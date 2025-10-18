@@ -5,16 +5,16 @@
 
 using namespace b3d;
 
-SkeletonMask::SkeletonMask(u32 numBones)
-	: mIsDisabled(numBones)
+SkeletonMask::SkeletonMask(u32 boneCount)
+	: mIsDisabled(boneCount)
 {}
 
-bool SkeletonMask::IsEnabled(u32 boneIdx) const
+bool SkeletonMask::IsEnabled(u32 boneIndex) const
 {
-	if(boneIdx >= (u32)mIsDisabled.size())
+	if(boneIndex >= (u32)mIsDisabled.size())
 		return true;
 
-	return !mIsDisabled[boneIdx];
+	return !mIsDisabled[boneIndex];
 }
 
 SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
@@ -23,8 +23,8 @@ SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
 
 void SkeletonMaskBuilder::SetBoneState(const String& name, bool enabled)
 {
-	u32 numBones = mSkeleton->GetBoneCount();
-	for(u32 i = 0; i < numBones; i++)
+	u32 boneCount = mSkeleton->GetBoneCount();
+	for(u32 i = 0; i < boneCount; i++)
 	{
 		if(mSkeleton->GetBoneInfo(i).Name == name)
 		{

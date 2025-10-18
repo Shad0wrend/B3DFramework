@@ -5,8 +5,6 @@
 #include "Math/B3DMath.h"
 #include "Utility/B3DTime.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
 u32 VirtualInput::sNextVirtualButtonId = 0;
@@ -16,8 +14,11 @@ VirtualInput::VirtualInput()
 {
 	mInputConfiguration = B3DMakeShared<InputConfiguration>();
 
-	Input::Instance().OnButtonDown.Connect(std::bind(&VirtualInput::ButtonDown, this, _1));
-	Input::Instance().OnButtonUp.Connect(std::bind(&VirtualInput::ButtonUp, this, _1));
+	auto fnButtonDown = [this](const ButtonEvent& event) { ButtonDown(event); };
+	Input::Instance().OnButtonDown.Connect(fnButtonDown);
+
+	auto fnButtonUp = [this](const ButtonEvent& event) { ButtonUp(event); };
+	Input::Instance().OnButtonUp.Connect(fnButtonUp);
 }
 
 void VirtualInput::SetConfiguration(const SPtr<InputConfiguration>& input)
@@ -54,68 +55,68 @@ VirtualAxis VirtualInput::GetOrCreateVirtualAxis(const String& name)
 	return VirtualAxis(newId);
 }
 
-bool VirtualInput::IsButtonDown(const VirtualButton& button, u32 deviceIdx) const
+bool VirtualInput::IsButtonDown(const VirtualButton& button, u32 deviceIndex) const
 {
-	if(deviceIdx >= (u32)mDevices.size())
+	if(deviceIndex >= (u32)mDevices.size())
 		return false;
 
-	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
-	auto iterFind = cachedStates.find(button.ButtonIdentifier);
+	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIndex].CachedStates;
+	auto foundIterator = cachedStates.find(button.ButtonIdentifier);
 
-	if(iterFind != cachedStates.end())
-		return iterFind->second.State == ButtonState::ToggledOn;
+	if(foundIterator != cachedStates.end())
+		return foundIterator->second.State == ButtonState::ToggledOn;
 
 	return false;
 }
 
-bool VirtualInput::IsButtonUp(const VirtualButton& button, u32 deviceIdx) const
+bool VirtualInput::IsButtonUp(const VirtualButton& button, u32 deviceIndex) const
 {
-	if(deviceIdx >= (u32)mDevices.size())
+	if(deviceIndex >= (u32)mDevices.size())
 		return false;
 
-	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
-	auto iterFind = cachedStates.find(button.ButtonIdentifier);
+	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIndex].CachedStates;
+	auto foundIterator = cachedStates.find(button.ButtonIdentifier);
 
-	if(iterFind != cachedStates.end())
-		return iterFind->second.State == ButtonState::ToggledOff;
+	if(foundIterator != cachedStates.end())
+		return foundIterator->second.State == ButtonState::ToggledOff;
 
 	return false;
 }
 
-bool VirtualInput::IsButtonHeld(const VirtualButton& button, u32 deviceIdx) const
+bool VirtualInput::IsButtonHeld(const VirtualButton& button, u32 deviceIndex) const
 {
-	if(deviceIdx >= (u32)mDevices.size())
+	if(deviceIndex >= (u32)mDevices.size())
 		return false;
 
-	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
-	auto iterFind = cachedStates.find(button.ButtonIdentifier);
+	const Map<u32, ButtonData>& cachedStates = mDevices[deviceIndex].CachedStates;
+	auto foundIterator = cachedStates.find(button.ButtonIdentifier);
 
-	if(iterFind != cachedStates.end())
-		return iterFind->second.State == ButtonState::On || iterFind->second.State == ButtonState::ToggledOn;
+	if(foundIterator != cachedStates.end())
+		return foundIterator->second.State == ButtonState::On || foundIterator->second.State == ButtonState::ToggledOn;
 
 	return false;
 }
 
-float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIdx) const
+float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIndex) const
 {
-	VirtualAxisInformation axisDesc;
-	if(mInputConfiguration->GetAxisInternal(axis, axisDesc))
+	VirtualAxisInformation axisDescription;
+	if(mInputConfiguration->GetAxisInternal(axis, axisDescription))
 	{
-		float axisValue = GetInput().GetAxisValue((u32)axisDesc.Type, deviceIdx);
+		float axisValue = GetInput().GetAxisValue((u32)axisDescription.Type, deviceIndex);
 
-		bool isMouseAxis = (u32)axisDesc.Type <= (u32)InputAxis::MouseZ;
-		bool isNormalized = axisDesc.Normalize || !isMouseAxis;
+		bool isMouseAxis = (u32)axisDescription.Type <= (u32)InputAxis::MouseZ;
+		bool isNormalized = axisDescription.Normalize || !isMouseAxis;
 
-		if(isNormalized && axisDesc.DeadZone > 0.0f)
+		if(isNormalized && axisDescription.DeadZone > 0.0f)
 		{
 			// Scale to [-1, 1] range after removing the dead zone
 			if(axisValue > 0)
-				axisValue = std::max(0.f, axisValue - axisDesc.DeadZone) / (1.0f - axisDesc.DeadZone);
+				axisValue = std::max(0.f, axisValue - axisDescription.DeadZone) / (1.0f - axisDescription.DeadZone);
 			else
-				axisValue = -std::max(0.f, -axisValue - axisDesc.DeadZone) / (1.0f - axisDesc.DeadZone);
+				axisValue = -std::max(0.f, -axisValue - axisDescription.DeadZone) / (1.0f - axisDescription.DeadZone);
 		}
 
-		if(axisDesc.Normalize)
+		if(axisDescription.Normalize)
 		{
 			if(isMouseAxis)
 			{
@@ -124,12 +125,12 @@ float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIdx) const
 				axisValue /= 1.0f;
 			}
 
-			axisValue = Math::Clamp(axisValue * axisDesc.Sensitivity, -1.0f, 1.0f);
+			axisValue = Math::Clamp(axisValue * axisDescription.Sensitivity, -1.0f, 1.0f);
 		}
 		else
-			axisValue *= axisDesc.Sensitivity;
+			axisValue *= axisDescription.Sensitivity;
 
-		if(axisDesc.Invert)
+		if(axisDescription.Invert)
 			axisValue = -axisValue;
 
 		return axisValue;
@@ -140,13 +141,13 @@ float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIdx) const
 
 void VirtualInput::UpdateInternal()
 {
-	u64 frameIdx = GetTime().GetCurrentFrameIndex();
+	u64 frameIndex = GetTime().GetCurrentFrameIndex();
 	for(auto& deviceData : mDevices)
 	{
 		for(auto& state : deviceData.CachedStates)
 		{
 			// We need to stay in toggled state for one frame.
-			if(state.second.UpdateFrameIdx == frameIdx)
+			if(state.second.UpdateFrameIdx == frameIndex)
 				continue;
 
 			if(state.second.State == ButtonState::ToggledOff)
@@ -157,7 +158,7 @@ void VirtualInput::UpdateInternal()
 	}
 
 	bool hasEvents = true;
-	u64 repeatInternal = mInputConfiguration->GetRepeatInterval();
+	u64 repeatInterval = mInputConfiguration->GetRepeatInterval();
 	u64 currentTime = GetTime().GetRealTimeInMilliseconds();
 
 	// Trigger all events
@@ -194,10 +195,10 @@ void VirtualInput::UpdateInternal()
 				if(!state.second.AllowRepeat)
 					continue;
 
-				u64 diff = currentTime - state.second.Timestamp;
-				if(diff >= repeatInternal)
+				u64 timeDifference = currentTime - state.second.Timestamp;
+				if(timeDifference >= repeatInterval)
 				{
-					state.second.Timestamp += repeatInternal;
+					state.second.Timestamp += repeatInterval;
 
 					VirtualButtonEvent event;
 					event.Button = state.second.Button;
@@ -214,18 +215,18 @@ void VirtualInput::UpdateInternal()
 	}
 
 	// Send button held events
-	u32 deviceIdx = 0;
+	u32 deviceIndex = 0;
 	for(auto& deviceData : mDevices)
 	{
-		for(auto& btnIdentifier : deviceData.HeldButtons)
+		for(auto& buttonIdentifier : deviceData.HeldButtons)
 		{
 			Map<u32, ButtonData>& cachedStates = deviceData.CachedStates;
-			ButtonData& data = cachedStates[btnIdentifier];
+			ButtonData& data = cachedStates[buttonIdentifier];
 
-			OnButtonHeld(data.Button, deviceIdx);
+			OnButtonHeld(data.Button, deviceIndex);
 		}
 
-		deviceIdx++;
+		deviceIndex++;
 	}
 }
 
@@ -249,27 +250,27 @@ void VirtualInput::ButtonDown(const ButtonEvent& event)
 		Map<u32, ButtonData>& cachedStates = mDevices[event.DeviceIndex].CachedStates;
 		TArray<u32>& heldButtons = mDevices[event.DeviceIndex].HeldButtons;
 
-		u32 numButtons = (u32)tempButtons.size();
-		for(u32 i = 0; i < numButtons; i++)
+		u32 buttonCount = (u32)tempButtons.size();
+		for(u32 buttonIndex = 0; buttonIndex < buttonCount; buttonIndex++)
 		{
-			const VirtualButton& btn = tempButtons[i];
-			const VirtualButtonInformation& btnDesc = tempBtnDescs[i];
+			const VirtualButton& button = tempButtons[buttonIndex];
+			const VirtualButtonInformation& buttonDescription = tempBtnDescs[buttonIndex];
 
-			ButtonData& data = cachedStates[btn.ButtonIdentifier];
+			ButtonData& data = cachedStates[button.ButtonIdentifier];
 
-			data.Button = btn;
+			data.Button = button;
 			data.State = ButtonState::ToggledOn;
 			data.Timestamp = event.Timestamp;
 			data.UpdateFrameIdx = GetTime().GetCurrentFrameIndex();
-			data.AllowRepeat = btnDesc.Repeatable;
+			data.AllowRepeat = buttonDescription.Repeatable;
 
 			VirtualButtonEvent virtualEvent;
-			virtualEvent.Button = btn;
+			virtualEvent.Button = button;
 			virtualEvent.State = ButtonState::On;
 			virtualEvent.DeviceIdx = event.DeviceIndex;
 
 			mEvents.push(virtualEvent);
-			heldButtons.Add(btn.ButtonIdentifier);
+			heldButtons.Add(button.ButtonIdentifier);
 		}
 	}
 }
@@ -294,30 +295,30 @@ void VirtualInput::ButtonUp(const ButtonEvent& event)
 		Map<u32, ButtonData>& cachedStates = mDevices[event.DeviceIndex].CachedStates;
 		TArray<u32>& heldButtons = mDevices[event.DeviceIndex].HeldButtons;
 
-		u32 numButtons = (u32)tempButtons.size();
-		for(u32 i = 0; i < numButtons; i++)
+		u32 buttonCount = (u32)tempButtons.size();
+		for(u32 buttonIndex = 0; buttonIndex < buttonCount; buttonIndex++)
 		{
-			const VirtualButton& btn = tempButtons[i];
-			const VirtualButtonInformation& btnDesc = tempBtnDescs[i];
+			const VirtualButton& button = tempButtons[buttonIndex];
+			const VirtualButtonInformation& buttonDescription = tempBtnDescs[buttonIndex];
 
-			ButtonData& data = cachedStates[btn.ButtonIdentifier];
+			ButtonData& data = cachedStates[button.ButtonIdentifier];
 
-			data.Button = btn;
+			data.Button = button;
 			data.State = ButtonState::ToggledOff;
 			data.Timestamp = event.Timestamp;
 			data.UpdateFrameIdx = GetTime().GetCurrentFrameIndex();
-			data.AllowRepeat = btnDesc.Repeatable;
+			data.AllowRepeat = buttonDescription.Repeatable;
 
 			VirtualButtonEvent virtualEvent;
-			virtualEvent.Button = btn;
+			virtualEvent.Button = button;
 			virtualEvent.State = ButtonState::Off;
 			virtualEvent.DeviceIdx = event.DeviceIndex;
 
 			mEvents.push(virtualEvent);
 
-			auto iterFind = std::find(heldButtons.begin(), heldButtons.end(), btn.ButtonIdentifier);
-			if(iterFind != heldButtons.end())
-				heldButtons.SwapAndErase(iterFind);
+			auto foundIterator = std::find(heldButtons.begin(), heldButtons.end(), button.ButtonIdentifier);
+			if(foundIterator != heldButtons.end())
+				heldButtons.SwapAndErase(foundIterator);
 		}
 	}
 }

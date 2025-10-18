@@ -45,8 +45,8 @@ namespace b3d
 		/**
 		 * Draws an axis aligned cuboid.
 		 *
-		 * @param[in]	position	Center of the cuboid.
-		 * @param[in]	extents		Radius of the cuboid in each axis.
+		 * @param	position	Center of the cuboid.
+		 * @param	extents		Radius of the cuboid in each axis.
 		 */
 		void DrawCube(const Vector3& position, const Vector3& extents);
 
@@ -56,28 +56,28 @@ namespace b3d
 		/**
 		 * Draws a solid cone.
 		 *
-		 * @param[in]	base		Position of the center of the base of the cone.
-		 * @param[in]	normal		Orientation of the cone, pointing from center base to the tip of the cone.
-		 * @param[in]	height		Height of the cone (along the normal).
-		 * @param[in]	radius		Radius of the base of the cone.
-		 * @param[in]	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
+		 * @param	base		Position of the center of the base of the cone.
+		 * @param	normal		Orientation of the cone, pointing from center base to the tip of the cone.
+		 * @param	height		Height of the cone (along the normal).
+		 * @param	radius		Radius of the base of the cone.
+		 * @param	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
 		 */
 		void DrawCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale = Vector2::kOne);
 
 		/**
 		 * Draws a solid disc.
 		 *
-		 * @param[in]	position	Center of the disc.
-		 * @param[in]	normal		Orientation of the disc, pointing in the direction the disc is visible in.
-		 * @param[in]	radius		Radius of the disc.
+		 * @param	position	Center of the disc.
+		 * @param	normal		Orientation of the disc, pointing in the direction the disc is visible in.
+		 * @param	radius		Radius of the disc.
 		 */
 		void DrawDisc(const Vector3& position, const Vector3& normal, float radius);
 
 		/**
 		 * Draws a wireframe axis aligned cuboid.
 		 *
-		 * @param[in]	position	Center of the cuboid.
-		 * @param[in]	extents		Radius of the cuboid in each axis.
+		 * @param	position	Center of the cuboid.
+		 * @param	extents		Radius of the cuboid in each axis.
 		 */
 		void DrawWireCube(const Vector3& position, const Vector3& extents);
 
@@ -87,11 +87,11 @@ namespace b3d
 		/**
 		 * Draws a wireframe cone.
 		 *
-		 * @param[in]	base		Position of the center of the base of the cone.
-		 * @param[in]	normal		Orientation of the cone, pointing from center base to the tip of the cone.
-		 * @param[in]	height		Height of the cone (along the normal).
-		 * @param[in]	radius		Radius of the base of the cone.
-		 * @param[in]	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
+		 * @param	base		Position of the center of the base of the cone.
+		 * @param	normal		Orientation of the cone, pointing from center base to the tip of the cone.
+		 * @param	height		Height of the cone (along the normal).
+		 * @param	radius		Radius of the base of the cone.
+		 * @param	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
 		 */
 		void DrawWireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale = Vector2::kOne);
 
@@ -106,27 +106,27 @@ namespace b3d
 		/**
 		 * Draws a wireframe disc.
 		 *
-		 * @param[in]	position	Center of the disc.
-		 * @param[in]	normal		Orientation of the disc, pointing in the direction the disc is visible in.
-		 * @param[in]	radius		Radius of the disc.
+		 * @param	position	Center of the disc.
+		 * @param	normal		Orientation of the disc, pointing in the direction the disc is visible in.
+		 * @param	radius		Radius of the disc.
 		 */
 		void DrawWireDisc(const Vector3& position, const Vector3& normal, float radius);
 
 		/**
 		 * Draws a wireframe arc.
 		 *
-		 * @param[in]	position	Center of the arc.
-		 * @param[in]	normal		Orientation of the arc, pointing in the direction the arc is visible in.
-		 * @param[in]	radius		Radius of the arc.
-		 * @param[in]	startAngle	Angle at which to start the arc.
-		 * @param[in]	amountAngle	Length of the arc.
+		 * @param	position	Center of the arc.
+		 * @param	normal		Orientation of the arc, pointing in the direction the arc is visible in.
+		 * @param	radius		Radius of the arc.
+		 * @param	startAngle	Angle at which to start the arc.
+		 * @param	amountAngle	Length of the arc.
 		 */
 		void DrawWireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle);
 
 		/**
 		 * Draws a wireframe mesh.
 		 *
-		 * @param[in]	meshData	Object containing mesh vertices and indices. Vertices must be Vertex3 and indices
+		 * @param	meshData	Object containing mesh vertices and indices. Vertices must be Vertex3 and indices
 		 *							32-bit.
 		 */
 		void DrawWireMesh(const SPtr<MeshData>& meshData);
@@ -134,11 +134,11 @@ namespace b3d
 		/**
 		 * Draws a wireframe frustum.
 		 *
-		 * @param[in]	position	Origin of the frustum, or the eye point.
-		 * @param[in]	aspect		Ratio of frustum width over frustum height.
-		 * @param[in]	FOV			Horizontal field of view in degrees.
-		 * @param[in]	near		Distance to the near frustum plane.
-		 * @param[in]	far			Distance to the far frustum plane.
+		 * @param	position	Origin of the frustum, or the eye point.
+		 * @param	aspect		Ratio of frustum width over frustum height.
+		 * @param	FOV			Horizontal field of view in degrees.
+		 * @param	near		Distance to the near frustum plane.
+		 * @param	far			Distance to the far frustum plane.
 		 */
 		void DrawFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far);
 
@@ -213,7 +213,7 @@ namespace b3d
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh);
 
 			/** Returns the material variation matching the provided parameters. */
-			static DebugDrawMat* GetVariation(DebugDrawMaterial drawMat);
+			static DebugDrawMat* GetVariation(DebugDrawMaterial drawMaterial);
 		};
 
 		/** Performs rendering of meshes provided by DebugDraw. */
@@ -233,7 +233,7 @@ namespace b3d
 			 * Updates the internal data that is used for rendering. Normally you would call this after updating the meshes
 			 * on the main thread.
 			 *
-			 * @param[in]	meshes			Meshes to render.
+			 * @param	meshes			Meshes to render.
 			 */
 			void UpdateData(const Vector<DebugDraw::MeshRenderData>& meshes);
 

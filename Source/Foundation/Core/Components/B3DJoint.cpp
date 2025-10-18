@@ -7,7 +7,6 @@
 #include "RTTI/B3DJointRTTI.h"
 #include "Scene/B3DSceneInstance.h"
 
-using namespace std::placeholders;
 using namespace b3d;
 
 Joint::Joint(const HSceneObject& parent, JointCreateInformation& createInformation)

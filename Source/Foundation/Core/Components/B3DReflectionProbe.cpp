@@ -131,7 +131,7 @@ void ReflectionProbe::CaptureAndFilter()
 
 	mFilteredTexture = Texture::CreateShared(cubemapDesc);
 
-	auto renderComplete = [this]()
+	auto fnRenderComplete = [this]()
 	{
 		mRendererTask = nullptr;
 	};
@@ -142,7 +142,7 @@ void ReflectionProbe::CaptureAndFilter()
 	const SPtr<render::RendererScene> rendererScene = B3DGetRenderProxy(SceneObject()->GetScene()->GetRendererScene());
 	if(mCustomTexture == nullptr)
 	{
-		auto renderReflProbe = [textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
+		auto fnRenderReflectionProbe = [textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
 			SPtr<GpuCommandBufferProfiler> commandBufferProfiler = GetGpuProfiler().CreateCommandBufferProfiler(*commandBuffer);
@@ -170,12 +170,12 @@ void ReflectionProbe::CaptureAndFilter()
 			return true;
 		};
 
-		mRendererTask = render::RendererTask::Create("ReflProbeRender", renderReflProbe);
+		mRendererTask = render::RendererTask::Create("ReflProbeRender", fnRenderReflectionProbe);
 	}
 	else
 	{
 		SPtr<render::Texture> customTextureRenderProxy = B3DGetRenderProxy(mCustomTexture);
-		auto filterReflProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
+		auto fnFilterReflectionProbe = [customTextureRenderProxy, textureRenderProxy, probeRenderProxy, rendererScene](render::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
 			SPtr<GpuCommandBufferProfiler> commandBufferProfiler = GetGpuProfiler().CreateCommandBufferProfiler(*commandBuffer);
@@ -198,10 +198,10 @@ void ReflectionProbe::CaptureAndFilter()
 			return true;
 		};
 
-		mRendererTask = render::RendererTask::Create("ReflProbeRender", filterReflProbe);
+		mRendererTask = render::RendererTask::Create("ReflProbeRender", fnFilterReflectionProbe);
 	}
 
-	mRendererTask->OnComplete.Connect(renderComplete);
+	mRendererTask->OnComplete.Connect(fnRenderComplete);
 	render::GetRenderer()->AddTask(mRendererTask);
 }
 

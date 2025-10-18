@@ -27,17 +27,17 @@ namespace b3d
 		 * Creates a new RenderTexture and automatically generates a single color surface and (optionally) a depth/stencil
 		 * surface.
 		 *
-		 * @param[in]	colorDesc			Description of the color surface to create.
-		 * @param[in]	createDepth			Determines will a depth/stencil buffer of the same size as the color buffer be
+		 * @param	colorDesc			Description of the color surface to create.
+		 * @param	createDepth			Determines will a depth/stencil buffer of the same size as the color buffer be
 		 *									created for the render texture.
-		 * @param[in]	depthStencilFormat	Format of the depth/stencil buffer if enabled.
+		 * @param	depthStencilFormat	Format of the depth/stencil buffer if enabled.
 		 */
 		virtual SPtr<RenderTexture> CreateRenderTexture(const TextureCreateInformation& colorDesc, bool createDepth = true, PixelFormat depthStencilFormat = PF_D32);
 
 		/**
 		 * Creates a RenderTexture using the description struct.
 		 *
-		 * @param[in]	desc	Description of the render texture to create.
+		 * @param	desc	Description of the render texture to create.
 		 */
 		virtual SPtr<RenderTexture> CreateRenderTexture(const RenderTextureCreateInformation& desc);
 

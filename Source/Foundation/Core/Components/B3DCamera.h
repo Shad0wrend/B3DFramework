@@ -333,9 +333,9 @@ namespace b3d
 		 * Converts a point in screen space (pixels corresponding to render target attached to the camera) to a point in
 		 * world space.
 		 *
-		 * @param[in]	screenPoint	Point to transform.
-		 * @param[in]	deviceDepth	Depth to place the world point at, in normalized device coordinates.
-		 * @return					3D point in world space.
+		 * @param	screenPoint Point to transform.
+		 * @param	deviceDepth Depth to place the world point at, in normalized device coordinates.
+		 * @return	3D point in world space.
 		 */
 		Vector3 ScreenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth = 0.5f) const;
 

@@ -26,9 +26,9 @@ namespace b3d
 		/**
 		 * Registers a new curve used for animating position.
 		 *
-		 * @param[in]	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
+		 * @param	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
 		 *							in a skeleton, if any.
-		 * @param[in]	curve		Curve to add to the clip.
+		 * @param	curve		Curve to add to the clip.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(AddPositionCurve))
 		void AddPositionCurve(const String& name, const TAnimationCurve<Vector3>& curve);
@@ -36,9 +36,9 @@ namespace b3d
 		/**
 		 * Registers a new curve used for animating rotation.
 		 *
-		 * @param[in]	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
+		 * @param	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
 		 *							in a skeleton, if any.
-		 * @param[in]	curve		Curve to add to the clip.
+		 * @param	curve		Curve to add to the clip.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(AddRotationCurve))
 		void AddRotationCurve(const String& name, const TAnimationCurve<Quaternion>& curve);
@@ -46,9 +46,9 @@ namespace b3d
 		/**
 		 * Registers a new curve used for animating scale.
 		 *
-		 * @param[in]	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
+		 * @param	name		Unique name of the curve. This name will be used mapping the curve to the relevant bone
 		 *							in a skeleton, if any.
-		 * @param[in]	curve		Curve to add to the clip.
+		 * @param	curve		Curve to add to the clip.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(AddScaleCurve))
 		void AddScaleCurve(const String& name, const TAnimationCurve<Vector3>& curve);
@@ -56,9 +56,9 @@ namespace b3d
 		/**
 		 * Registers a new curve used for generic animation.
 		 *
-		 * @param[in]	name		Unique name of the curve. This can be used for retrieving the value of the curve
+		 * @param	name		Unique name of the curve. This can be used for retrieving the value of the curve
 		 *							from animation.
-		 * @param[in]	curve		Curve to add to the clip.
+		 * @param	curve		Curve to add to the clip.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(AddGenericCurve))
 		void AddGenericCurve(const String& name, const TAnimationCurve<float>& curve);
@@ -116,8 +116,8 @@ namespace b3d
 		/**
 		 * Constructs a new animation event.
 		 *
-		 * @param[in]	name	Name used to identify the event when triggered.
-		 * @param[in]	time	Time at which to trigger the event, in seconds.
+		 * @param	name	Name used to identify the event when triggered.
+		 * @param	time	Time at which to trigger the event, in seconds.
 		 */
 		AnimationEvent(const String& name, float time)
 			: Name(name), Time(time)
@@ -190,8 +190,8 @@ namespace b3d
 		 * Maps skeleton bone names to animation curve names, and returns a set of indices that can be easily used for
 		 * locating an animation curve based on the bone index.
 		 *
-		 * @param[in]	skeleton	Skeleton to create the mapping for.
-		 * @param[out]	mapping		Pre-allocated array that will receive output animation clip indices. The array must
+		 * @param	skeleton	Skeleton to create the mapping for.
+		 * @param	mapping		Pre-allocated array that will receive output animation clip indices. The array must
 		 *							be large enough to store an index for every bone in the @p skeleton. Bones that have
 		 *							no related animation curves will be assigned value -1.
 		 */
@@ -201,8 +201,8 @@ namespace b3d
 		 * Attempts to find translation/rotation/scale curves with the specified name and fills the mapping structure with
 		 * their indices, which can then be used for quick lookup.
 		 *
-		 * @param[in]	name		Name of the curves to look up.
-		 * @param[out]	mapping		Triple containing the translation/rotation/scale indices of the found curves. Indices
+		 * @param	name		Name of the curves to look up.
+		 * @param	mapping		Triple containing the translation/rotation/scale indices of the found curves. Indices
 		 *							will be -1 for curves that haven't been found.
 		 */
 		void GetCurveMapping(const String& name, AnimationCurveMapping& mapping) const;
@@ -211,11 +211,11 @@ namespace b3d
 		 * Attempts to find a generic curve with the specified name and fills output with found index, which can then be
 		 * used for quick lookup.
 		 *
-		 * @param[in]	name		Name of the curve to look up.
-		 * @param[out]	frameIdx	Index of the curve animating the morph shape frames, or -1 if not found.
-		 * @param[out]	weightIdx	Index of the curve animating the channel weight, or -1 if not found.
+		 * @param	name		Name of the curve to look up.
+		 * @param	frameIndex	Index of the curve animating the morph shape frames, or -1 if not found.
+		 * @param	weightIndex	Index of the curve animating the channel weight, or -1 if not found.
 		 */
-		void GetMorphMapping(const String& name, u32& frameIdx, u32& weightIdx) const;
+		void GetMorphMapping(const String& name, u32& frameIndex, u32& weightIndex) const;
 
 		/**
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
@@ -260,12 +260,12 @@ namespace b3d
 		/**
 		 * Creates an animation clip with specified curves.
 		 *
-		 * @param[in]	curves		Curves to initialize the animation with.
-		 * @param[in]	isAdditive	Determines does the clip contain additive curve data. This will change the behaviour
+		 * @param	curves		Curves to initialize the animation with.
+		 * @param	isAdditive	Determines does the clip contain additive curve data. This will change the behaviour
 		 *							how is the clip blended with other animations.
-		 * @param[in]	sampleRate	If animation uses evenly spaced keyframes, number of samples per second. Not relevant
+		 * @param	sampleRate	If animation uses evenly spaced keyframes, number of samples per second. Not relevant
 		 *							if keyframes are unevenly spaced.
-		 * @param[in]	rootMotion	Optional set of curves that can be used for animating the root bone. Not used by the
+		 * @param	rootMotion	Optional set of curves that can be used for animating the root bone. Not used by the
 		 *							animation system directly but is instead provided to the user for manual evaluation.
 		 */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(AnimationClip))

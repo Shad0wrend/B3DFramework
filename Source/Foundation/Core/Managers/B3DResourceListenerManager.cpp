@@ -7,8 +7,6 @@
 #include "Resources/B3DIResourceListener.h"
 #include "CoreObject/B3DRenderThread.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
 #if B3D_DEBUG
@@ -25,8 +23,17 @@ void throwIfNotSimThread()
 
 ResourceListenerManager::ResourceListenerManager()
 {
-	mResourceLoadedConn = GetResources().OnResourceLoaded.Connect(std::bind(&::b3d::ResourceListenerManager::OnResourceLoaded, this, _1));
-	mResourceModifiedConn = GetResources().OnResourceModified.Connect(std::bind(&::b3d::ResourceListenerManager::OnResourceModified, this, _1));
+	auto fnOnResourceLoaded = [this](const HResource& resource)
+	{
+		OnResourceLoaded(resource);
+	};
+	mResourceLoadedConn = GetResources().OnResourceLoaded.Connect(fnOnResourceLoaded);
+
+	auto fnOnResourceModified = [this](const HResource& resource)
+	{
+		OnResourceModified(resource);
+	};
+	mResourceModifiedConn = GetResources().OnResourceModified.Connect(fnOnResourceModified);
 }
 
 ResourceListenerManager::~ResourceListenerManager()
@@ -228,14 +235,14 @@ void ResourceListenerManager::AddDependencies(IResourceListener* listener)
 	if(mTempResourceBuffer.size() > 0)
 	{
 		Vector<u64> resourceHandleIds(mTempResourceBuffer.size());
-		u32 idx = 0;
+		u32 resourceIndex = 0;
 		for(auto& resource : mTempResourceBuffer)
 		{
 			u64 handleId = (u64)resource.GetHandleData();
-			resourceHandleIds[idx] = handleId;
+			resourceHandleIds[resourceIndex] = handleId;
 			mResourceToListenerMap[handleId].push_back(listener);
 
-			idx++;
+			resourceIndex++;
 		}
 
 		mListenerToResourceMap[listener] = resourceHandleIds;

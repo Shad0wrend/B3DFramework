@@ -262,15 +262,15 @@ namespace b3d
 		/**
 		 * Updates the texture with new data. Provided data buffer will be locked until the operation completes.
 		 *
-		 * @param[in]	data				Pixel data to write. User must ensure it is in format and size compatible with
-		 *									the texture.
-		 * @param[in]	face				Texture face to write to.
-		 * @param[in]	mipLevel			Mipmap level to write to.
-		 * @param[in]	discardEntireBuffer When true the existing contents of the resource you are updating will be
-		 *									discarded. This can make the operation faster. Resources with certain buffer
-		 *									types might require this flag to be in a specific state otherwise the operation
-		 *									will fail.
-		 * @return							Async operation object you can use to track operation completion.
+		 * @param data					Pixel data to write. User must ensure it is in format and size compatible with
+		 *								the texture.
+		 * @param face					Texture face to write to.
+		 * @param mipLevel				Mipmap level to write to.
+		 * @param discardEntireBuffer	When true the existing contents of the resource you are updating will be
+		 *								discarded. This can make the operation faster. Resources with certain buffer
+		 *								types might require this flag to be in a specific state otherwise the operation
+		 *								will fail.
+		 * @return						Async operation object you can use to track operation completion.
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
@@ -280,11 +280,11 @@ namespace b3d
 		 * Reads internal texture data to the provided previously allocated buffer. Provided data buffer will be locked
 		 * until the operation completes.
 		 *
-		 * @param[out]	data		Pre-allocated buffer of proper size and format where data will be read to. You can use
-		 *							TextureProperties::allocBuffer() to allocate a buffer of a correct format and size.
-		 * @param[in]	face		Texture face to read from.
-		 * @param[in]	mipLevel	Mipmap level to read from.
-		 * @return					Async operation object you can use to track operation completion.
+		 * @param data		Pre-allocated buffer of proper size and format where data will be read to. You can use
+		 *					TextureProperties::allocBuffer() to allocate a buffer of a correct format and size.
+		 * @param face		Texture face to read from.
+		 * @param mipLevel	Mipmap level to read from.
+		 * @return			Async operation object you can use to track operation completion.
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
@@ -293,10 +293,10 @@ namespace b3d
 		/**
 		 * Reads internal texture data into a newly allocated buffer.
 		 *
-		 * @param[in]	face		Texture face to read from.
-		 * @param[in]	mipLevel	Mipmap level to read from.
-		 * @return					Async operation object that will contain the buffer with the data once the operation
-		 *							completes.
+		 * @param face		Texture face to read from.
+		 * @param mipLevel	Mipmap level to read from.
+		 * @return			Async operation object that will contain the buffer with the data once the operation
+		 *					completes.
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
@@ -306,10 +306,10 @@ namespace b3d
 		/**
 		 * Reads data from the cached system memory texture buffer into the provided buffer.
 		 *
-		 * @param[out]	data		Pre-allocated buffer of proper size and format where data will be read to. You can use
-		 *							TextureProperties::allocBuffer() to allocate a buffer of a correct format and size.
-		 * @param[in]	face		Texture face to read from.
-		 * @param[in]	mipLevel	Mipmap level to read from.
+		 * @param data		Pre-allocated buffer of proper size and format where data will be read to. You can use
+		 *					TextureProperties::allocBuffer() to allocate a buffer of a correct format and size.
+		 * @param face		Texture face to read from.
+		 * @param mipLevel	Mipmap level to read from.
 		 *
 		 * @note
 		 * The data read is the cached texture data. Any data written to the texture from the GPU or render thread will not
@@ -410,9 +410,9 @@ namespace b3d
 			/**
 			 * Locks the buffer for reading or writing.
 			 *
-			 * @param[in]	options 	Options for controlling what you may do with the locked data.
-			 * @param[in]	mipLevel	(optional) Mipmap level to lock.
-			 * @param[in]	face		(optional) Texture face to lock.
+			 * @param options	Options for controlling what you may do with the locked data.
+			 * @param mipLevel	(optional) Mipmap level to lock.
+			 * @param face		(optional) Texture face to lock.
 			 *
 			 * @note
 			 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
@@ -469,7 +469,7 @@ namespace b3d
 			 * @note	If the texture is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
 			 *			method in very rare circumstances.
 			 *
-			 * @param	destination	Previously allocated buffer to read data into.
+			 * @param	destination		Previously allocated buffer to read data into.
 			 * @param	mipLevel		(optional) Mipmap level to read from.
 			 * @param	face			(optional) Texture face to read from.
 			 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default queue will be used.

@@ -52,7 +52,7 @@ namespace b3d
 
 	protected:
 		void Initialize() override;
-		SPtr<DataStream> GetSourceStream(u32& size) override;
+		SPtr<DataStream> GetSourceStream(u32& outSize) override;
 
 	private:
 		// These streams exist to save original audio data in case it's needed later (usually for saving with the editor, or

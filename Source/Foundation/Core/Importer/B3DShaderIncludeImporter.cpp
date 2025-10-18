@@ -7,15 +7,15 @@
 
 using namespace b3d;
 
-bool ShaderIncludeImporter::IsExtensionSupported(const String& ext) const
+bool ShaderIncludeImporter::IsExtensionSupported(const String& extension) const
 {
-	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	String lowerCaseExtension = extension;
+	StringUtil::ToLowerCase(lowerCaseExtension);
 
-	return lowerCaseExt == u8"bslinc";
+	return lowerCaseExtension == u8"bslinc";
 }
 
-bool ShaderIncludeImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
+bool ShaderIncludeImporter::IsMagicNumberSupported(const u8* magicNumber, u32 magicNumberSize) const
 {
 	return true; // Plain-text so I don't even check for magic number
 }

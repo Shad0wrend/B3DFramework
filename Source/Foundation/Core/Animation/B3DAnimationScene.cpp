@@ -103,16 +103,16 @@ const EvaluatedAnimationData* AnimationScene::Update(bool async)
 	}
 
 	// Prepare the write buffer
-	u32 totalNumBones = 0;
+	u32 totalBoneCount = 0;
 	for(auto& anim : mProxies)
 	{
 		if(anim->Skeleton != nullptr)
-			totalNumBones += anim->Skeleton->GetBoneCount();
+			totalBoneCount += anim->Skeleton->GetBoneCount();
 	}
 
 	// Prepare the write buffer
 	EvaluatedAnimationData& renderData = mAnimData[mPoseWriteBufferIndex];
-	renderData.Transforms.resize(totalNumBones);
+	renderData.Transforms.resize(totalBoneCount);
 	renderData.Infos.clear();
 
 	// Queue animation evaluation tasks
@@ -121,21 +121,19 @@ const EvaluatedAnimationData* AnimationScene::Update(bool async)
 		mWorkerWaitGroup.Increment((u32)mProxies.size());
 	}
 
-	u32 curBoneIdx = 0;
+	u32 currentBoneIndex = 0;
 	for(auto& anim : mProxies)
 	{
-		auto evaluateAnimWorker = [this, anim, curBoneIdx]()
+		GetApplication().GetTaskScheduler().Post(SchedulerTask([this, anim, currentBoneIndex]()
 		{
-			u32 boneIdx = curBoneIdx;
-			EvaluateAnimation(anim.get(), boneIdx);
+			u32 boneIndex = currentBoneIndex;
+			EvaluateAnimation(anim.get(), boneIndex);
 
 			mWorkerWaitGroup.NotifyDone();
-		};
-
-		GetApplication().GetTaskScheduler().Post(SchedulerTask(evaluateAnimWorker, "AnimWorker"));
+		}, "AnimWorker"));
 
 		if(anim->Skeleton != nullptr)
-			curBoneIdx += anim->Skeleton->GetBoneCount();
+			currentBoneIndex += anim->Skeleton->GetBoneCount();
 	}
 
 	// Wait for tasks to complete
@@ -163,7 +161,7 @@ const EvaluatedAnimationData* AnimationScene::Update(bool async)
 	return output;
 }
 
-void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
+void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& currentBoneIndex)
 {
 	// Culling
 	if(anim->CullEnabled)
@@ -199,15 +197,15 @@ void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	// Evaluate skeletal animation
 	if(anim->Skeleton != nullptr)
 	{
-		u32 numBones = anim->Skeleton->GetBoneCount();
+		u32 boneCount = anim->Skeleton->GetBoneCount();
 
 		EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.PoseInfo;
 		poseInfo.AnimationId = anim->AnimationId;
-		poseInfo.BoneStartIndex = curBoneIdx;
-		poseInfo.BoneCount = numBones;
+		poseInfo.BoneStartIndex = currentBoneIndex;
+		poseInfo.BoneCount = boneCount;
 
 		memset(anim->SkeletonPose.HasOverride, 0, sizeof(bool) * anim->SkeletonPose.NumBones);
-		Matrix4* boneDst = renderData.Transforms.data() + curBoneIdx;
+		Matrix4* boneDst = renderData.Transforms.data() + currentBoneIndex;
 
 		// Copy transforms from mapped scene objects
 		u32 boneTfrmIdx = 0;
@@ -226,7 +224,7 @@ void AnimationScene::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 		// Animate bones
 		anim->Skeleton->GetPose(boneDst, anim->SkeletonPose, anim->SkeletonMask, anim->Layers, anim->LayerCount);
 
-		curBoneIdx += numBones;
+		currentBoneIndex += boneCount;
 		hasAnimInfo = true;
 	}
 	else

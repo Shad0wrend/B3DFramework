@@ -7,7 +7,6 @@
 #include "B3DCollider.h"
 #include "Physics/B3DPhysics.h"
 
-using namespace std::placeholders;
 using namespace b3d;
 
 CharacterController::CharacterController(const HSceneObject& parent)

@@ -157,11 +157,11 @@ namespace b3d
 		/**
 		 * Checks is the provided format valid for the texture type and usage.
 		 *
-		 * @param[in, out]	format	Format to check. If format is not valid the method will update this with the closest
-		 *							relevant format.
-		 * @param[in]		texType	Type of the texture the format will be used for.
-		 * @param[in]		usage	A set of TextureUsage flags that define how will a texture be used.
-		 * @return					True if the format is valid, false if not.
+		 * @param format		Format to check. If format is not valid the method will update this with the closest
+		 *						relevant format.
+		 * @param textureType	Type of the texture the format will be used for.
+		 * @param usage			A set of TextureUsage flags that define how will a texture be used.
+		 * @return				True if the format is valid, false if not.
 		 *
 		 * @note	This method checks only for obvious format mismatches:
 		 *			- Using depth format for anything but a depth-stencil buffer
@@ -171,7 +171,7 @@ namespace b3d
 		 *
 		 *			Caller should still check for platform-specific unsupported formats.
 		 */
-		static bool CheckFormat(PixelFormat& format, TextureType texType, int usage);
+		static bool CheckFormat(PixelFormat& format, TextureType textureType, int usage);
 
 		/**
 		 * Checks are the provided dimensions valid for the specified pixel format. Some formats (like BC) require

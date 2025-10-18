@@ -71,7 +71,7 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 	// a curve.
 	const float FIT_TIME = 0.001f;
 
-	auto eulerToQuaternion = [&](i32 keyIdx, Vector3& angles, const Quaternion& lastQuat)
+	auto fnEulerToQuaternion = [&](i32 keyIndex, Vector3& angles, const Quaternion& lastQuat)
 	{
 		Quaternion quat(
 			Degree(angles.X),
@@ -79,7 +79,7 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 			Degree(angles.Z), order);
 
 		// Flip quaternion in case rotation is over 180 degrees (use shortest path)
-		if(keyIdx > 0)
+		if(keyIndex > 0)
 		{
 			float dot = quat.Dot(lastQuat);
 			if(dot < 0.0f)
@@ -93,7 +93,7 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 	Vector<TKeyframe<Quaternion>> quatKeyframes;
 	quatKeyframes.reserve(numKeys);
 
-	auto addKeyframe = [&quatKeyframes](float time, const Quaternion& quat)
+	auto fnAddKeyframe = [&quatKeyframes](float time, const Quaternion& quat)
 	{
 		quatKeyframes.emplace_back();
 		TKeyframe<Quaternion>& keyframe = quatKeyframes.back();
@@ -137,15 +137,15 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 				// Ensure rotation is not over 180 degrees
 				B3D_ASSERT(curQuat.Dot(lastQuat) >= 0.0f);
 
-				addKeyframe(curTime, curQuat);
+				fnAddKeyframe(curTime, curQuat);
 				lastTime = curTime;
 				lastQuat = curQuat;
 			}
 		}
 		else
 		{
-			Quaternion quat = eulerToQuaternion(i, angles, lastQuat);
-			addKeyframe(time, quat);
+			Quaternion quat = fnEulerToQuaternion(i, angles, lastQuat);
+			fnAddKeyframe(time, quat);
 
 			lastTime = time;
 			lastQuat = quat;
@@ -168,8 +168,8 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 
 		Vector3 anglesStart = eulerCurve->Evaluate(startFitTime, false);
 		Vector3 anglesEnd = eulerCurve->Evaluate(endFitTime, false);
-		Quaternion startFitValue = eulerToQuaternion(i, anglesStart, currentKey.Value);
-		Quaternion endFitValue = eulerToQuaternion(i, anglesEnd, startFitValue);
+		Quaternion startFitValue = fnEulerToQuaternion(i, anglesStart, currentKey.Value);
+		Quaternion endFitValue = fnEulerToQuaternion(i, anglesEnd, startFitValue);
 
 		float invFitTime = 1.0f / (dt * FIT_TIME);
 		currentKey.OutTangent = (startFitValue - currentKey.Value) * invFitTime;
@@ -189,7 +189,7 @@ SPtr<TAnimationCurve<Vector3>> AnimationUtility::QuaternionToEulerCurve(const SP
 	// a curve.
 	const float FIT_TIME = 0.001f;
 
-	auto quaternionToEuler = [&](const Quaternion& quat)
+	auto fnQuaternionToEuler = [&](const Quaternion& quat)
 	{
 		Radian x, y, z;
 		quat.ToEulerAngles(x, y, z);
@@ -210,7 +210,7 @@ SPtr<TAnimationCurve<Vector3>> AnimationUtility::QuaternionToEulerCurve(const SP
 	{
 		float time = quatCurve->GetKeyFrame(i).Time;
 		Quaternion quat = quatCurve->GetKeyFrame(i).Value;
-		Vector3 euler = quaternionToEuler(quat);
+		Vector3 euler = fnQuaternionToEuler(quat);
 
 		eulerKeyframes[i].Time = time;
 		eulerKeyframes[i].Value = euler;
@@ -234,8 +234,8 @@ SPtr<TAnimationCurve<Vector3>> AnimationUtility::QuaternionToEulerCurve(const SP
 
 		Quaternion startQuat = Quaternion::Normalize(quatCurve->Evaluate(startFitTime, false));
 		Quaternion endQuat = Quaternion::Normalize(quatCurve->Evaluate(endFitTime, false));
-		Vector3 startFitValue = quaternionToEuler(startQuat);
-		Vector3 endFitValue = quaternionToEuler(endQuat);
+		Vector3 startFitValue = fnQuaternionToEuler(startQuat);
+		Vector3 endFitValue = fnQuaternionToEuler(endQuat);
 
 		// If fit values rotate for more than 180 degrees, wrap them so they use the shortest path
 		for(int j = 0; j < 3; j++)
@@ -537,7 +537,7 @@ void AnimationUtility::CalculateTangents(Vector<TKeyframe<T>>& keyframes)
 		return;
 	}
 
-	auto calcTangent = [](const Keyframe& left, const Keyframe& right)
+	auto fnCalcTangent = [](const Keyframe& left, const Keyframe& right)
 	{
 		float diff = right.Time - left.Time;
 
@@ -553,7 +553,7 @@ void AnimationUtility::CalculateTangents(Vector<TKeyframe<T>>& keyframes)
 		const Keyframe& keyNext = keyframes[1];
 
 		keyThis.InTangent = TCurveProperties<T>::GetZero();
-		keyThis.OutTangent = calcTangent(keyThis, keyNext);
+		keyThis.OutTangent = fnCalcTangent(keyThis, keyNext);
 	}
 
 	// Inner keyframes
@@ -563,7 +563,7 @@ void AnimationUtility::CalculateTangents(Vector<TKeyframe<T>>& keyframes)
 		Keyframe& keyThis = keyframes[i];
 		const Keyframe& keyNext = keyframes[i + 1];
 
-		keyThis.OutTangent = calcTangent(keyPrev, keyNext);
+		keyThis.OutTangent = fnCalcTangent(keyPrev, keyNext);
 		keyThis.InTangent = keyThis.OutTangent;
 	}
 
@@ -573,7 +573,7 @@ void AnimationUtility::CalculateTangents(Vector<TKeyframe<T>>& keyframes)
 		const Keyframe& keyPrev = keyframes[keyframes.size() - 2];
 
 		keyThis.OutTangent = TCurveProperties<T>::GetZero();
-		keyThis.InTangent = calcTangent(keyPrev, keyThis);
+		keyThis.InTangent = fnCalcTangent(keyPrev, keyThis);
 	}
 }
 

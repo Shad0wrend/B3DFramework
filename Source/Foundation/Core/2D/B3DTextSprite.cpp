@@ -62,11 +62,11 @@ void TextSprite::Update(const TextSpriteInformation& information, u64 groupId)
 			renderElement.VertexUVs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * renderElement.VertexCount);
 			renderElement.Indices = (u32*)mAlloc.Alloc(sizeof(u32) * renderElement.IndexCount);
 
-			const HTexture& tex = textGeometry.GetTextureForPage(pageIndex);
+			const HTexture& texture = textGeometry.GetTextureForPage(pageIndex);
 
 			SpriteMaterialInfo& materialInformation = renderElementData.MaterialInformation;
 			materialInformation.GroupId = groupId;
-			materialInformation.Texture = tex;
+			materialInformation.Texture = texture;
 			materialInformation.Tint = information.Color;
 			materialInformation.AnimationStartTime = 0.0f;
 
@@ -158,7 +158,7 @@ u32 TextSprite::BuildTextQuads(const TextGeometry& textGeometry, u32 width, u32 
 
 void TextSprite::GetAlignmentOffsets(const TextGeometry& textGeometry, u32 width, u32 height, GUIHorizontalTextAlignment horzAlign, GUIVerticalTextAlignment vertAlign, Vector2I* output)
 {
-	u32 lineCount = textGeometry.GetLineCount();
+	const u32 lineCount = textGeometry.GetLineCount();
 	float currentHeight = 0.0f;
 	for(u32 lineIndex = 0; lineIndex < lineCount; lineIndex++)
 	{

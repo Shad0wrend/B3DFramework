@@ -41,7 +41,7 @@ TTechnique<IsRenderProxy>::TTechnique()
 {}
 
 template <bool IsRenderProxy>
-SPtr<typename TTechnique<IsRenderProxy>::PassType> TTechnique<IsRenderProxy>::GetPass(u32 index) const
+SPtr<typename TTechnique<IsRenderProxy>::PassType> TTechnique<IsRenderProxy>::GetPass(u32 passIndex) const
 {
 	if(!mHasPassData)
 	{
@@ -49,13 +49,13 @@ SPtr<typename TTechnique<IsRenderProxy>::PassType> TTechnique<IsRenderProxy>::Ge
 		return nullptr;
 	}
 
-	if(index >= (u32)mPasses.size())
+	if(passIndex >= (u32)mPasses.size())
 	{
-		B3D_LOG(Error, Material, "Unable to retrieve shader variation pass. The provided index={0} is out of range=[0, {1}].", index, mPasses.size());
+		B3D_LOG(Error, Material, "Unable to retrieve shader variation pass. The provided index={0} is out of range=[0, {1}].", passIndex, mPasses.size());
 		return nullptr;
 	}
 
-	return mPasses[index];
+	return mPasses[passIndex];
 }
 
 template <bool IsRenderProxy>
@@ -115,8 +115,8 @@ TAsyncOp<bool> TTechnique<IsRenderProxy>::Compile()
 		{
 			hashStringStream << shaderCompilerMetaData->Source;
 
-			for(const auto& cachedIncludePair : shaderCompilerMetaData->IncludeHashes)
-				hashStringStream << cachedIncludePair.first << " = " << StringUtil::HexToLiteral(cachedIncludePair.second.data(), (u32)cachedIncludePair.second.size()) << "\n";
+			for(const auto& includeHashPair : shaderCompilerMetaData->IncludeHashes)
+				hashStringStream << includeHashPair.first << " = " << StringUtil::HexToLiteral(includeHashPair.second.data(), (u32)includeHashPair.second.size()) << "\n";
 		}
 
 		const String& hashString = hashStringStream.str();

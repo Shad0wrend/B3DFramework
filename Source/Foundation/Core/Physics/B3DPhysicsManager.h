@@ -31,8 +31,8 @@ namespace b3d
 		/**
 		 * Initializes the physics manager and a particular physics implementation.
 		 *
-		 * @param[in]	pluginName	Name of the plugin containing a physics implementation.
-		 * @param[in]	cooking		Should the physics cooking library be initialized (normally only needed during
+		 * @param	pluginName	Name of the plugin containing a physics implementation.
+		 * @param	cooking		Should the physics cooking library be initialized (normally only needed during
 		 *							development).
 		 */
 		PhysicsManager(const String& pluginName, bool cooking);

@@ -49,9 +49,9 @@ namespace b3d
 		 * Creates a new drop target. Any drop events that happen on the specified window's drop area will be reported
 		 * through the target's events.
 		 *
-		 * @param[in]	window		Window to which the drop target will be attached to.
-		 * @param[in]	area		Area, relative to the window, in which the drop events are allowed.
-		 * @return					Newly created drop target.
+		 * @param	window	Window to which the drop target will be attached to.
+		 * @param	area	Area, relative to the window, in which the drop events are allowed.
+		 * @return			Newly created drop target.
 		 */
 		static SPtr<DropTarget> Create(const RenderWindow* window, const Area2I& area);
 

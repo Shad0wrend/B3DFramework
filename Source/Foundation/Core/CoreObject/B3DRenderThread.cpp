@@ -3,8 +3,6 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "Threading/B3DThreadPool.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
 #if B3D_SWAP_RENDER_AND_MAIN_THREAD

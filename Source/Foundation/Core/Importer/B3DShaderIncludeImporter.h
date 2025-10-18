@@ -19,10 +19,10 @@ namespace b3d
 	{
 	public:
 		/** @copydoc SpecificImporter::IsExtensionSupported */
-		bool IsExtensionSupported(const String& ext) const;
+		bool IsExtensionSupported(const String& extension) const;
 
 		/** @copydoc SpecificImporter::IsMagicNumberSupported */
-		bool IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const;
+		bool IsMagicNumberSupported(const u8* magicNumber, u32 magicNumberSize) const;
 
 		/** @copydoc SpecificImporter::Import */
 		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions);

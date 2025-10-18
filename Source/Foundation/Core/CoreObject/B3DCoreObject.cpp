@@ -5,8 +5,6 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "CoreObject/B3DCoreObjectManager.h"
 
-using namespace std::placeholders;
-
 using namespace b3d;
 
 CoreObject::CoreObject(bool createRenderProxy)

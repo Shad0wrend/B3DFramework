@@ -174,9 +174,9 @@ namespace b3d
 		/**
 		 * Sets a cursor using a custom image.
 		 *
-		 * @param[in] 	pixelData	Cursor image data.
-		 * @param[in]	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
-		 *							Arrow cursor).
+		 * @param	pixelData	Cursor image data.
+		 * @param	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
+		 *						Arrow cursor).
 		 *
 		 * @note	Thread safe.
 		 */
@@ -185,8 +185,8 @@ namespace b3d
 		/**
 		 * Sets an icon for the main application window.
 		 *
-		 * @param[in] 	pixelData	Icon image data. This will be resized to the required icon size, depending on platform
-		 * 							implementation.
+		 * @param	pixelData	Icon image data. This will be resized to the required icon size, depending on platform
+		 * 						implementation.
 		 *
 		 * @note	Thread safe.
 		 */
@@ -226,7 +226,7 @@ namespace b3d
 		/**
 		 * Causes the current thread to pause execution for the specified amount of time.
 		 *
-		 * @param[in]	duration	Duration in milliseconds. Providing zero will give up the current time-slice.
+		 * @param	duration	Duration in milliseconds. Providing zero will give up the current time-slice.
 		 *
 		 * @note	This method relies on timer granularity being set to 1 millisecond. If it is not, you can expect
 		 *			this method to potentially take significantly longer if you are providing it with low ms values (<10).
@@ -236,7 +236,7 @@ namespace b3d
 		/**
 		 * Opens the provided folder using the default application, as specified by the operating system.
 		 *
-		 * @param[in]	path	Absolute path to the folder to open.
+		 * @param	path	Absolute path to the folder to open.
 		 */
 		static void OpenFolder(const Path& path);
 

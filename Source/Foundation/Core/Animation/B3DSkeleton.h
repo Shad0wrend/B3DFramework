@@ -146,9 +146,9 @@ namespace b3d
 		 * @param[out]	localPose	Output pose containing the local transforms. Must be pre-allocated with enough space
 		 *							to hold all the bone data of this skeleton.
 		 * @param[in]	layers		One or multiple layers, containing one or multiple animation states to evaluate.
-		 * @param[in]	numLayers	Number of layers in the @p layers array.
+		 * @param[in]	layerCount	Number of layers in the @p layers array.
 		 */
-		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationStateLayer* layers, u32 numLayers);
+		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationStateLayer* layers, u32 layerCount);
 
 		/** Returns the total number of bones in the skeleton. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
@@ -156,28 +156,28 @@ namespace b3d
 		u32 GetBoneCount() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */
-		const SkeletonBoneInfo& GetBoneInfo(u32 idx) const { return mBoneInfo[idx]; }
+		const SkeletonBoneInfo& GetBoneInfo(u32 index) const { return mBoneInfo[index]; }
 
 		/** Searches all bones to find a root bone. Returns -1 if no root can be found. */
 		u32 GetRootBoneIndex() const;
 
 		/** Returns the inverse bind pose for the bone at the provided index. */
-		const Matrix4& GetInvBindPose(u32 idx) const { return mInvBindPoses[idx]; }
+		const Matrix4& GetInvBindPose(u32 index) const { return mInvBindPoses[index]; }
 
 		/** Calculates the bind-pose transform of the bone at the specified index. */
-		Transform CalcBoneTransform(u32 idx) const;
+		Transform CalcBoneTransform(u32 index) const;
 
 		/**
 		 * Creates a new Skeleton.
 		 *
 		 * @param[in]	bones		An array of bones to initialize the skeleton with. Data will be copied.
-		 * @param[in]	numBones	Number of bones in the @p bones array.
+		 * @param[in]	boneCount	Number of bones in the @p bones array.
 		 */
-		static SPtr<Skeleton> Create(BONE_DESC* bones, u32 numBones);
+		static SPtr<Skeleton> Create(BONE_DESC* bones, u32 boneCount);
 
 	private:
 		Skeleton() = default;
-		Skeleton(BONE_DESC* bones, u32 numBones);
+		Skeleton(BONE_DESC* bones, u32 boneCount);
 
 		u32 mNumBones = 0;
 		TArray<Transform> mBoneTransforms;

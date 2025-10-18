@@ -13,7 +13,6 @@
 #	include "Private/MacOS/B3DMacOSRenderWindow.h"
 #endif
 
-using namespace std::placeholders;
 using namespace b3d;
 
 SPtr<RenderWindow> RenderWindowManager::CreateRenderWindow(const RenderWindowCreateInformation& createInformation, const SPtr<RenderWindow>& parentWindow)

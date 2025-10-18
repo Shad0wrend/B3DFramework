@@ -128,7 +128,7 @@ void Skybox::FilterTexture()
 		mIrradiance = Texture::CreateShared(irradianceCubemapDesc);
 	}
 
-	auto renderComplete = [this]()
+	auto fnRenderComplete = [this]()
 	{
 		mRendererTask = nullptr;
 	};
@@ -137,7 +137,7 @@ void Skybox::FilterTexture()
 	SPtr<render::Texture> filteredRadianceRenderProxy = B3DGetRenderProxy(mFilteredRadiance);
 	SPtr<render::Texture> irradianceRenderProxy = B3DGetRenderProxy(mIrradiance);
 
-	auto filterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
+	auto fnFilterSkybox = [filteredRadianceRenderProxy, irradianceRenderProxy, skyboxRenderProxy](render::GpuCommandBufferPool& commandBufferPool)
 	{
 		const SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
 		SPtr<GpuCommandBufferProfiler> commandBufferProfiler = GetGpuProfiler().CreateCommandBufferProfiler(*commandBuffer);
@@ -163,9 +163,9 @@ void Skybox::FilterTexture()
 		return true;
 	};
 
-	mRendererTask = render::RendererTask::Create("SkyboxFilter", filterSkybox);
+	mRendererTask = render::RendererTask::Create("SkyboxFilter", fnFilterSkybox);
 
-	mRendererTask->OnComplete.Connect(renderComplete);
+	mRendererTask->OnComplete.Connect(fnRenderComplete);
 	render::GetRenderer()->AddTask(mRendererTask);
 }
 

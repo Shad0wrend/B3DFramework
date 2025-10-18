@@ -82,9 +82,9 @@ namespace b3d
 		/**
 		 * Constructs a new mesh with no sub-meshes.
 		 *
-		 * @param[in]	vertexCount		Number of vertices in the mesh.
-		 * @param[in]	indexCount		Number of indices in the mesh.
-		 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
+		 * @param	vertexCount		Number of vertices in the mesh.
+		 * @param	indexCount		Number of indices in the mesh.
+		 * @param	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is triangles, where three indices represent a single triangle.
 		 */
 		MeshBase(u32 vertexCount, u32 indexCount, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
@@ -93,9 +93,9 @@ namespace b3d
 		 * Constructs a new mesh with one or multiple sub-meshes. (When using just one sub-mesh it is equivalent to using
 		 * the other overload).
 		 *
-		 * @param[in]	vertexCount		Number of vertices in the mesh.
-		 * @param[in]	indexCount		Number of indices in the mesh.
-		 * @param[in]	subMeshes		Defines how are indices separated into sub-meshes, and how are those sub-meshes
+		 * @param	vertexCount		Number of vertices in the mesh.
+		 * @param	indexCount		Number of indices in the mesh.
+		 * @param	subMeshes		Defines how are indices separated into sub-meshes, and how are those sub-meshes
 		 *								rendered.
 		 */
 		MeshBase(u32 vertexCount, u32 indexCount, const Vector<SubMesh>& subMeshes);

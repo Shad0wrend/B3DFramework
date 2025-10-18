@@ -102,11 +102,11 @@ namespace b3d
 		/**
 		 * Returns a set of GPU parameters for the specified pass.
 		 *
-		 * @param[in]	passIdx		Pass in which to look the GPU program for in.
-		 * @return					GPU parameters object that can be used for setting parameters of all GPU programs
-		 *							in a pass. Returns null if pass doesn't exist.
+		 * @param passIndex		Pass in which to look the GPU program for in.
+		 * @return				GPU parameters object that can be used for setting parameters of all GPU programs
+		 *						in a pass. Returns null if pass doesn't exist.
 		 */
-		SPtr<GpuParamsType> GetGpuParams(u32 passIdx = 0);
+		SPtr<GpuParamsType> GetGpuParams(u32 passIndex = 0);
 
 		/**
 		 * Searches for a parameter block buffer with the specified name, and returns an index you can use for accessing it.
@@ -117,11 +117,11 @@ namespace b3d
 		/**
 		 * Assign a parameter block buffer with the specified index to all the relevant child GpuParameters.
 		 *
-		 * @param[in]	index			Index of the buffer, as retrieved from GetParamBlockBufferIndex().
-		 * @param[in]	paramBlock		Parameter block to assign.
-		 * @param[in]	ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
-		 *								if the caller wishes to manually update the buffer contents externally, to prevent
-		 *								overwriting manually written data during update.
+		 * @param index				Index of the buffer, as retrieved from GetParamBlockBufferIndex().
+		 * @param paramBlock		Parameter block to assign.
+		 * @param ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
+		 *							if the caller wishes to manually update the buffer contents externally, to prevent
+		 *							overwriting manually written data during update.
 		 *
 		 * @note
 		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
@@ -133,11 +133,11 @@ namespace b3d
 		/**
 		 * Assign a parameter block buffer with the specified name to all the relevant child GpuParameters.
 		 *
-		 * @param[in]	name			Name of the buffer to set.
-		 * @param[in]	paramBlock		Parameter block to assign.
-		 * @param[in]	ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
-		 *								if the caller wishes to manually update the buffer contents externally, to prevent
-		 *								overwriting manually written data during update.
+		 * @param name				Name of the buffer to set.
+		 * @param paramBlock		Parameter block to assign.
+		 * @param ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
+		 *							if the caller wishes to manually update the buffer contents externally, to prevent
+		 *							overwriting manually written data during update.
 		 *
 		 * @note
 		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
@@ -152,12 +152,12 @@ namespace b3d
 		/**
 		 * Updates parameter data in this object from the provided material parameters object.
 		 *
-		 * @param[in]	params			Object containing the parameter data to update from. Layout of the object must match
-		 *								the object used for creating this object (be created for the same shader).
-		 * @param[in]	t				Time to evaluate animated parameters at (if any).
-		 * @param[in]	updateAll		Normally the system will track dirty parameters since the last call to this method,
-		 *								and only update the dirty ones. Set this to true if you want to force all parameters
-		 *								to update, regardless of their dirty state.
+		 * @param params	Object containing the parameter data to update from. Layout of the object must match
+		 *					the object used for creating this object (be created for the same shader).
+		 * @param t			Time to evaluate animated parameters at (if any).
+		 * @param updateAll Normally the system will track dirty parameters since the last call to this method,
+		 *					and only update the dirty ones. Set this to true if you want to force all parameters
+		 *					to update, regardless of their dirty state.
 		 */
 		void Update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
 

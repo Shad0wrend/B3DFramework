@@ -18,13 +18,13 @@ namespace b3d
 	{
 	public:
 		SkeletonMask() = default;
-		SkeletonMask(u32 numBones);
+		SkeletonMask(u32 boneCount);
 
 		/**
 		 * Checks is the bone at the specified index enabled. Caller is expected to know which skeleton is the skeleton
 		 * mask tied with, in order to determine the bone index.
 		 */
-		bool IsEnabled(u32 boneIdx) const;
+		bool IsEnabled(u32 boneIndex) const;
 
 	private:
 		friend class SkeletonMaskBuilder;

@@ -23,42 +23,42 @@ void LocalizedStringData::ConcatenateString(b3d::String& outputString, b3d::Stri
 	if(parameters != nullptr)
 	{
 		u32 totalNumChars = 0;
-		u32 prevIdx = 0;
-		for(u32 i = 0; i < actualNumParameters; i++)
+		u32 previousIndex = 0;
+		for(u32 parameterIndex = 0; parameterIndex < actualNumParameters; parameterIndex++)
 		{
-			totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (u32)parameters[ParameterOffsets[i].ParamIdx].size();
+			totalNumChars += (ParameterOffsets[parameterIndex].Location - previousIndex) + (u32)parameters[ParameterOffsets[parameterIndex].ParamIdx].size();
 			;
 
-			prevIdx = ParameterOffsets[i].Location;
+			previousIndex = ParameterOffsets[parameterIndex].Location;
 		}
 
-		totalNumChars += (u32)String.size() - prevIdx;
+		totalNumChars += (u32)String.size() - previousIndex;
 
 		outputString.resize(totalNumChars);
-		char* strData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
+		char* stringData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
 
-		prevIdx = 0;
-		for(u32 i = 0; i < actualNumParameters; i++)
+		previousIndex = 0;
+		for(u32 parameterIndex = 0; parameterIndex < actualNumParameters; parameterIndex++)
 		{
-			u32 strSize = ParameterOffsets[i].Location - prevIdx;
-			memcpy(strData, &String[prevIdx], strSize * sizeof(char));
-			strData += strSize;
+			u32 stringSize = ParameterOffsets[parameterIndex].Location - previousIndex;
+			memcpy(stringData, &String[previousIndex], stringSize * sizeof(char));
+			stringData += stringSize;
 
-			b3d::String& param = parameters[ParameterOffsets[i].ParamIdx];
-			memcpy(strData, &param[0], param.size() * sizeof(char));
-			strData += param.size();
+			b3d::String& parameter = parameters[ParameterOffsets[parameterIndex].ParamIdx];
+			memcpy(stringData, &parameter[0], parameter.size() * sizeof(char));
+			stringData += parameter.size();
 
-			prevIdx = ParameterOffsets[i].Location;
+			previousIndex = ParameterOffsets[parameterIndex].Location;
 		}
 
-		memcpy(strData, &String[prevIdx], (String.size() - prevIdx) * sizeof(char));
+		memcpy(stringData, &String[previousIndex], (String.size() - previousIndex) * sizeof(char));
 	}
 	else
 	{
 		outputString.resize(String.size());
-		char* strData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
+		char* stringData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
 
-		memcpy(strData, &String[0], String.size() * sizeof(char));
+		memcpy(stringData, &String[0], String.size() * sizeof(char));
 	}
 }
 
@@ -74,9 +74,9 @@ void LocalizedStringData::UpdateString(const b3d::String& _string)
 	StringStream cleanString;
 	bool escaped = false;
 	u32 numRemovedChars = 0;
-	for(u32 i = 0; i < (u32)_string.size(); i++)
+	for(u32 charIndex = 0; charIndex < (u32)_string.size(); charIndex++)
 	{
-		if(_string[i] == '^' && !escaped)
+		if(_string[charIndex] == '^' && !escaped)
 		{
 			numRemovedChars++;
 			escaped = true;
@@ -86,31 +86,31 @@ void LocalizedStringData::UpdateString(const b3d::String& _string)
 		if(lastBracket == -1)
 		{
 			// If current char is non-escaped opening bracket start parameter definition
-			if(_string[i] == '{' && !escaped)
-				lastBracket = i;
+			if(_string[charIndex] == '{' && !escaped)
+				lastBracket = charIndex;
 			else
-				cleanString << _string[i];
+				cleanString << _string[charIndex];
 		}
 		else
 		{
-			if(isdigit(_string[i]))
-				bracketChars << _string[i];
+			if(isdigit(_string[charIndex]))
+				bracketChars << _string[charIndex];
 			else
 			{
 				// If current char is non-escaped closing bracket end parameter definition
-				u32 numParamChars = (u32)bracketChars.tellp();
-				if(_string[i] == '}' && numParamChars > 0 && !escaped)
+				u32 numParameterChars = (u32)bracketChars.tellp();
+				if(_string[charIndex] == '}' && numParameterChars > 0 && !escaped)
 				{
-					numRemovedChars += numParamChars + 2; // +2 for open and closed brackets
+					numRemovedChars += numParameterChars + 2; // +2 for open and closed brackets
 
-					u32 paramIdx = Parseu32(bracketChars.str());
-					paramOffsets.push_back(ParamOffset(paramIdx, i + 1 - numRemovedChars));
+					u32 parameterIndex = Parseu32(bracketChars.str());
+					paramOffsets.push_back(ParamOffset(parameterIndex, charIndex + 1 - numRemovedChars));
 				}
 				else
 				{
 					// Last bracket wasn't really a parameter
-					for(u32 j = lastBracket; j <= i; j++)
-						cleanString << _string[j];
+					for(u32 bracketCharIndex = lastBracket; bracketCharIndex <= charIndex; bracketCharIndex++)
+						cleanString << _string[bracketCharIndex];
 				}
 
 				lastBracket = -1;
@@ -127,35 +127,41 @@ void LocalizedStringData::UpdateString(const b3d::String& _string)
 	NumParameters = (u32)paramOffsets.size();
 
 	// Try to find out of order param offsets and fix them
-	std::sort(begin(paramOffsets), end(paramOffsets), [&](const ParamOffset& a, const ParamOffset& b)
-			  { return a.ParamIdx < b.ParamIdx; });
+	auto fnSortByParamIndex = [](const ParamOffset& a, const ParamOffset& b)
+	{
+		return a.ParamIdx < b.ParamIdx;
+	};
+	std::sort(begin(paramOffsets), end(paramOffsets), fnSortByParamIndex);
 
 	if(paramOffsets.size() > 0)
 	{
-		u32 sequentialIdx = 0;
-		u32 lastParamIdx = paramOffsets[0].ParamIdx;
-		for(u32 i = 0; i < NumParameters; i++)
+		u32 sequentialIndex = 0;
+		u32 lastParameterIndex = paramOffsets[0].ParamIdx;
+		for(u32 offsetIndex = 0; offsetIndex < NumParameters; offsetIndex++)
 		{
-			if(paramOffsets[i].ParamIdx == lastParamIdx)
+			if(paramOffsets[offsetIndex].ParamIdx == lastParameterIndex)
 			{
-				paramOffsets[i].ParamIdx = sequentialIdx;
+				paramOffsets[offsetIndex].ParamIdx = sequentialIndex;
 				continue;
 			}
 
-			lastParamIdx = paramOffsets[i].ParamIdx;
-			sequentialIdx++;
+			lastParameterIndex = paramOffsets[offsetIndex].ParamIdx;
+			sequentialIndex++;
 
-			paramOffsets[i].ParamIdx = sequentialIdx;
+			paramOffsets[offsetIndex].ParamIdx = sequentialIndex;
 		}
 	}
 
 	// Re-sort based on location since we find that more useful at runtime
-	std::sort(begin(paramOffsets), end(paramOffsets), [&](const ParamOffset& a, const ParamOffset& b)
-			  { return a.Location < b.Location; });
+	auto fnSortByLocation = [](const ParamOffset& a, const ParamOffset& b)
+	{
+		return a.Location < b.Location;
+	};
+	std::sort(begin(paramOffsets), end(paramOffsets), fnSortByLocation);
 
 	ParameterOffsets = B3DNewMultiple<ParamOffset>(NumParameters);
-	for(u32 i = 0; i < NumParameters; i++)
-		ParameterOffsets[i] = paramOffsets[i];
+	for(u32 offsetIndex = 0; offsetIndex < NumParameters; offsetIndex++)
+		ParameterOffsets[offsetIndex] = paramOffsets[offsetIndex];
 }
 
 StringTable::StringTable()
@@ -225,9 +231,9 @@ String StringTable::GetString(const String& identifier, Language language)
 
 void StringTable::RemoveString(const String& identifier)
 {
-	for(u32 i = 0; i < (u32)Language::Count; i++)
+	for(u32 languageIndex = 0; languageIndex < (u32)Language::Count; languageIndex++)
 	{
-		mAllLanguages[i].Strings.erase(identifier);
+		mAllLanguages[languageIndex].Strings.erase(identifier);
 	}
 
 	mIdentifiers.erase(identifier);

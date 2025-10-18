@@ -95,10 +95,10 @@ namespace b3d
 		/**
 		 * Wraps or clamps the provided time value between the provided range.
 		 *
-		 * @param[in,out]	time	Time value to wrap/clamp.
-		 * @param[in]		start	Start of the range.
-		 * @param[in]		end		End of the range.
-		 * @param[in]		loop	If true the value will be wrapped, otherwise clamped to range.
+		 * @param	time	Time value to wrap/clamp.
+		 * @param	start	Start of the range.
+		 * @param	end		End of the range.
+		 * @param	loop	If true the value will be wrapped, otherwise clamped to range.
 		 */
 		static void WrapTime(float& time, float start, float end, bool loop);
 
@@ -136,11 +136,11 @@ namespace b3d
 		/**
 		 * Calculates the total range covered by a set of curves.
 		 *
-		 * @param[in]	curves		Curves to calculate range for.
-		 * @param[out]	xMin		Minimum time value present in the curves.
-		 * @param[out]	xMax		Maximum time value present in the curves.
-		 * @param[out]	yMin		Minimum curve value present in the curves.
-		 * @param[out]	yMax		Maximum curve value present in the curves.
+		 * @param	curves		Curves to calculate range for.
+		 * @param	xMin		Minimum time value present in the curves.
+		 * @param	xMax		Maximum time value present in the curves.
+		 * @param	yMin		Minimum curve value present in the curves.
+		 * @param	yMax		Maximum curve value present in the curves.
 		 */
 		static void CalculateRange(const Vector<TAnimationCurve<float>>& curves, float& xMin, float& xMax, float& yMin, float& yMax);
 

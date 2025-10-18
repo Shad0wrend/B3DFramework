@@ -66,12 +66,12 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 	Vector<VertexElement> combinedVertexElements;
 	for(auto& meshData : meshes)
 	{
-		for(u32 i = 0; i < meshData->GetVertexDescription()->GetElementCount(); i++)
+		for(u32 elementIndex = 0; elementIndex < meshData->GetVertexDescription()->GetElementCount(); elementIndex++)
 		{
-			const VertexElement& newElement = meshData->GetVertexDescription()->GetElement(i);
+			const VertexElement& newElement = meshData->GetVertexDescription()->GetElement(elementIndex);
 
-			i32 alreadyExistsIdx = -1;
-			u32 idx = 0;
+			i32 alreadyExistsIndex = -1;
+			u32 existingElementIndex = 0;
 
 			for(auto& existingElement : combinedVertexElements)
 			{
@@ -82,14 +82,14 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 						B3D_EXCEPT(NotImplementedException, "Two elements have same semantics but different types. This is not supported.");
 					}
 
-					alreadyExistsIdx = idx;
+					alreadyExistsIndex = existingElementIndex;
 					break;
 				}
 
-				idx++;
+				existingElementIndex++;
 			}
 
-			if(alreadyExistsIdx == -1)
+			if(alreadyExistsIndex == -1)
 			{
 				combinedVertexElements.push_back(newElement);
 				vertexElements.Add(VertexElement(newElement.GetType(), newElement.GetSemantic(), newElement.GetSemanticIndex(), newElement.GetStreamIndex()));
@@ -103,35 +103,35 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 	// Copy indices
 	u32 vertexOffset = 0;
 	u32 indexOffset = 0;
-	u32* idxPtr = combinedMeshData->GetIndices32();
+	u32* indexPointer = combinedMeshData->GetIndices32();
 	for(auto& meshData : meshes)
 	{
 		u32 indexCount = meshData->GetIndexCount();
-		u32* srcData = meshData->GetIndices32();
+		u32* sourceData = meshData->GetIndices32();
 
-		for(u32 j = 0; j < indexCount; j++)
-			idxPtr[j] = srcData[j] + vertexOffset;
+		for(u32 indexIndex = 0; indexIndex < indexCount; indexIndex++)
+			indexPointer[indexIndex] = sourceData[indexIndex] + vertexOffset;
 
 		indexOffset += indexCount;
-		idxPtr += indexCount;
+		indexPointer += indexCount;
 		vertexOffset += meshData->GetVertexCount();
 	}
 
 	// Copy sub-meshes
-	u32 meshIdx = 0;
+	u32 meshIndex = 0;
 	indexOffset = 0;
 	for(auto& meshData : meshes)
 	{
 		u32 indexCount = meshData->GetIndexCount();
-		const Vector<SubMesh> curSubMeshes = allSubMeshes[meshIdx];
+		const Vector<SubMesh> currentSubMeshes = allSubMeshes[meshIndex];
 
-		for(auto& subMesh : curSubMeshes)
+		for(auto& subMesh : currentSubMeshes)
 		{
 			subMeshes.push_back(SubMesh(subMesh.IndexOffset + indexOffset, subMesh.IndexCount, subMesh.DrawOp));
 		}
 
 		indexOffset += indexCount;
-		meshIdx++;
+		meshIndex++;
 	}
 
 	// Copy vertices
@@ -140,31 +140,31 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 	{
 		for(auto& element : combinedVertexElements)
 		{
-			u32 dstVertexStride = vertexDescription->GetVertexStride(element.GetStreamIndex());
-			u8* dstData = combinedMeshData->GetElementData(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex());
-			dstData += vertexOffset * dstVertexStride;
+			u32 destinationVertexStride = vertexDescription->GetVertexStride(element.GetStreamIndex());
+			u8* destinationData = combinedMeshData->GetElementData(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex());
+			destinationData += vertexOffset * destinationVertexStride;
 
 			u32 sourceVertexCount = meshData->GetVertexCount();
 			u32 vertexSize = vertexDescription->GetElementSize(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex());
 
 			if(meshData->GetVertexDescription()->HasElement(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex()))
 			{
-				u32 srcVertexStride = meshData->GetVertexDescription()->GetVertexStride(element.GetStreamIndex());
-				u8* srcData = meshData->GetElementData(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex());
+				u32 sourceVertexStride = meshData->GetVertexDescription()->GetVertexStride(element.GetStreamIndex());
+				u8* sourceData = meshData->GetElementData(element.GetSemantic(), element.GetSemanticIndex(), element.GetStreamIndex());
 
-				for(u32 i = 0; i < sourceVertexCount; i++)
+				for(u32 vertexIndex = 0; vertexIndex < sourceVertexCount; vertexIndex++)
 				{
-					memcpy(dstData, srcData, vertexSize);
-					dstData += dstVertexStride;
-					srcData += srcVertexStride;
+					memcpy(destinationData, sourceData, vertexSize);
+					destinationData += destinationVertexStride;
+					sourceData += sourceVertexStride;
 				}
 			}
 			else
 			{
-				for(u32 i = 0; i < sourceVertexCount; i++)
+				for(u32 vertexIndex = 0; vertexIndex < sourceVertexCount; vertexIndex++)
 				{
-					memset(dstData, 0, vertexSize);
-					dstData += dstVertexStride;
+					memset(destinationData, 0, vertexSize);
+					destinationData += destinationVertexStride;
 				}
 			}
 		}
@@ -200,13 +200,13 @@ void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 	u32 elementOffset = GetElementOffset(semantic, semanticIndex, streamIndex);
 	u32 vertexStride = mVertexDescription->GetVertexStride(streamIndex);
 
-	u8* dst = GetData() + indexBufferOffset + elementOffset;
-	u8* src = (u8*)data;
-	for(u32 i = 0; i < mVertexCount; i++)
+	u8* destination = GetData() + indexBufferOffset + elementOffset;
+	u8* source = (u8*)data;
+	for(u32 vertexIndex = 0; vertexIndex < mVertexCount; vertexIndex++)
 	{
-		memcpy(dst, src, elementSize);
-		dst += vertexStride;
-		src += elementSize;
+		memcpy(destination, source, elementSize);
+		destination += vertexStride;
+		source += elementSize;
 	}
 }
 
@@ -235,13 +235,13 @@ void MeshData::GetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 	u32 elementOffset = GetElementOffset(semantic, semanticIndex, streamIndex);
 	u32 vertexStride = mVertexDescription->GetVertexStride(streamIndex);
 
-	u8* src = GetData() + indexBufferOffset + elementOffset;
-	u8* dst = (u8*)data;
-	for(u32 i = 0; i < mVertexCount; i++)
+	u8* source = GetData() + indexBufferOffset + elementOffset;
+	u8* destination = (u8*)data;
+	for(u32 vertexIndex = 0; vertexIndex < mVertexCount; vertexIndex++)
 	{
-		memcpy(dst, src, elementSize);
-		dst += elementSize;
-		src += vertexStride;
+		memcpy(destination, source, elementSize);
+		destination += elementSize;
+		source += vertexStride;
 	}
 }
 
@@ -301,26 +301,26 @@ u32 MeshData::GetIndexBufferOffset() const
 	return 0;
 }
 
-u32 MeshData::GetStreamOffset(u32 streamIdx) const
+u32 MeshData::GetStreamOffset(u32 streamIndex) const
 {
-	u32 streamOffset = mVertexDescription->GetStreamOffset(streamIdx);
+	u32 streamOffset = mVertexDescription->GetStreamOffset(streamIndex);
 
 	return streamOffset * mVertexCount;
 }
 
-u8* MeshData::GetElementData(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+u8* MeshData::GetElementData(VertexElementSemantic semantic, u32 semanticIndex, u32 streamIndex) const
 {
-	return GetData() + GetIndexBufferSize() + GetElementOffset(semantic, semanticIdx, streamIdx);
+	return GetData() + GetIndexBufferSize() + GetElementOffset(semantic, semanticIndex, streamIndex);
 }
 
-u8* MeshData::GetStreamData(u32 streamIdx) const
+u8* MeshData::GetStreamData(u32 streamIndex) const
 {
-	return GetData() + GetIndexBufferSize() + GetStreamOffset(streamIdx);
+	return GetData() + GetIndexBufferSize() + GetStreamOffset(streamIndex);
 }
 
-u32 MeshData::GetElementOffset(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+u32 MeshData::GetElementOffset(VertexElementSemantic semantic, u32 semanticIndex, u32 streamIndex) const
 {
-	return GetStreamOffset(streamIdx) + mVertexDescription->GetElementOffsetFromStream(semantic, semanticIdx, streamIdx);
+	return GetStreamOffset(streamIndex) + mVertexDescription->GetElementOffsetFromStream(semantic, semanticIndex, streamIndex);
 }
 
 u32 MeshData::GetIndexBufferSize() const
@@ -342,47 +342,47 @@ Bounds MeshData::CalculateBounds() const
 {
 	Bounds bounds(BsZero);
 
-	SPtr<VertexDescription> vertexDesc = GetVertexDescription();
-	for(u32 i = 0; i < vertexDesc->GetElementCount(); i++)
+	SPtr<VertexDescription> vertexDescription = GetVertexDescription();
+	for(u32 elementIndex = 0; elementIndex < vertexDescription->GetElementCount(); elementIndex++)
 	{
-		const VertexElement& curElement = vertexDesc->GetElement(i);
+		const VertexElement& currentElement = vertexDescription->GetElement(elementIndex);
 
-		if(curElement.GetSemantic() != VES_POSITION || (curElement.GetType() != VET_FLOAT3 && curElement.GetType() != VET_FLOAT4))
+		if(currentElement.GetSemantic() != VES_POSITION || (currentElement.GetType() != VET_FLOAT3 && currentElement.GetType() != VET_FLOAT4))
 			continue;
 
-		u8* data = GetElementData(curElement.GetSemantic(), curElement.GetSemanticIndex(), curElement.GetStreamIndex());
-		u32 stride = vertexDesc->GetVertexStride(curElement.GetStreamIndex());
+		u8* data = GetElementData(currentElement.GetSemantic(), currentElement.GetSemanticIndex(), currentElement.GetStreamIndex());
+		u32 stride = vertexDescription->GetVertexStride(currentElement.GetStreamIndex());
 
 		if(GetVertexCount() > 0)
 		{
-			Vector3 curPosition = *(Vector3*)data;
-			Vector3 accum = curPosition;
-			Vector3 min = curPosition;
-			Vector3 max = curPosition;
+			Vector3 currentPosition = *(Vector3*)data;
+			Vector3 accumulator = currentPosition;
+			Vector3 minimum = currentPosition;
+			Vector3 maximum = currentPosition;
 
-			for(u32 i = 1; i < GetVertexCount(); i++)
+			for(u32 vertexIndex = 1; vertexIndex < GetVertexCount(); vertexIndex++)
 			{
-				curPosition = *(Vector3*)(data + stride * i);
-				accum += curPosition;
-				min = Vector3::Min(min, curPosition);
-				max = Vector3::Max(max, curPosition);
+				currentPosition = *(Vector3*)(data + stride * vertexIndex);
+				accumulator += currentPosition;
+				minimum = Vector3::Min(minimum, currentPosition);
+				maximum = Vector3::Max(maximum, currentPosition);
 			}
 
-			Vector3 center = accum / (float)GetVertexCount();
-			float radiusSqrd = 0.0f;
+			Vector3 center = accumulator / (float)GetVertexCount();
+			float radiusSquared = 0.0f;
 
-			for(u32 i = 0; i < GetVertexCount(); i++)
+			for(u32 vertexIndex = 0; vertexIndex < GetVertexCount(); vertexIndex++)
 			{
-				curPosition = *(Vector3*)(data + stride * i);
-				float dist = center.SquaredDistance(curPosition);
+				currentPosition = *(Vector3*)(data + stride * vertexIndex);
+				float distance = center.SquaredDistance(currentPosition);
 
-				if(dist > radiusSqrd)
-					radiusSqrd = dist;
+				if(distance > radiusSquared)
+					radiusSquared = distance;
 			}
 
-			float radius = Math::SquareRoot(radiusSqrd);
+			float radius = Math::SquareRoot(radiusSquared);
 
-			bounds = Bounds(center, (max - min) * 0.5f, radius);
+			bounds = Bounds(center, (maximum - minimum) * 0.5f, radius);
 			break;
 		}
 	}

@@ -8,7 +8,6 @@
 #include "RTTI/B3DColliderRTTI.h"
 #include "Scene/B3DSceneInstance.h"
 
-using namespace std::placeholders;
 
 using namespace b3d;
 

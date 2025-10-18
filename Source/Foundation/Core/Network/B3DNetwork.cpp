@@ -119,20 +119,20 @@ NetworkAddress NetworkAddress::UNASSIGNED;
 
 NetworkAddress::NetworkAddress(const char* address)
 {
-	SystemAddress sysAddress(address);
-	systemToNetworkAddress(sysAddress, *this);
+	SystemAddress systemAddress(address);
+	systemToNetworkAddress(systemAddress, *this);
 }
 
 NetworkAddress::NetworkAddress(const char* ip, u16 port)
 {
-	SystemAddress sysAddress(ip, port);
-	systemToNetworkAddress(sysAddress, *this);
+	SystemAddress systemAddress(ip, port);
+	systemToNetworkAddress(systemAddress, *this);
 }
 
 String NetworkAddress::toString(bool withPort) const
 {
-	SystemAddress sysAddress = networkToSystemAddress(*this);
-	return String(sysAddress.ToString(withPort, '|'));
+	SystemAddress systemAddress = networkToSystemAddress(*this);
+	return String(systemAddress.ToString(withPort, '|'));
 }
 
 bool NetworkAddress::compareIP(const NetworkAddress& other) const
@@ -276,39 +276,39 @@ NetworkPeer::NetworkPeer(const NETWORK_PEER_DESC& desc)
 	m->peer = RakPeerInterface::GetInstance();
 	m->networkIdMapping.resize(desc.maxNumConnections);
 
-	for(i32 i = 0; i < (i32)m->networkIdMapping.size(); i++)
-		m->networkIdMapping[i].id = NetworkId(i);
+	for(i32 networkIdIndex = 0; networkIdIndex < (i32)m->networkIdMapping.size(); networkIdIndex++)
+		m->networkIdMapping[networkIdIndex].id = NetworkId(networkIdIndex);
 
-	u32 numDescriptors = (u32)desc.listenAddresses.size();
-	SocketDescriptor* descriptors = B3DStackAllocate<SocketDescriptor>(numDescriptors);
+	u32 descriptorCount = (u32)desc.listenAddresses.size();
+	SocketDescriptor* descriptors = B3DStackAllocate<SocketDescriptor>(descriptorCount);
 
-	for(u32 i = 0; i < numDescriptors; i++)
+	for(u32 descriptorIndex = 0; descriptorIndex < descriptorCount; descriptorIndex++)
 	{
-		const NetworkAddress& address = desc.listenAddresses[i];
+		const NetworkAddress& address = desc.listenAddresses[descriptorIndex];
 
 		if(address.compareIP(NetworkAddress::UNASSIGNED))
 		{
 			if(address.port == 0)
-				descriptors[i] = SocketDescriptor();
+				descriptors[descriptorIndex] = SocketDescriptor();
 			else
-				descriptors[i] = SocketDescriptor(address.port, nullptr);
+				descriptors[descriptorIndex] = SocketDescriptor(address.port, nullptr);
 		}
 		else
 		{
 			if(address.ipType == IPV6)
 			{
 				B3D_LOG(Error, Network, "IPV6 not supported for listener addreses on this backend");
-				descriptors[i] = SocketDescriptor();
+				descriptors[descriptorIndex] = SocketDescriptor();
 			}
 			else // IPV4
 			{
 				String addressStr = address.toString();
-				descriptors[i] = SocketDescriptor(address.port, addressStr.c_str());
+				descriptors[descriptorIndex] = SocketDescriptor(address.port, addressStr.c_str());
 			}
 		}
 	}
 
-	StartupResult result = m->peer->Startup(desc.maxNumConnections, descriptors, numDescriptors);
+	StartupResult result = m->peer->Startup(desc.maxNumConnections, descriptors, descriptorCount);
 
 	B3DStackFree(descriptors);
 
@@ -474,10 +474,10 @@ NetworkObject::~NetworkObject()
 NetworkObjectState NetworkObject::getNetworkState() const
 {
 	// We know serialization will maintain object state, so safely remove the const
-	NetworkObject* thisObj = const_cast<NetworkObject*>(this);
+	NetworkObject* thisObject = const_cast<NetworkObject*>(this);
 
 	NetworkObjectState state;
-	state.state = SerializedObject::Create(*thisObj, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
+	state.state = SerializedObject::Create(*thisObject, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
 	return state;
 }
@@ -522,9 +522,9 @@ NetworkEncoder::~NetworkEncoder()
 
 void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context)
 {
-	BinarySerializer bs;
+	BinarySerializer binarySerializer;
 
-	auto flushToBuffer = [this](u8* bufferStart, u32 bytesWritten, u32& newBufferSize)
+	auto fnFlushToBuffer = [this](u8* bufferStart, u32 bytesWritten, u32& newBufferSize)
 	{
 		if(mBufferPieces.empty())
 			allocBufferPiece();
@@ -549,13 +549,13 @@ void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, Ser
 		return mWriteBuffer;
 	};
 
-	auto writeToBuffer = [this, &flushToBuffer](auto data)
+	auto fnWriteToBuffer = [this, &fnFlushToBuffer](auto data)
 	{
 		u32 size = rttiGetElemSize(data);
 		if((mWriteBufferOffset + size) > WRITE_BUFFER_SIZE)
 		{
 			u32 newBufferSize;
-			flushToBuffer(mWriteBuffer, mWriteBufferOffset, newBufferSize);
+			fnFlushToBuffer(mWriteBuffer, mWriteBufferOffset, newBufferSize);
 		}
 
 		rttiWriteElem(data, (char*)mWriteBuffer + mWriteBufferOffset);
@@ -564,35 +564,35 @@ void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, Ser
 		mBytesWritten += size;
 	};
 
-	auto writeToOffset = [this](u32 offset, auto data)
+	auto fnWriteToOffset = [this](u32 offset, auto data)
 	{
-		u32 curOffset = 0;
+		u32 currentOffset = 0;
 		for(auto& entry : mBufferPieces)
 		{
-			if(offset >= curOffset && offset < (curOffset + entry.size))
+			if(offset >= currentOffset && offset < (currentOffset + entry.size))
 			{
-				u32 localOffset = offset - curOffset;
+				u32 localOffset = offset - currentOffset;
 				rttiWriteElem(data, (char*)entry.buffer + localOffset);
 				break;
 			}
 		}
 	};
 
-	writeToBuffer(type);
-	writeToBuffer(uuid);
+	fnWriteToBuffer(type);
+	fnWriteToBuffer(uuid);
 
 	u32 sizeWriteOffset = mBytesWritten;
-	writeToBuffer(0);
+	fnWriteToBuffer(0);
 
 	if(object)
 	{
 		u8* writeStart = mWriteBuffer + mWriteBufferOffset;
 		u32 remainingBufferSize = WRITE_BUFFER_SIZE - mWriteBufferOffset;
-		u32 objBytesWritten = 0;
-		bs.encode(object, writeStart, remainingBufferSize, &objBytesWritten, flushToBuffer, false, context);
-		mBytesWritten += objBytesWritten;
+		u32 objectBytesWritten = 0;
+		binarySerializer.encode(object, writeStart, remainingBufferSize, &objectBytesWritten, fnFlushToBuffer, false, context);
+		mBytesWritten += objectBytesWritten;
 
-		writeToOffset(sizeWriteOffset, objBytesWritten);
+		fnWriteToOffset(sizeWriteOffset, objectBytesWritten);
 	}
 }
 
@@ -612,17 +612,17 @@ u8* NetworkEncoder::getOutput(u32& size)
 	}
 
 	u32 offset = 1; // First byte reserved for message type, set externally
-	for(auto iter = mBufferPieces.begin(); iter != mBufferPieces.end(); ++iter)
+	for(auto iterator = mBufferPieces.begin(); iterator != mBufferPieces.end(); ++iterator)
 	{
-		if(iter->size > 0)
+		if(iterator->size > 0)
 		{
-			memcpy(mResultBuffer + offset, iter->buffer, iter->size);
-			offset += iter->size;
+			memcpy(mResultBuffer + offset, iterator->buffer, iterator->size);
+			offset += iterator->size;
 		}
 	}
 
-	for(auto iter = mBufferPieces.rbegin(); iter != mBufferPieces.rend(); ++iter)
-		mBufferPiecePool.push_back(*iter);
+	for(auto iterator = mBufferPieces.rbegin(); iterator != mBufferPieces.rend(); ++iterator)
+		mBufferPiecePool.push_back(*iterator);
 
 	mBufferPieces.clear();
 
@@ -675,8 +675,8 @@ SPtr<IReflectable> NetworkDecoder::decode(u8& type, UUID& uuid, SerializationCon
 
 	if(objectSize > 0)
 	{
-		BinarySerializer bs;
-		SPtr<IReflectable> object = bs.decode(mInputStream, objectSize, context);
+		BinarySerializer binarySerializer;
+		SPtr<IReflectable> object = binarySerializer.decode(mInputStream, objectSize, context);
 
 		return object;
 	}
@@ -692,11 +692,11 @@ void Network::NotifyNetworkObjectSpawnedInternal(NetworkObject* object)
 	object->mNetworkUUID = UUIDGenerator::generateRandom();
 	mActions.emplace_back(object->mNetworkUUID, Spawning);
 
-	ObjectInfo objInfo;
-	objInfo.obj = object;
-	objInfo.state = object->GetNetworkState();
+	ObjectInfo objectInfo;
+	objectInfo.obj = object;
+	objectInfo.state = object->GetNetworkState();
 
-	mNetworkObjects[object->mNetworkUUID] = objInfo;
+	mNetworkObjects[object->mNetworkUUID] = objectInfo;
 
 	// TODO - This queues sync on next tick. Allow caller to force sync immediately though some flag, and/or
 	// change the tick rate. The same applies to other _notify functions.
@@ -820,22 +820,22 @@ void Network::update(float dt)
 		{
 			for(auto& entry : mActions)
 			{
-				auto iterFind = mNetworkObjects.find(entry.uuid);
-				B3D_ASSERT(iterFind != mNetworkObjects.end());
+				auto findIterator = mNetworkObjects.find(entry.uuid);
+				B3D_ASSERT(findIterator != mNetworkObjects.end());
 
-				ObjectInfo& objInfo = iterFind->second;
+				ObjectInfo& objectInfo = findIterator->second;
 
 				switch(entry.type)
 				{
 				case Spawning:
-					mEncoder.encode((u32)NetworkActionType::Spawn, entry.uuid, objInfo.state.state.get());
+					mEncoder.encode((u32)NetworkActionType::Spawn, entry.uuid, objectInfo.state.state.get());
 					break;
 				case Spawned:
 					// TODO - No purpose. Remove this?
 					break;
 				case Despawning:
 					mEncoder.encode((u32)NetworkActionType::Despawn, entry.uuid, nullptr);
-					mNetworkObjects.erase(iterFind);
+					mNetworkObjects.erase(findIterator);
 					break;
 				default:
 					break;

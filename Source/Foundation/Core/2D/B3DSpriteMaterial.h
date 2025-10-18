@@ -112,10 +112,10 @@ namespace b3d
 		 * Merges two SpriteMaterialInfo%s into one structure. User must guarantee that the two objects are mergeable
 		 * by ensuring their merge hashes match (by calling getMergeHash()).
 		 *
-		 * @param[in, out]	mergeInto	Object that contains the first part of the data, and will contain the result of the
-		 *								merge.
-		 * @param[in]		mergeFrom	Object that contains the second part of the data to merge, which will be merged into
-		 *								the first object.
+		 * @param	mergeInto	Object that contains the first part of the data, and will contain the result of the
+		 *						merge.
+		 * @param	mergeFrom	Object that contains the second part of the data to merge, which will be merged into
+		 *						the first object.
 		 */
 		virtual void Merge(SpriteMaterialInfo& mergeInto, const SpriteMaterialInfo& mergeFrom) const {}
 

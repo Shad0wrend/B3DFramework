@@ -110,11 +110,11 @@ ConvexVolume TCamera<IsRenderProxy>::GetWorldFrustum() const
 	worldMatrix.SetTrs(transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
 
 	Vector<Plane> worldPlanes(frustumPlanes.size());
-	u32 i = 0;
+	u32 planeIndex = 0;
 	for(auto& plane : frustumPlanes)
 	{
-		worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
-		i++;
+		worldPlanes[planeIndex] = worldMatrix.MultiplyAffine(plane);
+		planeIndex++;
 	}
 
 	return ConvexVolume(worldPlanes);

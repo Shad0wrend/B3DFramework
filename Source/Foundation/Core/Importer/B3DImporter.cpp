@@ -25,10 +25,10 @@ Importer::Importer()
 
 Importer::~Importer()
 {
-	for(auto i = mAssetImporters.begin(); i != mAssetImporters.end(); ++i)
+	for(auto iter = mAssetImporters.begin(); iter != mAssetImporters.end(); ++iter)
 	{
-		if((*i) != nullptr)
-			B3DDelete(*i);
+		if((*iter) != nullptr)
+			B3DDelete(*iter);
 	}
 
 	mAssetImporters.clear();
@@ -45,11 +45,11 @@ bool Importer::SupportsFileType(const String& extension) const
 	return false;
 }
 
-bool Importer::SupportsFileType(const u8* magicNumber, u32 magicNumSize) const
+bool Importer::SupportsFileType(const u8* magicNumber, u32 magicNumberSize) const
 {
 	for(auto iter = mAssetImporters.begin(); iter != mAssetImporters.end(); ++iter)
 	{
-		if(*iter != nullptr && (*iter)->IsMagicNumberSupported(magicNumber, magicNumSize))
+		if(*iter != nullptr && (*iter)->IsMagicNumberSupported(magicNumber, magicNumberSize))
 			return true;
 	}
 
@@ -183,11 +183,11 @@ void Importer::WaitForAsync(SpecificImporter* importer)
 	{
 		Lock lock(mPerImporterQueueMutex);
 
-		auto found = mPerImporterQueues.find(importer);
-		if(found == mPerImporterQueues.end())
+		auto foundQueue = mPerImporterQueues.find(importer);
+		if(foundQueue == mPerImporterQueues.end())
 			return;
 
-		perImporterQueue = found->second.get();
+		perImporterQueue = foundQueue->second.get();
 
 		if(!B3D_ENSURE(perImporterQueue != nullptr))
 			return;
@@ -259,8 +259,8 @@ void Importer::QueueForImport(SpecificImporter* importer, const Path& inputFileP
 		{
 			Lock lock(mPerImporterQueueMutex);
 
-			if(const auto& found = mPerImporterQueues.find(importer); found != mPerImporterQueues.end())
-				perImporterQueue = found->second.get();
+			if(const auto& foundQueue = mPerImporterQueues.find(importer); foundQueue != mPerImporterQueues.end())
+				perImporterQueue = foundQueue->second.get();
 			else
 			{
 				UPtr<SchedulerTicketQueue> newQueue = B3DMakeUnique<SchedulerTicketQueue>(GetApplication().GetTaskScheduler());
@@ -314,12 +314,12 @@ void Importer::RegisterAssetImporterInternal(SpecificImporter* importer)
 
 SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 {
-	String ext = inputFilePath.GetExtension();
-	if(ext.empty())
+	String extension = inputFilePath.GetExtension();
+	if(extension.empty())
 		return nullptr;
 
-	ext = ext.substr(1, ext.size() - 1); // Remove the .
-	if(!SupportsFileType(ext))
+	extension = extension.substr(1, extension.size() - 1); // Remove the .
+	if(!SupportsFileType(extension))
 	{
 		B3D_LOG(Warning, Importer, "There is no importer for the provided file type. ({0})", inputFilePath);
 		return nullptr;
@@ -327,7 +327,7 @@ SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 
 	for(auto iter = mAssetImporters.begin(); iter != mAssetImporters.end(); ++iter)
 	{
-		if(*iter != nullptr && (*iter)->IsExtensionSupported(ext))
+		if(*iter != nullptr && (*iter)->IsExtensionSupported(extension))
 		{
 			return *iter;
 		}

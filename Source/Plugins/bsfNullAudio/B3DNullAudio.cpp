@@ -49,9 +49,9 @@ void NullAudioClip::Initialize()
 	AudioClip::Initialize();
 }
 
-SPtr<DataStream> NullAudioClip::GetSourceStream(u32& size)
+SPtr<DataStream> NullAudioClip::GetSourceStream(u32& outSize)
 {
-	size = mSourceStreamSize;
+	outSize = mSourceStreamSize;
 	mSourceStreamData->Seek(0);
 
 	return mSourceStreamData;

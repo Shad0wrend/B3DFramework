@@ -175,7 +175,7 @@ namespace b3d
 		 * Updates the physics simulation. In order to maintain stability of the physics calculations this method should
 		 * be called at fixed intervals (e.g. 60 times a second).
 		 *
-		 * @param[in]	step	Time delta to advance the physics simulation by, in seconds.
+		 * @param	step	Time delta to advance the physics simulation by, in seconds.
 		 */
 		virtual void FixedUpdate(float step) = 0;
 
@@ -197,10 +197,10 @@ namespace b3d
 		/**
 		 * Casts a ray into the scene and returns the closest found hit, if any.
 		 *
-		 * @param[in]	ray		Ray to cast into the scene.
-		 * @param[out]	hit		Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max		Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	ray		Ray to cast into the scene.
+		 * @param	hit		Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max		Maximum distance at which to perform the query. Hits past this distance will not be
 		 *						detected.
 		 * @return				True if something was hit, false otherwise.
 		 */
@@ -210,11 +210,11 @@ namespace b3d
 		/**
 		 * Casts a ray into the scene and returns the closest found hit, if any.
 		 *
-		 * @param[in]	origin		Origin of the ray to cast into the scene.
-		 * @param[in]	unitDir		Unit direction of the ray to cast into the scene.
-		 * @param[out]	hit			Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	origin		Origin of the ray to cast into the scene.
+		 * @param	unitDir		Unit direction of the ray to cast into the scene.
+		 * @param	hit			Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -224,12 +224,12 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a box and returns the closest found hit, if any.
 		 *
-		 * @param[in]	box			Box to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the box.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[out]	hit			Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	box			Box to sweep through the scene.
+		 * @param	rotation	Orientation of the box.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	hit			Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -239,11 +239,11 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a sphere and returns the closest found hit, if any.
 		 *
-		 * @param[in]	sphere		Sphere to sweep through the scene.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[out]	hit			Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	sphere		Sphere to sweep through the scene.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	hit			Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -253,12 +253,12 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a capsule and returns the closest found hit, if any.
 		 *
-		 * @param[in]	capsule		Capsule to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the capsule.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[out]	hit			Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	capsule		Capsule to sweep through the scene.
+		 * @param	rotation	Orientation of the capsule.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	hit			Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -268,13 +268,13 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns the closest found hit, if any.
 		 *
-		 * @param[in]	mesh		Mesh to sweep through the scene. Must be convex.
-		 * @param[in]	position	Starting position of the mesh.
-		 * @param[in]	rotation	Orientation of the mesh.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[out]	hit			Information recorded about a hit. Only valid if method returns true.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	mesh		Mesh to sweep through the scene. Must be convex.
+		 * @param	position	Starting position of the mesh.
+		 * @param	rotation	Orientation of the mesh.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	hit			Information recorded about a hit. Only valid if method returns true.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -284,9 +284,9 @@ namespace b3d
 		/**
 		 * Casts a ray into the scene and returns all found hits.
 		 *
-		 * @param[in]	ray		Ray to cast into the scene.
-		 * @param[in]	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max		Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	ray		Ray to cast into the scene.
+		 * @param	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max		Maximum distance at which to perform the query. Hits past this distance will not be
 		 *						detected.
 		 * @return				List of all detected hits.
 		 */
@@ -296,10 +296,10 @@ namespace b3d
 		/**
 		 * Casts a ray into the scene and returns all found hits.
 		 *
-		 * @param[in]	origin		Origin of the ray to cast into the scene.
-		 * @param[in]	unitDir		Unit direction of the ray to cast into the scene.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	origin		Origin of the ray to cast into the scene.
+		 * @param	unitDir		Unit direction of the ray to cast into the scene.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					List of all detected hits.
 		 */
@@ -309,11 +309,11 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a box and returns all found hits.
 		 *
-		 * @param[in]	box			Box to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the box.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	box			Box to sweep through the scene.
+		 * @param	rotation	Orientation of the box.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					List of all detected hits.
 		 */
@@ -323,10 +323,10 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a sphere and returns all found hits.
 		 *
-		 * @param[in]	sphere		Sphere to sweep through the scene.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	sphere		Sphere to sweep through the scene.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					List of all detected hits.
 		 */
@@ -336,11 +336,11 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a capsule and returns all found hits.
 		 *
-		 * @param[in]	capsule		Capsule to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the capsule.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	capsule		Capsule to sweep through the scene.
+		 * @param	rotation	Orientation of the capsule.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					List of all detected hits.
 		 */
@@ -350,12 +350,12 @@ namespace b3d
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns all found hits.
 		 *
-		 * @param[in]	mesh		Mesh to sweep through the scene. Must be convex.
-		 * @param[in]	position	Starting position of the mesh.
-		 * @param[in]	rotation	Orientation of the mesh.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	mesh		Mesh to sweep through the scene. Must be convex.
+		 * @param	position	Starting position of the mesh.
+		 * @param	rotation	Orientation of the mesh.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					List of all detected hits.
 		 */
@@ -366,9 +366,9 @@ namespace b3d
 		 * Casts a ray into the scene and checks if it has hit anything. This can be significantly more efficient than other
 		 * types of cast* calls.
 		 *
-		 * @param[in]	ray		Ray to cast into the scene.
-		 * @param[in]	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max		Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	ray		Ray to cast into the scene.
+		 * @param	layer	Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max		Maximum distance at which to perform the query. Hits past this distance will not be
 		 *						detected.
 		 * @return				True if something was hit, false otherwise.
 		 */
@@ -379,10 +379,10 @@ namespace b3d
 		 * Casts a ray into the scene and checks if it has hit anything. This can be significantly more efficient than other
 		 * types of cast* calls.
 		 *
-		 * @param[in]	origin		Origin of the ray to cast into the scene.
-		 * @param[in]	unitDir		Unit direction of the ray to cast into the scene.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	origin		Origin of the ray to cast into the scene.
+		 * @param	unitDir		Unit direction of the ray to cast into the scene.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -393,11 +393,11 @@ namespace b3d
 		 * Performs a sweep into the scene using a box and checks if it has hit anything. This can be significantly more
 		 * efficient than other types of cast* calls.
 		 *
-		 * @param[in]	box			Box to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the box.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	box			Box to sweep through the scene.
+		 * @param	rotation	Orientation of the box.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -408,10 +408,10 @@ namespace b3d
 		 * Performs a sweep into the scene using a sphere and checks if it has hit anything. This can be significantly more
 		 * efficient than other types of cast* calls.
 		 *
-		 * @param[in]	sphere		Sphere to sweep through the scene.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	sphere		Sphere to sweep through the scene.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -422,11 +422,11 @@ namespace b3d
 		 * Performs a sweep into the scene using a capsule and checks if it has hit anything. This can be significantly more
 		 * efficient than other types of cast* calls.
 		 *
-		 * @param[in]	capsule		Capsule to sweep through the scene.
-		 * @param[in]	rotation	Orientation of the capsule.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	capsule		Capsule to sweep through the scene.
+		 * @param	rotation	Orientation of the capsule.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -437,12 +437,12 @@ namespace b3d
 		 * Performs a sweep into the scene using a convex mesh and checks if it has hit anything. This can be significantly
 		 * more efficient than other types of cast* calls.
 		 *
-		 * @param[in]	mesh		Mesh to sweep through the scene. Must be convex.
-		 * @param[in]	position	Starting position of the mesh.
-		 * @param[in]	rotation	Orientation of the mesh.
-		 * @param[in]	unitDir		Unit direction towards which to perform the sweep.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
-		 * @param[in]	max			Maximum distance at which to perform the query. Hits past this distance will not be
+		 * @param	mesh		Mesh to sweep through the scene. Must be convex.
+		 * @param	position	Starting position of the mesh.
+		 * @param	rotation	Orientation of the mesh.
+		 * @param	unitDir		Unit direction towards which to perform the sweep.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	max			Maximum distance at which to perform the query. Hits past this distance will not be
 		 *							detected.
 		 * @return					True if something was hit, false otherwise.
 		 */
@@ -452,9 +452,9 @@ namespace b3d
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided box.
 		 *
-		 * @param[in]	box			Box to check for overlap.
-		 * @param[in]	rotation	Orientation of the box.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	box			Box to check for overlap.
+		 * @param	rotation	Orientation of the box.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					List of all colliders that overlap the box.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(BoxOverlap))
@@ -463,8 +463,8 @@ namespace b3d
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided sphere.
 		 *
-		 * @param[in]	sphere		Sphere to check for overlap.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	sphere		Sphere to check for overlap.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					List of all colliders that overlap the sphere.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SphereOverlap))
@@ -473,9 +473,9 @@ namespace b3d
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided capsule.
 		 *
-		 * @param[in]	capsule		Capsule to check for overlap.
-		 * @param[in]	rotation	Orientation of the capsule.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	capsule		Capsule to check for overlap.
+		 * @param	rotation	Orientation of the capsule.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					List of all colliders that overlap the capsule.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(CapsuleOverlap))
@@ -484,10 +484,10 @@ namespace b3d
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided convex mesh.
 		 *
-		 * @param[in]	mesh		Mesh to check for overlap. Must be convex.
-		 * @param[in]	position	Position of the mesh.
-		 * @param[in]	rotation	Orientation of the mesh.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	mesh		Mesh to check for overlap. Must be convex.
+		 * @param	position	Position of the mesh.
+		 * @param	rotation	Orientation of the mesh.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					List of all colliders that overlap the mesh.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(ConvexOverlap))
@@ -496,9 +496,9 @@ namespace b3d
 		/**
 		 * Checks if the provided box overlaps any other collider in the scene.
 		 *
-		 * @param[in]	box			Box to check for overlap.
-		 * @param[in]	rotation	Orientation of the box.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	box			Box to check for overlap.
+		 * @param	rotation	Orientation of the box.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(BoxOverlapAny))
@@ -507,8 +507,8 @@ namespace b3d
 		/**
 		 * Checks if the provided sphere overlaps any other collider in the scene.
 		 *
-		 * @param[in]	sphere		Sphere to check for overlap.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	sphere		Sphere to check for overlap.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SphereOverlapAny))
@@ -517,9 +517,9 @@ namespace b3d
 		/**
 		 * Checks if the provided capsule overlaps any other collider in the scene.
 		 *
-		 * @param[in]	capsule		Capsule to check for overlap.
-		 * @param[in]	rotation	Orientation of the capsule.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	capsule		Capsule to check for overlap.
+		 * @param	rotation	Orientation of the capsule.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(CapsuleOverlapAny))
@@ -528,10 +528,10 @@ namespace b3d
 		/**
 		 * Checks if the provided convex mesh overlaps any other collider in the scene.
 		 *
-		 * @param[in]	mesh		Mesh to check for overlap. Must be convex.
-		 * @param[in]	position	Position of the mesh.
-		 * @param[in]	rotation	Orientation of the mesh.
-		 * @param[in]	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
+		 * @param	mesh		Mesh to check for overlap. Must be convex.
+		 * @param	position	Position of the mesh.
+		 * @param	rotation	Orientation of the mesh.
+		 * @param	layer		Layers to consider for the query. This allows you to ignore certain groups of objects.
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(ConvexOverlapAny))

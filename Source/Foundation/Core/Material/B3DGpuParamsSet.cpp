@@ -409,7 +409,7 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 	}
 
 	// Create object param mappings
-	auto determineObjectMappings = [&](const Map<String, ShaderObjectParameterInformation>& params, MaterialParams::ParamType paramType)
+	auto fnDetermineObjectMappings = [&](const Map<String, ShaderObjectParameterInformation>& params, MaterialParams::ParamType paramType)
 	{
 		for(auto iter = params.begin(); iter != params.end(); ++iter)
 		{
@@ -430,9 +430,9 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 		}
 	};
 
-	determineObjectMappings(textureParams, MaterialParams::ParamType::Texture);
-	determineObjectMappings(samplerParams, MaterialParams::ParamType::Sampler);
-	determineObjectMappings(bufferParams, MaterialParams::ParamType::Buffer);
+	fnDetermineObjectMappings(textureParams, MaterialParams::ParamType::Texture);
+	fnDetermineObjectMappings(samplerParams, MaterialParams::ParamType::Sampler);
+	fnDetermineObjectMappings(bufferParams, MaterialParams::ParamType::Buffer);
 
 	return validParams;
 }
@@ -647,8 +647,8 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 			const Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT>& parameterDescriptionsForPass = parameterDescriptionsPerPass[i];
 			for(u32 j = 0; j < kNumStages; j++)
 			{
-				auto processObjectParams = [&](const Map<String, GpuObjectParameterInformation>& gpuParams,
-											   u32 stageIdx, MaterialParams::ParamType paramType)
+				auto fnProcessObjectParams = [&](const Map<String, GpuObjectParameterInformation>& gpuParams,
+											   u32 stageIndex, MaterialParams::ParamType paramType)
 				{
 					for(auto& param : gpuParams)
 					{
@@ -658,19 +658,19 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 						if(iterFind == validParams.end())
 							continue;
 
-						u32 paramIdx;
-						auto result = params->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIdx);
+						u32 paramIndex;
+						auto result = params->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIndex);
 
 						// Parameter shouldn't be in the valid parameter list if it cannot be found
 						B3D_ASSERT(result == MaterialParams::GetParamResult::Success);
 
 						objParamInfos.push_back(ObjectParamInfo());
 						ObjectParamInfo& paramInfo = objParamInfos.back();
-						paramInfo.ParamIdx = paramIdx;
+						paramInfo.ParamIdx = paramIndex;
 						paramInfo.SlotIdx = param.second.Slot;
 						paramInfo.SetIdx = param.second.Set;
 
-						stageOffsets[stageIdx]++;
+						stageOffsets[stageIndex]++;
 						totalNumObjects++;
 					}
 				};
@@ -682,10 +682,10 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 					continue;
 				}
 
-				processObjectParams(desc->SampledTextures, 0, MaterialParams::ParamType::Texture);
-				processObjectParams(desc->StorageTextures, 1, MaterialParams::ParamType::Texture);
-				processObjectParams(desc->Buffers, 2, MaterialParams::ParamType::Buffer);
-				processObjectParams(desc->Samplers, 3, MaterialParams::ParamType::Sampler);
+				fnProcessObjectParams(desc->SampledTextures, 0, MaterialParams::ParamType::Texture);
+				fnProcessObjectParams(desc->StorageTextures, 1, MaterialParams::ParamType::Texture);
+				fnProcessObjectParams(desc->Buffers, 2, MaterialParams::ParamType::Buffer);
+				fnProcessObjectParams(desc->Samplers, 3, MaterialParams::ParamType::Sampler);
 
 				stageOffsets += 4;
 			}
@@ -812,12 +812,12 @@ TGpuParamsSet<IsRenderProxy>::~TGpuParamsSet()
 }
 
 template <bool IsRenderProxy>
-SPtr<typename TGpuParamsSet<IsRenderProxy>::GpuParamsType> TGpuParamsSet<IsRenderProxy>::GetGpuParams(u32 passIdx)
+SPtr<typename TGpuParamsSet<IsRenderProxy>::GpuParamsType> TGpuParamsSet<IsRenderProxy>::GetGpuParams(u32 passIndex)
 {
-	if(passIdx >= mPassParams.size())
+	if(passIndex >= mPassParams.size())
 		return nullptr;
 
-	return mPassParams[passIdx];
+	return mPassParams[passIndex];
 }
 
 template <bool IsRenderProxy>
@@ -931,7 +931,7 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 				const bool transposeMatrices = gpuBackendConventions.MatrixOrder == GpuBackendConventions::MatrixOrder::ColumnMajor;
 				if(transposeMatrices)
 				{
-					auto writeTransposed = [&paramInfo, &paramSize, &arraySize, &paramBlock, data](auto& temp)
+					auto fnWriteTransposed = [&paramInfo, &paramSize, &arraySize, &paramBlock, data](auto& temp)
 					{
 						for(u32 i = 0; i < arraySize; i++)
 						{
@@ -949,55 +949,55 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 					case GPDT_MATRIX_2X2:
 						{
 							MatrixNxM<2, 2> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_2X3:
 						{
 							MatrixNxM<2, 3> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_2X4:
 						{
 							MatrixNxM<2, 4> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_3X2:
 						{
 							MatrixNxM<3, 2> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_3X3:
 						{
 							Matrix3 matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_3X4:
 						{
 							MatrixNxM<3, 4> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_4X2:
 						{
 							MatrixNxM<4, 2> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_4X3:
 						{
 							MatrixNxM<4, 3> matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					case GPDT_MATRIX_4X4:
 						{
 							Matrix4 matrix;
-							writeTransposed(matrix);
+							fnWriteTransposed(matrix);
 						}
 						break;
 					default:

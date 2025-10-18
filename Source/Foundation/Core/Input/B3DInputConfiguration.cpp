@@ -16,51 +16,51 @@ VirtualAxisInformation::VirtualAxisInformation(u32 type)
 
 void InputConfiguration::RegisterButton(const String& name, ButtonCode buttonCode, ButtonModifier modifiers, bool repeatable)
 {
-	Vector<VirtualButtonData>& btnData = mButtons[(u32)buttonCode & 0x0000FFFF];
+	Vector<VirtualButtonData>& buttonData = mButtons[(u32)buttonCode & 0x0000FFFF];
 
-	i32 idx = -1;
-	for(u32 i = 0; i < (u32)btnData.size(); i++)
+	i32 existingIndex = -1;
+	for(u32 buttonIndex = 0; buttonIndex < (u32)buttonData.size(); buttonIndex++)
 	{
-		if(btnData[i].Name == name)
+		if(buttonData[buttonIndex].Name == name)
 		{
-			idx = (i32)i;
+			existingIndex = (i32)buttonIndex;
 			break;
 		}
 	}
 
-	if(idx == -1)
+	if(existingIndex == -1)
 	{
-		idx = (i32)btnData.size();
-		btnData.push_back(VirtualButtonData());
+		existingIndex = (i32)buttonData.size();
+		buttonData.push_back(VirtualButtonData());
 	}
 
-	VirtualButtonData& btn = btnData[idx];
-	btn.Name = name;
-	btn.Desc = VirtualButtonInformation(buttonCode, modifiers, repeatable);
-	btn.Button = VirtualInput::GetOrCreateVirtualButton(name);
+	VirtualButtonData& button = buttonData[existingIndex];
+	button.Name = name;
+	button.Desc = VirtualButtonInformation(buttonCode, modifiers, repeatable);
+	button.Button = VirtualInput::GetOrCreateVirtualButton(name);
 }
 
 void InputConfiguration::UnregisterButton(const String& name)
 {
-	Vector<u32> toRemove;
+	Vector<u32> indicesToRemove;
 
-	for(u32 i = 0; i < static_cast<unsigned>(ButtonCode::TotalKeyCount); i++)
+	for(u32 keyIndex = 0; keyIndex < static_cast<unsigned>(ButtonCode::TotalKeyCount); keyIndex++)
 	{
-		for(u32 j = 0; j < (u32)mButtons[i].size(); j++)
+		for(u32 buttonIndex = 0; buttonIndex < (u32)mButtons[keyIndex].size(); buttonIndex++)
 		{
-			if(mButtons[i][j].Name == name)
-				toRemove.push_back(j);
+			if(mButtons[keyIndex][buttonIndex].Name == name)
+				indicesToRemove.push_back(buttonIndex);
 		}
 
-		u32 numRemoved = 0;
-		for(auto& toRemoveIdx : toRemove)
+		u32 removedCount = 0;
+		for(auto& indexToRemove : indicesToRemove)
 		{
-			mButtons[i].erase(mButtons[i].begin() + toRemoveIdx - numRemoved);
+			mButtons[keyIndex].erase(mButtons[keyIndex].begin() + indexToRemove - removedCount);
 
-			numRemoved++;
+			removedCount++;
 		}
 
-		toRemove.clear();
+		indicesToRemove.clear();
 	}
 }
 
@@ -78,27 +78,27 @@ void InputConfiguration::RegisterAxis(const String& name, const VirtualAxisCreat
 
 void InputConfiguration::UnregisterAxis(const String& name)
 {
-	for(u32 i = 0; i < (u32)mAxes.size(); i++)
+	for(u32 axisIndex = 0; axisIndex < (u32)mAxes.size(); axisIndex++)
 	{
-		if(mAxes[i].Name == name)
+		if(mAxes[axisIndex].Name == name)
 		{
-			mAxes.erase(mAxes.begin() + i);
-			i--;
+			mAxes.erase(mAxes.begin() + axisIndex);
+			axisIndex--;
 		}
 	}
 }
 
-bool InputConfiguration::GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VirtualButtonInformation>& btnDesc) const
+bool InputConfiguration::GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& buttons, Vector<VirtualButtonInformation>& buttonDescriptions) const
 {
-	const Vector<VirtualButtonData>& btnData = mButtons[(u32)code & 0x0000FFFF];
+	const Vector<VirtualButtonData>& buttonData = mButtons[(u32)code & 0x0000FFFF];
 
 	bool foundAny = false;
-	for(u32 i = 0; i < (u32)btnData.size(); i++)
+	for(u32 buttonIndex = 0; buttonIndex < (u32)buttonData.size(); buttonIndex++)
 	{
-		if((((u32)btnData[i].Desc.Modifiers) & modifiers) == ((u32)btnData[i].Desc.Modifiers))
+		if((((u32)buttonData[buttonIndex].Desc.Modifiers) & modifiers) == ((u32)buttonData[buttonIndex].Desc.Modifiers))
 		{
-			btns.push_back(btnData[i].Button);
-			btnDesc.push_back(btnData[i].Desc);
+			buttons.push_back(buttonData[buttonIndex].Button);
+			buttonDescriptions.push_back(buttonData[buttonIndex].Desc);
 			foundAny = true;
 		}
 	}
@@ -106,11 +106,11 @@ bool InputConfiguration::GetButtonsInternal(ButtonCode code, u32 modifiers, Vect
 	return foundAny;
 }
 
-bool InputConfiguration::GetAxisInternal(const VirtualAxis& axis, VirtualAxisInformation& axisDesc) const
+bool InputConfiguration::GetAxisInternal(const VirtualAxis& axis, VirtualAxisInformation& axisDescription) const
 {
 	if(axis.AxisIdentifier >= (u32)mAxes.size())
 		return false;
 
-	axisDesc = mAxes[axis.AxisIdentifier].Desc;
+	axisDescription = mAxes[axis.AxisIdentifier].Desc;
 	return true;
 }

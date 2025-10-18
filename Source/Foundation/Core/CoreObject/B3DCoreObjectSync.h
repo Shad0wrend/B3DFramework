@@ -133,7 +133,7 @@ namespace b3d
 		template <typename T, typename A = StdFrameAlloc<T>>
 		using RenderProxySyncVector = std::vector<T, A>;
 
-		/** Copies a field from the non-core object into the field in the RenderProxywSyncPacket. */
+		/** Copies a field from the non-core object into the field in the RenderProxySyncPacket. */
 		template <bool IsRenderProxy, class FieldTypeA, class FieldTypeB>
 		void RenderProxySyncField(FieldTypeA& a, FieldTypeB& b, std::enable_if_t<!IsRenderProxy>* = 0)
 		{
@@ -234,9 +234,9 @@ namespace b3d
 	 * IMPORTANT: Type you pass to ApplySyncData() must be exactly ClassType as defined here. It cannot be a base type of ClassType or any other type otherwise
 	 *			  you risk memory corruption due to the cast to void*.
 	 *
-	 * @param	ClassType		Type of the source object from which the data will be gathered. Destination object type will be automatically deduced using
-	 *							CoreVariantType<Type, Core> helper.
-	 * @param	Name			Name of the packet structure.
+	 * @param ClassType		Type of the source object from which the data will be gathered. Destination object type will be automatically deduced using
+	 *						CoreVariantType<Type, Core> helper.
+	 * @param Name			Name of the packet structure.
 	 */
 #define B3D_SYNC_BLOCK_BEGIN(ClassType, Name)                                                          \
 	struct ClassType::Name : RenderProxySyncPacket                                                     \
@@ -279,7 +279,7 @@ namespace b3d
 	 * the entry name. The destination object type must be a friend of the source object type, so this object can access it's
 	 * private fields.
 	 *
-	 * @param	EntryName		Name of the field to sync.
+	 * @param EntryName		Name of the field to sync.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY(EntryName)                                                                                                    \
 	META_Entry_##EntryName;                                                                                                                \
@@ -315,8 +315,8 @@ private:                                                                        
 	 * Equivalent to B3D_SYNC_BLOCK_ENTRY, but the caller must populate the packet field entry manually after construction. This is
 	 * useful if a field exists in the destination object, but not in the source object.
 	 *
-	 * @param	EntryType		Type of the field (always specify the non-core type).
-	 * @param	EntryName		Name of the field to sync.
+	 * @param EntryType		Type of the field (always specify the non-core type).
+	 * @param EntryName		Name of the field to sync.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(EntryType, EntryName)                                                                           \
 	META_Entry_##EntryName;                                                                                                                \
@@ -351,8 +351,8 @@ private:                                                                        
 	 * Equivalent to B3D_SYNC_BLOCK_ENTRY, but the caller must manually read the packet field to apply it to the destination object.
 	 * This is useful if a field exists in the source object, but not in the destination object.
 	 *
-	 * @param	EntryType		Type of the field (always specify the non-core type).
-	 * @param	EntryName		Name of the field to sync.
+	 * @param EntryType		Type of the field (always specify the non-core type).
+	 * @param EntryName		Name of the field to sync.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY_CUSTOM_GETTER(EntryType, EntryName)                                                                           \
 	META_Entry_##EntryName;                                                                                                                \
@@ -389,8 +389,8 @@ private:                                                                        
 	 * user to utilize the field as needed. This is useful if you just need to transfer some data, with either source or destination
 	 * object having the field in its class.
 	 *
-	 * @param	EntryType		Type of the field (always specify the non-core type).
-	 * @param	EntryName		Name of the field in the sync packet definition.
+	 * @param EntryType		Type of the field (always specify the non-core type).
+	 * @param EntryName		Name of the field in the sync packet definition.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY_CUSTOM(EntryType, EntryName)                                                                                  \
 	META_Entry_##EntryName;                                                                                                                \
@@ -425,9 +425,8 @@ private:                                                                        
 	 * packet field, but the packet data will be applied automatically when the parent's data is applied. Child packet will
 	 * also be automatically be destructed when the parent is destructed.
 	 *
-	 * @param	ClassType		Base type of the object the packet is responsible for syncing. 
-	 * @param	EntryName		Name of the field with the pointer to package.
-	 *
+	 * @param ClassType		Base type of the object the packet is responsible for syncing.
+	 * @param EntryName		Name of the field with the pointer to package.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY_PACKET_BASE(ClassType, EntryName)                                                \
 	META_Entry_##EntryName;                                                                                   \
@@ -463,9 +462,8 @@ private:                                                                        
 	 * on parent sync packet creation, and will be automatically applied when the parent is applied, as well as destructed when
 	 * the parent is destructed.
 	 *
-	 * @param	EntryName		Name of the field to sync.
-	 * @param	SyncPacketType	Type name of the sync packet of the child type. Must be part of the field's class.
-	 *
+	 * @param EntryName		Name of the field to sync.
+	 * @param SyncPacketType	Type name of the sync packet of the child type. Must be part of the field's class.
 	 */
 #define B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(EntryName, SyncPacketType)                                                \
 	META_Entry_##EntryName;                                                                                         \

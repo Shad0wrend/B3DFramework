@@ -246,8 +246,8 @@ namespace b3d
 		/**
 		 * Applies a force to the center of the mass of the rigidbody. This will produce linear momentum.
 		 *
-		 * @param	force		Force to apply.
-		 * @param	mode			Determines what is the type of @p force.
+		 * @param	force	Force to apply.
+		 * @param	mode	Determines what is the type of @p force.
 		 */
 		B3D_SCRIPT_EXPORT()
 		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force);
@@ -255,8 +255,8 @@ namespace b3d
 		/**
 		 * Applies a torque to the rigidbody. This will produce angular momentum.
 		 *
-		 * @param	torque		Torque to apply.
-		 * @param	mode			Determines what is the type of @p torque.
+		 * @param	torque	Torque to apply.
+		 * @param	mode	Determines what is the type of @p torque.
 		 */
 		B3D_SCRIPT_EXPORT()
 		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force);
@@ -266,8 +266,8 @@ namespace b3d
 		 * momentum.
 		 *
 		 * @param	force		Force to apply.
-		 * @param	position		World position to apply the force at.
-		 * @param	mode			Determines what is the type of @p force.
+		 * @param	position	World position to apply the force at.
+		 * @param	mode		Determines what is the type of @p force.
 		 */
 		B3D_SCRIPT_EXPORT()
 		void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force);
@@ -473,16 +473,16 @@ namespace b3d
 		/**
 		 * Sets the rigidbody's center of mass transform. Only relevant if RigibodyFlag::AutoTensors is turned off.
 		 *
-		 * @param	position		Position of the center of mass.
-		 * @param	rotation		Rotation that determines orientation of the inertia tensor (rotation of the center of mass frame).
+		 * @param	position	Position of the center of mass.
+		 * @param	rotation	Rotation that determines orientation of the inertia tensor (rotation of the center of mass frame).
 		 */
 		virtual void SetCenterOfMass(const Vector3& position, const Quaternion& rotation) = 0;
 
 		/**
 		 * Gets the rigidbody's center of mass transform.
 		 *
-		 * @param	outPosition		Position of the center of mass.
-		 * @param	outRotation		Rotation that determines orientation of the inertia tensor (rotation of the center of mass frame).
+		 * @param	outPosition	Position of the center of mass.
+		 * @param	outRotation	Rotation that determines orientation of the inertia tensor (rotation of the center of mass frame).
 		 */
 		virtual void GetCenterOfMass(Vector3& outPosition, Quaternion& outRotation) = 0;
 

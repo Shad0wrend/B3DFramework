@@ -261,8 +261,8 @@ namespace b3d
 		/**
 		 * Checks does the string table contain the provided identifier.
 		 *
-		 * @param[in]	identifier		Identifier to look for.
-		 * @return						True if the identifier exists in the table, false otherwise.
+		 * @param	identifier		Identifier to look for.
+		 * @return					True if the identifier exists in the table, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
 		bool Contains(const String& identifier);
@@ -291,23 +291,23 @@ namespace b3d
 		/**
 		 * Gets a string data for the specified string identifier and currently active language.
 		 *
-		 * @param[in]	identifier		   	Unique string identifier.
-		 * @param[in]	insertIfNonExisting	If true, a new string data for the specified identifier and language will be
-		 *									added to the table if data doesn't already exist. The data will use the
-		 *									identifier as the translation string.
-		 * @return							The string data. Don't store reference to this data as it may get deleted.
+		 * @param	identifier		   	Unique string identifier.
+		 * @param	insertIfNonExisting	If true, a new string data for the specified identifier and language will be
+		 *								added to the table if data doesn't already exist. The data will use the
+		 *								identifier as the translation string.
+		 * @return						The string data. Don't store reference to this data as it may get deleted.
 		 */
 		SPtr<LocalizedStringData> GetStringData(const String& identifier, bool insertIfNonExisting = true);
 
 		/**
 		 * Gets a string data for the specified string identifier and language.
 		 *
-		 * @param[in]	identifier		   	Unique string identifier.
-		 * @param[in]	language		   	Language.
-		 * @param[in]	insertIfNonExisting	If true, a new string data for the specified identifier and language will be
-		 *									added to the table if data doesn't already exist. The data will use the
-		 *									identifier as the translation string.
-		 * @return							The string data. Don't store reference to this data as it may get deleted.
+		 * @param	identifier		   	Unique string identifier.
+		 * @param	language		   	Language.
+		 * @param	insertIfNonExisting	If true, a new string data for the specified identifier and language will be
+		 *								added to the table if data doesn't already exist. The data will use the
+		 *								identifier as the translation string.
+		 * @return						The string data. Don't store reference to this data as it may get deleted.
 		 */
 		SPtr<LocalizedStringData> GetStringData(const String& identifier, Language language, bool insertIfNonExisting = true);
 

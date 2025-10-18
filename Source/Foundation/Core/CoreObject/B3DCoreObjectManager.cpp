@@ -227,7 +227,13 @@ void CoreObjectManager::SyncToRenderThread(bool swapBuffers)
 	Lock lock(mObjectsMutex);
 
 	SyncDownload(mSyncAllocators[mActiveFrameAllocatorIndex]);
-	GetRenderThread().PostCommand(std::bind(&CoreObjectManager::SyncUpload, this), "SyncToRenderThread");
+
+	auto fnSyncUpload = [this]
+	{
+		SyncUpload();
+	};
+
+	GetRenderThread().PostCommand(fnSyncUpload, "SyncToRenderThread");
 
 	if(swapBuffers)
 	{
@@ -250,30 +256,30 @@ void CoreObjectManager::SyncToRenderThread(CoreObject* object)
 	FrameAllocator* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
 	Vector<IndividualCoreSyncData> syncData;
 
-	std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
+	std::function<void(CoreObject*)> fnSyncObject = [&](CoreObject* currentObject)
 	{
-		if(!curObj->IsRenderProxyDataOutOfDate())
+		if(!currentObject->IsRenderProxyDataOutOfDate())
 			return; // We already processed it as some other object's dependency
 
 		// Sync dependencies before dependants
 		// Note: I don't check for recursion. Possible infinite loop if two objects
 		// are dependent on one another.
 
-		u64 id = curObj->GetInternalId();
-		auto iterFind = mDependencies.find(id);
+		u64 objectId = currentObject->GetInternalId();
+		auto iterFind = mDependencies.find(objectId);
 
 		if(iterFind != mDependencies.end())
 		{
 			const Vector<CoreObject*>& dependencies = iterFind->second;
 			for(auto& dependency : dependencies)
-				syncObject(dependency);
+				fnSyncObject(dependency);
 		}
 
-		SPtr<render::RenderProxy> renderProxy = curObj->GetRenderProxy();
+		SPtr<render::RenderProxy> renderProxy = currentObject->GetRenderProxy();
 		if(renderProxy == nullptr)
 		{
-			curObj->MarkRenderProxyDataUpToDate();
-			mDirtyObjects.erase(id);
+			currentObject->MarkRenderProxyDataUpToDate();
+			mDirtyObjects.erase(objectId);
 			return;
 		}
 
@@ -282,23 +288,22 @@ void CoreObjectManager::SyncToRenderThread(CoreObject* object)
 		data.Allocator = allocator;
 		data.Destination = renderProxy;
 
-		RenderProxySyncPacket* const syncPacket = curObj->CreateRenderProxySyncPacket(*allocator, curObj->GetRenderProxyDirtyFlags());
+		RenderProxySyncPacket* const syncPacket = currentObject->CreateRenderProxySyncPacket(*allocator, currentObject->GetRenderProxyDirtyFlags());
 		if(syncPacket != nullptr)
 			data.SyncData = CoreSyncData(syncPacket);
 
-		curObj->MarkRenderProxyDataUpToDate();
-		mDirtyObjects.erase(id);
+		currentObject->MarkRenderProxyDataUpToDate();
+		mDirtyObjects.erase(objectId);
 	};
 
-	syncObject(object);
+	fnSyncObject(object);
 
-	std::function<void(const Vector<IndividualCoreSyncData>&)> callback =
-		[](const Vector<IndividualCoreSyncData>& data)
+	auto fnCallback = [](const Vector<IndividualCoreSyncData>& data)
 	{
 		// Traverse in reverse to sync dependencies before dependants
-		for(auto riter = data.rbegin(); riter != data.rend(); ++riter)
+		for(auto reverseIterator = data.rbegin(); reverseIterator != data.rend(); ++reverseIterator)
 		{
-			const IndividualCoreSyncData& entry = *riter;
+			const IndividualCoreSyncData& entry = *reverseIterator;
 			entry.Destination->SyncFromCoreObject(entry.SyncData, *entry.Allocator);
 
 			RenderProxySyncPacket* const syncPacket = entry.SyncData.GetSyncPacket();
@@ -308,7 +313,7 @@ void CoreObjectManager::SyncToRenderThread(CoreObject* object)
 	};
 
 	if(syncData.size() > 0)
-		GetRenderThread().PostCommand(std::bind(callback, syncData), "SyncToRenderThread(CoreObject*)");
+		GetRenderThread().PostCommand([fnCallback, syncData] { fnCallback(syncData); }, "SyncToRenderThread(CoreObject*)");
 }
 
 void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
@@ -354,54 +359,54 @@ void CoreObjectManager::SyncDownload(FrameAllocator* allocator)
 	// ones with higher ones and should be updated first.
 	for(auto& objectData : mDirtyObjects)
 	{
-		std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
+		std::function<void(CoreObject*)> fnSyncObject = [&](CoreObject* currentObject)
 		{
-			if(!curObj->IsRenderProxyDataOutOfDate())
+			if(!currentObject->IsRenderProxyDataOutOfDate())
 				return; // We already processed it as some other object's dependency
 
 			// Sync dependencies before dependants
 			// Note: I don't check for recursion. Possible infinite loop if two objects
 			// are dependent on one another.
 
-			u64 id = curObj->GetInternalId();
-			auto iterFind = mDependencies.find(id);
+			u64 objectId = currentObject->GetInternalId();
+			auto iterFind = mDependencies.find(objectId);
 
 			if(iterFind != mDependencies.end())
 			{
 				const Vector<CoreObject*>& dependencies = iterFind->second;
 				for(auto& dependency : dependencies)
-					syncObject(dependency);
+					fnSyncObject(dependency);
 			}
 
-			SPtr<render::RenderProxy> renderProxy = curObj->GetRenderProxy();
+			SPtr<render::RenderProxy> renderProxy = currentObject->GetRenderProxy();
 			if(renderProxy == nullptr)
 			{
-				curObj->MarkRenderProxyDataUpToDate();
+				currentObject->MarkRenderProxyDataUpToDate();
 				return;
 			}
 
-			CoreSyncData objSyncData;
+			CoreSyncData objectSyncData;
 
-			RenderProxySyncPacket* const syncPacket = curObj->CreateRenderProxySyncPacket(*allocator, curObj->GetRenderProxyDirtyFlags());
+			RenderProxySyncPacket* const syncPacket = currentObject->CreateRenderProxySyncPacket(*allocator, currentObject->GetRenderProxyDirtyFlags());
 			if(syncPacket != nullptr)
-				objSyncData = CoreSyncData(syncPacket);
+				objectSyncData = CoreSyncData(syncPacket);
 
-			curObj->MarkRenderProxyDataUpToDate();
-			syncData.Entries.push_back(PerObjectSyncData(renderProxy, curObj->GetInternalId(), objSyncData));
+			currentObject->MarkRenderProxyDataUpToDate();
+			syncData.Entries.push_back(PerObjectSyncData(renderProxy, currentObject->GetInternalId(), objectSyncData));
 		};
 
 		CoreObject* object = objectData.second.Object;
 		if(object != nullptr)
-			syncObject(object);
+			fnSyncObject(object);
 		else
 		{
 			// Object was destroyed but we still need to sync its modifications before it was destroyed
 			if(objectData.second.SyncDataId != -1)
 			{
-				const PerObjectSyncData& objData = mDestroyedSyncData[objectData.second.SyncDataId];
+				const PerObjectSyncData& perObjectData = mDestroyedSyncData[objectData.second.SyncDataId];
 
-				syncData.Entries.push_back(objData);
-				syncData.DestroyedObjects.push_back(objData.RenderProxy);
+				syncData.Entries.push_back(perObjectData);
+				syncData.DestroyedObjects.push_back(perObjectData.RenderProxy);
 			}
 		}
 	}
@@ -425,13 +430,13 @@ void CoreObjectManager::SyncUpload()
 		mPerFrameSyncData.pop_front();
 	}
 
-	for(auto& objSyncData : syncData.Entries)
+	for(auto& objectSyncData : syncData.Entries)
 	{
-		SPtr<render::RenderProxy> destinationObj = objSyncData.RenderProxy;
-		if(destinationObj != nullptr)
-			destinationObj->SyncFromCoreObject(objSyncData.SyncData, *syncData.Allocator);
+		SPtr<render::RenderProxy> destinationObject = objectSyncData.RenderProxy;
+		if(destinationObject != nullptr)
+			destinationObject->SyncFromCoreObject(objectSyncData.SyncData, *syncData.Allocator);
 
-		RenderProxySyncPacket* const syncPacket = objSyncData.SyncData.GetSyncPacket();
+		RenderProxySyncPacket* const syncPacket = objectSyncData.SyncData.GetSyncPacket();
 		if(syncPacket != nullptr)
 			syncData.Allocator->Destruct(syncPacket);
 	}

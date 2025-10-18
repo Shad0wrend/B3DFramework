@@ -75,131 +75,131 @@ Area2I Sprite::GetBounds(const Vector2I& offset, const Area2I& clipRect) const
 	return bounds;
 }
 
-u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Area2I& clipRect, bool clip) const
+u32 Sprite::FillBuffer(u8* outVertices, u8* outUv, u32* outIndices, u32 vertexOffset, u32 indexOffset, u32 maxVertexCount, u32 maxIndexCount, u32 vertexStride, u32 indexStride, u32 renderElementIndex, const Vector2I& offset, const Area2I& clipRect, bool clip) const
 {
-	const RenderElementData& renderElementData = mCachedRenderElements[renderElementIdx];
+	const RenderElementData& renderElementData = mCachedRenderElements[renderElementIndex];
 	const SpriteRenderElement& renderElement = renderElementData.RenderElement;
 
-	u32 startVert = vertexOffset;
+	u32 startVertex = vertexOffset;
 	u32 startIndex = indexOffset;
 
-	u32 maxVertIdx = maxNumVerts;
-	u32 maxIndexIdx = maxNumIndices;
+	u32 maxVertexIndex = maxVertexCount;
+	u32 maxIndexIndex = maxIndexCount;
 
-	u32 numVertices = renderElement.VertexCount;
-	u32 numIndices = renderElement.IndexCount;
-	const u32 quadCount = numVertices / 4;
+	u32 vertexCount = renderElement.VertexCount;
+	u32 indexCount = renderElement.IndexCount;
+	const u32 quadCount = vertexCount / 4;
 
-	B3D_ASSERT((startVert + numVertices) <= maxVertIdx);
-	B3D_ASSERT((startIndex + numIndices) <= maxIndexIdx);
+	B3D_ASSERT((startVertex + vertexCount) <= maxVertexIndex);
+	B3D_ASSERT((startIndex + indexCount) <= maxIndexIndex);
 
-	u8* vertDst = vertices + startVert * vertexStride;
-	u8* uvDst = uv + startVert * vertexStride;
+	u8* vertexDestination = outVertices + startVertex * vertexStride;
+	u8* uvDestination = outUv + startVertex * vertexStride;
 
 	// TODO - I'm sure this can be done in a more cache friendly way. Profile it later.
-	Vector2 vecOffset((float)offset.X, (float)offset.Y);
+	Vector2 vectorOffset((float)offset.X, (float)offset.Y);
 	if(clip)
 	{
-		for(u32 i = 0; i < quadCount; i++)
+		for(u32 quadIndex = 0; quadIndex < quadCount; quadIndex++)
 		{
-			u8* vecStart = vertDst;
-			u8* uvStart = uvDst;
-			u32 vertIdx = i * 4;
+			u8* vectorStart = vertexDestination;
+			u8* uvStart = uvDestination;
+			u32 vertexIndex = quadIndex * 4;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 0], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 0], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 0], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 0], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 1], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 1], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 1], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 1], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 2], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 2], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 2], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 2], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 3], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 3], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 3], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 3], sizeof(Vector2));
 
-			ClipQuadsToRect(vecStart, uvStart, 1, vertexStride, clipRect);
+			ClipQuadsToRect(vectorStart, uvStart, 1, vertexStride, clipRect);
 
-			vertDst = vecStart;
-			Vector2* curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination = vectorStart;
+			Vector2* currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 		}
 	}
 	else
 	{
-		for(u32 i = 0; i < quadCount; i++)
+		for(u32 quadIndex = 0; quadIndex < quadCount; quadIndex++)
 		{
-			u8* vecStart = vertDst;
-			u32 vertIdx = i * 4;
+			u8* vectorStart = vertexDestination;
+			u32 vertexIndex = quadIndex * 4;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 0], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 0], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 0], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 0], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 1], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 1], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 1], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 1], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 2], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 2], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 2], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 2], sizeof(Vector2));
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 
-			memcpy(vertDst, &renderElement.VertexPositions[vertIdx + 3], sizeof(Vector2));
-			memcpy(uvDst, &renderElement.VertexUVs[vertIdx + 3], sizeof(Vector2));
+			memcpy(vertexDestination, &renderElement.VertexPositions[vertexIndex + 3], sizeof(Vector2));
+			memcpy(uvDestination, &renderElement.VertexUVs[vertexIndex + 3], sizeof(Vector2));
 
-			vertDst = vecStart;
-			Vector2* curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination = vectorStart;
+			Vector2* currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			curVec = (Vector2*)vertDst;
-			*curVec += vecOffset;
+			vertexDestination += vertexStride;
+			currentVector = (Vector2*)vertexDestination;
+			*currentVector += vectorOffset;
 
-			vertDst += vertexStride;
-			uvDst += vertexStride;
+			vertexDestination += vertexStride;
+			uvDestination += vertexStride;
 		}
 	}
 
-	if(indices != nullptr)
-		memcpy(&indices[startIndex], renderElement.Indices, numIndices * sizeof(u32));
+	if(outIndices != nullptr)
+		memcpy(&outIndices[startIndex], renderElement.Indices, indexCount * sizeof(u32));
 
 	return quadCount;
 }
@@ -264,10 +264,10 @@ void Sprite::UpdateBounds() const
 		{
 			const u32 vertexCount = renderElement.VertexCount;
 
-			for(u32 i = 0; i < vertexCount; i++)
+			for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 			{
-				min = Vector2::Min(min, renderElement.VertexPositions[i]);
-				max = Vector2::Max(max, renderElement.VertexPositions[i]);
+				min = Vector2::Min(min, renderElement.VertexPositions[vertexIndex]);
+				max = Vector2::Max(max, renderElement.VertexPositions[vertexIndex]);
 			}
 		}
 	}
@@ -278,24 +278,24 @@ void Sprite::UpdateBounds() const
 // This will only properly clip an array of quads
 // Vertices in the quad must be in a specific order: top left, top right, bottom left, bottom right
 // (0, 0) represents top left of the screen
-void Sprite::ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Area2I& clipRect)
+void Sprite::ClipQuadsToRect(u8* outVertices, u8* outUv, u32 quadCount, u32 vertexStride, const Area2I& clipRect)
 {
 	float left = (float)clipRect.X;
 	float right = (float)clipRect.X + clipRect.Width;
 	float top = (float)clipRect.Y;
 	float bottom = (float)clipRect.Y + clipRect.Height;
 
-	for(u32 i = 0; i < numQuads; i++)
+	for(u32 quadIndex = 0; quadIndex < quadCount; quadIndex++)
 	{
-		Vector2* vecA = (Vector2*)(vertices);
-		Vector2* vecB = (Vector2*)(vertices + vertStride);
-		Vector2* vecC = (Vector2*)(vertices + vertStride * 2);
-		Vector2* vecD = (Vector2*)(vertices + vertStride * 3);
+		Vector2* vecA = (Vector2*)(outVertices);
+		Vector2* vecB = (Vector2*)(outVertices + vertexStride);
+		Vector2* vecC = (Vector2*)(outVertices + vertexStride * 2);
+		Vector2* vecD = (Vector2*)(outVertices + vertexStride * 3);
 
-		Vector2* uvA = (Vector2*)(uv);
-		Vector2* uvB = (Vector2*)(uv + vertStride);
-		Vector2* uvC = (Vector2*)(uv + vertStride * 2);
-		Vector2* uvD = (Vector2*)(uv + vertStride * 3);
+		Vector2* uvA = (Vector2*)(outUv);
+		Vector2* uvB = (Vector2*)(outUv + vertexStride);
+		Vector2* uvC = (Vector2*)(outUv + vertexStride * 2);
+		Vector2* uvD = (Vector2*)(outUv + vertexStride * 3);
 
 		// Attempt to skip those that are definitely not clipped
 		if(vecA->X >= left && vecB->X <= right &&
@@ -349,8 +349,8 @@ void Sprite::ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride,
 		uvC->Y -= uvBottomOffset;
 		uvD->Y -= uvBottomOffset;
 
-		vertices += vertStride * 4;
-		uv += vertStride * 4;
+		outVertices += vertexStride * 4;
+		outUv += vertexStride * 4;
 	}
 }
 
@@ -427,7 +427,7 @@ void Sprite::ClipQuadsToRectangle(DataRange& vertices, DataRange& uv, u32 quadCo
 	}
 }
 
-void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 triangleCount, u32 vertexStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
 {
 	Vector<Plane> clipPlanes = {
 		Plane(Vector3(1.0f, 0.0f, 0.0f), (float)clipRect.X),
@@ -436,5 +436,5 @@ void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStri
 		Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.Y + (i32)clipRect.Height))
 	};
 
-	MeshUtility::Clip2D(vertices, uv, numTris, vertStride, clipPlanes, writeCallback);
+	MeshUtility::Clip2D(vertices, uv, triangleCount, vertexStride, clipPlanes, writeCallback);
 }

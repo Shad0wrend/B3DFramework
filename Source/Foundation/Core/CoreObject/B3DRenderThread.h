@@ -32,10 +32,10 @@ namespace b3d
 		/**
 		 * Queues a new command that will be added to the render thread command queue.
 		 *
-		 * @param	commandCallback			Command to queue.
-		 * @param	debugName				Optional name for identifying the command more easily.
-		 * @param	waitUntilComplete		If true, the caller will block until the command finishes executing.
-		 * @param	extraDebugInformation	Additional information for debugging (e.g. associated object name).
+		 * @param commandCallback			Command to queue.
+		 * @param debugName					Optional name for identifying the command more easily.
+		 * @param waitUntilComplete			If true, the caller will block until the command finishes executing.
+		 * @param extraDebugInformation		Additional information for debugging (e.g. associated object name).
 		 *
 		 * @note	Thread safe.
 		 */

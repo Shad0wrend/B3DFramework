@@ -55,7 +55,7 @@ namespace b3d
 
 	protected:
 		/** Marks the contents as dirty, causing it to sync with the render thread object. */
-		virtual void MarkRenderProxyDirty(ShaderVariationDirtyFlags flag) {}
+		virtual void MarkRenderProxyDirty(ShaderVariationDirtyFlags flags) {}
 
 		/** @copydoc CoreObject::SyncToRenderProxy */
 		virtual void SyncToRenderProxy() {}
@@ -78,7 +78,7 @@ namespace b3d
 		virtual ~TTechnique() = default;
 
 		/**	Returns a pass with the specified index. */
-		SPtr<PassType> GetPass(u32 index) const;
+		SPtr<PassType> GetPass(u32 passIndex) const;
 
 		/**	Returns total number of passes. */
 		u32 GetPassCount() const;
@@ -136,10 +136,10 @@ namespace b3d
 		/**
 		 * Creates a new variation.
 		 *
-		 * @param		owner				Shader that owns the variation.
-		 * @param		language			Shading language used by the variation. The engine will not use this variation unless this language is supported by the render backend.
-		 * @param		variationParameters	Variation parameters used for compiling this variation.
-		 * @param		precompiledData		Optional set of precompiled variation data. If not provided, you must manually call Compile() on the variation before use.
+		 * @param owner				Shader that owns the variation.
+		 * @param language			Shading language used by the variation. The engine will not use this variation unless this language is supported by the render backend.
+		 * @param variationParameters	Variation parameters used for compiling this variation.
+		 * @param precompiledData		Optional set of precompiled variation data. If not provided, you must manually call Compile() on the variation before use.
 		 * @return							Newly creted variation.
 		 */
 		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
@@ -147,7 +147,7 @@ namespace b3d
 	protected:
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-		void MarkRenderProxyDirty(ShaderVariationDirtyFlags flag) override;
+		void MarkRenderProxyDirty(ShaderVariationDirtyFlags flags) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void SyncToRenderProxy() override;
 

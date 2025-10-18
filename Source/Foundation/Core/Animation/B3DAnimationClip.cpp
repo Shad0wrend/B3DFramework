@@ -174,9 +174,9 @@ void AnimationClip::BuildNameMapping()
 {
 	mNameMapping.clear();
 
-	auto registerEntries = [&](auto& curve, CurveType type)
+	auto fnRegisterEntries = [&](auto& curve, CurveType type)
 	{
-		u32 typeIdx = (u32)type;
+		u32 typeIndex = (u32)type;
 
 		for(u32 i = 0; i < (u32)curve.size(); i++)
 		{
@@ -188,16 +188,16 @@ void AnimationClip::BuildNameMapping()
 				u32* indices = mNameMapping[entry.Name].data();
 				memset(indices, -1, sizeof(u32) * (int)CurveType::Count);
 
-				indices[typeIdx] = i;
+				indices[typeIndex] = i;
 			}
 			else
-				mNameMapping[entry.Name][typeIdx] = i;
+				mNameMapping[entry.Name][typeIndex] = i;
 		}
 	};
 
-	registerEntries(mCurves->Position, CurveType::Position);
-	registerEntries(mCurves->Rotation, CurveType::Rotation);
-	registerEntries(mCurves->Scale, CurveType::Scale);
+	fnRegisterEntries(mCurves->Position, CurveType::Position);
+	fnRegisterEntries(mCurves->Rotation, CurveType::Rotation);
+	fnRegisterEntries(mCurves->Scale, CurveType::Scale);
 
 	// Generic and morph curves
 	{
@@ -206,13 +206,13 @@ void AnimationClip::BuildNameMapping()
 		{
 			auto& entry = curve[i];
 
-			u32 typeIdx;
+			u32 typeIndex;
 			if(entry.Flags.IsSet(AnimationCurveFlag::MorphFrame))
-				typeIdx = (u32)CurveType::MorphFrame;
+				typeIndex = (u32)CurveType::MorphFrame;
 			else if(entry.Flags.IsSet(AnimationCurveFlag::MorphWeight))
-				typeIdx = (u32)CurveType::MorphWeight;
+				typeIndex = (u32)CurveType::MorphWeight;
 			else
-				typeIdx = (u32)CurveType::Generic;
+				typeIndex = (u32)CurveType::Generic;
 
 			auto iterFind = mNameMapping.find(entry.Name);
 			if(iterFind == mNameMapping.end())
@@ -220,10 +220,10 @@ void AnimationClip::BuildNameMapping()
 				u32* indices = mNameMapping[entry.Name].data();
 				memset(indices, -1, sizeof(u32) * (int)CurveType::Count);
 
-				indices[typeIdx] = i;
+				indices[typeIndex] = i;
 			}
 			else
-				mNameMapping[entry.Name][typeIdx] = i;
+				mNameMapping[entry.Name][typeIndex] = i;
 		}
 	}
 }
@@ -237,8 +237,8 @@ void AnimationClip::Initialize()
 
 void AnimationClip::GetBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const
 {
-	u32 numBones = skeleton.GetBoneCount();
-	for(u32 i = 0; i < numBones; i++)
+	u32 boneCount = skeleton.GetBoneCount();
+	for(u32 i = 0; i < boneCount; i++)
 	{
 		const SkeletonBoneInfo& boneInfo = skeleton.GetBoneInfo(i);
 
@@ -261,20 +261,20 @@ void AnimationClip::GetCurveMapping(const String& name, AnimationCurveMapping& m
 		mapping = { (u32)-1, (u32)-1, (u32)-1 };
 }
 
-void AnimationClip::GetMorphMapping(const String& name, u32& frameIdx, u32& weightIdx) const
+void AnimationClip::GetMorphMapping(const String& name, u32& frameIndex, u32& weightIndex) const
 {
 	auto iterFind = mNameMapping.find(name);
 	if(iterFind != mNameMapping.end())
 	{
 		const u32* indices = iterFind->second.data();
 
-		frameIdx = indices[(u32)CurveType::MorphFrame];
-		weightIdx = indices[(u32)CurveType::MorphWeight];
+		frameIndex = indices[(u32)CurveType::MorphFrame];
+		weightIndex = indices[(u32)CurveType::MorphWeight];
 	}
 	else
 	{
-		frameIdx = (u32)-1;
-		weightIdx = (u32)-1;
+		frameIndex = (u32)-1;
+		weightIndex = (u32)-1;
 	}
 }
 

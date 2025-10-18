@@ -172,11 +172,11 @@ void OAAudioClip::GetSamples(u8* samples, u32 offset, u32 count) const
 	B3D_LOG(Warning, RenderBackend, "Attempting to read samples while sample data is not available.");
 }
 
-SPtr<DataStream> OAAudioClip::GetSourceStream(u32& size)
+SPtr<DataStream> OAAudioClip::GetSourceStream(u32& outSize)
 {
 	Lock lock(mMutex);
 
-	size = mSourceStreamSize;
+	outSize = mSourceStreamSize;
 	mSourceStreamData->Seek(0);
 
 	return mSourceStreamData;

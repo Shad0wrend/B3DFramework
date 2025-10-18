@@ -17,7 +17,6 @@
 #include "Components/B3DCamera.h"
 #include "Profiling/B3DProfilerGPU.h"
 
-using namespace std::placeholders;
 
 using namespace b3d;
 
@@ -136,7 +135,7 @@ void DebugDraw::UpdateInternal()
 	Vector<MeshRenderData> proxyData = CreateMeshProxyData(mActiveMeshes);
 
 	render::DebugDrawRenderer* renderer = mRenderer.get();
-	GetRenderThread().PostCommand(std::bind(&render::DebugDrawRenderer::UpdateData, renderer, proxyData), "DebugDrawRenderer::UpdateData");
+	GetRenderThread().PostCommand([renderer, proxyData]() { renderer->UpdateData(proxyData); }, "DebugDrawRenderer::UpdateData");
 }
 
 namespace b3d { namespace render
@@ -154,12 +153,12 @@ void DebugDrawMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer
 	GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
 
-DebugDrawMat* DebugDrawMat::GetVariation(DebugDrawMaterial mat)
+DebugDrawMat* DebugDrawMat::GetVariation(DebugDrawMaterial material)
 {
-	if(mat == DebugDrawMaterial::Solid)
+	if(material == DebugDrawMaterial::Solid)
 		return Get(GetVariation<true, false, false>());
 
-	if(mat == DebugDrawMaterial::Wire)
+	if(material == DebugDrawMaterial::Wire)
 		return Get(GetVariation<false, false, true>());
 
 	return Get(GetVariation<false, true, false>());
@@ -202,8 +201,8 @@ void DebugDrawRenderer::Render(const Camera& camera, const RendererViewContext& 
 
 	for(auto& entry : mMeshes)
 	{
-		DebugDrawMat* mat = DebugDrawMat::GetVariation(entry.Type);
-		mat->Execute(*viewContext.CommandBuffer, mParamBuffer, entry.Mesh, entry.SubMesh);
+		DebugDrawMat* material = DebugDrawMat::GetVariation(entry.Type);
+		material->Execute(*viewContext.CommandBuffer, mParamBuffer, entry.Mesh, entry.SubMesh);
 	}
 }
 }}

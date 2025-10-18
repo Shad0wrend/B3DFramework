@@ -31,8 +31,8 @@ namespace b3d
 		/**
 		 * Returns the string table with the specified id. If the table doesn't exist new one is created.
 		 *
-		 * @param[in]	id		Identifier of the string table.
-		 * @return				String table with the specified identifier.
+		 * @param	id		Identifier of the string table.
+		 * @return			String table with the specified identifier.
 		 */
 		B3D_SCRIPT_EXPORT()
 		HStringTable GetTable(u32 id);
@@ -40,7 +40,7 @@ namespace b3d
 		/**
 		 * Removes the string table with the specified id.
 		 *
-		 * @param[in]	id		Identifier of the string table.
+		 * @param	id		Identifier of the string table.
 		 */
 		B3D_SCRIPT_EXPORT()
 		void RemoveTable(u32 id);
@@ -48,8 +48,8 @@ namespace b3d
 		/**
 		 * Registers a new string table or replaces an old one at the specified id.
 		 *
-		 * @param[in]	id		Identifier of the string table.
-		 * @param[in]	table	New string table to assign to the specified identifier.
+		 * @param	id		Identifier of the string table.
+		 * @param	table	New string table to assign to the specified identifier.
 		 */
 		B3D_SCRIPT_EXPORT()
 		void SetTable(u32 id, const HStringTable& table);

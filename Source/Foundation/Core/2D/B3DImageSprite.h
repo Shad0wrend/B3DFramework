@@ -59,9 +59,9 @@ namespace b3d
 
 		/**
 		 * Calculates the required UV scale in order for a texture of size @p sourceSize to be placed on the surface
-		 * of @p destSize size, while respecting the chosen scale mode.
+		 * of @p destinationSize size, while respecting the chosen scale mode.
 		 */
-		static Vector2 GetTextureUvScale(Size2I sourceSize, Size2I destSize, TextureScaleMode scaleMode);
+		static Vector2 GetTextureUvScale(Size2I sourceSize, Size2I destinationSize, TextureScaleMode scaleMode);
 
 	private:
 		/**	Clears internal geometry buffers. */

@@ -2047,7 +2047,7 @@ bool PixelUtility::IsDepth(PixelFormat format)
 	return (PixelUtility::GetFlags(format) & PFF_DEPTH) > 0;
 }
 
-bool PixelUtility::CheckFormat(PixelFormat& format, TextureType texType, int usage)
+bool PixelUtility::CheckFormat(PixelFormat& format, TextureType textureType, int usage)
 {
 	// First check just the usage since it's the most limiting factor
 
@@ -2082,7 +2082,7 @@ bool PixelUtility::CheckFormat(PixelFormat& format, TextureType texType, int usa
 	}
 
 	//// Sampled texture support depends on texture type
-	switch(texType)
+	switch(textureType)
 	{
 	case TEX_TYPE_1D:
 		{

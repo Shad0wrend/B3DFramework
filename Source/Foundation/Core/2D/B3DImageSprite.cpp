@@ -51,15 +51,15 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 	SpriteRenderElement& renderElement = renderElementData.RenderElement;
 	{
 		const u32 existingQuadCount = renderElement.VertexCount / 4;
-		u32 newNumQuads = quadCount;
-		if(newNumQuads != existingQuadCount)
+		u32 newQuadCount = quadCount;
+		if(newQuadCount != existingQuadCount)
 		{
 			if(renderElement.VertexPositions != nullptr) B3DDeleteMultiple(renderElement.VertexPositions, renderElement.VertexCount);
 			if(renderElement.VertexUVs != nullptr) B3DDeleteMultiple(renderElement.VertexUVs, renderElement.VertexCount);
 			if(renderElement.Indices != nullptr) B3DDeleteMultiple(renderElement.Indices, renderElement.IndexCount);
 
-			renderElement.VertexCount = newNumQuads * 4;
-			renderElement.IndexCount = newNumQuads * 6;
+			renderElement.VertexCount = newQuadCount * 4;
+			renderElement.IndexCount = newQuadCount * 6;
 			renderElement.VertexPositions = B3DNewMultiple<Vector2>(renderElement.VertexCount);
 			renderElement.VertexUVs = B3DNewMultiple<Vector2>(renderElement.VertexCount);
 			renderElement.Indices = B3DNewMultiple<u32>(renderElement.IndexCount);
@@ -91,14 +91,14 @@ void ImageSprite::Update(const ImageSpriteInformation& information, u64 groupId)
 		renderElement.MaterialInformation = &renderElementData.MaterialInformation;
 	}
 
-	for(u32 i = 0; i < quadCount; i++)
+	for(u32 quadIndex = 0; quadIndex < quadCount; quadIndex++)
 	{
-		renderElement.Indices[i * 6 + 0] = i * 4 + 0;
-		renderElement.Indices[i * 6 + 1] = i * 4 + 1;
-		renderElement.Indices[i * 6 + 2] = i * 4 + 2;
-		renderElement.Indices[i * 6 + 3] = i * 4 + 1;
-		renderElement.Indices[i * 6 + 4] = i * 4 + 3;
-		renderElement.Indices[i * 6 + 5] = i * 4 + 2;
+		renderElement.Indices[quadIndex * 6 + 0] = quadIndex * 4 + 0;
+		renderElement.Indices[quadIndex * 6 + 1] = quadIndex * 4 + 1;
+		renderElement.Indices[quadIndex * 6 + 2] = quadIndex * 4 + 2;
+		renderElement.Indices[quadIndex * 6 + 3] = quadIndex * 4 + 1;
+		renderElement.Indices[quadIndex * 6 + 4] = quadIndex * 4 + 3;
+		renderElement.Indices[quadIndex * 6 + 5] = quadIndex * 4 + 2;
 	}
 
 	Vector2I offset = GetAnchorOffset(information.Anchor, information.Size.Width, information.Size.Height);
@@ -292,47 +292,47 @@ void ImageSprite::ClearMesh()
 	UpdateBounds();
 }
 
-Vector2 ImageSprite::GetTextureUvScale(Size2I sourceSize, Size2I destSize, TextureScaleMode scaleMode)
+Vector2 ImageSprite::GetTextureUvScale(Size2I sourceSize, Size2I destinationSize, TextureScaleMode scaleMode)
 {
 	Vector2 uvScale = Vector2(1.0f, 1.0f);
 
 	switch(scaleMode)
 	{
 	case TextureScaleMode::ScaleToFit:
-		uvScale.X = (float)sourceSize.Width / (float)destSize.Width;
-		uvScale.Y = (float)sourceSize.Height / (float)destSize.Height;
+		uvScale.X = (float)sourceSize.Width / (float)destinationSize.Width;
+		uvScale.Y = (float)sourceSize.Height / (float)destinationSize.Height;
 
 		if(uvScale.X > uvScale.Y)
 		{
 			uvScale.X = 1.0f;
-			uvScale.Y = ((float)destSize.Height * ((float)sourceSize.Height / (float)sourceSize.Width)) / (float)destSize.Width;
+			uvScale.Y = ((float)destinationSize.Height * ((float)sourceSize.Height / (float)sourceSize.Width)) / (float)destinationSize.Width;
 		}
 		else
 		{
-			uvScale.X = ((float)destSize.Width * ((float)sourceSize.Width / (float)sourceSize.Height)) / (float)destSize.Height;
+			uvScale.X = ((float)destinationSize.Width * ((float)sourceSize.Width / (float)sourceSize.Height)) / (float)destinationSize.Height;
 			uvScale.Y = 1.0f;
 		}
 
 		break;
 	case TextureScaleMode::CropToFit:
-		uvScale.X = (float)sourceSize.Width / (float)destSize.Width;
-		uvScale.Y = (float)sourceSize.Height / (float)destSize.Height;
+		uvScale.X = (float)sourceSize.Width / (float)destinationSize.Width;
+		uvScale.Y = (float)sourceSize.Height / (float)destinationSize.Height;
 
 		if(uvScale.X > uvScale.Y)
 		{
-			uvScale.X = ((float)destSize.Width * ((float)sourceSize.Width / (float)sourceSize.Height)) / (float)destSize.Height;
+			uvScale.X = ((float)destinationSize.Width * ((float)sourceSize.Width / (float)sourceSize.Height)) / (float)destinationSize.Height;
 			uvScale.Y = 1.0f;
 		}
 		else
 		{
 			uvScale.X = 1.0f;
-			uvScale.Y = ((float)destSize.Height * ((float)sourceSize.Height / (float)sourceSize.Width)) / (float)destSize.Width;
+			uvScale.Y = ((float)destinationSize.Height * ((float)sourceSize.Height / (float)sourceSize.Width)) / (float)destinationSize.Width;
 		}
 
 		break;
 	case TextureScaleMode::RepeatToFit:
-		uvScale.X = (float)destSize.Width / (float)sourceSize.Width;
-		uvScale.Y = (float)destSize.Height / (float)sourceSize.Height;
+		uvScale.X = (float)destinationSize.Width / (float)sourceSize.Width;
+		uvScale.Y = (float)destinationSize.Height / (float)sourceSize.Height;
 		break;
 	case TextureScaleMode::StretchToFit:
 		// Do nothing, (1.0f, 1.0f) is the default UV scale

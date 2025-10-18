@@ -26,8 +26,8 @@ namespace b3d
 		 * Creates a new localized string with the specified identifier. If the identifier doesn't previously exist in the
 		 * string table, identifier value will also be used for initializing the default language version of the string.
 		 *
-		 * @param[in]	identifier		String you can use for later referencing the localized string.
-		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
+		 * @param	identifier		String you can use for later referencing the localized string.
+		 * @param	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		B3D_SCRIPT_EXPORT()
 		explicit HString(const String& identifier, u32 stringTableId = 0);
@@ -36,10 +36,10 @@ namespace b3d
 		 * Creates a new localized string with the specified identifier and sets the default language version of the
 		 * string. If a string with that identifier already exists default language string will be updated.
 		 *
-		 * @param[in]	identifier		String you can use for later referencing the localized string.
-		 * @param[in]	defaultString	Default string to assign to the specified identifier. Language to which it will be
-		 *								assigned depends on the StringTable::DEFAULT_LANGUAGE value.
-		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
+		 * @param	identifier		String you can use for later referencing the localized string.
+		 * @param	defaultString	Default string to assign to the specified identifier. Language to which it will be
+		 *							assigned depends on the StringTable::DEFAULT_LANGUAGE value.
+		 * @param	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		B3D_SCRIPT_EXPORT()
 		explicit HString(const String& identifier, const String& defaultString, u32 stringTableId = 0);
@@ -47,7 +47,7 @@ namespace b3d
 		/**
 		 * Creates a new empty localized string.
 		 *
-		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
+		 * @param	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		B3D_SCRIPT_EXPORT()
 		HString(u32 stringTableId);
@@ -70,10 +70,13 @@ namespace b3d
 		 * Sets a value of a string parameter. Parameters are specified as bracketed values within the string itself
 		 * (for example {0}, {1}) etc. Use ^ as an escape character.
 		 *
+		 * @param	index	Index of the parameter to set.
+		 * @param	value	Value to assign to the parameter.
+		 *
 		 * @note	This is useful for strings that have dynamically changing values, like numbers, embedded in them.
 		 */
 		B3D_SCRIPT_EXPORT()
-		void SetParameter(u32 idx, const String& value);
+		void SetParameter(u32 index, const String& value);
 
 		/** Returns an empty string. */
 		static const HString& Dummy();

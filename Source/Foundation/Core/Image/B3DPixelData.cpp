@@ -193,14 +193,14 @@ Vector<Color> PixelData::GetColors() const
 }
 
 template <class T>
-void PixelData::SetColorsInternal(const T& colors, u32 numElements)
+void PixelData::SetColorsInternal(const T& colors, u32 elementCount)
 {
 	u32 depth = mExtents.GetDepth();
 	u32 height = mExtents.GetHeight();
 	u32 width = mExtents.GetWidth();
 
-	u32 totalNumElements = width * height * depth;
-	if(numElements != totalNumElements)
+	u32 totalElementCount = width * height * depth;
+	if(elementCount != totalElementCount)
 	{
 		B3D_LOG(Error, PixelUtility, "Unable to set colors, invalid array size.");
 		return;
@@ -239,9 +239,9 @@ void PixelData::SetColors(const Vector<Color>& colors)
 	SetColorsInternal(colors, (u32)colors.size());
 }
 
-void PixelData::SetColors(Color* colors, u32 numElements)
+void PixelData::SetColors(Color* colors, u32 elementCount)
 {
-	SetColorsInternal(colors, numElements);
+	SetColorsInternal(colors, elementCount);
 }
 
 void PixelData::SetColors(const Color& color)

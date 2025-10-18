@@ -45,35 +45,35 @@ namespace b3d
 		/**
 		 * Creates the system address from a printable IP string, with an optional port component.
 		 *
-		 * @param[in]		address		Null-terminated string such as "192.0.0.1" or "2001:db8:63b3:1::3490". The string
-		 *								can optionally also contain a port component, delimited using "|", such as
-		 *								"192.0.0.1|1234".
+		 * @param		address		Null-terminated string such as "192.0.0.1" or "2001:db8:63b3:1::3490". The string
+		 *							can optionally also contain a port component, delimited using "|", such as
+		 *							"192.0.0.1|1234".
 		 */
 		NetworkAddress(const char* address);
 
 		/**
 		 * Creates the system address from a printable IP string, with a separately specified port component.
 		 *
-		 * @param[in]		ip		Null-terminated string such as "192.0.0.1" or "2001:db8:63b3:1::3490".
-		 * @param[in]		port	Port in range [0, 65535].
+		 * @param		ip		Null-terminated string such as "192.0.0.1" or "2001:db8:63b3:1::3490".
+		 * @param		port	Port in range [0, 65535].
 		 */
 		NetworkAddress(const char* ip, u16 port);
 
 		/**
 		 * Converts the network address into printable string, with an optional port component.
 		 *
-		 * @param[in]		withPort		If true the returned string will contain a port component delimited with "|"
-		 *									after the IP string. For example, "192.0.0.1|1234".
-		 * @return							Printable IP string, such as "192.0.0.1" or "2001:db8:63b3:1::3490". If
-		 *									@p withPort is true the string will also include a port component.
+		 * @param		withPort	If true the returned string will contain a port component delimited with "|"
+		 *							after the IP string. For example, "192.0.0.1|1234".
+		 * @return					Printable IP string, such as "192.0.0.1" or "2001:db8:63b3:1::3490". If
+		 *							@p withPort is true the string will also include a port component.
 		 */
 		String toString(bool withPort = false) const;
 
 		/**
 		 * Compares the IP portion of a network address with another address (ignoring port).
 		 *
-		 * @param[in]	other		Other address to compare with.
-		 * @return					True if the IP addresses match, false otherwise.
+		 * @param	other	Other address to compare with.
+		 * @return			True if the IP addresses match, false otherwise.
 		 */
 		bool compareIP(const NetworkAddress& other) const;
 
@@ -272,30 +272,30 @@ namespace b3d
 		 * Attempts to connect to a new peer. This will execute asynchronously and you must query @p receive() for a
 		 * network event of type 'ConnectingDone' to confirm the connection has been established.
 		 *
-		 * @param[in]		host		Host name of the peer to connect to. This can be an IP address or a domain name.
-		 * @param[in]		port		Port on which to try connecting to.
-		 * @return						True if the connection attempt succesfully started, and false otherwise. If false
-		 *								the relevant error message will be printed in the log.
+		 * @param	host	Host name of the peer to connect to. This can be an IP address or a domain name.
+		 * @param	port	Port on which to try connecting to.
+		 * @return			True if the connection attempt succesfully started, and false otherwise. If false
+		 *					the relevant error message will be printed in the log.
 		 */
 		bool connect(const char* host, u16 port);
 
 		/**
 		 * Disconnects from a previously connected remote peer.
 		 *
-		 * @param[in]	address		Address of the peer to disconnect from.
-		 * @param[in]	silent		If true the peer will neatly disconnect from the remote by first sending a disconnect
-		 *							message. If false the peer will immediately close the connection without notifying the
-		 *							remote.
+		 * @param	address		Address of the peer to disconnect from.
+		 * @param	silent		If true the peer will neatly disconnect from the remote by first sending a disconnect
+		 *						message. If false the peer will immediately close the connection without notifying the
+		 *						remote.
 		 */
 		void disconnect(const NetworkAddress& address, bool silent = false);
 
 		/**
 		 * Disconnects from a previously connected remote peer.
 		 *
-		 * @param[in]	id			Unique network id of the peer to disconnect from.
-		 * @param[in]	silent		If true the peer will neatly disconnect from the remote by first sending a disconnect
-		 *							message. If false the peer will immediately close the connection without notifying the
-		 *							remote.
+		 * @param	id		Unique network id of the peer to disconnect from.
+		 * @param	silent	If true the peer will neatly disconnect from the remote by first sending a disconnect
+		 *					message. If false the peer will immediately close the connection without notifying the
+		 *					remote.
 		 */
 		void disconnect(const NetworkId& id, bool silent = false);
 
@@ -304,9 +304,9 @@ namespace b3d
 
 		/**
 		 * Checks if there are any available network events and returns the first available event.
-
-		 * @return		First available event, or null of none available. Received events must be freed by calling
-		 *				free().
+		 *
+		 * @return	First available event, or null of none available. Received events must be freed by calling
+		 *			free().
 		 */
 		NetworkEvent* receive() const;
 
@@ -315,40 +315,40 @@ namespace b3d
 		/**
 		 * Attempts to send some data to the specified remote peer.
 		 *
-		 * @param[in]	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *							the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *							reserved).
-		 * @param[in]	destination	Network address to send the message to. You must be currently connected to the
-		 *							peer at the specified address.
-		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
+		 * @param	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
+		 *						the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
+		 *						reserved).
+		 * @param	destination	Network address to send the message to. You must be currently connected to the
+		 *						peer at the specified address.
+		 * @param	channel		Channel determining reliability, ordering and priority of the sent data.
 		 *
-		 * @note		Whenever possible prefer to use the variant of this method that accepts NetworkId for the
-		 *				@p destination parameter, as it is faster.
+		 * @note	Whenever possible prefer to use the variant of this method that accepts NetworkId for the
+		 *			destination parameter, as it is faster.
 		 */
 		void send(const PacketData& data, const NetworkAddress& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
 
 		/**
 		 * Attempts to send some data to the specified remote peer.
 		 *
-		 * @param[in]	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *							the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *							reserved).
-		 * @param[in]	destination	Network id of the peer to send the message to.
-		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
+		 * @param	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
+		 *						the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
+		 *						reserved).
+		 * @param	destination	Network id of the peer to send the message to.
+		 * @param	channel		Channel determining reliability, ordering and priority of the sent data.
 		 */
 		void send(const PacketData& data, const NetworkId& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
 
 		/**
 		 * Broadcasts some data to all currently connected peers.
 		 *
-		 * @param[in]	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *							the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *							reserved).
-		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
+		 * @param	data	Data to send in the form of raw bytes. The first byte of your message /must/ contain
+		 *					the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
+		 *					reserved).
+		 * @param	channel	Channel determining reliability, ordering and priority of the sent data.
 		 */
 		void broadcast(const PacketData& data, const PacketChannel& channel);
 
-		/** Frees a network event received though a call to @p receive(). */
+		/** Frees a network event received though a call to receive(). */
 		void free(NetworkEvent* event);
 
 		// TODO - Other methods needed:

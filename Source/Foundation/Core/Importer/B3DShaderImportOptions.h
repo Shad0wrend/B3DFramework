@@ -19,8 +19,8 @@ namespace b3d
 		/**
 		 * Sets a define and its value. Replaces an existing define if one already exists with the provided name.
 		 *
-		 * @param[in]	define		Name of the define.
-		 * @param[in]	value		Value to assign to the define.
+		 * @param	define		Name of the define.
+		 * @param	value		Value to assign to the define.
 		 */
 		B3D_SCRIPT_EXPORT()
 
@@ -32,18 +32,18 @@ namespace b3d
 		/**
 		 * Checks if the define exists and returns its value if it does.
 		 *
-		 * @param[in]	define		Name of the define to get the value for.
-		 * @param[out]	value		value of the define. Only defined if the method returns true.
-		 * @returns					True if the define was found, false otherwise.
+		 * @param	define		Name of the define to get the value for.
+		 * @param	value		value of the define. Only defined if the method returns true.
+		 * @return				True if the define was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
 
 		bool GetDefine(const String& define, String& value) const
 		{
-			auto iterFind = mDefines.find(define);
-			if(iterFind != mDefines.end())
+			auto findIter = mDefines.find(define);
+			if(findIter != mDefines.end())
 			{
-				value = iterFind->second;
+				value = findIter->second;
 				return true;
 			}
 
@@ -53,21 +53,21 @@ namespace b3d
 		/**
 		 * Checks if the provided define exists.
 		 *
-		 * @param[in]	define		Name of the define to check.
-		 * @returns					True if the define was found, false otherwise.
+		 * @param	define		Name of the define to check.
+		 * @return				True if the define was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
 
 		bool HasDefine(const String& define) const
 		{
-			auto iterFind = mDefines.find(define);
-			return iterFind != mDefines.end();
+			auto findIter = mDefines.find(define);
+			return findIter != mDefines.end();
 		}
 
 		/**
 		 * Unregisters a previously set define.
 		 *
-		 * @param[in]	define		Name of the define to unregister.
+		 * @param	define		Name of the define to unregister.
 		 */
 		B3D_SCRIPT_EXPORT()
 

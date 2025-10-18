@@ -70,7 +70,7 @@ namespace b3d
 		/**
 		 * Sets a cursor icon. Uses one of the manually registered icons.
 		 *
-		 * @param[in]	name		The name to identify the cursor, one set previously by calling setCursorIcon().
+		 * @param	name	The name to identify the cursor, one set previously by calling setCursorIcon().
 		 */
 		B3D_SCRIPT_EXPORT()
 		void SetCursor(const String& name);
@@ -78,10 +78,10 @@ namespace b3d
 		/**
 		 * Registers a new custom cursor icon you can then set by calling "setCursor".
 		 *
-		 * @param[in]	name		The name to identify the cursor.
-		 * @param[in]	pixelData	Cursor image data.
-		 * @param[in]	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
-		 *							Arrow cursor).
+		 * @param	name		The name to identify the cursor.
+		 * @param	pixelData	Cursor image data.
+		 * @param	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
+		 *						Arrow cursor).
 		 *
 		 * @note
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the
@@ -93,10 +93,10 @@ namespace b3d
 		/**
 		 * Registers a new custom cursor icon you can then set by calling setCursor().
 		 *
-		 * @param[in]	type		One of the built-in cursor types.
-		 * @param[in] 	pixelData	Cursor image data.
-		 * @param[in]	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
-		 *							Arrow cursor).
+		 * @param	type		One of the built-in cursor types.
+		 * @param	pixelData	Cursor image data.
+		 * @param	hotSpot		Offset on the cursor image to where the actual input happens (for example tip of the
+		 *						Arrow cursor).
 		 *
 		 * @note
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the

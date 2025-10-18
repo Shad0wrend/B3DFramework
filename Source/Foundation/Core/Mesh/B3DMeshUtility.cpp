@@ -530,7 +530,7 @@ class TriangleClipper2D : public TriangleClipperBase
 {
 public:
 	/** @copydoc MeshUtility::Clip2D */
-	void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+	void Clip(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
 
 private:
 	/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
@@ -541,29 +541,29 @@ private:
 	Vector2 uvBuffer[kBufferSize];
 };
 
-void TriangleClipper2D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+void TriangleClipper2D::Clip(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
 {
 	// Add vertices
-	u32 numVertices = numTris * 3;
-	mesh.Verts.resize(numVertices);
+	u32 vertexCount = triangleCount * 3;
+	mesh.Verts.resize(vertexCount);
 
 	if(uvs != nullptr)
 	{
-		for(u32 i = 0; i < numVertices; i++)
+		for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 		{
-			ClipVert& clipVert = mesh.Verts[i];
-			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
+			ClipVert& clipVert = mesh.Verts[vertexIndex];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * vertexIndex);
 
 			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
-			clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
+			clipVert.Uv = *(Vector2*)(uvs + vertexStride * vertexIndex);
 		}
 	}
 	else
 	{
-		for(u32 i = 0; i < numVertices; i++)
+		for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 		{
-			ClipVert& clipVert = mesh.Verts[i];
-			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
+			ClipVert& clipVert = mesh.Verts[vertexIndex];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * vertexIndex);
 
 			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
 		}
@@ -571,9 +571,9 @@ void TriangleClipper2D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStrid
 
 	AddEdgesAndFaces();
 
-	for(int i = 0; i < 4; i++)
+	for(int planeIndex = 0; planeIndex < 4; planeIndex++)
 	{
-		if(ClipByPlane(clipPlanes[i]) == -1)
+		if(ClipByPlane(clipPlanes[planeIndex]) == -1)
 			return;
 	}
 
@@ -630,7 +630,7 @@ class TriangleClipper3D : public TriangleClipperBase
 {
 public:
 	/** @copydoc MeshUtility::Clip3D */
-	void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
+	void Clip(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
 
 private:
 	/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
@@ -641,28 +641,28 @@ private:
 	Vector2 uvBuffer[kBufferSize];
 };
 
-void TriangleClipper3D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
+void TriangleClipper3D::Clip(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
 {
 	// Add vertices
-	u32 numVertices = numTris * 3;
-	mesh.Verts.resize(numVertices);
+	u32 vertexCount = triangleCount * 3;
+	mesh.Verts.resize(vertexCount);
 
 	if(uvs != nullptr)
 	{
-		for(u32 i = 0; i < numVertices; i++)
+		for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 		{
-			ClipVert& clipVert = mesh.Verts[i];
+			ClipVert& clipVert = mesh.Verts[vertexIndex];
 
-			clipVert.Point = *(Vector3*)(vertices + vertexStride * i);
-			clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
+			clipVert.Point = *(Vector3*)(vertices + vertexStride * vertexIndex);
+			clipVert.Uv = *(Vector2*)(uvs + vertexStride * vertexIndex);
 		}
 	}
 	else
 	{
-		for(u32 i = 0; i < numVertices; i++)
+		for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 		{
-			ClipVert& clipVert = mesh.Verts[i];
-			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
+			ClipVert& clipVert = mesh.Verts[vertexIndex];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * vertexIndex);
 
 			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
 		}
@@ -670,9 +670,9 @@ void TriangleClipper3D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStrid
 
 	AddEdgesAndFaces();
 
-	for(int i = 0; i < 4; i++)
+	for(int planeIndex = 0; planeIndex < 4; planeIndex++)
 	{
-		if(ClipByPlane(clipPlanes[i]) == -1)
+		if(ClipByPlane(clipPlanes[planeIndex]) == -1)
 			return;
 	}
 
@@ -720,209 +720,209 @@ void TriangleClipper3D::ConvertToMesh(const std::function<void(Vector3*, Vector2
 	B3DClearAllocatorFrame();
 }
 
-void MeshUtility::CalculateNormals(Vector3* vertices, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, u32 indexSize)
+void MeshUtility::CalculateNormals(Vector3* vertices, u8* indices, u32 vertexCount, u32 indexCount, Vector3* normals, u32 indexSize)
 {
-	u32 numFaces = numIndices / 3;
+	u32 faceCount = indexCount / 3;
 
-	Vector3* faceNormals = B3DNewMultiple<Vector3>(numFaces);
-	for(u32 i = 0; i < numFaces; i++)
+	Vector3* faceNormals = B3DNewMultiple<Vector3>(faceCount);
+	for(u32 faceIndex = 0; faceIndex < faceCount; faceIndex++)
 	{
 		u32 triangle[3];
-		memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
-		memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
-		memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
+		memcpy(&triangle[0], indices + (faceIndex * 3 + 0) * indexSize, indexSize);
+		memcpy(&triangle[1], indices + (faceIndex * 3 + 1) * indexSize, indexSize);
+		memcpy(&triangle[2], indices + (faceIndex * 3 + 2) * indexSize, indexSize);
 
 		Vector3 edgeA = vertices[triangle[1]] - vertices[triangle[0]];
 		Vector3 edgeB = vertices[triangle[2]] - vertices[triangle[0]];
-		faceNormals[i] = Vector3::Normalize(Vector3::Cross(edgeA, edgeB));
+		faceNormals[faceIndex] = Vector3::Normalize(Vector3::Cross(edgeA, edgeB));
 
 		// Note: Potentially don't normalize here in order to weigh the normals
 		// by triangle size
 	}
 
-	VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
-	for(u32 i = 0; i < numVertices; i++)
+	VertexConnectivity connectivity(indices, vertexCount, faceCount, indexSize);
+	for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 	{
-		VertexFaces& faces = connectivity.VertexFaces[i];
+		VertexFaces& faces = connectivity.VertexFaces[vertexIndex];
 
-		normals[i] = Vector3::kZero;
-		for(u32 j = 0; j < faces.NumFaces; j++)
+		normals[vertexIndex] = Vector3::kZero;
+		for(u32 faceArrayIndex = 0; faceArrayIndex < faces.NumFaces; faceArrayIndex++)
 		{
-			u32 faceIdx = faces.Faces[j];
-			normals[i] += faceNormals[faceIdx];
+			u32 faceIndex = faces.Faces[faceArrayIndex];
+			normals[vertexIndex] += faceNormals[faceIndex];
 		}
 
-		normals[i].Normalize();
+		normals[vertexIndex].Normalize();
 	}
 
-	B3DDeleteMultiple(faceNormals, numFaces);
+	B3DDeleteMultiple(faceNormals, faceCount);
 }
 
-void MeshUtility::CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* tangents, Vector3* bitangents, u32 indexSize, u32 vertexStride)
+void MeshUtility::CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 vertexCount, u32 indexCount, Vector3* tangents, Vector3* bitangents, u32 indexSize, u32 vertexStride)
 {
-	u32 numFaces = numIndices / 3;
-	u32 vec2Stride = vertexStride == 0 ? sizeof(Vector2) : vertexStride;
-	u32 vec3Stride = vertexStride == 0 ? sizeof(Vector3) : vertexStride;
+	u32 faceCount = indexCount / 3;
+	u32 vector2Stride = vertexStride == 0 ? sizeof(Vector2) : vertexStride;
+	u32 vector3Stride = vertexStride == 0 ? sizeof(Vector3) : vertexStride;
 
 	u8* positionBytes = (u8*)vertices;
 	u8* normalBytes = (u8*)normals;
 	u8* uvBytes = (u8*)uv;
 
-	Vector3* faceTangents = B3DNewMultiple<Vector3>(numFaces);
-	Vector3* faceBitangents = B3DNewMultiple<Vector3>(numFaces);
-	for(u32 i = 0; i < numFaces; i++)
+	Vector3* faceTangents = B3DNewMultiple<Vector3>(faceCount);
+	Vector3* faceBitangents = B3DNewMultiple<Vector3>(faceCount);
+	for(u32 faceIndex = 0; faceIndex < faceCount; faceIndex++)
 	{
 		u32 triangle[3];
-		memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
-		memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
-		memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
+		memcpy(&triangle[0], indices + (faceIndex * 3 + 0) * indexSize, indexSize);
+		memcpy(&triangle[1], indices + (faceIndex * 3 + 1) * indexSize, indexSize);
+		memcpy(&triangle[2], indices + (faceIndex * 3 + 2) * indexSize, indexSize);
 
-		Vector3 p0 = *(Vector3*)&positionBytes[triangle[0] * vec3Stride];
-		Vector3 p1 = *(Vector3*)&positionBytes[triangle[1] * vec3Stride];
-		Vector3 p2 = *(Vector3*)&positionBytes[triangle[2] * vec3Stride];
+		Vector3 position0 = *(Vector3*)&positionBytes[triangle[0] * vector3Stride];
+		Vector3 position1 = *(Vector3*)&positionBytes[triangle[1] * vector3Stride];
+		Vector3 position2 = *(Vector3*)&positionBytes[triangle[2] * vector3Stride];
 
-		Vector2 uv0 = *(Vector2*)&uvBytes[triangle[0] * vec2Stride];
-		Vector2 uv1 = *(Vector2*)&uvBytes[triangle[1] * vec2Stride];
-		Vector2 uv2 = *(Vector2*)&uvBytes[triangle[2] * vec2Stride];
+		Vector2 uv0 = *(Vector2*)&uvBytes[triangle[0] * vector2Stride];
+		Vector2 uv1 = *(Vector2*)&uvBytes[triangle[1] * vector2Stride];
+		Vector2 uv2 = *(Vector2*)&uvBytes[triangle[2] * vector2Stride];
 
-		Vector3 q0 = p1 - p0;
-		Vector3 q1 = p2 - p0;
+		Vector3 edge0 = position1 - position0;
+		Vector3 edge1 = position2 - position0;
 
-		Vector2 st1 = uv1 - uv0;
-		Vector2 st2 = uv2 - uv0;
+		Vector2 deltaUV1 = uv1 - uv0;
+		Vector2 deltaUV2 = uv2 - uv0;
 
-		float denom = st1.X * st2.Y - st2.X * st1.Y;
-		if(fabs(denom) >= 0e-8f)
+		float denominator = deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y;
+		if(fabs(denominator) >= 0e-8f)
 		{
-			float r = 1.0f / denom;
+			float reciprocal = 1.0f / denominator;
 
-			faceTangents[i] = (st2.Y * q0 - st1.Y * q1) * r;
-			faceBitangents[i] = (st1.X * q1 - st2.X * q0) * r;
+			faceTangents[faceIndex] = (deltaUV2.Y * edge0 - deltaUV1.Y * edge1) * reciprocal;
+			faceBitangents[faceIndex] = (deltaUV1.X * edge1 - deltaUV2.X * edge0) * reciprocal;
 
-			faceTangents[i].Normalize();
-			faceBitangents[i].Normalize();
+			faceTangents[faceIndex].Normalize();
+			faceBitangents[faceIndex].Normalize();
 		}
 
 		// Note: Potentially don't normalize here in order to weight the normals by triangle size
 	}
 
-	VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
-	for(u32 i = 0; i < numVertices; i++)
+	VertexConnectivity connectivity(indices, vertexCount, faceCount, indexSize);
+	for(u32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
 	{
-		VertexFaces& faces = connectivity.VertexFaces[i];
+		VertexFaces& faces = connectivity.VertexFaces[vertexIndex];
 
-		tangents[i] = Vector3::kZero;
-		bitangents[i] = Vector3::kZero;
+		tangents[vertexIndex] = Vector3::kZero;
+		bitangents[vertexIndex] = Vector3::kZero;
 
-		for(u32 j = 0; j < faces.NumFaces; j++)
+		for(u32 faceArrayIndex = 0; faceArrayIndex < faces.NumFaces; faceArrayIndex++)
 		{
-			u32 faceIdx = faces.Faces[j];
-			tangents[i] += faceTangents[faceIdx];
-			bitangents[i] += faceBitangents[faceIdx];
+			u32 faceIndex = faces.Faces[faceArrayIndex];
+			tangents[vertexIndex] += faceTangents[faceIndex];
+			bitangents[vertexIndex] += faceBitangents[faceIndex];
 		}
 
-		tangents[i].Normalize();
-		bitangents[i].Normalize();
+		tangents[vertexIndex].Normalize();
+		bitangents[vertexIndex].Normalize();
 
-		Vector3 normal = *(Vector3*)&normalBytes[i * vec3Stride];
+		Vector3 normal = *(Vector3*)&normalBytes[vertexIndex * vector3Stride];
 
 		// Orthonormalize
-		float dot0 = normal.Dot(tangents[i]);
-		tangents[i] -= dot0 * normal;
-		tangents[i].Normalize();
+		float dotProduct0 = normal.Dot(tangents[vertexIndex]);
+		tangents[vertexIndex] -= dotProduct0 * normal;
+		tangents[vertexIndex].Normalize();
 
-		float dot1 = tangents[i].Dot(bitangents[i]);
-		dot0 = normal.Dot(bitangents[i]);
-		bitangents[i] -= dot0 * normal + dot1 * tangents[i];
-		bitangents[i].Normalize();
+		float dotProduct1 = tangents[vertexIndex].Dot(bitangents[vertexIndex]);
+		dotProduct0 = normal.Dot(bitangents[vertexIndex]);
+		bitangents[vertexIndex] -= dotProduct0 * normal + dotProduct1 * tangents[vertexIndex];
+		bitangents[vertexIndex].Normalize();
 	}
 
-	B3DDeleteMultiple(faceTangents, numFaces);
-	B3DDeleteMultiple(faceBitangents, numFaces);
+	B3DDeleteMultiple(faceTangents, faceCount);
+	B3DDeleteMultiple(faceBitangents, faceCount);
 
 	// TODO - Consider weighing tangents by triangle size and/or edge angles
 }
 
-void MeshUtility::CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize)
+void MeshUtility::CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 vertexCount, u32 indexCount, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize)
 {
-	CalculateNormals(vertices, indices, numVertices, numIndices, normals, indexSize);
-	CalculateTangents(vertices, normals, uv, indices, numVertices, numIndices, tangents, bitangents, indexSize);
+	CalculateNormals(vertices, indices, vertexCount, indexCount, normals, indexSize);
+	CalculateTangents(vertices, normals, uv, indices, vertexCount, indexCount, tangents, bitangents, indexSize);
 }
 
-void MeshUtility::Clip2D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+void MeshUtility::Clip2D(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
 {
 	TriangleClipper2D clipper;
-	clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+	clipper.Clip(vertices, uvs, triangleCount, vertexStride, clipPlanes, writeCallback);
 }
 
-void MeshUtility::Clip3D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
+void MeshUtility::Clip3D(u8* vertices, u8* uvs, u32 triangleCount, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
 {
 	TriangleClipper3D clipper;
-	clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+	clipper.Clip(vertices, uvs, triangleCount, vertexStride, clipPlanes, writeCallback);
 }
 
-void MeshUtility::PackNormals(Vector3* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+void MeshUtility::PackNormals(Vector3* source, u8* destination, u32 count, u32 inputStride, u32 outputStride)
 {
-	u8* srcPtr = (u8*)source;
-	u8* dstPtr = destination;
-	for(u32 i = 0; i < count; i++)
+	u8* sourcePointer = (u8*)source;
+	u8* destinationPointer = destination;
+	for(u32 normalIndex = 0; normalIndex < count; normalIndex++)
 	{
-		Vector3 src = *(Vector3*)srcPtr;
+		Vector3 sourceNormal = *(Vector3*)sourcePointer;
 
-		PackedNormal& packed = *(PackedNormal*)dstPtr;
-		packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
-		packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
-		packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
+		PackedNormal& packed = *(PackedNormal*)destinationPointer;
+		packed.X = Math::Clamp((int)(sourceNormal.X * 127.5f + 127.5f), 0, 255);
+		packed.Y = Math::Clamp((int)(sourceNormal.Y * 127.5f + 127.5f), 0, 255);
+		packed.Z = Math::Clamp((int)(sourceNormal.Z * 127.5f + 127.5f), 0, 255);
 		packed.W = 128;
 
-		srcPtr += inStride;
-		dstPtr += outStride;
+		sourcePointer += inputStride;
+		destinationPointer += outputStride;
 	}
 }
 
-void MeshUtility::PackNormals(Vector4* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+void MeshUtility::PackNormals(Vector4* source, u8* destination, u32 count, u32 inputStride, u32 outputStride)
 {
-	u8* srcPtr = (u8*)source;
-	u8* dstPtr = destination;
-	for(u32 i = 0; i < count; i++)
+	u8* sourcePointer = (u8*)source;
+	u8* destinationPointer = destination;
+	for(u32 normalIndex = 0; normalIndex < count; normalIndex++)
 	{
-		Vector4 src = *(Vector4*)srcPtr;
-		PackedNormal& packed = *(PackedNormal*)dstPtr;
+		Vector4 sourceNormal = *(Vector4*)sourcePointer;
+		PackedNormal& packed = *(PackedNormal*)destinationPointer;
 
-		packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
-		packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
-		packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
-		packed.W = Math::Clamp((int)(src.W * 127.5f + 127.5f), 0, 255);
+		packed.X = Math::Clamp((int)(sourceNormal.X * 127.5f + 127.5f), 0, 255);
+		packed.Y = Math::Clamp((int)(sourceNormal.Y * 127.5f + 127.5f), 0, 255);
+		packed.Z = Math::Clamp((int)(sourceNormal.Z * 127.5f + 127.5f), 0, 255);
+		packed.W = Math::Clamp((int)(sourceNormal.W * 127.5f + 127.5f), 0, 255);
 
-		srcPtr += inStride;
-		dstPtr += outStride;
+		sourcePointer += inputStride;
+		destinationPointer += outputStride;
 	}
 }
 
 void MeshUtility::UnpackNormals(u8* source, Vector3* destination, u32 count, u32 stride)
 {
-	u8* ptr = source;
-	for(u32 i = 0; i < count; i++)
+	u8* pointer = source;
+	for(u32 normalIndex = 0; normalIndex < count; normalIndex++)
 	{
-		destination[i] = UnpackNormal(ptr);
+		destination[normalIndex] = UnpackNormal(pointer);
 
-		ptr += stride;
+		pointer += stride;
 	}
 }
 
 void MeshUtility::UnpackNormals(u8* source, Vector4* destination, u32 count, u32 stride)
 {
-	u8* ptr = source;
-	for(u32 i = 0; i < count; i++)
+	u8* pointer = source;
+	for(u32 normalIndex = 0; normalIndex < count; normalIndex++)
 	{
-		PackedNormal& packed = *(PackedNormal*)ptr;
+		PackedNormal& packed = *(PackedNormal*)pointer;
 
-		const float inv = (1.0f / 255.0f) * 2.0f;
-		destination[i].X = (packed.X * inv - 1.0f);
-		destination[i].Y = (packed.Y * inv - 1.0f);
-		destination[i].Z = (packed.Z * inv - 1.0f);
-		destination[i].W = (packed.W * inv - 1.0f);
+		const float inverse = (1.0f / 255.0f) * 2.0f;
+		destination[normalIndex].X = (packed.X * inverse - 1.0f);
+		destination[normalIndex].Y = (packed.Y * inverse - 1.0f);
+		destination[normalIndex].Z = (packed.Z * inverse - 1.0f);
+		destination[normalIndex].W = (packed.W * inverse - 1.0f);
 
-		ptr += stride;
+		pointer += stride;
 	}
 }

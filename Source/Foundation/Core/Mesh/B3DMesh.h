@@ -71,8 +71,8 @@ namespace b3d
 		/**
 		 * Updates the mesh with new data. Provided data buffer will be locked until the operation completes.
 		 *
-		 * @param[in]	data				Data of valid size and format to write to the subresource.
-		 * @param[in]	discardEntireBuffer When true the existing contents of the resource you are updating will be
+		 * @param	data				Data of valid size and format to write to the subresource.
+		 * @param	discardEntireBuffer When true the existing contents of the resource you are updating will be
 		 *									discarded. This can make the operation faster. Resources with certain buffer
 		 *									types might require this flag to be in a specific state otherwise the operation
 		 *									will fail.
@@ -86,7 +86,7 @@ namespace b3d
 		 * Reads internal mesh data to the provided previously allocated buffer. Provided data buffer will be locked until
 		 * the operation completes.
 		 *
-		 * @param[out]	data			Pre-allocated buffer of proper vertex/index format and size where data will be read
+		 * @param	data			Pre-allocated buffer of proper vertex/index format and size where data will be read
 		 *								to. You can use allocBuffer() to allocate a buffer of a correct format and size.
 		 * @return						Async operation object you can use to track operation completion.
 		 *
@@ -171,16 +171,16 @@ namespace b3d
 		/**
 		 * Creates a new empty mesh. Created mesh will have no sub-meshes.
 		 *
-		 * @param[in]	vertexCount		Number of vertices in the mesh.
-		 * @param[in]	indexCount		Number of indices in the mesh.
-		 * @param[in]	vertexDescription		Vertex description structure that describes how are vertices organized in the
+		 * @param	vertexCount		Number of vertices in the mesh.
+		 * @param	indexCount		Number of indices in the mesh.
+		 * @param	vertexDescription		Vertex description structure that describes how are vertices organized in the
 		 *								vertex buffer. When binding a mesh to the pipeline you must ensure vertex
 		 *								description at least partially matches the input description of the currently bound
 		 *								vertex GPU program.
-		 * @param[in]	flags			Flags to control various mesh options.
-		 * @param[in]	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
+		 * @param	flags			Flags to control various mesh options.
+		 * @param	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle list, where three indices represent a single triangle.
-		 * @param[in]	indexType		Size of indices, use smaller size for better performance, however be careful not to
+		 * @param	indexType		Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the size.
 		 */
 		static HMesh Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
@@ -188,7 +188,7 @@ namespace b3d
 		/**
 		 * Creates a new empty mesh.
 		 *
-		 * @param[in]	meshCreateInformation	Descriptor containing the properties of the mesh to create.
+		 * @param	meshCreateInformation	Descriptor containing the properties of the mesh to create.
 		 */
 		static HMesh Create(const MeshCreateInformation& meshCreateInformation);
 
@@ -196,8 +196,8 @@ namespace b3d
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
 		 * by the mesh data exactly. Mesh will have no sub-meshes.
 		 *
-		 * @param[in]	initialData						Vertex and index data to initialize the mesh with.
-		 * @param[in]	meshCreateInformation			Descriptor containing the properties of the mesh to create. Vertex and index count,
+		 * @param	initialData						Vertex and index data to initialize the mesh with.
+		 * @param	meshCreateInformation			Descriptor containing the properties of the mesh to create. Vertex and index count,
 		 *												vertex descriptor and index type properties are ignored and are read from provided
 		 *												mesh data instead.
 		 */
@@ -207,9 +207,9 @@ namespace b3d
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
 		 * by the mesh data exactly. Mesh will have no sub-meshes.
 		 *
-		 * @param[in]	initialData		Vertex and index data to initialize the mesh with.
-		 * @param[in]	flags			Flags to control various mesh options.
-		 * @param[in]	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
+		 * @param	initialData		Vertex and index data to initialize the mesh with.
+		 * @param	flags			Flags to control various mesh options.
+		 * @param	primitiveType	Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle strip, where three indices represent a single triangle.
 		 */
 		static HMesh Create(const SPtr<MeshData>& initialData, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST);
@@ -307,16 +307,16 @@ namespace b3d
 			/**
 			 * Creates a new empty mesh. Created mesh will have no sub-meshes.
 			 *
-			 * @param[in]	vertexCount			Number of vertices in the mesh.
-			 * @param[in]	indexCount			Number of indices in the mesh.
-			 * @param[in]	vertexDescription	Vertex description structure that describes how are vertices organized in the
+			 * @param	vertexCount			Number of vertices in the mesh.
+			 * @param	indexCount			Number of indices in the mesh.
+			 * @param	vertexDescription	Vertex description structure that describes how are vertices organized in the
 			 *									vertex buffer. When binding a mesh to the pipeline you must ensure vertex
 			 *									description at least partially matches the input description of the currently
 			 *									bound vertex GPU program.
-			 * @param[in]	flags				Flags to control various mesh options.
-			 * @param[in]	primitiveType		Determines how should the provided indices be interpreted by the pipeline. Default
+			 * @param	flags				Flags to control various mesh options.
+			 * @param	primitiveType		Determines how should the provided indices be interpreted by the pipeline. Default
 			 *									option is a triangle list, where three indices represent a single triangle.
-			 * @param[in]	indexType			Size of indices, use smaller size for better performance, however be careful not to
+			 * @param	indexType			Size of indices, use smaller size for better performance, however be careful not to
 			 *									go over the number of vertices limited by the size.
 			 */
 			static SPtr<Mesh> Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, MeshFlags flags = MeshFlag::Static, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
@@ -324,8 +324,8 @@ namespace b3d
 			/**
 			 * Creates a new empty mesh.
 			 *
-			 * @param[in]	meshCreateInformation	Descriptor containing the properties of the mesh to create.
-			 * @param[in]	deviceMask				Mask that determines on which GPU devices should the object be created on.
+			 * @param	meshCreateInformation	Descriptor containing the properties of the mesh to create.
+			 * @param	deviceMask				Mask that determines on which GPU devices should the object be created on.
 			 */
 			static SPtr<Mesh> Create(const MeshCreateInformation& meshCreateInformation);
 
@@ -333,8 +333,8 @@ namespace b3d
 			 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
 			 * by the mesh data exactly.
 			 *
-			 * @param[in]	initialData				Vertex and index data to initialize the mesh with.
-			 * @param[in]	meshCreateInformation	Descriptor containing the properties of the mesh to create. Vertex and index count,
+			 * @param	initialData				Vertex and index data to initialize the mesh with.
+			 * @param	meshCreateInformation	Descriptor containing the properties of the mesh to create. Vertex and index count,
 			 *										vertex descriptor and index type properties are ignored and are read from provided
 			 *										mesh data instead.
 			 */
@@ -344,9 +344,9 @@ namespace b3d
 			 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
 			 * by the mesh data exactly. Mesh will have no sub-meshes.
 			 *
-			 * @param[in]	initialData		Vertex and index data to initialize the mesh with.
-			 * @param[in]	flags			Flags to control various mesh options.
-			 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
+			 * @param	initialData		Vertex and index data to initialize the mesh with.
+			 * @param	flags			Flags to control various mesh options.
+			 * @param	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 			 *								option is a triangle strip, where three indices represent a single triangle.
 			 */
 			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, MeshFlags flags = MeshFlag::Static, DrawOperationType drawOp = DOT_TRIANGLE_LIST);

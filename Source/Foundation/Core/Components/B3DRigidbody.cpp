@@ -265,9 +265,9 @@ void Rigidbody::UpdateColliders()
 		}
 
 		u32 childCount = currentSO->GetChildCount();
-		for(u32 i = 0; i < childCount; i++)
+		for(u32 childIndex = 0; childIndex < childCount; childIndex++)
 		{
-			HSceneObject child = currentSO->GetChild(i);
+			HSceneObject child = currentSO->GetChild(childIndex);
 
 			if(child->HasComponent<Rigidbody>())
 				continue;
@@ -293,10 +293,10 @@ void Rigidbody::AddCollider(const HCollider& collider)
 
 void Rigidbody::RemoveCollider(const HCollider& collider)
 {
-	auto iterFind = std::find(mChildColliders.begin(), mChildColliders.end(), collider);
+	auto findIterator = std::find(mChildColliders.begin(), mChildColliders.end(), collider);
 
-	if(iterFind != mChildColliders.end())
-		mChildColliders.erase(iterFind);
+	if(findIterator != mChildColliders.end())
+		mChildColliders.erase(findIterator);
 }
 
 void Rigidbody::CheckForNestedRigibody()

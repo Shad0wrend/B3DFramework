@@ -50,7 +50,7 @@ namespace b3d
 
 		/**
 		 * Forces the listener to send out events about the specified resource immediately, instead of waiting for the
-		 * next update() call.
+		 * next Update() call.
 		 */
 		void NotifyListeners(const UUID& resourceUUID);
 

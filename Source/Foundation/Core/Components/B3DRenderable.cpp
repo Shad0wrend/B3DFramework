@@ -455,7 +455,7 @@ static SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 boneCount)
 	u8* currentWriteLocation = temporaryBuffer;
 
 	// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
-	for(u32 i = 0; i < boneCount; i++)
+	for(u32 boneIndex = 0; boneIndex < boneCount; boneIndex++)
 	{
 		memcpy(currentWriteLocation, &Matrix4::kIdentity, 12 * sizeof(float)); // Assuming row-major format
 		currentWriteLocation += 12 * sizeof(float);
@@ -581,9 +581,9 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 
 	const EvaluatedAnimationData::AnimationInfo* animInfo = nullptr;
 
-	auto iterFind = animData.Infos.find(mAnimationId);
-	if(iterFind != animData.Infos.end())
-		animInfo = &iterFind->second;
+	auto findIterator = animData.Infos.find(mAnimationId);
+	if(findIterator != animData.Infos.end())
+		animInfo = &findIterator->second;
 
 	if(animInfo == nullptr)
 		return;
@@ -600,9 +600,9 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 		const u32 bufferSize = poseInfo.BoneCount * 3 * sizeof(Vector4);
 		u8* const temporaryBuffer = (u8*)B3DStackAllocate(bufferSize);
 		u8* currentWriteLocation = temporaryBuffer;
-		for(u32 j = 0; j < poseInfo.BoneCount; j++)
+		for(u32 boneIndex = 0; boneIndex < poseInfo.BoneCount; boneIndex++)
 		{
-			const Matrix4& transform = animData.Transforms[poseInfo.BoneStartIndex + j];
+			const Matrix4& transform = animData.Transforms[poseInfo.BoneStartIndex + boneIndex];
 			memcpy(currentWriteLocation, &transform, 12 * sizeof(float)); // Assuming row-major format
 
 			currentWriteLocation += 12 * sizeof(float);

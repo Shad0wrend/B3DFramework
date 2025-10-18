@@ -33,8 +33,8 @@ namespace b3d
 		/**
 		 * Creates a new physics mesh.
 		 *
-		 * @param[in]	meshData	Index and vertices of the mesh data.
-		 * @param[in]	type		Type of the mesh. If convex the provided mesh geometry will be converted into a convex
+		 * @param	meshData	Index and vertices of the mesh data.
+		 * @param	type		Type of the mesh. If convex the provided mesh geometry will be converted into a convex
 		 *							mesh (that might not be the same as the provided mesh data).
 		 */
 		static HPhysicsMesh Create(const SPtr<MeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);

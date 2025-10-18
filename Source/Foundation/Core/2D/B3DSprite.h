@@ -78,9 +78,9 @@ namespace b3d
 		/**
 		 * Returns clipped bounds of the sprite.
 		 *
-		 * @param[in]	offset		Offset that will be added to the returned bounds.
-		 * @param[in]	clipRect	Local clip rect that is used for clipping the sprite bounds. (Clipping is done before
-		 *							the offset is applied). If clip rect width or height is zero, no clipping is done.
+		 * @param	offset		Offset that will be added to the returned bounds.
+		 * @param	clipRect	Local clip rect that is used for clipping the sprite bounds. (Clipping is done before
+		 *						the offset is applied). If clip rect width or height is zero, no clipping is done.
 		 *
 		 * @return				Clipped sprite bounds.
 		 */
@@ -106,39 +106,39 @@ namespace b3d
 		/**
 		 * Fill the pre-allocated vertex, uv and index buffers with the mesh data for the specified render element.
 		 *
-		 * @param[out]	vertices			Previously allocated buffer where to store the vertices.
-		 * @param[out]	uv					Previously allocated buffer where to store the uv coordinates.
-		 * @param[out]	indices				Previously allocated buffer where to store the indices.
-		 * @param[in]	vertexOffset		At which vertex should the method start filling the buffer.
-		 * @param[in]	indexOffset			At which index should the method start filling the buffer.
-		 * @param[in]	maxNumVerts			Total number of vertices the buffers were allocated for. Used only for memory
+		 * @param	outVertices				Previously allocated buffer where to store the vertices.
+		 * @param	outUv						Previously allocated buffer where to store the uv coordinates.
+		 * @param	outIndices				Previously allocated buffer where to store the indices.
+		 * @param	vertexOffset			At which vertex should the method start filling the buffer.
+		 * @param	indexOffset				At which index should the method start filling the buffer.
+		 * @param	maxVertexCount			Total number of vertices the buffers were allocated for. Used only for memory
 		 *									safety.
-		 * @param[in]	maxNumIndices		Total number of indices the buffers were allocated for. Used only for memory
+		 * @param	maxIndexCount			Total number of indices the buffers were allocated for. Used only for memory
 		 *									safety.
-		 * @param[in]	vertexStride		Number of bytes between of vertices in the provided vertex and uv data.
-		 * @param[in]	indexStride			Number of bytes between two indexes in the provided index data.
-		 * @param[in]	renderElementIdx	Zero-based index of the render element.
-		 * @param[in]	offset				Position offset to apply to all vertices, after clipping.
-		 * @param[in]	clipRect			Rectangle to clip the vertices to.
-		 * @param[in]	clip				Should the vertices be clipped to the provided @p clipRect.
+		 * @param	vertexStride			Number of bytes between of vertices in the provided vertex and uv data.
+		 * @param	indexStride				Number of bytes between two indexes in the provided index data.
+		 * @param	renderElementIndex		Zero-based index of the render element.
+		 * @param	offset					Position offset to apply to all vertices, after clipping.
+		 * @param	clipRect				Rectangle to clip the vertices to.
+		 * @param	clip					Should the vertices be clipped to the provided @p clipRect.
 		 *
 		 * @see		getNumRenderElements()
 		 * @see		getNumQuads()
 		 */
-		u32 FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset, u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx, const Vector2I& offset, const Area2I& clipRect, bool clip = true) const; // DEPRECATED
+		u32 FillBuffer(u8* outVertices, u8* outUv, u32* outIndices, u32 vertexOffset, u32 indexOffset, u32 maxVertexCount, u32 maxIndexCount, u32 vertexStride, u32 indexStride, u32 renderElementIndex, const Vector2I& offset, const Area2I& clipRect, bool clip = true) const; // DEPRECATED
 
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices must form axis aligned quads.
 		 *
-		 * @param[in, out]	vertices	Pointer to the start of the buffer containing vertex positions.
-		 * @param[in, out]	uv			Pointer to the start of the buffer containing UV coordinates.
-		 * @param[in]		numQuads	Number of quads in the provided buffer pointers.
-		 * @param[in]		vertStride	Number of bytes to skip when going to the next vertex. This assumes both position
+		 * @param	outVertices			Pointer to the start of the buffer containing vertex positions.
+		 * @param	outUv					Pointer to the start of the buffer containing UV coordinates.
+		 * @param	quadCount			Number of quads in the provided buffer pointers.
+		 * @param	vertexStride		Number of bytes to skip when going to the next vertex. This assumes both position
 		 *								and uv coordinates have the same stride (as they are likely pointing to the same
 		 *								buffer).
-		 * @param[in]		clipRect	Rectangle to clip the geometry to.
+		 * @param	clipRect			Rectangle to clip the geometry to.
 		 */
-		static void ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Area2I& clipRect);
+		static void ClipQuadsToRect(u8* outVertices, u8* outUv, u32 quadCount, u32 vertexStride, const Area2I& clipRect);
 
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices must form axis aligned quads.
@@ -154,19 +154,19 @@ namespace b3d
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices can be arbitrary triangles.
 		 *
-		 * @param[in]	vertices		Pointer to the start of the buffer containing vertex positions.
-		 * @param[in]	uv				Pointer to the start of the buffer containing UV coordinates. Can be null if UV is
+		 * @param	vertices			Pointer to the start of the buffer containing vertex positions.
+		 * @param	uv					Pointer to the start of the buffer containing UV coordinates. Can be null if UV is
 		 *								not needed.
-		 * @param[in]	numTris			Number of triangles in the provided buffer pointers.
-		 * @param[in]	vertStride		Number of bytes to skip when going to the next vertex. This assumes both position
+		 * @param	triangleCount		Number of triangles in the provided buffer pointers.
+		 * @param	vertexStride		Number of bytes to skip when going to the next vertex. This assumes both position
 		 *								and uv coordinates have the same stride (as they are likely pointing to the same
 		 *								buffer).
-		 * @param[in]	clipRect		Rectangle to clip the geometry to.
-		 * @param[in]	writeCallback	Callback that will be triggered when clipped vertices and UV coordinates are
+		 * @param	clipRect			Rectangle to clip the geometry to.
+		 * @param	writeCallback		Callback that will be triggered when clipped vertices and UV coordinates are
 		 *								generated and need to be stored. Vertices are always generate in tuples of three,
 		 *								forming a single triangle.
 		 */
-		static void ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+		static void ClipTrianglesToRect(u8* vertices, u8* uv, u32 triangleCount, u32 vertexStride, const Area2I& clipRect, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
 
 	protected:
 		/**	Returns the offset needed to move the sprite in order for it to respect the provided anchor. */

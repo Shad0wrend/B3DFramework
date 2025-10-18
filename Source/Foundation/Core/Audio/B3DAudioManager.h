@@ -31,7 +31,7 @@ namespace b3d
 		/**
 		 * Initializes the physics manager and a particular audio system implementation.
 		 *
-		 * @param[in]	pluginName	Name of the plugin containing a audio system implementation.
+		 * @param	pluginName	Name of the plugin containing a audio system implementation.
 		 */
 		AudioManager(const String& pluginName);
 		~AudioManager();

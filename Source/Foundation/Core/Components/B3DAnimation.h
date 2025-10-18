@@ -181,15 +181,15 @@ namespace b3d
 		 * Rebuilds the internal proxy data according to the newly assigned skeleton and clips. This should be called
 		 * whenever the animation skeleton changes.
 		 *
-		 * @param	skeleton		New skeleton to assign to the proxy.
-		 * @param	mask			Mask that filters which skeleton bones are enabled or disabled.
-		 * @param	inOutClipInfos	Potentially new clip infos that will be used for rebuilding the proxy. Once the
+		 * @param skeleton			New skeleton to assign to the proxy.
+		 * @param mask				Mask that filters which skeleton bones are enabled or disabled.
+		 * @param inOutClipInfos	Potentially new clip infos that will be used for rebuilding the proxy. Once the
 		 *							method completes clip info layout and state indices will be populated for
 		 *							further use in the Update*() methods.
-		 * @param	sceneObjects	A list of scene objects that are influenced by specific animation curves.
-		 * @param	morphShapes		Morph shapes used for per-vertex animation.
+		 * @param sceneObjects		A list of scene objects that are influenced by specific animation curves.
+		 * @param morphShapes		Morph shapes used for per-vertex animation.
 		 *
-		 * @note	Should be called from the main thread when the caller is sure the animation thread is not using it.
+		 * @note Should be called from the main thread when the caller is sure the animation thread is not using it.
 		 */
 		void RebuildFull(const SPtr<Skeleton>& skeleton, const SkeletonMask& mask, Vector<AnimationClipInfo>& inOutClipInfos, const Vector<SceneObjectMappingCurveInfo>& sceneObjects, const SPtr<MorphShapes>& morphShapes);
 
@@ -197,13 +197,13 @@ namespace b3d
 		 * Rebuilds the internal proxy data according to the newly clips. This should be called whenever clips are added
 		 * or removed, or clip layout indices change.
 		 *
-		 * @param	inOutClipInfos	New clip infos that will be used for rebuilding the proxy. Once the method
+		 * @param inOutClipInfos	New clip infos that will be used for rebuilding the proxy. Once the method
 		 *							completes clip info layout and state indices will be populated for further use
 		 *							in the Update*() methods.
-		 * @param	sceneObjects	A list of scene objects that are influenced by specific animation curves.
-		 * @param	morphShapes		Morph shapes used for per-vertex animation.
+		 * @param sceneObjects		A list of scene objects that are influenced by specific animation curves.
+		 * @param morphShapes		Morph shapes used for per-vertex animation.
 		 *
-		 * @note	Should be called from the main thread when the caller is sure the animation thread is not using it.
+		 * @note Should be called from the main thread when the caller is sure the animation thread is not using it.
 		 */
 		void RebuildClips(Vector<AnimationClipInfo>& inOutClipInfos, const Vector<SceneObjectMappingCurveInfo>& sceneObjects, const SPtr<MorphShapes>& morphShapes);
 
@@ -411,9 +411,8 @@ namespace b3d
 		/**
 		 * Retrieves detailed information about a currently playing animation clip.
 		 *
-		 * @param	clip	Clip to retrieve the information for.
-		 * @param	state	Animation clip state containing the requested information. Only valid if the method returns
-		 *					true.
+		 * @param clip		Clip to retrieve the information for.
+		 * @param state		Animation clip state containing the requested information. Only valid if the method returns true.
 		 * @return			True if the state was found (animation clip is playing), false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(GetState))
@@ -423,8 +422,8 @@ namespace b3d
 		 * Changes the state of a playing animation clip. If animation clip is not currently playing the playback is started
 		 * for the clip.
 		 *
-		 * @param	clip	Clip to change the state for.
-		 * @param	state	New state of the animation (e.g. changing the time for seeking).
+		 * @param clip		Clip to change the state for.
+		 * @param state		New state of the animation (e.g. changing the time for seeking).
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetState))
 		void SetState(const HAnimationClip& clip, AnimationClipState state);
@@ -473,7 +472,7 @@ namespace b3d
 		/**
 		 * Returns one of the animation clips influencing this animation.
 		 *
-		 * @param	index	Sequential index of the animation clip to retrieve.
+		 * @param index		Sequential index of the animation clip to retrieve.
 		 * @return			Animation clip at the specified index, or null if the index is out of range.
 		 */
 		B3D_SCRIPT_EXPORT(InteropOnly(true))
@@ -551,9 +550,9 @@ namespace b3d
 		/**
 		 * Retrieves an evaluated value for a generic curve with the specified index.
 		 *
-		 * @param	curveIndex	The curve index referencing a set of curves from the first playing animation clip.
+		 * @param curveIndex	The curve index referencing a set of curves from the first playing animation clip.
 		 *						Generic curves from all other clips are ignored.
-		 * @param	outValue	Value of the generic curve. Only valid if the method return true.
+		 * @param outValue		Value of the generic curve. Only valid if the method return true.
 		 * @return				True if the value was retrieved successfully. The method might fail if animation update
 		 *						didn't yet have a chance to execute and values are not yet available, or if the
 		 *						animation clip changed since the last frame (the last problem can be avoided by ensuring
@@ -631,14 +630,14 @@ namespace b3d
 		/**
 		 * Triggers any events between the last frame and current one.
 		 *
-		 * @param	delta			Time elapsed since the last call to this method.
+		 * @param delta Time elapsed since the last call to this method.
 		 */
 		void TriggerEvents(float delta);
 
 		/**
 		 * Updates the animation proxy object based on the currently set skeleton, playing clips and dirty flags.
 		 *
-		 * @param	timeDelta	Seconds passed since the last call to this method.
+		 * @param timeDelta Seconds passed since the last call to this method.
 		 */
 		void UpdateAnimationProxy(float timeDelta);
 

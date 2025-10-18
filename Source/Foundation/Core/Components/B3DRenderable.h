@@ -94,7 +94,7 @@ namespace b3d
 		 * Sets bounds that will be used when determining if object is visible. Only relevant if setUseOverrideBounds() is
 		 * set to true.
 		 *
-		 * @param[in]	bounds	Bounds in local space.
+		 * @param	bounds	Bounds in local space.
 		 */
 		void SetOverrideBounds(const AABox& bounds);
 

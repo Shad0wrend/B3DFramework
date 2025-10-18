@@ -15,8 +15,8 @@ PhysicsManager::PhysicsManager(const String& pluginName, bool cooking)
 	{
 		typedef PhysicsFactory* (*LoadPluginFunc)();
 
-		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("LoadPlugin");
-		mFactory = loadPluginFunc();
+		LoadPluginFunc loadPluginFunction = (LoadPluginFunc)mPlugin->GetSymbol("LoadPlugin");
+		mFactory = loadPluginFunction();
 
 		if(mFactory != nullptr)
 			mFactory->StartUp(cooking);
@@ -31,10 +31,10 @@ PhysicsManager::~PhysicsManager()
 		{
 			typedef void (*UnloadPluginFunc)(PhysicsFactory*);
 
-			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("UnloadPlugin");
+			UnloadPluginFunc unloadPluginFunction = (UnloadPluginFunc)mPlugin->GetSymbol("UnloadPlugin");
 
 			mFactory->ShutDown();
-			unloadPluginFunc(mFactory);
+			unloadPluginFunction(mFactory);
 		}
 
 		DynamicLibraryManager::Instance().Unload(mPlugin);

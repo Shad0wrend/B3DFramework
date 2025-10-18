@@ -38,16 +38,15 @@ TAsyncOp<void> Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuf
 
 	data->LockInternal();
 
-	std::function<void(const SPtr<render::Mesh>&, const SPtr<MeshData>&, bool, TAsyncOp<void>&)> func =
-		[&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& _meshData, bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
+	auto fnWriteMeshData = [&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& meshData, bool shouldDiscardEntireBuffer, TAsyncOp<void>& asyncOp)
 	{
-		mesh->WriteData(*_meshData, _discardEntireBuffer, false);
-		_meshData->UnlockInternal();
+		mesh->WriteData(*meshData, shouldDiscardEntireBuffer, false);
+		meshData->UnlockInternal();
 		asyncOp.CompleteOperation();
 	};
 
 	TAsyncOp<void> asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), data, discardEntireBuffer, asyncOp]() mutable { func(renderProxy, data, discardEntireBuffer, asyncOp); }, "Mesh::WriteData", false, GetName());
+	GetRenderThread().PostCommand([fnWriteMeshData = std::move(fnWriteMeshData), renderProxy = B3DGetRenderProxy(this), data, discardEntireBuffer, asyncOp]() mutable { fnWriteMeshData(renderProxy, data, discardEntireBuffer, asyncOp); }, "Mesh::WriteData", false, GetName());
 
 	return asyncOp;
 }
@@ -56,21 +55,20 @@ TAsyncOp<void> Mesh::ReadData(const SPtr<MeshData>& data)
 {
 	data->LockInternal();
 
-	std::function<void(const SPtr<render::Mesh>&, const SPtr<MeshData>&, TAsyncOp<void>&)> func =
-		[&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& _meshData, TAsyncOp<void>& asyncOp)
+	auto fnReadMeshData = [&](const SPtr<render::Mesh>& mesh, const SPtr<MeshData>& meshData, TAsyncOp<void>& asyncOp)
 	{
 		// TODO - Transfer buffers should be handled by the Renderer
 		const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 		if(gpuDevice != nullptr)
 			gpuDevice->SubmitTransferCommandBuffers();
 
-		mesh->ReadData(*_meshData);
-		_meshData->UnlockInternal();
+		mesh->ReadData(*meshData);
+		meshData->UnlockInternal();
 		asyncOp.CompleteOperation();
 	};
 
 	TAsyncOp<void> asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), data, asyncOp]() mutable { func(renderProxy, data, asyncOp); }, "Mesh::ReadData", false, GetName());
+	GetRenderThread().PostCommand([fnReadMeshData = std::move(fnReadMeshData), renderProxy = B3DGetRenderProxy(this), data, asyncOp]() mutable { fnReadMeshData(renderProxy, data, asyncOp); }, "Mesh::ReadData", false, GetName());
 
 	return asyncOp;
 }
@@ -290,19 +288,19 @@ void Mesh::Initialize()
 	mVertexData->VertexCount = mProperties.VertexCount;
 	mVertexData->VertexDescription = mVertexDescription;
 
-	for(u32 i = 0; i <= mVertexDescription->GetLargestStreamIndex(); i++)
+	for(u32 streamIndex = 0; streamIndex <= mVertexDescription->GetLargestStreamIndex(); streamIndex++)
 	{
-		if(!mVertexDescription->HasStream(i))
+		if(!mVertexDescription->HasStream(streamIndex))
 			continue;
 
 		GpuBufferCreateInformation vertexBufferCreateInformation;
 		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
 		vertexBufferCreateInformation.Flags = flags;
-		vertexBufferCreateInformation.Vertex.ElementSize = mVertexData->VertexDescription->GetVertexStride(i);
+		vertexBufferCreateInformation.Vertex.ElementSize = mVertexData->VertexDescription->GetVertexStride(streamIndex);
 		vertexBufferCreateInformation.Vertex.Count = mVertexData->VertexCount;
 
 		SPtr<GpuBuffer> vertexBuffer = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
-		mVertexData->SetBuffer(i, vertexBuffer);
+		mVertexData->SetBuffer(streamIndex, vertexBuffer);
 	}
 
 	// TODO Low priority - DX11 (and maybe OpenGL)? allow an optimization that allows you to set
@@ -365,7 +363,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	const u32 indexBufferIndexSize = b3d::GpuBuffer::GetIndexSize(indexBufferInformation.Index.Type);
 
 	u32 indicesSize = meshData.GetIndexBufferSize();
-	u8* srcIdxData = meshData.GetIndexData();
+	u8* sourceIndexData = meshData.GetIndexData();
 
 	if(meshData.GetIndexElementSize() != indexBufferIndexSize)
 	{
@@ -380,41 +378,41 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		B3D_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
 	}
 
-	mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
+	mIndexBuffer->WriteData(0, indicesSize, sourceIndexData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
 
 	// Vertices
-	for(u32 i = 0; i <= mVertexDescription->GetLargestStreamIndex(); i++)
+	for(u32 streamIndex = 0; streamIndex <= mVertexDescription->GetLargestStreamIndex(); streamIndex++)
 	{
-		if(!mVertexDescription->HasStream(i))
+		if(!mVertexDescription->HasStream(streamIndex))
 			continue;
 
-		if(!meshData.GetVertexDescription()->HasStream(i))
+		if(!meshData.GetVertexDescription()->HasStream(streamIndex))
 			continue;
 
 		// Ensure both have the same sized vertices
-		u32 myVertSize = mVertexDescription->GetVertexStride(i);
-		u32 otherVertSize = meshData.GetVertexDescription()->GetVertexStride(i);
-		if(myVertSize != otherVertSize)
+		u32 myVertexSize = mVertexDescription->GetVertexStride(streamIndex);
+		u32 otherVertexSize = meshData.GetVertexDescription()->GetVertexStride(streamIndex);
+		if(myVertexSize != otherVertexSize)
 		{
 			B3D_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
 								"Needed: {1}. Got: {2}",
-				   i, myVertSize, otherVertSize);
+				   streamIndex, myVertexSize, otherVertexSize);
 
 			continue;
 		}
 
-		SPtr<GpuBuffer> vertexBuffer = mVertexData->GetBuffer(i);
+		SPtr<GpuBuffer> vertexBuffer = mVertexData->GetBuffer(streamIndex);
 
-		u32 bufferSize = meshData.GetStreamSize(i);
-		u8* srcVertBufferData = meshData.GetStreamData(i);
+		u32 bufferSize = meshData.GetStreamSize(streamIndex);
+		u8* sourceVertexBufferData = meshData.GetStreamData(streamIndex);
 
 		if(bufferSize > vertexBuffer->GetTotalSize())
 		{
 			bufferSize = vertexBuffer->GetTotalSize();
-			B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
+			B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", streamIndex);
 		}
 
-		vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
+		vertexBuffer->WriteData(0, bufferSize, sourceVertexBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
 	}
 
 	if(performUpdateBounds)
@@ -442,7 +440,7 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 			return;
 		}
 
-		u32 idxElemSize = indexBufferIndexSize;
+		u32 indexElementSize = indexBufferIndexSize;
 
 		u8* indices = nullptr;
 		if(indexType == IT_16BIT)
@@ -450,9 +448,9 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 		else
 			indices = (u8*)meshData.GetIndices32();
 
-		u32 numIndicesToCopy = std::min(mProperties.IndexCount, meshData.GetIndexCount());
+		u32 indexCountToCopy = std::min(mProperties.IndexCount, meshData.GetIndexCount());
 
-		u32 indicesSize = numIndicesToCopy * idxElemSize;
+		u32 indicesSize = indexCountToCopy * indexElementSize;
 		if(indicesSize > meshData.GetIndexBufferSize())
 		{
 			B3D_LOG(Error, Mesh, "Provided buffer doesn't have enough space to store mesh indices.");
@@ -466,42 +464,42 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 	{
 		auto vertexBuffers = mVertexData->GetBuffers();
 
-		u32 streamIdx = 0;
-		for(auto iter = vertexBuffers.begin(); iter != vertexBuffers.end(); ++iter)
+		u32 streamIndex = 0;
+		for(auto iterator = vertexBuffers.begin(); iterator != vertexBuffers.end(); ++iterator)
 		{
-			if(!meshData.GetVertexDescription()->HasStream(streamIdx))
+			if(!meshData.GetVertexDescription()->HasStream(streamIndex))
 				continue;
 
-			SPtr<GpuBuffer> vertexBuffer = iter->second;
+			SPtr<GpuBuffer> vertexBuffer = iterator->second;
 
 			const GpuBufferInformation& vertexBufferInformation = vertexBuffer->GetInformation();
 			B3D_ENSURE(vertexBufferInformation.Type == GpuBufferType::Vertex);
 
 			// Ensure both have the same sized vertices
-			u32 myVertSize = mVertexDescription->GetVertexStride(streamIdx);
-			u32 otherVertSize = meshData.GetVertexDescription()->GetVertexStride(streamIdx);
-			if(myVertSize != otherVertSize)
+			u32 myVertexSize = mVertexDescription->GetVertexStride(streamIndex);
+			u32 otherVertexSize = meshData.GetVertexDescription()->GetVertexStride(streamIndex);
+			if(myVertexSize != otherVertexSize)
 			{
 				B3D_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
 									"Needed: {1}. Got: {2}",
-					   streamIdx, myVertSize, otherVertSize);
+					   streamIndex, myVertexSize, otherVertexSize);
 
 				continue;
 			}
 
-			u32 numVerticesToCopy = meshData.GetVertexCount();
-			u32 bufferSize = vertexBufferInformation.Vertex.ElementSize * numVerticesToCopy;
+			u32 vertexCountToCopy = meshData.GetVertexCount();
+			u32 bufferSize = vertexBufferInformation.Vertex.ElementSize * vertexCountToCopy;
 
 			if(bufferSize > vertexBuffer->GetTotalSize())
 			{
-				B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.", streamIdx);
+				B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.", streamIndex);
 				continue;
 			}
 
-			u8* dest = meshData.GetStreamData(streamIdx);
-			vertexBuffer->ReadData(0, bufferSize, dest);
+			u8* destination = meshData.GetStreamData(streamIndex);
+			vertexBuffer->ReadData(0, bufferSize, destination);
 
-			streamIdx++;
+			streamIndex++;
 		}
 	}
 }

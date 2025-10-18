@@ -33,11 +33,12 @@ namespace b3d
 		SpriteManager();
 		~SpriteManager();
 
-		/** Returns the material used for rendering image sprites.
+		/**
+		 * Returns the material used for rendering image sprites.
 		 *
-		 * @param[in]	transparency	Transparency mode the material should support.
-		 * @param[in]	animation		True if the material should be able to perform sprite sheet animation.
-		 * @return						Requested sprite material.
+		 * @param	transparency	Transparency mode the material should support.
+		 * @param	animation		True if the material should be able to perform sprite sheet animation.
+		 * @return					Requested sprite material.
 		 */
 		SpriteMaterial* GetImageMaterial(SpriteMaterialTransparency transparency, bool animation = false) const
 		{

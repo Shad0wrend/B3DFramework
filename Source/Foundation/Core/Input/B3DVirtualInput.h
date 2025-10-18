@@ -74,52 +74,52 @@ namespace b3d
 		/**
 		 * Check is the virtual button just getting pressed. This state is only active for one frame.
 		 *
-		 * @param[in]	button		Virtual button identifier.
-		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
+		 * @param	button			Virtual button identifier.
+		 * @param	deviceIndex		Optional device index in case multiple input devices are available.
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonDown(const VirtualButton& button, u32 deviceIdx = 0) const;
+		bool IsButtonDown(const VirtualButton& button, u32 deviceIndex = 0) const;
 
 		/**
 		 * Check is the virtual button just getting released. This state is only active for one frame.
 		 *
-		 * @param[in]	button		Virtual button identifier.
-		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
+		 * @param	button			Virtual button identifier.
+		 * @param	deviceIndex		Optional device index in case multiple input devices are available.
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonUp(const VirtualButton& button, u32 deviceIdx = 0) const;
+		bool IsButtonUp(const VirtualButton& button, u32 deviceIndex = 0) const;
 
 		/**
 		 * Check is the virtual button is being held. This state is active as long as the button is being held down,
 		 * possibly for multiple frames.
 		 *
-		 * @param[in]	button		Virtual button identifier.
-		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
+		 * @param	button			Virtual button identifier.
+		 * @param	deviceIndex		Optional device index in case multiple input devices are available.
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonHeld(const VirtualButton& button, u32 deviceIdx = 0) const;
+		bool IsButtonHeld(const VirtualButton& button, u32 deviceIndex = 0) const;
 
 		/**
 		 * Returns normalized value for the specified input axis. Returned value will usually be in [-1.0, 1.0] range, but
 		 * can be outside the range for devices with unbound axes (for example mouse).
 		 *
-		 * @param[in]	axis		Virtual axis identifier.
-		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
+		 * @param	axis			Virtual axis identifier.
+		 * @param	deviceIndex		Optional device index in case multiple input devices are available.
 		 */
 		B3D_SCRIPT_EXPORT()
-		float GetAxisValue(const VirtualAxis& axis, u32 deviceIdx = 0) const;
+		float GetAxisValue(const VirtualAxis& axis, u32 deviceIndex = 0) const;
 
 		/**	Triggered when a virtual button is pressed. */
 		B3D_SCRIPT_EXPORT()
-		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonDown;
+		Event<void(const VirtualButton&, u32 deviceIndex)> OnButtonDown;
 
 		/**	Triggered when a virtual button is released. */
 		B3D_SCRIPT_EXPORT()
-		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonUp;
+		Event<void(const VirtualButton&, u32 deviceIndex)> OnButtonUp;
 
 		/**	Triggered every frame when a virtual button is being held down. */
 		B3D_SCRIPT_EXPORT()
-		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonHeld;
+		Event<void(const VirtualButton&, u32 deviceIndex)> OnButtonHeld;
 
 		/** @name Internal
 		 *  @{

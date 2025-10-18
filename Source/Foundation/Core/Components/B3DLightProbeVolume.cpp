@@ -236,13 +236,13 @@ void LightProbeVolume::RunRenderProbeTask()
 	if(mRendererTask)
 		mRendererTask->Cancel();
 
-	auto renderComplete = [this]()
+	auto fnRenderComplete = [this]()
 	{
 		mRendererTask = nullptr;
 	};
 
 	SPtr<render::LightProbeVolume> renderProxy = B3DGetRenderProxy(this);
-	auto renderProbes = [renderProxy](render::GpuCommandBufferPool& commandBufferPool)
+	auto fnRenderProbes = [renderProxy](render::GpuCommandBufferPool& commandBufferPool)
 	{
 		SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
 		SPtr<GpuCommandBufferProfiler> commandBufferProfiler = GetGpuProfiler().CreateCommandBufferProfiler(*commandBuffer);
@@ -258,9 +258,9 @@ void LightProbeVolume::RunRenderProbeTask()
 		return isDone;
 	};
 
-	mRendererTask = render::RendererTask::Create("RenderLightProbes", renderProbes);
+	mRendererTask = render::RendererTask::Create("RenderLightProbes", fnRenderProbes);
 
-	mRendererTask->OnComplete.Connect(renderComplete);
+	mRendererTask->OnComplete.Connect(fnRenderComplete);
 	render::GetRenderer()->AddTask(mRendererTask);
 }
 
@@ -273,12 +273,12 @@ void LightProbeVolume::UpdateCoefficients()
 	render::LightProbeVolume* renderProxy = B3DGetRenderProxy(this).get();
 
 	Vector<LightProbeCoefficientInfo> coeffInfo;
-	auto getSaveData = [renderProxy, &coeffInfo]()
+	auto fnGetSaveData = [renderProxy, &coeffInfo]()
 	{
 		renderProxy->GetProbeCoefficients(coeffInfo);
 	};
 
-	GetRenderThread().PostCommand(getSaveData, "LightProbeVolume::GetProbeCoefficients", true);
+	GetRenderThread().PostCommand(fnGetSaveData, "LightProbeVolume::GetProbeCoefficients", true);
 
 	for(auto& entry : coeffInfo)
 	{

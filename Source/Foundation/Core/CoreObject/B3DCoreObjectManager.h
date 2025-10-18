@@ -84,7 +84,7 @@ namespace b3d
 		 * Synchronizes all CoreObjects with dirty render proxy data with the render thread. Their dirty data will be allocated using the global
 		 * frame allocator and then queued for update using the render thread queue for the calling thread.
 		 *
-		 *	@param swapBuffers		Switch ownership of the current buffer from the main thread to the render thread. All data written during sync download
+		 * @param swapBuffers		Switch ownership of the current buffer from the main thread to the render thread. All data written during sync download
 		 *							will now become owned by the render thread, and a new buffer will be made available on the main thread. Note that
 		 *							there is a limited number of buffers (as specified by RenderThread::kSyncBufferCount), and the caller must ensure
 		 *							that the render thread is still not using the oldest buffer. Generally this is done by ensuring that the render thread
@@ -109,7 +109,7 @@ namespace b3d
 		 * Stores all syncable data from dirty core objects into memory allocated by the provided allocator. Additional
 		 * meta-data is stored internally to be used by call to SyncUpload().
 		 *
-		 * @param	allocator Allocator to use for allocating memory for stored data.
+		 * @param allocator		Allocator to use for allocating memory for stored data.
 		 *
 		 * @note	Main thread only.
 		 * @note	Must be followed by a call to SyncUpload() with the same type.
@@ -127,8 +127,8 @@ namespace b3d
 		/**
 		 * Updates the cached list of dependencies and dependants for the specified object.
 		 *
-		 * @param	object			Update to update dependencies for.
-		 * @param	dependencies	New set of dependencies, or null to clear all dependencies.
+		 * @param object			Object to update dependencies for.
+		 * @param dependencies		New set of dependencies, or null to clear all dependencies.
 		 */
 		void UpdateDependencies(CoreObject* object, Vector<CoreObject*>* dependencies);
 

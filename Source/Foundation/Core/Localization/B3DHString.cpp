@@ -47,8 +47,8 @@ HString::HString(const HString& copy)
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
 		if(copy.mParameters != nullptr)
 		{
-			for(u32 i = 0; i < mStringData->NumParameters; i++)
-				mParameters[i] = copy.mParameters[i];
+			for(u32 parameterIndex = 0; parameterIndex < mStringData->NumParameters; parameterIndex++)
+				mParameters[parameterIndex] = copy.mParameters[parameterIndex];
 		}
 
 		mStringPtr = &mCachedString;
@@ -90,8 +90,8 @@ HString& HString::operator=(const HString& rhs)
 		mParameters = B3DNewMultiple<String>(mStringData->NumParameters);
 		if(rhs.mParameters != nullptr)
 		{
-			for(u32 i = 0; i < mStringData->NumParameters; i++)
-				mParameters[i] = rhs.mParameters[i];
+			for(u32 parameterIndex = 0; parameterIndex < mStringData->NumParameters; parameterIndex++)
+				mParameters[parameterIndex] = rhs.mParameters[parameterIndex];
 		}
 
 		mStringPtr = &mCachedString;
@@ -135,12 +135,12 @@ const String& HString::GetValue() const
 	return kEmptyString;
 }
 
-void HString::SetParameter(u32 idx, const String& value)
+void HString::SetParameter(u32 index, const String& value)
 {
-	if(mStringData == nullptr || idx >= mStringData->NumParameters)
+	if(mStringData == nullptr || index >= mStringData->NumParameters)
 		return;
 
-	mParameters[idx] = value;
+	mParameters[index] = value;
 	mIsDirty = true;
 }
 

@@ -54,12 +54,12 @@ namespace b3d
 		 * resource only the primary resource is imported (for example an FBX a mesh would be imported, but animations
 		 * ignored).
 		 *
-		 * @param[in]	inputFilePath	Pathname of the input file.
-		 * @param[in]	importOptions	(optional) Options for controlling the import. Caller must ensure import options
-		 *								actually match the type of the importer used for the file type.
-		 * @param[in]	UUID			Specific UUID to assign to the resource. If not specified a randomly generated
-		 *								UUID will be assigned.
-		 * @return						Imported resource.
+		 * @param	inputFilePath	Pathname of the input file.
+		 * @param	importOptions	(optional) Options for controlling the import. Caller must ensure import options
+		 *							actually match the type of the importer used for the file type.
+		 * @param	UUID			Specific UUID to assign to the resource. If not specified a randomly generated
+		 *							UUID will be assigned.
+		 * @return					Imported resource.
 		 *
 		 * @see		createImportOptions
 		 * @note	Thread safe.
@@ -86,11 +86,11 @@ namespace b3d
 		 * resources, which is relevant for files that can contain multiple resources (for example an FBX which may contain
 		 * both a mesh and animations).
 		 *
-		 * @param[in]	inputFilePath	Pathname of the input file.
-		 * @param[in]	importOptions	(optional) Options for controlling the import. Caller must ensure import options
-		 *								actually match the type of the importer used for the file type.
-		 * @return						A list of all imported resources. The primary resource is always the first returned
-		 *								resource.
+		 * @param	inputFilePath	Pathname of the input file.
+		 * @param	importOptions	(optional) Options for controlling the import. Caller must ensure import options
+		 *							actually match the type of the importer used for the file type.
+		 * @return					A list of all imported resources. The primary resource is always the first returned
+		 *							resource.
 		 *
 		 * @see		createImportOptions
 		 * @note	Thread safe.
@@ -109,10 +109,10 @@ namespace b3d
 		 * Automatically detects the importer needed for the provided file and returns valid type of import options for
 		 * that importer.
 		 *
-		 * @param[in]	inputFilePath	Pathname of the input file.
+		 * @param	inputFilePath	Pathname of the input file.
 		 *
-		 * @return						The new import options. Null is returned if the file path is not valid, or if a
-		 *								valid importer cannot be found for the specified file.
+		 * @return					The new import options. Null is returned if the file path is not valid, or if a
+		 *							valid importer cannot be found for the specified file.
 		 *
 		 * @note
 		 * You will need to type cast the importer options to a valid type, taking into consideration exact importer you
@@ -131,7 +131,7 @@ namespace b3d
 		/**
 		 * Checks if we can import a file with the specified extension.
 		 *
-		 * @param[in]	extension	The extension without the leading dot.
+		 * @param	extension	The extension without the leading dot.
 		 */
 		B3D_SCRIPT_EXPORT()
 		bool SupportsFileType(const String& extension) const;
@@ -139,10 +139,10 @@ namespace b3d
 		/**
 		 * Checks if we can import a file with the specified magic number.
 		 *
-		 * @param[in]	magicNumber 	The buffer containing the magic number.
-		 * @param[in]	magicNumSize	Size of the magic number buffer.
+		 * @param	magicNumber 		The buffer containing the magic number.
+		 * @param	magicNumberSize		Size of the magic number buffer.
 		 */
-		bool SupportsFileType(const u8* magicNumber, u32 magicNumSize) const;
+		bool SupportsFileType(const u8* magicNumber, u32 magicNumberSize) const;
 
 		/** @name Internal
 		 *  @{
@@ -152,7 +152,7 @@ namespace b3d
 		 * Registers a new asset importer for a specific set of extensions (as determined by the implementation). If an
 		 * asset importer for one or multiple extensions already exists, it is removed and replaced with this one.
 		 *
-		 * @param[in]	importer	The importer that is able to handle import of certain type of files.
+		 * @param	importer	The importer that is able to handle import of certain type of files.
 		 *
 		 * @note	This method should only be called by asset importers themselves on startup. Importer takes ownership
 		 *			of the provided pointer and will release it. Assumes it is allocated using the general allocator.

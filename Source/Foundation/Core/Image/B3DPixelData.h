@@ -343,10 +343,10 @@ namespace b3d
 		/**
 		 * Samples a color at the specified coordinates using a specific filter.
 		 *
-		 * @param[in]	coords	Coordinates to sample the color at. They start at top left corner (0, 0), and are in range
-		 *						[0, 1].
-		 * @param[in]	filter	Filtering mode to use when sampling the color.
-		 * @return				Sampled color.
+		 * @param coords	Coordinates to sample the color at. They start at top left corner (0, 0), and are in range
+		 *					[0, 1].
+		 * @param filter	Filtering mode to use when sampling the color.
+		 * @return			Sampled color.
 		 */
 		Color SampleColorAt(const Vector2& coords, TextureFilter filter = TF_BILINEAR) const;
 
@@ -372,7 +372,7 @@ namespace b3d
 		 * Initializes the internal buffer with the provided set of colors. The array should be of
 		 * width * height * depth size and mapped as such: arrayIdx = x + y * width + z * width * height.
 		 */
-		void SetColors(Color* colors, u32 numElements);
+		void SetColors(Color* colors, u32 elementCount);
 
 		/** Initializes all the pixels with a single color. */
 		void SetColors(const Color& color);
@@ -409,7 +409,7 @@ namespace b3d
 		 * @note	A generic method that is reused in other more specific setColors() calls.
 		 */
 		template <class T>
-		void SetColorsInternal(const T& colors, u32 numElements);
+		void SetColorsInternal(const T& colors, u32 elementCount);
 
 		/**	Returns the needed size of the internal buffer, in bytes. */
 		u32 GetInternalBufferSize() const override;

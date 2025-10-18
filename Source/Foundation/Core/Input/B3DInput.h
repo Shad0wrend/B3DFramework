@@ -59,8 +59,8 @@ namespace b3d
 		/**	Stores information about a queued input event that is to be triggered later. */
 		struct QueuedEvent
 		{
-			QueuedEvent(EventType type, u32 idx)
-				: Type(type), Idx(idx)
+			QueuedEvent(EventType type, u32 eventIndex)
+				: Type(type), Idx(eventIndex)
 			{}
 
 			EventType Type;
@@ -75,38 +75,38 @@ namespace b3d
 		 * Returns value of the specified input axis. Normally in range [-1.0, 1.0] but can be outside the range for
 		 * devices with unbound axes (for example mouse).
 		 *
-		 * @param[in]	type		Type of axis to query. Usually a type from InputAxis but can be a custom value.
-		 * @param[in]	deviceIdx	Index of the device in case more than one is hooked up (0 - primary).
+		 * @param	type			Type of axis to query. Usually a type from InputAxis but can be a custom value.
+		 * @param	deviceIndex		Index of the device in case more than one is hooked up (0 - primary).
 		 */
 		B3D_SCRIPT_EXPORT()
-		float GetAxisValue(u32 type, u32 deviceIdx = 0) const;
+		float GetAxisValue(u32 type, u32 deviceIndex = 0) const;
 
 		/**
 		 * Query if the provided button is currently being held (this frame or previous frames).
 		 *
-		 * @param[in]	keyCode		Code of the button to query.
-		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
+		 * @param	keyCode			Code of the button to query.
+		 * @param	deviceIndex		Device to query the button on (0 - primary).
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonHeld(ButtonCode keyCode, u32 deviceIdx = 0) const;
+		bool IsButtonHeld(ButtonCode keyCode, u32 deviceIndex = 0) const;
 
 		/**
 		 * Query if the provided button is currently being released (only true for one frame).
 		 *
-		 * @param[in]	keyCode		Code of the button to query.
-		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
+		 * @param	keyCode			Code of the button to query.
+		 * @param	deviceIndex		Device to query the button on (0 - primary).
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonUp(ButtonCode keyCode, u32 deviceIdx = 0) const;
+		bool IsButtonUp(ButtonCode keyCode, u32 deviceIndex = 0) const;
 
 		/**
 		 * Query if the provided button is currently being pressed (only true for one frame).
 		 *
-		 * @param[in]	keyCode		Code of the button to query.
-		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
+		 * @param	keyCode			Code of the button to query.
+		 * @param	deviceIndex		Device to query the button on (0 - primary).
 		 */
 		B3D_SCRIPT_EXPORT()
-		bool IsButtonDown(ButtonCode keyCode, u32 deviceIdx = 0) const;
+		bool IsButtonDown(ButtonCode keyCode, u32 deviceIndex = 0) const;
 
 		/** Returns position of the pointer (for example mouse cursor) relative to the screen. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(PointerPosition))
@@ -119,7 +119,7 @@ namespace b3d
 		/**
 		 * Query if the provided pointer button is currently being held (this frame or previous frames).
 		 *
-		 * @param[in]	pointerButton		Code of the button to query.
+		 * @param	pointerButton	Code of the button to query.
 		 */
 		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonHeld(PointerEventButton pointerButton) const;
@@ -127,7 +127,7 @@ namespace b3d
 		/**
 		 * Query if the provided pointer button is currently being released (only true for one frame).
 		 *
-		 * @param[in]	pointerButton		Code of the button to query.
+		 * @param	pointerButton	Code of the button to query.
 		 */
 		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonUp(PointerEventButton pointerButton) const;
@@ -135,7 +135,7 @@ namespace b3d
 		/**
 		 * Query if the provided pointer button is currently being pressed (only true for one frame).
 		 *
-		 * @param[in]	pointerButton		Code of the button to query.
+		 * @param	pointerButton	Code of the button to query.
 		 */
 		B3D_SCRIPT_EXPORT()
 		bool IsPointerButtonDown(PointerEventButton pointerButton) const;
@@ -152,7 +152,7 @@ namespace b3d
 		u32 GetDeviceCount(InputDevice device) const;
 
 		/** Returns the name of a specific input device. Returns empty string if the device doesn't exist. */
-		String GetDeviceName(InputDevice type, u32 idx);
+		String GetDeviceName(InputDevice type, u32 deviceIndex);
 
 		/** Triggered whenever a button is first pressed. */
 		B3D_SCRIPT_EXPORT()
@@ -231,20 +231,20 @@ namespace b3d
 		 * Smooths the input mouse axis value. Smoothing makes the changes to the axis more gradual depending on previous
 		 * values.
 		 *
-		 * @param[in]	value	Value to smooth.
-		 * @param[in]	idx		Index of the mouse axis to smooth, 0 - horizontal, 1 - vertical.
+		 * @param	value		Value to smooth.
+		 * @param	axisIndex	Index of the mouse axis to smooth, 0 - horizontal, 1 - vertical.
 		 * @return				Smoothed value.
 		 */
-		float SmoothMouse(float value, u32 idx);
+		float SmoothMouse(float value, u32 axisIndex);
 
 		/**	Triggered by input handler when a button is pressed. */
-		void ButtonDown(u32 deviceIdx, ButtonCode code, u64 timestamp);
+		void ButtonDown(u32 deviceIndex, ButtonCode code, u64 timestamp);
 
 		/**	Triggered by input handler when a button is released. */
-		void ButtonUp(u32 deviceIdx, ButtonCode code, u64 timestamp);
+		void ButtonUp(u32 deviceIndex, ButtonCode code, u64 timestamp);
 
 		/**	Triggered by input handler when a mouse/joystick axis is moved. */
-		void AxisMoved(u32 deviceIdx, float value, u32 axis);
+		void AxisMoved(u32 deviceIndex, float value, u32 axis);
 
 		/**
 		 * Called from the message loop to notify user has entered a character.

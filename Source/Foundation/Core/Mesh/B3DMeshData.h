@@ -106,13 +106,13 @@ namespace b3d
 		/**
 		 * Copies data from @p data parameter into the internal buffer for the specified semantic.
 		 *
-		 * @param[in]	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
-		 * @param[in]	data			Vertex data, containing at least @p size bytes.
-		 * @param[in]	size			The size of the data. Must be the size of the vertex element type * number of
+		 * @param	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
+		 * @param	data			Vertex data, containing at least @p size bytes.
+		 * @param	size			The size of the data. Must be the size of the vertex element type * number of
 		 *								vertices.
-		 * @param[in]	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
+		 * @param	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
 		 *								to differentiate between them.
-		 * @param[in]	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
+		 * @param	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
 		 *								represented as a single vertex buffer.
 		 */
 		void SetVertexData(VertexElementSemantic semantic, void* data, u32 size, u32 semanticIndex = 0, u32 streamIndex = 0);
@@ -120,13 +120,13 @@ namespace b3d
 		/**
 		 * Copies data from the internal buffer to the pre-allocated buffer for the specified semantic.
 		 *
-		 * @param[in]	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
-		 * @param[in]	data			Buffer that will receive vertex data, of at least @p size bytes.
-		 * @param[in]	size			The size of the data. Must be the size of the vertex element type * number of
+		 * @param	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
+		 * @param	data			Buffer that will receive vertex data, of at least @p size bytes.
+		 * @param	size			The size of the data. Must be the size of the vertex element type * number of
 		 *								vertices.
-		 * @param[in]	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
+		 * @param	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
 		 *								to differentiate between them.
-		 * @param[in]	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
+		 * @param	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
 		 *								represented as a single vertex buffer.
 		 */
 		void GetVertexData(VertexElementSemantic semantic, void* data, u32 size, u32 semanticIndex = 0, u32 streamIndex = 0);
@@ -201,10 +201,10 @@ namespace b3d
 		 * Returns the pointer to the first element of the specified type. If you want to iterate over all elements you
 		 * need to call getVertexStride() to get the number	of bytes you need to advance between each element.
 		 *
-		 * @param[in]	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
-		 * @param[in]	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
+		 * @param	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
+		 * @param	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
 		 *								to differentiate between them.
-		 * @param[in]	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
+		 * @param	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
 		 *								represented as a single vertex buffer.
 		 * @return						null if it fails, else the element data.
 		 */
@@ -214,10 +214,10 @@ namespace b3d
 		 * Returns an offset into the internal buffer where this element with the provided semantic starts. Offset is
 		 * provided in number of bytes.
 		 *
-		 * @param[in]	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
-		 * @param[in]	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
+		 * @param	semantic   		Semantic that allows the engine to connect the data to a shader input slot.
+		 * @param	semanticIndex 	(optional) If there are multiple semantics with the same name, use different index
 		 *								to differentiate between them.
-		 * @param[in]	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
+		 * @param	streamIndex   	(optional) Zero-based index of the stream. Each stream will internally be
 		 *								represented as a single vertex buffer.
 		 */
 		u32 GetElementOffset(VertexElementSemantic semantic, u32 semanticIndex = 0, u32 streamIndex = 0) const;
@@ -246,11 +246,11 @@ namespace b3d
 		/**
 		 * Combines a number of submeshes and their mesh data into one large mesh data buffer.
 		 *
-		 * @param[in]	elements		Data containing vertices and indices referenced by the submeshes. Number of elements
+		 * @param	elements		Data containing vertices and indices referenced by the submeshes. Number of elements
 		 *								must be the same as number of submeshes.
-		 * @param[in]	allSubMeshes	Submeshes representing vertex and index range to take from mesh data and combine.
+		 * @param	allSubMeshes	Submeshes representing vertex and index range to take from mesh data and combine.
 		 *								Number of submeshes must match the number of provided MeshData elements.
-		 * @param[out]	subMeshes		Outputs all combined sub-meshes with their new index and vertex offsets referencing
+		 * @param	subMeshes		Outputs all combined sub-meshes with their new index and vertex offsets referencing
 		 *								the newly created MeshData.
 		 * @return						Combined mesh data containing all vertices and indexes references by the provided
 		 *								sub-meshes.
@@ -283,12 +283,12 @@ namespace b3d
 		/**
 		 * Returns the data needed for iterating over the requested vertex element.
 		 *
-		 * @param[in]	semantic   		Semantic of the element we are looking for.
-		 * @param[in]	semanticIndex 	If there are multiple semantics with the same name, use different index to
+		 * @param	semantic   		Semantic of the element we are looking for.
+		 * @param	semanticIndex 	If there are multiple semantics with the same name, use different index to
 		 *								differentiate between them.
-		 * @param[in]	streamIndex   	Zero-based index of the stream the element resides in.
-		 * @param[out]	data			Pointer to the start of this elements data.
-		 * @param[out]	stride			Number of bytes between vertex elements of this type.
+		 * @param	streamIndex   	Zero-based index of the stream the element resides in.
+		 * @param	data			Pointer to the start of this elements data.
+		 * @param	stride			Number of bytes between vertex elements of this type.
 		 */
 		void GetDataForIterator(VertexElementSemantic semantic, u32 semanticIndex, u32 streamIndex, u8*& data, u32& stride) const;
 

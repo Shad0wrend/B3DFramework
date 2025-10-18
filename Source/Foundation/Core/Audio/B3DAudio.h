@@ -31,9 +31,9 @@ namespace b3d
 		 * Starts playback of the provided audio clip. This can be used for a quicker way of creating audio sources if you
 		 * don't need the full control provided by creating AudioSource manually.
 		 *
-		 * @param[in]	clip		Audio clip to play.
-		 * @param[in]	position	Position in world space to play the clip at. Only relevant if the clip is 3D.
-		 * @param[in]	volume		Volume to play the clip at.
+		 * @param	clip		Audio clip to play.
+		 * @param	position	Position in world space to play the clip at. Only relevant if the clip is 3D.
+		 * @param	volume		Volume to play the clip at.
 		 */
 		void Play(const HAudioClip& clip, const Vector3& position = Vector3::kZero, float volume = 1.0f);
 
@@ -85,7 +85,7 @@ namespace b3d
 		/**
 		 * Creates a new audio clip.
 		 *
-		 * @param	samples					Stream containing audio samples in format specified in @p desc.
+		 * @param	samples					Stream containing audio samples in format specified in @p createInformation.
 		 * @param	streamSize				Size of the audio data in the provided stream, in bytes.
 		 * @param	sampleCount				Number of samples in @p samples stream.
 		 * @param	createInformation		Descriptor describing the type of the audio stream (format, sample rate, etc.).
@@ -99,7 +99,7 @@ namespace b3d
 		/** Creates a new AudioSource. */
 		virtual SPtr<IAudioSourceImplementation> CreateSource() = 0;
 
-		/** Stops playback of all sources started with Audio::play calls. */
+		/** Stops playback of all sources started with Audio::Play calls. */
 		void StopManualSources();
 
 	private:

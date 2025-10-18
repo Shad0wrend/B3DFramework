@@ -619,11 +619,11 @@ TAnimationCurve<T>::TAnimationCurve(const Vector<KeyFrame>& keyframes)
 	// Ensure keyframes are sorted
 	if(!keyframes.empty())
 	{
-		float time = keyframes[0].Time;
+		float previousTime = keyframes[0].Time;
 		for(u32 i = 1; i < (u32)keyframes.size(); i++)
 		{
-			B3D_ASSERT(keyframes[i].Time >= time);
-			time = keyframes[i].Time;
+			B3D_ASSERT(keyframes[i].Time >= previousTime);
+			previousTime = keyframes[i].Time;
 		}
 	}
 #endif

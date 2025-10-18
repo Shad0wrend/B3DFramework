@@ -73,23 +73,23 @@ void SliderJoint::CalculateLocalBodyTransform(JointBody body, Vector3& position,
 	rotation = mInformation.Bodies[(u32)body].Rotation;
 
 	HRigidbody rigidbody = mInformation.Bodies[(u32)body].Body;
-	const Transform& tfrm = SO()->GetTransform();
+	const Transform& transform = SO()->GetTransform();
 	if(rigidbody == nullptr) // Get world space transform if no relative to any body
 	{
-		Quaternion worldRot = tfrm.GetRotation();
+		Quaternion worldRotation = transform.GetRotation();
 
-		rotation = worldRot * rotation;
-		position = worldRot.Rotate(position) + tfrm.GetPosition();
+		rotation = worldRotation * rotation;
+		position = worldRotation.Rotate(position) + transform.GetPosition();
 	}
 	else
 	{
-		const Transform& rigidbodyTfrm = rigidbody->SO()->GetTransform();
+		const Transform& rigidbodyTransform = rigidbody->SO()->GetTransform();
 
 		// Use only the offset for positioning, but for rotation use both the offset and target SO rotation.
 		// (Needed because we need to rotate the joint SO in order to orient the slider direction, so we need an
 		// additional transform that allows us to orient the object)
 		position = rotation.Rotate(position);
-		rotation = (rigidbodyTfrm.GetRotation() * rotation).Inverse() * tfrm.GetRotation();
+		rotation = (rigidbodyTransform.GetRotation() * rotation).Inverse() * transform.GetRotation();
 	}
 }
 

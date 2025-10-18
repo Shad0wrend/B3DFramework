@@ -127,7 +127,7 @@ TAsyncOp<void> Texture::WriteData(const SPtr<PixelData>& data, u32 face, u32 mip
 
 	data->LockInternal();
 
-	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, bool, TAsyncOp<void>&)> func =
+	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, bool, TAsyncOp<void>&)> fnWriteData =
 		[&](const SPtr<render::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
 			bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
 	{
@@ -137,7 +137,7 @@ TAsyncOp<void> Texture::WriteData(const SPtr<PixelData>& data, u32 face, u32 mip
 	};
 
 	TAsyncOp<void> asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), face, mipLevel, data, discardEntireBuffer, asyncOp]() mutable { func(renderProxy, face, mipLevel, data, discardEntireBuffer, asyncOp); }, "Texture::WriteData", false, GetName());
+	GetRenderThread().PostCommand([fnWriteData = std::move(fnWriteData), renderProxy = B3DGetRenderProxy(this), face, mipLevel, data, discardEntireBuffer, asyncOp]() mutable { fnWriteData(renderProxy, face, mipLevel, data, discardEntireBuffer, asyncOp); }, "Texture::WriteData", false, GetName());
 
 	return asyncOp;
 }
@@ -146,7 +146,7 @@ TAsyncOp<void> Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipL
 {
 	data->LockInternal();
 
-	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, TAsyncOp<void>&)> func =
+	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, TAsyncOp<void>&)> fnReadData =
 		[&](const SPtr<render::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
 			TAsyncOp<void>& asyncOp)
 	{
@@ -161,7 +161,7 @@ TAsyncOp<void> Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipL
 	};
 
 	TAsyncOp<void> asyncOp;
-	GetRenderThread().PostCommand([func = std::move(func), renderProxy = B3DGetRenderProxy(this), face, mipLevel, data, asyncOp]() mutable { func(renderProxy, face, mipLevel, data, asyncOp); }, "Texture::ReadData", false, GetName());
+	GetRenderThread().PostCommand([fnReadData = std::move(fnReadData), renderProxy = B3DGetRenderProxy(this), face, mipLevel, data, asyncOp]() mutable { fnReadData(renderProxy, face, mipLevel, data, asyncOp); }, "Texture::ReadData", false, GetName());
 
 	return asyncOp;
 }
@@ -170,7 +170,7 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 {
 	TAsyncOp<SPtr<PixelData>> op;
 
-	auto func = [texture = B3DGetRenderProxy(this), face, mipLevel, op]() mutable
+	auto fnReadDataAsync = [texture = B3DGetRenderProxy(this), face, mipLevel, op]() mutable
 	{
 		// TODO - Transfer buffers should be handled by the Renderer
 		const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
@@ -183,7 +183,7 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 		op.CompleteOperation(output);
 	};
 
-	GetRenderThread().PostCommand(func, "Texture::ReadData", false, GetName());
+	GetRenderThread().PostCommand(fnReadDataAsync, "Texture::ReadData", false, GetName());
 	return op;
 }
 

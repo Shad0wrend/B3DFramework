@@ -1925,9 +1925,9 @@ void Animation::RebuildGenericMappings()
 			HSceneObject currentSceneObject = rootSceneObject->FindPath(name);
 
 			bool found = false;
-			for(u32 i = 0; i < (u32)newMappingInfos.size(); i++)
+			for(u32 mappingInfoIndex = 0; mappingInfoIndex < (u32)newMappingInfos.size(); mappingInfoIndex++)
 			{
-				if(newMappingInfos[i].SceneObject == currentSceneObject)
+				if(newMappingInfos[mappingInfoIndex].SceneObject == currentSceneObject)
 				{
 					found = true;
 					break;
@@ -1992,9 +1992,9 @@ Vector<HBone> Animation::FindChildBones()
 		}
 
 		int childCount = currentSceneObject->GetChildCount();
-		for(int i = 0; i < childCount; i++)
+		for(int childIndex = 0; childIndex < childCount; childIndex++)
 		{
-			HSceneObject child = currentSceneObject->GetChild(i);
+			HSceneObject child = currentSceneObject->GetChild(childIndex);
 			if(child->GetComponent<Animation>() != nullptr)
 				continue;
 

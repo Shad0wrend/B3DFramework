@@ -56,13 +56,13 @@ namespace b3d
 		/**
 		 * Creates a new physics material.
 		 *
-		 * @param[in]	staticFriction	Controls friction when two in-contact objects are not moving lateral to each other
+		 * @param	staticFriction	Controls friction when two in-contact objects are not moving lateral to each other
 		 *								(for example how difficult is to get an object moving from a static state while it
 		 *								is in contact other object(s)).
-		 * @param[in]	dynamicFriction	Sets dynamic friction of the material. Controls friction when two in-contact objects
+		 * @param	dynamicFriction	Sets dynamic friction of the material. Controls friction when two in-contact objects
 		 *								are moving lateral to each other (for example how quickly does an object slow down
 		 *								when sliding along another object).
-		 * @param[in]	restitution		Controls "bounciness" of an object during a collision. Value of 1 means the
+		 * @param	restitution		Controls "bounciness" of an object during a collision. Value of 1 means the
 		 *								collision is elastic, and value of 0 means the value is inelastic. Must be in
 		 *								[0, 1] range.
 		 */

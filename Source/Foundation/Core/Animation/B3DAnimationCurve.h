@@ -74,7 +74,7 @@ namespace b3d
 		/**
 		 * Creates a new animation curve.
 		 *
-		 * @param[in]	keyframes	Keyframes to initialize the curve with. They must be sorted by time.
+		 * @param	keyframes	Keyframes to initialize the curve with. They must be sorted by time.
 		 */
 		B3D_SCRIPT_EXPORT()
 		TAnimationCurve(const Vector<KeyFrame>& keyframes);
@@ -84,11 +84,11 @@ namespace b3d
 		 * happens sequential order (which should be true for most curves). If evaluation is not happening in sequential
 		 * order using the non-caching version of evaluate() might yield better performance.
 		 *
-		 * @param[in]	time			%Time to evaluate the curve at.
-		 * @param[in]	cache			Cached data from previous requests that can be used for speeding up sequential calls
+		 * @param	time			%Time to evaluate the curve at.
+		 * @param	cache			Cached data from previous requests that can be used for speeding up sequential calls
 		 *								to this method. Caller should ensure to maintain a persistent instance of this data
 		 *								for every animation using this curve in order to ensure cache is maintained.
-		 * @param[in]	loop			If true the curve will loop when it goes past the end or beggining. Otherwise the
+		 * @param	loop			If true the curve will loop when it goes past the end or beggining. Otherwise the
 		 *								curve value will be clamped.
 		 * @return						Interpolated value from the curve at provided time.
 		 */
@@ -98,8 +98,8 @@ namespace b3d
 		 * Evaluate the animation curve at the specified time. If evaluating multiple values in a sequential order consider
 		 * using the cached version of evaluate() for better performance.
 		 *
-		 * @param[in]	time	%Time to evaluate the curve at.
-		 * @param[in]	loop	If true the curve will loop when it goes past the end or beggining. Otherwise the curve
+		 * @param	time	%Time to evaluate the curve at.
+		 * @param	loop	If true the curve will loop when it goes past the end or beggining. Otherwise the curve
 		 *						value will be clamped.
 		 * @return				Interpolated value from the curve at provided time.
 		 */
@@ -110,8 +110,8 @@ namespace b3d
 		 * Evaluates the integrated animation curve. (e.g. evaluating a curve containing velocity values will return
 		 * a position).
 		 *
-		 * @param[in]	time				%Time to evaluate the curve at.
-		 * @param[in]	integrationCache	Cache storing the values required for integration. Generated the first time
+		 * @param	time				%Time to evaluate the curve at.
+		 * @param	integrationCache	Cache storing the values required for integration. Generated the first time
 		 *									this method is called and re-used on subsequent calls. Caller must ensure to
 		 *									use the cache only with the curve it was originally used on. Separate caches
 		 *									need to be used for single and double integration evaluation.
@@ -123,8 +123,8 @@ namespace b3d
 		 * Evaluates the double integrated animation curve. (e.g. evaluating a curve containing acceleration values will
 		 * return a position).
 		 *
-		 * @param[in]	time				%Time to evaluate the curve at.
-		 * @param[in]	integrationCache	Cache storing the values required for integration. Generated the first time
+		 * @param	time				%Time to evaluate the curve at.
+		 * @param	integrationCache	Cache storing the values required for integration. Generated the first time
 		 *									this method is called and re-used on subsequent calls. Caller must ensure to
 		 *									use the cache only with the curve it was originally used on. Separate caches
 		 *									need to be used for single and double integration evaluation.
@@ -136,8 +136,8 @@ namespace b3d
 		 * Evaluate the animation curve at the specified time and returns a new keyframe containing the evaluated value
 		 * and tangents.
 		 *
-		 * @param[in]	time	%Time to evaluate the curve at.
-		 * @param[in]	loop	If true the curve will loop when it goes past the end or beginning. Otherwise the curve
+		 * @param	time	%Time to evaluate the curve at.
+		 * @param	loop	If true the curve will loop when it goes past the end or beginning. Otherwise the curve
 		 *						value will be clamped.
 		 * @return				Keyframe containing the interpolated value and tangents at provided time.
 		 */
@@ -146,8 +146,8 @@ namespace b3d
 		/**
 		 * Splits a piece of the animation curve into a separate animation curve.
 		 *
-		 * @param[in]	start	Beginning time of the split curve.
-		 * @param[in]	end		End time of the split curve.
+		 * @param	start	Beginning time of the split curve.
+		 * @param	end		End time of the split curve.
 		 * @return				New curve with data corresponding to the provided split times.
 		 */
 		TAnimationCurve<T> Split(float start, float end);
@@ -178,7 +178,7 @@ namespace b3d
 		u32 GetNumKeyFrames() const { return (u32)mKeyframes.size(); }
 
 		/** Returns a keyframe at the specified index. */
-		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
+		const TKeyframe<T>& GetKeyFrame(u32 index) const { return mKeyframes[index]; }
 
 		/** Returns a list of all keyframes in the curve. */
 		B3D_SCRIPT_EXPORT(ExportName(KeyFrames), Property(Getter))
@@ -196,23 +196,23 @@ namespace b3d
 		 * Returns a pair of keys that can be used for interpolating to field the value at the provided time. This attempts
 		 * to find keys using the cache first, and if not possible falls back to a full search.
 		 *
-		 * @param[in]	time			Time for which to find the relevant keys from. It is expected to be clamped to a
+		 * @param	time			Time for which to find the relevant keys from. It is expected to be clamped to a
 		 *								valid range within the curve.
-		 * @param[in]	cache			Animation instance data holding the time to evaluate the curve at, and any cached
+		 * @param	cache			Animation instance data holding the time to evaluate the curve at, and any cached
 		 *								data from previous requests. Time is expected to be clamped to a valid range
 		 *								within the curve.
-		 * @param[out]	leftKey			Index of the key to interpolate from.
-		 * @param[out]	rightKey		Index of the key to interpolate to.
+		 * @param	leftKey			Index of the key to interpolate from.
+		 * @param	rightKey		Index of the key to interpolate to.
 		 */
 		void FindKeys(float time, const TCurveCache<T>& cache, u32& leftKey, u32& rightKey) const;
 
 		/**
 		 * Returns a pair of keys that can be used for interpolating to field the value at the provided time.
 		 *
-		 * @param[in]	time			Time for which to find the relevant keys from. It is expected to be clamped to a
+		 * @param	time			Time for which to find the relevant keys from. It is expected to be clamped to a
 		 *								valid range within the curve.
-		 * @param[out]	leftKey			Index of the key to interpolate from.
-		 * @param[out]	rightKey		Index of the key to interpolate to.
+		 * @param	leftKey			Index of the key to interpolate from.
+		 * @param	rightKey		Index of the key to interpolate to.
 		 */
 		void FindKeys(float time, u32& leftKey, u32& rightKey) const;
 
@@ -222,9 +222,9 @@ namespace b3d
 		/**
 		 * Calculates a key in-between the provided two keys.
 		 *
-		 * @param[in]	lhs		Key to interpolate from.
-		 * @param[in]	rhs		Key to interpolate to.
-		 * @param[in]	time	Curve time to interpolate the keys at.
+		 * @param	lhs		Key to interpolate from.
+		 * @param	rhs		Key to interpolate to.
+		 * @param	time	Curve time to interpolate the keys at.
 		 * @return				Interpolated key value.
 		 */
 		KeyFrame EvaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const;
@@ -278,8 +278,8 @@ namespace b3d
 		/**
 		 * Constructs a new named animation curve.
 		 *
-		 * @param[in]	name	Name of the curve.
-		 * @param[in]	curve	Curve containing the animation data.
+		 * @param	name	Name of the curve.
+		 * @param	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, const TAnimationCurve<T> curve)
 			: Name(name), Curve(curve)
@@ -288,9 +288,9 @@ namespace b3d
 		/**
 		 * Constructs a new named animation curve.
 		 *
-		 * @param[in]	name	Name of the curve.
-		 * @param[in]	flags	Flags that describe the animation curve.
-		 * @param[in]	curve	Curve containing the animation data.
+		 * @param	name	Name of the curve.
+		 * @param	flags	Flags that describe the animation curve.
+		 * @param	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, AnimationCurveFlags flags, const TAnimationCurve<T> curve)
 			: Name(name), Curve(curve)

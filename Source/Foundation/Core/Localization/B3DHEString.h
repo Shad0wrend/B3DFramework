@@ -20,7 +20,7 @@ namespace b3d
 		 * doesn't previously exist in the string table, identifier value will also be used for initializing the default
 		 * language version of the string.
 		 *
-		 * @param[in]	identifier		String you can use for later referencing the localized string.
+		 * @param	identifier		String you can use for later referencing the localized string.
 		 */
 		HEString(const String& identifier);
 
@@ -29,9 +29,9 @@ namespace b3d
 		 * language version of the string. If a string with that identifier already exists default language string will be
 		 * updated.
 		 *
-		 * @param[in]	identifier		String you can use for later referencing the localized string.
-		 * @param[in]	defaultString	Default string to assign to the specified identifier. Language to which it
-		 *								will be assigned depends on the StringTable::DEFAULT_LANGUAGE value.
+		 * @param	identifier		String you can use for later referencing the localized string.
+		 * @param	defaultString	Default string to assign to the specified identifier. Language to which it
+		 *							will be assigned depends on the StringTable::DEFAULT_LANGUAGE value.
 		 */
 		HEString(const String& identifier, const String& defaultString);
 

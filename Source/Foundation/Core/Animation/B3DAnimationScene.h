@@ -71,7 +71,7 @@ namespace b3d
 		 * Determines how often to evaluate animations. If rendering is not running at adequate framerate the animation
 		 * could end up being evaluated less times than specified here.
 		 *
-		 * @param[in]	fps		Number of frames per second to evaluate the animation. Default is 60.
+		 * @param	fps		Number of frames per second to evaluate the animation. Default is 60.
 		 */
 		void SetUpdateRate(u32 fps);
 
@@ -79,7 +79,7 @@ namespace b3d
 		 * Evaluates animations for all animated objects, and returns the evaluated skeleton bone poses and morph shape
 		 * meshes that can be passed along to the renderer.
 		 *
-		 * @param[in]		async		If true the method returns immediately while the animation gets evaluated in the
+		 * @param	async		If true the method returns immediately while the animation gets evaluated in the
 		 *								background. The returned evaluated data will be the data from the previous frame.
 		 *								Therefore note that this introduces a one frame latency on the animation. If the
 		 *								latency is not acceptable set this to false, at a potential performance impact.
@@ -126,11 +126,11 @@ namespace b3d
 		/**
 		 * Evaluates animation for a single object and writes the result in the currently active write buffer.
 		 *
-		 * @param[in]	anim		Proxy representing the animation to evaluate.
-		 * @param[in]	boneIdx		Index in the output buffer in which to write evaluated bone information. This will be
+		 * @param	anim		Proxy representing the animation to evaluate.
+		 * @param	boneIndex		Index in the output buffer in which to write evaluated bone information. This will be
 		 *							automatically advanced by the number of written bone transforms.
 		 */
-		void EvaluateAnimation(AnimationProxy* anim, u32& boneIdx);
+		void EvaluateAnimation(AnimationProxy* anim, u32& boneIndex);
 
 		u64 mNextId = 1;
 		UnorderedMap<u64, Animation*> mAnimations;

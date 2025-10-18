@@ -22,10 +22,10 @@ namespace b3d
 		/**
 		 * Constructs a virtual button descriptor.
 		 *
-		 * @param[in]	buttonCode	Physical button the virtual button is triggered by.
-		 * @param[in]	modifiers	Modifiers required to be pressed with the physical button to trigger the virtual button.
-		 * @param[in]	repeatable	If true, the virtual button events will be sent continually while the physical button
-		 *							is being held.
+		 * @param	buttonCode	Physical button the virtual button is triggered by.
+		 * @param	modifiers	Modifiers required to be pressed with the physical button to trigger the virtual button.
+		 * @param	repeatable	If true, the virtual button events will be sent continually while the physical button
+		 *						is being held.
 		 */
 		VirtualButtonInformation(ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
 
@@ -48,7 +48,7 @@ namespace b3d
 		/**
 		 * Constructs a new virtual axis descriptor.
 		 *
-		 * @param[in]	type		@copydoc VirtualAxisInformation::Type
+		 * @param	type	@copydoc VirtualAxisInformation::Type
 		 */
 		VirtualAxisInformation(u32 type);
 
@@ -219,10 +219,10 @@ namespace b3d
 		/**
 		 * Returns data about virtual buttons that are triggered by the specified physical button code and modifier flags.
 		 */
-		bool GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VirtualButtonInformation>& btnDescs) const;
+		bool GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& buttons, Vector<VirtualButtonInformation>& buttonDescriptions) const;
 
 		/**	Retrieves virtual axis descriptor for the provided axis. */
-		bool GetAxisInternal(const VirtualAxis& axis, VirtualAxisInformation& axisDesc) const;
+		bool GetAxisInternal(const VirtualAxis& axis, VirtualAxisInformation& axisDescription) const;
 
 		/** @} */
 
