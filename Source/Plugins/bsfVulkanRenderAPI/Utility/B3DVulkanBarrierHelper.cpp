@@ -145,7 +145,7 @@ void VulkanBarrierHelper::Execute()
 		}
 		else if(trackingInfo.Image != nullptr)
 		{
-			mCommandBuffer->UpdateWriteHazardTrackingAfterBarrier(
+			mResourceTracker->UpdateWriteHazardTrackingAfterBarrier(
 				trackingInfo.Image,
 				trackingInfo.ImageSubresourceRange,
 				trackingInfo.SourceAccess,

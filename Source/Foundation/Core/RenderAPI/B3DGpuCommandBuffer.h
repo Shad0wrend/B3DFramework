@@ -409,19 +409,6 @@ namespace b3d
 			virtual bool IsInRenderPass() const = 0;
 
 			/**
-			 * Transitions a texture from one layout to another. Transitions determine in what way a texture may be used on the command buffer.
-			 * 
-			 *  By default all textures will be assigned a ShaderRead layout, you generally don't need to transition to this layout unless if you explicitly transitioned out of it. You generally need to perform
-			 *  a transition if a texture is being accessed as a storage texture (unordered access), or if it's used as a transfer source or destination. You might also need to transition back to shader readable
-			 *  layout after those operations are complete.
-			 *
-			 * @param	texture				Texture whose layout to transition.
-			 * @param	layout				Layout to transition to.
-			 * @param	subresourceRange	Subresources (mips, array levels) of the texture to transition. Different subresources can be in different layouts.
-			 */
-			virtual void TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources()) = 0;
-
-			/**
 			 * Issues a memory and/or execution barrier that guarantees that the contents of GPU buffers will be correctly visible for the provided destination stages. The barrier must be issued when
 			 * performing writes to an image or a buffer. For example if writing to a buffer/image:
 			 *  - a write-after-read barrier must be issued to ensure any GPU operations reading from the buffer complete before we start writing to it.

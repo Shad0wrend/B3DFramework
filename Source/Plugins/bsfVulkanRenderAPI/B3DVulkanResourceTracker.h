@@ -81,13 +81,8 @@ namespace b3d::render
 #endif
 
 	/**
-	 * Helper class that tracks resource usage, layout transitions, and hazard tracking for VulkanGpuCommandBuffer.
-	 *
-	 * This class encapsulates all the logic for:
-	 * - Tracking which resources (images, buffers) are used on a command buffer
-	 * - Managing image subresource states and layout transitions
-	 * - Performing subresource range subdivision when needed
-	 * - Validating memory hazards (read-after-write, write-after-read)
+	 * Helper class that tracks all resources used on a command buffer. It is responsible for keeping those resources alive why they
+	 * are bound on the command buffer, and also keep track of necessary barriers and layout transitions that need to be issued.
 	 */
 	class VulkanResourceTracker
 	{
@@ -147,22 +142,6 @@ namespace b3d::render
 			/** Use flags when subresource is bound for a transfer operation. Currently unused. */
 			ResourcePipelineUse TransferUse;
 
-#if B3D_AUTOMATIC_BARRIERS
-			/**
-			 * Use flags when subresource is bound for any kind of operation that will require an execution or memory
-			 * barrier due to a write hazard. Currently used for issuing execution/memory barriers after shader writes
-			 * (not counting render pass writes, which handles barriers through subpass dependencies, or transfer operations
-			 * which handle the barriers explicitly). Reset after a memory barrier is issued.
-			 */
-			ResourcePipelineUse WriteHazardUse;
-
-			/**
-			 * Use flags to set after running the pipeline barrier. Ensures that resource accesses after the barrier
-			 * trigger barriers on their next use.
-			 */
-			ResourcePipelineUse NewWriteHazardUse;
-#endif
-
 			/**
 			 * Specifies how will the subresource be used during the current render pass or dispatch call. Reset
 			 * after use.
@@ -171,6 +150,11 @@ namespace b3d::render
 
 			/** Determines is the initial use of this subresource read-only. Used for better determining access flags. */
 			bool InitialReadOnly = false;
+
+#if B3D_HAZARD_TRACKING
+			/** Used for tracking read-after-write/write-after-write and write-after-read hazards, and validating that correct barriers were issued*/
+			WriteHazardTracking* WriteHazardTracking = nullptr;
+#endif
 
 			// Only relevant for layout transitions
 			/**
@@ -196,11 +180,6 @@ namespace b3d::render
 			 * does on its attachments. Only relevant for framebuffer attachments. Ignored if render pass doesn't execute.
 			 */
 			VkImageLayout RenderPassLayout;
-
-#if B3D_HAZARD_TRACKING
-			/** Used for tracking read-after-write/write-after-write and write-after-read hazards, and validating that correct barriers were issued*/
-			WriteHazardTracking* WriteHazardTracking = nullptr;
-#endif
 		};
 
 		/**
@@ -211,14 +190,40 @@ namespace b3d::render
 		 */
 		VulkanResourceTracker(VulkanGpuCommandBuffer* commandBuffer);
 
-		/** Creates a new tracking state for the buffer (if this is the first time the buffer has been used on the command buffer), or returns existing tracking state. */
-		BufferTrackingState& GetOrCreateBufferTrackingState(VulkanBuffer* buffer);
-
-		/** Lets the tracker know that the provided buffer resource has been queued the associated command buffer. */
+		/** Lets the tracker know that the provided buffer resource has been queued on the associated command buffer. */
 		void TrackBufferUsage(BufferTrackingState& bufferTrackingState, GpuResourceUseFlags useFlags, GpuAccessFlags access);
 
 		/** Same as the other overload, except it automatically creates/finds the BufferTrackingState object. */
 		void TrackBufferUsage(VulkanBuffer* buffer, GpuResourceUseFlags useFlags, GpuAccessFlags access);
+
+		// TODO - Doc
+		// Note: Use TrackframeBufferUse for framebuffer attachment images
+		void TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+		void IterateAndCreateOverlappingImageSubresourceTrackingState(VulkanImage* image, VkImageSubresourceRange subresourceRange, void(*FnDoOnOverlappingSubresource)(u32 globalSubresourceIndex, void* userData), void* userData = nullptr);
+		void ClearFramebufferFlagsForImage(VulkanImage* image);
+		void ClearShaderFlagsForAllRenderPassImageSubresources();
+		u32 FindImageTrackingStateIndex(VulkanImage* image);
+		const ImageTrackingState* FindImageTrackingState(VulkanImage* image);
+		TArrayView<ImageSubresourceTrackingState> GetSubresourceTrackingStatesForImage(VulkanImage* image);
+		const ImageSubresourceTrackingState& GetSubresourceTrackingStateAtIndex(u32 globalSubresourceIndex) { return mSubresourceTrackingState[globalSubresourceIndex]; }
+
+		/**
+		 * Lets the tracker know that the provided framebuffer has been queued on the associated command buffer. All associated attachment images
+		 * will be tracked as well, there's no need to track them separately.
+		 */
+		void TrackFramebufferUse(VulkanFramebuffer* framebuffer, RenderSurfaceMask loadMask, u32 readMask);
+
+		/** Lets the tracker know that the provided swap chain has been queued on the associated command buffer. */
+		void TrackSwapChainUse(VulkanSwapChain* swapChain);
+
+		/**
+		 * Lets the tracker know that the provided resource has been queued on the associated command buffer.
+		 * If a resource is an image, buffer, swap chain or framebuffer use the more specific Track*Use() overload.
+		 */
+		void TrackResourceUse(VulkanResource* resource, GpuAccessFlags access);
+
+		/** Finds a subresource tracking state for the specified face and mip level of the provided image. */
+		ImageSubresourceTrackingState& FindSubresourceTrackingState(VulkanImage* image, u32 face, u32 mip);
 
 		/** Notifies all tracked resources that the command buffer has submitted to a GPU queue. */
 		void NotifyUsed(GpuQueueId queueId);
@@ -238,13 +243,65 @@ namespace b3d::render
 #if B3D_HAZARD_TRACKING
 		/** Updates write hazard tracking for a single buffer after a barrier has been issued. */
 		void UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
+
+		/** Updates write hazard tracking for a single image after a barrier has been issued. */
+		void UpdateWriteHazardTrackingAfterBarrier(VulkanImage* image, const VkImageSubresourceRange& range, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
 #endif
 
 		// TODO - These are temporarily exposed during the process of moving towards the tracker
 		TDenseMap<VulkanResource*, BufferTrackingState>& GetBuffers() { return mBuffers; }
+		TDenseMap<VulkanResource*, u32>& GetImages() { return mImages; }
+		Vector<ImageTrackingState>& GetImageTrackingState() { return mImageTrackingState; }
+		Vector<ImageSubresourceTrackingState>& GetSubresourceTrackingState() { return mSubresourceTrackingState; }
+		UnorderedSet<VulkanImage*>& GetQueuedLayoutTransitions() { return mQueuedLayoutTransitions; }
+		void ClearQueuedLayoutTransitions() { mQueuedLayoutTransitions.clear(); }
 
 	private:
 		friend class VulkanGpuCommandBuffer;
+
+		/** Creates a new tracking state for the buffer (if this is the first time the buffer has been used on the command buffer), or returns existing tracking state. */
+		BufferTrackingState& GetOrCreateBufferTrackingState(VulkanBuffer* buffer);
+
+		// TODO - Doc
+		ImageTrackingState& GetOrCreateImageTrackingState(VulkanImage* image);
+		ImageTrackingState& GetImageTrackingState(VulkanImage* image);
+		void IterateAndCreateOverlappingImageSubresourceTrackingState(ImageTrackingState& imageTrackingState, const VulkanImage& image, VkImageSubresourceRange subresourceRange, void(*FnDoOnOverlappingSubresource)(u32 globalSubresourceIndex, void* userData), void* userData = nullptr);
+
+		/** Registers a new resource range using the provided parameters to initialize it. */
+		u32 AddSubresourceTrackingState(const VkImageSubresourceRange& range);
+
+
+		/**
+		 * Creates a copy of an existing subresource with a new range.
+		 *
+		 * @param	copyFromIndex				Global index of the subresource to copy from.
+		 * @param	newRange					The new subresource range to assign to the copy.
+		 * @return								Global index of the newly created subresource.
+		 */
+		u32 CopySubresourceTrackingStateWithNewRange(u32 copyFromIndex, const VkImageSubresourceRange& newRange);
+
+		/** Lets the tracker know that the provided image subresource range resource has been queued the associated command buffer. */
+		// TODO - Refactor this signature, try to clean it up once we have explicit layout transitions
+		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+
+		/**
+		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of shader
+		 * read or write. Sets up any necessary execution and memory barriers, as well as layout transitions.
+		 */
+		// TODO - CLean up these three methods, perhaps try merging into one
+		void UpdateShaderSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
+
+		/**
+		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of being bound
+		 * as a framebuffer attachment. Sets up any necessary execution and memory barriers, as well as layout transitions.
+		 */
+		void UpdateFramebufferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+
+		/**
+		 * Updates an existing image sub-resource with new access and stage flags for the purposes of being used for a
+		 * transfer operation. Sets up any necessary execution and memory barriers, as well as layout transitions.
+		 */
+		void UpdateTransferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
 
 		VulkanGpuCommandBuffer* mCommandBuffer;
 
@@ -266,11 +323,10 @@ namespace b3d::render
 		/** Storage for all image subresource tracking states. ImageTrackingState references ranges within this storage. */
 		Vector<ImageSubresourceTrackingState> mSubresourceTrackingState;
 
-		/** Set of global subresource indices that are currently bound for shader access. */
-		Set<u32> mShaderBoundSubresourceInfos;
+		/** Set of global subresource indices that are used on the current render pass. */
+		Set<u32> mRenderPassSubresources;
 
-		/** Maps images to their global image tracking state index if they have queued layout transitions. */
-		UnorderedMap<VulkanImage*, u32> mQueuedLayoutTransitions;
+		UnorderedSet<VulkanImage*> mQueuedLayoutTransitions;
 
 #if B3D_HAZARD_TRACKING
 		/** Pool allocator for WriteHazardTracking structures. */
