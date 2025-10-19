@@ -71,7 +71,7 @@ void DownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>
 		gDownsampleParamDef.gOffsets.Set(mParamBuffer, invTextureSize * Vector2(1.0f, 1.0f));
 	}
 
-	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL);
+	commandBuffer.BeginRenderPass(output, RT_DEPTH_STENCIL);
 
 	Bind(commandBuffer);
 
@@ -217,7 +217,7 @@ void EyeAdaptHistogramReduceMat::Execute(GpuCommandBuffer& commandBuffer, const 
 
 	gEyeAdaptHistogramReduceParamDef.gThreadGroupCount.Set(mParamBuffer, numHistograms);
 
-	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL);
+	commandBuffer.BeginRenderPass(output, RT_DEPTH_STENCIL);
 
 	Bind(commandBuffer);
 
@@ -259,7 +259,7 @@ void EyeAdaptationMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Textu
 	PopulateParams(mParamBuffer, frameDelta, settings, exposureScale);
 
 	// Render
-	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL);
+	commandBuffer.BeginRenderPass(output, RT_DEPTH_STENCIL);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -1369,7 +1369,7 @@ void BokehDOFMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& 
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
-	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(output, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 	commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
 	commandBuffer.SetVertexDescription(mTileVertexDescription);
 
@@ -2086,7 +2086,7 @@ void SSRTraceMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& v
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
-	commandBuffer.BeginRenderPass(destination, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(destination, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 	commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
 
 	Bind(commandBuffer);
@@ -2391,7 +2391,7 @@ void EncodeDepthMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture
 	gEncodeDepthParamDef.gNear.Set(mParamBuffer, near);
 	gEncodeDepthParamDef.gFar.Set(mParamBuffer, far);
 
-	commandBuffer.BeginRenderPass(output, 0, RT_COLOR0);
+	commandBuffer.BeginRenderPass(output, RT_NONE, RT_COLOR0);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);

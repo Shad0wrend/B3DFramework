@@ -131,7 +131,6 @@ SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBuffer
 			vkFreeCommandBuffers(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), mVulkanPool, 1, &commandBufferHandle);
 
 			B3DDelete(commandBuffer);
-			
 		});
 
 	mCommandBuffers[commandBuffer->GetId()] = commandBuffer;
@@ -262,7 +261,7 @@ void VulkanGpuCommandBuffer::End()
 	mState = State::RecordingDone;
 }
 
-void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
+void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTarget, RenderSurfaceMask readOnlyMask, RenderSurfaceMask loadMask)
 {
 	EnsureValidThread();
 	B3D_ASSERT(mState != State::Submitted);
@@ -354,7 +353,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 		loadMask.Set(RT_DEPTH);
 	}
 
-	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
+	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyMask == readOnlyMask && mRenderTargetLoadMask == loadMask)
 		return;
 
 	if(IsInRenderPass())
@@ -387,13 +386,13 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 	if(newFramebuffer == nullptr)
 	{
 		mFramebuffer = nullptr;
-		mRenderTargetReadOnlyFlags = 0;
+		mRenderTargetReadOnlyMask = RT_NONE;
 		mRenderTargetLoadMask = RT_NONE;
 	}
 	else
 	{
 		mFramebuffer = newFramebuffer;
-		mRenderTargetReadOnlyFlags = readOnlyFlags;
+		mRenderTargetReadOnlyMask = readOnlyMask;
 		mRenderTargetLoadMask = loadMask;
 	}
 
@@ -433,7 +432,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 
 	if(mFramebuffer)
 	{
-		mResourceTracker.TrackFramebufferUse(mFramebuffer, loadMask, readOnlyFlags);
+		mResourceTracker.TrackFramebufferUse(mFramebuffer, loadMask, readOnlyMask);
 
 		if(swapChain)
 			mResourceTracker.TrackSwapChainUse(swapChain);
@@ -852,7 +851,7 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 
 	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
 	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	BeginRenderPass(nullptr, 0, RT_ALL); // TODO - RenderPass
+	BeginRenderPass(nullptr, RT_NONE, RT_ALL); // TODO - RenderPass
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
@@ -976,7 +975,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass()
 
 	const Area2I renderArea = GetRenderPassArea();
 
-	const RenderSurfaceMask readMask = mResourceTracker.GetFramebufferReadOnlyMask(mFramebuffer, mRenderTargetReadOnlyFlags);
+	const RenderSurfaceMask readMask = mResourceTracker.GetFramebufferReadOnlyMask(mFramebuffer, mRenderTargetReadOnlyMask);
 	RenderSurfaceMask loadMask = mRenderTargetLoadMask;
 	const RenderSurfaceMask originalClearMask = mClearMask;
 
@@ -1636,7 +1635,7 @@ bool VulkanGpuCommandBuffer::BindGraphicsPipeline()
 	const SPtr<VulkanVertexInput> vertexShaderInput = VulkanVertexInputManager::Instance().GetVertexInfo(mVertexDescription, vertexShaderInputDescription);
 
 	VulkanRenderPass *const renderPass = mFramebuffer->GetRenderPass();
-	VulkanPipeline *const pipeline = mGraphicsPipeline->FindOrCreateVulkanResource(renderPass, mRenderTargetReadOnlyFlags, mDrawOp, vertexShaderInput);
+	VulkanPipeline *const pipeline = mGraphicsPipeline->FindOrCreateVulkanResource(renderPass, mRenderTargetReadOnlyMask, mDrawOp, vertexShaderInput);
 
 	if(pipeline == nullptr)
 		return false;
@@ -2043,7 +2042,7 @@ void VulkanGpuCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags source
 VkImageLayout VulkanGpuCommandBuffer::GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass)
 {
 	if(inRenderPass)
-		return mResourceTracker.GetCurrentSubresourceLayout(image, range, mFramebuffer, mRenderTargetReadOnlyFlags);
+		return mResourceTracker.GetCurrentSubresourceLayout(image, range, mFramebuffer, mRenderTargetReadOnlyMask);
 
 	return mResourceTracker.GetCurrentSubresourceLayout(image, range);
 }

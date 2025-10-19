@@ -510,7 +510,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}});
 
 	// Render decals after all normal objects, using a read-only depth buffer
-	commandBuffer.BeginRenderPass(RenderTargetNoMask, FBT_DEPTH, RT_ALL);
+	commandBuffer.BeginRenderPass(RenderTargetNoMask, RT_DEPTH, RT_ALL);
 
 	const Vector<RenderQueueElement>& decalElements = inputs.View.GetDecalQueue()->GetSortedElements();
 	RenderQueueElements(commandBuffer, decalElements);
@@ -612,7 +612,7 @@ void RCNodeSceneColor::Clear()
 
 void RCNodeSceneColor::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
-	commandBuffer.BeginRenderPass(RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(RenderTarget, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -866,7 +866,7 @@ void RCNodeLightAccumulation::Render(const RenderCompositorNodeInputs& inputs)
 
 void RCNodeLightAccumulation::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
-	commandBuffer.BeginRenderPass(RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(RenderTarget, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 
 	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
 	material->Execute(commandBuffer, LightAccumulationTexArray->Texture, LightAccumulationTex->Texture);
@@ -961,7 +961,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 	{
 		ProfileGPUBlock sampleBlock(commandBuffer, "Standard deferred unshadowed lights");
 
-		commandBuffer.BeginRenderPass(Output->RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+		commandBuffer.BeginRenderPass(Output->RenderTarget, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 
 		for(u32 i = 0; i < (u32)LightType::Count; i++)
 		{
@@ -1026,7 +1026,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 
 			for(u32 j = 0; j < count; j++)
 			{
-				commandBuffer.BeginRenderPass(mLightOcclusionRT, FBT_DEPTH, RT_DEPTH_STENCIL);
+				commandBuffer.BeginRenderPass(mLightOcclusionRT, RT_DEPTH, RT_DEPTH_STENCIL);
 
 				Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 				commandBuffer.SetViewport(area);
@@ -1038,7 +1038,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 				shadowRenderer.RenderShadowOcclusion(commandBuffer, inputs.View, light, gbuffer);
 				commandBuffer.EndRenderPass();
 
-				commandBuffer.BeginRenderPass(Output->RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
+				commandBuffer.BeginRenderPass(Output->RenderTarget, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 				StandardDeferred::Instance().RenderLight(commandBuffer, lightType, light, inputs.View, gbuffer, lightOcclusionTex->Texture);
 				commandBuffer.EndRenderPass();
 			}
@@ -1224,7 +1224,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		SPtr<GpuBuffer> perViewBuffer = inputs.View.GetPerViewBuffer();
 
 		SPtr<RenderTexture> iblRadianceRT = RenderTexture::Create(rtDesc);
-		commandBuffer.BeginRenderPass(iblRadianceRT, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
+		commandBuffer.BeginRenderPass(iblRadianceRT, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 
 		const VisibleReflProbeData& probeData = inputs.ViewGroup.GetVisibleReflProbeData();
 
@@ -1290,7 +1290,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		// Finalize rendered reflections and output them to main render target
 		{
-			commandBuffer.BeginRenderPass(outputRT, FBT_DEPTH | FBT_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
+			commandBuffer.BeginRenderPass(outputRT, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 
 			DeferredIBLFinalizeMat* mat = DeferredIBLFinalizeMat::GetVariation(isMSAA, true);
 			mat->Bind(commandBuffer, gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParams.Buffer);
@@ -1570,14 +1570,14 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderQueue* opaqueQueue = inputs.View.GetOpaqueQueue(true).get();
 	RenderQueue* transparentQueue = inputs.View.GetTransparentQueue().get();
 
-	commandBuffer.BeginRenderPass(renderTarget, 0, RT_ALL);
+	commandBuffer.BeginRenderPass(renderTarget, RT_NONE, RT_ALL);
 	RenderQueueElements(commandBuffer, opaqueQueue->GetSortedElements());
 	commandBuffer.EndRenderPass();
 
 	// Allow depth-testing against the depth buffer after the writes above
 	commandBuffer.IssueBarriers(GpuTextureBarrier(sceneDepthNode->DepthTex->Texture, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Write, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Read));
 
-	commandBuffer.BeginRenderPass(renderTarget, FBT_DEPTH, RT_ALL);
+	commandBuffer.BeginRenderPass(renderTarget, RT_DEPTH, RT_ALL);
 	RenderQueueElements(commandBuffer, transparentQueue->GetSortedElements());
 	commandBuffer.EndRenderPass();
 
@@ -1638,9 +1638,8 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 
 	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
 	RCNodeSceneColor* sceneColorNode = dependencies.Get<RCNodeSceneColor>();
-	int readOnlyFlags = FBT_DEPTH | FBT_STENCIL;
 
-	commandBuffer.BeginRenderPass(sceneColorNode->RenderTarget, readOnlyFlags, RT_COLOR0 | RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(sceneColorNode->RenderTarget, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -2805,7 +2804,7 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	SSRStencilMat* stencilMat = SSRStencilMat::GetVariation(viewProps.Target.NumSamples > 1, true);
 
 	// Note: Making the assumption that the stencil buffer is clear at this point
-	commandBuffer.BeginRenderPass(resolvedSceneDepthNode->Output->RenderTexture, FBT_DEPTH, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(resolvedSceneDepthNode->Output->RenderTexture, RT_DEPTH, RT_DEPTH_STENCIL);
 	stencilMat->Execute(commandBuffer, inputs.View, gbuffer, settings);
 	commandBuffer.EndRenderPass();
 

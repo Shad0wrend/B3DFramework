@@ -66,15 +66,14 @@ namespace b3d
 			 * found.
 			 *
 			 * @param	renderPass			Render pass that the pipeline will be used with, or one compatible.
-			 * @param	readOnlyFlags		Flags that control which portion of the framebuffer is read-only. Accepts
-			 *								combinations of FrameBufferType enum.
+			 * @param	readOnlyMask		Flags that control which framebuffer attachments are read-only. 
 			 * @param	drawOp				Type of geometry that will be drawn using the pipeline.
 			 * @param	vertexInput			State describing inputs to the vertex program.
 			 * @return						Vulkan graphics pipeline object.
 			 *
 			 * @note	Thread safe.
 			 */
-			VulkanPipeline* FindOrCreateVulkanResource(VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
+			VulkanPipeline* FindOrCreateVulkanResource(VulkanRenderPass* renderPass, RenderSurfaceMask readOnlyMask, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
 
 			/** Returns the pipeline layout object. */
 			VkPipelineLayout GetPipelineLayoutHandle() const { return mPipelineLayout; }
@@ -90,24 +89,23 @@ namespace b3d
 			 * Create a new Vulkan graphics pipeline.
 			 *
 			 * @param	renderPass			Render pass that the pipeline will be used with, or one compatible.
-			 * @param	readOnlyFlags		Flags that control which portion of the framebuffer is read-only. Accepts
-			 *								combinations of FrameBufferType enum.
+			 * @param	readOnlyMask		Flags that control which framebuffer attachment is read-only.
 			 * @param	primitiveType		Type of geometry that will be drawn using the pipeline.
 			 * @param	vertexInput			State describing inputs to the vertex program.
 			 * @return						Vulkan graphics pipeline object.
 			 *
 			 * @note	Thread safe.
 			 */
-			VulkanPipeline* CreatePipeline(VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput);
+			VulkanPipeline* CreatePipeline(VulkanRenderPass* renderPass, RenderSurfaceMask readOnlyMask, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput);
 
 			/**	Key uniquely identifying GPU pipelines. */
 			struct GpuPipelineKey
 			{
-				GpuPipelineKey(u32 framebufferId, u32 vertexInputId, u32 readOnlyFlags, DrawOperationType drawOp);
+				GpuPipelineKey(u32 framebufferId, u32 vertexInputId, RenderSurfaceMask readOnlyMask, DrawOperationType drawOp);
 
 				u32 FramebufferId;
 				u32 VertexInputId;
-				u32 ReadOnlyFlags;
+				RenderSurfaceMask ReadOnlyMask;
 				DrawOperationType DrawOp;
 			};
 

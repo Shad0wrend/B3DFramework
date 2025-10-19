@@ -150,7 +150,7 @@ void IrradianceEvaluateMat::Execute(GpuCommandBuffer& commandBuffer, const Rende
 	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 
 	// Render
-	commandBuffer.BeginRenderPass(output, FBT_DEPTH | FBT_STENCIL, loadMask);
+	commandBuffer.BeginRenderPass(output, RT_DEPTH_STENCIL, loadMask);
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)viewProps.Target.ViewRect.Width, (float)viewProps.Target.ViewRect.Height));

@@ -27,8 +27,8 @@ VulkanPipeline::~VulkanPipeline()
 }
 
 VulkanGpuGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
-	u32 framebufferId, u32 vertexInputId, u32 readOnlyFlags, DrawOperationType drawOp)
-	: FramebufferId(framebufferId), VertexInputId(vertexInputId), ReadOnlyFlags(readOnlyFlags), DrawOp(drawOp)
+	u32 framebufferId, u32 vertexInputId, RenderSurfaceMask readOnlyMask, DrawOperationType drawOp)
+	: FramebufferId(framebufferId), VertexInputId(vertexInputId), ReadOnlyMask(readOnlyMask), DrawOp(drawOp)
 {
 }
 
@@ -37,7 +37,7 @@ size_t VulkanGpuGraphicsPipelineState::HashFunc::operator()(const GpuPipelineKey
 	size_t hash = 0;
 	B3DCombineHash(hash, key.FramebufferId);
 	B3DCombineHash(hash, key.VertexInputId);
-	B3DCombineHash(hash, key.ReadOnlyFlags);
+	B3DCombineHash(hash, key.ReadOnlyMask);
 	B3DCombineHash(hash, key.DrawOp);
 
 	return hash;
@@ -51,7 +51,7 @@ bool VulkanGpuGraphicsPipelineState::EqualFunc::operator()(const GpuPipelineKey&
 	if(a.VertexInputId != b.VertexInputId)
 		return false;
 
-	if(a.ReadOnlyFlags != b.ReadOnlyFlags)
+	if(a.ReadOnlyMask != b.ReadOnlyMask)
 		return false;
 
 	if(a.DrawOp != b.DrawOp)
@@ -270,18 +270,17 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_PipelineState);
 }
 
-VulkanPipeline* VulkanGpuGraphicsPipelineState::FindOrCreateVulkanResource(VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput)
+VulkanPipeline* VulkanGpuGraphicsPipelineState::FindOrCreateVulkanResource(VulkanRenderPass* renderPass, RenderSurfaceMask readOnlyMask, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput)
 {
 	Lock lock(mMutex);
 
-	readOnlyFlags &= ~FBT_COLOR; // Ignore the color
-	GpuPipelineKey key(renderPass->GetId(), vertexInput->GetId(), readOnlyFlags, drawOp);
+	GpuPipelineKey key(renderPass->GetId(), vertexInput->GetId(), readOnlyMask, drawOp);
 
 	auto iterFind = mPipelines.find(key);
 	if(iterFind != mPipelines.end())
 		return iterFind->second;
 
-	VulkanPipeline* newPipeline = CreatePipeline(renderPass, readOnlyFlags, drawOp, vertexInput);
+	VulkanPipeline* newPipeline = CreatePipeline(renderPass, readOnlyMask, drawOp, vertexInput);
 	mPipelines[key] = newPipeline;
 
 	return newPipeline;
@@ -309,7 +308,7 @@ void VulkanGpuGraphicsPipelineState::RegisterShaderModuleResources(VulkanResourc
 	}
 }
 
-VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput)
+VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass* renderPass, RenderSurfaceMask readOnlyMask, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput)
 {
 	mInputAssemblyInfo.topology = VulkanUtility::GetDrawOp(primitiveType);
 	mTesselationInfo.patchControlPoints = 3; // Not provided by our shaders for now
@@ -317,7 +316,7 @@ VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass*
 	mColorBlendStateInfo.attachmentCount = renderPass->GetColorAttachmentCount() > 0 ? (renderPass->GetMaximumColorAttachmentIndex() + 1) : 0;
 
 	const DepthStencilStateInformation depthStencilStateInformation = GetDepthStencilState();
-	bool enableDepthWrites = depthStencilStateInformation.DepthWriteEnable && (readOnlyFlags & FBT_DEPTH) == 0;
+	bool enableDepthWrites = depthStencilStateInformation.DepthWriteEnable && !readOnlyMask.IsSet(RT_DEPTH);
 
 	mDepthStencilInfo.depthWriteEnable = enableDepthWrites; // If depth stencil attachment is read only, depthWriteEnable must be VK_FALSE
 
@@ -330,7 +329,7 @@ VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass*
 	VkStencilOp oldBackFailOp = mDepthStencilInfo.back.failOp;
 	VkStencilOp oldBackZFailOp = mDepthStencilInfo.back.depthFailOp;
 
-	if((readOnlyFlags & FBT_STENCIL) != 0)
+	if(readOnlyMask.IsSet(RT_STENCIL))
 	{
 		// Disable any stencil writes
 		mDepthStencilInfo.front.passOp = VK_STENCIL_OP_KEEP;
@@ -353,7 +352,7 @@ VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass*
 	if(renderPass->HasDepthAttachment())
 	{
 		mPipelineInfo.pDepthStencilState = &mDepthStencilInfo;
-		depthReadOnly = (readOnlyFlags & FBT_DEPTH) != 0;
+		depthReadOnly = readOnlyMask.IsSet(RT_DEPTH);
 	}
 	else
 	{
@@ -366,10 +365,16 @@ VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(VulkanRenderPass*
 	{
 		mPipelineInfo.pColorBlendState = &mColorBlendStateInfo;
 
-		for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
+		for(u32 colorAttachmentIndex = 0; colorAttachmentIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; colorAttachmentIndex++)
 		{
-			VkPipelineColorBlendAttachmentState& blendState = mAttachmentBlendStates[i];
-			colorReadOnly[i] = blendState.colorWriteMask == 0;
+			VkPipelineColorBlendAttachmentState& blendState = mAttachmentBlendStates[colorAttachmentIndex];
+			if(readOnlyMask.IsSet((RenderSurfaceMaskBits)(1 << colorAttachmentIndex)))
+			{
+				// Disable writes to this color attachment
+				blendState.colorWriteMask = 0;
+			}
+
+			colorReadOnly[colorAttachmentIndex] = blendState.colorWriteMask == 0;
 		}
 	}
 	else

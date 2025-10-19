@@ -224,9 +224,9 @@ namespace b3d::render
 		 *										the provided framebuffer, and will return the layout of the subresource after the render pass begins.
 		 *										This may be different from the current layout if the image is used as a framebuffer attachment, in which
 		 *										case the render pass may perform an automated layout transition when it begins.
-		 * @param	explicitReadOnlyFlags		Flags that specify which aspects of the image are known to be read-only, regardless of shader use.
+		 * @param	explicitReadOnlyMask		Mask that specifies which attachments are forced to be read-only, regardless of shader use.
 		 */
-		VkImageLayout GetCurrentSubresourceLayout(VulkanImage* image, const VkImageSubresourceRange& range, VulkanFramebuffer* framebuffer = nullptr, u32 explicitReadOnlyFlags = 0) const;
+		VkImageLayout GetCurrentSubresourceLayout(VulkanImage* image, const VkImageSubresourceRange& range, VulkanFramebuffer* framebuffer = nullptr, RenderSurfaceMask explicitReadOnlyMask = RT_NONE) const;
 
 		/**
 		 * Checks the subresource state of all associated framebuffer attachments and returns a mask of those that need to be read-only during the render pass,
@@ -238,7 +238,7 @@ namespace b3d::render
 		 * Lets the tracker know that the provided framebuffer has been queued on the associated command buffer. All associated attachment images
 		 * will be tracked as well, there's no need to track them separately.
 		 */
-		void TrackFramebufferUse(VulkanFramebuffer* framebuffer, RenderSurfaceMask loadMask, u32 readMask);
+		void TrackFramebufferUse(VulkanFramebuffer* framebuffer, RenderSurfaceMask loadMask, RenderSurfaceMask readOnlyMask);
 
 		/** Lets the tracker know that the provided swap chain has been queued on the associated command buffer. */
 		void TrackSwapChainUse(VulkanSwapChain* swapChain);

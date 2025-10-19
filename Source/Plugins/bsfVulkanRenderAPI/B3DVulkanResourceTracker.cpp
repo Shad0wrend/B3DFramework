@@ -621,7 +621,7 @@ void VulkanResourceTracker::TrackResourceUse(VulkanResource* resource, GpuAccess
 	}
 }
 
-void VulkanResourceTracker::TrackFramebufferUse(VulkanFramebuffer* framebuffer, RenderSurfaceMask loadMask, u32 readMask)
+void VulkanResourceTracker::TrackFramebufferUse(VulkanFramebuffer* framebuffer, RenderSurfaceMask loadMask, RenderSurfaceMask readOnlyMask)
 {
 	auto insertResult = mResources.insert(std::make_pair(framebuffer, ResourceUseHandle()));
 	if(insertResult.second) // New element
@@ -655,7 +655,7 @@ void VulkanResourceTracker::TrackFramebufferUse(VulkanFramebuffer* framebuffer, 
 		else
 			layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		GpuAccessFlag access = ((readMask & FBT_COLOR) != 0) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
+		GpuAccessFlag access = readOnlyMask.IsSet((RenderSurfaceMaskBits)(1 << colorAttachmentIndex)) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
 
 		VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
 		TrackImageUsage(attachment.Image, range, ImageUseFlagBits::Framebuffer, layout, attachment.FinalLayout, access, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
@@ -674,7 +674,7 @@ void VulkanResourceTracker::TrackFramebufferUse(VulkanFramebuffer* framebuffer, 
 			layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		// Note: We purposefully don't check read-only stencil here as generally access tracking doesn't matter for it, as it's always an attachment and shader can't read/write it directly
-		const GpuAccessFlag access = ((readMask & FBT_DEPTH) != 0) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
+		const GpuAccessFlag access = readOnlyMask.IsSet(RT_DEPTH) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
 
 		VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
 		TrackImageUsage(attachment.Image, range, ImageUseFlagBits::Framebuffer, layout, attachment.FinalLayout, access, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
@@ -837,7 +837,7 @@ void VulkanResourceTracker::PopulateAndResetLayoutTransitions(TArray<VkImageMemo
 	mQueuedLayoutTransitions.clear();
 }
 
-VkImageLayout VulkanResourceTracker::GetCurrentSubresourceLayout(VulkanImage* image, const VkImageSubresourceRange& range, VulkanFramebuffer* framebuffer, u32 explicitReadOnlyFlags) const
+VkImageLayout VulkanResourceTracker::GetCurrentSubresourceLayout(VulkanImage* image, const VkImageSubresourceRange& range, VulkanFramebuffer* framebuffer, RenderSurfaceMask explicitReadOnlyMask) const
 {
 	const u32 face = range.baseArrayLayer;
 	const u32 mip = range.baseMipLevel;
@@ -864,7 +864,7 @@ VkImageLayout VulkanResourceTracker::GetCurrentSubresourceLayout(VulkanImage* im
 			// If it's a FB attachment, retrieve its layout after the render pass begins
 			if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Framebuffer) && framebuffer != nullptr)
 			{
-				RenderSurfaceMask readMask = GetFramebufferReadOnlyMask(framebuffer, explicitReadOnlyFlags);
+				RenderSurfaceMask readMask = GetFramebufferReadOnlyMask(framebuffer, explicitReadOnlyMask);
 
 				// Is it a depth-stencil attachment?
 				if(renderPass->HasDepthAttachment() && framebuffer->GetDepthStencilAttachment().Image == image)

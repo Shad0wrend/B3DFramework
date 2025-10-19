@@ -778,7 +778,7 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 			entry->UpdateGpuBuffers();
 	}
 
-	commandBuffer.BeginRenderPass(m->Resources.GetInjectTarget(), 0, RT_ALL);
+	commandBuffer.BeginRenderPass(m->Resources.GetInjectTarget(), RT_NONE, RT_ALL);
 
 	ClearTiles(commandBuffer, newTiles);
 	InjectParticles(commandBuffer, allNewParticles);
@@ -1459,7 +1459,7 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 	GpuParticleCurveInjectMat* injectMat = GpuParticleCurveInjectMat::Get();
 	injectMat->Bind(commandBuffer);
 
-	commandBuffer.BeginRenderPass(mRT, 0, RT_ALL);
+	commandBuffer.BeginRenderPass(mRT, RT_NONE, RT_ALL);
 	commandBuffer.SetVertexDescription(mInjectVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { mInjectScratch, mInjectUV };

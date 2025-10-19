@@ -127,7 +127,7 @@ namespace b3d
 			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
 			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
 			void DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ) override;
-			void BeginRenderPass(const SPtr<RenderTarget>& target, u32 readOnlyFlags, RenderSurfaceMask loadMask) override;
+			void BeginRenderPass(const SPtr<RenderTarget>& target, RenderSurfaceMask readOnlyMask, RenderSurfaceMask loadMask) override;
 			void EndRenderPass() override { EndRenderPass(false); }
 			bool IsInRenderPass() const override { return mState == State::RecordingRenderPass; }
 			void SetViewport(const Area2& area) override;
@@ -495,7 +495,7 @@ namespace b3d
 			mutable u32 mNumUsedInterQueueSemaphores = 0;
 
 			VulkanFramebuffer* mFramebuffer = nullptr;
-			u32 mRenderTargetReadOnlyFlags = 0;
+			RenderSurfaceMask mRenderTargetReadOnlyMask = RT_NONE;
 			RenderSurfaceMask mRenderTargetLoadMask = RT_NONE;
 
 			VulkanResourceTracker mResourceTracker;
