@@ -150,7 +150,6 @@ namespace b3d::render
 
 			/** Specifies how will the subresource be accessed during the current render pass or dispatch call. Unlike accesses in *Use structs, this one is not reset after render pass. */
 			GpuAccessFlags Access;
-			bool IsInitialized = false;
 
 			/** Determines is the initial use of this subresource read-only. Used for better determining access flags. */
 			bool InitialReadOnly = false;
@@ -288,25 +287,6 @@ namespace b3d::render
 		/** Lets the tracker know that the provided image subresource range resource has been queued the associated command buffer. */
 		// TODO - Refactor this signature, try to clean it up once we have explicit layout transitions
 		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
-
-		/**
-		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of shader
-		 * read or write. Sets up any necessary execution and memory barriers, as well as layout transitions.
-		 */
-		// TODO - CLean up these three methods, perhaps try merging into one
-		void UpdateShaderSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
-
-		/**
-		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of being bound
-		 * as a framebuffer attachment. Sets up any necessary execution and memory barriers, as well as layout transitions.
-		 */
-		void UpdateFramebufferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
-
-		/**
-		 * Updates an existing image sub-resource with new access and stage flags for the purposes of being used for a
-		 * transfer operation. Sets up any necessary execution and memory barriers, as well as layout transitions.
-		 */
-		void UpdateTransferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
 
 		VulkanGpuCommandBuffer* mCommandBuffer;
 

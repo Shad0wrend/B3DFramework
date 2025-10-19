@@ -438,33 +438,84 @@ void VulkanResourceTracker::TrackImageUsage(VulkanImage* image, VkImageSubresour
 void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages)
 {
 	ImageSubresourceTrackingState& subresourceTrackingState = mSubresourceTrackingState[globalSubresourceIndex];
-	//if(subresourceTrackingState.Access == GpuAccessFlag::None) // New subresource
-	if(!subresourceTrackingState.IsInitialized)
+	if(subresourceTrackingState.Access == GpuAccessFlag::None) // New subresource
 	{
 		subresourceTrackingState.InitialLayout = layout;
 		subresourceTrackingState.InitialReadOnly = !access.IsSet(GpuAccessFlag::Write);
 		subresourceTrackingState.RenderPassLayout = finalLayout; // TODO - Handle this below
 		subresourceTrackingState.CurrentLayout = layout; // TODO - Handle this below
 		subresourceTrackingState.RequiredLayout = layout; // TODO - Handle this below
-		subresourceTrackingState.IsInitialized = true;
-
 	}
 	// TODO - Unify existing and new subresource paths
 	else
 	{
-		switch(use)
+		// Determine required layout
+		if(use == ImageUseFlagBits::Shader)
 		{
-		default:
-		case ImageUseFlagBits::Shader:
-			UpdateShaderSubresource(image, subresourceTrackingState, layout, access, stages);
-			break;
-		case ImageUseFlagBits::Framebuffer:
-			UpdateFramebufferSubresource(image, subresourceTrackingState, layout, finalLayout, access, stages);
-			break;
-		case ImageUseFlagBits::Transfer:
-			UpdateTransferSubresource(image, subresourceTrackingState, layout, access, stages);
-			break;
+			// Register the necessary layout transition, but only if the image isn't bound for framebuffer bind. If it is
+			// then we are forced to use the layout that's expected by the framebuffer.
+			if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
+			{
+				// Currently the system doesn't support image being bound to framebuffer, yet being written to by the
+				// shader. This seems like an unlikely scenario.
+				B3D_ASSERT(!access.IsSet(GpuAccessFlag::Write));
+			}
+			else
+			{
+				// Check if the image had a layout previously assigned, and if so check if multiple different layouts
+				// were requested. In that case we wish to transfer the image to GENERAL layout.
+
+				const bool firstUseInRenderPass = !subresourceTrackingState.UseFlags.IsSetAny(ImageUseFlagBits::Shader | ImageUseFlagBits::Framebuffer);
+				if(firstUseInRenderPass || subresourceTrackingState.RequiredLayout == VK_IMAGE_LAYOUT_UNDEFINED)
+					subresourceTrackingState.RequiredLayout = layout;
+				else if(subresourceTrackingState.RequiredLayout != layout)
+					subresourceTrackingState.RequiredLayout = VK_IMAGE_LAYOUT_GENERAL;
+			}
 		}
+		else if(use == ImageUseFlagBits::Framebuffer)
+		{
+			// Framebuffer expects a certain layout and we must respect it. In the case when the FB attachment is also bound
+			// for shader reads, this will override the layout required for shader read (GENERAL or DEPTH_READ_ONLY), but that
+			// is fine because those transitions are handled automatically by render-pass layout transitions.
+			subresourceTrackingState.RequiredLayout = layout;
+			subresourceTrackingState.RenderPassLayout = finalLayout;
+		}
+		else if(use == ImageUseFlagBits::Transfer)
+		{
+			// Ensure previously queued transitions were executed
+			B3D_ASSERT(subresourceTrackingState.CurrentLayout == subresourceTrackingState.RequiredLayout);
+
+			// Transition to a valid transfer layout
+			if(subresourceTrackingState.CurrentLayout != layout) // TODO - This should be handled externally by issuing barriers manually
+			{
+				const VkAccessFlags sourceAccessFlags = image->GetAccessFlags(layout);
+				const VkAccessFlags destinationAccessFlags = access.IsSet(GpuAccessFlag::Write) ? VK_ACCESS_TRANSFER_WRITE_BIT : VK_ACCESS_TRANSFER_READ_BIT;
+
+				VkImageMemoryBarrier barrier;
+				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				barrier.pNext = nullptr;
+				barrier.srcAccessMask = sourceAccessFlags;
+				barrier.dstAccessMask = destinationAccessFlags;
+				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.oldLayout = subresourceTrackingState.CurrentLayout;
+				barrier.newLayout = layout;
+				barrier.image = image->GetVulkanHandle();
+				barrier.subresourceRange = subresourceTrackingState.Range;
+
+				const VkPipelineStageFlags sourceStage = VulkanUtility::GetPipelineStageFlags(sourceAccessFlags);
+				const VkPipelineStageFlags destinationStage = VulkanUtility::GetPipelineStageFlags(destinationAccessFlags);
+
+				vkCmdPipelineBarrier(mCommandBuffer->GetVulkanHandle(), sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+			}
+
+			subresourceTrackingState.CurrentLayout = layout;
+			subresourceTrackingState.RequiredLayout = layout;
+		}
+
+		// Queue a layout transition
+		if(subresourceTrackingState.CurrentLayout != subresourceTrackingState.RequiredLayout)
+			mQueuedLayoutTransitions.insert(image);
 	}
 
 #if B3D_HAZARD_TRACKING
@@ -640,86 +691,6 @@ void VulkanResourceTracker::TrackSwapChainUse(VulkanSwapChain* swapChain)
 		B3D_ASSERT(!useHandle.Used);
 		useHandle.Flags |= GpuAccessFlag::Write;
 	}
-}
-
-void VulkanResourceTracker::UpdateShaderSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages)
-{
-	// New layout is valid, check for transitions (UNDEFINED signifies the caller doesn't want a layout transition)
-	if(layout != VK_IMAGE_LAYOUT_UNDEFINED)
-	{
-		// Register the necessary layout transition, but only if the image isn't bound for framebuffer bind. If it is
-		// then we are forced to use the layout that's expected by the framebuffer.
-
-		if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
-		{
-			// Currently the system doesn't support image being bound to framebuffer, yet being written to by the
-			// shader. This seems like an unlikely scenario.
-			B3D_ASSERT(!access.IsSet(GpuAccessFlag::Write));
-		}
-		else
-		{
-			// Check if the image had a layout previously assigned, and if so check if multiple different layouts
-			// were requested. In that case we wish to transfer the image to GENERAL layout.
-
-			bool firstUseInRenderPass = !subresourceTrackingState.UseFlags.IsSetAny(
-				ImageUseFlagBits::Shader | ImageUseFlagBits::Framebuffer);
-			if(firstUseInRenderPass || subresourceTrackingState.RequiredLayout == VK_IMAGE_LAYOUT_UNDEFINED)
-				subresourceTrackingState.RequiredLayout = layout;
-			else if(subresourceTrackingState.RequiredLayout != layout)
-				subresourceTrackingState.RequiredLayout = VK_IMAGE_LAYOUT_GENERAL;
-		}
-	}
-
-	if(subresourceTrackingState.CurrentLayout != subresourceTrackingState.RequiredLayout)
-	{
-		// Queue a layout transition
-		mQueuedLayoutTransitions.insert(image);
-	}
-}
-
-void VulkanResourceTracker::UpdateFramebufferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages)
-{
-	// Framebuffer expects a certain layout and we must respect it. In the case when the FB attachment is also bound
-	// for shader reads, this will override the layout required for shader read (GENERAL or DEPTH_READ_ONLY), but that
-	// is fine because those transitions are handled automatically by render-pass layout transitions.
-	subresourceTrackingState.RequiredLayout = layout;
-	subresourceTrackingState.RenderPassLayout = finalLayout;
-
-	if(subresourceTrackingState.CurrentLayout != subresourceTrackingState.RequiredLayout)
-		mQueuedLayoutTransitions.insert(image);
-}
-
-void VulkanResourceTracker::UpdateTransferSubresource(VulkanImage* image, ImageSubresourceTrackingState& subresourceTrackingState, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages)
-{
-	// Ensure previously queued transitions were executed
-	B3D_ASSERT(subresourceTrackingState.CurrentLayout == subresourceTrackingState.RequiredLayout);
-
-	// Transition to a valid transfer layout
-	if(subresourceTrackingState.CurrentLayout != layout)
-	{
-		const VkAccessFlags sourceAccessFlags = image->GetAccessFlags(layout);
-		const VkAccessFlags destinationAccessFlags = access.IsSet(GpuAccessFlag::Write) ? VK_ACCESS_TRANSFER_WRITE_BIT : VK_ACCESS_TRANSFER_READ_BIT;
-
-		VkImageMemoryBarrier barrier;
-		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		barrier.pNext = nullptr;
-		barrier.srcAccessMask = sourceAccessFlags;
-		barrier.dstAccessMask = destinationAccessFlags;
-		barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		barrier.oldLayout = subresourceTrackingState.CurrentLayout;
-		barrier.newLayout = layout;
-		barrier.image = image->GetVulkanHandle();
-		barrier.subresourceRange = subresourceTrackingState.Range;
-
-		const VkPipelineStageFlags sourceStage = VulkanUtility::GetPipelineStageFlags(sourceAccessFlags);
-		const VkPipelineStageFlags destinationStage = VulkanUtility::GetPipelineStageFlags(destinationAccessFlags);
-
-		vkCmdPipelineBarrier(mCommandBuffer->GetVulkanHandle(), sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
-	}
-
-	subresourceTrackingState.CurrentLayout = layout;
-	subresourceTrackingState.RequiredLayout = layout;
 }
 
 VulkanResourceTracker::ImageSubresourceTrackingState& VulkanResourceTracker::FindSubresourceTrackingState(VulkanImage* image, u32 face, u32 mip)
