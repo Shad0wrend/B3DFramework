@@ -35,6 +35,33 @@ namespace b3d::render
 	/** Invalid resource ID constant - use to indicate no resource or initialize handles */
 	static constexpr FrameGraphResourceId kInvalidFrameGraphResourceId = FrameGraphResourceId{~0u};
 
+	class FrameGraphPass;
+
+	/**
+	 * Tracks the lifetime of a resource within the frame graph.
+	 * Used to determine when resources can be allocated and released.
+	 */
+	struct FrameGraphResourceLifetime
+	{
+		/** The resource being tracked */
+		FrameGraphResourceId Resource;
+
+		/** The pass where this resource is first used (or imported) */
+		FrameGraphPass* FirstUse = nullptr;
+
+		/** The pass where this resource is last used */
+		FrameGraphPass* LastUse = nullptr;
+
+		/** Whether this resource is written to (not just read) */
+		bool IsWritten = false;
+
+		/** Whether this resource is read from an external source (imported) */
+		bool IsImported = false;
+
+		/** Whether this resource is explicitly marked as an output */
+		bool IsOutput = false;
+	};
+
 	/** @} */
 }
 
