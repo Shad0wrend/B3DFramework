@@ -15,7 +15,7 @@ String FrameGraphDebug::GenerateGraphText(const Vector<UPtr<FrameGraphPassNode>>
 	for (const auto& node : nodes)
 	{
 		FrameGraphPass* pass = node->GetPass();
-		result += StringFormat("Pass: {0}\n", pass->GetName());
+		result += StringFormat::Format("Pass: {0}\n", pass->GetName());
 
 		if (node->IsCulled())
 		{
@@ -23,7 +23,7 @@ String FrameGraphDebug::GenerateGraphText(const Vector<UPtr<FrameGraphPassNode>>
 		}
 		else
 		{
-			result += StringFormat("  Reference Count: {0}\n", node->GetReferenceCount());
+			result += StringFormat::Format("  Reference Count: {0}\n", node->GetReferenceCount());
 
 			const auto& incoming = node->GetIncomingDependencies();
 			if (!incoming.empty())
@@ -45,7 +45,7 @@ String FrameGraphDebug::GenerateGraphText(const Vector<UPtr<FrameGraphPassNode>>
 						break;
 					}
 
-					result += StringFormat("    <- {0} (Resource {1}, {2})\n",
+					result += StringFormat::Format("    <- {0} (Resource {1}, {2})\n",
 						dep.ProducerPass->GetName(),
 						dep.Resource.Index,
 						typeStr);
@@ -58,7 +58,7 @@ String FrameGraphDebug::GenerateGraphText(const Vector<UPtr<FrameGraphPassNode>>
 				result += "  Outgoing Dependencies:\n";
 				for (const auto& dep : outgoing)
 				{
-					result += StringFormat("    -> {0} (Resource {1})\n",
+					result += StringFormat::Format("    -> {0} (Resource {1})\n",
 						dep.ConsumerPass->GetName(),
 						dep.Resource.Index);
 				}
@@ -87,7 +87,7 @@ String FrameGraphDebug::GenerateGraphDOT(const Vector<UPtr<FrameGraphPassNode>>&
 			"style=filled,fillcolor=gray,fontcolor=white" :
 			"style=filled,fillcolor=lightblue";
 
-		result += StringFormat("  pass{0} [label=\"{1}\",{2}];\n",
+		result += StringFormat::Format("  pass{0} [label=\"{1}\",{2}];\n",
 			i, pass->GetName(), nodeStyle);
 	}
 
@@ -130,7 +130,7 @@ String FrameGraphDebug::GenerateGraphDOT(const Vector<UPtr<FrameGraphPassNode>>&
 				break;
 			}
 
-			result += StringFormat("  pass{0} -> pass{1} [label=\"R{2}\\n{3}\",color={4}];\n",
+			result += StringFormat::Format("  pass{0} -> pass{1} [label=\"R{2}\\n{3}\",color={4}];\n",
 				i, consumerIndex, dep.Resource.Index, depType, edgeColor);
 		}
 	}

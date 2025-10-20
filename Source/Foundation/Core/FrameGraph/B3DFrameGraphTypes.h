@@ -35,6 +35,37 @@ namespace b3d::render
 	/** Invalid resource ID constant - use to indicate no resource or initialize handles */
 	static constexpr FrameGraphResourceId kInvalidFrameGraphResourceId = FrameGraphResourceId{~0u};
 
+	/**
+	 * Type of frame graph pass.
+	 * Determines how the pass is executed and what automatic management is performed.
+	 */
+	enum class FrameGraphPassType
+	{
+		/**
+		 * Generic pass with no automatic management.
+		 * User must manually call BeginRenderPass/EndRenderPass if needed.
+		 * Barriers are still automatically inserted.
+		 */
+		Generic,
+
+		/**
+		 * Render pass - renders to one or more render targets.
+		 * Frame graph automatically:
+		 * - Creates RenderTarget from declared color/depth attachments
+		 * - Calls BeginRenderPass before execute lambda
+		 * - Calls EndRenderPass after execute lambda
+		 * - Issues barriers before BeginRenderPass
+		 */
+		Render,
+
+		/**
+		 * Compute pass - executes compute shaders.
+		 * No render pass management, but barriers are automatically inserted.
+		 * Validates that no render target resources are used.
+		 */
+		Compute
+	};
+
 	class FrameGraphPass;
 
 	/**

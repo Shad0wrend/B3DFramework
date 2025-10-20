@@ -4,9 +4,8 @@
 
 #include "B3DPrerequisites.h"
 #include "B3DFrameGraph.h"
-#include "B3DFrameGraphDependencyAnalyzer.h"
-#include "B3DFrameGraphTopologicalSort.h"
-#include "B3DFrameGraphCulling.h"
+#include "B3DFrameGraphPass.h"
+#include "B3DFrameGraphBarrier.h"
 
 namespace b3d::render
 {
@@ -17,21 +16,22 @@ namespace b3d::render
 	/**
 	 * Compiled frame graph output.
 	 *
-	 * Contains the result of frame graph compilation, including the ordered list of passes
-	 * to execute and resource lifetime information.
-	 *
-	 * Phase 1: Just stores passes in declaration order
-	 * Phase 2: Stores topologically sorted passes and resource lifetimes
-	 * Later phases: Will include barrier information, resource allocation commands, etc.
+	 * Contains the result of frame graph compilation, including the ordered list of passes to execute;
 	 */
 	class B3D_EXPORT CompiledFrameGraph
 	{
 	public:
 		/** Passes in topologically sorted execution order (culled passes removed) */
-		Vector<FrameGraphPassNode*> SortedPasses;
+		Vector<FrameGraphPass*> SortedPasses;
 
-		/** Resource lifetime information for all resources */
-		UnorderedMap<FrameGraphResourceId, FrameGraphResourceLifetime> ResourceLifetimes;
+		/** Barrier batches to issue before passes */
+		Vector<FrameGraphBarrierBatch> BarrierBatches;
+
+		/** Complete usage history for all resources. */
+		UnorderedMap<FrameGraphResourceId, ResourceUsageHistory> UsageHistories;
+
+		/** Render targets for render passes, created during compilation. */
+		UnorderedMap<FrameGraphPass*, SPtr<RenderTarget>> RenderTargets; // TODO - Store RenderTargets in passes directly?
 	};
 
 	/**
@@ -40,21 +40,13 @@ namespace b3d::render
 	 * The compiler is responsible for:
 	 * - Executing pass setup callbacks to collect resource dependencies
 	 * - Validating resource usage and access patterns
-	 * - Computing execution order (Phase 2+)
-	 * - Calculating synchronization barriers (Phase 3+)
-	 * - Performing resource lifetime analysis (Phase 4+)
+	 * - Analyzing dependencies and computing execution order
+	 * - Culling unused passes
+	 * - Calculating synchronization barriers and layout transitions
+	 * - Creating render targets for render passes
+	 * - Performing resource lifetime analysis
 	 *
-	 * Phase 1 Implementation:
-	 * - Executes setup functions to populate resource accesses
-	 * - Validates that all referenced resources exist
-	 * - Validates usage/access flag consistency
-	 * - Stores passes in declaration order
-	 *
-	 * Future Phases:
-	 * - Phase 2: Build dependency DAG, topological sort for execution order
-	 * - Phase 3: Calculate memory barriers and layout transitions
-	 * - Phase 4: Lifetime analysis for transient resource allocation
-	 * - Phase 5: Multi-queue scheduling and async compute optimization
+	 * All compilation logic is contained within this single class for simplicity.
 	 */
 	class B3D_EXPORT FrameGraphCompiler
 	{
@@ -72,6 +64,13 @@ namespace b3d::render
 		UPtr<CompiledFrameGraph> Compile();
 
 	private:
+		//////////////////////////////////////////////////////////////////////////
+		// Phase 1: Validation
+		//////////////////////////////////////////////////////////////////////////
+
+		/** Executes setup functions for all passes */
+		void ExecuteSetupFunctions();
+
 		/** Validates the graph (checks resources exist) */
 		bool Validate();
 
@@ -82,24 +81,112 @@ namespace b3d::render
 		bool ValidateResourceAccess(FrameGraphPass* pass, const FrameGraphResourceAccess& access);
 
 		/** Validates dependencies (Phase 2: checks for isolated passes, etc.) */
-		bool ValidateDependencies(const Vector<UPtr<FrameGraphPassNode>>& nodes);
+		bool ValidateDependencies();
 
-		/** Executes setup functions for all passes */
-		void ExecuteSetupFunctions();
+		/** Validates render pass setup (Phase 3) */
+		bool ValidateRenderPasses();
+
+		/** Validates layouts (Phase 3) */
+		bool ValidateLayouts(const CompiledFrameGraph& compiledGraph);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Phase 2: Dependency Analysis & Scheduling
+		//////////////////////////////////////////////////////////////////////////
+
+		/** Analyzes resource dependencies and builds the dependency graph */
+		bool AnalyzeDependencies();
+
+		/** Analyzes which passes read/write which resources */
+		void AnalyzeResourceAccess();
+
+		/** Builds dependency edges (RAW, WAR, WAW) */
+		void BuildDependencyGraph();
+
+		/** Tracks resource lifetimes (first use, last use, etc.) */
+		void TrackResourceLifetimes();
+
+		/** Culls unused passes (reverse DFS from outputs) */
+		void CullUnusedPasses();
+
+		/** Marks a pass and all its dependencies as used */
+		void MarkPassAsUsed(FrameGraphPass* pass);
+
+		/** Topologically sorts passes using Kahn's algorithm */
+		bool TopologicalSort(Vector<FrameGraphPass*>& outSortedPasses);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Phase 3: Barrier Generation & Synchronization
+		//////////////////////////////////////////////////////////////////////////
+
+		/** Builds usage history for all resources */
+		void BuildUsageHistory(const Vector<FrameGraphPass*>& passes);
+
+		/** Records a single resource usage */
+		void RecordUsage(
+			FrameGraphResourceId resource,
+			FrameGraphPass* pass,
+			GpuResourceUseFlags usage,
+			GpuAccessFlags access);
+
+		/** Determines the appropriate layout for a resource usage */
+		ImageLayout DetermineLayout(GpuResourceUseFlags usage, GpuAccessFlags access) const;
+
+		/** Builds transitions from usage history */
+		void BuildTransitions(Vector<ResourceTransition>& outTransitions);
+
+		/** Builds transitions for a single resource */
+		void BuildTransitionsForResource(
+			const ResourceUsageHistory& history,
+			Vector<ResourceTransition>& outTransitions);
+
+		/** Checks if a barrier is needed between two consecutive uses */
+		bool NeedsBarrier(const ResourceUsage& prevUsage, const ResourceUsage& currUsage) const;
+
+		/** Builds GPU barriers from transitions */
+		void BuildBarriers(
+			const Vector<ResourceTransition>& transitions,
+			Vector<FrameGraphBarrierBatch>& outBarriers);
+
+		/** Creates a buffer barrier from a transition */
+		TOptional<GpuBufferBarrier> CreateBufferBarrier(const ResourceTransition& transition);
+
+		/** Creates a texture barrier from a transition */
+		TOptional<GpuTextureBarrier> CreateTextureBarrier(const ResourceTransition& transition);
+
+		/** Creates render targets for render passes */
+		void CreateRenderTargets(
+			const Vector<FrameGraphPass*>& passes,
+			UnorderedMap<FrameGraphPass*, SPtr<RenderTarget>>& outRenderTargets);
+
+		/** Builds a render target for a single render pass */
+		SPtr<RenderTarget> BuildRenderTarget(FrameGraphPass* pass);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Member Variables
+		//////////////////////////////////////////////////////////////////////////
 
 		FrameGraph& mFrameGraph;
 
-		/** Dependency analyzer (Phase 2) */
-		UPtr<FrameGraphDependencyAnalyzer> mDependencyAnalyzer;
+		/** Map of resources to passes that write them (Phase 2) */
+		UnorderedMap<FrameGraphResourceId, Vector<FrameGraphPass*>> mResourceWriters;
 
-		/** Topological sorter (Phase 2) */
-		UPtr<FrameGraphTopologicalSort> mTopologicalSort;
+		/** Map of resources to passes that read them (Phase 2) */
+		UnorderedMap<FrameGraphResourceId, Vector<FrameGraphPass*>> mResourceReaders;
 
-		/** Pass culler (Phase 2) */
-		UPtr<FrameGraphCulling> mCulling;
+		/** Resource lifetime tracking (Phase 2) */
+		UnorderedMap<FrameGraphResourceId, FrameGraphResourceLifetime> mResourceLifetimes;
 
 		/** Sorted pass execution order (Phase 2) */
-		Vector<FrameGraphPassNode*> mSortedPasses;
+		Vector<FrameGraphPass*> mSortedPasses;
+
+		/** Number of culled passes (Phase 2) */
+		u32 mCulledPassCount = 0;
+
+		/** Passes involved in dependency cycles (Phase 2) */
+		Vector<FrameGraphPass*> mCyclePasses;
+
+		/** Resource usage histories (Phase 3) */
+		UnorderedMap<FrameGraphResourceId, ResourceUsageHistory> mUsageHistories;
 	};
 
 	/** @} */

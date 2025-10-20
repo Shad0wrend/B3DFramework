@@ -79,7 +79,6 @@ namespace b3d::render
 	 */
 
 	class FrameGraphCompiler;
-	class FrameGraphExecutor;
 	class CompiledFrameGraph;
 
 	/**
@@ -173,7 +172,8 @@ namespace b3d::render
 			const SPtr<GpuBuffer>& buffer);
 
 		/**
-		 * Declares a render or compute pass.
+		 * Declare a generic pass.
+		 * User must manually manage render passes if needed.
 		 *
 		 * @param name          Name for debugging/profiling
 		 * @param setupFunc     Lambda that declares resource dependencies
@@ -185,6 +185,37 @@ namespace b3d::render
 			FrameGraphPassSetupFunc setupFunc,
 			FrameGraphPassExecuteFunc executeFunc,
 			GpuQueueUsage queue = GQT_GRAPHICS);
+
+		/**
+		 * Declare a render pass.
+		 * Frame graph automatically:
+		 * - Creates render target from color/depth attachments
+		 * - Calls BeginRenderPass/EndRenderPass
+		 * - Issues barriers before BeginRenderPass
+		 *
+		 * @param name          Name for debugging/profiling
+		 * @param setupFunc     Lambda that declares resource dependencies
+		 * @param executeFunc   Lambda that records GPU commands
+		 * @param queue         Which queue to execute on (default: graphics)
+		 */
+		void DeclareRenderPass(
+			const StringView& name,
+			FrameGraphPassSetupFunc setupFunc,
+			FrameGraphPassExecuteFunc executeFunc,
+			GpuQueueUsage queue = GQT_GRAPHICS);
+
+		/**
+		 * Declare a compute pass.
+		 * No render pass management, validates compute-only resource usage.
+		 *
+		 * @param name          Name for debugging/profiling
+		 * @param setupFunc     Lambda that declares resource dependencies
+		 * @param executeFunc   Lambda that records GPU commands
+		 */
+		void DeclareComputePass(
+			const StringView& name,
+			FrameGraphPassSetupFunc setupFunc,
+			FrameGraphPassExecuteFunc executeFunc);
 
 		/**
 		 * Compiles the frame graph.
@@ -265,14 +296,36 @@ namespace b3d::render
 			return mOutputResources;
 		}
 
+		/**
+		 * Get a map of imported textures (internal - used by render target builder).
+		 * Returns a map from resource ID to texture.
+		 */
+		UnorderedMap<FrameGraphResourceId, SPtr<Texture>> GetImportedTextures() const;
+
 	private:
+		//////////////////////////////////////////////////////////////////////////
+		// Execution (internal)
+		//////////////////////////////////////////////////////////////////////////
+
+		/** Executes a single pass */
+		void ExecutePass(FrameGraphPass* pass);
+
+		/** Gets the appropriate queue for a pass */
+		SPtr<GpuQueue> GetQueueForPass(FrameGraphPass* pass);
+
+		/** Gets the appropriate command buffer pool for a queue type */
+		SPtr<GpuCommandBufferPool> GetPoolForQueue(GpuQueueUsage queueType);
+
+		//////////////////////////////////////////////////////////////////////////
+		// Member Variables
+		//////////////////////////////////////////////////////////////////////////
+
 		GpuDevice& mDevice;
 
 		Vector<UPtr<FrameGraphResource>> mResources;
 		Vector<UPtr<FrameGraphPass>> mPasses;
 
 		UPtr<FrameGraphCompiler> mCompiler;
-		UPtr<FrameGraphExecutor> mExecutor;
 		UPtr<CompiledFrameGraph> mCompiledGraph;
 
 		u32 mNextResourceId = 0;
@@ -280,6 +333,11 @@ namespace b3d::render
 
 		/** Resources explicitly marked as outputs (Phase 2) */
 		UnorderedSet<FrameGraphResourceId> mOutputResources;
+
+		/** Command buffer pools (one per queue type) */
+		SPtr<GpuCommandBufferPool> mGraphicsCommandPool;
+		SPtr<GpuCommandBufferPool> mComputeCommandPool;
+		SPtr<GpuCommandBufferPool> mTransferCommandPool;
 	};
 
 	/** @} */

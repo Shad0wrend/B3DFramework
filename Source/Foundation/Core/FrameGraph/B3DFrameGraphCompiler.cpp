@@ -1,7 +1,12 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DFrameGraphCompiler.h"
+#include "B3DFrameGraphPass.h"
+#include "B3DFrameGraphResource.h"
+#include "RenderAPI/B3DRenderTarget.h"
+#include "RenderAPI/B3DRenderTexture.h"
 #include "Debug/B3DDebug.h"
+#include <queue>
 
 using namespace b3d;
 using namespace b3d::render;
@@ -25,32 +30,28 @@ UPtr<CompiledFrameGraph> FrameGraphCompiler::Compile()
 	ExecuteSetupFunctions();
 
 	// Phase 2: Dependency analysis
-	mDependencyAnalyzer = B3DMakeUnique<FrameGraphDependencyAnalyzer>(mFrameGraph);
-	if (!mDependencyAnalyzer->Analyze())
+	if (!AnalyzeDependencies())
 	{
 		B3D_LOG(Error, RenderBackend, "Dependency analysis failed");
 		return nullptr;
 	}
 
 	// Phase 2: Dependency validation
-	if (!ValidateDependencies(mDependencyAnalyzer->GetPassNodes()))
+	if (!ValidateDependencies())
 	{
 		B3D_LOG(Warning, RenderBackend, "Dependency validation found potential issues");
 	}
 
 	// Phase 2: Pass culling
-	mCulling = B3DMakeUnique<FrameGraphCulling>(mFrameGraph);
-	auto& nodes = const_cast<Vector<UPtr<FrameGraphPassNode>>&>(mDependencyAnalyzer->GetPassNodes());
-	mCulling->Cull(nodes, mDependencyAnalyzer->GetResourceLifetimes());
+	CullUnusedPasses();
 
-	if (mCulling->GetCulledPassCount() > 0)
+	if (mCulledPassCount > 0)
 	{
-		B3D_LOG(Info, RenderBackend, "Culled {0} unused passes", mCulling->GetCulledPassCount());
+		B3D_LOG(Info, RenderBackend, "Culled {0} unused passes", mCulledPassCount);
 	}
 
 	// Phase 2: Topological sort
-	mTopologicalSort = B3DMakeUnique<FrameGraphTopologicalSort>();
-	if (!mTopologicalSort->Sort(mDependencyAnalyzer->GetPassNodes(), mSortedPasses))
+	if (!TopologicalSort(mSortedPasses))
 	{
 		B3D_LOG(Error, RenderBackend, "Topological sort failed - cycle detected");
 		return nullptr;
@@ -59,13 +60,44 @@ UPtr<CompiledFrameGraph> FrameGraphCompiler::Compile()
 	B3D_LOG(Info, RenderBackend, "Frame graph compiled successfully. Execution order:");
 	for (u32 i = 0; i < mSortedPasses.size(); i++)
 	{
-		B3D_LOG(Info, RenderBackend, "  {0}. {1}", i + 1, mSortedPasses[i]->GetPass()->GetName());
+		B3D_LOG(Info, RenderBackend, "  {0}. {1}", i + 1, mSortedPasses[i]->GetName());
 	}
+
+	// Phase 3: Validate render pass setup
+	if (!ValidateRenderPasses())
+	{
+		B3D_LOG(Error, RenderBackend, "Render pass validation failed");
+		return nullptr;
+	}
+
+	// Phase 3: Build usage history
+	BuildUsageHistory(mSortedPasses);
+
+	// Phase 3: Build transitions
+	Vector<ResourceTransition> transitions;
+	BuildTransitions(transitions);
+
+	// Phase 3: Build barriers
+	Vector<FrameGraphBarrierBatch> barriers;
+	BuildBarriers(transitions, barriers);
+
+	// Phase 3: Create render targets for render passes
+	UnorderedMap<FrameGraphPass*, SPtr<RenderTarget>> renderTargets;
+	CreateRenderTargets(mSortedPasses, renderTargets);
 
 	// Create compiled graph
 	auto compiled = B3DMakeUnique<CompiledFrameGraph>();
 	compiled->SortedPasses = mSortedPasses;
-	compiled->ResourceLifetimes = mDependencyAnalyzer->GetResourceLifetimes();
+	compiled->BarrierBatches = std::move(barriers);
+	compiled->UsageHistories = mUsageHistories;
+	compiled->RenderTargets = std::move(renderTargets);
+
+	// Phase 3: Validation
+	if (!ValidateLayouts(*compiled))
+	{
+		B3D_LOG(Error, RenderBackend, "Layout validation failed");
+		return nullptr;
+	}
 
 	return compiled;
 }
@@ -95,9 +127,6 @@ bool FrameGraphCompiler::Validate()
 		if (!ValidatePass(pass.get()))
 			isValid = false;
 	}
-
-	// Phase 1: No dependency analysis or cycle detection
-	// Phase 2 will add: dependency DAG, topological sort, cycle detection
 
 	return isValid;
 }
@@ -171,7 +200,6 @@ bool FrameGraphCompiler::ValidateResourceAccess(FrameGraphPass* pass, const Fram
 	}
 
 	// Validate usage/access combinations
-	const bool isRead = access.Access.IsSet(GpuAccessFlag::Read);
 	const bool isWrite = access.Access.IsSet(GpuAccessFlag::Write);
 	const bool isAttachment = access.Usage.IsSetAny(GpuResourceUseFlag::ColorAttachment | GpuResourceUseFlag::DepthStencilAttachment);
 
@@ -184,23 +212,20 @@ bool FrameGraphCompiler::ValidateResourceAccess(FrameGraphPass* pass, const Fram
 		return false;
 	}
 
-	// Phase 1: No advanced validation (write-after-write conflicts, read-after-write hazards, etc.)
-	// Phase 3 will add: barrier calculation, hazard detection, layout validation
-
 	return true;
 }
 
-bool FrameGraphCompiler::ValidateDependencies(const Vector<UPtr<FrameGraphPassNode>>& nodes)
+bool FrameGraphCompiler::ValidateDependencies()
 {
+	const auto& passes = mFrameGraph.GetPasses();
 	bool valid = true;
 
 	// Check for passes with no inputs or outputs (isolated passes)
-	for (const auto& node : nodes)
+	for (const auto& pass : passes)
 	{
-		if (node->IsCulled())
+		if (pass->IsCulled())
 			continue;
 
-		FrameGraphPass* pass = node->GetPass();
 		const auto& accesses = pass->GetResourceAccesses();
 
 		if (accesses.empty())
@@ -221,7 +246,7 @@ bool FrameGraphCompiler::ValidateDependencies(const Vector<UPtr<FrameGraphPassNo
 			}
 		}
 
-		if (!hasWrite && node->GetOutgoingDependencies().empty())
+		if (!hasWrite && pass->GetOutgoingDependencies().empty())
 		{
 			B3D_LOG(Warning, RenderBackend,
 				"Pass '{0}' only reads resources and has no outgoing dependencies. "
@@ -231,4 +256,735 @@ bool FrameGraphCompiler::ValidateDependencies(const Vector<UPtr<FrameGraphPassNo
 	}
 
 	return valid;
+}
+
+bool FrameGraphCompiler::ValidateRenderPasses()
+{
+	const auto& passes = mFrameGraph.GetPasses();
+	bool valid = true;
+
+	for (const auto& pass : passes)
+	{
+
+		if (pass->GetPassType() == FrameGraphPassType::Render)
+		{
+			// Check that render passes have at least one attachment
+			if (pass->GetColorAttachments().empty() && !pass->GetDepthAttachment().IsValid())
+			{
+				B3D_LOG(Error, RenderBackend,
+					"Render pass '{0}' has no color or depth attachments",
+					pass->GetName());
+				valid = false;
+			}
+		}
+		else if (pass->GetPassType() == FrameGraphPassType::Compute)
+		{
+			// Check that compute passes don't use render target resources
+			const auto& accesses = pass->GetResourceAccesses();
+			for (const auto& access : accesses)
+			{
+				if (access.Usage.IsSet(GpuResourceUseFlag::ColorAttachment) ||
+					access.Usage.IsSet(GpuResourceUseFlag::DepthStencilAttachment))
+				{
+					B3D_LOG(Error, RenderBackend,
+						"Compute pass '{0}' uses render target resources. Use DeclareRenderPass instead.",
+						pass->GetName());
+					valid = false;
+				}
+			}
+		}
+	}
+
+	return valid;
+}
+
+bool FrameGraphCompiler::ValidateLayouts(const CompiledFrameGraph& compiledGraph)
+{
+	// For now, just log that layouts were validated
+	// More sophisticated validation can be added later
+	B3D_LOG(Info, RenderBackend, "Layout validation passed for {0} resources",
+		compiledGraph.UsageHistories.size());
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Phase 2: Dependency Analysis & Scheduling
+//////////////////////////////////////////////////////////////////////////
+
+bool FrameGraphCompiler::AnalyzeDependencies()
+{
+	// Analyze resource access patterns
+	AnalyzeResourceAccess();
+
+	// Build dependency edges
+	BuildDependencyGraph();
+
+	// Track resource lifetimes
+	TrackResourceLifetimes();
+
+	return true;
+}
+
+void FrameGraphCompiler::AnalyzeResourceAccess()
+{
+	const auto& passes = mFrameGraph.GetPasses();
+
+	for (const auto& pass : passes)
+	{
+		const auto& accesses = pass->GetResourceAccesses();
+
+		for (const auto& access : accesses)
+		{
+			const bool isWrite = access.Access.IsSet(GpuAccessFlag::Write);
+			const bool isRead = access.Access.IsSet(GpuAccessFlag::Read);
+
+			if (isWrite)
+				mResourceWriters[access.Resource].push_back(pass.get());
+
+			if (isRead)
+				mResourceReaders[access.Resource].push_back(pass.get());
+		}
+	}
+}
+
+void FrameGraphCompiler::BuildDependencyGraph()
+{
+	const auto& passes = mFrameGraph.GetPasses();
+
+	// Build a map from pass to its declaration index for ordering checks
+	UnorderedMap<FrameGraphPass*, u32> passToIndex;
+	for (u32 i = 0; i < passes.size(); i++)
+		passToIndex[passes[i].get()] = i;
+
+	// For each pass, check its resource accesses
+	for (u32 consumerIndex = 0; consumerIndex < passes.size(); consumerIndex++)
+	{
+		const auto& pass = passes[consumerIndex];
+		const auto& accesses = pass->GetResourceAccesses();
+
+		for (const auto& access : accesses)
+		{
+			const bool consumerWrites = access.Access.IsSet(GpuAccessFlag::Write);
+			const bool consumerReads = access.Access.IsSet(GpuAccessFlag::Read);
+
+			// Read-after-Write (RAW) - True dependency
+			if (consumerReads)
+			{
+				auto writersIt = mResourceWriters.find(access.Resource);
+				if (writersIt != mResourceWriters.end())
+				{
+					for (FrameGraphPass* producerPass : writersIt->second)
+					{
+						if (producerPass == pass.get())
+							continue;
+
+						u32 producerIndex = passToIndex[producerPass];
+						if (producerIndex >= consumerIndex)
+							continue;
+
+						FrameGraphPassDependency dependency;
+						dependency.ProducerPass = producerPass;
+						dependency.ConsumerPass = pass.get();
+						dependency.Resource = access.Resource;
+						dependency.DependencyType = FrameGraphPassDependency::Type::ReadAfterWrite;
+
+						pass->AddIncomingDependency(dependency);
+						producerPass->AddOutgoingDependency(dependency);
+					}
+				}
+			}
+
+			// Write-after-Read (WAR) - Anti-dependency
+			if (consumerWrites)
+			{
+				auto readersIt = mResourceReaders.find(access.Resource);
+				if (readersIt != mResourceReaders.end())
+				{
+					for (FrameGraphPass* producerPass : readersIt->second)
+					{
+						if (producerPass == pass.get())
+							continue;
+
+						u32 producerIndex = passToIndex[producerPass];
+						if (producerIndex >= consumerIndex)
+							continue;
+
+						FrameGraphPassDependency dependency;
+						dependency.ProducerPass = producerPass;
+						dependency.ConsumerPass = pass.get();
+						dependency.Resource = access.Resource;
+						dependency.DependencyType = FrameGraphPassDependency::Type::WriteAfterRead;
+
+						pass->AddIncomingDependency(dependency);
+						producerPass->AddOutgoingDependency(dependency);
+					}
+				}
+
+				// Write-after-Write (WAW) - Output dependency
+				auto writersIt = mResourceWriters.find(access.Resource);
+				if (writersIt != mResourceWriters.end())
+				{
+					for (FrameGraphPass* producerPass : writersIt->second)
+					{
+						if (producerPass == pass.get())
+							continue;
+
+						u32 producerIndex = passToIndex[producerPass];
+						if (producerIndex >= consumerIndex)
+							continue;
+
+						FrameGraphPassDependency dependency;
+						dependency.ProducerPass = producerPass;
+						dependency.ConsumerPass = pass.get();
+						dependency.Resource = access.Resource;
+						dependency.DependencyType = FrameGraphPassDependency::Type::WriteAfterWrite;
+
+						pass->AddIncomingDependency(dependency);
+						producerPass->AddOutgoingDependency(dependency);
+					}
+				}
+			}
+		}
+	}
+
+	// Initialize reference counts for topological sort
+	for (const auto& pass : passes)
+		pass->SetReferenceCount(static_cast<u32>(pass->GetIncomingDependencies().size()));
+}
+
+void FrameGraphCompiler::TrackResourceLifetimes()
+{
+	const auto& passes = mFrameGraph.GetPasses();
+
+	// Track all imported resources
+	const auto& resources = mFrameGraph.GetResources();
+	for (const auto& resource : resources)
+	{
+		FrameGraphResourceLifetime lifetime;
+		lifetime.Resource = resource->GetId();
+		lifetime.IsImported = true;
+		lifetime.FirstUse = nullptr;
+		lifetime.LastUse = nullptr;
+		lifetime.IsWritten = false;
+
+		mResourceLifetimes[resource->GetId()] = lifetime;
+	}
+
+	// Iterate through passes in declaration order to track first/last use
+	for (const auto& pass : passes)
+	{
+		const auto& accesses = pass->GetResourceAccesses();
+
+		for (const auto& access : accesses)
+		{
+			auto it = mResourceLifetimes.find(access.Resource);
+			if (it == mResourceLifetimes.end())
+			{
+				// Resource not imported, create lifetime entry
+				FrameGraphResourceLifetime lifetime;
+				lifetime.Resource = access.Resource;
+				lifetime.IsImported = false;
+				lifetime.FirstUse = pass.get();
+				lifetime.LastUse = pass.get();
+				lifetime.IsWritten = access.Access.IsSet(GpuAccessFlag::Write);
+
+				mResourceLifetimes[access.Resource] = lifetime;
+			}
+			else
+			{
+				// Update existing lifetime
+				if (it->second.FirstUse == nullptr)
+					it->second.FirstUse = pass.get();
+
+				it->second.LastUse = pass.get();
+
+				if (access.Access.IsSet(GpuAccessFlag::Write))
+					it->second.IsWritten = true;
+			}
+		}
+	}
+
+	// Mark explicit outputs
+	const auto& outputResources = mFrameGraph.GetOutputResources();
+	for (FrameGraphResourceId outputId : outputResources)
+	{
+		auto it = mResourceLifetimes.find(outputId);
+		if (it != mResourceLifetimes.end())
+			it->second.IsOutput = true;
+	}
+}
+
+void FrameGraphCompiler::CullUnusedPasses()
+{
+	const auto& passes = mFrameGraph.GetPasses();
+	mCulledPassCount = 0;
+
+	// Step 1: Mark all passes as culled initially
+	for (const auto& pass : passes)
+		pass->SetCulled(true);
+
+	// Step 2: Find passes that write to output resources
+	Vector<FrameGraphPass*> outputPasses;
+
+	for (const auto& pair : mResourceLifetimes)
+	{
+		const auto& lifetime = pair.second;
+
+		// Check if this is an output resource
+		bool isOutput = lifetime.IsOutput || (lifetime.IsImported && lifetime.IsWritten);
+
+		if (isOutput && lifetime.LastUse != nullptr)
+		{
+			outputPasses.push_back(lifetime.LastUse);
+		}
+	}
+
+	// Step 3: Perform reverse DFS from output passes
+	for (FrameGraphPass* outputPass : outputPasses)
+		MarkPassAsUsed(outputPass);
+
+	// Step 4: Count culled passes
+	for (const auto& pass : passes)
+	{
+		if (pass->IsCulled())
+		{
+			mCulledPassCount++;
+			B3D_LOG(Info, RenderBackend, "Culled unused pass: {0}", pass->GetName());
+		}
+	}
+}
+
+void FrameGraphCompiler::MarkPassAsUsed(FrameGraphPass* pass)
+{
+	// Already marked as used
+	if (!pass->IsCulled())
+		return;
+
+	// Mark this pass as used
+	pass->SetCulled(false);
+
+	// Recursively mark all incoming dependencies as used
+	const auto& incoming = pass->GetIncomingDependencies();
+	for (const auto& dependency : incoming)
+	{
+		MarkPassAsUsed(dependency.ProducerPass);
+	}
+}
+
+bool FrameGraphCompiler::TopologicalSort(Vector<FrameGraphPass*>& outSortedPasses)
+{
+	const auto& passes = mFrameGraph.GetPasses();
+	outSortedPasses.clear();
+	outSortedPasses.reserve(passes.size());
+
+	// Kahn's algorithm using a queue
+	std::queue<FrameGraphPass*> readyQueue;
+
+	// Find all passes with no incoming dependencies
+	for (const auto& pass : passes)
+	{
+		if (pass->IsReady() && !pass->IsCulled())
+			readyQueue.push(pass.get());
+	}
+
+	// Process passes
+	while (!readyQueue.empty())
+	{
+		FrameGraphPass* currentPass = readyQueue.front();
+		readyQueue.pop();
+
+		// Add to sorted list
+		outSortedPasses.push_back(currentPass);
+
+		// Process all outgoing dependencies
+		const auto& outgoing = currentPass->GetOutgoingDependencies();
+		for (const auto& dependency : outgoing)
+		{
+			FrameGraphPass* consumerPass = dependency.ConsumerPass;
+
+			if (consumerPass->IsCulled())
+				continue;
+
+			// Decrement reference count
+			consumerPass->DecrementReferenceCount();
+
+			// If all dependencies satisfied, add to queue
+			if (consumerPass->IsReady())
+				readyQueue.push(consumerPass);
+		}
+	}
+
+	// Check for cycles
+	bool hasCycle = false;
+	mCyclePasses.clear();
+
+	for (const auto& pass : passes)
+	{
+		if (!pass->IsCulled() && pass->GetReferenceCount() > 0)
+		{
+			hasCycle = true;
+			mCyclePasses.push_back(pass.get());
+		}
+	}
+
+	if (hasCycle)
+	{
+		B3D_LOG(Error, RenderBackend, "Cycle detected in frame graph dependencies.");
+		B3D_LOG(Error, RenderBackend, "The following passes are involved in the cycle:");
+
+		for (const auto& pass : mCyclePasses)
+		{
+			B3D_LOG(Error, RenderBackend, "  Pass: {0}", pass->GetName());
+			B3D_LOG(Error, RenderBackend, "    Unresolved dependencies: {0}",
+				pass->GetReferenceCount());
+
+			// Log incoming dependencies
+			const auto& incoming = pass->GetIncomingDependencies();
+			for (const auto& dep : incoming)
+			{
+				B3D_LOG(Error, RenderBackend, "      <- {0} (via resource {1})",
+					dep.ProducerPass->GetName(),
+					dep.Resource.Index);
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Phase 3: Barrier Generation & Synchronization
+//////////////////////////////////////////////////////////////////////////
+
+void FrameGraphCompiler::BuildUsageHistory(const Vector<FrameGraphPass*>& passes)
+{
+	mUsageHistories.clear();
+
+	// Iterate through all passes in execution order
+	for (FrameGraphPass* pass : passes)
+	{
+		// Record all resource accesses for this pass
+		const auto& accesses = pass->GetResourceAccesses();
+		for (const auto& access : accesses)
+		{
+			RecordUsage(access.Resource, pass, access.Usage, access.Access);
+		}
+	}
+
+	B3D_LOG(Info, RenderBackend, "Built usage history for {0} resources", mUsageHistories.size());
+}
+
+void FrameGraphCompiler::RecordUsage(
+	FrameGraphResourceId resource,
+	FrameGraphPass* pass,
+	GpuResourceUseFlags usage,
+	GpuAccessFlags access)
+{
+	B3D_ENSURE(resource.IsValid());
+	B3D_ENSURE(pass != nullptr);
+
+	// Get or create usage history for this resource
+	auto& history = mUsageHistories[resource];
+	if (history.Resource.Index == ~0u)
+	{
+		history.Resource = resource;
+	}
+
+	// Determine the layout for this usage
+	ImageLayout layout = DetermineLayout(usage, access);
+
+	// Add this usage to the history
+	history.Uses.emplace_back(pass, usage, access, layout);
+
+	B3D_LOG(Verbose, RenderBackend,
+		"Resource {0} used by pass '{1}': usage=0x{2:X}, access=0x{3:X}, layout={4}",
+		resource.Index,
+		pass->GetName(),
+		(u32)usage,
+		(u32)access,
+		(u32)layout);
+}
+
+ImageLayout FrameGraphCompiler::DetermineLayout(GpuResourceUseFlags usage, GpuAccessFlags access) const
+{
+	return FrameGraphLayoutHelper::GetLayoutForUsage(usage, access);
+}
+
+void FrameGraphCompiler::BuildTransitions(Vector<ResourceTransition>& outTransitions)
+{
+	// Process each resource's usage history
+	for (const auto& pair : mUsageHistories)
+	{
+		BuildTransitionsForResource(pair.second, outTransitions);
+	}
+
+	B3D_LOG(Info, RenderBackend, "Built {0} resource transitions", outTransitions.size());
+}
+
+void FrameGraphCompiler::BuildTransitionsForResource(
+	const ResourceUsageHistory& history,
+	Vector<ResourceTransition>& outTransitions)
+{
+	if (history.Uses.empty())
+		return;
+
+	// Iterate through consecutive uses
+	for (size_t usageIndex = 1; usageIndex < history.Uses.size(); usageIndex++)
+	{
+		const ResourceUsage& prevUsage = history.Uses[usageIndex - 1];
+		const ResourceUsage& currUsage = history.Uses[usageIndex];
+
+		// Check if we need a barrier between these two uses
+		if (NeedsBarrier(prevUsage, currUsage))
+		{
+			// Create transition
+			ResourceTransition transition(
+				history.Resource,
+				prevUsage.Pass,
+				currUsage.Pass,
+				prevUsage.Usage,
+				prevUsage.Access,
+				prevUsage.Layout,
+				currUsage.Usage,
+				currUsage.Access,
+				currUsage.Layout
+			);
+
+			outTransitions.push_back(transition);
+
+			B3D_LOG(Verbose, RenderBackend,
+				"Transition for resource {0}: pass '{1}' -> '{2}', layout {3} -> {4}",
+				history.Resource.Index,
+				prevUsage.Pass->GetName(),
+				currUsage.Pass->GetName(),
+				(u32)prevUsage.Layout,
+				(u32)currUsage.Layout);
+		}
+	}
+}
+
+bool FrameGraphCompiler::NeedsBarrier(const ResourceUsage& prevUsage, const ResourceUsage& currUsage) const
+{
+	// Different passes always need synchronization
+	if (prevUsage.Pass != currUsage.Pass)
+	{
+		// RAW (Read-After-Write): Previous pass wrote, current pass reads or writes
+		if (prevUsage.Access.IsSet(GpuAccessFlag::Write))
+			return true;
+
+		// WAR (Write-After-Read): Previous pass read, current pass writes
+		if (currUsage.Access.IsSet(GpuAccessFlag::Write))
+			return true;
+
+		// Layout transition needed
+		if (FrameGraphLayoutHelper::RequiresTransition(prevUsage.Layout, currUsage.Layout))
+			return true;
+	}
+
+	// Same pass, no barrier needed (synchronization within a pass is automatic)
+	return false;
+}
+
+void FrameGraphCompiler::BuildBarriers(
+	const Vector<ResourceTransition>& transitions,
+	Vector<FrameGraphBarrierBatch>& outBarriers)
+{
+	// Group transitions by destination pass
+	UnorderedMap<FrameGraphPass*, Vector<ResourceTransition>> transitionsByPass;
+
+	for (const auto& transition : transitions)
+	{
+		transitionsByPass[transition.DestinationPass].push_back(transition);
+	}
+
+	// Build barrier batches
+	for (const auto& pair : transitionsByPass)
+	{
+		FrameGraphPass* pass = pair.first;
+		const Vector<ResourceTransition>& passTransitions = pair.second;
+
+		FrameGraphBarrierBatch batch;
+		batch.DestinationPass = pass;
+
+		// Convert each transition to a barrier
+		for (const auto& transition : passTransitions)
+		{
+			// Try buffer barrier first
+			auto bufferBarrier = CreateBufferBarrier(transition);
+			if (bufferBarrier.has_value())
+			{
+				batch.Barriers.BufferBarriers.Add(bufferBarrier.value());
+				continue;
+			}
+
+			// Try texture barrier
+			auto textureBarrier = CreateTextureBarrier(transition);
+			if (textureBarrier.has_value())
+			{
+				batch.Barriers.TextureBarriers.Add(textureBarrier.value());
+				continue;
+			}
+
+			B3D_LOG(Warning, RenderBackend,
+				"Failed to create barrier for resource {0} in pass '{1}'",
+				transition.Resource.Index,
+				pass->GetName());
+		}
+
+		if (batch.Barriers.BufferBarriers.Size() > 0 || batch.Barriers.TextureBarriers.Size() > 0)
+		{
+			outBarriers.push_back(batch);
+
+			B3D_LOG(Info, RenderBackend,
+				"Created barrier batch for pass '{0}': {1} buffer barriers, {2} texture barriers",
+				pass->GetName(),
+				batch.Barriers.BufferBarriers.Size(),
+				batch.Barriers.TextureBarriers.Size());
+		}
+	}
+}
+
+TOptional<GpuBufferBarrier> FrameGraphCompiler::CreateBufferBarrier(const ResourceTransition& transition)
+{
+	FrameGraphResource* resource = mFrameGraph.GetResource(transition.Resource);
+	if (!resource || resource->GetType() != FrameGraphResourceType::Buffer)
+		return {};
+
+	auto* bufferResource = static_cast<FrameGraphBufferResource*>(resource);
+
+	GpuBufferBarrier barrier(
+		bufferResource->GetBuffer(),
+		transition.SourceUsage,
+		transition.SourceAccess,
+		transition.DestinationUsage,
+		transition.DestinationAccess
+	);
+
+	return barrier;
+}
+
+TOptional<GpuTextureBarrier> FrameGraphCompiler::CreateTextureBarrier(const ResourceTransition& transition)
+{
+	FrameGraphResource* resource = mFrameGraph.GetResource(transition.Resource);
+	if (!resource || resource->GetType() != FrameGraphResourceType::Texture)
+		return {};
+
+	auto* textureResource = static_cast<FrameGraphTextureResource*>(resource);
+
+	GpuTextureBarrier barrier(
+		textureResource->GetTexture(),
+		transition.SourceUsage,
+		transition.SourceAccess,
+		transition.DestinationUsage,
+		transition.DestinationAccess
+	);
+
+	// Set explicit layouts
+	barrier.SourceLayout = transition.SourceLayout;
+	barrier.DestinationLayout = transition.DestinationLayout;
+
+	return barrier;
+}
+
+void FrameGraphCompiler::CreateRenderTargets(
+	const Vector<FrameGraphPass*>& passes,
+	UnorderedMap<FrameGraphPass*, SPtr<RenderTarget>>& outRenderTargets)
+{
+	for (FrameGraphPass* pass : passes)
+	{
+		if (pass->GetPassType() == FrameGraphPassType::Render)
+		{
+			SPtr<RenderTarget> rt = BuildRenderTarget(pass);
+			if (!rt)
+			{
+				B3D_LOG(Error, RenderBackend, "Failed to create render target for render pass '{0}'",
+					pass->GetName());
+				continue;
+			}
+			outRenderTargets[pass] = rt;
+		}
+	}
+}
+
+SPtr<render::RenderTarget> FrameGraphCompiler::BuildRenderTarget(FrameGraphPass* pass)
+{
+	B3D_ENSURE(pass->GetPassType() == FrameGraphPassType::Render);
+
+	// Get color attachments
+	const auto& colorAttachments = pass->GetColorAttachments();
+	const auto& importedTextures = mFrameGraph.GetImportedTextures();
+
+	// Build color textures array
+	Vector<SPtr<Texture>> colorTextures;
+	u32 maxIndex = 0;
+
+	for (const auto& pair : colorAttachments)
+	{
+		maxIndex = std::max(maxIndex, pair.first);
+	}
+
+	colorTextures.resize(maxIndex + 1);
+
+	for (const auto& pair : colorAttachments)
+	{
+		u32 index = pair.first;
+		FrameGraphResourceId resourceId = pair.second;
+
+		auto it = importedTextures.find(resourceId);
+		if (it == importedTextures.end())
+		{
+			B3D_LOG(Error, RenderBackend, "Render pass '{0}': Color attachment {1} references invalid resource {2}",
+				pass->GetName(), index, resourceId.Index);
+			return nullptr;
+		}
+
+		colorTextures[index] = it->second;
+	}
+
+	// Get depth attachment
+	SPtr<Texture> depthTexture;
+	FrameGraphResourceId depthId = pass->GetDepthAttachment();
+	if (depthId.IsValid())
+	{
+		auto it = importedTextures.find(depthId);
+		if (it == importedTextures.end())
+		{
+			B3D_LOG(Error, RenderBackend, "Render pass '{0}': Depth attachment references invalid resource {1}",
+				pass->GetName(), depthId.Index);
+			return nullptr;
+		}
+
+		depthTexture = it->second;
+	}
+
+	// Create render target descriptor
+	RenderTextureCreateInformation rtInfo;
+
+	for (u32 i = 0; i < colorTextures.size(); i++)
+	{
+		if (colorTextures[i])
+			rtInfo.ColorSurfaces[i].Texture = colorTextures[i];
+	}
+
+	if (depthTexture)
+		rtInfo.DepthStencilSurface.Texture = depthTexture;
+
+	// Create render target
+	SPtr<RenderTarget> renderTarget = RenderTexture::Create(rtInfo);
+
+	if (!renderTarget)
+	{
+		B3D_LOG(Error, RenderBackend, "Failed to create render target for pass '{0}'", pass->GetName());
+		return nullptr;
+	}
+
+	B3D_LOG(Info, RenderBackend, "Created render target for pass '{0}' with {1} color attachments{2}",
+		pass->GetName(),
+		colorTextures.size(),
+		depthTexture ? " and depth" : "");
+
+	return renderTarget;
 }
