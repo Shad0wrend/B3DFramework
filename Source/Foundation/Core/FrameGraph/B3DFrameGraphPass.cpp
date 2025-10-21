@@ -212,10 +212,10 @@ void FrameGraphPass::ExecuteSetup()
 		mSetupFunction(*this);
 }
 
-void FrameGraphPass::ExecuteCommands(GpuCommandBuffer& commandBuffer)
+void FrameGraphPass::ExecuteCommands(GpuCommandBuffer& commandBuffer, FrameGraphPassResources& resources)
 {
 	if (mExecuteFunction)
-		mExecuteFunction(commandBuffer);
+		mExecuteFunction(commandBuffer, resources);
 }
 
 void FrameGraphPass::Reset()

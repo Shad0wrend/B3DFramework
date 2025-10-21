@@ -47,8 +47,10 @@ namespace b3d::render
 	 *
 	 * The execute function is called during frame graph execution to record GPU commands.
 	 * Use the provided GpuCommandBuffer to record rendering or compute commands.
+	 * Use the provided FrameGraphPassResources to retrieve allocated textures and buffers
+	 * (both imported and transient resources).
 	 */
-	using FrameGraphPassExecuteFunc = std::function<void(GpuCommandBuffer&)>;
+	using FrameGraphPassExecuteFunc = std::function<void(GpuCommandBuffer&, FrameGraphPassResources&)>;
 
 	class FrameGraph;
 
@@ -289,7 +291,7 @@ namespace b3d::render
 		void ExecuteSetup();
 
 		/** Executes the command recording function (internal) */
-		void ExecuteCommands(GpuCommandBuffer& commandBuffer);
+		void ExecuteCommands(GpuCommandBuffer& commandBuffer, FrameGraphPassResources& resources);
 
 		/** Resets the pass for reuse (internal) */
 		void Reset();

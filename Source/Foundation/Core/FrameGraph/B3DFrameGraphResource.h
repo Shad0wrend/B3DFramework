@@ -26,8 +26,7 @@ namespace b3d::render
 	/**
 	 * Base class for frame graph resources.
 	 *
-	 * Currently only imported resources are supported.
-	 * Transient resources will be added in a future update.
+	 * Supports both imported (externally managed) and transient (automatically allocated) resources.
 	 */
 	class B3D_EXPORT FrameGraphResource
 	{
@@ -48,30 +47,30 @@ namespace b3d::render
 		/** Returns the resource type */
 		FrameGraphResourceType GetType() const { return mType; }
 
-		/** Returns whether this is a transient resource (always false for imported resources) */
-		virtual bool IsTransient() const { return false; }
+		/** Returns whether this is a transient resource */
+		bool IsTransient() const { return mIsTransient; }
 
 	protected:
 		FrameGraphResourceId mId;
 		String mName; // TODO - Can we make this development only?
 		FrameGraphResourceType mType;
+		bool mIsTransient = false;
 	};
 
 	/**
-	 * Frame graph texture resource (imported).
+	 * Frame graph texture resource.
 	 *
-	 * Represents a texture that has been imported into the frame graph from an external source.
-	 * The texture lifetime is managed externally and must remain valid for the duration of
-	 * frame graph execution.
-	 *
-	 * Currently only imported resources are supported.
-	 * Transient (temporary) resources that are automatically allocated will be added in a future update.
+	 * Represents either an imported texture (externally managed) or a transient texture
+	 * (automatically allocated). For imported resources, the texture lifetime is managed
+	 * externally and must remain valid for the duration of frame graph execution.
+	 * For transient resources, the texture is allocated during Execute() based on the
+	 * stored descriptor.
 	 */
 	class B3D_EXPORT FrameGraphTextureResource : public FrameGraphResource
 	{
 	public:
 		/**
-		 * Constructs a new texture resource.
+		 * Constructs an imported texture resource.
 		 *
 		 * @param id		Unique identifier for this resource
 		 * @param name		Name for debugging/profiling
@@ -82,10 +81,21 @@ namespace b3d::render
 			const StringView& name,
 			const SPtr<Texture>& texture);
 
-		/** Returns the underlying texture */
+		/**
+		 * Constructs a transient texture resource.
+		 * The texture will be null until allocated during Execute().
+		 *
+		 * @param id		Unique identifier for this resource
+		 * @param name		Name for debugging/profiling
+		 */
+		FrameGraphTextureResource(
+			FrameGraphResourceId id,
+			const StringView& name);
+
+		/** Returns the underlying texture (may be null for transients before allocation) */
 		const SPtr<Texture>& GetTexture() const { return mTexture; }
 
-		/** Sets the texture (for internal use) */
+		/** Sets the texture (used when allocating transients) */
 		void SetTexture(const SPtr<Texture>& texture) { mTexture = texture; }
 
 	private:
@@ -93,20 +103,19 @@ namespace b3d::render
 	};
 
 	/**
-	 * Frame graph buffer resource (imported).
+	 * Frame graph buffer resource.
 	 *
-	 * Represents a GPU buffer that has been imported into the frame graph from an external source.
-	 * The buffer lifetime is managed externally and must remain valid for the duration of
-	 * frame graph execution.
-	 *
-	 * Currently only imported resources are supported.
-	 * Transient (temporary) resources that are automatically allocated will be added in a future update.
+	 * Represents either an imported buffer (externally managed) or a transient buffer
+	 * (automatically allocated). For imported resources, the buffer lifetime is managed
+	 * externally and must remain valid for the duration of frame graph execution.
+	 * For transient resources, the buffer is allocated during Execute() based on the
+	 * stored descriptor.
 	 */
 	class B3D_EXPORT FrameGraphBufferResource : public FrameGraphResource
 	{
 	public:
 		/**
-		 * Constructs a new buffer resource.
+		 * Constructs an imported buffer resource.
 		 *
 		 * @param id		Unique identifier for this resource
 		 * @param name		Name for debugging/profiling
@@ -117,10 +126,21 @@ namespace b3d::render
 			const StringView& name,
 			const SPtr<GpuBuffer>& buffer);
 
-		/** Returns the underlying buffer */
+		/**
+		 * Constructs a transient buffer resource.
+		 * The buffer will be null until allocated during Execute().
+		 *
+		 * @param id		Unique identifier for this resource
+		 * @param name		Name for debugging/profiling
+		 */
+		FrameGraphBufferResource(
+			FrameGraphResourceId id,
+			const StringView& name);
+
+		/** Returns the underlying buffer (may be null for transients before allocation) */
 		const SPtr<GpuBuffer>& GetBuffer() const { return mBuffer; }
 
-		/** Sets the buffer (for internal use) */
+		/** Sets the buffer (used when allocating transients) */
 		void SetBuffer(const SPtr<GpuBuffer>& buffer) { mBuffer = buffer; }
 
 	private:

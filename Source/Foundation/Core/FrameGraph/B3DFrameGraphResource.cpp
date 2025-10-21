@@ -10,6 +10,7 @@ FrameGraphResource::FrameGraphResource(
 	: mId(id)
 	, mName(name)
 	, mType(type)
+	, mIsTransient(false)
 {
 }
 
@@ -21,6 +22,16 @@ FrameGraphTextureResource::FrameGraphTextureResource(
 	, mTexture(texture)
 {
 	B3D_ENSURE(texture != nullptr);
+	mIsTransient = false;
+}
+
+FrameGraphTextureResource::FrameGraphTextureResource(
+	FrameGraphResourceId id,
+	const StringView& name)
+	: FrameGraphResource(id, name, FrameGraphResourceType::Texture)
+	, mTexture(nullptr)
+{
+	mIsTransient = true;
 }
 
 FrameGraphBufferResource::FrameGraphBufferResource(
@@ -31,6 +42,16 @@ FrameGraphBufferResource::FrameGraphBufferResource(
 	, mBuffer(buffer)
 {
 	B3D_ENSURE(buffer != nullptr);
+	mIsTransient = false;
+}
+
+FrameGraphBufferResource::FrameGraphBufferResource(
+	FrameGraphResourceId id,
+	const StringView& name)
+	: FrameGraphResource(id, name, FrameGraphResourceType::Buffer)
+	, mBuffer(nullptr)
+{
+	mIsTransient = true;
 }
 
 FrameGraphRenderTargetResource::FrameGraphRenderTargetResource(

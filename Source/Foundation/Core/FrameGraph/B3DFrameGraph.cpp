@@ -2,6 +2,9 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DFrameGraph.h"
 #include "B3DFrameGraphCompiler.h"
+#include "B3DFrameGraphPassResources.h"
+#include "B3DFrameGraphResourceAllocator.h"
+#include "B3DFrameGraphResource.h"
 #include "Debug/B3DDebug.h"
 
 using namespace b3d;
@@ -71,6 +74,44 @@ FrameGraphResourceId FrameGraph::ImportRenderTarget(
 	mResources.push_back(std::move(resource));
 
 	B3D_LOG(Info, RenderBackend, "Imported render target '{0}' (surface mask: {1})", name, (u32)surface);
+
+	return id;
+}
+
+FrameGraphResourceId FrameGraph::DeclareTransientTexture(
+	const StringView& name,
+	const TextureCreateInformation& createInformation)
+{
+	FrameGraphResourceId id{mNextResourceId++};
+
+	// Create resource object (without actual texture)
+	auto resource = B3DMakeUnique<FrameGraphTextureResource>(id, name);
+	mResources.push_back(std::move(resource));
+
+	// Store create information separately
+	mTransientTextureCreateInfo[id] = createInformation;
+
+	B3D_LOG(Info, RenderBackend, "Declared transient texture '{0}' (id: {1})",
+		name, id.Index);
+
+	return id;
+}
+
+FrameGraphResourceId FrameGraph::DeclareTransientBuffer(
+	const StringView& name,
+	const GpuBufferCreateInformation& createInformation)
+{
+	FrameGraphResourceId id{mNextResourceId++};
+
+	// Create resource object (without actual buffer)
+	auto resource = B3DMakeUnique<FrameGraphBufferResource>(id, name);
+	mResources.push_back(std::move(resource));
+
+	// Store create information separately
+	mTransientBufferCreateInfo[id] = createInformation;
+
+	B3D_LOG(Info, RenderBackend, "Declared transient buffer '{0}' (id: {1})",
+		name, id.Index);
 
 	return id;
 }
@@ -165,6 +206,16 @@ void FrameGraph::Execute()
 	B3D_LOG(Info, RenderBackend, "Executing frame graph with {0} passes",
 		mCompiledGraph->SortedPasses.size());
 
+	// Create resource allocator if not exists
+	if (!mResourceAllocator)
+	{
+		mResourceAllocator = B3DMakeUnique<FrameGraphResourceAllocator>(mDevice);
+		B3D_LOG(Info, RenderBackend, "Created transient resource allocator");
+	}
+
+	// Build transient allocation info from compiled usage histories
+	BuildTransientAllocationInfo();
+
 	// Build a map from pass to barrier batches
 	UnorderedMap<FrameGraphPass*, Vector<const FrameGraphBarrierBatch*>> passBarriers;
 	for (const auto& batch : mCompiledGraph->BarrierBatches)
@@ -208,6 +259,9 @@ void FrameGraph::Execute()
 			pass->GetPassType() == FrameGraphPassType::Render ? "Render" :
 			pass->GetPassType() == FrameGraphPassType::Compute ? "Compute" : "Generic");
 
+		// Allocate transients for this pass (before barriers)
+		AllocateTransientsForPass(pass);
+
 		// If queue changed, submit current command buffer and start a new one
 		if (hasActiveCmd && pass->GetQueue() != currentQueue)
 		{
@@ -243,6 +297,9 @@ void FrameGraph::Execute()
 			}
 		}
 
+		// Create resource accessor for this pass
+		FrameGraphPassResources passResources(*this, pass);
+
 		// Handle render passes
 		bool isRenderPass = pass->GetPassType() == FrameGraphPassType::Render;
 		SPtr<RenderTarget> renderTarget;
@@ -265,8 +322,8 @@ void FrameGraph::Execute()
 			currentCmd->BeginRenderPass(renderTarget);
 		}
 
-		// Execute the pass
-		pass->ExecuteCommands(*currentCmd);
+		// Execute the pass with resource accessor
+		pass->ExecuteCommands(*currentCmd, passResources);
 
 		// End render pass if needed
 		if (isRenderPass)
@@ -274,6 +331,9 @@ void FrameGraph::Execute()
 			B3D_LOG(Info, RenderBackend, "Ending render pass for '{0}'", pass->GetName());
 			currentCmd->EndRenderPass();
 		}
+
+		// Deallocate transients after last use
+		DeallocateTransientResourcesAfterPass(pass);
 	}
 
 	// Submit final command buffer
@@ -296,6 +356,16 @@ void FrameGraph::Reset()
 	mPasses.clear();
 	mCompiledGraph.reset();
 	mOutputResources.clear();
+
+	// Clear transient resource create information
+	mTransientTextureCreateInfo.clear();
+	mTransientBufferCreateInfo.clear();
+
+	// Reset resource allocator and clear allocation info
+	if (mResourceAllocator)
+		mResourceAllocator->Reset();
+
+	mTransientAllocationInfo.clear();
 
 	// Reset ID counters
 	mNextResourceId = 0;
@@ -357,8 +427,11 @@ void FrameGraph::ExecutePass(FrameGraphPass* pass)
 		return;
 	}
 
+	// Create resource accessor for this pass
+	FrameGraphPassResources passResources(*this, pass);
+
 	// Execute user lambda - this may call BeginRenderPass/EndRenderPass
-	pass->ExecuteCommands(*cmd);
+	pass->ExecuteCommands(*cmd, passResources);
 
 	// End command buffer recording
 	cmd->End();
@@ -392,5 +465,129 @@ SPtr<GpuCommandBufferPool> FrameGraph::GetPoolForQueue(GpuQueueUsage queueType)
 			return mTransferCommandPool;
 		default:
 			return nullptr;
+	}
+}
+
+void FrameGraph::BuildTransientAllocationInfo()
+{
+	mTransientAllocationInfo.clear();
+
+	// Iterate through all resources
+	for (auto& resource : mResources)
+	{
+		if (!resource->IsTransient())
+			continue;
+
+		// Get usage history from compiled graph
+		auto historyIt = mCompiledGraph->UsageHistories.find(resource->GetId());
+		if (historyIt == mCompiledGraph->UsageHistories.end())
+		{
+			// Unused transient - skip allocation
+			B3D_LOG(Warning, RenderBackend, "Transient resource '{0}' was declared but never used",
+				resource->GetName());
+			continue;
+		}
+
+		// Store for later allocation on first use
+		mTransientAllocationInfo[resource->GetId()] = historyIt->second;
+	}
+
+	B3D_LOG(Info, RenderBackend, "Prepared {0} transient resources for allocation",
+		mTransientAllocationInfo.size());
+}
+
+void FrameGraph::AllocateTransientsForPass(FrameGraphPass* pass)
+{
+	// Check if this pass is FirstUse for any transients
+	for (auto& pair : mTransientAllocationInfo)
+	{
+		FrameGraphResourceId resourceId = pair.first;
+		const ResourceUsageHistory& history = pair.second;
+
+		if (history.Uses.empty())
+			continue;
+
+		const ResourceUsage& firstUse = history.Uses[0];
+		if (firstUse.Pass != pass)
+			continue;
+
+		// Allocate this transient
+		FrameGraphResource* resource = GetResource(resourceId);
+		B3D_ENSURE(resource != nullptr);
+
+		if (resource->GetType() == FrameGraphResourceType::Texture)
+		{
+			auto* texResource = static_cast<FrameGraphTextureResource*>(resource);
+
+			// Get create information from separate storage
+			auto createInfoIt = mTransientTextureCreateInfo.find(resourceId);
+			B3D_ENSURE(createInfoIt != mTransientTextureCreateInfo.end());
+
+			auto allocated = mResourceAllocator->AllocateTexture(
+				texResource->GetName(),
+				createInfoIt->second);
+
+			texResource->SetTexture(allocated);
+
+			B3D_LOG(Info, RenderBackend, "Allocated transient texture '{0}' for pass '{1}'",
+				texResource->GetName(), pass->GetName());
+		}
+		else if (resource->GetType() == FrameGraphResourceType::Buffer)
+		{
+			auto* bufResource = static_cast<FrameGraphBufferResource*>(resource);
+
+			// Get create information from separate storage
+			auto createInfoIt = mTransientBufferCreateInfo.find(resourceId);
+			B3D_ENSURE(createInfoIt != mTransientBufferCreateInfo.end());
+
+			auto allocated = mResourceAllocator->AllocateBuffer(
+				bufResource->GetName(),
+				createInfoIt->second);
+
+			bufResource->SetBuffer(allocated);
+
+			B3D_LOG(Info, RenderBackend, "Allocated transient buffer '{0}' for pass '{1}'",
+				bufResource->GetName(), pass->GetName());
+		}
+	}
+}
+
+void FrameGraph::DeallocateTransientResourcesAfterPass(FrameGraphPass* pass)
+{
+	// Check if this pass is LastUse for any transients
+	for (auto& pair : mTransientAllocationInfo)
+	{
+		FrameGraphResourceId resourceId = pair.first;
+		const ResourceUsageHistory& history = pair.second;
+
+		if (history.Uses.empty())
+			continue;
+
+		const ResourceUsage& lastUse = history.Uses[history.Uses.size() - 1];
+		if (lastUse.Pass != pass)
+			continue;
+
+		// Deallocate this transient
+		FrameGraphResource* resource = GetResource(resourceId);
+		B3D_ENSURE(resource != nullptr);
+
+		if (resource->GetType() == FrameGraphResourceType::Texture)
+		{
+			auto* texResource = static_cast<FrameGraphTextureResource*>(resource);
+			mResourceAllocator->FreeTexture(texResource->GetTexture());
+			texResource->SetTexture(nullptr);  // Clear pointer
+
+			B3D_LOG(Info, RenderBackend, "Freed transient texture '{0}' after pass '{1}'",
+				texResource->GetName(), pass->GetName());
+		}
+		else if (resource->GetType() == FrameGraphResourceType::Buffer)
+		{
+			auto* bufResource = static_cast<FrameGraphBufferResource*>(resource);
+			mResourceAllocator->FreeBuffer(bufResource->GetBuffer());
+			bufResource->SetBuffer(nullptr);
+
+			B3D_LOG(Info, RenderBackend, "Freed transient buffer '{0}' after pass '{1}'",
+				bufResource->GetName(), pass->GetName());
+		}
 	}
 }

@@ -67,6 +67,7 @@ namespace b3d::render
 	};
 
 	class FrameGraphPass;
+	class FrameGraphPassResources;
 
 	/**
 	 * Tracks the lifetime of a resource within the frame graph.
