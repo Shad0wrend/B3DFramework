@@ -17,6 +17,7 @@ namespace b3d::render
 	// Forward declarations
 	class FrameGraphResourceAllocator;
 	struct ResourceUsageHistory;
+	struct FrameGraphBarrierBatch;
 
 	/**
 	 * @page FrameGraphUsage Frame Graph Usage Guide
@@ -547,6 +548,29 @@ namespace b3d::render
 		void Reset();
 
 		/**
+		 * Sets the external command buffer for frame graph execution.
+		 *
+		 * The FrameGraph will use this command buffer for all pass execution instead of
+		 * creating its own. This enables integration with external rendering systems where
+		 * the command buffer is managed elsewhere (e.g., RenderBeast).
+		 *
+		 * Must be called after Reset() and before Execute(). The command buffer must remain
+		 * valid for the entire Execute() call.
+		 *
+		 * @param commandBuffer  External command buffer to use for execution
+		 *
+		 * Example:
+		 * @code
+		 * FrameGraph graph(device);
+		 * graph.SetCommandBuffer(externalCommandBuffer);
+		 * // ... declare passes ...
+		 * graph.Compile();
+		 * graph.Execute();  // Uses externalCommandBuffer
+		 * @endcode
+		 */
+		void SetCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer);
+
+		/**
 		 * Mark a resource as an output to prevent it from being culled.
 		 *
 		 * During compilation, the frame graph performs a reverse DFS from output resources
@@ -594,6 +618,12 @@ namespace b3d::render
 		//////////////////////////////////////////////////////////////////////////
 		// Execution (internal)
 		//////////////////////////////////////////////////////////////////////////
+
+		/** Executes all passes using external command buffer (if set via SetCommandBuffer) */
+		void ExecuteWithExternalCommandBuffer(const UnorderedMap<FrameGraphPass*, Vector<const FrameGraphBarrierBatch*>>& passBarriers); // TODO: External command buffer is primarily used for migration purposes, can be removed later
+
+		/** Executes all passes using pool-based command buffers (legacy mode) */
+		void ExecuteWithPooledCommandBuffers(const UnorderedMap<FrameGraphPass*, Vector<const FrameGraphBarrierBatch*>>& passBarriers);
 
 		/** Executes a single pass */
 		void ExecutePass(FrameGraphPass* pass);
@@ -645,7 +675,10 @@ namespace b3d::render
 		/** Transient resource allocation info (maps resource ID to usage history) */
 		UnorderedMap<FrameGraphResourceId, ResourceUsageHistory> mTransientAllocationInfo;
 
-		/** Command buffer pools (one per queue type) */
+		/** External command buffer provided via SetCommandBuffer() */
+		SPtr<GpuCommandBuffer> mExternalCommandBuffer;
+
+		/** Command buffer pools (one per queue type) - reserved for future multi-queue support */
 		SPtr<GpuCommandBufferPool> mGraphicsCommandPool;
 		SPtr<GpuCommandBufferPool> mComputeCommandPool;
 		SPtr<GpuCommandBufferPool> mTransferCommandPool;

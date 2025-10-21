@@ -223,6 +223,96 @@ void FrameGraph::Execute()
 		passBarriers[batch.DestinationPass].push_back(&batch);
 	}
 
+	// Determine execution mode based on whether external command buffer is set
+	const bool useExternalCommandBuffer = (mExternalCommandBuffer != nullptr);
+
+	if (useExternalCommandBuffer)
+	{
+		// New mode: Use external command buffer (single buffer for entire frame)
+		B3D_LOG(Info, RenderBackend, "Using external command buffer mode");
+		ExecuteWithExternalCommandBuffer(passBarriers);
+	}
+	else
+	{
+		// Legacy mode: Create command buffers from pools (per-queue batching)
+		B3D_LOG(Info, RenderBackend, "Using pool-based command buffer mode");
+		ExecuteWithPooledCommandBuffers(passBarriers);
+	}
+
+	B3D_LOG(Info, RenderBackend, "Frame graph execution complete");
+}
+
+void FrameGraph::ExecuteWithExternalCommandBuffer(const UnorderedMap<FrameGraphPass*, Vector<const FrameGraphBarrierBatch*>>& passBarriers)
+{
+	// Execute passes in sorted order using the external command buffer
+	for (FrameGraphPass* pass : mCompiledGraph->SortedPasses)
+	{
+		B3D_LOG(Info, RenderBackend, "Executing pass: {0} (type: {1})",
+			pass->GetName(),
+			pass->GetPassType() == FrameGraphPassType::Render ? "Render" :
+			pass->GetPassType() == FrameGraphPassType::Compute ? "Compute" : "Generic");
+
+		// Allocate transients for this pass (before barriers)
+		AllocateTransientsForPass(pass);
+
+		// Issue barriers before this pass
+		auto barrierIt = passBarriers.find(pass);
+		if (barrierIt != passBarriers.end() && !barrierIt->second.empty())
+		{
+			for (const FrameGraphBarrierBatch* batch : barrierIt->second)
+			{
+				B3D_LOG(Info, RenderBackend,
+					"Issuing {0} buffer barriers and {1} texture barriers before pass '{2}'",
+					batch->Barriers.BufferBarriers.Size(),
+					batch->Barriers.TextureBarriers.Size(),
+					pass->GetName());
+
+				mExternalCommandBuffer->IssueBarriers(batch->Barriers);
+			}
+		}
+
+		// Create resource accessor for this pass
+		FrameGraphPassResources passResources(*this, pass);
+
+		// Handle render passes
+		bool isRenderPass = pass->GetPassType() == FrameGraphPassType::Render;
+		SPtr<RenderTarget> renderTarget;
+
+		if (isRenderPass)
+		{
+			// Get pre-created render target
+			auto rtIt = mCompiledGraph->RenderTargets.find(pass);
+			if (rtIt == mCompiledGraph->RenderTargets.end())
+			{
+				B3D_LOG(Error, RenderBackend, "Render target not found for render pass '{0}'",
+					pass->GetName());
+				continue;
+			}
+
+			renderTarget = rtIt->second;
+
+			// Begin render pass
+			B3D_LOG(Info, RenderBackend, "Beginning render pass for '{0}'", pass->GetName());
+			mExternalCommandBuffer->BeginRenderPass(renderTarget);
+		}
+
+		// Execute the pass with resource accessor using external command buffer
+		pass->ExecuteCommands(*mExternalCommandBuffer, passResources);
+
+		// End render pass if needed
+		if (isRenderPass)
+		{
+			B3D_LOG(Info, RenderBackend, "Ending render pass for '{0}'", pass->GetName());
+			mExternalCommandBuffer->EndRenderPass();
+		}
+
+		// Deallocate transients after last use
+		DeallocateTransientResourcesAfterPass(pass);
+	}
+}
+
+void FrameGraph::ExecuteWithPooledCommandBuffers(const UnorderedMap<FrameGraphPass*, Vector<const FrameGraphBarrierBatch*>>& passBarriers)
+{
 	// Execute passes in sorted order, batching by queue
 	SPtr<GpuCommandBuffer> currentCmd;
 	GpuQueueUsage currentQueue = GQT_GRAPHICS;
@@ -338,8 +428,6 @@ void FrameGraph::Execute()
 
 	// Submit final command buffer
 	fnSubmitCurrentCmd();
-
-	B3D_LOG(Info, RenderBackend, "Frame graph execution complete");
 }
 
 void FrameGraph::Reset()
@@ -370,6 +458,21 @@ void FrameGraph::Reset()
 	// Reset ID counters
 	mNextResourceId = 0;
 	mNextPassIndex = 0;
+
+	// Clear external command buffer
+	mExternalCommandBuffer = nullptr;
+}
+
+void FrameGraph::SetCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer)
+{
+	if (!B3D_ENSURE(commandBuffer != nullptr))
+	{
+		B3D_LOG(Error, RenderBackend, "SetCommandBuffer called with null command buffer");
+		return;
+	}
+
+	mExternalCommandBuffer = commandBuffer;
+	B3D_LOG(Info, RenderBackend, "Set external command buffer for frame graph execution");
 }
 
 void FrameGraph::MarkAsOutput(FrameGraphResourceId resource)

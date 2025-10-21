@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DRenderBeastPrerequisites.h"
+#include "FrameGraph/B3DFrameGraphTypes.h"
 #include "Utility/B3DTypeList.h"
 
 namespace b3d
@@ -21,6 +22,7 @@ namespace b3d
 		class RenderCompositorNode;
 		struct PooledStorageBuffer;
 		struct FrameInfo;
+		class FrameGraph;
 
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -201,7 +203,17 @@ namespace b3d
 			 */
 			void Build(const RendererView& view, const TArray<StringID>& primaryNodes);
 
-			/** Performs rendering using the current render node hierarchy. This is expected to be called once per frame. */
+			/**
+			 * Builds the compositor node hierarchy into a FrameGraph.
+			 * All nodes (FrameGraph-based and legacy) contribute passes to the graph.
+			 * Legacy nodes are wrapped in manual FrameGraph passes.
+			 *
+			 * @param graph   FrameGraph to build into
+			 * @param inputs  Node inputs (view, scene, extensions, etc.)
+			 */
+			void BuildGraph(FrameGraph& graph, RenderCompositorNodeInputs& inputs) const;
+
+			/** @deprecated Performs rendering using the current render node hierarchy. Will be removed after full migration. */
 			void Execute(RenderCompositorNodeInputs& inputs) const;
 
 		private:
@@ -345,6 +357,12 @@ namespace b3d
 			SPtr<PooledRenderTexture> IdTex;
 			SPtr<PooledRenderTexture> VelocityTex;
 
+			FrameGraphResourceId Albedo;
+			FrameGraphResourceId Normals;
+			FrameGraphResourceId RoughnessMetalness;
+			FrameGraphResourceId Id;
+			FrameGraphResourceId Velocity;
+
 			SPtr<RenderTexture> RenderTarget;
 			SPtr<RenderTexture> RenderTargetNoMask;
 
@@ -356,6 +374,7 @@ namespace b3d
 
 		protected:
 			void Render(const RenderCompositorNodeInputs& inputs) override;
+			void BuildFrameGraphPass(const SPtr<FrameGraph>& frameGraph, const RenderCompositorNodeInputs& inputs);
 			void Clear() override;
 		};
 

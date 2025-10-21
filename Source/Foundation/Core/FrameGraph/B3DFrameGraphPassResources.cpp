@@ -20,40 +20,34 @@ FrameGraphPassResources::FrameGraphPassResources(
 
 SPtr<render::Texture> FrameGraphPassResources::GetTexture(FrameGraphResourceId id) const
 {
-	B3D_ENSURE(id.IsValid(), "Invalid resource ID");
+	B3D_ENSURE(id.IsValid()); // Invalid resource ID
 
 	FrameGraphResource* resource = mFrameGraph.GetResource(id);
-	B3D_ENSURE(resource != nullptr, "Resource {0} does not exist in frame graph", id.Index);
+	B3D_ENSURE(resource != nullptr); // Resource does not exist in frame graph
 
-	B3D_ENSURE(resource->GetType() == FrameGraphResourceType::Texture,
-		"Resource '{0}' is not a texture (type mismatch)", resource->GetName());
+	B3D_ENSURE(resource->GetType() == FrameGraphResourceType::Texture); // Resource is not a texture (type mismatch)
 
 	auto* textureResource = static_cast<FrameGraphTextureResource*>(resource);
 	const SPtr<render::Texture>& texture = textureResource->GetTexture();
 
-	B3D_ENSURE(texture != nullptr,
-		"Texture resource '{0}' is not allocated (transient resources must be allocated before use)",
-		resource->GetName());
+	B3D_ENSURE(texture != nullptr); // Texture resource  is not allocated (transient resources must be allocated before use)
 
 	return texture;
 }
 
 SPtr<render::GpuBuffer> FrameGraphPassResources::GetBuffer(FrameGraphResourceId id) const
 {
-	B3D_ENSURE(id.IsValid(), "Invalid resource ID");
+	B3D_ENSURE(id.IsValid()); // Invalid resource ID
 
 	FrameGraphResource* resource = mFrameGraph.GetResource(id);
-	B3D_ENSURE(resource != nullptr, "Resource {0} does not exist in frame graph", id.Index);
+	B3D_ENSURE(resource != nullptr); // Resource does not exist in frame graph
 
-	B3D_ENSURE(resource->GetType() == FrameGraphResourceType::Buffer,
-		"Resource '{0}' is not a buffer (type mismatch)", resource->GetName());
+	B3D_ENSURE(resource->GetType() == FrameGraphResourceType::Buffer); // Resource is not a buffer (type mismatch)
 
 	auto* bufferResource = static_cast<FrameGraphBufferResource*>(resource);
 	const SPtr<render::GpuBuffer>& buffer = bufferResource->GetBuffer();
 
-	B3D_ENSURE(buffer != nullptr,
-		"Buffer resource '{0}' is not allocated (transient resources must be allocated before use)",
-		resource->GetName());
+	B3D_ENSURE(buffer != nullptr); //Buffer resource is not allocated (transient resources must be allocated before use)
 
 	return buffer;
 }

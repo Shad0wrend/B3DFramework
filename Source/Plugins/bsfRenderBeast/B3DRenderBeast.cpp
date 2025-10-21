@@ -35,6 +35,7 @@
 #include "RenderAPI/B3DRenderTexture.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 #include "Resources/B3DBuiltinResources.h"
+#include "FrameGraph/B3DFrameGraph.h"
 
 using namespace std::placeholders;
 
@@ -462,6 +463,10 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 
 	view.BeginFrame(frameInfo);
 
+	// Create FrameGraph for this view
+	FrameGraph frameGraph(*mDevice);
+	frameGraph.SetCommandBuffer(commandBuffer.GetShared());
+
 	RenderCompositorNodeInputs inputs(viewGroup, view, sceneInfo, *mRenderThreadOptions, frameInfo, mFeatureSet);
 	inputs.ActiveCommandBuffer = commandBuffer.GetShared();
 
@@ -505,7 +510,13 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 	}
 
 	const RenderCompositor& compositor = view.GetCompositor();
-	PROFILE_CALL(compositor.Execute(inputs), "Compositor")
+
+	// Build all compositor nodes into the FrameGraph
+	PROFILE_CALL(compositor.BuildGraph(frameGraph, inputs), "Build FrameGraph")
+
+	// Compile and execute the FrameGraph once
+	PROFILE_CALL(frameGraph.Compile(), "Compile FrameGraph")
+	PROFILE_CALL(frameGraph.Execute(), "Execute FrameGraph")
 
 	view.EndFrame();
 

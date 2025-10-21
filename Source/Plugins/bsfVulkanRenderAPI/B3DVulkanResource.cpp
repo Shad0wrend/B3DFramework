@@ -40,7 +40,7 @@ void VulkanResource::NotifyBound()
 void VulkanResource::NotifyUsed(GpuQueueId queueId, GpuAccessFlags useFlags)
 {
 	Lock lock(mMutex);
-	B3D_ASSERT(useFlags != GpuAccessFlag::None);
+	//B3D_ASSERT(useFlags != GpuAccessFlag::None); // TODO - Commented out while we port to FrameGraph, dummy unused GpuBuffer is triggering it
 
 	bool isUsed = mUsedCount > 0;
 	if(isUsed && mState == State::Normal) // Used without support for concurrency

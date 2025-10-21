@@ -27,6 +27,9 @@
 #include "Profiling/B3DProfilerCPU.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DRenderTexture.h"
+#include "FrameGraph/B3DFrameGraph.h"
+#include "FrameGraph/B3DFrameGraphPassResources.h"
+#include "RenderAPI/B3DGpuBuffer.h"
 
 namespace b3d { namespace render {
 
@@ -231,6 +234,57 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 
 	if(!mRegisteredNodes.empty())
 		mRegisteredNodes.back().Node->Clear();
+}
+
+void RenderCompositor::BuildGraph(FrameGraph& graph, RenderCompositorNodeInputs& inputs) const
+{
+	if(!mIsValid)
+		return;
+
+	// Create a dummy buffer resource to prevent culling of legacy nodes
+	// Legacy nodes don't declare their resource dependencies, so they would be culled
+	// by the FrameGraph compiler. We create a dummy output that all legacy nodes write to,
+	// ensuring they are kept in the graph.
+	const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();                                                                        \
+	GpuBufferCreateInformation dummyBufferDesc = GpuBufferCreateInformation::CreateUniform(4);
+	SPtr<GpuBuffer> dummyBuffer = gpuDevice->CreateGpuBuffer(dummyBufferDesc);
+	FrameGraphResourceId legacyOutputId = graph.ImportBuffer("LegacyOutput", dummyBuffer);
+	graph.MarkAsOutput(legacyOutputId);
+
+	// Iterate through all registered nodes and add them to the FrameGraph
+	// For now, all nodes are legacy nodes (wrapped in manual FrameGraph passes)
+	// As nodes are migrated to FrameGraph, they will call graph.DeclarePass() themselves
+	for(auto& entry : mRegisteredNodes)
+	{
+		inputs.InputNodes = entry.Inputs;
+
+		// Wrap legacy node in a generic FrameGraph pass
+		const StringID nodeId = entry.NodeDescriptor->Id;
+		const String passName = String(nodeId.CStr());
+
+		graph.DeclarePass(
+			passName,
+			[legacyOutputId](FrameGraphPass& pass)
+			{
+				// Legacy nodes don't declare resources upfront
+				// Treated as black boxes - no automatic barrier optimization
+				// Write to dummy output to prevent culling
+				pass.Write(legacyOutputId, GpuResourceUseFlag::ShaderAccess);
+			},
+			[node = entry.Node, inputNodes = entry.Inputs, &inputs](GpuCommandBuffer& cmd, FrameGraphPassResources& resources)
+			{
+				// Update command buffer in inputs to match current FrameGraph buffer
+				auto originalCmdBuffer = inputs.ActiveCommandBuffer;
+				inputs.ActiveCommandBuffer = cmd.GetShared();
+				inputs.InputNodes = inputNodes;
+
+				// Execute legacy Render() method
+				node->Render(inputs);
+
+				// Restore original command buffer
+				inputs.ActiveCommandBuffer = originalCmdBuffer;
+			});
+	}
 }
 
 void RenderCompositor::Clear()
@@ -533,6 +587,328 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	// Make sure that any compute shaders are able to read g-buffer by unbinding it
 	commandBuffer.EndRenderPass();
 	commandBuffer.BeginRenderPass(nullptr);  // TODO - RenderPass
+}
+
+void RCNodeBasePass::BuildFrameGraphPass(const SPtr<FrameGraph>& frameGraph, const RenderCompositorNodeInputs& inputs)
+{
+	// Allocate necessary textures & targets
+	GpuResourcePool& resPool = GetGpuResourcePool();
+	const RendererViewProperties& viewProps = inputs.View.GetProperties();
+
+	const u32 width = viewProps.Target.ViewRect.Width;
+	const u32 height = viewProps.Target.ViewRect.Height;
+	const u32 numSamples = viewProps.Target.NumSamples;
+
+	bool needsVelocity = inputs.View.RequiresVelocityWrites();
+
+	// Note: Consider customizable formats. e.g. for testing if quality can be improved with higher precision normals.
+	AlbedoTex = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RGBA8, width, height, TU_RENDERTARGET, numSamples, true));
+	NormalTex = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RGB10A2, width, height, TU_RENDERTARGET, numSamples, false));
+	RoughMetalTex = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RG16F, width, height, TU_RENDERTARGET, numSamples, false)); // Note: Metal doesn't need 16-bit float
+	IdTex = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_R8, width, height, TU_RENDERTARGET, numSamples, false));
+
+	if(needsVelocity)
+	{
+		VelocityTex = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RG16S, width, height, TU_RENDERTARGET, numSamples, false));
+	}
+
+	Albedo = frameGraph->ImportTexture("Albedo", AlbedoTex->Texture);
+	Normals = frameGraph->ImportTexture("Normals", NormalTex->Texture);
+	RoughnessMetalness = frameGraph->ImportTexture("RoughnessMetalness", RoughMetalTex->Texture);
+	Id = frameGraph->ImportTexture("Id", IdTex->Texture);
+
+	if(needsVelocity)
+		Velocity = frameGraph->ImportTexture("Velocity", VelocityTex->Texture);
+
+	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
+	auto sceneDepthNode = dependencies.Get<RCNodeSceneDepth>();
+	auto sceneColorNode = dependencies.Get<RCNodeSceneColor>();
+	SPtr<PooledRenderTexture> sceneDepthTex = sceneDepthNode->DepthTex;
+	SPtr<PooledRenderTexture> sceneColorTex = sceneColorNode->SceneColorTex;
+
+	bool rebuildRT = false;
+	if(RenderTarget != nullptr)
+	{
+		u32 targetIdx = 0;
+		rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != sceneColorTex->Texture;
+		rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != AlbedoTex->Texture;
+		rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != NormalTex->Texture;
+		rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != RoughMetalTex->Texture;
+		if(needsVelocity) rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != VelocityTex->Texture;
+		rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != IdTex->Texture;
+		rebuildRT |= RenderTarget->GetDepthStencilTexture() != sceneDepthTex->Texture;
+	}
+	else
+		rebuildRT = true;
+
+	if(RenderTarget == nullptr || rebuildRT)
+	{
+		u32 targetIdx = 0;
+
+		RenderTextureCreateInformation gbufferDesc;
+		gbufferDesc.ColorSurfaces[targetIdx].Texture = sceneColorTex->Texture;
+		gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+		gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+		gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+		targetIdx++;
+
+		gbufferDesc.ColorSurfaces[targetIdx].Texture = AlbedoTex->Texture;
+		gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+		gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+		gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+		targetIdx++;
+
+		gbufferDesc.ColorSurfaces[targetIdx].Texture = NormalTex->Texture;
+		gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+		gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+		gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+		targetIdx++;
+
+		gbufferDesc.ColorSurfaces[targetIdx].Texture = RoughMetalTex->Texture;
+		gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+		gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+		gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+		targetIdx++;
+
+		if(needsVelocity)
+		{
+			gbufferDesc.ColorSurfaces[targetIdx].Texture = VelocityTex->Texture;
+			gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+			gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+			gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+			targetIdx++;
+		}
+
+		gbufferDesc.DepthStencilSurface.Texture = sceneDepthTex->Texture;
+		gbufferDesc.DepthStencilSurface.Face = 0;
+		gbufferDesc.DepthStencilSurface.MipLevel = 0;
+
+		RenderTargetNoMask = RenderTexture::Create(gbufferDesc);
+
+		gbufferDesc.ColorSurfaces[targetIdx].Texture = IdTex->Texture;
+		gbufferDesc.ColorSurfaces[targetIdx].Face = 0;
+		gbufferDesc.ColorSurfaces[targetIdx].FaceCount = 1;
+		gbufferDesc.ColorSurfaces[targetIdx].MipLevel = 0;
+		targetIdx++;
+
+		RenderTarget = RenderTexture::Create(gbufferDesc);
+	}
+
+	// Prepare all visible objects. Note that this also prepares non-opaque objects.
+	//// Prepare normal renderables
+	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
+	const auto numRenderables = (u32)inputs.Scene.Renderables.size();
+	for(u32 i = 0; i < numRenderables; i++)
+	{
+		if(!visibility.Renderables[i])
+			continue;
+
+		RendererRenderable* rendererRenderable = inputs.Scene.Renderables[i];
+		rendererRenderable->UpdatePerCallBuffer(viewProps.ViewProjTransform);
+
+		for(auto& element : inputs.Scene.Renderables[i]->Elements)
+		{
+			SPtr<GpuParameters> gpuParams = element.Params->GetGpuParams();
+			const GpuParameterBinding& binding = element.PerCameraBinding;
+			if(binding.Slot != (u32)-1)
+				gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
+		}
+	}
+
+	//// Prepare particle systems
+	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
+	if(particleData)
+	{
+		const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
+
+		const GpuParticleResources& gpuSimResources = GpuParticleSimulation::Instance().GetResources();
+		for(u32 i = 0; i < numParticleSystems; i++)
+		{
+			if(!visibility.ParticleSystems[i])
+				continue;
+
+			const RendererParticles& rendererParticles = inputs.Scene.ParticleSystems[i];
+			ParticlesRenderElement& renderElement = rendererParticles.RenderElement;
+
+			if(!renderElement.IsValid())
+				continue;
+
+			ParticleSystem* particleSystem = rendererParticles.ParticleSystem;
+
+			// Bind textures/buffers from CPU simulation
+			const auto iterFind = particleData->CpuData.find(particleSystem->GetId());
+			if(iterFind != particleData->CpuData.end())
+			{
+				ParticleRenderData* renderData = iterFind->second;
+				rendererParticles.BindCpuSimulatedInputs(renderData, inputs.View);
+			}
+			// Bind textures/buffers from GPU simulation
+			else if(rendererParticles.GpuParticleSystem)
+				rendererParticles.BindGpuSimulatedInputs(gpuSimResources, inputs.View);
+		}
+	}
+
+	//// Prepare decals
+	const auto numDecals = (u32)inputs.Scene.Decals.size();
+	for(u32 i = 0; i < numDecals; i++)
+	{
+		if(!visibility.Decals[i])
+			continue;
+
+		const RendererDecal& rendererDecal = inputs.Scene.Decals[i];
+		DecalRenderElement& renderElement = rendererDecal.RenderElement;
+
+		rendererDecal.UpdatePerCallBuffer(viewProps.ViewProjTransform);
+
+		SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParams();
+		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
+		if(binding.Slot != (u32)-1)
+			gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
+
+		renderElement.DepthInputTexture.Set(sceneDepthTex->Texture);
+		renderElement.MaskInputTexture.Set(IdTex->Texture);
+	}
+
+	Camera* sceneCamera = inputs.View.GetSceneCamera();
+
+	// Trigger prepare callbacks
+	if(sceneCamera != nullptr)
+	{
+		for(auto& extension : inputs.ExtPrepare)
+		{
+			RendererViewContext context;
+			context.CurrentTarget = inputs.View.GetCompositorRenderTarget();
+			context.FrameGraph = frameGraph;
+
+			extension->Render(*sceneCamera, context);
+		}
+	}
+
+	// Render base pass
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	commandBuffer.BeginRenderPass(RenderTarget);
+
+	frameGraph->DeclareRenderPass("ClearGBuffer", [this, sceneColorNode, sceneDepthNode, needsVelocity](FrameGraphPass& frameGraphPass)
+	{
+		frameGraphPass.WriteColor(sceneColorNode->SceneColor);
+		frameGraphPass.WriteColor(Albedo, 1);
+		frameGraphPass.WriteColor(Normals, 2);
+		frameGraphPass.WriteColor(RoughnessMetalness, 3);
+		frameGraphPass.WriteColor(Id, 4);
+
+		if(needsVelocity)
+			frameGraphPass.WriteColor(Velocity, 4);
+
+		frameGraphPass.WriteDepth(sceneDepthNode->Depth);
+	}, [this](GpuCommandBuffer& commandBuffer, FrameGraphPassResources& frameGraphPassResources)
+	{
+		Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
+		commandBuffer.SetViewport(area);
+
+		// Clear all targets
+		commandBuffer.ClearViewport(FBT_COLOR | FBT_DEPTH | FBT_STENCIL, Color::kZero, 1.0f, 0);
+	});
+
+	// Trigger pre-base-pass callbacks
+	if(sceneCamera != nullptr)
+	{
+		inputs.View.NotifyCompositorTargetChangedInternal(RenderTarget);
+
+		for(auto& extension : inputs.ExtPreBasePass)
+		{
+			RendererViewContext context;
+			context.CurrentTarget = inputs.View.GetCompositorRenderTarget();
+			context.FrameGraph = frameGraph;
+
+			extension->Render(*sceneCamera, context);
+		}
+	}
+
+	// Render all visible opaque elements that use the deferred pipeline
+	frameGraph->DeclareRenderPass("BasePassOpaque", [this, sceneColorNode, sceneDepthNode, needsVelocity](FrameGraphPass& frameGraphPass)
+	{
+		frameGraphPass.WriteColor(sceneColorNode->SceneColor);
+		frameGraphPass.WriteColor(Albedo, 1);
+		frameGraphPass.WriteColor(Normals, 2);
+		frameGraphPass.WriteColor(RoughnessMetalness, 3);
+		frameGraphPass.WriteColor(Id, 4);
+
+		if(needsVelocity)
+			frameGraphPass.WriteColor(Velocity, 4);
+
+		frameGraphPass.WriteDepth(sceneDepthNode->Depth);
+	}, [this, &inputs](GpuCommandBuffer& commandBuffer, FrameGraphPassResources& frameGraphPassResources)
+	{
+		const Vector<RenderQueueElement>& opaqueElements = inputs.View.GetOpaqueQueue(false)->GetSortedElements();
+		RenderQueueElements(commandBuffer, opaqueElements);
+	});
+
+	// Determine MSAA coverage if required
+	if(viewProps.Target.NumSamples > 1)
+	{
+		auto msaaCoverageNode = static_cast<RCNodeMSAACoverage*>(inputs.InputNodes[3]);
+
+		GBufferTextures gbuffer;
+		gbuffer.Albedo = AlbedoTex->Texture;
+		gbuffer.Normals = NormalTex->Texture;
+		gbuffer.RoughMetal = RoughMetalTex->Texture;
+		gbuffer.Depth = sceneDepthNode->DepthTex->Texture;
+
+		frameGraph->DeclareRenderPass("MSAACoverage", [this, sceneColorNode, sceneDepthNode, needsVelocity](FrameGraphPass& frameGraphPass)
+		{
+			// TODO - Bind this as render target
+			//commandBuffer.BeginRenderPass(msaaCoverageNode->Output->RenderTexture);
+		}, [this, &inputs](GpuCommandBuffer& commandBuffer, FrameGraphPassResources& frameGraphPassResources)
+		{
+			MSAACoverageMat* mat = MSAACoverageMat::GetVariation(viewProps.Target.NumSamples);
+			mat->Execute(commandBuffer, inputs.View, gbuffer);
+		});
+
+		frameGraph->DeclareRenderPass("MSAAStencil", [this, sceneColorNode, sceneDepthNode, needsVelocity](FrameGraphPass& frameGraphPass)
+		{
+			// TODO - Bind this as render target
+			//commandBuffer.BeginRenderPass(sceneDepthNode->DepthTex->RenderTexture);
+		}, [this, &inputs](GpuCommandBuffer& commandBuffer, FrameGraphPassResources& frameGraphPassResources)
+		{
+			MSAACoverageStencilMat* stencilMat = MSAACoverageStencilMat::Get();
+			stencilMat->Execute(commandBuffer, inputs.View, msaaCoverageNode->Output->Texture);
+		});
+	}
+
+	// Render decals after all normal objects, using a read-only depth buffer
+	//commandBuffer.BeginRenderPass(RenderTargetNoMask, RT_DEPTH, RT_ALL); // TODO - Need to be able to pass render target load flags
+	frameGraph->DeclareRenderPass("BasePassDecals", [this, sceneColorNode, sceneDepthNode, needsVelocity](FrameGraphPass& frameGraphPass)
+	{
+		frameGraphPass.WriteColor(sceneColorNode->SceneColor);
+		frameGraphPass.WriteColor(Albedo, 1);
+		frameGraphPass.WriteColor(Normals, 2);
+		frameGraphPass.WriteColor(RoughnessMetalness, 3);
+
+		if(needsVelocity)
+			frameGraphPass.WriteColor(Velocity, 4);
+
+		frameGraphPass.ReadDepth(sceneDepthNode->Depth);
+
+	}, [this, &inputs](GpuCommandBuffer& commandBuffer, FrameGraphPassResources& frameGraphPassResources)
+	{
+		const Vector<RenderQueueElement>& decalElements = inputs.View.GetDecalQueue()->GetSortedElements();
+		RenderQueueElements(commandBuffer, decalElements);
+	});
+
+	// Trigger post-base-pass callbacks
+	if(sceneCamera != nullptr)
+	{
+		inputs.View.NotifyCompositorTargetChangedInternal(RenderTargetNoMask);
+
+		for(auto& extension : inputs.ExtPostBasePass)
+		{
+			RendererViewContext context;
+			context.CurrentTarget = inputs.View.GetCompositorRenderTarget();
+			context.FrameGraph = frameGraph;
+
+			extension->Render(*sceneCamera, context);
+		}
+	}
 }
 
 void RCNodeBasePass::Clear()
