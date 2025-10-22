@@ -659,7 +659,7 @@ u32 VulkanGpuParameters::GetSetCount() const
 	return mParameterLayout->GetSetCount();
 }
 
-void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets)
+void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VkDescriptorSet* outSets, TInlineArray<u32, 4>& outDynamicOffsets)
 {
 	PerDeviceData& perDeviceData = mPerDeviceData;
 	if(perDeviceData.PerSetData == nullptr)
@@ -1057,7 +1057,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 	for(u32 dynamicOffset : dynamicOffsetMapping)
 	{
 		if(dynamicOffset != ~0u)
-			outDynamicOffsets.push_back(dynamicOffset);
+			outDynamicOffsets.Add(dynamicOffset);
 	}
 
 	// Acquire sets as needed, and updated their contents if dirty

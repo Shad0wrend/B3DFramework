@@ -49,7 +49,7 @@ namespace b3d
 			 *
 			 * @note	Thread safe.
 			 */
-			void PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets);
+			void PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VkDescriptorSet* outSets, TInlineArray<u32, 4>& outDynamicOffsets);
 
 		protected:
 			/** All GPU param data related to a single descriptor set. */

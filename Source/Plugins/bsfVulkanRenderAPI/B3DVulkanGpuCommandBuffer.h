@@ -127,7 +127,7 @@ namespace b3d
 			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
 			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
 			void DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ) override;
-			void BeginRenderPass(const SPtr<RenderTarget>& target, RenderSurfaceMask readOnlyMask, RenderSurfaceMask loadMask) override;
+			void BeginRenderPass(const RenderPassCreateInformation& createInformation) override;
 			void EndRenderPass() override { EndRenderPass(false); }
 			bool IsInRenderPass() const override { return mState == State::RecordingRenderPass; }
 			void SetViewport(const Area2& area) override;
@@ -410,6 +410,14 @@ namespace b3d
 				u64 PoolIdentifier = 0;
 			};
 
+			/** Cached data from GpuParameters that were registered during render pass start. */
+			struct CachedGpuParameterData
+			{
+				TInlineArray<VkDescriptorSet, 4> DescriptorSets;
+				TInlineArray<u32, 4> DynamicOffsets;
+				u32 SetCount = 0;
+			};
+
 			VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanGpuCommandBufferPool& pool, u32 id, VkCommandBuffer commandBufferHandle, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
 
 			/** Returns the pool the command buffer was allocated from. */
@@ -540,8 +548,9 @@ namespace b3d
 			TArray<VkImageMemoryBarrier> mLayoutTransitionBarriersTemp;
 			Vector<VulkanEvent*> mQueuedEvents;
 			Vector<SwapChainImageInformation> mAcquiredSwapChainImages;
-			Vector<u32> mDynamicDescriptorOffsetsToBind;
+			TInlineArray<u32, 4> mDynamicDescriptorOffsetsToBind;
 			UnorderedMap<u32, u32> mDynamicDescriptorOffsetsOverrides;
+			UnorderedMap<GpuParameters*, CachedGpuParameterData> mRenderPassGpuParametersCache;
 
 			SPtr<RenderTarget> mRenderTarget;
 			bool mRenderTargetModified = false;

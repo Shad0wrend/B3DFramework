@@ -359,6 +359,49 @@ namespace b3d
 			TInlineArray<GpuTextureBarrier, 2> TextureBarriers;
 			TInlineArray<GpuRenderTargetBarrier, 2> RenderTargetBarriers;
 		};
+
+		/**
+		 * Descriptor structure used for initialization of a render pass. Render pass will bind the provided
+		 * render target and allow draw calls to be executed until it ends.
+		 */
+		struct RenderPassCreateInformation
+		{
+			/** Render target to render to. */
+			SPtr<RenderTarget> Target;
+
+			/**
+			 * Which surfaces of the render target are read-only.
+			 * Read-only surfaces cannot be written to during the render pass.
+			 */
+			RenderSurfaceMask ReadOnlyMask = RT_NONE;
+
+			/**
+			 * Which surfaces of the render target should preserve their existing contents.
+			 * Use this when you need to blend, read, or perform other operations with
+			 * the existing contents of the render target.
+			 */
+			RenderSurfaceMask LoadMask = RT_NONE;
+
+			/**
+			 * Set of all GPU parameters that will be bound during this render pass. The command buffer will pre-register all resources
+			 * from these parameters, allowing barriers and layout transitions to be issued before the render pass begins.
+			 */
+			TInlineArray<SPtr<GpuParameters>, 4> Parameters;
+
+			RenderPassCreateInformation() = default;
+
+			RenderPassCreateInformation(const SPtr<RenderTarget>& target, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
+				: Target(target), ReadOnlyMask(readOnlyMask), LoadMask(loadMask)
+			{ }
+
+			RenderPassCreateInformation(const SPtr<RenderTarget>& target, const SPtr<GpuParameters>& parameters, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
+				: Target(target), ReadOnlyMask(readOnlyMask), LoadMask(loadMask)
+			{
+				if(parameters != nullptr)
+					Parameters.Add(parameters);
+			}
+		};
+
 		/**
 		 * Contains a list of render API commands that can be queued for execution on the GPU. User is allowed to populate the
 		 * command buffer from any thread, ensuring render API command generation can be multi-threaded. Command buffers
@@ -469,21 +512,36 @@ namespace b3d
 			virtual void DispatchCompute(u32 groupCountX, u32 groupCountY = 1, u32 groupCountZ = 1) = 0;
 
 			/**
-			 * Change the render target into which to draw into and begins a render pass.
+			 * Begins a new render pass, allowing rendering commands to be recorded.
+			 * All resources referenced by the provided GPU parameters will be registered with the
+			 * command buffer and necessary barriers/layout transitions will be issued before the
+			 * render pass begins.
 			 *
-			 * @param	target			Render target to draw to.
-			 * @param	readOnlyMask	Determines which attachments will be bound for read-only operations.
-			 *							This is mainly useful for depth or stencil attachments which need to be bound
-			 *							both for depth/stencil tests, as well as shader reads.
-			 * @param	loadMask		Determines which render target surfaces will have their current contents
-			 *							preserved. By default when a render target is bound its contents will be
-			 *							lost. You might need to preserve contents if you need to perform blending
-			 *							or similar operations with the existing contents of the render target.
-			 *
-			 *							Use the mask to select exactly which surfaces of the render target need
-			 *							their contents preserved.
+			 * @param createInformation    Structure containing render target, masks, and all parameters
+			 *                            that will be used during the render pass.
 			 */
-			virtual void BeginRenderPass(const SPtr<RenderTarget>& target, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE) = 0;
+			virtual void BeginRenderPass(const RenderPassCreateInformation& createInformation) = 0;
+
+			/**
+			 * Begins a new render pass (legacy overload for backward compatibility).
+			 *
+			 * @param target          Render target to draw to.
+			 * @param readOnlyMask    Determines which attachments will be bound for read-only operations.
+			 *                        This is mainly useful for depth or stencil attachments which need to be bound
+			 *                        both for depth/stencil tests, as well as shader reads.
+			 * @param loadMask        Determines which render target surfaces will have their current contents
+			 *                        preserved. By default when a render target is bound its contents will be
+			 *                        lost. You might need to preserve contents if you need to perform blending
+			 *                        or similar operations with the existing contents of the render target.
+			 *
+			 *                        Use the mask to select exactly which surfaces of the render target need
+			 *                        their contents preserved.
+			 */
+			void BeginRenderPass(const SPtr<RenderTarget>& target, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
+			{
+				RenderPassCreateInformation createInfo(target, readOnlyMask, loadMask);
+				BeginRenderPass(createInfo);
+			}
 
 			/** Ends the current render pass. */
 			virtual void EndRenderPass() = 0;

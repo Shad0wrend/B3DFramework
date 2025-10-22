@@ -261,10 +261,14 @@ void VulkanGpuCommandBuffer::End()
 	mState = State::RecordingDone;
 }
 
-void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTarget, RenderSurfaceMask readOnlyMask, RenderSurfaceMask loadMask)
+void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& createInformation)
 {
 	EnsureValidThread();
 	B3D_ASSERT(mState != State::Submitted);
+
+	const SPtr<RenderTarget>& renderTarget = createInformation.Target;
+	RenderSurfaceMask readOnlyMask = createInformation.ReadOnlyMask;
+	RenderSurfaceMask loadMask = createInformation.LoadMask;
 
 	VulkanFramebuffer* newFramebuffer;
 	VulkanSwapChain* swapChain = nullptr;
@@ -340,7 +344,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 	if(loadMask.IsSet(RT_DEPTH) && !loadMask.IsSet(RT_STENCIL))
 	{
 		B3D_LOG(Warning, RenderBackend, "SetRenderTarget() invalid load mask, depth enabled but stencil disabled. "
-									   "This is not supported. Both will be loaded.");
+										   "This is not supported. Both will be loaded.");
 
 		loadMask.Set(RT_STENCIL);
 	}
@@ -348,7 +352,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 	if(!loadMask.IsSet(RT_DEPTH) && loadMask.IsSet(RT_STENCIL))
 	{
 		B3D_LOG(Warning, RenderBackend, "SetRenderTarget() invalid load mask, stencil enabled but depth disabled. "
-									   "This is not supported. Both will be loaded.");
+										   "This is not supported. Both will be loaded.");
 
 		loadMask.Set(RT_DEPTH);
 	}
@@ -426,6 +430,29 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const SPtr<RenderTarget>& renderTar
 		}
 	}
 #endif
+
+	// Pre-register all GPU parameters before the render pass, so we can automatically issue barriers
+	for(const SPtr<GpuParameters>& parameters : createInformation.Parameters)
+	{
+		if(parameters == nullptr)
+			continue;
+
+		VulkanGpuParameters* vkParams = static_cast<VulkanGpuParameters*>(parameters.get());
+		u32 setCount = vkParams->GetSetCount();
+
+		if(setCount == 0)
+			continue;
+
+		// Use mDescriptorSetsTemp for temporary storage and call PrepareForBind
+		TInlineArray<u32, 4> tempDynamicOffsets;
+		vkParams->PrepareForBind(*this, mResourceTracker, mDescriptorSetsTemp, tempDynamicOffsets);
+
+		// Cache the preparation results for later use by SetGpuParameters
+		CachedGpuParameterData& cacheData = mRenderPassGpuParametersCache[parameters.get()];
+		cacheData.SetCount = setCount;
+		cacheData.DescriptorSets = TInlineArray<VkDescriptorSet, 4>(mDescriptorSetsTemp, mDescriptorSetsTemp + setCount);
+		cacheData.DynamicOffsets = std::move(tempDynamicOffsets);
+	}
 
 	// Re-set the params as they will need to be re-bound
 	SetGpuParameters(mBoundParams);
@@ -851,7 +878,7 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 
 	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
 	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	BeginRenderPass(nullptr, RT_NONE, RT_ALL); // TODO - RenderPass
+	BeginRenderPass(RenderPassCreateInformation(nullptr, RT_NONE, RT_ALL)); // TODO - RenderPass
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
@@ -1141,8 +1168,13 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 	mState = State::Recording;
 	mIsRenderPassInterrupted = isInternalInterrupt;
 
+	if(isInternalInterrupt)
+		mRenderPassGpuParametersCache.clear();
+
 	// In case the same GPU params from last pass get used, this makes sure the states we reset above, get re-applied
 	mBoundParamsDirty = true;
+
+	// TODO - Probably best to clear mBoundParams since I cleared the cache above
 }
 
 u32 VulkanGpuCommandBuffer::AllocateSignalSemaphores(TInlineArray<VkSemaphore, 8>& outSemaphores)
@@ -1767,12 +1799,36 @@ void VulkanGpuCommandBuffer::BindGpuParams()
 	{
 		mBoundDescriptorSetCount = mBoundParams->GetSetCount();
 
-		mDynamicDescriptorOffsetsToBind.clear();
-		mBoundParams->PrepareForBind(*this, mResourceTracker, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
+		// Check if we have cached preparation data
+		auto it = mRenderPassGpuParametersCache.find(mBoundParams.get());
+		if(it != mRenderPassGpuParametersCache.end())
+		{
+			// Use cached preparation data (skip PrepareForBind)
+			const CachedGpuParameterData& cacheData = it->second;
+
+			// Copy cached descriptor sets to temp buffer
+			B3D_ASSERT(cacheData.SetCount == mBoundDescriptorSetCount);
+			memcpy(mDescriptorSetsTemp, cacheData.DescriptorSets.data(), sizeof(VkDescriptorSet) * cacheData.SetCount);
+
+			mDynamicDescriptorOffsetsToBind = cacheData.DynamicOffsets;
+		}
+		else
+		{
+			B3D_LOG(Warning, RenderBackend,
+				"SetGpuParameters() called with parameters not declared in RenderPassCreateInformation. Automatic resource barriers and layout transitions may not execute correctly.");
+
+			// Fallback: No cached data, call PrepareForBind now
+			// This handles compute dispatch and non-render-pass scenarios
+			mDynamicDescriptorOffsetsToBind.clear();
+			mBoundParams->PrepareForBind(*this, mResourceTracker, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
+		}
 	}
 	else
+	{
 		mBoundDescriptorSetCount = 0;
+	}
 
+	// Apply dynamic offset overrides
 	for(const auto& pair : mDynamicDescriptorOffsetsOverrides)
 	{
 		if(!B3D_ENSURE(pair.first < (u32)mDynamicDescriptorOffsetsToBind.size()))
