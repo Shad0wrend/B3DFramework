@@ -524,7 +524,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		MSAACoverageMat* const msaaCoverageMaterial = MSAACoverageMat::GetVariation(viewProps.Target.NumSamples);
 		msaaCoverageMaterial->Prepare(inputs.View, gbuffer);
 
-		RenderPassCreateInformation msaaCoverageInfo(msaaCoverageNode->Output->RenderTexture, msaaCoverageMaterial->GetParams());
+		RenderPassCreateInformation msaaCoverageInfo(msaaCoverageNode->Output->RenderTexture, msaaCoverageMaterial->GetGPUParameters());
 		commandBuffer.BeginRenderPass(msaaCoverageInfo);
 		msaaCoverageMaterial->Execute(commandBuffer, inputs.View);
 		commandBuffer.EndRenderPass();
@@ -532,7 +532,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		MSAACoverageStencilMat* msaaCoverageStencilMaterial = MSAACoverageStencilMat::Get();
 		msaaCoverageStencilMaterial->Prepare(msaaCoverageNode->Output->Texture);
 
-		RenderPassCreateInformation msaaStencilInfo(sceneDepthNode->DepthTex->RenderTexture, msaaCoverageStencilMaterial->GetParams());
+		RenderPassCreateInformation msaaStencilInfo(sceneDepthNode->DepthTex->RenderTexture, msaaCoverageStencilMaterial->GetGPUParameters());
 		commandBuffer.BeginRenderPass(msaaStencilInfo);
 		msaaCoverageStencilMaterial->Execute(commandBuffer, inputs.View);
 		commandBuffer.EndRenderPass();
@@ -2057,7 +2057,8 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 		bloomTex = bloomNode->Output;
 	}
 
-	tonemapping->Execute(commandBuffer, sceneColor, eyeAdaptationTex, bloomTex, tonemapLUTTex, ppOutput, settings);
+	tonemapping->Prepare(sceneColor, eyeAdaptationTex, bloomTex, tonemapLUTTex, settings);
+	tonemapping->Execute(commandBuffer, ppOutput);
 }
 
 void RCNodeTonemapping::Clear()
@@ -2108,7 +2109,8 @@ void RCNodeBokehDOF::Render(const RenderCompositorNodeInputs& inputs)
 	SPtr<PooledRenderTexture> unfocusedTex =
 		GetGpuResourcePool().Get(BokehDOFMat::GetOutputDesc(halfResSceneAndDepth->Texture));
 
-	renderMat->Execute(commandBuffer, halfResSceneAndDepth->Texture, inputs.View, settings, unfocusedTex->RenderTexture);
+	renderMat->Prepare(halfResSceneAndDepth->Texture, inputs.View, settings, unfocusedTex->RenderTexture);
+	renderMat->Execute(commandBuffer, halfResSceneAndDepth->Texture, unfocusedTex->RenderTexture);
 	halfResSceneAndDepth = nullptr;
 
 	// Combine the unfocused and focused textures to form the final image
@@ -2583,7 +2585,8 @@ void RCNodeHiZ::Render(const RenderCompositorNodeInputs& inputs)
 		// Make sure that 1 pixel in HiZ maps to a 2x2 block in source
 		destRect = Area2(0, 0, Math::CeilToInt(viewProps.Target.ViewRect.Width / 2.0f) / (float)size, Math::CeilToInt(viewProps.Target.ViewRect.Height / 2.0f) / (float)size);
 
-		material->Execute(commandBuffer, resolvedSceneDepth->Output->Texture, 0, srcRect, destRect, rt);
+		material->Prepare(resolvedSceneDepth->Output->Texture, 0);
+		material->Execute(commandBuffer, rt, srcRect, destRect);
 	}
 	else // First level is just a copy of the depth buffer
 	{
@@ -2609,7 +2612,8 @@ void RCNodeHiZ::Render(const RenderCompositorNodeInputs& inputs)
 		rtDesc.ColorSurfaces[0].MipLevel = i;
 		rt = RenderTexture::Create(rtDesc);
 
-		material->Execute(commandBuffer, Output->Texture, i - 1, destRect, destRect, rt);
+		material->Prepare(Output->Texture, i - 1);
+		material->Execute(commandBuffer, rt, destRect, destRect);
 	}
 }
 
@@ -2684,7 +2688,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		PooledRenderTextureCreateInformation desc = PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, downsampledSize.X, downsampledSize.Y, TU_RENDERTARGET);
 		setupTex0 = resPool.Get(desc);
 
-		downsample->Execute(commandBuffer, inputs.View, sceneDepth, sceneNormals, setupTex0->RenderTexture, kDepthRange);
+		downsample->Prepare(inputs.View, sceneDepth, sceneNormals, setupTex0->RenderTexture, kDepthRange);
+		downsample->Execute(commandBuffer, setupTex0->RenderTexture);
 	}
 
 	SPtr<PooledRenderTexture> setupTex1;
@@ -2697,7 +2702,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		PooledRenderTextureCreateInformation desc = PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, downsampledSize.X, downsampledSize.Y, TU_RENDERTARGET);
 		setupTex1 = resPool.Get(desc);
 
-		downsample->Execute(commandBuffer, inputs.View, sceneDepth, sceneNormals, setupTex1->RenderTexture, kDepthRange);
+		downsample->Prepare(inputs.View, sceneDepth, sceneNormals, setupTex1->RenderTexture, kDepthRange);
+		downsample->Execute(commandBuffer, setupTex1->RenderTexture);
 	}
 
 	SSAOTextureInputs textures;
@@ -2718,7 +2724,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		downAOTex1 = resPool.Get(desc);
 
 		SSAOMat* ssaoMat = SSAOMat::GetVariation(false, false, quality);
-		ssaoMat->Execute(commandBuffer, inputs.View, textures, downAOTex1->RenderTexture, settings);
+		ssaoMat->Prepare(inputs.View, textures, downAOTex1->RenderTexture, settings);
+		ssaoMat->Execute(commandBuffer, downAOTex1->RenderTexture);
 
 		setupTex1 = nullptr;
 	}
@@ -2740,7 +2747,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 
 		bool upsample = numDownsampleLevels > 1;
 		SSAOMat* ssaoMat = SSAOMat::GetVariation(upsample, false, quality);
-		ssaoMat->Execute(commandBuffer, inputs.View, textures, downAOTex0->RenderTexture, settings);
+		ssaoMat->Prepare(inputs.View, textures, downAOTex0->RenderTexture, settings);
+		ssaoMat->Execute(commandBuffer, downAOTex0->RenderTexture);
 
 		if(upsample)
 			downAOTex1 = nullptr;
@@ -2759,7 +2767,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 
 		bool upsample = numDownsampleLevels > 0;
 		SSAOMat* ssaoMat = SSAOMat::GetVariation(upsample, true, quality);
-		ssaoMat->Execute(commandBuffer, inputs.View, textures, mPooledOutput->RenderTexture, settings);
+		ssaoMat->Prepare(inputs.View, textures, mPooledOutput->RenderTexture, settings);
+		ssaoMat->Execute(commandBuffer, mPooledOutput->RenderTexture);
 	}
 
 	resolvedNormals = nullptr;
@@ -2783,8 +2792,11 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		SSAOBlurMat* blurHorz = SSAOBlurMat::GetVariation(true);
 		SSAOBlurMat* blurVert = SSAOBlurMat::GetVariation(false);
 
-		blurHorz->Execute(commandBuffer, inputs.View, mPooledOutput->Texture, sceneDepth, blurIntermediateTex->RenderTexture, kDepthRange);
-		blurVert->Execute(commandBuffer, inputs.View, blurIntermediateTex->Texture, sceneDepth, mPooledOutput->RenderTexture, kDepthRange);
+		blurHorz->Prepare(inputs.View, mPooledOutput->Texture, sceneDepth, kDepthRange);
+		blurHorz->Execute(commandBuffer, blurIntermediateTex->RenderTexture);
+
+		blurVert->Prepare(inputs.View, blurIntermediateTex->Texture, sceneDepth, kDepthRange);
+		blurVert->Execute(commandBuffer, mPooledOutput->RenderTexture);
 	}
 
 	commandBuffer.BeginRenderPass(nullptr); // TODO - RenderPass
@@ -2869,7 +2881,8 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	stencilMat->Prepare(inputs.View, gbuffer, settings);
 
 	// Note: Making the assumption that the stencil buffer is clear at this point
-	commandBuffer.BeginRenderPass(resolvedSceneDepthNode->Output->RenderTexture, RT_DEPTH, RT_DEPTH_STENCIL);
+	RenderPassCreateInformation stencilInfo(resolvedSceneDepthNode->Output->RenderTexture, stencilMat->GetGPUParameters(), RT_DEPTH, RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(stencilInfo);
 	stencilMat->Execute(commandBuffer, inputs.View);
 	commandBuffer.EndRenderPass();
 
@@ -2882,7 +2895,8 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	SPtr<RenderTexture> traceRt = RenderTexture::Create(traceRtDesc);
 
 	SSRTraceMat* traceMat = SSRTraceMat::GetVariation(settings.Quality, viewProps.Target.NumSamples > 1, true);
-	traceMat->Execute(commandBuffer, inputs.View, gbuffer, sceneColor, hiZ, settings, traceRt);
+	traceMat->Prepare(inputs.View, gbuffer, sceneColor, hiZ, settings);
+	traceMat->Execute(commandBuffer, traceRt, inputs.View);
 
 	resolvedSceneColor = nullptr;
 
