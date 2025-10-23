@@ -212,12 +212,12 @@ namespace b3d
 			 * Sets parameters (textures, samplers, buffers) for the currently active pass.
 			 *
 			 * @param	commandBuffer	Command buffer to bind the pass parameters to.
-			 * @param	params			Object containing the parameters.
+			 * @param	adapter			Object containing the parameters.
 			 * @param	passIdx			Pass for which to set the parameters.
 			 *
 			 * @note	Render thread.
 			 */
-			void SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx = 0);
+			void SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& adapter, u32 passIdx = 0);
 
 			/**
 			 * Draws the specified mesh.

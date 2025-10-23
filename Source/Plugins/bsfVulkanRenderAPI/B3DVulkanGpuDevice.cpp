@@ -623,9 +623,9 @@ void VulkanGpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& out
 	output[2][3] = (output[2][3] + output[3][3]) / 2;
 }
 
-GpuDataParameterBlockInformation VulkanGpuDevice::GenerateUniformBlockInformation(const String& name, Vector<GpuDataParameterInformation>& inOutUniforms)
+GpuUniformBufferInformation VulkanGpuDevice::GenerateUniformBlockInformation(const String& name, Vector<GpuUniformBufferMemberInformation>& inOutUniforms)
 {
-	GpuDataParameterBlockInformation block;
+	GpuUniformBufferInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;

@@ -86,7 +86,7 @@ namespace b3d
 	 */
 
 	/**
-	 * Class defining a single pass of a technique (of a material). Pass may contain multiple GPU programs (vertex,
+	 * Class defining a single pass of a variation (of a material). Pass may contain multiple GPU programs (vertex,
 	 * fragment, geometry, etc.), and a set of pipeline states (blend, rasterizer, etc.). When initially created the pass
 	 * is in its uncompiled state. It needs to be explicitly compiled by calling Compile() before use.
 	 *
@@ -108,7 +108,7 @@ namespace b3d
 		static SPtr<Pass> Create(const PassCreateInformation& desc);
 
 	protected:
-		friend class Technique;
+		friend class Variation;
 		friend class render::Pass;
 		struct SyncPacket;
 
@@ -161,7 +161,7 @@ namespace b3d
 
 		protected:
 			friend class b3d::Pass;
-			friend class Technique;
+			friend class Variation;
 
 			Pass() = default;
 			Pass(const PassCreateInformation& desc);

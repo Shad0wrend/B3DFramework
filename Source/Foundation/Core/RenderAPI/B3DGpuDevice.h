@@ -446,7 +446,7 @@ namespace b3d
 		 * @return					Descriptor for the parameter block holding the provided parameters as laid out by the
 		 *							default render API layout.
 		 */
-		virtual GpuDataParameterBlockInformation GenerateUniformBlockInformation(const String& name, Vector<GpuDataParameterInformation>& inOutUniforms) = 0;
+		virtual GpuUniformBufferInformation GenerateUniformBlockInformation(const String& name, Vector<GpuUniformBufferMemberInformation>& inOutUniforms) = 0;
 
 		/**
 		 * Converts a GPU timestamp into a time in milliseconds.

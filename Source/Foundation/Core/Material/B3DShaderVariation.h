@@ -183,7 +183,7 @@ namespace b3d
 		bool Matches(const ShaderVariationParameters& other, bool exact = true) const;
 
 		/** Returns all the variation parameters. */
-		const TInlineArray<ShaderVariationParameter, 4>& GetParams() const { return mParams; }
+		const TInlineArray<ShaderVariationParameter, 4>& GetParameterList() const { return mParams; }
 
 		bool operator==(const ShaderVariationParameters& rhs) const;
 

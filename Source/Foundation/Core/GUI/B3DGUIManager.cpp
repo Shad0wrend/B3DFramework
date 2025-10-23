@@ -1674,11 +1674,6 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		cameraRenderData.CachedRenderTexture = RenderTexture::Create(cachedRenderTextureCreateInformation);
 	}
 
-	commandBuffer.BeginRenderPass(cameraRenderData.CachedRenderTexture, RT_NONE, RT_ALL);
-
-	if(rebuildCachedRenderTexture)
-		commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
-
 	for(auto& widget : widgetRenderData)
 	{
 		for(auto& drawGroup : widget.DrawGroups)
@@ -1836,6 +1831,11 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		}
 	};
 
+	commandBuffer.BeginRenderPass(cameraRenderData.CachedRenderTexture, RT_NONE, RT_ALL);
+
+	if(rebuildCachedRenderTexture)
+		commandBuffer.ClearRenderTarget(FBT_COLOR, Color::kZero);
+
 	if(!rebuildCachedRenderTexture && !kRedrawAllRegions)
 	{
 		fnDrawRegions(cameraRenderData.LastFrameDirtyDebugDrawRegions, false);
@@ -1856,7 +1856,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	// Note: This could be optimized by blitting only the modified regions
 	commandBuffer.EndRenderPass();
 
-	commandBuffer.BeginRenderPass(renderTarget, RT_NONE, RT_ALL);
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(renderTarget, RT_NONE, RT_ALL));
 	commandBuffer.SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
 
 	GetRendererUtility().Blend(commandBuffer, cameraRenderData.CachedRenderTexture->GetColorTexture(0), Area2I::kEmpty, false, false, true);

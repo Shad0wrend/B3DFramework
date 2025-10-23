@@ -11,7 +11,7 @@ namespace b3d
 	 */
 
 	/** Describes a single GPU program data (for example int, float, Vector2) parameter. */
-	struct GpuDataParameterInformation
+	struct GpuUniformBufferMemberInformation
 	{
 		String Name;
 		u32 ElementSize; /**< In multiples of 4 bytes. */
@@ -24,11 +24,11 @@ namespace b3d
 		u32 GpuOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
 		u32 CpuOffset; /**< In multiples of 4 bytes. */
 
-		bool operator==(const GpuDataParameterInformation& other) const;
-		bool operator!=(const GpuDataParameterInformation& other) const { return !operator==(other); }
+		bool operator==(const GpuUniformBufferMemberInformation& other) const;
+		bool operator!=(const GpuUniformBufferMemberInformation& other) const { return !operator==(other); }
 	};
 
-	inline bool GpuDataParameterInformation::operator==(const GpuDataParameterInformation& other) const
+	inline bool GpuUniformBufferMemberInformation::operator==(const GpuUniformBufferMemberInformation& other) const
 	{
 		return Name == other.Name &&
 			ElementSize == other.ElementSize &&
@@ -54,7 +54,7 @@ namespace b3d
 	};
 
 	/**	Describes a GPU program parameter block (collection of GPU program data parameters). */
-	struct GpuDataParameterBlockInformation
+	struct GpuUniformBufferInformation
 	{
 		String Name;
 		u32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
@@ -66,8 +66,8 @@ namespace b3d
 	/** Contains information about all parameters (i.e. uniforms) for a single GPU program, including data/object parameters and parameter blocks. */
 	struct B3D_EXPORT GpuProgramParameterDescription : IReflectable
 	{
-		Map<String, GpuDataParameterBlockInformation> UniformBuffers;
-		Map<String, GpuDataParameterInformation> UniformBufferMembers;
+		Map<String, GpuUniformBufferInformation> UniformBuffers;
+		Map<String, GpuUniformBufferMemberInformation> UniformBufferMembers;
 
 		Map<String, GpuObjectParameterInformation> Samplers;
 		Map<String, GpuObjectParameterInformation> SampledTextures;

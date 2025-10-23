@@ -13,52 +13,53 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** Contains a set of GpuParameters used for a single technique within a Material. */
+	/** Shared code between render and main thread versions of MaterialParameterAdapter. */
 	template <bool IsRenderProxy>
-	class B3D_EXPORT TGpuParamsSet
+	class B3D_EXPORT TMaterialParameterAdapter
 	{
-		using GpuParamsType = CoreVariantType<GpuParameters, IsRenderProxy>;
-		using MaterialParamsType = CoreVariantType<MaterialParams, IsRenderProxy>;
-		using ParamBlockPtrType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
-		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
+		using GpuParametersType = CoreVariantType<GpuParameters, IsRenderProxy>;
+		using MaterialParametersType = CoreVariantType<MaterialParameters, IsRenderProxy>;
+		using MaterialType = CoreVariantHandleType<Material, IsRenderProxy>;
+		using UniformBufferPointerType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
+		using VariationType = CoreVariantType<Variation, IsRenderProxy>;
 		using ShaderType = CoreVariantHandleType<Shader, IsRenderProxy>;
 		using PassType = CoreVariantType<Pass, IsRenderProxy>;
-		using ParamBlockType = CoreVariantType<GpuBuffer, IsRenderProxy>;
+		using UniformBufferType = CoreVariantType<GpuBuffer, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 
-		/** Binding location for a single GPU param block buffer. */
-		struct BlockBinding
+		/** Binding location for a single GPU uniform buffer. */
+		struct UniformBufferBinding
 		{
 			u32 Set;
 			u32 Slot;
 		};
 
-		/** All bindings for GPU param block buffers, for a single pass. */
-		struct PassBlockBindings
+		/** All bindings for GPU uniform buffers, for a single pass. */
+		struct PassUniformBufferBindings
 		{
-			BlockBinding Bindings[GPT_COUNT];
+			UniformBufferBinding Bindings[GPT_COUNT];
 		};
 
-		/** Information about a parameter block buffer. */
-		struct BlockInfo
+		/** Information about a uniform buffer. */
+		struct UniformBufferInfo
 		{
-			BlockInfo(const String& name, u32 set, u32 slot, const ParamBlockPtrType& buffer, bool shareable)
+			UniformBufferInfo(const String& name, u32 set, u32 slot, const UniformBufferPointerType& buffer, bool shareable)
 				: Name(name), Set(set), Slot(slot), Buffer(buffer), Shareable(shareable), AllowUpdate(true), IsUsed(true), PassData(nullptr)
 			{}
 
 			String Name;
 			u32 Set;
 			u32 Slot;
-			ParamBlockPtrType Buffer;
+			UniformBufferPointerType Buffer;
 			bool Shareable;
 			bool AllowUpdate;
 			bool IsUsed;
 
-			PassBlockBindings* PassData;
+			PassUniformBufferBindings* PassData;
 		};
 
-		/** Information about how a data parameter maps from a material parameter into a parameter block buffer. */
+		/** Information about how a data parameter maps from a material parameter into a uniform buffer. */
 		struct DataParamInfo
 		{
 			u32 ParamIdx;
@@ -95,9 +96,9 @@ namespace b3d
 		};
 
 	public:
-		TGpuParamsSet() = default;
-		TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader, const SPtr<MaterialParamsType>& params);
-		~TGpuParamsSet();
+		TMaterialParameterAdapter() = default;
+		TMaterialParameterAdapter(const SPtr<VariationType>& variation, const ShaderType& shader, const SPtr<MaterialParametersType>& materialParameters);
+		~TMaterialParameterAdapter();
 
 		/**
 		 * Returns a set of GPU parameters for the specified pass.
@@ -106,60 +107,50 @@ namespace b3d
 		 * @return				GPU parameters object that can be used for setting parameters of all GPU programs
 		 *						in a pass. Returns null if pass doesn't exist.
 		 */
-		SPtr<GpuParamsType> GetGpuParams(u32 passIndex = 0);
+		SPtr<GpuParametersType> GetGpuParameters(u32 passIndex = 0);
 
 		/**
-		 * Searches for a parameter block buffer with the specified name, and returns an index you can use for accessing it.
-		 * Returns -1 if buffer was not found.
+		 * Searches for a parameter uniform buffer with the specified name, and returns an index you can use for accessing it.
+		 * Returns ~0u if buffer was not found.
 		 */
-		u32 GetParamBlockBufferIndex(const String& name) const;
+		u32 GetUniformBufferIndex(const String& name) const;
 
 		/**
-		 * Assign a parameter block buffer with the specified index to all the relevant child GpuParameters.
+		 * Assign a uniform buffer with the specified index to all the relevant child GpuParameters.
 		 *
-		 * @param index				Index of the buffer, as retrieved from GetParamBlockBufferIndex().
-		 * @param paramBlock		Parameter block to assign.
-		 * @param ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
+		 * @param index				Index of the buffer, as retrieved from GetUniformBufferIndex().
+		 * @param buffer			Uniform buffer to assign.
+		 * @param ignoreInUpdate	If true the buffer will not be updated during the Update() call. This is useful
 		 *							if the caller wishes to manually update the buffer contents externally, to prevent
 		 *							overwriting manually written data during update.
-		 *
-		 * @note
-		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
-		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
-		 * in the buffers need only be set once and then reused multiple times.
 		 */
-		void SetParamBlockBuffer(u32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
+		void SetUniformBuffer(u32 index, const UniformBufferPointerType& buffer, bool ignoreInUpdate = false);
 
 		/**
-		 * Assign a parameter block buffer with the specified name to all the relevant child GpuParameters.
+		 * Assign a uniform buffer with the specified name to all the relevant child GpuParameters.
 		 *
 		 * @param name				Name of the buffer to set.
-		 * @param paramBlock		Parameter block to assign.
-		 * @param ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
+		 * @param buffer			Uniform buffer to assign.
+		 * @param ignoreInUpdate	If true the buffer will not be updated during the Update() call. This is useful
 		 *							if the caller wishes to manually update the buffer contents externally, to prevent
 		 *							overwriting manually written data during update.
-		 *
-		 * @note
-		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
-		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
-		 * in the buffers need only be set once and then reused multiple times.
 		 */
-		void SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
+		void SetUniformBuffer(const String& name, const UniformBufferPointerType& buffer, bool ignoreInUpdate = false);
 
 		/** Returns the number of passes the set contains the parameters for. */
-		u32 GetNumPasses() const { return (u32)mPassParams.size(); }
+		u32 GetPassCount() const { return (u32)mGPUParameterPerPass.size(); }
 
 		/**
-		 * Updates parameter data in this object from the provided material parameters object.
+		 * Updates parameter data in underlying GpuParameter objects from the provided material parameters object.
 		 *
-		 * @param params	Object containing the parameter data to update from. Layout of the object must match
-		 *					the object used for creating this object (be created for the same shader).
-		 * @param t			Time to evaluate animated parameters at (if any).
-		 * @param updateAll Normally the system will track dirty parameters since the last call to this method,
-		 *					and only update the dirty ones. Set this to true if you want to force all parameters
-		 *					to update, regardless of their dirty state.
+		 * @param material				Material containing parameters to update from. This object must have been created
+		 *								from the same material (or the same shader/variation combination).
+		 * @param t						Time to evaluate animated parameters at (if any).
+		 * @param updateAll				Normally the system will track dirty parameters since the last call to this method,
+		 *								and only update the dirty ones. Set this to true if you want to force all parameters
+		 *								to update, regardless of their dirty state.
 		 */
-		void Update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
+		void Update(const MaterialType& material, float t = 0.0f, bool updateAll = false);
 
 		static const u32 kNumStages;
 
@@ -167,8 +158,8 @@ namespace b3d
 		template <bool IsRenderProxy2>
 		friend class TMaterial;
 
-		Vector<SPtr<GpuParamsType>> mPassParams;
-		Vector<BlockInfo> mBlocks;
+		Vector<SPtr<GpuParametersType>> mGPUParameterPerPass;
+		Vector<UniformBufferInfo> mUniformBuffers;
 		Vector<DataParamInfo> mDataParamInfos;
 		PassParamInfo* mPassParamInfos;
 
@@ -176,27 +167,27 @@ namespace b3d
 		u8* mData;
 	};
 
-	/** Main thread version of TGpuParamsSet<IsRenderProxy>. */
-	class B3D_EXPORT GpuParamsSet : public TGpuParamsSet<false>
+	/** Used for transferring material parameters to GpuParameters. */
+	class B3D_EXPORT MaterialParameterAdapter : public TMaterialParameterAdapter<false>
 	{
 	public:
-		GpuParamsSet() = default;
+		MaterialParameterAdapter() = default;
 
-		GpuParamsSet(const SPtr<Technique>& technique, const HShader& shader, const SPtr<MaterialParams>& params)
-			: TGpuParamsSet(technique, shader, params)
+		MaterialParameterAdapter(const SPtr<Variation>& variation, const HShader& shader, const SPtr<MaterialParameters>& params)
+			: TMaterialParameterAdapter(variation, shader, params)
 		{}
 	};
 
 	namespace render
 	{
-		/** Render thread version of TGpuParamsSet<IsRenderProxy>. */
-		class B3D_EXPORT GpuParamsSet : public TGpuParamsSet<true>
+		/** Render thread version of MaterialParameterAdapter. */
+		class B3D_EXPORT MaterialParameterAdapter : public TMaterialParameterAdapter<true>
 		{
 		public:
-			GpuParamsSet() = default;
+			MaterialParameterAdapter() = default;
 
-			GpuParamsSet(const SPtr<Technique>& technique, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params)
-				: TGpuParamsSet(technique, shader, params)
+			MaterialParameterAdapter(const SPtr<Variation>& variation, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& materialParameters)
+				: TMaterialParameterAdapter(variation, shader, materialParameters)
 			{}
 		};
 	} // namespace render

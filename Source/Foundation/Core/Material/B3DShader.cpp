@@ -538,7 +538,7 @@ void Shader::SetIncludeFiles(const Vector<String>& includes)
 
 SPtr<render::RenderProxy> Shader::CreateRenderProxy() const
 {
-	Vector<SPtr<render::Technique>> techniques;
+	Vector<SPtr<render::Variation>> techniques;
 	for(auto& technique : mInformation.Techniques)
 		techniques.push_back(B3DGetRenderProxy(technique));
 

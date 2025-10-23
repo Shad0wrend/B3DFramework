@@ -165,7 +165,7 @@ void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderD
 	gParticlesParamDef.gTexSize.Set(ParticlesParamBuffer, texSize);
 	gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, 0);
 
-	SPtr<GpuParameters> gpuParams = RenderElement.Params->GetGpuParams();
+	SPtr<GpuParameters> gpuParams = RenderElement.Params->GetGpuParameters();
 	const GpuParameterBinding& binding = RenderElement.PerCameraBinding;
 	if(binding.Slot != (u32)-1)
 		gpuParams->SetUniformBuffer(binding.Set, binding.Slot, view.GetPerViewBuffer());
@@ -197,7 +197,7 @@ void RendererParticles::BindGpuSimulatedInputs(const GpuParticleResources& gpuSi
 	const u32 texSize = GpuParticleResources::kTexSize;
 	gParticlesParamDef.gTexSize.Set(ParticlesParamBuffer, texSize);
 
-	SPtr<GpuParameters> gpuParams = RenderElement.Params->GetGpuParams();
+	SPtr<GpuParameters> gpuParams = RenderElement.Params->GetGpuParameters();
 	const GpuParameterBinding& binding = RenderElement.PerCameraBinding;
 	if(binding.Slot != (u32)-1)
 		gpuParams->SetUniformBuffer(binding.Set, binding.Slot, view.GetPerViewBuffer());

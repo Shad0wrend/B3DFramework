@@ -158,7 +158,7 @@ namespace b3d
 		bool HasUniformBufferMember(const String& name) const { return mUniformBufferMembers.find(name) != mUniformBufferMembers.end(); }
 
 		/** Returns information about a member of a uniform buffer by the specified name, or null if not found. */
-		const GpuDataParameterInformation* TryGetUniformBufferMemberInformation(const String& name) const;
+		const GpuUniformBufferMemberInformation* TryGetUniformBufferMemberInformation(const String& name) const;
 
 	protected:
 		GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation);
@@ -170,7 +170,7 @@ namespace b3d
 		};
 
 		UnorderedMap<String, UniformInformation> mUniformMap; /**< A map of all uniforms. */
-		UnorderedMap<String, GpuDataParameterInformation> mUniformBufferMembers; /**< All data parameters in all uniform buffers. */
+		UnorderedMap<String, GpuUniformBufferMemberInformation> mUniformBufferMembers; /**< All data parameters in all uniform buffers. */
 		Array<TInlineArray<UniformInformation*, 16>, (u32)GpuParameterType::Count> mUniformsPerType; /**< List of uniforms per type. */
 		TInlineArray<SetInformation, 2> mSets;
 		u32 mResourceCount = 0;

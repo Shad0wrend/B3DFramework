@@ -33,7 +33,7 @@ namespace b3d
 			u32 WriteVelocityTechniqueIdx = (u32)-1;
 
 			/** All GPU parameters from the material used by the renderable. */
-			SPtr<GpuParamsSet> Params;
+			SPtr<MaterialParameterAdapter> Params;
 
 			/** Renderer specific value that identifies the type of this renderable element. */
 			u32 Type = 0;

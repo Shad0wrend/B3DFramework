@@ -30,7 +30,7 @@ HTexture GetSpriteImageAtlas(const HSpriteImage& spriteImage)
 	return HTexture();
 }
 
-MaterialParamsBase::MaterialParamsBase(
+MaterialParametersBase::MaterialParametersBase(
 	const Map<String, ShaderDataParameterInformation>& dataParams,
 	const Map<String, ShaderObjectParameterInformation>& textureParams,
 	const Map<String, ShaderObjectParameterInformation>& bufferParams,
@@ -180,7 +180,7 @@ MaterialParamsBase::MaterialParamsBase(
 	}
 }
 
-MaterialParamsBase::~MaterialParamsBase()
+MaterialParametersBase::~MaterialParametersBase()
 {
 	for(auto& entry : mDataParameterMetaData)
 	{
@@ -201,7 +201,7 @@ MaterialParamsBase::~MaterialParamsBase()
 	mAlloc.Clear();
 }
 
-const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const String& name, u32 arrayIdx) const
+const ColorGradientHDR& MaterialParametersBase::GetColorGradientParam(const String& name, u32 arrayIdx) const
 {
 	static ColorGradientHDR EMPTY_GRADIENT;
 
@@ -213,7 +213,7 @@ const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const String& 
 	return GetColorGradientParam(*param, arrayIdx);
 }
 
-void MaterialParamsBase::SetColorGradientParam(const String& name, u32 arrayIdx, const ColorGradientHDR& input)
+void MaterialParametersBase::SetColorGradientParam(const String& name, u32 arrayIdx, const ColorGradientHDR& input)
 {
 	const ParamData* param = nullptr;
 	auto result = GetParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
@@ -223,7 +223,7 @@ void MaterialParamsBase::SetColorGradientParam(const String& name, u32 arrayIdx,
 	SetColorGradientParam(*param, arrayIdx, input);
 }
 
-const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const ParamData& param, u32 arrayIdx) const
+const ColorGradientHDR& MaterialParametersBase::GetColorGradientParam(const ParamData& param, u32 arrayIdx) const
 {
 	const DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 	if(paramInfo.ColorGradient)
@@ -233,7 +233,7 @@ const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const ParamDat
 	return EMPTY_GRADIENT;
 }
 
-void MaterialParamsBase::SetColorGradientParam(const ParamData& param, u32 arrayIdx, const ColorGradientHDR& input)
+void MaterialParametersBase::SetColorGradientParam(const ParamData& param, u32 arrayIdx, const ColorGradientHDR& input)
 {
 	DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 	if(paramInfo.ColorGradient)
@@ -244,7 +244,7 @@ void MaterialParamsBase::SetColorGradientParam(const ParamData& param, u32 array
 	param.Version = ++mParamVersion;
 }
 
-u32 MaterialParamsBase::GetParamIndex(const String& name) const
+u32 MaterialParametersBase::GetParamIndex(const String& name) const
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -253,7 +253,7 @@ u32 MaterialParamsBase::GetParamIndex(const String& name) const
 	return iterFind->second;
 }
 
-MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, u32& output) const
+MaterialParametersBase::GetParamResult MaterialParametersBase::GetParamIndex(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, u32& output) const
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -272,7 +272,7 @@ MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const Strin
 	return GetParamResult::Success;
 }
 
-MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamData(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, const ParamData** output) const
+MaterialParametersBase::GetParamResult MaterialParametersBase::GetParamData(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, const ParamData** output) const
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -291,7 +291,7 @@ MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamData(const String
 	return GetParamResult::Success;
 }
 
-void MaterialParamsBase::ReportGetParamError(GetParamResult errorCode, const String& name, u32 arrayIdx) const
+void MaterialParametersBase::ReportGetParamError(GetParamResult errorCode, const String& name, u32 arrayIdx) const
 {
 	switch(errorCode)
 	{
@@ -340,8 +340,8 @@ RTTIType* MaterialParamSamplerStateData::GetRtti() const
 }
 
 template <bool IsRenderProxy>
-TMaterialParams<IsRenderProxy>::TMaterialParams(const ShaderType& shader, u64 initialParamVersion)
-	: MaterialParamsBase(
+TMaterialParameters<IsRenderProxy>::TMaterialParameters(const ShaderType& shader, u64 initialParamVersion)
+	: MaterialParametersBase(
 		  shader->GetDataParams(),
 		  shader->GetTextureParams(),
 		  shader->GetBufferParams(),
@@ -413,7 +413,7 @@ TMaterialParams<IsRenderProxy>::TMaterialParams(const ShaderType& shader, u64 in
 }
 
 template <bool IsRenderProxy>
-TMaterialParams<IsRenderProxy>::~TMaterialParams()
+TMaterialParameters<IsRenderProxy>::~TMaterialParameters()
 {
 	if(mDefaultTextureParams != nullptr)
 		mAlloc.Destruct(mDefaultTextureParams, mTextureParameterCount);
@@ -423,7 +423,7 @@ TMaterialParams<IsRenderProxy>::~TMaterialParams()
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetStructData(const String& name, void* value, u32 size, u32 arrayIdx) const
+void TMaterialParameters<IsRenderProxy>::GetStructData(const String& name, void* value, u32 size, u32 arrayIdx) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Data, GPDT_STRUCT, arrayIdx, &param);
@@ -437,7 +437,7 @@ void TMaterialParams<IsRenderProxy>::GetStructData(const String& name, void* val
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetStructData(const String& name, const void* value, u32 size, u32 arrayIdx)
+void TMaterialParameters<IsRenderProxy>::SetStructData(const String& name, const void* value, u32 size, u32 arrayIdx)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Data, GPDT_STRUCT, arrayIdx, &param);
@@ -451,7 +451,7 @@ void TMaterialParams<IsRenderProxy>::SetStructData(const String& name, const voi
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetTexture(const String& name, TextureType& value, TextureSurface& surface) const
+void TMaterialParameters<IsRenderProxy>::GetTexture(const String& name, TextureType& value, TextureSurface& surface) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -465,7 +465,7 @@ void TMaterialParams<IsRenderProxy>::GetTexture(const String& name, TextureType&
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetTexture(const String& name, const TextureType& value, const TextureSurface& surface)
+void TMaterialParameters<IsRenderProxy>::SetTexture(const String& name, const TextureType& value, const TextureSurface& surface)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -479,7 +479,7 @@ void TMaterialParams<IsRenderProxy>::SetTexture(const String& name, const Textur
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetSpriteImage(const String& name, SpriteImageType& value) const
+void TMaterialParameters<IsRenderProxy>::GetSpriteImage(const String& name, SpriteImageType& value) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -493,7 +493,7 @@ void TMaterialParams<IsRenderProxy>::GetSpriteImage(const String& name, SpriteIm
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetSpriteImage(const String& name, const SpriteImageType& value)
+void TMaterialParameters<IsRenderProxy>::SetSpriteImage(const String& name, const SpriteImageType& value)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -507,7 +507,7 @@ void TMaterialParams<IsRenderProxy>::SetSpriteImage(const String& name, const Sp
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetStorageTexture(const String& name, TextureType& value, TextureSurface& surface) const
+void TMaterialParameters<IsRenderProxy>::GetStorageTexture(const String& name, TextureType& value, TextureSurface& surface) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -521,7 +521,7 @@ void TMaterialParams<IsRenderProxy>::GetStorageTexture(const String& name, Textu
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetStorageTexture(const String& name, const TextureType& value, const TextureSurface& surface)
+void TMaterialParameters<IsRenderProxy>::SetStorageTexture(const String& name, const TextureType& value, const TextureSurface& surface)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -535,7 +535,7 @@ void TMaterialParams<IsRenderProxy>::SetStorageTexture(const String& name, const
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetBuffer(const String& name, BufferType& value) const
+void TMaterialParameters<IsRenderProxy>::GetBuffer(const String& name, BufferType& value) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Buffer, GPDT_UNKNOWN, 0, &param);
@@ -549,7 +549,7 @@ void TMaterialParams<IsRenderProxy>::GetBuffer(const String& name, BufferType& v
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetBuffer(const String& name, const BufferType& value)
+void TMaterialParameters<IsRenderProxy>::SetBuffer(const String& name, const BufferType& value)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Buffer, GPDT_UNKNOWN, 0, &param);
@@ -563,7 +563,7 @@ void TMaterialParams<IsRenderProxy>::SetBuffer(const String& name, const BufferT
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetSamplerState(const String& name, SPtr<SamplerState>& value) const
+void TMaterialParameters<IsRenderProxy>::GetSamplerState(const String& name, SPtr<SamplerState>& value) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -577,7 +577,7 @@ void TMaterialParams<IsRenderProxy>::GetSamplerState(const String& name, SPtr<Sa
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetSamplerState(const String& name, const SPtr<SamplerState>& value)
+void TMaterialParameters<IsRenderProxy>::SetSamplerState(const String& name, const SPtr<SamplerState>& value)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -591,7 +591,7 @@ void TMaterialParams<IsRenderProxy>::SetSamplerState(const String& name, const S
 }
 
 template <bool IsRenderProxy>
-bool TMaterialParams<IsRenderProxy>::IsAnimated(const String& name, u32 arrayIdx)
+bool TMaterialParameters<IsRenderProxy>::IsAnimated(const String& name, u32 arrayIdx)
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -610,7 +610,7 @@ bool TMaterialParams<IsRenderProxy>::IsAnimated(const String& name, u32 arrayIdx
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetStructData(const ParamData& param, void* value, u32 size, u32 arrayIdx) const
+void TMaterialParameters<IsRenderProxy>::GetStructData(const ParamData& param, void* value, u32 size, u32 arrayIdx) const
 {
 	const StructParameterMetaData& structParam = mStructParameterMetaData[param.Index + arrayIdx];
 	if(structParam.DataSize != size)
@@ -625,7 +625,7 @@ void TMaterialParams<IsRenderProxy>::GetStructData(const ParamData& param, void*
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetStructData(const ParamData& param, const void* value, u32 size, u32 arrayIdx)
+void TMaterialParameters<IsRenderProxy>::SetStructData(const ParamData& param, const void* value, u32 size, u32 arrayIdx)
 {
 	const StructParameterMetaData& structParam = mStructParameterMetaData[param.Index + arrayIdx];
 	if(structParam.DataSize != size)
@@ -641,14 +641,14 @@ void TMaterialParams<IsRenderProxy>::SetStructData(const ParamData& param, const
 }
 
 template <bool IsRenderProxy>
-u32 TMaterialParams<IsRenderProxy>::GetStructSize(const ParamData& param) const
+u32 TMaterialParameters<IsRenderProxy>::GetStructSize(const ParamData& param) const
 {
 	const StructParameterMetaData& structParam = mStructParameterMetaData[param.Index];
 	return structParam.DataSize;
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
+void TMaterialParameters<IsRenderProxy>::GetTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 {
 	const ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 
@@ -661,7 +661,7 @@ void TMaterialParams<IsRenderProxy>::GetTexture(const ParamData& param, TextureT
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
+void TMaterialParameters<IsRenderProxy>::SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 {
 	ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 	textureParam.Texture = value;
@@ -673,14 +673,14 @@ void TMaterialParams<IsRenderProxy>::SetTexture(const ParamData& param, const Te
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetSpriteImage(const ParamData& param, SpriteImageType& value) const
+void TMaterialParameters<IsRenderProxy>::GetSpriteImage(const ParamData& param, SpriteImageType& value) const
 {
 	const ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 	value = textureParam.SpriteImage;
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetSpriteImage(const ParamData& param, const SpriteImageType& value)
+void TMaterialParameters<IsRenderProxy>::SetSpriteImage(const ParamData& param, const SpriteImageType& value)
 {
 	ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 	textureParam.Texture = nullptr;
@@ -692,13 +692,13 @@ void TMaterialParams<IsRenderProxy>::SetSpriteImage(const ParamData& param, cons
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetBuffer(const ParamData& param, BufferType& value) const
+void TMaterialParameters<IsRenderProxy>::GetBuffer(const ParamData& param, BufferType& value) const
 {
 	value = mBufferParameters[param.Index].Value;
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetBuffer(const ParamData& param, const BufferType& value)
+void TMaterialParameters<IsRenderProxy>::SetBuffer(const ParamData& param, const BufferType& value)
 {
 	mBufferParameters[param.Index].Value = value;
 
@@ -706,7 +706,7 @@ void TMaterialParams<IsRenderProxy>::SetBuffer(const ParamData& param, const Buf
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetStorageTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
+void TMaterialParameters<IsRenderProxy>::GetStorageTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 {
 	const ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 	value = textureParam.Texture;
@@ -714,7 +714,7 @@ void TMaterialParams<IsRenderProxy>::GetStorageTexture(const ParamData& param, T
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetStorageTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
+void TMaterialParameters<IsRenderProxy>::SetStorageTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 {
 	ParamTextureDataType& textureParam = mTextureParameters[param.Index];
 	textureParam.Texture = value;
@@ -726,13 +726,13 @@ void TMaterialParams<IsRenderProxy>::SetStorageTexture(const ParamData& param, c
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
+void TMaterialParameters<IsRenderProxy>::GetSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
 {
 	value = mSamplerParameters[param.Index].Value;
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::SetSamplerState(const ParamData& param, const SPtr<SamplerState>& value)
+void TMaterialParameters<IsRenderProxy>::SetSamplerState(const ParamData& param, const SPtr<SamplerState>& value)
 {
 	mSamplerParameters[param.Index].Value = value;
 
@@ -740,7 +740,7 @@ void TMaterialParams<IsRenderProxy>::SetSamplerState(const ParamData& param, con
 }
 
 template <bool IsRenderProxy>
-MateralParamTextureType TMaterialParams<IsRenderProxy>::GetTextureType(const ParamData& param) const
+MateralParamTextureType TMaterialParameters<IsRenderProxy>::GetTextureType(const ParamData& param) const
 {
 	if(mTextureParameters[param.Index].IsLoadStore)
 		return MateralParamTextureType::LoadStore;
@@ -752,7 +752,7 @@ MateralParamTextureType TMaterialParams<IsRenderProxy>::GetTextureType(const Par
 }
 
 template <bool IsRenderProxy>
-bool TMaterialParams<IsRenderProxy>::IsAnimated(const ParamData& param, u32 arrayIdx) const
+bool TMaterialParameters<IsRenderProxy>::IsAnimated(const ParamData& param, u32 arrayIdx) const
 {
 	const DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 
@@ -760,7 +760,7 @@ bool TMaterialParams<IsRenderProxy>::IsAnimated(const ParamData& param, u32 arra
 }
 
 template <bool IsRenderProxy>
-typename TMaterialParams<IsRenderProxy>::SpriteImageType TMaterialParams<IsRenderProxy>::GetOwningSpriteImage(const ParamData& param) const
+typename TMaterialParameters<IsRenderProxy>::SpriteImageType TMaterialParameters<IsRenderProxy>::GetOwningSpriteImage(const ParamData& param) const
 {
 	SpriteImageType output;
 
@@ -776,19 +776,19 @@ typename TMaterialParams<IsRenderProxy>::SpriteImageType TMaterialParams<IsRende
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetDefaultTexture(const ParamData& param, TextureType& value) const
+void TMaterialParameters<IsRenderProxy>::GetDefaultTexture(const ParamData& param, TextureType& value) const
 {
 	value = mDefaultTextureParams[param.Index];
 }
 
 template <bool IsRenderProxy>
-void TMaterialParams<IsRenderProxy>::GetDefaultSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
+void TMaterialParameters<IsRenderProxy>::GetDefaultSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
 {
 	value = mDefaultSamplerStateParams[param.Index];
 }
 
-template class TMaterialParams<true>;
-template class TMaterialParams<false>;
+template class TMaterialParameters<true>;
+template class TMaterialParameters<false>;
 
 namespace b3d
 {
@@ -827,7 +827,7 @@ namespace b3d
 		SPtr<SamplerState> SamplerState;
 	};
 
-	B3D_SYNC_BLOCK_BEGIN(MaterialParams, SyncPacket)
+	B3D_SYNC_BLOCK_BEGIN(MaterialParameters, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersDataParameter>, DataParameters)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<u8>, DataParameterData)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<MaterialParametersCurveMetaData>, CurveMetaData)
@@ -839,11 +839,11 @@ namespace b3d
 	B3D_SYNC_BLOCK_END
 }
 
-MaterialParams::MaterialParams(const HShader& shader, u64 initialParamVersion)
-	: TMaterialParams(shader, initialParamVersion), mLastSyncVersion(1)
+MaterialParameters::MaterialParameters(const HShader& shader, u64 initialParamVersion)
+	: TMaterialParameters(shader, initialParamVersion), mLastSyncVersion(1)
 {}
 
-MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAllocator& allocator, bool forceAll)
+MaterialParameters::SyncPacket* MaterialParameters::CreateSyncPacket(FrameAllocator& allocator, bool forceAll)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator);
 
@@ -968,7 +968,7 @@ MaterialParams::SyncPacket* MaterialParams::CreateSyncPacket(FrameAllocator& all
 	return syncPacket;
 }
 
-void MaterialParams::GetResourceDependencies(Vector<HResource>& resources)
+void MaterialParameters::GetResourceDependencies(Vector<HResource>& resources)
 {
 	for(u32 i = 0; i < (u32)mParams.size(); i++)
 	{
@@ -985,7 +985,7 @@ void MaterialParams::GetResourceDependencies(Vector<HResource>& resources)
 	}
 }
 
-void MaterialParams::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
+void MaterialParameters::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
 {
 	for(u32 i = 0; i < (u32)mParams.size(); i++)
 	{
@@ -1018,24 +1018,24 @@ void MaterialParams::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
 	}
 }
 
-RTTIType* MaterialParams::GetRttiStatic()
+RTTIType* MaterialParameters::GetRttiStatic()
 {
-	return MaterialParamsRTTI::Instance();
+	return MaterialParametersRTTI::Instance();
 }
 
-RTTIType* MaterialParams::GetRtti() const
+RTTIType* MaterialParameters::GetRtti() const
 {
-	return MaterialParams::GetRttiStatic();
+	return MaterialParameters::GetRttiStatic();
 }
 
 namespace b3d { namespace render
 {
-MaterialParams::MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion)
-	: TMaterialParams(shader, initialParamVersion)
+MaterialParameters::MaterialParameters(const SPtr<Shader>& shader, u64 initialParamVersion)
+	: TMaterialParameters(shader, initialParamVersion)
 {}
 
-MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParams>& params)
-	: TMaterialParams(shader, 1)
+MaterialParameters::MaterialParameters(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParameters>& params)
+	: TMaterialParameters(shader, 1)
 {
 	memcpy(mDataParamsBuffer, params->mDataParamsBuffer, mDataSize);
 
@@ -1092,7 +1092,7 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<b3d::Mater
 	}
 }
 
-void MaterialParams::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParams::SyncPacket& syncPacket)
+void MaterialParameters::ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParameters::SyncPacket& syncPacket)
 {
 	mParamVersion++;
 

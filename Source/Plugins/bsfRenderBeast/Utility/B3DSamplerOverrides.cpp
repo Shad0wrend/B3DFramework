@@ -13,7 +13,7 @@
 namespace b3d {
 namespace render {
 
-MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet, const SPtr<RenderBeastOptions>& options)
+MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& params, const SPtr<MaterialParameterAdapter>& paramsSet, const SPtr<RenderBeastOptions>& options)
 {
 	MaterialSamplerOverrides* output = nullptr;
 
@@ -30,11 +30,11 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		for(auto& samplerParam : samplerParams)
 		{
 			u32 paramIdx;
-			auto result = params->GetParamIndex(samplerParam.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIdx);
+			auto result = params->GetParamIndex(samplerParam.first, MaterialParameters::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIdx);
 
 			// Parameter shouldn't be in the valid parameter list if it cannot be found
-			B3D_ASSERT(result == MaterialParams::GetParamResult::Success);
-			const MaterialParamsBase::ParamData* materialParamData = params->GetParamData(paramIdx);
+			B3D_ASSERT(result == MaterialParameters::GetParamResult::Success);
+			const MaterialParametersBase::ParamData* materialParamData = params->GetParamData(paramIdx);
 
 			u32 overrideIdx = (u32)overrides.size();
 			overrides.push_back(SamplerOverride());
@@ -59,7 +59,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 				overrideLookup[entry] = overrideIdx;
 		}
 
-		u32 numPasses = paramsSet->GetNumPasses();
+		u32 numPasses = paramsSet->GetPassCount();
 
 		// First pass just determine if we even need to override and count the number of sampler states
 		u32* numSetsPerPass = (u32*)B3DStackAllocate<u32>(numPasses);
@@ -70,7 +70,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		{
 			u32 maxSamplerSet = 0;
 
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParams(i);
+			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
 
 			const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
@@ -91,7 +91,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32* slotsPerSetIter = slotsPerSet;
 		for(u32 i = 0; i < numPasses; i++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParams(i);
+			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
 
 			const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
@@ -126,7 +126,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		slotsPerSetIter = slotsPerSet;
 		for(u32 i = 0; i < numPasses; i++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParams(i);
+			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
 
 			PassSamplerOverrides& passOverrides = output->Passes[i];

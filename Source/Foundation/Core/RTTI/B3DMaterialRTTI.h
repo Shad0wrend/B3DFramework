@@ -15,7 +15,7 @@ namespace b3d
 
 	class B3D_EXPORT MaterialRTTI : public TRTTIType<Material, Resource, MaterialRTTI>
 	{
-		SPtr<MaterialParams> mMaterialParameters;
+		SPtr<MaterialParameters> mMaterialParameters;
 
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER(mShader, 0)
@@ -33,9 +33,9 @@ namespace b3d
 				if(!mMaterialParameters)
 					return;
 
-				object.InitializeTechniques();
+				object.InitializeVariations();
 
-				if(object.GetNumTechniques() > 0)
+				if(object.GetVariationCount() > 0)
 					object.SetParams(mMaterialParameters);
 			}
 		}
@@ -44,7 +44,7 @@ namespace b3d
 		{
 			if(operationType.IsSet(RTTIOperationType::ReadBit))
 			{
-				mMaterialParameters = object.mParams;
+				mMaterialParameters = object.mParameters;
 			}
 		}
 

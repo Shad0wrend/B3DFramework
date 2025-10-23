@@ -13,14 +13,14 @@ TMaterialDataCommon<DATA_TYPE, IsRenderProxy>::TMaterialDataCommon(const String&
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuDataParameterType)DATA_TYPE, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Data, (GpuDataParameterType)DATA_TYPE, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
-			const MaterialParams::ParamData* data = params->GetParamData(paramIndex);
+			const MaterialParameters::ParamData* data = params->GetParamData(paramIndex);
 
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -43,8 +43,8 @@ void TMaterialParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arra
 		return;
 	}
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->SetDataParam(*data, arrayIdx, value);
 	this->mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -57,8 +57,8 @@ T TMaterialParameterPrimitive<T, IsRenderProxy>::Get(u32 arrayIdx) const
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 		return output;
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->GetDataParam(*data, arrayIdx, output);
 	return output;
@@ -76,8 +76,8 @@ void TMaterialParameterCurve<T, IsRenderProxy>::Set(TAnimationCurve<T> value, u3
 		return;
 	}
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->SetCurveParam(*data, arrayIdx, std::move(value));
 	this->mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -91,8 +91,8 @@ const TAnimationCurve<T>& TMaterialParameterCurve<T, IsRenderProxy>::Get(u32 arr
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 		return EMPTY_CURVE;
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	return params->template GetCurveParam<T>(*data, arrayIdx);
 }
@@ -109,8 +109,8 @@ void TMaterialParameterColorGradient<IsRenderProxy>::Set(const ColorGradientHDR&
 		return;
 	}
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->SetColorGradientParam(*data, arrayIdx, value);
 	this->mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -124,8 +124,8 @@ const ColorGradientHDR& TMaterialParameterColorGradient<IsRenderProxy>::Get(u32 
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 		return EMPTY_GRADIENT;
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	return params->GetColorGradientParam(*data, arrayIdx);
 }
@@ -142,8 +142,8 @@ void TMaterialParameterStruct<IsRenderProxy>::Set(const void* value, u32 sizeByt
 		return;
 	}
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->SetStructData(*data, value, sizeBytes, arrayIdx);
 	this->mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -155,8 +155,8 @@ void TMaterialParameterStruct<IsRenderProxy>::Get(void* value, u32 sizeBytes, u3
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 		return;
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	params->GetStructData(*data, value, sizeBytes, arrayIdx);
 }
@@ -167,8 +167,8 @@ u32 TMaterialParameterStruct<IsRenderProxy>::GetElementSize() const
 	if(this->mMaterial == nullptr)
 		return 0;
 
-	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(this->mParamIndex);
+	SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(this->mParamIndex);
 
 	return params->GetStructSize(*data);
 }
@@ -179,12 +179,12 @@ TMaterialParameterSampledTexture<IsRenderProxy>::TMaterialParameterSampledTextur
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -200,8 +200,8 @@ void TMaterialParameterSampledTexture<IsRenderProxy>::Set(const TextureType& tex
 	if(mMaterial == nullptr)
 		return;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	// If there is a default value, assign that instead of null
 	TextureType newValue = texture;
@@ -223,8 +223,8 @@ typename TMaterialParameterSampledTexture<IsRenderProxy>::TextureType TMaterialP
 
 	TextureSurface surface;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->GetTexture(*data, texture, surface);
 	return texture;
@@ -236,12 +236,12 @@ TMaterialParamSpriteImage<IsRenderProxy>::TMaterialParamSpriteImage(const String
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -257,8 +257,8 @@ void TMaterialParamSpriteImage<IsRenderProxy>::Set(const SpriteImageType& image)
 	if(mMaterial == nullptr)
 		return;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	if(image == nullptr)
 	{
@@ -282,8 +282,8 @@ typename TMaterialParamSpriteImage<IsRenderProxy>::SpriteImageType TMaterialPara
 	if(mMaterial == nullptr)
 		return texture;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->GetSpriteImage(*data, texture);
 	return texture;
@@ -295,12 +295,12 @@ TMaterialParameterStorageTexture<IsRenderProxy>::TMaterialParameterStorageTextur
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -316,8 +316,8 @@ void TMaterialParameterStorageTexture<IsRenderProxy>::Set(const TextureType& tex
 	if(mMaterial == nullptr)
 		return;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->SetStorageTexture(*data, texture, surface);
 	mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -334,8 +334,8 @@ typename TMaterialParameterStorageTexture<IsRenderProxy>::TextureType TMaterialP
 
 	TextureSurface surface;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->GetStorageTexture(*data, texture, surface);
 
@@ -348,12 +348,12 @@ TMaterialParameterBuffer<IsRenderProxy>::TMaterialParameterBuffer(const String& 
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Buffer, GPDT_UNKNOWN, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Buffer, GPDT_UNKNOWN, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -369,8 +369,8 @@ void TMaterialParameterBuffer<IsRenderProxy>::Set(const BufferType& buffer) cons
 	if(mMaterial == nullptr)
 		return;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->SetBuffer(*data, buffer);
 	mMaterial->MarkRenderProxyDataDirtyInternal();
@@ -384,8 +384,8 @@ typename TMaterialParameterBuffer<IsRenderProxy>::BufferType TMaterialParameterB
 	if(mMaterial == nullptr)
 		return buffer;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 	params->GetBuffer(*data, buffer);
 
 	return buffer;
@@ -397,12 +397,12 @@ TMaterialParameterSampler<IsRenderProxy>::TMaterialParameterSampler(const String
 {
 	if(material != nullptr)
 	{
-		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
+		SPtr<MaterialParamsType> params = material->GetMaterialParameters();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParameters::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIndex);
 
-		if(result == MaterialParams::GetParamResult::Success)
+		if(result == MaterialParameters::GetParamResult::Success)
 		{
 			mMaterial = material;
 			mParamIndex = paramIndex;
@@ -418,8 +418,8 @@ void TMaterialParameterSampler<IsRenderProxy>::Set(const SPtr<SamplerState>& sam
 	if(mMaterial == nullptr)
 		return;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	// If there is a default value, assign that instead of null
 	SPtr<SamplerState> newValue = sampState;
@@ -438,8 +438,8 @@ SPtr<SamplerState> TMaterialParameterSampler<IsRenderProxy>::Get() const
 	if(mMaterial == nullptr)
 		return samplerState;
 
-	SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
-	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
+	SPtr<MaterialParamsType> params = mMaterial->GetMaterialParameters();
+	const MaterialParameters::ParamData* data = params->GetParamData(mParamIndex);
 
 	params->GetSamplerState(*data, samplerState);
 	return samplerState;

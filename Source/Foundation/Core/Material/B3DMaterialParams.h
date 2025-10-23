@@ -34,8 +34,8 @@ namespace b3d
 		Sprite
 	};
 
-	/** Common functionality for MaterialParams and render::MaterialParams. */
-	class B3D_EXPORT MaterialParamsBase
+	/** Common functionality for MaterialParameters and render::MaterialParameters. */
+	class B3D_EXPORT MaterialParametersBase
 	{
 	public:
 		/** Type of material parameter. */
@@ -86,7 +86,7 @@ namespace b3d
 		/**
 		 * Creates a new material params object and initializes enough room for parameters from the provided parameter data.
 		 */
-		MaterialParamsBase(
+		MaterialParametersBase(
 			const Map<String, ShaderDataParameterInformation>& dataParams,
 			const Map<String, ShaderObjectParameterInformation>& textureParams,
 			const Map<String, ShaderObjectParameterInformation>& bufferParams,
@@ -94,8 +94,8 @@ namespace b3d
 			u64 initialParamVersion);
 
 		/** Constructor for serialization use only. */
-		MaterialParamsBase() = default;
-		virtual ~MaterialParamsBase();
+		MaterialParametersBase() = default;
+		virtual ~MaterialParametersBase();
 
 		/**
 		 * Returns the value of a shader data parameter with the specified name at the specified array index. If the
@@ -269,7 +269,7 @@ namespace b3d
 		const ParamData* GetParamData(u32 index) const { return &mParams[index]; }
 
 		/** Returns the total number of parameters managed by this object. */
-		u32 GetNumParams() const { return (u32)mParams.size(); }
+		u32 GetParameterCount() const { return (u32)mParams.size(); }
 
 		/**
 		 * Logs an error that was reported by getParamData().
@@ -501,10 +501,10 @@ namespace b3d
 
 	/** Common code that may be specialized for both MaterialParams and render::MaterialParams. */
 	template <bool IsRenderProxy>
-	class B3D_EXPORT TMaterialParams : public MaterialParamsBase
+	class B3D_EXPORT TMaterialParameters : public MaterialParametersBase
 	{
 	public:
-		using GpuParamsType = CoreVariantType<GpuParameters, IsRenderProxy>;
+		using GpuParametersType = CoreVariantType<GpuParameters, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using ShaderType = CoreVariantHandleType<Shader, IsRenderProxy>;
 		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
@@ -522,12 +522,12 @@ namespace b3d
 		 *										you are replacing an existing MaterialParams object and wish to ensure
 		 *										version number keeps getting incremented.
 		 */
-		TMaterialParams(const ShaderType& shader, u64 initialParamVersion);
+		TMaterialParameters(const ShaderType& shader, u64 initialParamVersion);
 
 		/** Constructor for serialization use only. */
-		TMaterialParams() = default;
+		TMaterialParameters() = default;
 
-		virtual ~TMaterialParams();
+		virtual ~TMaterialParameters();
 
 		/**
 		 * Returns the value of a shader structure parameter with the specified name at the specified array index. If the
@@ -788,8 +788,7 @@ namespace b3d
 	 * Contains all parameter values set in a Material. This is similar to GpuParameters which also stores parameter values,
 	 * however GpuParameters are built for use on the GPU-side and don't store parameters that don't exist in a compiled GPU
 	 * program. This object on the other hand stores all parameters defined in a shader, regardless or not if they actually
-	 * exist in the GPU program. Additionally GpuParameters are defined per-program (for example vertex, fragment) while this
-	 * object exists for the entire material.
+	 * exist in the GPU program. 
 	 *
 	 * @note
 	 * This introduces redundancy as parameters stored by GpuParameters and this object are duplicated. If this is an issue the
@@ -797,15 +796,15 @@ namespace b3d
 	 * @note
 	 * The reason why parameters in this class and GpuParameters differ is most often compiler optimizations. If a compiler
 	 * optimizes out a variable in a GPU program we should still be able to store it, either for later when the variable
-	 * will be introduced, or for other techniques that might have that variable implemented.
+	 * will be introduced, or for other variations that might have that variable implemented.
 	 */
-	class B3D_EXPORT MaterialParams : public IReflectable, public TMaterialParams<false>
+	class B3D_EXPORT MaterialParameters : public IReflectable, public TMaterialParameters<false>
 	{
 	public:
 		struct SyncPacket;
 
-		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
-		MaterialParams(const HShader& shader, u64 initialParamVersion = 1);
+		/** @copydoc TMaterialParameters::TMaterialParameters(const ShaderType&, u64) */
+		MaterialParameters(const HShader& shader, u64 initialParamVersion = 1);
 
 		/**
 		 * Creates sync packet that can be used for bringing the render proxy up to date.
@@ -824,7 +823,7 @@ namespace b3d
 		void GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects);
 
 	private:
-		friend class render::MaterialParams;
+		friend class render::MaterialParameters;
 
 		mutable u64 mLastSyncVersion;
 
@@ -832,9 +831,9 @@ namespace b3d
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		MaterialParams() {} // Only for serialization
+		MaterialParameters() {} // Only for serialization
 
-		friend class MaterialParamsRTTI;
+		friend class MaterialParametersRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;
 	};
@@ -842,21 +841,21 @@ namespace b3d
 	namespace render
 	{
 		/** Render thread version of MaterialParams. */
-		class B3D_EXPORT MaterialParams : public TMaterialParams<true>
+		class B3D_EXPORT MaterialParameters : public TMaterialParameters<true>
 		{
 		public:
 			/** Initializes the render proxy its main thread counterpart. */
-			MaterialParams(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParams>& params);
+			MaterialParameters(const SPtr<Shader>& shader, const SPtr<b3d::MaterialParameters>& params);
 
-			/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
-			MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
+			/** @copydoc TMaterialParameters::TMaterialParameters(const ShaderType&, u64) */
+			MaterialParameters(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
 
 			/**
 			 * Updates the stored parameters from the provided sync packet, allowing changes to be transfered between core objects and
 			 * render proxies. Packet must be retrieved from b3d::MaterialParams::CreateSyncPacket(). Sync packet is destroyed
 			 * using the provided allocator after it has been applied.
 			 */
-			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParams::SyncPacket& syncPacket);
+			void ApplyAndDestroySyncPacket(FrameAllocator& allocator, const b3d::MaterialParameters::SyncPacket& syncPacket);
 		};
 	} // namespace render
 

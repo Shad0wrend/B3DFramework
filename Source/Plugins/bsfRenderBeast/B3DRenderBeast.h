@@ -42,7 +42,7 @@ namespace b3d
 			/** Renderer information for a single material. */
 			struct RendererMaterial
 			{
-				Vector<SPtr<GpuParamsSet>> Params;
+				Vector<SPtr<MaterialParameterAdapter>> Params;
 				u32 MatVersion;
 			};
 

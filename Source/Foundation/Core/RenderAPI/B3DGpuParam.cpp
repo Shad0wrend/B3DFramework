@@ -18,7 +18,7 @@ TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive()
 {}
 
 template <class T, bool IsRenderProxy>
-TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive(const GpuDataParameterInformation* parameterInformation, const GpuParamsType& parent)
+TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent)
 	: mParent(parent), mParameterInformation(parameterInformation)
 {}
 
@@ -87,7 +87,7 @@ TGpuParameterStruct<IsRenderProxy>::TGpuParameterStruct()
 {}
 
 template <bool IsRenderProxy>
-TGpuParameterStruct<IsRenderProxy>::TGpuParameterStruct(const GpuDataParameterInformation* parameterInformation, const GpuParamsType& parent)
+TGpuParameterStruct<IsRenderProxy>::TGpuParameterStruct(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent)
 	: mParent(parent), mParameterInformation(parameterInformation)
 {}
 

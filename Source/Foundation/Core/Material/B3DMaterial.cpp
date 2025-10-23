@@ -52,40 +52,34 @@ SPtr<CoreVariantType<Material, IsRenderProxy>> GetMaterialPtr(const TMaterial<Is
 }
 
 template <bool IsRenderProxy>
-SPtr<typename TMaterial<IsRenderProxy>::GpuParamsSetType> TMaterial<IsRenderProxy>::CreateParamsSet(u32 techniqueIdx)
+SPtr<typename TMaterial<IsRenderProxy>::MaterialParameterAdapterType> TMaterial<IsRenderProxy>::CreateParameterAdapter(u32 variationIndex)
 {
-	if(techniqueIdx >= (u32)mTechniques.size())
+	if(variationIndex >= (u32)mVariations.size())
 		return nullptr;
 
-	SPtr<TechniqueType> technique = mTechniques[techniqueIdx];
-	return B3DMakeShared<GpuParamsSetType>(technique, mShader, mParams);
+	SPtr<VariationType> variation = mVariations[variationIndex];
+	return B3DMakeShared<MaterialParameterAdapterType>(variation, mShader, mParameters);
 }
 
 template <bool IsRenderProxy>
-void TMaterial<IsRenderProxy>::UpdateParamsSet(const SPtr<GpuParamsSetType>& paramsSet, float t, bool updateAll)
+u32 TMaterial<IsRenderProxy>::FindVariation(const FindVariationInformation& information) const
 {
-	paramsSet->Update(mParams, t, updateAll);
-}
+	u32 bestVariationIndex = ~0u;
+	u32 bestVariationScore = std::numeric_limits<u32>::max();
 
-template <bool IsRenderProxy>
-u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc) const
-{
-	u32 bestTechniqueIdx = (u32)-1;
-	u32 bestTechniqueScore = std::numeric_limits<u32>::max();
-
-	for(u32 i = 0; i < (u32)mTechniques.size(); i++)
+	for(u32 variationIndex = 0; variationIndex < (u32)mVariations.size(); variationIndex++)
 	{
 		// Make sure tags match
 		bool foundMatch = true;
 
-		const ShaderVariationParameters& curVariation = mTechniques[i]->GetVariationParameters();
-		const auto& curVarParams = curVariation.GetParams();
-		const auto& internalVarParams = mVariation.GetParams();
+		const ShaderVariationParameters& currentVariationParameters = mVariations[variationIndex]->GetVariationParameters();
+		const auto& currentVariationParameterList = currentVariationParameters.GetParameterList();
+		const auto& internalVariationParameterList = mVariationParameters.GetParameterList();
 
-		u32 numMatchedSearchParams = 0;
-		u32 numMatchedInternalParams = 0;
+		u32 matchedSearchParameterCount = 0;
+		u32 matchedInternalParameterCount = 0;
 		u32 currentScore = 0;
-		for(auto& param : curVarParams)
+		for(auto& variationParameter : currentVariationParameterList)
 		{
 			enum SearchResult
 			{
@@ -95,17 +89,17 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 			};
 
 			SearchResult matchesSearch = NoParam;
-			if(desc.VariationParameters)
+			if(information.VariationParameters)
 			{
-				const auto findSearch = desc.VariationParameters->FindParameter(param.Name);
+				const auto findSearch = information.VariationParameters->FindParameter(variationParameter.Name);
 				if(findSearch != nullptr)
-					matchesSearch = findSearch->SignedInteger == param.SignedInteger ? Matching : NotMatching;
+					matchesSearch = findSearch->SignedInteger == variationParameter.SignedInteger ? Matching : NotMatching;
 			}
 
 			SearchResult matchesInternal = NoParam;
-			const auto findInternal = mVariation.FindParameter(param.Name);
+			const auto findInternal = mVariationParameters.FindParameter(variationParameter.Name);
 			if(findInternal != nullptr)
-				matchesInternal = findInternal->SignedInteger == param.SignedInteger ? Matching : NotMatching;
+				matchesInternal = findInternal->SignedInteger == variationParameter.SignedInteger ? Matching : NotMatching;
 
 			switch(matchesSearch)
 			{
@@ -116,18 +110,18 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 				default:
 				case NoParam:
 					// When it comes to parameters not part of the search, prefer those with 0 default value
-					currentScore += param.UnsignedInteger;
+					currentScore += variationParameter.UnsignedInteger;
 					break;
 				case NotMatching:
 					foundMatch = false;
 					break;
 				case Matching:
-					numMatchedInternalParams++;
+					matchedInternalParameterCount++;
 					break;
 				}
 				break;
 			case NotMatching:
-				if(desc.Override)
+				if(information.Override)
 				{
 					foundMatch = false;
 					break;
@@ -143,8 +137,8 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 					foundMatch = false;
 					break;
 				case Matching:
-					numMatchedSearchParams++;
-					numMatchedInternalParams++;
+					matchedSearchParameterCount++;
+					matchedInternalParameterCount++;
 					break;
 				}
 				break;
@@ -153,20 +147,20 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 				{
 				default:
 				case NoParam:
-					numMatchedSearchParams++;
+					matchedSearchParameterCount++;
 					break;
 				case NotMatching:
-					if(desc.Override)
+					if(information.Override)
 					{
-						numMatchedSearchParams++;
-						numMatchedInternalParams++;
+						matchedSearchParameterCount++;
+						matchedInternalParameterCount++;
 					}
 					else
 						foundMatch = false;
 					break;
 				case Matching:
-					numMatchedSearchParams++;
-					numMatchedInternalParams++;
+					matchedSearchParameterCount++;
+					matchedInternalParameterCount++;
 					break;
 				}
 				break;
@@ -179,42 +173,42 @@ u32 TMaterial<IsRenderProxy>::FindTechnique(const FindVariationInformation& desc
 		if(!foundMatch)
 			continue;
 
-		if(desc.VariationParameters)
+		if(information.VariationParameters)
 		{
-			const auto& searchVarParams = desc.VariationParameters->GetParams();
-			if(numMatchedSearchParams != (u32)searchVarParams.size())
+			const auto& searchVarParams = information.VariationParameters->GetParameterList();
+			if(matchedSearchParameterCount != (u32)searchVarParams.size())
 				continue;
 		}
 
-		if(numMatchedInternalParams != (u32)internalVarParams.size())
+		if(matchedInternalParameterCount != (u32)internalVariationParameterList.size())
 			continue;
 
-		if(currentScore < bestTechniqueScore)
+		if(currentScore < bestVariationScore)
 		{
-			bestTechniqueIdx = i;
-			bestTechniqueScore = currentScore;
+			bestVariationIndex = variationIndex;
+			bestVariationScore = currentScore;
 		}
 	}
 
-	return bestTechniqueIdx;
+	return bestVariationIndex;
 }
 
 template <bool IsRenderProxy>
-u32 TMaterial<IsRenderProxy>::GetDefaultTechnique() const
+u32 TMaterial<IsRenderProxy>::GetDefaultVariation() const
 {
-	u32 bestTechniqueIdx = 0;
-	u32 bestTechniqueScore = std::numeric_limits<u32>::max();
+	u32 bestVariationIndex = 0;
+	u32 bestVariationScore = std::numeric_limits<u32>::max();
 
-	for(u32 i = 0; i < (u32)mTechniques.size(); i++)
+	for(u32 variationIndex = 0; variationIndex < (u32)mVariations.size(); variationIndex++)
 	{
-		const ShaderVariationParameters& curVariation = mTechniques[i]->GetVariationParameters();
-		const auto& curVarParams = curVariation.GetParams();
-		const auto& internalVarParams = mVariation.GetParams();
+		const ShaderVariationParameters& currentVariationParameters = mVariations[variationIndex]->GetVariationParameters();
+		const auto& currentVariationParameterList = currentVariationParameters.GetParameterList();
+		const auto& internalVariationParameterList = mVariationParameters.GetParameterList();
 
 		bool foundMatch = true;
-		u32 numMatchedParams = 0;
+		u32 matchedParameterCount = 0;
 		u32 currentScore = 0;
-		for(auto& param : curVarParams)
+		for(auto& param : currentVariationParameterList)
 		{
 			enum SearchResult
 			{
@@ -224,7 +218,7 @@ u32 TMaterial<IsRenderProxy>::GetDefaultTechnique() const
 			};
 
 			SearchResult matches = NoParam;
-			const auto findInternal = mVariation.FindParameter(param.Name);
+			const auto findInternal = mVariationParameters.FindParameter(param.Name);
 			if(findInternal != nullptr)
 				matches = findInternal->SignedInteger == param.SignedInteger ? Matching : NotMatching;
 
@@ -239,7 +233,7 @@ u32 TMaterial<IsRenderProxy>::GetDefaultTechnique() const
 				foundMatch = false;
 				break;
 			case Matching:
-				numMatchedParams++;
+				matchedParameterCount++;
 				break;
 			}
 
@@ -250,44 +244,44 @@ u32 TMaterial<IsRenderProxy>::GetDefaultTechnique() const
 		if(!foundMatch)
 			continue;
 
-		if(numMatchedParams != (u32)internalVarParams.size())
+		if(matchedParameterCount != (u32)internalVariationParameterList.size())
 			continue;
 
-		if(currentScore < bestTechniqueScore)
+		if(currentScore < bestVariationScore)
 		{
-			bestTechniqueIdx = i;
-			bestTechniqueScore = currentScore;
+			bestVariationIndex = variationIndex;
+			bestVariationScore = currentScore;
 		}
 	}
 
-	return bestTechniqueIdx;
+	return bestVariationIndex;
 }
 
 template <bool IsRenderProxy>
-u32 TMaterial<IsRenderProxy>::GetNumPasses(u32 techniqueIdx) const
+u32 TMaterial<IsRenderProxy>::GetPassCount(u32 variationIndex) const
 {
 	if(mShader == nullptr)
 		return 0;
 
-	if(techniqueIdx >= (u32)mTechniques.size())
+	if(variationIndex >= (u32)mVariations.size())
 		return 0;
 
-	return mTechniques[techniqueIdx]->GetPassCount();
+	return mVariations[variationIndex]->GetPassCount();
 }
 
 template <bool IsRenderProxy>
-SPtr<typename TMaterial<IsRenderProxy>::PassType> TMaterial<IsRenderProxy>::GetPass(u32 passIdx, u32 techniqueIdx) const
+SPtr<typename TMaterial<IsRenderProxy>::PassType> TMaterial<IsRenderProxy>::GetPass(u32 passIndex, u32 variationIndex) const
 {
 	if(mShader == nullptr)
 		return nullptr;
 
-	if(techniqueIdx >= (u32)mTechniques.size())
+	if(variationIndex >= (u32)mVariations.size())
 		return nullptr;
 
-	if(passIdx < 0 || passIdx >= mTechniques[techniqueIdx]->GetPassCount())
+	if(passIndex < 0 || passIndex >= mVariations[variationIndex]->GetPassCount())
 		return nullptr;
 
-	return mTechniques[techniqueIdx]->GetPass(passIdx);
+	return mVariations[variationIndex]->GetPass(passIndex);
 }
 
 template <bool IsRenderProxy>
@@ -357,26 +351,26 @@ TMaterialParameterSampler<IsRenderProxy> TMaterial<IsRenderProxy>::GetParamSampl
 template <bool IsRenderProxy>
 bool TMaterial<IsRenderProxy>::IsAnimated(const String& name, u32 arrayIdx)
 {
-	return mParams->IsAnimated(name, arrayIdx);
+	return mParameters->IsAnimated(name, arrayIdx);
 }
 
 template <bool IsRenderProxy>
-void TMaterial<IsRenderProxy>::InitializeTechniques()
+void TMaterial<IsRenderProxy>::InitializeVariations()
 {
-	mTechniques.clear();
+	mVariations.clear();
 
 	if(IsShaderValid(mShader))
 	{
-		mParams = B3DMakeShared<MaterialParamsType>(mShader);
-		mTechniques = mShader->GetCompatibleTechniques();
+		mParameters = B3DMakeShared<MaterialParametersType>(mShader);
+		mVariations = mShader->GetCompatibleTechniques();
 
-		if(mTechniques.empty())
+		if(mVariations.empty())
 			return;
 
-		InitDefaultParameters();
+		InitializeDefaultParameters();
 	}
 	else
-		mParams = nullptr;
+		mParameters = nullptr;
 
 	MarkDependenciesDirtyInternal();
 }
@@ -394,7 +388,7 @@ void TMaterial<IsRenderProxy>::SetParamValue(const String& name, u8* buffer, u32
 }
 
 template <bool IsRenderProxy>
-void TMaterial<IsRenderProxy>::InitDefaultParameters()
+void TMaterial<IsRenderProxy>::InitializeDefaultParameters()
 {
 	const Map<String, ShaderDataParameterInformation>& dataParams = mShader->GetDataParams();
 	for(auto& paramData : dataParams)
@@ -531,8 +525,8 @@ void TMaterial<IsRenderProxy>::ThrowIfNotInitialized() const
 	if(mShader == nullptr)
 		B3D_EXCEPT(InternalErrorException, "Material does not have shader set.");
 
-	if(mTechniques.empty())
-		B3D_EXCEPT(InternalErrorException, "Shader does not contain a supported technique.");
+	if(mVariations.empty())
+		B3D_EXCEPT(InternalErrorException, "Shader does not contain a supported variation.");
 }
 
 template class TMaterial<false>;
@@ -584,7 +578,7 @@ Material::Material(const HShader& shader, const ShaderVariationParameters& varia
 	: mLoadFlags(Load_None)
 {
 	mShader = shader;
-	mVariation = variation;
+	mVariationParameters = variation;
 }
 
 void Material::Initialize()
@@ -605,12 +599,12 @@ void Material::SetShader(const HShader& shader)
 	mShader = shader;
 	AddResourceDependency(mShader);
 
-	mTechniques.clear();
+	mVariations.clear();
 	mLoadFlags = Load_None;
 
 	// Make sure to clear params, because the default behaviour is to re-apply them (which won't work due to changed
 	// shader)
-	mParams = nullptr;
+	mParameters = nullptr;
 
 	MarkResourcesDirtyInternal();
 
@@ -619,7 +613,7 @@ void Material::SetShader(const HShader& shader)
 
 void Material::SetVariation(const ShaderVariationParameters& variation)
 {
-	mVariation = variation;
+	mVariationParameters = variation;
 	MarkRenderProxyDataDirty();
 }
 
@@ -647,17 +641,17 @@ SPtr<render::RenderProxy> Material::CreateRenderProxy() const
 	{
 		shader = B3DGetRenderProxy(mShader);
 
-		Vector<SPtr<render::Technique>> variations(mTechniques.size());
-		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
-			variations[i] = B3DGetRenderProxy(mTechniques[i]);
+		Vector<SPtr<render::Variation>> variations(mVariations.size());
+		for(u32 i = 0; i < (u32)mVariations.size(); i++)
+			variations[i] = B3DGetRenderProxy(mVariations[i]);
 
-		SPtr<render::MaterialParams> materialParams = B3DMakeShared<render::MaterialParams>(shader, mParams);
+		SPtr<render::MaterialParameters> materialParams = B3DMakeShared<render::MaterialParameters>(shader, mParameters);
 
-		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, variations, materialParams, mVariation);
+		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, variations, materialParams, mVariationParameters);
 	}
 
 	if(renderProxy == nullptr)
-		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, mVariation);
+		renderProxy = new(B3DAllocate<render::Material>()) render::Material(shader, mVariationParameters);
 
 	SPtr<render::Material> renderProxyShared = B3DMakeSharedFromExisting<render::Material>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
@@ -669,10 +663,10 @@ namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Material, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mShader)
-		B3D_SYNC_BLOCK_ENTRY(mTechniques)
-		B3D_SYNC_BLOCK_ENTRY(mVariation)
+		B3D_SYNC_BLOCK_ENTRY(mVariations)
+		B3D_SYNC_BLOCK_ENTRY(mVariationParameters)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(bool, IsSyncingAllParameters)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(MaterialParams::SyncPacket*, DirtyMaterialParametersPacket)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(MaterialParameters::SyncPacket*, DirtyMaterialParametersPacket)
 	B3D_SYNC_BLOCK_END
 }
 
@@ -680,11 +674,11 @@ RenderProxySyncPacket* Material::CreateRenderProxySyncPacket(FrameAllocator& all
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
-	syncPacket->IsSyncingAllParameters = (GetRenderProxyDirtyFlags() & ~((u32)MaterialDirtyFlags::Param)) != 0;
+	syncPacket->IsSyncingAllParameters = (GetRenderProxyDirtyFlags() & ~((u32)MaterialDirtyFlags::Parameter)) != 0;
 	syncPacket->DirtyMaterialParametersPacket = nullptr;
 
-	if(mParams != nullptr)
-		syncPacket->DirtyMaterialParametersPacket = mParams->CreateSyncPacket(allocator, syncPacket->IsSyncingAllParameters);
+	if(mParameters != nullptr)
+		syncPacket->DirtyMaterialParametersPacket = mParameters->CreateSyncPacket(allocator, syncPacket->IsSyncingAllParameters);
 	
 	return syncPacket;
 }
@@ -694,8 +688,8 @@ void Material::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	if(mShader.IsLoaded())
 		dependencies.push_back(mShader.Get());
 
-	if(mParams != nullptr)
-		mParams->GetCoreObjectDependencies(dependencies);
+	if(mParameters != nullptr)
+		mParameters->GetCoreObjectDependencies(dependencies);
 }
 
 void Material::GetListenerResources(Vector<HResource>& resources)
@@ -703,8 +697,8 @@ void Material::GetListenerResources(Vector<HResource>& resources)
 	if(mShader != nullptr)
 		resources.push_back(mShader);
 
-	if(mParams != nullptr)
-		mParams->GetResourceDependencies(resources);
+	if(mParameters != nullptr)
+		mParameters->GetResourceDependencies(resources);
 }
 
 void Material::InitializeIfLoaded()
@@ -716,12 +710,12 @@ void Material::InitializeIfLoaded()
 			mLoadFlags = Load_All;
 
 			// Shader about to change, so save parameters, rebuild material and restore parameters
-			SPtr<MaterialParams> oldParams = mParams;
+			SPtr<MaterialParameters> oldParams = mParameters;
 
-			InitializeTechniques();
+			InitializeVariations();
 			MarkRenderProxyDataDirty();
 
-			if(mTechniques.empty()) // Wasn't initialized
+			if(mVariations.empty()) // Wasn't initialized
 				return;
 
 			if(oldParams)
@@ -746,7 +740,7 @@ void Material::NotifyResourceLoaded(const HResource& resource)
 	else
 	{
 		// Otherwise just sync changes (most likely just a texture got loaded)
-		MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags::ParamResource);
+		MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags::ParameterResource);
 	}
 }
 
@@ -761,7 +755,7 @@ void Material::NotifyResourceChanged(const HResource& resource)
 	else
 	{
 		// Otherwise just sync changes (most likely just a texture got reimported)
-		MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags::ParamResource);
+		MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags::ParameterResource);
 	}
 }
 
@@ -778,7 +772,7 @@ HMaterial Material::Clone()
 }
 
 template <class T>
-void CopyParam(const SPtr<MaterialParams>& from, Material* to, const String& name, const MaterialParams::ParamData& paramRef, u32 arraySize)
+void CopyParam(const SPtr<MaterialParameters>& from, Material* to, const String& name, const MaterialParameters::ParamData& paramRef, u32 arraySize)
 {
 	TMaterialParameterPrimitive<T, false> param;
 	to->GetParam(name, param);
@@ -791,13 +785,13 @@ void CopyParam(const SPtr<MaterialParams>& from, Material* to, const String& nam
 	}
 }
 
-void Material::SetParams(const SPtr<MaterialParams>& params)
+void Material::SetParams(const SPtr<MaterialParameters>& params)
 {
 	if(params == nullptr)
 		return;
 
 	std::function<
-		void(const SPtr<MaterialParams>&, Material*, const String&, const MaterialParams::ParamData&, u32)>
+		void(const SPtr<MaterialParameters>&, Material*, const String&, const MaterialParameters::ParamData&, u32)>
 		copyParamLookup[GPDT_COUNT];
 
 	copyParamLookup[GPDT_FLOAT1] = &CopyParam<float>;
@@ -835,10 +829,10 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 	{
 		u32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
 
-		const MaterialParams::ParamData* paramData = nullptr;
-		auto result = params->GetParamData(param.first, MaterialParams::ParamType::Data, param.second.Type, 0, &paramData);
+		const MaterialParameters::ParamData* paramData = nullptr;
+		auto result = params->GetParamData(param.first, MaterialParameters::ParamType::Data, param.second.Type, 0, &paramData);
 
-		if(result != MaterialParams::GetParamResult::Success)
+		if(result != MaterialParameters::GetParamResult::Success)
 			continue;
 
 		u32 elemsToCopy = std::min(arraySize, paramData->ArraySize);
@@ -889,10 +883,10 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 	auto& textureParams = mShader->GetTextureParams();
 	for(auto& param : textureParams)
 	{
-		const MaterialParams::ParamData* paramData = nullptr;
-		auto result = params->GetParamData(param.first, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, &paramData);
+		const MaterialParameters::ParamData* paramData = nullptr;
+		auto result = params->GetParamData(param.first, MaterialParameters::ParamType::Texture, GPDT_UNKNOWN, 0, &paramData);
 
-		if(result != MaterialParams::GetParamResult::Success)
+		if(result != MaterialParameters::GetParamResult::Success)
 			continue;
 
 		MateralParamTextureType texType = params->GetTextureType(*paramData);
@@ -934,10 +928,10 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 	auto& bufferParams = mShader->GetBufferParams();
 	for(auto& param : bufferParams)
 	{
-		const MaterialParams::ParamData* paramData = nullptr;
-		auto result = params->GetParamData(param.first, MaterialParams::ParamType::Buffer, GPDT_UNKNOWN, 0, &paramData);
+		const MaterialParameters::ParamData* paramData = nullptr;
+		auto result = params->GetParamData(param.first, MaterialParameters::ParamType::Buffer, GPDT_UNKNOWN, 0, &paramData);
 
-		if(result != MaterialParams::GetParamResult::Success)
+		if(result != MaterialParameters::GetParamResult::Success)
 			continue;
 
 		TMaterialParameterBuffer<false> curParam = GetParamBuffer(param.first);
@@ -950,10 +944,10 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 	auto& samplerParams = mShader->GetSamplerParams();
 	for(auto& param : samplerParams)
 	{
-		const MaterialParams::ParamData* paramData = nullptr;
-		auto result = params->GetParamData(param.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, &paramData);
+		const MaterialParameters::ParamData* paramData = nullptr;
+		auto result = params->GetParamData(param.first, MaterialParameters::ParamType::Sampler, GPDT_UNKNOWN, 0, &paramData);
 
-		if(result != MaterialParams::GetParamResult::Success)
+		if(result != MaterialParameters::GetParamResult::Success)
 			continue;
 
 		TMaterialParameterSampler<false> curParam = GetParamSamplerState(param.first);
@@ -1008,28 +1002,28 @@ namespace b3d { namespace render
 {
 Material::Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation)
 {
-	mVariation = variation;
+	mVariationParameters = variation;
 	SetShader(shader);
 }
 
-Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariationParameters& variation)
+Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Variation>>& variations, const SPtr<MaterialParameters>& materialParameters, const ShaderVariationParameters& variation)
 {
 	mShader = shader;
-	mParams = materialParams;
-	mTechniques = techniques;
-	mVariation = variation;
+	mParameters = materialParameters;
+	mVariations = variations;
+	mVariationParameters = variation;
 }
 
 void Material::SetShader(const SPtr<Shader>& shader)
 {
 	mShader = shader;
 
-	InitializeTechniques();
+	InitializeVariations();
 }
 
 void Material::SetVariation(const ShaderVariationParameters& variation)
 {
-	mVariation = variation;
+	mVariationParameters = variation;
 }
 
 void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
@@ -1038,20 +1032,20 @@ void Material::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allo
 	if(!syncPacket)
 		return;
 
-	u64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
+	u64 initialParamVersion = mParameters != nullptr ? mParameters->GetParamVersion() : 1;
 	if(syncPacket->IsSyncingAllParameters)
-		mParams = nullptr;
+		mParameters = nullptr;
 
-	const u32 originalVariationIndex = mVariation.GetIndex();
+	const u32 originalVariationIndex = mVariationParameters.GetIndex();
 	syncPacket->ApplySyncData(this);
 
-	if(mParams == nullptr && mShader != nullptr)
-		mParams = B3DMakeShared<MaterialParams>(mShader, initialParamVersion);
+	if(mParameters == nullptr && mShader != nullptr)
+		mParameters = B3DMakeShared<MaterialParameters>(mShader, initialParamVersion);
 
-	if(mParams != nullptr && syncPacket->DirtyMaterialParametersPacket)
-		mParams->ApplyAndDestroySyncPacket(allocator, *syncPacket->DirtyMaterialParametersPacket);
+	if(mParameters != nullptr && syncPacket->DirtyMaterialParametersPacket)
+		mParameters->ApplyAndDestroySyncPacket(allocator, *syncPacket->DirtyMaterialParametersPacket);
 
-	mVariation.SetIndex(originalVariationIndex);
+	mVariationParameters.SetIndex(originalVariationIndex);
 }
 
 SPtr<Material> Material::Create(const SPtr<Shader>& shader)

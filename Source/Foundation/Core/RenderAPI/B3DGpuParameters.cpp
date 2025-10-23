@@ -232,7 +232,7 @@ template <bool IsRenderProxy>
 template <class T>
 bool TGpuParams<IsRenderProxy>::TryGetParameter(const String& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
 {
-	const GpuDataParameterInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
+	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
 	if(parameterInformation == nullptr)
 	{
 		output = TGpuParameterPrimitive<T, IsRenderProxy>(nullptr, nullptr);
@@ -246,7 +246,7 @@ bool TGpuParams<IsRenderProxy>::TryGetParameter(const String& name, TGpuParamete
 template <bool IsRenderProxy>
 bool TGpuParams<IsRenderProxy>::TryGetStructParameter(const String& name, TGpuParameterStruct<IsRenderProxy>& output) const
 {
-	const GpuDataParameterInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
+	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
 	if (parameterInformation == nullptr)
 	{
 		output = TGpuParameterStruct<IsRenderProxy>(nullptr, nullptr);

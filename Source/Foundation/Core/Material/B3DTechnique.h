@@ -40,17 +40,17 @@ namespace b3d
 	using PrecompiledVariationData = TPrecompiledVariationData<false>;
 	namespace render { using PrecompiledVariationData = TPrecompiledVariationData<true>; }
 
-	/** Base class that is used for implementing both main and render thread versions of Technique. */
-	class B3D_EXPORT TechniqueBase
+	/** Base class that is used for implementing both main and render thread versions of Variation. */
+	class B3D_EXPORT VariationBase
 	{
 	public:
-		TechniqueBase(const String& language, const ShaderVariationParameters& variationParameters);
-		virtual ~TechniqueBase() = default;
+		VariationBase(const String& language, const ShaderVariationParameters& variationParameters);
+		virtual ~VariationBase() = default;
 
-		/**	Checks if this technique is supported based on current render and other systems. */
+		/**	Checks if this variation is supported based on current render and other systems. */
 		bool IsSupported() const;
 
-		/** Returns a set of preprocessor defines used for compiling this particular technique. */
+		/** Returns a set of preprocessor defines used for compiling this particular variation. */
 		const ShaderVariationParameters& GetVariationParameters() const { return mVariationParameters; }
 
 	protected:
@@ -64,18 +64,18 @@ namespace b3d
 		ShaderVariationParameters mVariationParameters;
 	};
 
-	/** Templated class that is used for implementing both main and render thread versions of Technique. */
+	/** Templated class that is used for implementing both main and render thread versions of Variation. */
 	template <bool IsRenderProxy>
-	class B3D_EXPORT TTechnique : public TechniqueBase
+	class B3D_EXPORT TVariation : public VariationBase
 	{
 	public:
 		using PassType = CoreVariantType<Pass, IsRenderProxy>;
 		using ShaderType = CoreVariantType<Shader, IsRenderProxy>;
-		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
+		using VariationType = CoreVariantType<Variation, IsRenderProxy>;
 
-		TTechnique();
-		TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData);
-		virtual ~TTechnique() = default;
+		TVariation();
+		TVariation(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData);
+		virtual ~TVariation() = default;
 
 		/**	Returns a pass with the specified index. */
 		SPtr<PassType> GetPass(u32 passIndex) const;
@@ -86,7 +86,7 @@ namespace b3d
 		/** Compiles the variation in case it was not initialized with precompiled data. */
 		TAsyncOp<bool> Compile();
 
-		/** Returns true if the technique has been fully compiled. */
+		/** Returns true if the variation has been fully compiled. */
 		bool IsCompiled() const { return mIsCompiled; }
 
 		/**
@@ -94,7 +94,7 @@ namespace b3d
 		 * @{
 		 */
 
-		/** Assigns a set of compiled passes to the technique. This should be called only when a technique has not been initialized with precompiled pass data, and compilation for the technique finished. */
+		/** Assigns a set of compiled passes to the variation. This should be called only when a variation has not been initialized with precompiled pass data, and compilation for the variation finished. */
 		void SetCompiledPassData(TInlineArray<SPtr<PassType>, 1> compiledPasses);
 
 		/** Sets the shader that owns this variation. */
@@ -104,7 +104,7 @@ namespace b3d
 
 	protected:
 		/** Returns a reference to itself using the most derived type. */
-		virtual SPtr<TechniqueType> GetSelf() = 0;
+		virtual SPtr<VariationType> GetSelf() = 0;
 
 		WeakSPtr<ShaderType> mOwner;
 		TInlineArray<SPtr<PassType>, 1> mPasses;
@@ -119,30 +119,25 @@ namespace b3d
 	 */
 
 	/**
-	 * Technique is a set of shading passes bindable to the GPU pipeline. Each technique can also have a set of properties
-	 * that help the engine to determine which technique should be used under which circumstances (if more than one
-	 * technique is available).
-	 *
-	 * @note
-	 * Normally you want to have a separate technique for every render system and renderer your application supports.
-	 * For example, if you are supporting DirectX11 and OpenGL you will want to have two techniques, one using HLSL based
-	 * GPU programs, other using GLSL. Those techniques should try to mirror each other's end results.
+	 * Variation is a set of shading passes bindable to the GPU pipeline. Each shader has at least one variation, but many have multiple.
+	 * Each variation is typically compiled with different set of preprocessor defines enabling or disabling specific features of the shader.
+	 * A shader may also have multiple variations for different rendering backends (e.g. DirectX, OpenGL, Vulkan, etc.).
 	 */
-	class B3D_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<false>
+	class B3D_EXPORT Variation : public IReflectable, public CoreObject, public TVariation<false>
 	{
 	public:
-		Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
+		Variation(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
 
 		/**
 		 * Creates a new variation.
 		 *
-		 * @param owner				Shader that owns the variation.
-		 * @param language			Shading language used by the variation. The engine will not use this variation unless this language is supported by the render backend.
+		 * @param owner					Shader that owns the variation.
+		 * @param language				Shading language used by the variation. The engine will not use this variation unless this language is supported by the render backend.
 		 * @param variationParameters	Variation parameters used for compiling this variation.
 		 * @param precompiledData		Optional set of precompiled variation data. If not provided, you must manually call Compile() on the variation before use.
-		 * @return							Newly creted variation.
+		 * @return						Newly creted variation.
 		 */
-		static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
+		static SPtr<Variation> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
 
 	protected:
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
@@ -151,31 +146,31 @@ namespace b3d
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void SyncToRenderProxy() override;
 
-		SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
+		SPtr<Variation> GetSelf() override { return std::static_pointer_cast<Variation>(GetShared()); }
 
-		/**	Creates a new technique but doesn't initialize it. */
-		static SPtr<Technique> CreateEmpty();
+		/**	Creates a new variation but doesn't initialize it. */
+		static SPtr<Variation> CreateEmpty();
 
 	private:
 		struct SyncPacket;
-		friend class render::Technique;
+		friend class render::Variation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 
 		/** Serialization only constructor. */
-		Technique();
+		Variation();
 
 	public:
-		friend class TechniqueRTTI;
+		friend class VariationRTTI;
 		static RTTIType* GetRttiStatic();
 		RTTIType* GetRtti() const override;
 	};
 
 	/** @} */
 
-	class TechniqueRenderProxyRTTI;
+	class VariationRenderProxyRTTI;
 
 	namespace render
 	{
@@ -183,23 +178,23 @@ namespace b3d
 		 *  @{
 		 */
 
-		/** Render thread version of b3d::Technique. */
-		class B3D_EXPORT Technique : public IReflectable, public RenderProxy, public TTechnique<true>
+		/** Render thread version of b3d::Variation. */
+		class B3D_EXPORT Variation : public IReflectable, public RenderProxy, public TVariation<true>
 		{
 		public:
-			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
+			Variation(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData);
 
-			/** @copydoc b3d::Technique::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
-			static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
+			/** @copydoc b3d::Variation::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
+			static SPtr<Variation> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData = {});
 
-			/**	Creates a new empty technique. */
-			static SPtr<Technique> CreateEmpty();
+			/**	Creates a new empty variation. */
+			static SPtr<Variation> CreateEmpty();
 
 		protected:
-			friend class b3d::Technique;
+			friend class b3d::Variation;
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
-			SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
+			SPtr<Variation> GetSelf() override { return std::static_pointer_cast<Variation>(GetShared()); }
 
 		private:
 			/************************************************************************/
@@ -207,10 +202,10 @@ namespace b3d
 			/************************************************************************/
 
 			/** Serialization only constructor. */
-			Technique();
+			Variation();
 
 		public:
-			friend class b3d::TechniqueRenderProxyRTTI;
+			friend class b3d::VariationRenderProxyRTTI;
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};

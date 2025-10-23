@@ -15,12 +15,12 @@
 
 using namespace b3d;
 
-TechniqueBase::TechniqueBase(const String& language, const ShaderVariationParameters& variationParameters)
+VariationBase::VariationBase(const String& language, const ShaderVariationParameters& variationParameters)
 	: mLanguage(language), mVariationParameters(variationParameters)
 {
 }
 
-bool TechniqueBase::IsSupported() const
+bool VariationBase::IsSupported() const
 {
 	const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 
@@ -31,17 +31,17 @@ bool TechniqueBase::IsSupported() const
 }
 
 template <bool IsRenderProxy>
-TTechnique<IsRenderProxy>::TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData)
-	: TechniqueBase(language, variationParameters), mOwner(owner), mPasses(precompiledData.value_or(TPrecompiledVariationData<IsRenderProxy>()).PrecompiledPasses), mHasPassData(precompiledData.has_value())
+TVariation<IsRenderProxy>::TVariation(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<TPrecompiledVariationData<IsRenderProxy>>& precompiledData)
+	: VariationBase(language, variationParameters), mOwner(owner), mPasses(precompiledData.value_or(TPrecompiledVariationData<IsRenderProxy>()).PrecompiledPasses), mHasPassData(precompiledData.has_value())
 { }
 
 template <bool IsRenderProxy>
-TTechnique<IsRenderProxy>::TTechnique()
-	: TechniqueBase(StringUtil::kBlank, ShaderVariationParameters())
+TVariation<IsRenderProxy>::TVariation()
+	: VariationBase(StringUtil::kBlank, ShaderVariationParameters())
 {}
 
 template <bool IsRenderProxy>
-SPtr<typename TTechnique<IsRenderProxy>::PassType> TTechnique<IsRenderProxy>::GetPass(u32 passIndex) const
+SPtr<typename TVariation<IsRenderProxy>::PassType> TVariation<IsRenderProxy>::GetPass(u32 passIndex) const
 {
 	if(!mHasPassData)
 	{
@@ -59,7 +59,7 @@ SPtr<typename TTechnique<IsRenderProxy>::PassType> TTechnique<IsRenderProxy>::Ge
 }
 
 template <bool IsRenderProxy>
-u32 TTechnique<IsRenderProxy>::GetPassCount() const
+u32 TVariation<IsRenderProxy>::GetPassCount() const
 {
 	if(!mHasPassData)
 	{
@@ -71,7 +71,7 @@ u32 TTechnique<IsRenderProxy>::GetPassCount() const
 }
 
 template <bool IsRenderProxy>
-void TTechnique<IsRenderProxy>::SetCompiledPassData(TInlineArray<SPtr<PassType>, 1> compiledPasses)
+void TVariation<IsRenderProxy>::SetCompiledPassData(TInlineArray<SPtr<PassType>, 1> compiledPasses)
 {
 	mPasses = std::move(compiledPasses);
 	mHasPassData = true;
@@ -81,7 +81,7 @@ void TTechnique<IsRenderProxy>::SetCompiledPassData(TInlineArray<SPtr<PassType>,
 }
 
 template <bool IsRenderProxy>
-void TTechnique<IsRenderProxy>::SetOwner(const WeakSPtr<ShaderType>& owner)
+void TVariation<IsRenderProxy>::SetOwner(const WeakSPtr<ShaderType>& owner)
 {
 	mOwner = owner;
 
@@ -90,7 +90,7 @@ void TTechnique<IsRenderProxy>::SetOwner(const WeakSPtr<ShaderType>& owner)
 }
 
 template<bool IsRenderProxy>
-TAsyncOp<bool> TTechnique<IsRenderProxy>::Compile()
+TAsyncOp<bool> TVariation<IsRenderProxy>::Compile()
 {
 	// TODO - This should be done async, but XShaderCompiler has issues with multiple threads. Additionally the pass compile needs to be made thread safe on the Vulkan level.
 	TAsyncOp<bool> operation;
@@ -129,7 +129,7 @@ TAsyncOp<bool> TTechnique<IsRenderProxy>::Compile()
 		{
 			cacheName = Path(shaderCompilerMetaData->NameInCache)+ mLanguage + StringUtil::HexToLiteral(variationHash.data(), (u32)variationHash.size());
 
-			const SPtr<TechniqueType> cachedTechnique = cache.TryGetEntry<TechniqueType>(cacheName);
+			const SPtr<VariationType> cachedTechnique = cache.TryGetEntry<VariationType>(cacheName);
 			if(cachedTechnique != nullptr)
 				GetSelf()->SetCompiledPassData(cachedTechnique->mPasses);
 		}
@@ -173,18 +173,18 @@ TAsyncOp<bool> TTechnique<IsRenderProxy>::Compile()
 	return operation;
 }
 
-template class TTechnique<false>;
-template class TTechnique<true>;
+template class TVariation<false>;
+template class TVariation<true>;
 
-Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
-	: TTechnique(owner, language, variationParameters, precompiledData)
+Variation::Variation(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
+	: TVariation(owner, language, variationParameters, precompiledData)
 {}
 
-Technique::Technique()
-	: TTechnique()
+Variation::Variation()
+	: TVariation()
 {}
 
-SPtr<render::RenderProxy> Technique::CreateRenderProxy() const
+SPtr<render::RenderProxy> Variation::CreateRenderProxy() const
 {
 	const SPtr<Shader> owner = mOwner.lock();
 	const WeakSPtr<render::Shader> ownerRenderProxy = B3DGetRenderProxy(owner);
@@ -195,39 +195,39 @@ SPtr<render::RenderProxy> Technique::CreateRenderProxy() const
 
 	TOptional<render::PrecompiledVariationData> precompiledDataRenderProxy = mHasPassData ? render::PrecompiledVariationData(passRenderProxies) : TOptional<render::PrecompiledVariationData>{};
 
-	render::Technique* const renderProxy = new(B3DAllocate<render::Technique>()) render::Technique(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
-	const SPtr<render::Technique> renderProxyShared = B3DMakeSharedFromExisting<render::Technique>(renderProxy);
+	render::Variation* const renderProxy = new(B3DAllocate<render::Variation>()) render::Variation(ownerRenderProxy, mLanguage, mVariationParameters, precompiledDataRenderProxy);
+	const SPtr<render::Variation> renderProxyShared = B3DMakeSharedFromExisting<render::Variation>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
 	return renderProxyShared;
 }
 
-void Technique::GetCoreDependencies(Vector<CoreObject*>& dependencies)
+void Variation::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 {
 	for(auto& pass : mPasses)
 		dependencies.push_back(pass.get());
 }
 
-void Technique::MarkRenderProxyDirty(ShaderVariationDirtyFlags flags)
+void Variation::MarkRenderProxyDirty(ShaderVariationDirtyFlags flags)
 {
 	CoreObject::MarkRenderProxyDataDirty(flags);
 }
 
-void Technique::SyncToRenderProxy()
+void Variation::SyncToRenderProxy()
 {
 	CoreObject::SyncToRenderProxy();
 }
 
 namespace b3d
 {
-	B3D_SYNC_BLOCK_BEGIN(Technique, SyncPacket)
+	B3D_SYNC_BLOCK_BEGIN(Variation, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY(mPasses)
 		B3D_SYNC_BLOCK_ENTRY(mHasPassData)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(SPtr<Shader>, Owner)
 	B3D_SYNC_BLOCK_END
 }
 
-RenderProxySyncPacket* Technique::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* Variation::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	const ShaderVariationDirtyFlags dirtyFlags = (ShaderVariationDirtyFlags)flags;
 
@@ -239,68 +239,68 @@ RenderProxySyncPacket* Technique::CreateRenderProxySyncPacket(FrameAllocator& al
 	return syncPacket;
 }
 
-SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
+SPtr<Variation> Variation::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 {
-	Technique* technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
-	SPtr<Technique> techniquePtr = B3DMakeSharedFromExisting<Technique>(technique);
-	techniquePtr->SetShared(techniquePtr);
-	techniquePtr->Initialize();
+	Variation* variation = new(B3DAllocate<Variation>()) Variation(owner, language, variationParameters, precompiledData);
+	SPtr<Variation> variationShared = B3DMakeSharedFromExisting<Variation>(variation);
+	variationShared->SetShared(variationShared);
+	variationShared->Initialize();
 
-	return techniquePtr;
+	return variationShared;
 }
 
-SPtr<Technique> Technique::CreateEmpty()
+SPtr<Variation> Variation::CreateEmpty()
 {
-	Technique* technique = new(B3DAllocate<Technique>()) Technique();
-	SPtr<Technique> techniquePtr = B3DMakeSharedFromExisting<Technique>(technique);
-	techniquePtr->SetShared(techniquePtr);
+	Variation* variation = new(B3DAllocate<Variation>()) Variation();
+	SPtr<Variation> variationShared = B3DMakeSharedFromExisting<Variation>(variation);
+	variationShared->SetShared(variationShared);
 
-	return techniquePtr;
+	return variationShared;
 }
 
-RTTIType* Technique::GetRttiStatic()
+RTTIType* Variation::GetRttiStatic()
 {
-	return TechniqueRTTI::Instance();
+	return VariationRTTI::Instance();
 }
 
-RTTIType* Technique::GetRtti() const
+RTTIType* Variation::GetRtti() const
 {
-	return Technique::GetRttiStatic();
+	return Variation::GetRttiStatic();
 }
 
 namespace b3d { namespace render
 {
-Technique::Technique()
-	: TTechnique(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
+Variation::Variation()
+	: TVariation(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
 { }
 
-Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
-	: TTechnique(owner, language, variationParameters, precompiledData)
+Variation::Variation(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
+	: TVariation(owner, language, variationParameters, precompiledData)
 {}
 
-SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
+SPtr<Variation> Variation::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)
 {
-	Technique *const technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
-	SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);
-	techniqueShared->SetShared(techniqueShared);
-	techniqueShared->Initialize();
+	Variation *const variation = new(B3DAllocate<Variation>()) Variation(owner, language, variationParameters, precompiledData);
+	SPtr<Variation> variationShared = B3DMakeSharedFromExisting<Variation>(variation);
+	variationShared->SetShared(variationShared);
+	variationShared->Initialize();
 
-	return techniqueShared;
+	return variationShared;
 }
 
-SPtr<Technique> Technique::CreateEmpty()
+SPtr<Variation> Variation::CreateEmpty()
 {
-	Technique* const technique = new(B3DAllocate<Technique>()) Technique();
-	SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);
-	techniqueShared->SetShared(techniqueShared);
-	techniqueShared->Initialize();
+	Variation* const variation = new(B3DAllocate<Variation>()) Variation();
+	SPtr<Variation> variationShared = B3DMakeSharedFromExisting<Variation>(variation);
+	variationShared->SetShared(variationShared);
+	variationShared->Initialize();
 
-	return techniqueShared;
+	return variationShared;
 }
 
-void Technique::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+void Variation::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<b3d::Technique::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::Variation::SyncPacket>();
 	if(!syncPacket)
 		return;
 
@@ -312,13 +312,13 @@ void Technique::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& all
 		syncPacket->ApplySyncData(this);
 }
 
-RTTIType* Technique::GetRttiStatic()
+RTTIType* Variation::GetRttiStatic()
 {
-	return TechniqueRenderProxyRTTI::Instance();
+	return VariationRenderProxyRTTI::Instance();
 }
 
-RTTIType* Technique::GetRtti() const
+RTTIType* Variation::GetRtti() const
 {
-	return Technique::GetRttiStatic();
+	return Variation::GetRttiStatic();
 }
 }}

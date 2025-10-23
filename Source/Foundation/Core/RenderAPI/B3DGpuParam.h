@@ -103,7 +103,7 @@ namespace b3d
 
 	public:
 		TGpuParameterPrimitive();
-		TGpuParameterPrimitive(const GpuDataParameterInformation* parameterInformation, const GpuParamsType& parent);
+		TGpuParameterPrimitive(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent);
 
 		/**
 		 * Sets a parameter value at the specified array index. If parameter does not contain an array leave the index at 0.
@@ -130,7 +130,7 @@ namespace b3d
 
 	protected:
 		GpuParamsType mParent;
-		const GpuDataParameterInformation* mParameterInformation = nullptr;
+		const GpuUniformBufferMemberInformation* mParameterInformation = nullptr;
 	};
 
 	/** @copydoc TGpuParameterPrimitive */
@@ -142,7 +142,7 @@ namespace b3d
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, IsRenderProxy>>;
 
 		TGpuParameterStruct();
-		TGpuParameterStruct(const GpuDataParameterInformation* parameterInformation, const GpuParamsType& parent);
+		TGpuParameterStruct(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
@@ -161,7 +161,7 @@ namespace b3d
 
 	protected:
 		GpuParamsType mParent;
-		const GpuDataParameterInformation* mParameterInformation = nullptr;
+		const GpuUniformBufferMemberInformation* mParameterInformation = nullptr;
 	};
 
 	/** @copydoc TGpuParameterPrimitive */

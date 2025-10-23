@@ -375,7 +375,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 		for(auto& element : inputs.Scene.Renderables[i]->Elements)
 		{
-			SPtr<GpuParameters> gpuParams = element.Params->GetGpuParams();
+			SPtr<GpuParameters> gpuParams = element.Params->GetGpuParameters();
 			const GpuParameterBinding& binding = element.PerCameraBinding;
 			if(binding.Slot != (u32)-1)
 				gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
@@ -441,7 +441,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 		rendererDecal.UpdatePerCallBuffer(viewProps.ViewProjTransform);
 
-		SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParams();
+		SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParameters();
 		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
 		if(binding.Slot != (u32)-1)
 			gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
@@ -498,7 +498,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation basePassInfo(RenderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParams(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			basePassInfo.Parameters.Add(gpuParams);
 	}
@@ -548,7 +548,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation decalPassInfo(RenderTargetNoMask, RT_DEPTH, RT_ALL);
 	for(const auto& element : decalElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParams(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			decalPassInfo.Parameters.Add(gpuParams);
 	}
@@ -1551,7 +1551,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 			// Note: It would be nice to be able to set this once and keep it, only updating if the buffers actually
 			// change (e.g. when growing).
-			const SPtr<GpuParameters> gpuParams = element.Params->GetGpuParams();
+			const SPtr<GpuParameters> gpuParams = element.Params->GetGpuParameters();
 			if(supportsClusteredForward)
 				bindParamsForClustered(*gpuParams, element.ForwardLightingParams, element.ImageBasedParams);
 			else
@@ -1591,7 +1591,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			if(!renderElement.IsValid())
 				continue;
 
-			const SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParams();
+			const SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParameters();
 
 			// Note: It would be nice to be able to set this once and keep it, only updating if the buffers actually
 			// change (e.g. when growing).

@@ -98,10 +98,10 @@ namespace b3d
 		 * @param		inOutVariation			Variation on which to set the compiled data if successful.
 		 * @return								A result object containing an error message if not successful.
 		 */
-		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Technique& inOutVariation) = 0;
+		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Variation& inOutVariation) = 0;
 
 		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, ShadingLanguageFlag, ShaderCompilerMetaData, Technique&) */
-		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Technique& inOutVariation) = 0;
+		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Variation& inOutVariation) = 0;
 	};
 
 	/** Keeps track of all available shader compilers. */

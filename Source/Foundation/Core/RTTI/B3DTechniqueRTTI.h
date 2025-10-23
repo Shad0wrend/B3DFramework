@@ -16,7 +16,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_EXPORT TechniqueRTTI : public TRTTIType<Technique, IReflectable, TechniqueRTTI>
+	class B3D_EXPORT VariationRTTI : public TRTTIType<Variation, IReflectable, VariationRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -27,7 +27,7 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnOperationEnded(Technique& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		void OnOperationEnded(Variation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 				object.Initialize();
@@ -35,22 +35,22 @@ namespace b3d
 
 		const String& GetRttiName() override
 		{
-			static String name = "Technique";
+			static String name = "Variation";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_Technique;
+			return TID_Variation;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return Technique::CreateEmpty();
+			return Variation::CreateEmpty();
 		}
 	};
 
-	class B3D_EXPORT TechniqueRenderProxyRTTI : public TRTTIType<render::Technique, IReflectable, TechniqueRenderProxyRTTI>
+	class B3D_EXPORT VariationRenderProxyRTTI : public TRTTIType<render::Variation, IReflectable, VariationRenderProxyRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -61,7 +61,7 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnOperationEnded(render::Technique& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
+		void OnOperationEnded(render::Variation& object, RTTIOperationTypeFlags operationType, RTTIOperationContext& context) override
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 				object.Initialize();
@@ -69,18 +69,18 @@ namespace b3d
 
 		const String& GetRttiName() override
 		{
-			static String name = "TechniqueRenderProxy";
+			static String name = "VariationRenderProxy";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_TechniqueRenderProxy;
+			return TID_VariationRenderProxy;
 		}
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return render::Technique::CreateEmpty();
+			return render::Variation::CreateEmpty();
 		}
 	};
 

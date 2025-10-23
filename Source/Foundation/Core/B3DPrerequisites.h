@@ -280,7 +280,7 @@ namespace b3d
 	};
 
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Pass)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(Technique)
+	B3D_CORE_OBJECT_FORWARD_DECLARE(Variation)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Shader)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Material)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(RenderTarget)
@@ -288,9 +288,9 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(RenderWindow)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Viewport)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(GpuParameters)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(GpuParamsSet)
+	B3D_CORE_OBJECT_FORWARD_DECLARE(MaterialParameterAdapter)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(MaterialParams)
+	B3D_CORE_OBJECT_FORWARD_DECLARE(MaterialParameters)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Light)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Camera)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Renderable)
@@ -362,9 +362,9 @@ namespace b3d
 	class FontManager;
 	class GpuProgram;
 	struct GpuProgramParameterDescription;
-	struct GpuDataParameterInformation;
+	struct GpuUniformBufferMemberInformation;
 	struct GpuObjectParameterInformation;
-	struct GpuDataParameterBlockInformation;
+	struct GpuUniformBufferInformation;
 	class ShaderInclude;
 	class ImportOptions;
 	class TextureImportOptions;
@@ -563,7 +563,7 @@ namespace b3d
 		TID_ResourceHandleData = 1011,
 		TID_CgProgram = 1012,
 		TID_Pass = 1014,
-		TID_Technique = 1015,
+		TID_Variation = 1015,
 		TID_Shader = 1016,
 		TID_Material = 1017,
 		TID_SamplerState = 1021,
@@ -610,7 +610,7 @@ namespace b3d
 		TID_WeakResourceHandle = 1087,
 		TID_TextureParamData = 1088,
 		TID_StructParameterMetaData = 1089,
-		TID_MaterialParams = 1090,
+		TID_MaterialParameters = 1090,
 		//TID_MaterialRTTIParam = 1091,
 		TID_PhysicsMaterial = 1092,
 		TID_Collider = 1093,
@@ -740,7 +740,7 @@ namespace b3d
 		TID_PersistentCacheMetaData = 1217,
 		TID_GpuProgramCreateInformation = 1218,
 		TID_PassRenderProxy = 1219,
-		TID_TechniqueRenderProxy = 1220,
+		TID_VariationRenderProxy = 1220,
 		TID_ShaderCompilerMetaData = 1221,
 		TID_ShaderInformationBase = 1222,
 		TID_ShaderInformation = 1223,

@@ -22,10 +22,10 @@ SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariatio
 	findVariationInformation.VariationParameters = &variation;
 
 	variation.SetBool("ENABLE_CLIPPING", true);
-	mWithClippingVariation.VariationIndex = mMaterial->FindTechnique(findVariationInformation);
+	mWithClippingVariation.VariationIndex = mMaterial->FindVariation(findVariationInformation);
 
 	variation.SetBool("ENABLE_CLIPPING", false);
-	mWithoutClippingVariation.VariationIndex = mMaterial->FindTechnique(findVariationInformation);
+	mWithoutClippingVariation.VariationIndex = mMaterial->FindVariation(findVariationInformation);
 
 	mMaterialStored.store(true, std::memory_order_release);
 
@@ -45,7 +45,7 @@ void SpriteMaterial::Initialize()
 
 	auto fnPrepareVariation = [this](MaterialVariationInformation& variationInformation)
 	{
-		const SPtr<render::Technique> variation = mMaterial->GetTechnique(variationInformation.VariationIndex);
+		const SPtr<render::Variation> variation = mMaterial->GetVariation(variationInformation.VariationIndex);
 		B3D_ASSERT(variation != nullptr);
 
 		if(!variation->IsCompiled())
@@ -59,10 +59,10 @@ void SpriteMaterial::Initialize()
 		if(pass)
 			pass->Compile();
 
-		variationInformation.ParameterSet = mMaterial->CreateParamsSet(variationInformation.VariationIndex);
-		variationInformation.UniformBufferIndex = variationInformation.ParameterSet->GetParamBlockBufferIndex("GUIParams");
+		variationInformation.ParameterSet = mMaterial->CreateParameterAdapter(variationInformation.VariationIndex);
+		variationInformation.UniformBufferIndex = variationInformation.ParameterSet->GetUniformBufferIndex("GUIParams");
 
-		const SPtr<render::GpuParameters>& withClippingVariationGpuParameters = variationInformation.ParameterSet->GetGpuParams(0);
+		const SPtr<render::GpuParameters>& withClippingVariationGpuParameters = variationInformation.ParameterSet->GetGpuParameters(0);
 		withClippingVariationGpuParameters->GetStorageBufferParameter("gVertices", variationInformation.VerticesBufferParameter);
 		withClippingVariationGpuParameters->TryGetStorageBufferParameter("gClipRegions", variationInformation.ClipRegionsBufferParameter);
 	};
@@ -81,7 +81,7 @@ void SpriteMaterial::Initialize()
 		B3D_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
 }
 
-void SpriteMaterial::Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& withClippingParams, const SPtr<render::GpuParamsSet>& withoutClippingParams)
+void SpriteMaterial::Destroy(const SPtr<render::Material>& material, const SPtr<render::MaterialParameterAdapter>& withClippingParams, const SPtr<render::MaterialParameterAdapter>& withoutClippingParams)
 {
 	// Do nothing, we just need to make sure the material pointer's last reference is lost while on the render thread
 }
@@ -117,9 +117,9 @@ void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<
 
 	if(clipRegionBuffer != nullptr)
 	{
-		mMaterial->UpdateParamsSet(mWithClippingVariation.ParameterSet);
+		mWithClippingVariation.ParameterSet->Update(mMaterial);
 
-		mWithClippingVariation.ParameterSet->SetParamBlockBuffer(mWithClippingVariation.UniformBufferIndex, uniformBuffer);
+		mWithClippingVariation.ParameterSet->SetUniformBuffer(mWithClippingVariation.UniformBufferIndex, uniformBuffer);
 		mWithClippingVariation.ClipRegionsBufferParameter.Set(clipRegionBuffer);
 		mWithClippingVariation.VerticesBufferParameter.Set(vertexBuffer);
 
@@ -130,9 +130,9 @@ void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<
 	}
 	else
 	{
-		mMaterial->UpdateParamsSet(mWithoutClippingVariation.ParameterSet);
+		mWithoutClippingVariation.ParameterSet->Update(mMaterial);
 
-		mWithoutClippingVariation.ParameterSet->SetParamBlockBuffer(mWithoutClippingVariation.UniformBufferIndex, uniformBuffer);
+		mWithoutClippingVariation.ParameterSet->SetUniformBuffer(mWithoutClippingVariation.UniformBufferIndex, uniformBuffer);
 		mWithoutClippingVariation.VerticesBufferParameter.Set(vertexBuffer);
 
 		render::GetRendererUtility().SetPass(commandBuffer, mMaterial, 0, mWithoutClippingVariation.VariationIndex);

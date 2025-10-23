@@ -68,7 +68,7 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 		mUniformMap[entry.Name] = std::move(uniformInformation);
 	};
 
-	auto fnRegisterUniformBufferMember = [this](const GpuDataParameterInformation& entry) {
+	auto fnRegisterUniformBufferMember = [this](const GpuUniformBufferMemberInformation& entry) {
 
 		// If entry with the same name exists, ensure it's an exact duplicate we can ignore
 		if(auto found = mUniformBufferMembers.find(entry.Name); found != mUniformBufferMembers.end())
@@ -403,7 +403,7 @@ const UniformInformation* GpuPipelineParameterLayout::TryGetUniformInformation(c
 	return mSets[binding.Set].Uniforms[binding.Slot];
 }
 
-const GpuDataParameterInformation* GpuPipelineParameterLayout::TryGetUniformBufferMemberInformation(const String& name) const
+const GpuUniformBufferMemberInformation* GpuPipelineParameterLayout::TryGetUniformBufferMemberInformation(const String& name) const
 {
 	if(auto found = mUniformBufferMembers.find(name); found != mUniformBufferMembers.end())
 		return &found->second;

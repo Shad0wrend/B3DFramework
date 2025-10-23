@@ -93,7 +93,7 @@ namespace b3d
 		}
 	};
 
-	class B3D_EXPORT MaterialParamsRTTI : public TRTTIType<MaterialParams, IReflectable, MaterialParamsRTTI>
+	class B3D_EXPORT MaterialParametersRTTI : public TRTTIType<MaterialParameters, IReflectable, MaterialParametersRTTI>
 	{
 	public:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -106,14 +106,14 @@ namespace b3d
 			B3D_RTTI_MEMBER_CONTAINER(mSamplerParameters, 7)
 		B3D_RTTI_END_MEMBERS
 
-		SPtr<DataStream> GetDataBuffer(MaterialParams* obj, u32& size)
+		SPtr<DataStream> GetDataBuffer(MaterialParameters* obj, u32& size)
 		{
 			size = obj->mDataSize;
 
 			return B3DMakeShared<MemoryDataStream>(obj->mDataParamsBuffer, obj->mDataSize);
 		}
 
-		void SetDataBuffer(MaterialParams* obj, const SPtr<DataStream>& value, u32 size)
+		void SetDataBuffer(MaterialParameters* obj, const SPtr<DataStream>& value, u32 size)
 		{
 			obj->mDataParamsBuffer = obj->mAlloc.Alloc(size);
 			value->Read(obj->mDataParamsBuffer, size);
@@ -121,30 +121,30 @@ namespace b3d
 			obj->mDataSize = size;
 		}
 
-		MaterialParamsRTTI()
+		MaterialParametersRTTI()
 		{
-			AddDataBlockField("dataBuffer", 2, &MaterialParamsRTTI::GetDataBuffer, &MaterialParamsRTTI::SetDataBuffer);
+			AddDataBlockField("dataBuffer", 2, &MaterialParametersRTTI::GetDataBuffer, &MaterialParametersRTTI::SetDataBuffer);
 		}
 
 		const String& GetRttiName() override
 		{
-			static String name = "MaterialParams";
+			static String name = "MaterialParameters";
 			return name;
 		}
 
 		u32 GetRttiId() const override
 		{
-			return TID_MaterialParams;
+			return TID_MaterialParameters;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<MaterialParams>();
+			return B3DMakeShared<MaterialParameters>();
 		}
 	};
 
 	template <>
-	struct RTTIPlainType<MaterialParamsBase::ParamData>
+	struct RTTIPlainType<MaterialParametersBase::ParamData>
 	{
 		enum
 		{
@@ -156,7 +156,7 @@ namespace b3d
 			hasDynamicSize = 0
 		};
 
-		static BitLength ToMemory(const MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const MaterialParametersBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			B3DRTTIWrite(data.Type, stream);
 			B3DRTTIWrite(data.DataType, stream);
@@ -164,10 +164,10 @@ namespace b3d
 			B3DRTTIWrite(data.ArraySize, stream);
 			B3DRTTIWrite((u64)0, stream);
 
-			return sizeof(MaterialParamsBase::ParamData);
+			return sizeof(MaterialParametersBase::ParamData);
 		}
 
-		static BitLength FromMemory(MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(MaterialParametersBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			B3DRTTIRead(data.Type, stream);
 			B3DRTTIRead(data.DataType, stream);
@@ -177,17 +177,17 @@ namespace b3d
 
 			// Not a field we should serialize, but we do because this struct is serialized as a whole
 			data.Version = 1;
-			return sizeof(MaterialParamsBase::ParamData);
+			return sizeof(MaterialParametersBase::ParamData);
 		}
 
-		static BitLength GetSize(const MaterialParamsBase::ParamData& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const MaterialParametersBase::ParamData& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			return sizeof(MaterialParamsBase::ParamData);
+			return sizeof(MaterialParametersBase::ParamData);
 		}
 	};
 
 	template <>
-	struct RTTIPlainType<MaterialParamsBase::DataParamInfo>
+	struct RTTIPlainType<MaterialParametersBase::DataParamInfo>
 	{
 		enum
 		{
@@ -199,7 +199,7 @@ namespace b3d
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const MaterialParametersBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t kVersion = 1;
 
@@ -229,7 +229,7 @@ namespace b3d
 				return size; });
 		}
 
-		static BitLength FromMemory(MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(MaterialParametersBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -289,7 +289,7 @@ namespace b3d
 			return size;
 		}
 
-		static BitLength GetSize(const MaterialParamsBase::DataParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const MaterialParametersBase::DataParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size = B3DRTTISize(data.Offset) + sizeof(uint32_t) * 2;
 
@@ -307,10 +307,10 @@ namespace b3d
 
 	
 	template <>
-	struct RTTIPlainType<MaterialParamsBase::StructParameterMetaData> : RTTIPlainTypeHelper<MaterialParamsBase::StructParameterMetaData, TID_StructParameterMetaData, 0, false>
+	struct RTTIPlainType<MaterialParametersBase::StructParameterMetaData> : RTTIPlainTypeHelper<MaterialParametersBase::StructParameterMetaData, TID_StructParameterMetaData, 0, false>
 	{
 		template <class Processor>
-		static void RTTIEnumerateFields(MaterialParamsBase::StructParameterMetaData& object, Processor& processor, u8 version)
+		static void RTTIEnumerateFields(MaterialParametersBase::StructParameterMetaData& object, Processor& processor, u8 version)
 		{
 			processor(object.Offset);
 			processor(object.DataSize);

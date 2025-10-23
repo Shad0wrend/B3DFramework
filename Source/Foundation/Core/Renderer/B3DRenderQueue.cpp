@@ -49,7 +49,7 @@ void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 te
 		break;
 	}
 
-	u32 numPasses = material->GetNumPasses(techniqueIdx);
+	u32 numPasses = material->GetPassCount(techniqueIdx);
 	if(!separablePasses)
 		numPasses = std::min(1U, numPasses);
 
@@ -124,7 +124,7 @@ void RenderQueue::Sort()
 		}
 		else
 		{
-			const u32 numPasses = renderElem->Material->GetNumPasses(elem.TechniqueIdx);
+			const u32 numPasses = renderElem->Material->GetPassCount(elem.TechniqueIdx);
 			for(u32 j = 0; j < numPasses; j++)
 			{
 				mSortedRenderElements.push_back(RenderQueueElement());

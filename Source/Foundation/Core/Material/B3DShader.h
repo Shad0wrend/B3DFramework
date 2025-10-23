@@ -356,7 +356,7 @@ namespace b3d
 		ShaderInformation() = default;
 
 		/** Techniques to initialize the shader with. */
-		Vector<SPtr<Technique>> Techniques;
+		Vector<SPtr<Variation>> Techniques;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -385,7 +385,7 @@ namespace b3d
 		static render::ShaderInformation ConvertToRenderProxy(const ShaderInformation& other);
 
 		/** Techniques to initialize the shader with. */
-		Vector<SPtr<Technique>> Techniques;
+		Vector<SPtr<Variation>> Techniques;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -410,7 +410,7 @@ namespace b3d
 	class B3D_EXPORT TShader
 	{
 	public:
-		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
+		using TechniqueType = CoreVariantType<Variation, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using ShaderInformationType = CoreVariantType<ShaderInformation, IsRenderProxy>;
 		using ShaderCreateInformationType = CoreVariantType<ShaderCreateInformation, IsRenderProxy>;

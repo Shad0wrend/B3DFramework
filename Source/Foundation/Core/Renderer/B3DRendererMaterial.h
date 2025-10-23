@@ -76,7 +76,7 @@ namespace b3d
 		struct RendererMaterialVariationInformation
 		{
 			RendererMaterialBase* RendererMaterialInstance = nullptr; /**< Instance of the material to be created once the shader variation has been created. */
-			SPtr<Technique> ShaderVariation; /**< Shader variation used by the material. */
+			SPtr<Variation> ShaderVariation; /**< Shader variation used by the material. */
 			RendererMaterialVariationState State = RendererMaterialVariationState::NotCompiled;
 
 			TAsyncOp<RendererMaterialBase*> VariationCompileOperation{ AsyncOpEmpty() }; /**< Operation tracking variation creation as a whole. */
@@ -286,7 +286,7 @@ namespace b3d
 					return;
 				}
 
-				const Vector<SPtr<Technique>> variations = mMetaData.Shader->GetCompatibleTechniques();
+				const Vector<SPtr<Variation>> variations = mMetaData.Shader->GetCompatibleTechniques();
 
 				static TInlineArray<RendererMaterialVariationInformation, 4> newVariationInformation;
 				static ShaderVariations newVariationParameterSet;
@@ -299,7 +299,7 @@ namespace b3d
 
 				for(u32 variationIndex = 0; variationIndex < (u32)variations.size(); ++variationIndex)
 				{
-					const SPtr<Technique>& shaderVariation = variations[variationIndex];
+					const SPtr<Variation>& shaderVariation = variations[variationIndex];
 
 					for(u32 preliminaryVariationIndex = 0; preliminaryVariationIndex < mMetaData.VariationInformation.size(); ++preliminaryVariationIndex)
 					{
@@ -477,7 +477,7 @@ namespace b3d
 			mShader = mMetaData.Shader;
 			mVariationParameters = mMetaData.VariationParameterSet.Get(variationIndex);
 
-			const SPtr<Technique>& shaderVariation = mMetaData.VariationInformation[variationIndex].ShaderVariation;
+			const SPtr<Variation>& shaderVariation = mMetaData.VariationInformation[variationIndex].ShaderVariation;
 			B3D_ASSERT(shaderVariation->IsSupported());
 			B3D_ASSERT(shaderVariation->GetVariationParameters() == mVariationParameters);
 

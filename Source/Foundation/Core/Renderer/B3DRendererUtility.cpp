@@ -189,9 +189,9 @@ void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr
 	commandBuffer.SetGpuComputePipelineState(pass->GetComputePipelineState());
 }
 
-void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx)
+void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& params, u32 passIdx)
 {
-	const SPtr<GpuParameters>& gpuParams = params->GetGpuParams(passIdx);
+	const SPtr<GpuParameters>& gpuParams = params->GetGpuParameters(passIdx);
 	if(gpuParams == nullptr)
 		return;
 

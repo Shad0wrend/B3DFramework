@@ -25,7 +25,7 @@ namespace b3d
 		public:
 			GpuDataParameterBlockElement() = default;
 
-			GpuDataParameterBlockElement(const GpuDataParameterInformation& parameterInformation)
+			GpuDataParameterBlockElement(const GpuUniformBufferMemberInformation& parameterInformation)
 				: mParameterInformation(parameterInformation)
 			{}
 
@@ -81,7 +81,7 @@ namespace b3d
 			}
 
 		protected:
-			GpuDataParameterInformation mParameterInformation;
+			GpuUniformBufferMemberInformation mParameterInformation;
 		};
 
 		/** Base class for all parameter blocks. */
@@ -161,8 +161,8 @@ namespace b3d
 			if(gpuDevice)                                                                                                                                    \
 			{                                                                                                                                                \
                                                                                                                                                              \
-				GpuDataParameterBlockInformation blockInformation = gpuDevice->GenerateUniformBlockInformation(#Name, mParams);                              \
-				mBlockSize = blockInformation.BlockSize * sizeof(u32);                                                                                       \
+				GpuUniformBufferInformation bufferInformation = gpuDevice->GenerateUniformBlockInformation(#Name, mParams);                                  \
+				mBlockSize = bufferInformation.BlockSize * sizeof(u32);                                                                                      \
 			}                                                                                                                                                \
 			else                                                                                                                                             \
 			{                                                                                                                                                \
@@ -174,9 +174,9 @@ namespace b3d
                                                                                                                                                              \
 		struct META_FirstEntry                                                                                                                               \
 		{};                                                                                                                                                  \
-		static void META_GetPrevEntries(Vector<GpuDataParameterInformation>& params, META_FirstEntry id)                                                     \
+		static void META_GetPrevEntries(Vector<GpuUniformBufferMemberInformation>& params, META_FirstEntry id)                                               \
 		{}                                                                                                                                                   \
-		void META_InitPrevEntry(const Vector<GpuDataParameterInformation>& params, u32 idx, META_FirstEntry id)                                              \
+		void META_InitPrevEntry(const Vector<GpuUniformBufferMemberInformation>& params, u32 idx, META_FirstEntry id)                                        \
 		{}                                                                                                                                                   \
                                                                                                                                                              \
 		typedef META_FirstEntry
@@ -189,19 +189,19 @@ namespace b3d
                                                                                                         \
 	struct META_NextEntry_##Name_                                                                       \
 	{};                                                                                                 \
-	static void META_GetPrevEntries(Vector<GpuDataParameterInformation>& params, META_NextEntry_##Name_ id)        \
+	static void META_GetPrevEntries(Vector<GpuUniformBufferMemberInformation>& params, META_NextEntry_##Name_ id)        \
 	{                                                                                                   \
 		META_GetPrevEntries(params, META_Entry_##Name_());                                              \
                                                                                                         \
-		params.push_back(GpuDataParameterInformation());                                                \
-		GpuDataParameterInformation& newEntry = params.back();                                          \
+		params.push_back(GpuUniformBufferMemberInformation());                                                \
+		GpuUniformBufferMemberInformation& newEntry = params.back();                                          \
 		newEntry.Name = #Name_;                                                                         \
 		newEntry.Type = (GpuDataParameterType)TGpuDataParamInfo<Type_>::TypeId;                         \
 		newEntry.ArraySize = ElementCount;                                                              \
 		newEntry.ElementSize = sizeof(Type_);                                                           \
 	}                                                                                                   \
                                                                                                         \
-	void META_InitPrevEntry(const Vector<GpuDataParameterInformation>& params, u32 idx, META_NextEntry_##Name_ id) \
+	void META_InitPrevEntry(const Vector<GpuUniformBufferMemberInformation>& params, u32 idx, META_NextEntry_##Name_ id) \
 	{                                                                                                   \
 		META_InitPrevEntry(params, idx - 1, META_Entry_##Name_());                                      \
 		Name_ = GpuDataParameterBlockElement<Type_>(params[idx]);                                       \
@@ -222,9 +222,9 @@ private:                                                                        
 #define B3D_PARAM_BLOCK_END                                                     \
 	META_LastEntry;                                                             \
                                                                                 \
-	static Vector<GpuDataParameterInformation> GetEntries()                     \
+	static Vector<GpuUniformBufferMemberInformation> GetEntries()               \
 	{                                                                           \
-		Vector<GpuDataParameterInformation> entries;                            \
+		Vector<GpuUniformBufferMemberInformation> entries;                      \
 		META_GetPrevEntries(entries, META_LastEntry());                         \
 		return entries;                                                         \
 	}                                                                           \
@@ -234,7 +234,7 @@ private:                                                                        
 		META_InitPrevEntry(mParams, (u32)mParams.size() - 1, META_LastEntry()); \
 	}                                                                           \
                                                                                 \
-	Vector<GpuDataParameterInformation> mParams;                                \
+	Vector<GpuUniformBufferMemberInformation> mParams;                          \
 	u32 mBlockSize;                                                             \
 	}                                                                           \
 	;

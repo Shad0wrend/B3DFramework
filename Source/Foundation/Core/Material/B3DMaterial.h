@@ -29,9 +29,9 @@ namespace b3d
 	enum class MaterialDirtyFlags
 	{
 		/** Material parameter changed. */
-		Param = 1 << 0,
+		Parameter = 1 << 0,
 		/** Dependant resource has been loaded and/or changed. (e.g. a texture assigned to a parameter. */
-		ParamResource = 1 << 1,
+		ParameterResource = 1 << 1,
 		/** Material shader has changed. */
 		Shader = 2 << 2
 	};
@@ -92,7 +92,7 @@ namespace b3d
 		 */
 
 		/** Marks the contents of the main thread object as dirty, causing it to sync with the render proxy. */
-		virtual void MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Param) {}
+		virtual void MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Parameter) {}
 
 		/** @copydoc CoreObject::MarkDependenciesDirty */
 		virtual void MarkDependenciesDirtyInternal() {}
@@ -112,10 +112,10 @@ namespace b3d
 		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 		using PassType = CoreVariantType<Pass, IsRenderProxy>;
-		using TechniqueType = CoreVariantType<Technique, IsRenderProxy>;
+		using VariationType = CoreVariantType<Variation, IsRenderProxy>;
 		using ShaderType = CoreVariantHandleType<Shader, IsRenderProxy>;
-		using GpuParamsSetType = CoreVariantType<GpuParamsSet, IsRenderProxy>;
-		using MaterialParamsType = CoreVariantType<MaterialParams, IsRenderProxy>;
+		using MaterialParameterAdapterType = CoreVariantType<MaterialParameterAdapter, IsRenderProxy>;
+		using MaterialParametersType = CoreVariantType<MaterialParameters, IsRenderProxy>;
 
 		TMaterial() = default;
 		virtual ~TMaterial() = default;
@@ -125,74 +125,57 @@ namespace b3d
 		ShaderType GetShader() const { return mShader; }
 
 		/**
-		 * Set of parameters that determine which subset of techniques in the assigned shader should be used. Only the
-		 * techniques that have the provided parameters with the provided values will match. This will control which
-		 * technique is considered the default technique and which subset of techniques are searched during a call to
-		 * findTechnique().
+		 * Set of parameters that determine which subset of variations in the assigned shader should be used. Only the
+		 * variations that have the provided parameters with the provided values will match. This will control which
+		 * variation is considered the default variation and which subset of variations are searched during a call to
+		 * FindVariation().
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Variation), Property(Getter))
-		const ShaderVariationParameters& GetVariation() const { return mVariation; }
+		const ShaderVariationParameters& GetVariationParameters() const { return mVariationParameters; }
 
-		/** Returns the total number of techniques supported by this material. */
-		u32 GetNumTechniques() const { return (u32)mTechniques.size(); }
+		/** Returns the total number of variations supported by this material. */
+		u32 GetVariationCount() const { return (u32)mVariations.size(); }
 
-		/** Returns the technique at the specified index. */
-		const SPtr<TechniqueType>& GetTechnique(u32 idx) const { return mTechniques[idx]; }
+		/** Returns the variation at the specified index. */
+		const SPtr<VariationType>& GetVariation(u32 index) const { return mVariations[index]; }
 
 		/**
-		 * Attempts to find a technique matching the specified variation and tags among the supported techniques.
+		 * Attempts to find a variation matching the specified variation and tags among the supported variations.
 		 *
-		 * @param[in]	desc				Object containing an optional set of tags and a set of variation parameters to
-		 *									look for.
-		 * @return							First technique that matches the tags & variation parameters specified in
-		 *									@p desc.
+		 * @param		information		Object containing an optional set of tags and a set of variation parameters to look for.
+		 * @return						First variation that matches the variation parameters specified in @p information.
 		 */
-		u32 FindTechnique(const FindVariationInformation& desc) const;
+		u32 FindVariation(const FindVariationInformation& information) const;
 
 		/**
-		 * Finds the index of the default (primary) technique to use. This will be the first technique that matches the
+		 * Finds the index of the default (primary) variation to use. This will be the first variation that matches the
 		 * currently set variation parameters (if any).
 		 */
-		u32 GetDefaultTechnique() const;
+		u32 GetDefaultVariation() const;
 
 		/**
-		 * Returns the number of passes that are used by the technique at the specified index.
+		 * Returns the number of passes that are used by the variation at the specified index.
 		 *
-		 * @param[in]	techniqueIdx	Index of the technique to retrieve the number of passes for. 0 is always guaranteed
-		 *								to be the default technique.
-		 * @return						Number of passes used by the technique.
+		 * @param	variationIndex		Index of the variation to retrieve the number of passes for. 0 is always guaranteed to be the default variation.
+		 * @return						Number of passes used by the variation.
 		 */
-		u32 GetNumPasses(u32 techniqueIdx = 0) const;
+		u32 GetPassCount(u32 variationIndex = 0) const;
 
 		/**
-		 * Retrieves a specific shader pass from the provided technique.
+		 * Retrieves a specific shader pass from the provided variation.
 		 *
-		 * @param[in]	passIdx			Sequential index of the pass to retrieve.
-		 * @param[in]	techniqueIdx	Index of the technique to retrieve the pass for. 0 is always guaranteed to be
-		 *								the default technique.
+		 * @param	passIndex			Sequential index of the pass to retrieve.
+		 * @param	variationIndex		Index of the variation to retrieve the pass for. 0 is always guaranteed to be the default variation.
 		 * @return						Pass if found, null otherwise.
 		 */
-		SPtr<PassType> GetPass(u32 passIdx = 0, u32 techniqueIdx = 0) const;
+		SPtr<PassType> GetPass(u32 passIndex = 0, u32 variationIndex = 0) const;
 
 		/**
-		 * Creates a set of GpuParameters that may be used for binding material parameters to the GPU. The expected behaviour
-		 * is to create a set of GpuParameters per-technique once, and then before binding them to the GPU call
-		 * UpdateParamsSet() to ensure any dirty parameters are transfered from the material to GpuParameters. You may also
-		 * use the parameter set to manually modify parameters on a per-program basis, in which case no further updates from
-		 * the material are necessary.
+		 * Creates an adapter that can be used for transferring parameters from the material to one or multiple GpuParameters (one per pass).
+		 * The adapter will take care of tracking when material parameters change and can be used to update the underlying GpuParameters.
+		 * Adapter is only valid for a particular material variation, you will need to create a different adapter for each variation.
 		 */
-		SPtr<GpuParamsSetType> CreateParamsSet(u32 techniqueIdx = 0);
-
-		/**
-		 * Copies internal material parameter data to the provided params set.
-		 *
-		 * @param[in]	paramsSet		Parameter set to update.
-		 * @param[in]	t				Time to evaluate animated parameters at (if any are present).
-		 * @param[in]	updateAll		Normally the system will track dirty parameters since the last call to this method
-		 *								(on a per-set basis), and only update the dirty ones. Set this to true if you want
-		 *								to force all parameters to update, regardless of their dirty state.
-		 */
-		void UpdateParamsSet(const SPtr<GpuParamsSetType>& paramsSet, float t = 0.0f, bool updateAll = false);
+		SPtr<MaterialParameterAdapterType> CreateParameterAdapter(u32 variationIndex = 0);
 
 		/**
 		 * Assigns a float value to the shader parameter with the specified name.
@@ -440,7 +423,7 @@ namespace b3d
 		/**
 		 * Returns a handle that allows you to assign a constant value to a floating point parameter. This handle
 		 * may be used for more efficiently getting/setting GPU parameter values than calling
-		 * Material::get* / Material::set* methods.
+		 * Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -459,7 +442,7 @@ namespace b3d
 		/**
 		 * Returns a handle that allows you to assign a time-varying curve to a floating point parameter. This
 		 * handle may be used for more efficiently getting/setting GPU parameter values than calling
-		 * Material::get* / Material::set* methods.
+		 * Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -471,7 +454,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a color parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -491,7 +474,7 @@ namespace b3d
 		/**
 		 * Returns a handle that allows you to assign a time-varying gradient to a color parameter. This handle
 		 * may be used for more efficiently getting/setting GPU parameter values than calling
-		 * Material::get* / Material::set* methods.
+		 * Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material,
@@ -503,7 +486,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 2D vector parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -522,7 +505,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 3D vector parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -541,7 +524,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 4D vector parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -560,7 +543,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 3x3 matrix parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -579,7 +562,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 4x4 matrix parameter. This handle may be
-		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
+		 * used for more efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set*
 		 * methods.
 		 *
 		 * @note
@@ -598,7 +581,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a structure GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -610,7 +593,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a texture GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -622,7 +605,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a sprite texture GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -634,7 +617,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a load-store texture GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -646,7 +629,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a buffer GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -658,7 +641,7 @@ namespace b3d
 
 		/**
 		 * Returns a handle that allows you to assign a sampler state GPU parameter. This handle may be used for more
-		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
+		 * efficiently getting/setting GPU parameter values than calling Material::Get* / Material::Set* methods.
 		 *
 		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
@@ -688,7 +671,7 @@ namespace b3d
 		 * Returns an object containg all of material's parameters. Allows the caller to manipulate the parameters more
 		 * directly.
 		 */
-		SPtr<MaterialParamsType> GetInternalParamsInternal() const { return mParams; }
+		SPtr<MaterialParametersType> GetMaterialParameters() const { return mParameters; }
 
 		/** @} */
 	protected:
@@ -702,21 +685,21 @@ namespace b3d
 		void SetParamValue(const String& name, u8* buffer, u32 numElements);
 
 		/**
-		 * Initializes the material by using the compatible techniques from the currently set shader. Shader must contain
-		 * the techniques that matches the current renderer and render system.
+		 * Initializes the material by using the compatible variations from the currently set shader. Shader must contain
+		 * the variations that matches the current renderer and GPU backend.
 		 */
-		void InitializeTechniques();
+		void InitializeVariations();
 
 		/** Assigns all the default parameters specified in the shader to the material. */
-		void InitDefaultParameters();
+		void InitializeDefaultParameters();
 
-		/** Throw an exception if no shader is set, or no acceptable technique was found. */
+		/** Throw an exception if no shader is set, or no acceptable variation was found. */
 		void ThrowIfNotInitialized() const;
 
 		ShaderType mShader;
-		SPtr<MaterialParamsType> mParams;
-		Vector<SPtr<TechniqueType>> mTechniques;
-		ShaderVariationParameters mVariation;
+		SPtr<MaterialParametersType> mParameters;
+		Vector<SPtr<VariationType>> mVariations;
+		ShaderVariationParameters mVariationParameters;
 	};
 
 	/** @} */
@@ -732,7 +715,7 @@ namespace b3d
 		~Material() = default;
 
 		/**
-		 * Sets a shader that will be used by the material. Material will be initialized using all compatible techniques
+		 * Sets a shader that will be used by the material. Material will be initialized using all compatible variations
 		 * from the shader. Shader must be set before doing any other operations with the material.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(Shader), Property(Setter))
@@ -762,7 +745,7 @@ namespace b3d
 
 		/**
 		 * Creates a new material with the specified shader, and a set of parameters that determine which subset of
-		 * techniques in the shader should the material use.
+		 * variations in the shader should the material use.
 		 */
 		static HMaterial Create(const HShader& shader, const ShaderVariationParameters& variation);
 
@@ -774,7 +757,7 @@ namespace b3d
 		 * Marks the render proxy data as dirty. This causes the syncToCore() method to trigger the next time objects are synced
 		 * between render and main threads.
 		 */
-		void MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Param) override;
+		void MarkRenderProxyDataDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Parameter) override;
 
 		void MarkDependenciesDirtyInternal() override;
 		void MarkResourcesDirtyInternal() override;
@@ -803,7 +786,7 @@ namespace b3d
 		 * Uses the provided list of parameters to try to set every parameter in this material. Parameter whose name, type
 		 * or size don't match are ignored and will not be set.
 		 */
-		void SetParams(const SPtr<MaterialParams>& params);
+		void SetParams(const SPtr<MaterialParameters>& params);
 
 		/**	Creates a new empty material but doesn't initialize it. */
 		static SPtr<Material> CreateEmpty();
@@ -838,10 +821,10 @@ namespace b3d
 			void SetShader(const SPtr<Shader>& shader);
 
 			/**
-			 * Set of parameters that determine which subset of techniques in the assigned shader should be used. Only the
-			 * techniques that have the provided parameters with the provided values will match. This will control which
-			 * technique is considered the default technique and which subset of techniques are searched during a call to
-			 * findTechnique().
+			 * Set of parameters that determine which subset of variations in the assigned shader should be used. Only the
+			 * variations that have the provided parameters with the provided values will match. This will control which
+			 * variation is considered the default variation and which subset of variations are searched during a call to
+			 * FindVariation().
 			 */
 			void SetVariation(const ShaderVariationParameters& variation);
 
@@ -853,7 +836,7 @@ namespace b3d
 
 			Material() = default;
 			Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation);
-			Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariationParameters& variation);
+			Material(const SPtr<Shader>& shader, const Vector<SPtr<Variation>>& variations, const SPtr<MaterialParameters>& materialParameters, const ShaderVariationParameters& variation);
 
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};

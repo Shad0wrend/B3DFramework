@@ -152,7 +152,7 @@ namespace b3d
 	};
 
 	template <>
-	struct RTTIPlainType<GpuDataParameterInformation>
+	struct RTTIPlainType<GpuUniformBufferMemberInformation>
 	{
 		enum
 		{
@@ -166,7 +166,7 @@ namespace b3d
 
 		static constexpr uint32_t kVersion = 1;
 
-		static BitLength ToMemory(const GpuDataParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuUniformBufferMemberInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
 											   {
@@ -187,7 +187,7 @@ namespace b3d
 				return size; });
 		}
 
-		static BitLength FromMemory(GpuDataParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuUniformBufferMemberInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -210,7 +210,7 @@ namespace b3d
 			return size;
 		}
 
-		static BitLength GetSize(const GpuDataParameterInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuUniformBufferMemberInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(kVersion) + B3DRTTISize(data.Name) + B3DRTTISize(data.ElementSize) +
 				B3DRTTISize(data.ArraySize) + B3DRTTISize(data.ArrayElementStride) + B3DRTTISize(data.Type) +
@@ -286,7 +286,7 @@ namespace b3d
 	};
 
 	template <>
-	struct RTTIPlainType<GpuDataParameterBlockInformation>
+	struct RTTIPlainType<GpuUniformBufferInformation>
 	{
 		enum
 		{
@@ -300,7 +300,7 @@ namespace b3d
 
 		static constexpr uint32_t kVersion = 1;
 
-		static BitLength ToMemory(const GpuDataParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuUniformBufferInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]
 											   {
@@ -315,7 +315,7 @@ namespace b3d
 				return size; });
 		}
 
-		static BitLength FromMemory(GpuDataParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuUniformBufferInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -333,7 +333,7 @@ namespace b3d
 			return size;
 		}
 
-		static BitLength GetSize(const GpuDataParameterBlockInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuUniformBufferInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(kVersion) + B3DRTTISize(data.Name) + B3DRTTISize(data.Set) +
 				B3DRTTISize(data.Slot) + B3DRTTISize(data.BlockSize) + B3DRTTISize(data.IsShareable);

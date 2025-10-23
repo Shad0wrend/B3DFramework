@@ -21,7 +21,7 @@ using namespace b3d;
 /** Uniquely identifies a GPU parameter. */
 struct ValidParamKey
 {
-	ValidParamKey(const String& name, const MaterialParams::ParamType& type)
+	ValidParamKey(const String& name, const MaterialParameters::ParamType& type)
 		: Name(name), Type(type)
 	{}
 
@@ -36,7 +36,7 @@ struct ValidParamKey
 	}
 
 	String Name;
-	MaterialParams::ParamType Type;
+	MaterialParameters::ParamType Type;
 };
 
 /** @cond STDLIB */
@@ -62,7 +62,7 @@ struct hash<ValidParamKey>
 
 using namespace b3d;
 
-struct ShaderBlockDesc
+struct ShaderUniformBuffer
 {
 	String Name;
 	GpuBufferFlags Flags;
@@ -152,7 +152,7 @@ Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> GatherParameterDescriptio
 	return parameterDescriptions;
 }
 
-bool AreParamsEqual(const GpuDataParameterInformation& paramA, const GpuDataParameterInformation& paramB, bool ignoreBufferOffsets)
+bool AreParamsEqual(const GpuUniformBufferMemberInformation& paramA, const GpuUniformBufferMemberInformation& paramB, bool ignoreBufferOffsets)
 {
 	bool equal = paramA.ArraySize == paramB.ArraySize && paramA.ElementSize == paramB.ElementSize && paramA.Type == paramB.Type && paramA.ArrayElementStride == paramB.ArrayElementStride;
 
@@ -162,46 +162,46 @@ bool AreParamsEqual(const GpuDataParameterInformation& paramA, const GpuDataPara
 	return equal;
 }
 
-Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<GpuProgramParameterDescription>>& paramDescs, const Map<String, ShaderParameterBlockInformation>& shaderDesc)
+Vector<ShaderUniformBuffer> DetermineValidShareableUniformBuffers(const Vector<SPtr<GpuProgramParameterDescription>>& paramDescs, const Map<String, ShaderParameterBlockInformation>& shaderDesc)
 {
-	struct BlockInfo
+	struct UniformBufferInfo
 	{
-		BlockInfo() {}
+		UniformBufferInfo() {}
 
-		BlockInfo(const GpuDataParameterBlockInformation* blockDesc, const SPtr<GpuProgramParameterDescription>& paramDesc, bool isValid = true)
-			: BlockDesc(blockDesc), ParamDesc(paramDesc), IsValid(isValid)
+		UniformBufferInfo(const GpuUniformBufferInformation* uniformBufferDescriptor, const SPtr<GpuProgramParameterDescription>& paramDesc, bool isValid = true)
+			: BufferInformation(uniformBufferDescriptor), ParamDesc(paramDesc), IsValid(isValid)
 		{}
 
-		const GpuDataParameterBlockInformation* BlockDesc;
+		const GpuUniformBufferInformation* BufferInformation;
 		SPtr<GpuProgramParameterDescription> ParamDesc;
 		bool IsValid;
 		u32 Set;
 		u32 Slot;
 	};
 
-	// Make sure param blocks with the same name actually contain the same fields
-	Map<String, BlockInfo> uniqueParamBlocks;
+	// Make sure uniform buffers with the same name actually contain the same fields
+	Map<String, UniformBufferInfo> uniqueUniformBuffers;
 
 	for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 	{
 		const GpuProgramParameterDescription& curDesc = **iter;
-		for(auto blockIter = curDesc.UniformBuffers.begin(); blockIter != curDesc.UniformBuffers.end(); ++blockIter)
+		for(auto bufferIter = curDesc.UniformBuffers.begin(); bufferIter != curDesc.UniformBuffers.end(); ++bufferIter)
 		{
-			const GpuDataParameterBlockInformation& curBlock = blockIter->second;
+			const GpuUniformBufferInformation& curBlock = bufferIter->second;
 
 			if(!curBlock.IsShareable) // Non-shareable buffers are handled differently, they're allowed same names
 				continue;
 
-			auto iterFind = uniqueParamBlocks.find(blockIter->first);
-			if(iterFind == uniqueParamBlocks.end())
+			auto iterFind = uniqueUniformBuffers.find(bufferIter->first);
+			if(iterFind == uniqueUniformBuffers.end())
 			{
-				uniqueParamBlocks[blockIter->first] = BlockInfo(&curBlock, *iter);
+				uniqueUniformBuffers[bufferIter->first] = UniformBufferInfo(&curBlock, *iter);
 				continue;
 			}
 
-			const GpuDataParameterBlockInformation& otherBlock = *iterFind->second.BlockDesc;
+			const GpuUniformBufferInformation& otherBlock = *iterFind->second.BufferInformation;
 
-			// The block was already determined as invalid, no need to check further
+			// The buffer was already determined as invalid, no need to check further
 			if(!iterFind->second.IsValid)
 				continue;
 
@@ -210,28 +210,28 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 
 			for(auto myParamIter = curDesc.UniformBufferMembers.begin(); myParamIter != curDesc.UniformBufferMembers.end(); ++myParamIter)
 			{
-				const GpuDataParameterInformation& myParam = myParamIter->second;
+				const GpuUniformBufferMemberInformation& myParam = myParamIter->second;
 
 				if(myParam.ParentUniformBufferSet != curBlock.Set || myParam.ParentUniformBufferSlot != curBlock.Slot)
-					continue; // Param is in another block, so we will check it when its time for that block
+					continue; // Param is in another buffer, so we will check it when its time for that buffer
 
 				auto otherParamFind = otherDesc->UniformBufferMembers.find(myParamIter->first);
 
-				// Cannot find other param, blocks aren't equal
+				// Cannot find other param, buffers aren't equal
 				if(otherParamFind == otherDesc->UniformBufferMembers.end())
 					break;
 
-				const GpuDataParameterInformation& otherParam = otherParamFind->second;
+				const GpuUniformBufferMemberInformation& otherParam = otherParamFind->second;
 
 				if(!AreParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
 					break;
 			}
 
-			// Note: Ignoring mismatched blocks for now, because glslang parser doesn't report dead uniform entries,
-			// meaning identical blocks can have different sets of uniforms reported depending on which are unused.
+			// Note: Ignoring mismatched buffers for now, because glslang parser doesn't report dead uniform entries,
+			// meaning identical buffers can have different sets of uniforms reported depending on which are unused.
 			// if (!isBlockValid)
 			//{
-			//	LOGWRN("Found two param blocks with the same name but different contents: " + blockIter->first);
+			//	LOGWRN("Found two uniform buffers with the same name but different contents: " + blockIter->first);
 			//	uniqueParamBlocks[blockIter->first] = BlockInfo(&curBlock, nullptr, false);
 
 			//	continue;
@@ -239,15 +239,15 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 		}
 	}
 
-	Vector<ShaderBlockDesc> output;
-	for(auto& entry : uniqueParamBlocks)
+	Vector<ShaderUniformBuffer> output;
+	for(auto& entry : uniqueUniformBuffers)
 	{
 		if(!entry.second.IsValid)
 			continue;
 
-		const GpuDataParameterBlockInformation& curBlock = *entry.second.BlockDesc;
+		const GpuUniformBufferInformation& curBlock = *entry.second.BufferInformation;
 
-		ShaderBlockDesc shaderBlockDesc;
+		ShaderUniformBuffer shaderBlockDesc;
 		shaderBlockDesc.External = false;
 		shaderBlockDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWriteCachingOnCPU;
 		shaderBlockDesc.Size = curBlock.BlockSize * sizeof(u32);
@@ -268,9 +268,9 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 	return output;
 }
 
-Map<String, const GpuDataParameterInformation*> DetermineValidDataParameters(const Vector<SPtr<GpuProgramParameterDescription>>& paramDescs)
+Map<String, const GpuUniformBufferMemberInformation*> DetermineValidDataParameters(const Vector<SPtr<GpuProgramParameterDescription>>& paramDescs)
 {
-	Map<String, const GpuDataParameterInformation*> foundDataParams;
+	Map<String, const GpuUniformBufferMemberInformation*> foundDataParams;
 	Map<String, bool> validParams;
 
 	for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
@@ -280,7 +280,7 @@ Map<String, const GpuDataParameterInformation*> DetermineValidDataParameters(con
 		// Check regular data params
 		for(auto iter2 = curDesc.UniformBufferMembers.begin(); iter2 != curDesc.UniformBufferMembers.end(); ++iter2)
 		{
-			const GpuDataParameterInformation& curParam = iter2->second;
+			const GpuUniformBufferMemberInformation& curParam = iter2->second;
 
 			auto dataFindIter = validParams.find(iter2->first);
 			if(dataFindIter == validParams.end())
@@ -294,7 +294,7 @@ Map<String, const GpuDataParameterInformation*> DetermineValidDataParameters(con
 				{
 					auto dataFindIter2 = foundDataParams.find(iter2->first);
 
-					const GpuDataParameterInformation* otherParam = dataFindIter2->second;
+					const GpuUniformBufferMemberInformation* otherParam = dataFindIter2->second;
 					if(!AreParamsEqual(curParam, *otherParam, true))
 					{
 						validParams[iter2->first] = false;
@@ -353,7 +353,7 @@ Map<String, String> DetermineParameterToBlockMapping(const Vector<SPtr<GpuProgra
 		const GpuProgramParameterDescription& curDesc = **iter;
 		for(auto iter2 = curDesc.UniformBufferMembers.begin(); iter2 != curDesc.UniformBufferMembers.end(); ++iter2)
 		{
-			const GpuDataParameterInformation& curParam = iter2->second;
+			const GpuUniformBufferMemberInformation& curParam = iter2->second;
 
 			auto iterFind = paramToParamBlock.find(curParam.Name);
 			if(iterFind != paramToParamBlock.end())
@@ -377,7 +377,7 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 {
 	UnorderedMap<ValidParamKey, String> validParams;
 
-	Map<String, const GpuDataParameterInformation*> validDataParameters = DetermineValidDataParameters(paramDescs);
+	Map<String, const GpuUniformBufferMemberInformation*> validDataParameters = DetermineValidDataParameters(paramDescs);
 	Vector<const GpuObjectParameterInformation*> validObjectParameters = DetermineValidObjectParameters(paramDescs);
 	Map<String, String> paramToParamBlockMap = DetermineParameterToBlockMapping(paramDescs);
 
@@ -402,14 +402,14 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 		auto findBlockIter = paramToParamBlockMap.find(iter->second.GpuVariableName);
 
 		if(findBlockIter == paramToParamBlockMap.end())
-			B3D_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to param block map but exists in valid param map.");
+			B3D_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to uniform buffer map but exists in valid param map.");
 
-		ValidParamKey key(iter->second.GpuVariableName, MaterialParams::ParamType::Data);
+		ValidParamKey key(iter->second.GpuVariableName, MaterialParameters::ParamType::Data);
 		validParams.insert(std::make_pair(key, iter->first));
 	}
 
 	// Create object param mappings
-	auto fnDetermineObjectMappings = [&](const Map<String, ShaderObjectParameterInformation>& params, MaterialParams::ParamType paramType)
+	auto fnDetermineObjectMappings = [&](const Map<String, ShaderObjectParameterInformation>& params, MaterialParameters::ParamType paramType)
 	{
 		for(auto iter = params.begin(); iter != params.end(); ++iter)
 		{
@@ -430,9 +430,9 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 		}
 	};
 
-	fnDetermineObjectMappings(textureParams, MaterialParams::ParamType::Texture);
-	fnDetermineObjectMappings(samplerParams, MaterialParams::ParamType::Sampler);
-	fnDetermineObjectMappings(bufferParams, MaterialParams::ParamType::Buffer);
+	fnDetermineObjectMappings(textureParams, MaterialParameters::ParamType::Texture);
+	fnDetermineObjectMappings(samplerParams, MaterialParameters::ParamType::Sampler);
+	fnDetermineObjectMappings(bufferParams, MaterialParameters::ParamType::Buffer);
 
 	return validParams;
 }
@@ -477,28 +477,28 @@ SPtr<render::GpuParameters> CreateGpuParameters<true>(const SPtr<GpuPipelinePara
 }
 
 template <bool IsRenderProxy>
-const u32 TGpuParamsSet<IsRenderProxy>::kNumStages = 6;
+const u32 TMaterialParameterAdapter<IsRenderProxy>::kNumStages = 6;
 
 template <bool IsRenderProxy>
-TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader, const SPtr<MaterialParamsType>& params)
-	: mPassParams(technique->GetPassCount()), mParamVersion(0)
+TMaterialParameterAdapter<IsRenderProxy>::TMaterialParameterAdapter(const SPtr<VariationType>& variation, const ShaderType& shader, const SPtr<MaterialParametersType>& materialParameters)
+	: mGPUParameterPerPass(variation->GetPassCount()), mParamVersion(0)
 {
-	const u32 passCount = technique->GetPassCount();
+	const u32 passCount = variation->GetPassCount();
 
 	// Create GpuParameters for each pass and shader stage
 	Vector<SPtr<GpuProgramParameterDescription>> allParameterDescriptions;
 	Vector<Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT>> parameterDescriptionsPerPass;
 	for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 	{
-		SPtr<PassType> curPass = technique->GetPass(passIndex);
+		SPtr<PassType> curPass = variation->GetPass(passIndex);
 
 		SPtr<GpuGraphicsPipelineState> gfxPipeline = curPass->GetGraphicsPipelineState();
 		if(gfxPipeline != nullptr)
-			mPassParams[passIndex] = CreateGpuParameters<IsRenderProxy>(gfxPipeline->GetParameterLayout());
+			mGPUParameterPerPass[passIndex] = CreateGpuParameters<IsRenderProxy>(gfxPipeline->GetParameterLayout());
 		else
 		{
 			SPtr<GpuComputePipelineState> computePipeline = curPass->GetComputePipelineState();
-			mPassParams[passIndex] = CreateGpuParameters<IsRenderProxy>(computePipeline->GetParameterLayout());
+			mGPUParameterPerPass[passIndex] = CreateGpuParameters<IsRenderProxy>(computePipeline->GetParameterLayout());
 		}
 
 		parameterDescriptionsPerPass.push_back(GatherParameterDescriptions(curPass));
@@ -509,9 +509,9 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 		}
 	}
 
-	// Create and assign parameter block buffers
+	// Create and assign uniform buffers
 	//// Fill out various helper structures
-	Vector<ShaderBlockDesc> paramBlockData = DetermineValidShareableParamBlocks(allParameterDescriptions, shader->GetParamBlocks());
+	Vector<ShaderUniformBuffer> uniformBufferData = DetermineValidShareableUniformBuffers(allParameterDescriptions, shader->GetParamBlocks());
 	UnorderedMap<ValidParamKey, String> validParams = DetermineValidParameters(
 		allParameterDescriptions,
 		shader->GetDataParams(),
@@ -519,39 +519,39 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 		shader->GetBufferParams(),
 		shader->GetSamplerParams());
 
-	Map<String, ParamBlockPtrType> paramBlockBuffers;
+	Map<String, UniformBufferPointerType> paramBlockBuffers;
 
-	//// Create param blocks
-	for(auto& paramBlock : paramBlockData)
+	//// Create uniform buffers
+	for(auto& paramBlock : uniformBufferData)
 	{
-		ParamBlockPtrType newParamBlockBuffer;
+		UniformBufferPointerType newParamBlockBuffer;
 		if(!paramBlock.External)
-			newParamBlockBuffer = CreateGpuBuffer<ParamBlockType>(GpuBufferCreateInformation::CreateUniform(paramBlock.Size, paramBlock.Flags | GpuBufferFlag::AllowWriteCachingOnCPU));
+			newParamBlockBuffer = CreateGpuBuffer<UniformBufferType>(GpuBufferCreateInformation::CreateUniform(paramBlock.Size, paramBlock.Flags | GpuBufferFlag::AllowWriteCachingOnCPU));
 
-		paramBlock.SequentialIdx = (u32)mBlocks.size();
+		paramBlock.SequentialIdx = (u32)mUniformBuffers.size();
 
 		paramBlockBuffers[paramBlock.Name] = newParamBlockBuffer;
-		mBlocks.push_back(BlockInfo(paramBlock.Name, paramBlock.Set, paramBlock.Slot, newParamBlockBuffer, true));
+		mUniformBuffers.push_back(UniformBufferInfo(paramBlock.Name, paramBlock.Set, paramBlock.Slot, newParamBlockBuffer, true));
 	}
 
-	//// Assign param block buffers and generate information about data parameters
+	//// Assign uniform buffers and generate information about data parameters
 	B3D_ASSERT(passCount < 64); // BlockInfo flags uses u64 for tracking usage
 	for(u32 i = 0; i < passCount; i++)
 	{
-		SPtr<GpuParamsType> paramPtr = mPassParams[i];
+		SPtr<GpuParametersType> paramPtr = mGPUParameterPerPass[i];
 		const Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT>& parameterDescriptionsForPass = parameterDescriptionsPerPass[i];
 
 		for(u32 j = 0; j < kNumStages; j++)
 		{
 			// Assign shareable buffers
-			for(auto& block : paramBlockData)
+			for(auto& buffer : uniformBufferData)
 			{
-				const String& paramBlockName = block.Name;
+				const String& paramBlockName = buffer.Name;
 				if(paramPtr->HasUniformBuffer(paramBlockName))
 				{
-					ParamBlockPtrType blockBuffer = paramBlockBuffers[paramBlockName];
+					UniformBufferPointerType uniformBuffer = paramBlockBuffers[paramBlockName];
 
-					paramPtr->SetUniformBuffer(paramBlockName, blockBuffer);
+					paramPtr->SetUniformBuffer(paramBlockName, uniformBuffer);
 				}
 			}
 
@@ -562,43 +562,43 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 
 			for(auto iterBlockDesc = desc->UniformBuffers.begin(); iterBlockDesc != desc->UniformBuffers.end(); ++iterBlockDesc)
 			{
-				const GpuDataParameterBlockInformation& blockDesc = iterBlockDesc->second;
+				const GpuUniformBufferInformation& uniformBufferInformation = iterBlockDesc->second;
 
 				u32 globalBlockIdx = (u32)-1;
-				if(!blockDesc.IsShareable)
+				if(!uniformBufferInformation.IsShareable)
 				{
-					ParamBlockPtrType newParamBlockBuffer = CreateGpuBuffer<ParamBlockType>(GpuBufferCreateInformation::CreateUniform(blockDesc.BlockSize * sizeof(u32)));
+					UniformBufferPointerType newParamBlockBuffer = CreateGpuBuffer<UniformBufferType>(GpuBufferCreateInformation::CreateUniform(uniformBufferInformation.BlockSize * sizeof(u32)));
 
-					globalBlockIdx = (u32)mBlocks.size();
+					globalBlockIdx = (u32)mUniformBuffers.size();
 
 					paramPtr->SetUniformBuffer(iterBlockDesc->first, newParamBlockBuffer);
-					mBlocks.emplace_back(iterBlockDesc->first, iterBlockDesc->second.Set, iterBlockDesc->second.Slot, newParamBlockBuffer, false);
+					mUniformBuffers.emplace_back(iterBlockDesc->first, iterBlockDesc->second.Set, iterBlockDesc->second.Slot, newParamBlockBuffer, false);
 				}
 				else
 				{
-					auto iterFind = std::find_if(paramBlockData.begin(), paramBlockData.end(), [&](const auto& x)
+					auto iterFind = std::find_if(uniformBufferData.begin(), uniformBufferData.end(), [&](const auto& x)
 												 { return x.Name == iterBlockDesc->first; });
 
-					if(iterFind != paramBlockData.end())
+					if(iterFind != uniformBufferData.end())
 						globalBlockIdx = iterFind->SequentialIdx;
 				}
 
-				// If this parameter block is valid, create data/struct mappings for it
+				// If this uniform buffer is valid, create data/struct mappings for it
 				if(globalBlockIdx == (u32)-1)
 					continue;
 
 				for(auto& dataParam : desc->UniformBufferMembers)
 				{
-					if(dataParam.second.ParentUniformBufferSet != blockDesc.Set || dataParam.second.ParentUniformBufferSlot != blockDesc.Slot)
+					if(dataParam.second.ParentUniformBufferSet != uniformBufferInformation.Set || dataParam.second.ParentUniformBufferSlot != uniformBufferInformation.Slot)
 						continue;
 
-					ValidParamKey key(dataParam.first, MaterialParams::ParamType::Data);
+					ValidParamKey key(dataParam.first, MaterialParameters::ParamType::Data);
 
 					auto iterFind = validParams.find(key);
 					if(iterFind == validParams.end())
 						continue;
 
-					u32 paramIdx = params->GetParamIndex(iterFind->second);
+					u32 paramIdx = materialParameters->GetParamIndex(iterFind->second);
 
 					// Parameter shouldn't be in the valid parameter list if it cannot be found
 					B3D_ASSERT(paramIdx != (u32)-1);
@@ -619,13 +619,13 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 	auto& allParamBlocks = shader->GetParamBlocks();
 	for(auto& entry : allParamBlocks)
 	{
-		auto iterFind = std::find_if(mBlocks.begin(), mBlocks.end(), [&](auto& x)
+		auto iterFind = std::find_if(mUniformBuffers.begin(), mUniformBuffers.end(), [&](auto& x)
 									 { return x.Name == entry.first; });
 
-		if(iterFind == mBlocks.end())
+		if(iterFind == mUniformBuffers.end())
 		{
-			mBlocks.push_back(BlockInfo(entry.first, 0, 0, nullptr, true));
-			mBlocks.back().IsUsed = false;
+			mUniformBuffers.push_back(UniformBufferInfo(entry.first, 0, 0, nullptr, true));
+			mUniformBuffers.back().IsUsed = false;
 		}
 	}
 
@@ -643,12 +643,12 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 		u32* stageOffsets = offsets;
 		for(u32 i = 0; i < passCount; i++)
 		{
-			SPtr<GpuParamsType> paramPtr = mPassParams[i];
+			SPtr<GpuParametersType> paramPtr = mGPUParameterPerPass[i];
 			const Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT>& parameterDescriptionsForPass = parameterDescriptionsPerPass[i];
 			for(u32 j = 0; j < kNumStages; j++)
 			{
 				auto fnProcessObjectParams = [&](const Map<String, GpuObjectParameterInformation>& gpuParams,
-											   u32 stageIndex, MaterialParams::ParamType paramType)
+											   u32 stageIndex, MaterialParameters::ParamType paramType)
 				{
 					for(auto& param : gpuParams)
 					{
@@ -659,10 +659,10 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 							continue;
 
 						u32 paramIndex;
-						auto result = params->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIndex);
+						auto result = materialParameters->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIndex);
 
 						// Parameter shouldn't be in the valid parameter list if it cannot be found
-						B3D_ASSERT(result == MaterialParams::GetParamResult::Success);
+						B3D_ASSERT(result == MaterialParameters::GetParamResult::Success);
 
 						objParamInfos.push_back(ObjectParamInfo());
 						ObjectParamInfo& paramInfo = objParamInfos.back();
@@ -682,20 +682,20 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 					continue;
 				}
 
-				fnProcessObjectParams(desc->SampledTextures, 0, MaterialParams::ParamType::Texture);
-				fnProcessObjectParams(desc->StorageTextures, 1, MaterialParams::ParamType::Texture);
-				fnProcessObjectParams(desc->Buffers, 2, MaterialParams::ParamType::Buffer);
-				fnProcessObjectParams(desc->Samplers, 3, MaterialParams::ParamType::Sampler);
+				fnProcessObjectParams(desc->SampledTextures, 0, MaterialParameters::ParamType::Texture);
+				fnProcessObjectParams(desc->StorageTextures, 1, MaterialParameters::ParamType::Texture);
+				fnProcessObjectParams(desc->Buffers, 2, MaterialParameters::ParamType::Buffer);
+				fnProcessObjectParams(desc->Samplers, 3, MaterialParameters::ParamType::Sampler);
 
 				stageOffsets += 4;
 			}
 		}
 
 		// Transfer all objects into their permanent storage
-		u32 numBlocks = (u32)mBlocks.size();
-		u32 blockBindingsSize = numBlocks * passCount * sizeof(PassBlockBindings);
+		u32 bufferCount = (u32)mUniformBuffers.size();
+		u32 uniformBufferBindingsSize = bufferCount * passCount * sizeof(PassUniformBufferBindings);
 		u32 objectParamInfosSize = totalNumObjects * sizeof(ObjectParamInfo) + passCount * sizeof(PassParamInfo);
-		mData = (u8*)B3DAllocate(objectParamInfosSize + blockBindingsSize);
+		mData = (u8*)B3DAllocate(objectParamInfosSize + uniformBufferBindingsSize);
 		u8* dataIter = mData;
 
 		mPassParamInfos = (PassParamInfo*)dataIter;
@@ -761,40 +761,40 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 		}
 
 		// Determine on which passes & stages are buffers used on
-		for(auto& block : mBlocks)
+		for(auto& uniformBuffer : mUniformBuffers)
 		{
-			block.PassData = (PassBlockBindings*)dataIter;
-			dataIter += sizeof(PassBlockBindings) * passCount;
+			uniformBuffer.PassData = (PassUniformBufferBindings*)dataIter;
+			dataIter += sizeof(PassUniformBufferBindings) * passCount;
 		}
 
-		for(auto& block : mBlocks)
+		for(auto& uniformBuffer : mUniformBuffers)
 		{
 			for(u32 i = 0; i < passCount; i++)
 			{
-				SPtr<GpuParamsType> paramPtr = mPassParams[i];
+				SPtr<GpuParametersType> paramPtr = mGPUParameterPerPass[i];
 				const Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT>& parameterDescriptionsForPass = parameterDescriptionsPerPass[i];
 				for(u32 j = 0; j < kNumStages; j++)
 				{
 					SPtr<GpuProgramParameterDescription> curDesc = parameterDescriptionsForPass[j];
 					if(curDesc == nullptr)
 					{
-						block.PassData[i].Bindings[j].Set = -1;
-						block.PassData[i].Bindings[j].Slot = -1;
+						uniformBuffer.PassData[i].Bindings[j].Set = -1;
+						uniformBuffer.PassData[i].Bindings[j].Slot = -1;
 
 						continue;
 					}
 
-					auto iterFind = curDesc->UniformBuffers.find(block.Name);
+					auto iterFind = curDesc->UniformBuffers.find(uniformBuffer.Name);
 					if(iterFind == curDesc->UniformBuffers.end())
 					{
-						block.PassData[i].Bindings[j].Set = -1;
-						block.PassData[i].Bindings[j].Slot = -1;
+						uniformBuffer.PassData[i].Bindings[j].Set = -1;
+						uniformBuffer.PassData[i].Bindings[j].Slot = -1;
 
 						continue;
 					}
 
-					block.PassData[i].Bindings[j].Set = iterFind->second.Set;
-					block.PassData[i].Bindings[j].Slot = iterFind->second.Slot;
+					uniformBuffer.PassData[i].Bindings[j].Set = iterFind->second.Set;
+					uniformBuffer.PassData[i].Bindings[j].Slot = iterFind->second.Slot;
 				}
 			}
 		}
@@ -805,28 +805,28 @@ TGpuParamsSet<IsRenderProxy>::TGpuParamsSet(const SPtr<TechniqueType>& technique
 }
 
 template <bool IsRenderProxy>
-TGpuParamsSet<IsRenderProxy>::~TGpuParamsSet()
+TMaterialParameterAdapter<IsRenderProxy>::~TMaterialParameterAdapter()
 {
 	// All allocations share the same memory, so we just clear it all at once
 	B3DFree(mData);
 }
 
 template <bool IsRenderProxy>
-SPtr<typename TGpuParamsSet<IsRenderProxy>::GpuParamsType> TGpuParamsSet<IsRenderProxy>::GetGpuParams(u32 passIndex)
+SPtr<typename TMaterialParameterAdapter<IsRenderProxy>::GpuParametersType> TMaterialParameterAdapter<IsRenderProxy>::GetGpuParameters(u32 passIndex)
 {
-	if(passIndex >= mPassParams.size())
+	if(passIndex >= mGPUParameterPerPass.size())
 		return nullptr;
 
-	return mPassParams[passIndex];
+	return mGPUParameterPerPass[passIndex];
 }
 
 template <bool IsRenderProxy>
-u32 TGpuParamsSet<IsRenderProxy>::GetParamBlockBufferIndex(const String& name) const
+u32 TMaterialParameterAdapter<IsRenderProxy>::GetUniformBufferIndex(const String& name) const
 {
-	for(u32 i = 0; i < (u32)mBlocks.size(); i++)
+	for(u32 i = 0; i < (u32)mUniformBuffers.size(); i++)
 	{
-		const BlockInfo& block = mBlocks[i];
-		if(block.Name == name)
+		const UniformBufferInfo& uniformBuffer = mUniformBuffers[i];
+		if(uniformBuffer.Name == name)
 			return i;
 	}
 
@@ -834,58 +834,58 @@ u32 TGpuParamsSet<IsRenderProxy>::GetParamBlockBufferIndex(const String& name) c
 }
 
 template <bool IsRenderProxy>
-void TGpuParamsSet<IsRenderProxy>::SetParamBlockBuffer(u32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate)
+void TMaterialParameterAdapter<IsRenderProxy>::SetUniformBuffer(u32 index, const UniformBufferPointerType& buffer, bool ignoreInUpdate)
 {
-	BlockInfo& blockInfo = mBlocks[index];
-	if(!blockInfo.Shareable)
+	UniformBufferInfo& uniformBufferInfo = mUniformBuffers[index];
+	if(!uniformBufferInfo.Shareable)
 	{
-		B3D_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". "
+		B3D_LOG(Error, RenderBackend, "Cannot set uniform buffer with the name \"{0}\". "
 									 "Buffer is not assignable. ",
-			   blockInfo.Name);
+			   uniformBufferInfo.Name);
 		return;
 	}
 
-	if(!blockInfo.IsUsed)
+	if(!uniformBufferInfo.IsUsed)
 		return;
 
-	blockInfo.AllowUpdate = !ignoreInUpdate;
+	uniformBufferInfo.AllowUpdate = !ignoreInUpdate;
 
-	if(blockInfo.Buffer != paramBlock)
+	if(uniformBufferInfo.Buffer != buffer)
 	{
-		blockInfo.Buffer = paramBlock;
+		uniformBufferInfo.Buffer = buffer;
 
-		u32 numPasses = (u32)mPassParams.size();
+		u32 numPasses = (u32)mGPUParameterPerPass.size();
 		for(u32 j = 0; j < numPasses; j++)
 		{
-			SPtr<GpuParamsType> paramPtr = mPassParams[j];
+			SPtr<GpuParametersType> paramPtr = mGPUParameterPerPass[j];
 			for(u32 i = 0; i < kNumStages; i++)
 			{
 				GpuProgramType progType = (GpuProgramType)i;
 
-				const BlockBinding& binding = blockInfo.PassData[j].Bindings[progType];
+				const UniformBufferBinding& binding = uniformBufferInfo.PassData[j].Bindings[progType];
 
 				if(binding.Slot != (u32)-1)
-					paramPtr->SetUniformBuffer(binding.Set, binding.Slot, paramBlock);
+					paramPtr->SetUniformBuffer(binding.Set, binding.Slot, buffer);
 			}
 		}
 	}
 }
 
 template <bool IsRenderProxy>
-void TGpuParamsSet<IsRenderProxy>::SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate)
+void TMaterialParameterAdapter<IsRenderProxy>::SetUniformBuffer(const String& name, const UniformBufferPointerType& buffer, bool ignoreInUpdate)
 {
-	u32 bufferIdx = GetParamBlockBufferIndex(name);
+	u32 bufferIdx = GetUniformBufferIndex(name);
 	if(bufferIdx == (u32)-1)
 	{
-		B3D_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ", name);
+		B3D_LOG(Error, RenderBackend, "Cannot set uniform buffer with the name \"{0}\". Buffer name not found. ", name);
 		return;
 	}
 
-	SetParamBlockBuffer(bufferIdx, paramBlock, ignoreInUpdate);
+	SetUniformBuffer(bufferIdx, buffer, ignoreInUpdate);
 }
 
 template <bool IsRenderProxy>
-void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params, float t, bool updateAll)
+void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& material, float t, bool updateAll)
 {
 	// Note: Instead of iterating over every single parameter, it might be more efficient for @p params to keep
 	// a ring buffer and a version number. Then we could just iterate over the ring buffer and only access dirty
@@ -893,21 +893,22 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 
 	const SPtr<GpuDevice>& device = GetApplication().GetPrimaryGpuDevice();
 	const GpuBackendConventions& gpuBackendConventions = device->GetCapabilities().Conventions;
+	const SPtr<MaterialParametersType>& materialParameters = material->GetMaterialParameters();
 
 	// Update data params
 	for(auto& paramInfo : mDataParamInfos)
 	{
-		ParamBlockPtrType paramBlock = mBlocks[paramInfo.BlockIdx].Buffer;
-		if(paramBlock == nullptr || !mBlocks[paramInfo.BlockIdx].AllowUpdate)
+		UniformBufferPointerType paramBlock = mUniformBuffers[paramInfo.BlockIdx].Buffer;
+		if(paramBlock == nullptr || !mUniformBuffers[paramInfo.BlockIdx].AllowUpdate)
 			continue;
 
-		const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
+		const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
 		u32 arraySize = materialParamInfo->ArraySize == 0 ? 1 : materialParamInfo->ArraySize;
 
 		bool isAnimated = false;
 		for(u32 i = 0; i < arraySize; i++)
 		{
-			isAnimated = params->IsAnimated(*materialParamInfo, i);
+			isAnimated = materialParameters->IsAnimated(*materialParamInfo, i);
 			if(isAnimated)
 				break;
 		}
@@ -925,7 +926,7 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 			else
 				paramSize = paramInfo.ArrayStride * typeInfo.BaseTypeSize;
 
-			u8* data = params->GetData(materialParamInfo->Index);
+			u8* data = materialParameters->GetData(materialParamInfo->Index);
 			if(!isAnimated)
 			{
 				const bool transposeMatrices = gpuBackendConventions.MatrixOrder == GpuBackendConventions::MatrixOrder::ColumnMajor;
@@ -1034,9 +1035,9 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 						u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 
 						float value;
-						if(params->IsAnimated(*materialParamInfo, i))
+						if(materialParameters->IsAnimated(*materialParamInfo, i))
 						{
-							const TAnimationCurve<float>& curve = params->template GetCurveParam<float>(*materialParamInfo, i);
+							const TAnimationCurve<float>& curve = materialParameters->template GetCurveParam<float>(*materialParamInfo, i);
 
 							value = curve.Evaluate(t, true);
 						}
@@ -1051,7 +1052,7 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 					B3D_ASSERT(paramSize == sizeof(Area2));
 
 					CoreVariantHandleType<SpriteImage, IsRenderProxy> spriteImage =
-						params->GetOwningSpriteImage(*materialParamInfo);
+						materialParameters->GetOwningSpriteImage(*materialParamInfo);
 
 					u32 writeOffset = paramInfo.Offset * sizeof(u32);
 					Area2 uv = Area2(0.0f, 0.0f, 1.0f, 1.0f);
@@ -1079,9 +1080,9 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 						u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 
 						Color value;
-						if(params->IsAnimated(*materialParamInfo, i))
+						if(materialParameters->IsAnimated(*materialParamInfo, i))
 						{
-							const ColorGradientHDR& gradient = params->GetColorGradientParam(*materialParamInfo, i);
+							const ColorGradientHDR& gradient = materialParameters->GetColorGradientParam(*materialParamInfo, i);
 
 							const float wrappedT = Math::Repeat(t, gradient.GetDuration());
 							value = gradient.Evaluate(wrappedT);
@@ -1096,11 +1097,11 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 		}
 		else
 		{
-			u32 paramSize = params->GetStructSize(*materialParamInfo);
+			u32 paramSize = materialParameters->GetStructSize(*materialParamInfo);
 			void* paramData = B3DStackAllocate(paramSize);
 			for(u32 i = 0; i < arraySize; i++)
 			{
-				params->GetStructData(*materialParamInfo, paramData, paramSize, i);
+				materialParameters->GetStructData(*materialParamInfo, paramData, paramSize, i);
 
 				u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 				paramBlock->WriteCached(writeOffset, paramSize, paramData);
@@ -1110,11 +1111,11 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 	}
 
 	// Update object params
-	const auto numPasses = (u32)mPassParams.size();
+	const auto numPasses = (u32)mGPUParameterPerPass.size();
 
 	for(u32 i = 0; i < numPasses; i++)
 	{
-		SPtr<GpuParamsType> paramPtr = mPassParams[i];
+		SPtr<GpuParametersType> paramPtr = mGPUParameterPerPass[i];
 
 		for(u32 j = 0; j < kNumStages; j++)
 		{
@@ -1124,13 +1125,13 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.SampledTextures[k];
 
-				const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				TextureSurface surface;
 				TextureType texture;
-				params->GetTexture(*materialParamInfo, texture, surface);
+				materialParameters->GetTexture(*materialParamInfo, texture, surface);
 
 				paramPtr->SetSampledTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface, 0);
 			}
@@ -1139,13 +1140,13 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.StorageTextures[k];
 
-				const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				TextureSurface surface;
 				TextureType texture;
-				params->GetStorageTexture(*materialParamInfo, texture, surface);
+				materialParameters->GetStorageTexture(*materialParamInfo, texture, surface);
 
 				paramPtr->SetStorageTexture(paramInfo.SetIdx, paramInfo.SlotIdx,texture, surface, 0);
 			}
@@ -1154,12 +1155,12 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.Buffers[k];
 
-				const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				BufferType buffer;
-				params->GetBuffer(*materialParamInfo, buffer);
+				materialParameters->GetBuffer(*materialParamInfo, buffer);
 
 				paramPtr->SetStorageBuffer(paramInfo.SetIdx, paramInfo.SlotIdx, buffer, 0);
 			}
@@ -1168,12 +1169,12 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.SamplerStates[k];
 
-				const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				SPtr<SamplerState> samplerState;
-				params->GetSamplerState(*materialParamInfo, samplerState);
+				materialParameters->GetSamplerState(*materialParamInfo, samplerState);
 
 				paramPtr->SetSamplerState(paramInfo.SetIdx, paramInfo.SlotIdx, samplerState, 0);
 			}
@@ -1182,8 +1183,8 @@ void TGpuParamsSet<IsRenderProxy>::Update(const SPtr<MaterialParamsType>& params
 		paramPtr->MarkRenderProxyDataDirtyInternal();
 	}
 
-	mParamVersion = params->GetParamVersion();
+	mParamVersion = materialParameters->GetParamVersion();
 }
 
-template class TGpuParamsSet<false>;
-template class TGpuParamsSet<true>;
+template class TMaterialParameterAdapter<false>;
+template class TMaterialParameterAdapter<true>;

@@ -141,13 +141,13 @@ namespace b3d
 		virtual void Initialize();
 
 		/** Destroys the render thread material. */
-		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::GpuParamsSet>& withClippingParams, const SPtr<render::GpuParamsSet>& withoutClippingParams);
+		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::MaterialParameterAdapter>& withClippingParams, const SPtr<render::MaterialParameterAdapter>& withoutClippingParams);
 
 		struct MaterialVariationInformation
 		{
 			u32 VariationIndex = ~0u;
 			u32 UniformBufferIndex = ~0u;
-			SPtr<render::GpuParamsSet> ParameterSet;
+			SPtr<render::MaterialParameterAdapter> ParameterSet;
 
 			TGpuParameterBuffer<true> VerticesBufferParameter;
 			TGpuParameterBuffer<true> ClipRegionsBufferParameter;

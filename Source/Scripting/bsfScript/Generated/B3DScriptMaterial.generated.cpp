@@ -154,7 +154,7 @@ namespace b3d
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetVariation();
+		*tmp__output = static_cast<Material*>(self->GetNativeObject())->GetVariationParameters();
 
 		MonoObject* __output;
 		__output = ScriptShaderVariationParameters::GetOrCreateScriptObject(tmp__output);

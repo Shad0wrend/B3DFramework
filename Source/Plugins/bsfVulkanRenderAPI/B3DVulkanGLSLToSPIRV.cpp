@@ -454,7 +454,7 @@ static GpuBufferFormat SPIRVCrossTypeToBufferFormat(const spirv_cross::SPIRType&
 }
 
 /** Parses a single struct member from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static TOptional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_cross::Compiler& compiler, const spirv_cross::SPIRType& structType, u32 memberIndex, StringStream& outLog)
+static TOptional<GpuUniformBufferMemberInformation> ParseSPIRVCrossStructMember(spirv_cross::Compiler& compiler, const spirv_cross::SPIRType& structType, u32 memberIndex, StringStream& outLog)
 {
 	const spirv_cross::SPIRType& memberType = compiler.get_type(structType.member_types[memberIndex]);
 	u32 memberSize = (u32)compiler.get_declared_struct_member_size(structType, memberIndex);
@@ -482,7 +482,7 @@ static TOptional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_
 
 	const std::string& name = compiler.get_member_name(structType.self, memberIndex);
 
-	GpuDataParameterInformation memberInformation;
+	GpuUniformBufferMemberInformation memberInformation;
 	memberInformation.Name = name;
 	memberInformation.Type = SPIRVCrossTypeToGpuDataParameterType(memberType);
 	memberInformation.ParentUniformBufferSet = 0; // Must be assigned by the caller
@@ -503,7 +503,7 @@ static TOptional<GpuDataParameterInformation> ParseSPIRVCrossStructMember(spirv_
 }
 
 /** Parses a uniform buffer uniform from a SPIRVCross type. Returns null if parsing failed and logs an error into the provided log stream, otherwise returns the parsed data. */
-static TOptional<GpuDataParameterBlockInformation> ParseSPIRVCrossUniformBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
+static TOptional<GpuUniformBufferInformation> ParseSPIRVCrossUniformBuffer(spirv_cross::Compiler& compiler, const spirv_cross::Resource& resource, StringStream& outLog)
 {
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationBinding))
 	{
@@ -520,7 +520,7 @@ static TOptional<GpuDataParameterBlockInformation> ParseSPIRVCrossUniformBuffer(
 	const spirv_cross::SPIRType& type = compiler.get_type(resource.base_type_id);
 	const u32 bufferSize = (u32)compiler.get_declared_struct_size(type);
 
-	GpuDataParameterBlockInformation uniformBufferInformation;
+	GpuUniformBufferInformation uniformBufferInformation;
 	uniformBufferInformation.Name = resource.name;
 	uniformBufferInformation.BlockSize = Math::CeilToMultiple(bufferSize / 4u, 4u); // Round to multiple of 16 bytes
 	uniformBufferInformation.IsShareable = true;
@@ -715,7 +715,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 	const spirv_cross::ShaderResources& sprivResources = compiler.get_shader_resources();
 	for(const auto& resource : sprivResources.uniform_buffers)
 	{
-		TOptional<GpuDataParameterBlockInformation> uniformBufferInformation = ParseSPIRVCrossUniformBuffer(compiler, resource, outLog);
+		TOptional<GpuUniformBufferInformation> uniformBufferInformation = ParseSPIRVCrossUniformBuffer(compiler, resource, outLog);
 		if(!uniformBufferInformation)
 			continue;
 
@@ -723,7 +723,7 @@ static void ParseSPIRVCrossUniforms(spirv_cross::Compiler& compiler, GpuProgramP
 		const u32 memberCount = (u32)type.member_types.size();
 		for(u32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 		{
-			TOptional<GpuDataParameterInformation> memberInformation = ParseSPIRVCrossStructMember(compiler, type, memberIndex, outLog);
+			TOptional<GpuUniformBufferMemberInformation> memberInformation = ParseSPIRVCrossStructMember(compiler, type, memberIndex, outLog);
 			if(!memberInformation)
 				continue;
 
