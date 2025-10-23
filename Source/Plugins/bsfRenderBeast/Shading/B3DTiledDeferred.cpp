@@ -136,10 +136,8 @@ void TextureArrayToMSAATexture::Initialize()
 	mGPUParameters->GetSampledTextureParameter("gInput", mInputParam);
 }
 
-void TextureArrayToMSAATexture::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
+void TextureArrayToMSAATexture::Prepare(const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
 {
-	B3D_PROFILE_RENDERER_MATERIAL
-
 	const TextureProperties& inputProps = inputArray->GetProperties();
 	const TextureProperties& targetProps = target->GetProperties();
 
@@ -148,6 +146,13 @@ void TextureArrayToMSAATexture::Execute(GpuCommandBuffer& commandBuffer, const S
 	B3D_ASSERT(inputProps.Height == targetProps.Height);
 
 	mInputParam.Set(inputArray);
+}
+
+void TextureArrayToMSAATexture::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target)
+{
+	B3D_PROFILE_RENDERER_MATERIAL
+
+	const TextureProperties& targetProps = target->GetProperties();
 
 	Bind(commandBuffer);
 

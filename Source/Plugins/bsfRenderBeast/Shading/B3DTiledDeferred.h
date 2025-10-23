@@ -83,8 +83,11 @@ namespace b3d
 			TextureArrayToMSAATexture() = default;
 			void Initialize() override;
 
+			/** Prepares the material for rendering by setting up parameter. Must be called at least once before Execute. */
+			void Prepare(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
+
 			/** Binds the material for rendering, sets up parameters and executes it. */
-			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target);
 
 		private:
 			GpuParameterSampledTexture mInputParam;

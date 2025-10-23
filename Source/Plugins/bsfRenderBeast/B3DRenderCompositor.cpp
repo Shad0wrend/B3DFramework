@@ -469,7 +469,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 
 	// Clear the GBuffer
-	commandBuffer.BeginRenderPass(RenderTarget);
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget));
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -656,13 +656,15 @@ void RCNodeSceneColor::Clear()
 
 void RCNodeSceneColor::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
-	commandBuffer.BeginRenderPass(RenderTarget, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
+	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
+	material->Prepare(SceneColorTexArray->Texture, SceneColorTex->Texture);
+
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
 
-	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
-	material->Execute(commandBuffer, SceneColorTexArray->Texture, SceneColorTex->Texture);
+	material->Execute(commandBuffer, SceneColorTex->Texture);
 
 	commandBuffer.EndRenderPass();
 	SceneColorTexArray = nullptr;
@@ -910,10 +912,12 @@ void RCNodeLightAccumulation::Render(const RenderCompositorNodeInputs& inputs)
 
 void RCNodeLightAccumulation::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
-	commandBuffer.BeginRenderPass(RenderTarget, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
-
 	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
-	material->Execute(commandBuffer, LightAccumulationTexArray->Texture, LightAccumulationTex->Texture);
+	material->Prepare(LightAccumulationTexArray->Texture, LightAccumulationTex->Texture);
+	
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
+
+	material->Execute(commandBuffer, LightAccumulationTex->Texture);
 
 	commandBuffer.EndRenderPass();
 }
@@ -1140,7 +1144,7 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 
 		SPtr<RenderTexture> rt = RenderTexture::Create(rtDesc);
 
-		commandBuffer.BeginRenderPass(rt);
+		commandBuffer.BeginRenderPass(RenderPassCreateInformation(rt));
 		commandBuffer.ClearRenderTarget(FBT_DEPTH);
 		GetRendererUtility().Clear(commandBuffer, -1);
 		commandBuffer.EndRenderPass();
@@ -1666,9 +1670,10 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	SPtr<Texture> radiance = skybox ? skybox->GetTexture() : nullptr;
 
+	SkyboxMat* material;
 	if(radiance != nullptr)
 	{
-		SkyboxMat* material = SkyboxMat::GetVariation(false);
+		material = SkyboxMat::GetVariation(false);
 		material->Bind(commandBuffer, inputs.View.GetPerViewBuffer(), radiance, Color::kWhite);
 	}
 	else
@@ -1676,7 +1681,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 		// Cancel out the linear->SRGB conversion
 		Color clearColor = inputs.View.GetProperties().Target.ClearColor.GetLinear();
 
-		SkyboxMat* material = SkyboxMat::GetVariation(true);
+		material = SkyboxMat::GetVariation(true);
 		material->Bind(commandBuffer, inputs.View.GetPerViewBuffer(), nullptr, clearColor);
 	}
 
@@ -1686,7 +1691,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	// Ensure the scene color texture can be used as a color attachment, as previously it was written by a shader
 	commandBuffer.IssueBarriers(GpuTextureBarrier(sceneColorNode->SceneColorTex->Texture, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Read | GpuAccessFlag::Write));
 
-	commandBuffer.BeginRenderPass(sceneColorNode->RenderTarget, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(sceneColorNode->RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL));
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -1728,21 +1733,21 @@ void RCNodeFinalResolve::Render(const RenderCompositorNodeInputs& inputs)
 	SPtr<RenderTarget> target = viewProps.Target.Target;
 
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
-	commandBuffer.BeginRenderPass(target);
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target));
 	commandBuffer.SetViewport(viewProps.Target.NrmViewRect);
 
 	GetRendererUtility().Blit(commandBuffer, input, Area2I::kEmpty, viewProps.FlipView);
+
+	commandBuffer.EndRenderPass();
 
 	if(viewProps.EncodeDepth)
 	{
 		RCNodeResolvedSceneDepth* resolvedSceneDepthNode = dependencies.Get<RCNodeResolvedSceneDepth>();
 
-		EncodeDepthMat* encodeDepthMat = EncodeDepthMat::Get();
+		EncodeDepthMat* const encodeDepthMat = EncodeDepthMat::Get();
 		encodeDepthMat->Prepare(resolvedSceneDepthNode->Output->Texture, viewProps.DepthEncodeNear, viewProps.DepthEncodeFar);
 		encodeDepthMat->Execute(commandBuffer, target);
 	}
-
-	commandBuffer.EndRenderPass();
 
 	// Trigger overlay callbacks
 	Camera* sceneCamera = inputs.View.GetSceneCamera();
