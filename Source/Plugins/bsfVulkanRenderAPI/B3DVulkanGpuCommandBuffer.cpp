@@ -435,10 +435,10 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 	// aware to pick the correct layout
 	if(mFramebuffer)
 	{
-		mResourceTracker.TrackFramebufferUse(mFramebuffer, loadMask, readOnlyMask);
+		mResourceTracker.TrackFramebufferUsage(mFramebuffer, loadMask, readOnlyMask);
 
 		if(swapChain)
-			mResourceTracker.TrackSwapChainUse(swapChain);
+			mResourceTracker.TrackSwapChainUsage(swapChain);
 	}
 
 	// Pre-register all GPU parameters before the render pass, so we can automatically issue barriers
@@ -636,7 +636,7 @@ void VulkanGpuCommandBuffer::WriteTimestamp(GpuQueryId query, const SPtr<GpuQuer
 	VulkanGpuQueryPool* vulkanQueryPool = static_cast<VulkanGpuQueryPool*>(queryPool.get());
 	vkCmdWriteTimestamp(mCommandBufferHandle, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, vulkanQueryPool->GetVulkanHandle(), query.Id);
 
-	mResourceTracker.TrackResourceUse(vulkanQueryPool, GpuAccessFlag::Write);
+	mResourceTracker.TrackResourceUsage(vulkanQueryPool, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::BeginQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool, GpuQueryFlags flags)
@@ -650,7 +650,7 @@ void VulkanGpuCommandBuffer::BeginQuery(GpuQueryId query, const SPtr<GpuQueryPoo
 	mOpenQueries.emplace_back(IsInRenderPass(), queryPool->GetQueryType(), (u64)queryPool.get());
 #endif
 
-	mResourceTracker.TrackResourceUse(vulkanQueryPool, GpuAccessFlag::Write);
+	mResourceTracker.TrackResourceUsage(vulkanQueryPool, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::EndQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool)
@@ -670,7 +670,7 @@ void VulkanGpuCommandBuffer::EndQuery(GpuQueryId query, const SPtr<GpuQueryPool>
 	}
 #endif
 
-	mResourceTracker.TrackResourceUse(vulkanQueryPool, GpuAccessFlag::Write);
+	mResourceTracker.TrackResourceUsage(vulkanQueryPool, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::ResetQueries(const SPtr<GpuQueryPool>& queryPool)
@@ -682,7 +682,7 @@ void VulkanGpuCommandBuffer::ResetQueries(const SPtr<GpuQueryPool>& queryPool)
 	vkCmdResetQueryPool(mCommandBufferHandle, vulkanQueryPool->GetVulkanHandle(), 0, vulkanQueryPool->GetPoolSize());
 
 	vulkanQueryPool->NotifyPoolReset();
-	mResourceTracker.TrackResourceUse(vulkanQueryPool, GpuAccessFlag::Write);
+	mResourceTracker.TrackResourceUsage(vulkanQueryPool, GpuAccessFlag::Write);
 }
 
 void VulkanGpuCommandBuffer::SetDrawOperation(DrawOperationType drawOperation)
@@ -895,7 +895,7 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 		if(pipeline == nullptr)
 			return;
 
-		mResourceTracker.TrackResourceUse(pipeline, GpuAccessFlag::Read);
+		mResourceTracker.TrackResourceUsage(pipeline, GpuAccessFlag::Read);
 		mComputePipeline->RegisterShaderModuleResources(mResourceTracker);
 
 		vkCmdBindPipeline(mCommandBufferHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVulkanHandle());
@@ -1701,7 +1701,7 @@ bool VulkanGpuCommandBuffer::BindGraphicsPipeline()
 	}
 
 	mGraphicsPipeline->RegisterShaderModuleResources(mResourceTracker);
-	mResourceTracker.TrackResourceUse(pipeline, GpuAccessFlag::Read);
+	mResourceTracker.TrackResourceUsage(pipeline, GpuAccessFlag::Read);
 
 	vkCmdBindPipeline(mCommandBufferHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVulkanHandle());
 	BindDynamicStates(true);
@@ -1917,7 +1917,7 @@ void VulkanGpuCommandBuffer::SetEvent(VulkanEvent* event)
 	else
 		vkCmdSetEvent(mCommandBufferHandle, event->GetVulkanHandle(), VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
-	mResourceTracker.TrackResourceUse(event, GpuAccessFlag::Read);
+	mResourceTracker.TrackResourceUsage(event, GpuAccessFlag::Read);
 }
 
 void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length)

@@ -303,7 +303,7 @@ void VulkanGpuGraphicsPipelineState::RegisterShaderModuleResources(VulkanResourc
 			VulkanShaderModule* module = entry->GetVulkanResource();
 
 			if(module != nullptr)
-				resourceTracker.TrackResourceUse(module, GpuAccessFlag::Read);
+				resourceTracker.TrackResourceUsage(module, GpuAccessFlag::Read);
 		}
 	}
 }
@@ -510,6 +510,6 @@ void VulkanGpuComputePipelineState::RegisterShaderModuleResources(VulkanResource
 		VulkanShaderModule* module = program->GetVulkanResource();
 
 		if(module != nullptr)
-			resourceTracker.TrackResourceUse(module, GpuAccessFlag::Read);
+			resourceTracker.TrackResourceUsage(module, GpuAccessFlag::Read);
 	}
 }

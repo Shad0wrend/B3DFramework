@@ -135,6 +135,9 @@ namespace b3d
 			/** Converts all bits set in VkPipelineStageFlagFlags into a list readable pipeline names that will be appended to @p output, using "|" as separator. */
 			static void GetPipelineStageNames(VkPipelineStageFlags stages, StringStream& output);
 
+			/** Converts a VkImageLayout enum value to a readable string representing the layout name. */
+			static const char* GetImageLayoutName(VkImageLayout layout);
+
 			/** Converts resource use flag and access flag combination into VkAccessFlags. */
 			static VkAccessFlags GetAccessMaskFromUsage(GpuResourceUseFlags usage, GpuAccessFlags access);
 

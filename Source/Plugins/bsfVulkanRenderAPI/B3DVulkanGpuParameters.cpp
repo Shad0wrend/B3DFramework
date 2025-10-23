@@ -872,7 +872,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 				continue;
 
 			// Register with command buffer
-			resourceTracker.TrackResourceUse(resource, GpuAccessFlag::Read);
+			resourceTracker.TrackResourceUsage(resource, GpuAccessFlag::Read);
 
 			// Check if internal resource changed from what was previously bound in the descriptor set
 			B3D_ASSERT(perDeviceData.Samplers[sequentialResourceIndex] != VK_NULL_HANDLE);
@@ -1108,7 +1108,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 	{
 		VulkanDescriptorSet* set = perDeviceData.PerSetData[i].LastUsedSet;
 
-		resourceTracker.TrackResourceUse(set, GpuAccessFlag::Read);
+		resourceTracker.TrackResourceUsage(set, GpuAccessFlag::Read);
 		outSets[i] = set->GetVulkanHandle();
 	}
 }
