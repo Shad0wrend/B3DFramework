@@ -1,14 +1,14 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 
 #include "B3DApplication.h"
 #include "Material/B3DShader.h"
-#include "Material/B3DTechnique.h"
+#include "Material/B3DVariation.h"
 #include "Material/B3DPass.h"
 #include "RenderAPI/B3DGpuProgram.h"
 #include "RenderAPI/B3DGpuPipelineState.h"
-#include "Material/B3DMaterialParams.h"
+#include "Material/B3DMaterialParameters.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
 #include "Animation/B3DAnimationCurve.h"
 #include "Image/B3DColorGradient.h"

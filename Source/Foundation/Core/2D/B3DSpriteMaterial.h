@@ -120,19 +120,36 @@ namespace b3d
 		virtual void Merge(SpriteMaterialInfo& mergeInto, const SpriteMaterialInfo& mergeFrom) const {}
 
 		/**
-		 * Renders the provided mesh using the current material.
+		 * Creates parameter adapter for use with this material
 		 *
-		 * @param	commandBuffer		Command buffer to encode the render commands  on.
+		 * @param	supportClipping		If true, parameter adapter will be created for use with the clip region buffer variant of the material.
+		 */
+		virtual SPtr<render::MaterialParameterAdapter> CreateParameterAdapter(bool supportClipping);
+
+		/**
+		 * Prepares the provided parameters for use with the current material.
+		 *
+		 * @param	parameterAdapter	Pararmeter adapter to use for populating the parameters.
 		 * @param	mesh				Mesh to render, containing vertices in screen space.
-		 * @param	subMesh				Portion of @p mesh to render.
 		 * @param	texture				Optional texture to render the mesh with.
 		 * @param	sampler				Optional sampler to render the texture with.
 		 * @param	uniformBuffer		Buffer containing data GPU parameters, created from GUISpriteUniformBufferDefinition.
 		 * @param	clipRegionBuffer	Buffer containing regions against all rendered sprite quads will be culled/clipped against.
+		 */
+		virtual void Prepare(const SPtr<render::MaterialParameterAdapter>& parameterAdapter, const SPtr<render::MeshBase>& mesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& uniformBuffer, const SPtr<render::GpuBuffer>& clipRegionBuffer) const;
+
+		/**
+		 * Renders the provided mesh using the current material.
+		 *
+		 * @param	commandBuffer		Command buffer to encode the render commands  on.
+		 * @param	parameters			Parameters to use for rendering, prepared via the call to Prepare().
+		 * @param	mesh				Mesh to render, containing vertices in screen space.
+		 * @param	subMesh				Portion of @p mesh to render.
+		 * @param	clipRegionBuffer	Buffer containing regions against all rendered sprite quads will be culled/clipped against.
 		 * @param	clipRegionCount		Number of regions in @p clipRegionBuffer.
 		 * @param	additionalData		Optional additional data that might be required by the renderer.
 		 */
-		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::Texture>& texture, const SPtr<SamplerState>& sampler, const SPtr<render::GpuBuffer>& uniformBuffer, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
+		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::GpuParameters>& parameters, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
 
 		/** Writes the provided parameters into a uniform buffer created from GUISpriteUniformBufferDefinition. */
 		static void PopulateUniformBuffer(const SPtr<render::GpuBuffer>& buffer, const Vector2I& viewportOffset, float inverseViewportWidth, float inverseViewportHeight, bool flipY, float animationTime, u32 clipRegionCount, const Matrix4& transform, const render::SpriteMaterialInfo& materialInformation);
@@ -141,25 +158,15 @@ namespace b3d
 		virtual void Initialize();
 
 		/** Destroys the render thread material. */
-		static void Destroy(const SPtr<render::Material>& material, const SPtr<render::MaterialParameterAdapter>& withClippingParams, const SPtr<render::MaterialParameterAdapter>& withoutClippingParams);
-
-		struct MaterialVariationInformation
-		{
-			u32 VariationIndex = ~0u;
-			u32 UniformBufferIndex = ~0u;
-			SPtr<render::MaterialParameterAdapter> ParameterSet;
-
-			TGpuParameterBuffer<true> VerticesBufferParameter;
-			TGpuParameterBuffer<true> ClipRegionsBufferParameter;
-		};
+		static void Destroy(const SPtr<render::Material>& material);
 
 		u32 mId;
 		bool mAllowBatching;
 
 		// Render thread only (everything below)
 		SPtr<render::Material> mMaterial;
-		MaterialVariationInformation mWithoutClippingVariation;
-		MaterialVariationInformation mWithClippingVariation;
+		u32 mWithoutClippingVariationIndex = ~0u;
+		u32 mWithClippingVariationIndex = ~0u;
 
 		std::atomic<bool> mMaterialStored;
 

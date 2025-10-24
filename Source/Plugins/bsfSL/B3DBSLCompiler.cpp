@@ -4,7 +4,7 @@
 #include "RenderAPI/B3DGpuProgram.h"
 #include <regex>
 #include "Material/B3DShader.h"
-#include "Material/B3DTechnique.h"
+#include "Material/B3DVariation.h"
 #include "Material/B3DPass.h"
 #include "Math/B3DMatrix4.h"
 #include "Resources/B3DBuiltinResources.h"

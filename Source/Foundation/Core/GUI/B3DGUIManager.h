@@ -437,13 +437,20 @@ namespace b3d
 			/** Clears all draw groups from the specified widget. */
 			void ClearDrawGroups(u64 widgetId);
 
+			struct GUIBatchGpuParameterInfo 
+			{
+				SPtr<GpuBuffer> UniformBuffer;
+				SPtr<GpuBuffer> DirtyRegionBuffer;
+				u32 MaterialParameterIndex = ~0u;
+			};
+
 			struct GUIWidgetRenderData
 			{
 				u64 WidgetId;
 				u32 WidgetDepth = 0;
-				Vector<GUIBatchRenderData> DrawGroups;
-				Vector<SPtr<GpuBuffer>> GUIMeshUniformBuffers;
-				Vector<SPtr<GpuBuffer>> DirtyRegionBuffers;
+				Vector<GUIBatchRenderData> Batches;
+				TArray<GUIBatchGpuParameterInfo> GpuParameterInfos;
+				TArray<SPtr<MaterialParameterAdapter>> MaterialParameterAdapters;
 
 				Matrix4 WorldTransform = Matrix4::kIdentity;
 			};
@@ -458,6 +465,7 @@ namespace b3d
 
 			UnorderedMap<const Camera*, GUICameraRenderData> mPerCameraData;
 			UnorderedMap<u64, const Camera*> mWidgetToCameraMap;
+			UnorderedMap<SpriteMaterial*, TArray<SPtr<MaterialParameterAdapter>>> mMaterialParameterAdapterPool;
 			SPtr<SamplerState> mSamplerState;
 			float mTime = 0.0f;
 		};

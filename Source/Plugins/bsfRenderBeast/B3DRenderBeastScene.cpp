@@ -9,7 +9,7 @@
 #include "Particles/B3DParticleScene.h"
 #include "Mesh/B3DMesh.h"
 #include "Material/B3DPass.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "Utility/B3DSamplerOverrides.h"
 #include "B3DRenderBeastOptions.h"
 #include "B3DRenderBeast.h"

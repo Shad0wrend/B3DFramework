@@ -6,7 +6,7 @@
 #include "B3DRenderBeastIBLUtility.h"
 #include "Mesh/B3DMesh.h"
 #include "RenderAPI/B3DVertexDescription.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DRenderTexture.h"
 #include "Renderer/B3DRendererUtility.h"

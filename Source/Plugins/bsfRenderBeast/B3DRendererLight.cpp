@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DRendererLight.h"
 #include "Material/B3DMaterial.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "RenderAPI/B3DGpuParameters.h"
 #include "Components/B3DLight.h"
 #include "Renderer/B3DRendererUtility.h"

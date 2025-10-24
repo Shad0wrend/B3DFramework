@@ -7,7 +7,7 @@
 #include "RTTI/B3DStringRTTI.h"
 #include "RTTI/B3DStringIDRTTI.h"
 #include "RTTI/B3DStdRTTI.h"
-#include "Material/B3DTechnique.h"
+#include "Material/B3DVariation.h"
 
 namespace b3d
 {

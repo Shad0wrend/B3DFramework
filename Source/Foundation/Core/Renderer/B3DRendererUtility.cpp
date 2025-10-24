@@ -6,7 +6,7 @@
 #include "Mesh/B3DMesh.h"
 #include "RenderAPI/B3DVertexDescription.h"
 #include "Material/B3DMaterial.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "Material/B3DPass.h"
 #include "RenderAPI/B3DGpuParameters.h"
 #include "Utility/B3DShapeMeshes3D.h"

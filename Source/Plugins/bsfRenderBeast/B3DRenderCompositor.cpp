@@ -7,7 +7,7 @@
 #include "Renderer/B3DRendererUtility.h"
 #include "Utility/B3DBitwise.h"
 #include "Mesh/B3DMesh.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "Renderer/B3DGpuResourcePool.h"
 #include "Utility/B3DRendererTextures.h"
 #include "Shading/B3DStandardDeferred.h"

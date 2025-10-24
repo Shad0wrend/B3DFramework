@@ -583,7 +583,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 					continue;
 
 				Batch& batch = itFoundBatch->second;
-				output.NewBatches.push_back(GetRenderData(batch));
+				output.Batches.push_back(GetRenderData(batch));
 			}
 		}
 
@@ -602,7 +602,7 @@ GUIDrawGroupRenderDataUpdate GUIMeshBatches::RebuildDirty(bool forceRebuildMeshe
 			const SPtr<const RenderTarget>& target = entry.second;
 			for(auto& batchId : found->second.BatchPerRenderElement)
 			{
-				for(auto& batchRenderData : output.NewBatches)
+				for(auto& batchRenderData : output.Batches)
 				{
 					if(batchRenderData.Id != batchId)
 						continue;
@@ -927,7 +927,7 @@ GUIBatchRenderData GUIMeshBatches::GetRenderData(const Batch& batch)
 	meshRenderData.Mesh = B3DGetRenderProxy(batch.Mesh);
 	meshRenderData.Material = material.SpriteMaterial;
 	meshRenderData.MaterialInformation = material.SpriteMaterialInformation;
-	meshRenderData.UniformBufferIndex = 0;
+	meshRenderData.GpuParametersIndex = 0;
 	meshRenderData.Bounds = batch.Bounds;
 
 	meshRenderData.SubMesh.IndexOffset = 0;

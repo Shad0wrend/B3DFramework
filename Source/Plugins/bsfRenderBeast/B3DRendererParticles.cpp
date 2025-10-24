@@ -7,7 +7,7 @@
 #include "Mesh/B3DMesh.h"
 #include "RenderAPI/B3DVertexDescription.h"
 #include "Shading/B3DGpuParticleSimulation.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "B3DRendererView.h"
 #include "Mesh/B3DMeshUtility.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"

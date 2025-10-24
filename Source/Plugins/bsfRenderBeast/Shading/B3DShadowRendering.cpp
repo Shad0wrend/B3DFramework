@@ -5,7 +5,7 @@
 #include "B3DRenderBeastScene.h"
 #include "Components/B3DLight.h"
 #include "Renderer/B3DRendererUtility.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "Mesh/B3DMesh.h"
 #include "Components/B3DCamera.h"
 #include "Utility/B3DBitwise.h"

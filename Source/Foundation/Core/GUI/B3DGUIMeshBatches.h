@@ -24,7 +24,7 @@ namespace b3d
 		render::SpriteMaterialInfo MaterialInformation;
 		Area2I Bounds;
 
-		u32 UniformBufferIndex;
+		u32 GpuParametersIndex;
 	};
 
 	/** Information about a GUI element that is displaying a render target. */
@@ -57,7 +57,7 @@ namespace b3d
 	 */
 	struct GUIDrawGroupRenderDataUpdate
 	{
-		Vector<GUIBatchRenderData> NewBatches;
+		Vector<GUIBatchRenderData> Batches;
 		Vector<Area2I> DirtyRegions;
 	};
 

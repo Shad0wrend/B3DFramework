@@ -9,7 +9,7 @@
 #include "RTTI/B3DTextureRTTI.h"
 #include "RTTI/B3DTextureSurfaceRTTI.h"
 #include "RTTI/B3DAnimationCurveRTTI.h"
-#include "Material/B3DMaterialParams.h"
+#include "Material/B3DMaterialParameters.h"
 #include "RenderAPI/B3DSamplerState.h"
 #include "FileSystem/B3DDataStream.h"
 #include "Animation/B3DAnimationCurve.h"

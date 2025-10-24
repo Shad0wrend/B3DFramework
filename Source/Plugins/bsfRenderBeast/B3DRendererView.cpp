@@ -6,7 +6,7 @@
 #include "Renderer/B3DRendererUtility.h"
 #include "Material/B3DMaterial.h"
 #include "Material/B3DShader.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "B3DRendererLight.h"
 #include "B3DRenderBeastScene.h"
 #include "B3DRenderBeast.h"

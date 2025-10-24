@@ -3,7 +3,7 @@
 #include "Material/B3DShader.h"
 
 #include "B3DShaderManager.h"
-#include "Material/B3DTechnique.h"
+#include "Material/B3DVariation.h"
 #include "Error/B3DException.h"
 #include "Debug/B3DDebug.h"
 #include "RTTI/B3DShaderRTTI.h"

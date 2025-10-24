@@ -4,7 +4,7 @@
 #include "RenderAPI/B3DRenderTexture.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "Components/B3DCamera.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "Image/B3DPixelUtility.h"
 #include "Utility/B3DBitwise.h"
 #include "Renderer/B3DGpuResourcePool.h"

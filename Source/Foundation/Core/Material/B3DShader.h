@@ -6,7 +6,7 @@
 #include "Resources/B3DResource.h"
 #include "String/B3DStringID.h"
 #include "Resources/B3DResourceMetaData.h"
-#include "Material/B3DTechnique.h"
+#include "Material/B3DVariation.h"
 #include "RenderAPI/B3DGpuBuffer.h"
 #include "RenderAPI/B3DSamplerState.h"
 

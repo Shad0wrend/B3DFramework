@@ -37,6 +37,7 @@
 #include "RenderAPI/B3DSamplerState.h"
 #include "Resources/B3DBuiltinResources.h"
 #include "2D/B3DSpriteManager.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "VectorGraphics/B3DVectorSpriteAtlas.h"
 #include "RenderAPI/B3DGpuBackend.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
@@ -1616,7 +1617,7 @@ RendererExtensionRequest GUIRenderer::Check(const Camera& camera)
 	{
 		for(auto& widget : widgetRenderData)
 		{
-			for(auto& drawGroup : widget.DrawGroups)
+			for(auto& drawGroup : widget.Batches)
 			{
 				for(auto& renderTargetElem : drawGroup.RenderTargetElements)
 				{
@@ -1676,7 +1677,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 	for(auto& widget : widgetRenderData)
 	{
-		for(auto& drawGroup : widget.DrawGroups)
+		for(auto& drawGroup : widget.Batches)
 		{
 			for(auto& renderTargetElem : drawGroup.RenderTargetElements)
 			{
@@ -1699,8 +1700,8 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 		const u32 clipRegionCount = (u32)clipRegions.size();
 		const u32 requiredBufferSize = sizeof(ClipRegionArea) * clipRegionCount;
-		SPtr<GpuBuffer> dirtyRegionBuffer = widgetRenderData.DirtyRegionBuffers[bufferIndex];
-		if (dirtyRegionBuffer == nullptr || dirtyRegionBuffer->GetTotalSize()< requiredBufferSize)
+		SPtr<GpuBuffer> dirtyRegionBuffer = widgetRenderData.GpuParameterInfos[bufferIndex].DirtyRegionBuffer;
+		if (dirtyRegionBuffer == nullptr || dirtyRegionBuffer->GetTotalSize() < requiredBufferSize)
 		{
 			GpuBufferInformation gpuBufferInformation;
 			gpuBufferInformation.Type = GpuBufferType::StructuredStorage;
@@ -1709,7 +1710,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 			gpuBufferInformation.StructuredStorage.ElementSize = sizeof(ClipRegionArea);
 
 			dirtyRegionBuffer = gpuDevice->CreateGpuBuffer(gpuBufferInformation);
-			widgetRenderData.DirtyRegionBuffers[bufferIndex] = dirtyRegionBuffer;
+			widgetRenderData.GpuParameterInfos[bufferIndex].DirtyRegionBuffer = dirtyRegionBuffer;
 		}
 
 		ClipRegionArea* destination = reinterpret_cast<ClipRegionArea*>(dirtyRegionBuffer->Lock(GBL_WRITE_ONLY_DISCARD));
@@ -1771,15 +1772,15 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		{
 			meshesToRedraw.clear();
 
-			for(auto drawGroupIterator = widget.DrawGroups.rbegin(); drawGroupIterator != widget.DrawGroups.rend(); ++drawGroupIterator)
+			for(auto batchIterator = widget.Batches.rbegin(); batchIterator != widget.Batches.rend(); ++batchIterator)
 			{
-				const GUIBatchRenderData& drawGroup = *drawGroupIterator;
+				const GUIBatchRenderData& batch = *batchIterator;
 
 				// Check if the draw group overlaps any dirty regions, if not we can skip it
 				bool isDrawGroupOverlappingAny = false;
 				for (const Area2I& region : regions)
 				{
-					if (drawGroup.Bounds.Overlaps(region))
+					if (batch.Bounds.Overlaps(region))
 					{
 						isDrawGroupOverlappingAny = true;
 						break;
@@ -1790,7 +1791,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 					continue;
 
 				// Find exact elements of the draw group which overlap dirty regions and record those elements and their overlapping regions
-				for(const GUIMeshRenderData& meshRenderData : drawGroup.Elements)
+				for(const GUIMeshRenderData& meshRenderData : batch.Elements)
 				{
 					FrameVector<Area2I> overlappingDirtyRegions;
 					for (const Area2I& region : clippedRegions)
@@ -1803,8 +1804,8 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 						continue;
 
 					// Note: We will unnecessarily do this update multiple times if the same mesh overlaps multiple dirty regions
-					const SPtr<GpuBuffer>& buffer = widget.GUIMeshUniformBuffers[meshRenderData.UniformBufferIndex];
-					SpriteMaterial::PopulateUniformBuffer(buffer, viewportOffset, inverseRegionWidth, inverseRegionHeight, viewflipYFlip, mTime, (u32)overlappingDirtyRegions.size(), widget.WorldTransform, meshRenderData.MaterialInformation);
+					const SPtr<GpuBuffer>& uniformBuffer = widget.GpuParameterInfos[meshRenderData.GpuParametersIndex].UniformBuffer;
+					SpriteMaterial::PopulateUniformBuffer(uniformBuffer, viewportOffset, inverseRegionWidth, inverseRegionHeight, viewflipYFlip, mTime, (u32)overlappingDirtyRegions.size(), widget.WorldTransform, meshRenderData.MaterialInformation);
 
 					meshesToRedraw.push_back({ &meshRenderData, std::move(overlappingDirtyRegions) });
 				}
@@ -1814,18 +1815,23 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 			{
 				const GUIMeshRenderData* const meshRenderData = meshToDraw.RenderData;
 				SpriteMaterial* const material = meshRenderData->Material;
+				const GUIBatchGpuParameterInfo& parameterInfo = widget.GpuParameterInfos[meshRenderData->GpuParametersIndex];
 
 				// Note: Sprite material is being re-bound for each draw. We should ensure the material is bound only when it actually changes.
-				const SPtr<GpuBuffer>& uniformBuffer = widget.GUIMeshUniformBuffers[meshRenderData->UniformBufferIndex];
-				const SPtr<GpuBuffer>& clipRegionBuffer = fnCreateClipRegionBuffer(widget, meshRenderData->UniformBufferIndex, meshToDraw.OverlappingRegions);
+				const SPtr<GpuBuffer>& uniformBuffer = parameterInfo.UniformBuffer;
+				const SPtr<GpuBuffer>& clipRegionBuffer = fnCreateClipRegionBuffer(widget, meshRenderData->GpuParametersIndex, meshToDraw.OverlappingRegions);
+				const SPtr<MaterialParameterAdapter>& materialParameterAdapter = widget.MaterialParameterAdapters[parameterInfo.MaterialParameterIndex];
 
+				// Note: Ideally all these buffers are using dynamic buffer offsets, and textures are atlased so we can avoid rebinding parameters each time
 				if(!kEnableGUIRegionDebugDrawing || !useDebugMaterial)
 				{
-					material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
+					material->Prepare(materialParameterAdapter, meshRenderData->Mesh, meshRenderData->MaterialInformation.Texture, mSamplerState, uniformBuffer, clipRegionBuffer);
+					material->Render(commandBuffer, materialParameterAdapter->GetGpuParameters(), meshRenderData->Mesh, meshRenderData->SubMesh, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
 				}
 				else
 				{
-					material->Render(commandBuffer, meshRenderData->Mesh, meshRenderData->SubMesh, Texture::kPink, mSamplerState, uniformBuffer, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
+					material->Prepare(materialParameterAdapter, meshRenderData->Mesh, Texture::kPink, mSamplerState, uniformBuffer, clipRegionBuffer);
+					material->Render(commandBuffer, materialParameterAdapter->GetGpuParameters(), meshRenderData->Mesh, meshRenderData->SubMesh, clipRegionBuffer, (u32)meshToDraw.OverlappingRegions.size(), meshRenderData->MaterialInformation.AdditionalData);
 				}
 			}
 		}
@@ -1891,30 +1897,64 @@ void GUIRenderer::UpdateDrawGroups(const Camera* camera, u64 widgetId, u32 widge
 	else
 		widget = &(*found);
 
-	if(!data.NewBatches.empty())
+	if(!data.Batches.empty())
 	{
-		widget->DrawGroups = data.NewBatches;
+		// Move old parameter adapters back to the pool so they can be re-used
+		u32 removedAdapterCount = 0;
+		for(auto& batch : widget->Batches)
+		{
+			for(auto& entry : batch.Elements)
+			{
+				const GUIBatchGpuParameterInfo& gpuParameterInfo = widget->GpuParameterInfos[entry.GpuParametersIndex];
+
+				auto foundPool = mMaterialParameterAdapterPool.find(entry.Material);
+				if(B3D_ENSURE(foundPool != mMaterialParameterAdapterPool.end()))
+				{
+					foundPool->second.Add(widget->MaterialParameterAdapters[gpuParameterInfo.MaterialParameterIndex]);
+					removedAdapterCount++;
+				}
+			}
+		}
+
+		B3D_ENSURE(removedAdapterCount == widget->MaterialParameterAdapters.Size());
+		widget->MaterialParameterAdapters.Clear();
+
+		widget->Batches = data.Batches;
 
 		// Allocate GPU buffers containing the material parameters
-		u32 bufferCount = 0;
-		for(auto& drawGroup : widget->DrawGroups)
-			bufferCount += (u32)drawGroup.Elements.size();
+		u32 elementCount = 0;
+		for(auto& batch : widget->Batches)
+			elementCount += (u32)batch.Elements.size();
 
-		const u32 allocatedBufferCount = (u32)widget->GUIMeshUniformBuffers.size();
-		if(bufferCount > allocatedBufferCount)
+		const u32 allocatedParameterInfoCount = (u32)widget->GpuParameterInfos.size();
+		if(elementCount > allocatedParameterInfoCount)
 		{
-			widget->GUIMeshUniformBuffers.resize(bufferCount);
-			widget->DirtyRegionBuffers.resize(bufferCount);
+			widget->GpuParameterInfos.resize(elementCount);
 
-			for(u32 i = allocatedBufferCount; i < bufferCount; i++)
-				widget->GUIMeshUniformBuffers[i] = gGUISpriteUniformBufferDefinition.CreateBuffer();
+			for(u32 i = allocatedParameterInfoCount; i < elementCount; i++)
+				widget->GpuParameterInfos[i].UniformBuffer = gGUISpriteUniformBufferDefinition.CreateBuffer();
 		}
 
 		u32 currentBufferIndex = 0;
-		for(auto& drawGroup : widget->DrawGroups)
+		for(auto& batch : widget->Batches)
 		{
-			for(auto& entry : drawGroup.Elements)
-				entry.UniformBufferIndex = currentBufferIndex++;
+			for(auto& entry : batch.Elements)
+			{
+				entry.GpuParametersIndex = currentBufferIndex++;
+
+				TArray<SPtr<MaterialParameterAdapter>>& materialParameterAdapterPool = mMaterialParameterAdapterPool[entry.Material];
+				SPtr<MaterialParameterAdapter> materialParameterAdapter;
+				if(materialParameterAdapterPool.Empty())
+					materialParameterAdapter = entry.Material->CreateParameterAdapter(true);
+				else
+				{
+					materialParameterAdapter = materialParameterAdapterPool.Back();
+					materialParameterAdapterPool.Pop();
+				}
+
+				widget->GpuParameterInfos[entry.GpuParametersIndex].MaterialParameterIndex = (u32)widget->MaterialParameterAdapters.Size();
+				widget->MaterialParameterAdapters.Add(materialParameterAdapter);
+			}
 		}
 	}
 
@@ -1948,7 +1988,7 @@ void GUIRenderer::ClearDrawGroups(u64 widgetId)
 	if(found2 == widgetData.end())
 		return;
 
-	for(const auto& drawGroup : found2->DrawGroups)
+	for(const auto& drawGroup : found2->Batches)
 		Area2I::AddUnique(drawGroup.Bounds, found->second.DirtyRegions);
 
 	widgetData.erase(found2);

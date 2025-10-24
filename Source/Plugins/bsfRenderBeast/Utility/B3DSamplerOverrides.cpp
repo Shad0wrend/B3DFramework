@@ -4,9 +4,9 @@
 #include "B3DRenderBeastOptions.h"
 #include "Material/B3DMaterial.h"
 #include "RenderAPI/B3DGpuParameters.h"
-#include "Material/B3DGpuParamsSet.h"
+#include "Material/B3DMaterialParameterAdapter.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
-#include "Material/B3DMaterialParams.h"
+#include "Material/B3DMaterialParameters.h"
 #include "RenderAPI/B3DSamplerState.h"
 #include "RenderAPI/B3DGpuDevice.h"
 
