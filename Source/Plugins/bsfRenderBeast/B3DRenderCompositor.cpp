@@ -1620,15 +1620,35 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderQueue* opaqueQueue = inputs.View.GetOpaqueQueue(true).get();
 	RenderQueue* transparentQueue = inputs.View.GetTransparentQueue().get();
 
-	commandBuffer.BeginRenderPass(renderTarget, RT_NONE, RT_ALL);
-	RenderQueueElements(commandBuffer, opaqueQueue->GetSortedElements());
+	// Collect all GpuParameters that will be used in the opaque pass
+	const Vector<RenderQueueElement>& opaqueElements = opaqueQueue->GetSortedElements();
+	RenderPassCreateInformation opaquePassInfo(renderTarget, RT_NONE, RT_ALL);
+	for(const auto& element : opaqueElements)
+	{
+		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		if(gpuParams != nullptr)
+			opaquePassInfo.Parameters.Add(gpuParams);
+	}
+
+	commandBuffer.BeginRenderPass(opaquePassInfo);
+	RenderQueueElements(commandBuffer, opaqueElements);
 	commandBuffer.EndRenderPass();
 
 	// Allow depth-testing against the depth buffer after the writes above
 	commandBuffer.IssueBarriers(GpuTextureBarrier(sceneDepthNode->DepthTex->Texture, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Write, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Read));
 
-	commandBuffer.BeginRenderPass(renderTarget, RT_DEPTH, RT_ALL);
-	RenderQueueElements(commandBuffer, transparentQueue->GetSortedElements());
+	// Collect all GpuParameters that will be used in the transparent pass
+	const Vector<RenderQueueElement>& transparentElements = transparentQueue->GetSortedElements();
+	RenderPassCreateInformation transparentPassInfo(renderTarget, RT_DEPTH, RT_ALL);
+	for(const auto& element : transparentElements)
+	{
+		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		if(gpuParams != nullptr)
+			transparentPassInfo.Parameters.Add(gpuParams);
+	}
+
+	commandBuffer.BeginRenderPass(transparentPassInfo);
+	RenderQueueElements(commandBuffer, transparentElements);
 	commandBuffer.EndRenderPass();
 
 	// Note: Perhaps delay clearing this one frame, so previous frame textures have a better chance of being done
