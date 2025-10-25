@@ -1083,6 +1083,8 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 				shadowRenderer.RenderShadowOcclusion(commandBuffer, inputs.View, light, gbuffer);
 				commandBuffer.EndRenderPass();
 
+				commandBuffer.IssueBarriers({{ GpuTextureBarrier(Output->LightAccumulationTex->Texture, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Write )}});
+
 				commandBuffer.BeginRenderPass(Output->RenderTarget, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 				StandardDeferred::Instance().RenderLight(commandBuffer, lightType, light, inputs.View, gbuffer, lightOcclusionTex->Texture);
 				commandBuffer.EndRenderPass();
