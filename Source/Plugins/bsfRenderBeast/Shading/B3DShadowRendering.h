@@ -201,14 +201,13 @@ namespace b3d
 					  ShaderVariationParameter("USE_ZFAIL_STENCIL", useZFailStencil) });
 
 				return variation;
-			};
+			}
 
 		public:
 			ShadowProjectStencilMat() = default;
-			void Initialize() override;
 
-			/** Binds the material and its parameters to the pipeline. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera);
+			/** Binds the material to the pipeline (without binding parameters). */
+			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
@@ -219,9 +218,6 @@ namespace b3d
 			 *								inside the drawn geometry.
 			 */
 			static ShadowProjectStencilMat* GetVariation(bool directional, bool useZFailStencil);
-
-		private:
-			SPtr<GpuBuffer> mVertParams;
 		};
 
 		/** Common parameters used by the shadow projection materials. */
@@ -280,10 +276,9 @@ namespace b3d
 
 		public:
 			ShadowProjectMat() = default;
-			void Initialize() override;
 
-			/** Binds the material and its parameters to the pipeline. */
-			void Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params);
+			/** Binds the material to the pipeline (without binding parameters). */
+			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
@@ -293,14 +288,8 @@ namespace b3d
 			 */
 			static ShadowProjectMat* GetVariation(u32 quality, bool directional, bool MSAA);
 
-		private:
-			SPtr<SamplerState> mSamplerState;
-			SPtr<GpuBuffer> mVertParams;
-
-			GBufferParameterBinding mGBufferParams;
-
-			GpuParameterSampledTexture mShadowMapParam;
-			GpuParameterSampler mShadowSamplerParam;
+			/** Returns the sampler state used for shadow sampling. */
+			static SPtr<SamplerState> GetShadowSampler(GpuDevice& gpuDevice);
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ShadowProjectOmniParamsDef)
@@ -333,10 +322,9 @@ namespace b3d
 
 		public:
 			ShadowProjectOmniMat() = default;
-			void Initialize() override;
 
-			/** Binds the material and its parameters to the pipeline. */
-			void Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params);
+			/** Binds the material to the pipeline (without binding parameters). */
+			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
@@ -346,14 +334,8 @@ namespace b3d
 			 */
 			static ShadowProjectOmniMat* GetVariation(u32 quality, bool inside, bool MSAA);
 
-		private:
-			SPtr<SamplerState> mSamplerState;
-			SPtr<GpuBuffer> mVertParams;
-
-			GBufferParameterBinding mGBufferParams;
-
-			GpuParameterSampledTexture mShadowMapParam;
-			GpuParameterSampler mShadowSamplerParam;
+			/** Returns the sampler state used for shadow cubemap sampling. */
+			static SPtr<SamplerState> GetShadowSampler(GpuDevice& gpuDevice);
 		};
 
 		/** Pixel format used for rendering and storing shadow maps. */

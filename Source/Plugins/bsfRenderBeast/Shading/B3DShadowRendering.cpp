@@ -158,21 +158,9 @@ ShadowDepthCubeMat* ShadowDepthCubeMat::GetVariation(bool skinned, bool morph)
 ShadowProjectParamsDef gShadowProjectParamsDef;
 ShadowProjectVertParamsDef gShadowProjectVertParamsDef;
 
-void ShadowProjectStencilMat::Initialize()
+void ShadowProjectStencilMat::Bind(GpuCommandBuffer& commandBuffer)
 {
-	mVertParams = gShadowProjectVertParamsDef.CreateBuffer();
-	if(mGPUParameters->HasUniformBuffer("VertParams"))
-		mGPUParameters->SetUniformBuffer("VertParams", mVertParams);
-}
-
-void ShadowProjectStencilMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera)
-{
-	Vector4 lightPosAndScale(0, 0, 0, 1);
-	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
-
-	mGPUParameters->SetUniformBuffer("PerCamera", perCamera);
-
-	RendererMaterial::Bind(commandBuffer);
+	RendererMaterial::Bind(commandBuffer, false);
 }
 
 ShadowProjectStencilMat* ShadowProjectStencilMat::GetVariation(bool directional, bool useZFailStencil)
@@ -188,15 +176,13 @@ ShadowProjectStencilMat* ShadowProjectStencilMat::GetVariation(bool directional,
 	}
 }
 
-void ShadowProjectMat::Initialize()
+void ShadowProjectMat::Bind(GpuCommandBuffer& commandBuffer)
 {
-	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
-	mGPUParameters->GetSampledTextureParameter("gShadowTex", mShadowMapParam);
-	if(mGPUParameters->HasSamplerState("gShadowSampler"))
-		mGPUParameters->GetSamplerStateParameter("gShadowSampler", mShadowSamplerParam);
-	else
-		mGPUParameters->GetSamplerStateParameter("gShadowTex", mShadowSamplerParam);
+	RendererMaterial::Bind(commandBuffer, false);
+}
 
+SPtr<SamplerState> ShadowProjectMat::GetShadowSampler(GpuDevice& gpuDevice)
+{
 	SamplerStateInformation desc;
 	desc.MinFilter = FO_POINT;
 	desc.MagFilter = FO_POINT;
@@ -205,27 +191,7 @@ void ShadowProjectMat::Initialize()
 	desc.AddressMode.V = TAM_CLAMP;
 	desc.AddressMode.W = TAM_CLAMP;
 
-	mSamplerState = mGpuDevice->FindOrCreateSamplerState(desc);
-
-	mVertParams = gShadowProjectVertParamsDef.CreateBuffer();
-	if(mGPUParameters->HasUniformBuffer("VertParams"))
-		mGPUParameters->SetUniformBuffer("VertParams", mVertParams);
-}
-
-void ShadowProjectMat::Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params)
-{
-	Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
-	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
-
-	mGBufferParams.Bind(params.Gbuffer);
-
-	mShadowMapParam.Set(params.ShadowMap);
-	mShadowSamplerParam.Set(mSamplerState);
-
-	mGPUParameters->SetUniformBuffer("Params", params.ShadowParams);
-	mGPUParameters->SetUniformBuffer("PerCamera", params.PerCamera);
-
-	RendererMaterial::Bind(commandBuffer);
+	return gpuDevice.FindOrCreateSamplerState(desc);
 }
 
 ShadowProjectMat* ShadowProjectMat::GetVariation(u32 quality, bool directional, bool MSAA)
@@ -257,16 +223,13 @@ ShadowProjectMat* ShadowProjectMat::GetVariation(u32 quality, bool directional, 
 
 ShadowProjectOmniParamsDef gShadowProjectOmniParamsDef;
 
-void ShadowProjectOmniMat::Initialize()
+void ShadowProjectOmniMat::Bind(GpuCommandBuffer& commandBuffer)
 {
-	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
-	mGPUParameters->GetSampledTextureParameter("gShadowCubeTex", mShadowMapParam);
+	RendererMaterial::Bind(commandBuffer, false);
+}
 
-	if(mGPUParameters->HasSamplerState("gShadowCubeSampler"))
-		mGPUParameters->GetSamplerStateParameter("gShadowCubeSampler", mShadowSamplerParam);
-	else
-		mGPUParameters->GetSamplerStateParameter("gShadowCubeTex", mShadowSamplerParam);
-
+SPtr<SamplerState> ShadowProjectOmniMat::GetShadowSampler(GpuDevice& gpuDevice)
+{
 	SamplerStateInformation desc;
 	desc.MinFilter = FO_LINEAR;
 	desc.MagFilter = FO_LINEAR;
@@ -276,27 +239,7 @@ void ShadowProjectOmniMat::Initialize()
 	desc.AddressMode.W = TAM_CLAMP;
 	desc.ComparisonFunc = CMPF_GREATER_EQUAL;
 
-	mSamplerState = mGpuDevice->FindOrCreateSamplerState(desc);
-
-	mVertParams = gShadowProjectVertParamsDef.CreateBuffer();
-	if(mGPUParameters->HasUniformBuffer("VertParams"))
-		mGPUParameters->SetUniformBuffer("VertParams", mVertParams);
-}
-
-void ShadowProjectOmniMat::Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params)
-{
-	Vector4 lightPosAndScale(params.Light.GetWorldTransform().GetPosition(), params.Light.GetAttenuationRadius());
-	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
-
-	mGBufferParams.Bind(params.Gbuffer);
-
-	mShadowMapParam.Set(params.ShadowMap);
-	mShadowSamplerParam.Set(mSamplerState);
-
-	mGPUParameters->SetUniformBuffer("Params", params.ShadowParams);
-	mGPUParameters->SetUniformBuffer("PerCamera", params.PerCamera);
-
-	RendererMaterial::Bind(commandBuffer);
+	return gpuDevice.FindOrCreateSamplerState(desc);
 }
 
 ShadowProjectOmniMat* ShadowProjectOmniMat::GetVariation(u32 quality, bool inside, bool MSAA)
@@ -1009,6 +952,7 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 
 	SPtr<GpuBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer();
 	SPtr<GpuBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowProjectVertBuffer = gShadowProjectVertParamsDef.CreateBuffer();
 
 	u32 viewIdx = view.GetViewIdx();
 	Vector<const ShadowInfo*> shadowInfos;
@@ -1045,10 +989,36 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 			bool viewerInsideVolume = (tfrm.GetPosition() - viewProps.ViewOrigin).Length() < lightRadius;
 
 			SPtr<Texture> shadowMap = mShadowCubemaps[shadowInfo.TextureIdx].GetTexture();
-			ShadowProjectParams shadowParams(*light, shadowMap, shadowOmniParamBuffer, perViewBuffer, gbuffer);
 
 			ShadowProjectOmniMat* mat = ShadowProjectOmniMat::GetVariation(effectiveShadowQuality, viewerInsideVolume, viewProps.Target.NumSamples > 1);
-			mat->Bind(commandBuffer, shadowParams);
+			mat->Bind(commandBuffer);
+
+			// Bind GPU parameters explicitly
+			SPtr<GpuParameters> gpuParams = mat->GetGPUParameters();
+
+			// Set vertex parameters
+			Vector4 lightPosAndScale(tfrm.GetPosition(), light->GetAttenuationRadius());
+			gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, lightPosAndScale);
+			gpuParams->SetUniformBuffer("VertParams", shadowProjectVertBuffer);
+
+			// Set GBuffer textures
+			GBufferParameterBinding::Set(commandBuffer.GetGpuDevice(), gpuParams, gbuffer);
+
+			// Set shadow cubemap texture and sampler
+			gpuParams->SetSampledTexture("gShadowCubeTex", shadowMap);
+
+			GpuParameterSampler shadowSamplerParam;
+			if(gpuParams->HasSamplerState("gShadowCubeSampler"))
+				gpuParams->SetSamplerState("gShadowCubeSampler", ShadowProjectOmniMat::GetShadowSampler(commandBuffer.GetGpuDevice()));
+			else
+				gpuParams->SetSamplerState("gShadowCubeTex", ShadowProjectOmniMat::GetShadowSampler(commandBuffer.GetGpuDevice()));
+
+			// Set parameter buffers
+			gpuParams->SetUniformBuffer("Params", shadowOmniParamBuffer);
+			gpuParams->SetUniformBuffer("PerCamera", perViewBuffer);
+
+			// Bind parameters to pipeline
+			mat->BindParameters(commandBuffer);
 
 			GetRendererUtility().Draw(commandBuffer, GetRendererUtility().GetSphereStencil());
 		}
@@ -1150,8 +1120,24 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 				// for handling viewer outside the frustum will not properly render intersections with the near plane.
 				bool viewerInsideFrustum = shadowFrustum.Contains(viewProps.ViewOrigin, viewProps.NearPlane * 3.0f);
 
-				ShadowProjectStencilMat* mat = ShadowProjectStencilMat::GetVariation(false, viewerInsideFrustum);
-				mat->Bind(commandBuffer, perViewBuffer);
+				ShadowProjectStencilMat* stencilMat = ShadowProjectStencilMat::GetVariation(false, viewerInsideFrustum);
+				stencilMat->Bind(commandBuffer);
+
+				// Bind GPU parameters for stencil material
+				SPtr<GpuParameters> stencilGpuParams = stencilMat->GetGPUParameters(); // TODO - GPU parameter code is duplicated here and below, deduplicate
+
+				// Set vertex parameters (default for spot light)
+				Vector4 lightPosAndScale(0, 0, 0, 1);
+				gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, lightPosAndScale);
+				if(stencilGpuParams->HasUniformBuffer("VertParams"))
+					stencilGpuParams->SetUniformBuffer("VertParams", shadowProjectVertBuffer);
+
+				// Set per-camera buffer
+				stencilGpuParams->SetUniformBuffer("PerCamera", perViewBuffer);
+
+				// Bind parameters to pipeline
+				stencilMat->BindParameters(commandBuffer);
+
 				DrawFrustum(commandBuffer, frustumVertices);
 
 				// Reduce shadow quality based on shadow map resolution for spot lights
@@ -1165,17 +1151,58 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 				Vector3 near = viewProps.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo->DepthNear));
 				Vector3 far = viewProps.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo->DepthFar));
 
-				ShadowProjectStencilMat* mat = ShadowProjectStencilMat::GetVariation(true, true);
-				mat->Bind(commandBuffer, perViewBuffer);
+				ShadowProjectStencilMat* stencilMaterial = ShadowProjectStencilMat::GetVariation(true, true);
+				stencilMaterial->Bind(commandBuffer);
+
+				// Bind GPU parameters for stencil material
+				SPtr<GpuParameters> stencilGpuParams = stencilMaterial->GetGPUParameters();
+
+				// Set vertex parameters (default for directional light)
+				Vector4 lightPosAndScale(0, 0, 0, 1);
+				gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, lightPosAndScale);
+				if(stencilGpuParams->HasUniformBuffer("VertParams"))
+					stencilGpuParams->SetUniformBuffer("VertParams", shadowProjectVertBuffer);
+
+				// Set per-camera buffer
+				stencilGpuParams->SetUniformBuffer("PerCamera", perViewBuffer);
+
+				// Bind parameters to pipeline
+				stencilMaterial->BindParameters(commandBuffer);
 
 				DrawNearFarPlanes(commandBuffer, near.Z, far.Z, shadowInfo->CascadeIdx != 0);
 			}
 
 			gShadowProjectParamsDef.gFace.Set(shadowParamBuffer, (float)shadowMapFace);
-			ShadowProjectParams shadowParams(*light, shadowMap, shadowParamBuffer, perViewBuffer, gbuffer);
 
 			ShadowProjectMat* mat = ShadowProjectMat::GetVariation(effectiveShadowQuality, isCSM, viewProps.Target.NumSamples > 1);
-			mat->Bind(commandBuffer, shadowParams);
+			mat->Bind(commandBuffer);
+
+			// Bind GPU parameters explicitly
+			SPtr<GpuParameters> gpuParams = mat->GetGPUParameters();
+
+			// Set vertex parameters (default for spot/directional)
+			Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
+			gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, lightPosAndScale);
+			if(gpuParams->HasUniformBuffer("VertParams"))
+				gpuParams->SetUniformBuffer("VertParams", shadowProjectVertBuffer);
+
+			// Set GBuffer textures
+			GBufferParameterBinding::Set(commandBuffer.GetGpuDevice(), gpuParams, gbuffer);
+
+			// Set shadow texture and sampler
+			gpuParams->SetSampledTexture("gShadowTex", shadowMap);
+
+			if(gpuParams->HasSamplerState("gShadowSampler"))
+				gpuParams->SetSamplerState("gShadowSampler", ShadowProjectMat::GetShadowSampler(commandBuffer.GetGpuDevice()));
+			else
+				gpuParams->SetSamplerState("gShadowTex", ShadowProjectMat::GetShadowSampler(commandBuffer.GetGpuDevice()));
+
+			// Set parameter buffers
+			gpuParams->SetUniformBuffer("Params", shadowParamBuffer);
+			gpuParams->SetUniformBuffer("PerCamera", perViewBuffer);
+
+			// Bind parameters to pipeline
+			mat->BindParameters(commandBuffer);
 
 			if(!isCSM)
 				DrawFrustum(commandBuffer, frustumVertices);
