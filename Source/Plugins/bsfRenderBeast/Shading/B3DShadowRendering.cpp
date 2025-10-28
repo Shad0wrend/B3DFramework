@@ -278,13 +278,11 @@ struct ShadowProjectionParameterBinding
 	 * @param gpuParameters          The GPU parameters object to set parameters on.
 	 * @param vertexParameterBuffer  The vertex parameter buffer containing position and scale.
 	 * @param perCameraBuffer        The per-camera parameter buffer.
-	 * @param lightPositionAndScale  The light position and scale/radius to set in vertex parameters.
 	 * @param shadowParameterBuffer  Optional shadow-specific parameter buffer (for projection materials).
 	 */
-	static void BindCommonParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const Vector4& lightPositionAndScale, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
+	static void BindCommonParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
 	{
 		// Set vertex parameters
-		gShadowProjectVertParamsDef.gPositionAndScale.Set(vertexParameterBuffer, lightPositionAndScale);
 		if(gpuParameters->HasUniformBuffer("VertParams"))
 			gpuParameters->SetUniformBuffer("VertParams", vertexParameterBuffer);
 
@@ -305,7 +303,7 @@ struct ShadowProjectionParameterBinding
 	{
 		// Bind common parameters (VertParams, PerCamera, Params)
 		// Default light position for spot/directional lights
-		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, Vector4(0.0f, 0.0f, 0.0f, 1.0f), nullptr);
+		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, nullptr);
 	}
 
 	/**
@@ -319,7 +317,7 @@ struct ShadowProjectionParameterBinding
 	{
 		// Bind common parameters (VertParams, PerCamera, Params)
 		// Default light position for spot/directional lights
-		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, Vector4(0.0f, 0.0f, 0.0f, 1.0f), shadowParameterBuffer);
+		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, shadowParameterBuffer);
 
 		// Set GBuffer textures
 		GBufferParameterBinding::Set(gpuDevice, gpuParameters, gbuffer);
@@ -346,7 +344,7 @@ struct ShadowProjectionParameterBinding
 		// Set light position and radius for omnidirectional light
 		const Transform& transform = light.GetWorldTransform();
 		Vector4 lightPositionAndScale(transform.GetPosition(), light.GetAttenuationRadius());
-		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, lightPositionAndScale, shadowParameterBuffer);
+		BindCommonParameters(gpuParameters, vertexParameterBuffer, perCameraBuffer, shadowParameterBuffer);
 
 		// Set GBuffer textures
 		GBufferParameterBinding::Set(gpuDevice, gpuParameters, gbuffer);
@@ -834,8 +832,8 @@ void ShadowRendering::RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBe
 	for(u32 i = 0; i < (u32)sceneInfo.SpotLights.size(); ++i)
 	{
 		const RendererLight& light = sceneInfo.SpotLights[i];
-		mSpotLightShadows[i].StartIdx = shadowInfoCount;
-		mSpotLightShadows[i].NumShadows = 0;
+		mSpotLightShadows[i].StartIndex = shadowInfoCount;
+		mSpotLightShadows[i].ShadowCount = 0;
 
 		// Note: I'm using visibility across all views, while I could be using visibility for every view individually,
 		// if I kept that information somewhere
@@ -859,8 +857,8 @@ void ShadowRendering::RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBe
 	for(u32 i = 0; i < (u32)sceneInfo.RadialLights.size(); ++i)
 	{
 		const RendererLight& light = sceneInfo.RadialLights[i];
-		mRadialLightShadows[i].StartIdx = shadowInfoCount;
-		mRadialLightShadows[i].NumShadows = 0;
+		mRadialLightShadows[i].StartIndex = shadowInfoCount;
+		mRadialLightShadows[i].ShadowCount = 0;
 
 		// Note: I'm using visibility across all views, while I could be using visibility for every view individually,
 		// if I kept that information somewhere
@@ -1023,122 +1021,148 @@ Matrix4 CreateMixedToShadowUvMatrix(const Matrix4& viewP, const Matrix4& viewInv
 	return shadowMapTfrm * mixedToShadow;
 }
 
-void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, const RendererView& view, const RendererLight& rendererLight, GBufferTextures gbuffer) const
+
+ShadowRendering::ProjectedShadowRenderingBatchInformation ShadowRendering::PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, const RendererLight& rendererLight, GBufferTextures gbuffer) const
 {
-	u32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
+	const u32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
 
 	const Light* light = rendererLight.Internal;
-	u32 lightIdx = light->GetRendererId();
+	const u32 lightRendererId = light->GetRendererId();
 
-	auto viewProps = view.GetProperties();
+	const auto& viewProperties = view.GetProperties();
+	const SPtr<GpuBuffer>& perViewBuffer = view.GetPerViewBuffer();
 
-	const Matrix4& viewP = viewProps.ProjTransform;
-	Matrix4 viewInvVP = viewProps.ViewProjTransform.Inverse();
-
-	SPtr<GpuBuffer> perViewBuffer = view.GetPerViewBuffer();
-
-	ProfileGPUBlock sampleBlock(commandBuffer, "Render shadow occlusion");
-
-	const GpuDeviceCapabilities& caps = commandBuffer.GetGpuDevice().GetCapabilities();
+	const GpuDeviceCapabilities& deviceCapabilities = gpuDevice.GetCapabilities();
 	// TODO - Calculate and set a scissor rectangle for the light
 
-	SPtr<GpuBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer();
-	SPtr<GpuBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer();
-	SPtr<GpuBuffer> shadowProjectVertBuffer = gShadowProjectVertParamsDef.CreateBuffer();
+	ProjectedShadowRenderingBatchInformation batchRenderingInfo;
+	batchRenderingInfo.MSAA = viewProperties.Target.NumSamples > 1;
 
-	u32 viewIdx = view.GetViewIdx();
-	Vector<const ShadowInfo*> shadowInfos;
+	TInlineArray<const ShadowInfo*, 6> shadowInfos;
 
+	const u32 viewIndex = view.GetViewIdx();
+	// Prepare parameters
 	if(light->GetType() == LightType::Radial)
 	{
-		const LightShadows& shadows = mRadialLightShadows[lightIdx];
+		const LightShadows& shadows = mRadialLightShadows[lightRendererId];
+		const Transform& lightTransform = light->GetWorldTransform();
 
-		for(u32 i = 0; i < shadows.NumShadows; ++i)
+		// Check if viewer is inside the light bounds
+		//// Expand the light bounds slightly to handle the case when the near plane is intersecting the light volume
+		float lightRadius = light->GetAttenuationRadius() + viewProperties.NearPlane * 3.0f;
+		const bool viewerInsideVolume = (lightTransform.GetPosition() - viewProperties.ViewOrigin).Length() < lightRadius;
+
+		for(u32 localShadowIndex = 0; localShadowIndex < shadows.ShadowCount; ++localShadowIndex)
 		{
-			u32 shadowIdx = shadows.StartIdx + i;
-			const ShadowInfo& shadowInfo = mShadowInfos[shadowIdx];
+			const u32 shadowIndex = shadows.StartIndex + localShadowIndex;
+			const ShadowInfo& shadowInfo = mShadowInfos[shadowIndex];
 
-			if(shadowInfo.FadePerView[viewIdx] < 0.005f)
+			if(shadowInfo.FadePerView[viewIndex] < 0.005f)
 				continue;
 
-			for(u32 j = 0; j < 6; j++)
-				gShadowProjectOmniParamsDef.gFaceVPMatrices.Set(shadowOmniParamBuffer, shadowInfo.ShadowVpTransforms[j], j);
+			shadowInfos.Add(&shadowInfo);
+		}
 
-			gShadowProjectOmniParamsDef.gDepthBias.Set(shadowOmniParamBuffer, shadowInfo.DepthBias);
-			gShadowProjectOmniParamsDef.gFadePercent.Set(shadowOmniParamBuffer, shadowInfo.FadePerView[viewIdx]);
-			gShadowProjectOmniParamsDef.gInvResolution.Set(shadowOmniParamBuffer, 1.0f / shadowInfo.Area.Width);
+		SPtr<GpuBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer((u32)shadowInfos.Size());
+		SPtr<GpuBuffer> shadowProjectVertBuffer = gShadowProjectVertParamsDef.CreateBuffer((u32)shadowInfos.Size());
 
-			const Transform& tfrm = light->GetWorldTransform();
-			Vector4 lightPosAndRadius(tfrm.GetPosition(), light->GetAttenuationRadius());
-			gShadowProjectOmniParamsDef.gLightPosAndRadius.Set(shadowOmniParamBuffer, lightPosAndRadius);
+		batchRenderingInfo.UniformBufferSuballocationSize = shadowOmniParamBuffer->GetSuballocationSize();
+		batchRenderingInfo.VertexUniformBufferSuballocationSize = shadowProjectVertBuffer->GetSuballocationSize();
+
+		for(u32 visibleShadowIndex = 0; visibleShadowIndex < (u32)shadowInfos.Size(); ++visibleShadowIndex)
+		{
+			const ShadowInfo& shadowInfo = *shadowInfos[visibleShadowIndex];
+
+			for(u32 faceIndex = 0; faceIndex < 6; faceIndex++)
+				gShadowProjectOmniParamsDef.gFaceVPMatrices.Set(shadowOmniParamBuffer, shadowInfo.ShadowVpTransforms[faceIndex], faceIndex, visibleShadowIndex);
+
+			gShadowProjectOmniParamsDef.gDepthBias.Set(shadowOmniParamBuffer, shadowInfo.DepthBias, 0, visibleShadowIndex);
+			gShadowProjectOmniParamsDef.gFadePercent.Set(shadowOmniParamBuffer, shadowInfo.FadePerView[viewIndex], 0, visibleShadowIndex);
+			gShadowProjectOmniParamsDef.gInvResolution.Set(shadowOmniParamBuffer, 1.0f / shadowInfo.Area.Width, 0, visibleShadowIndex);
+
+			Vector4 lightPosAndRadius(lightTransform.GetPosition(), light->GetAttenuationRadius());
+			gShadowProjectOmniParamsDef.gLightPosAndRadius.Set(shadowOmniParamBuffer, lightPosAndRadius, 0, visibleShadowIndex);
+
+			Vector4 lightPosAndScale(lightTransform.GetPosition(), light->GetAttenuationRadius());
+			gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, lightPosAndScale, 0, visibleShadowIndex);
 
 			// Reduce shadow quality based on shadow map resolution for spot lights
 			u32 effectiveShadowQuality = GetShadowQuality(shadowQuality, shadowInfo.Area.Width, 2);
 
-			// Check if viewer is inside the light bounds
-			//// Expand the light bounds slightly to handle the case when the near plane is intersecting the light volume
-			float lightRadius = light->GetAttenuationRadius() + viewProps.NearPlane * 3.0f;
-			bool viewerInsideVolume = (tfrm.GetPosition() - viewProps.ViewOrigin).Length() < lightRadius;
-
 			SPtr<Texture> shadowMap = mShadowCubemaps[shadowInfo.TextureIdx].GetTexture();
 
-			ShadowProjectOmniMat* mat = ShadowProjectOmniMat::GetVariation(effectiveShadowQuality, viewerInsideVolume, viewProps.Target.NumSamples > 1);
-			mat->Bind(commandBuffer);
+			ShadowProjectOmniMat* const shadowProjectOmniMaterial = ShadowProjectOmniMat::GetVariation(effectiveShadowQuality, viewerInsideVolume, viewProperties.Target.NumSamples > 1);
 
-			// Bind GPU parameters explicitly
-			SPtr<GpuParameters> gpuParameters = mat->GetGPUParameters();
-			ShadowProjectionParameterBinding::BindOmnidirectionalProjectionParameters(gpuParameters, commandBuffer.GetGpuDevice(), *light, shadowMap, shadowOmniParamBuffer, perViewBuffer, shadowProjectVertBuffer, gbuffer);
+			const SPtr<GpuParameters>& gpuParameters =  shadowProjectOmniMaterial->CreateGpuParameters();
 
-			// Bind parameters to pipeline
-			mat->BindParameters(commandBuffer);
+			ProjectedShadowRenderingInformation shadowRenderingInfo;
+			shadowRenderingInfo.ShadowInfo = &shadowInfo;
+			shadowRenderingInfo.ShadowQuality = effectiveShadowQuality;
+			shadowRenderingInfo.IsViewerInsideLightVolume = viewerInsideVolume;
+			shadowRenderingInfo.PrimaryGpuParameters = gpuParameters;
 
-			GetRendererUtility().Draw(commandBuffer, GetRendererUtility().GetSphereStencil());
+			ShadowProjectionParameterBinding::BindOmnidirectionalProjectionParameters(gpuParameters, gpuDevice, *light, shadowMap, shadowOmniParamBuffer, perViewBuffer, shadowProjectVertBuffer, gbuffer);
+
+			const SPtr<GpuPipelineParameterLayout>& pipelineParameterLayout = gpuParameters->GetPipelineParameterInformation();
+			shadowRenderingInfo.PrimaryUniformBufferDynamicIndex = pipelineParameterLayout->GetDynamicOffsetIndex("Params");
+			shadowRenderingInfo.PrimaryVertexUniformBufferDynamicIndex = pipelineParameterLayout->GetDynamicOffsetIndex("VertParams");
+
+			batchRenderingInfo.Shadows.Add(shadowRenderingInfo);
 		}
 	}
 	else // Directional & spot
 	{
-		shadowInfos.clear();
-
 		bool isCSM = light->GetType() == LightType::Directional;
 		if(!isCSM)
 		{
-			const LightShadows& shadows = mSpotLightShadows[lightIdx];
-			for(u32 i = 0; i < shadows.NumShadows; ++i)
+			const LightShadows& shadows = mSpotLightShadows[lightRendererId];
+			for(u32 localShadowIndex = 0; localShadowIndex < shadows.ShadowCount; ++localShadowIndex)
 			{
-				u32 shadowIdx = shadows.StartIdx + i;
-				const ShadowInfo& shadowInfo = mShadowInfos[shadowIdx];
+				const u32 shadowIndex = shadows.StartIndex + localShadowIndex;
+				const ShadowInfo& shadowInfo = mShadowInfos[shadowIndex];
 
-				if(shadowInfo.FadePerView[viewIdx] < 0.005f)
+				if(shadowInfo.FadePerView[viewIndex] < 0.005f)
 					continue;
 
-				shadowInfos.push_back(&shadowInfo);
+				shadowInfos.Add(&shadowInfo);
 			}
 		}
 		else // Directional
 		{
-			const LightShadows& shadows = mDirectionalLightShadows[lightIdx].ViewShadows[viewIdx];
-			if(shadows.NumShadows > 0)
+			const LightShadows& shadows = mDirectionalLightShadows[lightRendererId].ViewShadows[viewIndex];
+			if(shadows.ShadowCount > 0)
 			{
-				u32 mapIdx = shadows.StartIdx;
-				const ShadowCascadedMap& cascadedMap = mCascadedShadowMaps[mapIdx];
+				u32 shadowMapIndex = shadows.StartIndex;
+				const ShadowCascadedMap& cascadedMap = mCascadedShadowMaps[shadowMapIndex];
 
 				// Render cascades in far to near order.
 				// Note: If rendering other non-cascade maps they should be rendered after cascades.
-				for(i32 i = cascadedMap.GetNumCascades() - 1; i >= 0; i--)
-					shadowInfos.push_back(&cascadedMap.GetShadowInfo(i));
+				for(i32 cascadeIndex = cascadedMap.GetNumCascades() - 1; cascadeIndex >= 0; cascadeIndex--)
+					shadowInfos.Add(&cascadedMap.GetShadowInfo(cascadeIndex));
 			}
 		}
 
-		for(auto& shadowInfo : shadowInfos)
+		if(shadowInfos.Empty())
+			return batchRenderingInfo;
+
+		const u32 shadowCount = (u32)shadowInfos.size();
+		SPtr<GpuBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer(shadowCount);
+		SPtr<GpuBuffer> shadowProjectVertBuffer = gShadowProjectVertParamsDef.CreateBuffer(shadowCount);
+
+		batchRenderingInfo.UniformBufferSuballocationSize = shadowParamBuffer->GetSuballocationSize();
+		batchRenderingInfo.VertexUniformBufferSuballocationSize = shadowProjectVertBuffer->GetSuballocationSize();
+
+		for(u32 shadowIndex = 0; shadowIndex < (u32)shadowInfos.size(); ++shadowIndex)
 		{
+			const ShadowInfo* shadowInfo = shadowInfos[shadowIndex];
 			float depthScale, depthOffset;
 
 			// Depth range scale is already baked into the ortho projection matrix, so avoid doing it here
 			if(isCSM)
 			{
 				// Need to map from API-specific clip space depth to [0, 1] range
-				depthScale = 1.0f / (caps.MaxDepth - caps.MinDepth);
-				depthOffset = -caps.MinDepth * depthScale;
+				depthScale = 1.0f / (deviceCapabilities.MaxDepth - deviceCapabilities.MinDepth);
+				depthOffset = -deviceCapabilities.MinDepth * depthScale;
 			}
 			else
 			{
@@ -1156,89 +1180,187 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 				shadowMapFace = shadowInfo->CascadeIdx;
 			}
 
-			Matrix4 mixedToShadowUV = CreateMixedToShadowUvMatrix(viewP, viewInvVP, shadowInfo->NormArea, depthScale, depthOffset, shadowInfo->ShadowVpTransform);
+			const Matrix4& cameraProjection = viewProperties.ProjTransform;
+			const Matrix4& cameraInverseViewProjection = viewProperties.ViewProjTransform.Inverse();
+
+			Matrix4 mixedToShadowUV = CreateMixedToShadowUvMatrix(cameraProjection, cameraInverseViewProjection, shadowInfo->NormArea, depthScale, depthOffset, shadowInfo->ShadowVpTransform);
 
 			auto shadowMapProps = shadowMap->GetProperties();
 
 			Vector2 shadowMapSize((float)shadowMapProps.Width, (float)shadowMapProps.Height);
 			float transitionScale = GetFadeTransition(*light, shadowInfo->SubjectBounds.Radius, shadowInfo->DepthRange, shadowInfo->Area.Width);
 
-			gShadowProjectParamsDef.gFadePlaneDepth.Set(shadowParamBuffer, shadowInfo->DepthFade);
-			gShadowProjectParamsDef.gMixedToShadowSpace.Set(shadowParamBuffer, mixedToShadowUV);
-			gShadowProjectParamsDef.gShadowMapSize.Set(shadowParamBuffer, shadowMapSize);
-			gShadowProjectParamsDef.gShadowMapSizeInv.Set(shadowParamBuffer, 1.0f / shadowMapSize);
-			gShadowProjectParamsDef.gSoftTransitionScale.Set(shadowParamBuffer, transitionScale);
+			gShadowProjectParamsDef.gFadePlaneDepth.Set(shadowParamBuffer, shadowInfo->DepthFade, 0, shadowIndex);
+			gShadowProjectParamsDef.gMixedToShadowSpace.Set(shadowParamBuffer, mixedToShadowUV, 0, shadowIndex);
+			gShadowProjectParamsDef.gShadowMapSize.Set(shadowParamBuffer, shadowMapSize, 0, shadowIndex);
+			gShadowProjectParamsDef.gShadowMapSizeInv.Set(shadowParamBuffer, 1.0f / shadowMapSize, 0, shadowIndex);
+			gShadowProjectParamsDef.gSoftTransitionScale.Set(shadowParamBuffer, transitionScale, 0, shadowIndex);
 
 			if(isCSM)
-				gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, 1.0f);
+				gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, 1.0f, 0, shadowIndex);
 			else
-				gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, shadowInfo->FadePerView[viewIdx]);
+				gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, shadowInfo->FadePerView[viewIndex], 0, shadowIndex);
 
 			if(shadowInfo->FadeRange == 0.0f)
-				gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 0.0f);
+				gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 0.0f, 0, shadowIndex);
 			else
-				gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 1.0f / shadowInfo->FadeRange);
+				gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 1.0f / shadowInfo->FadeRange, 0, shadowIndex);
+
+			gShadowProjectVertParamsDef.gPositionAndScale.Set(shadowProjectVertBuffer, Vector4(0.0f, 0.0f, 0.0f, 1.0f), 0, shadowIndex);
+
+			ProjectedShadowRenderingInformation shadowRenderingInfo;
+			shadowRenderingInfo.ShadowInfo = shadowInfo;
 
 			// Generate a stencil buffer to avoid evaluating pixels without any receiver geometry in the shadow area
-			std::array<Vector3, 8> frustumVertices;
 			u32 effectiveShadowQuality = shadowQuality;
 			if(!isCSM)
 			{
 				ConvexVolume shadowFrustum;
-				frustumVertices = GetFrustum(shadowInfo->ShadowVpTransform.Inverse(), shadowFrustum);
+				const std::array<Vector3, 8> frustumVertices = GetFrustum(shadowInfo->ShadowVpTransform.Inverse(), shadowFrustum);
 
 				// Check if viewer is inside the frustum. Frustum is slightly expanded so that if the near plane is
 				// intersecting the shadow frustum, it is counted as inside. This needs to be conservative as the code
 				// for handling viewer outside the frustum will not properly render intersections with the near plane.
-				bool viewerInsideFrustum = shadowFrustum.Contains(viewProps.ViewOrigin, viewProps.NearPlane * 3.0f);
+				bool viewerInsideFrustum = shadowFrustum.Contains(viewProperties.ViewOrigin, viewProperties.NearPlane * 3.0f);
 
-				ShadowProjectStencilMat* stencilMat = ShadowProjectStencilMat::GetVariation(false, viewerInsideFrustum);
-				stencilMat->Bind(commandBuffer);
+				ShadowProjectStencilMat* const stencilMaterial = ShadowProjectStencilMat::GetVariation(false, viewerInsideFrustum);
 
 				// Bind GPU parameters for stencil material
-				SPtr<GpuParameters> stencilGpuParameters = stencilMat->GetGPUParameters(); // TODO - GPU parameter code is duplicated here and below, deduplicate
+				SPtr<GpuParameters> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
 				ShadowProjectionParameterBinding::BindStencilProjectionParameters(stencilGpuParameters, perViewBuffer, shadowProjectVertBuffer);
 
-				// Bind parameters to pipeline
-				stencilMat->BindParameters(commandBuffer);
-
-				DrawFrustum(commandBuffer, frustumVertices);
+				shadowRenderingInfo.StencilGpuParameters = stencilGpuParameters;
+				shadowRenderingInfo.IsViewerInsideLightVolume = viewerInsideFrustum;
 
 				// Reduce shadow quality based on shadow map resolution for spot lights
 				effectiveShadowQuality = GetShadowQuality(shadowQuality, shadowInfo->Area.Width, 2);
 			}
 			else
 			{
+				ShadowProjectStencilMat* const stencilMaterial = ShadowProjectStencilMat::GetVariation(true, true);
+
+				// Bind GPU parameters for stencil material
+				SPtr<GpuParameters> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
+				ShadowProjectionParameterBinding::BindStencilProjectionParameters(stencilGpuParameters, perViewBuffer, shadowProjectVertBuffer);
+
+				shadowRenderingInfo.StencilGpuParameters = stencilGpuParameters;
+				shadowRenderingInfo.IsViewerInsideLightVolume = true;
+			}
+
+			shadowRenderingInfo.ShadowQuality = effectiveShadowQuality;
+
+			const SPtr<GpuPipelineParameterLayout>& stencilPipelineParameterLayout = shadowRenderingInfo.StencilGpuParameters->GetPipelineParameterInformation();
+			shadowRenderingInfo.StencilVertexUniformBufferDynamicIndex = stencilPipelineParameterLayout->GetDynamicOffsetIndex("VertParams");
+
+			gShadowProjectParamsDef.gFace.Set(shadowParamBuffer, (float)shadowMapFace);
+
+			ShadowProjectMat* const primaryMaterial = ShadowProjectMat::GetVariation(effectiveShadowQuality, isCSM, viewProperties.Target.NumSamples > 1);
+
+			// Bind GPU parameters explicitly
+			SPtr<GpuParameters> gpuParameters = primaryMaterial->CreateGpuParameters();
+			ShadowProjectionParameterBinding::BindProjectionParameters(gpuParameters, gpuDevice, shadowMap, shadowParamBuffer, perViewBuffer, shadowProjectVertBuffer, gbuffer);
+
+			shadowRenderingInfo.PrimaryGpuParameters = gpuParameters;
+
+			const SPtr<GpuPipelineParameterLayout>& pipelineParameterLayout = gpuParameters->GetPipelineParameterInformation();
+			shadowRenderingInfo.PrimaryUniformBufferDynamicIndex = pipelineParameterLayout->GetDynamicOffsetIndex("Params");
+			shadowRenderingInfo.PrimaryVertexUniformBufferDynamicIndex = pipelineParameterLayout->GetDynamicOffsetIndex("VertParams");
+
+			batchRenderingInfo.Shadows.Add(shadowRenderingInfo);
+		}
+	}
+
+	return batchRenderingInfo;
+}
+
+void ShadowRendering::RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, const RendererLight& rendererLight, const ProjectedShadowRenderingBatchInformation& batch) const
+{
+	const Light* light = rendererLight.Internal;
+	const auto& viewProperties = view.GetProperties();
+
+	// TODO - Calculate and set a scissor rectangle for the light
+
+	ProfileGPUBlock sampleBlock(commandBuffer, "Render shadow occlusion");
+
+	if(light->GetType() == LightType::Radial)
+	{
+		for(u32 visibleShadowIndex = 0; visibleShadowIndex < (u32)batch.Shadows.Size(); ++visibleShadowIndex)
+		{
+			const ProjectedShadowRenderingInformation& shadowRenderingInformation = batch.Shadows[visibleShadowIndex];
+
+			ShadowProjectOmniMat* const shadowProjectOmniMaterial = ShadowProjectOmniMat::GetVariation(shadowRenderingInformation.ShadowQuality, shadowRenderingInformation.IsViewerInsideLightVolume, batch.MSAA);
+			shadowProjectOmniMaterial->Bind(commandBuffer);
+
+			// Bind parameters to pipeline
+			commandBuffer.SetGpuParameters(shadowRenderingInformation.StencilGpuParameters);
+
+			// Calculate sub-allocation offsets
+			const u32 shadowSuballocationOffset = visibleShadowIndex * batch.UniformBufferSuballocationSize;
+			const u32 vertSuballocationOffset = visibleShadowIndex * batch.VertexUniformBufferSuballocationSize;
+
+			commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.PrimaryUniformBufferDynamicIndex, shadowSuballocationOffset);
+			commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.PrimaryVertexUniformBufferDynamicIndex, vertSuballocationOffset);
+
+			GetRendererUtility().Draw(commandBuffer, GetRendererUtility().GetSphereStencil());
+		}
+	}
+	else // Directional & spot
+	{
+		bool isCSM = light->GetType() == LightType::Directional;
+
+		for(u32 visibleShadowIndex = 0; visibleShadowIndex < (u32)batch.Shadows.Size(); ++visibleShadowIndex)
+		{
+			const ProjectedShadowRenderingInformation& shadowRenderingInformation = batch.Shadows[visibleShadowIndex];
+			const ShadowInfo& shadowInfo = *shadowRenderingInformation.ShadowInfo;
+
+			// Generate a stencil buffer to avoid evaluating pixels without any receiver geometry in the shadow area
+			std::array<Vector3, 8> frustumVertices;
+			if(!isCSM)
+			{
+				ConvexVolume shadowFrustum;
+				frustumVertices = GetFrustum(shadowInfo.ShadowVpTransform.Inverse(), shadowFrustum);
+
+				ShadowProjectStencilMat* stencilMat = ShadowProjectStencilMat::GetVariation(false, shadowRenderingInformation.IsViewerInsideLightVolume);
+				stencilMat->Bind(commandBuffer);
+
+				// Bind parameters to pipeline
+				commandBuffer.SetGpuParameters(shadowRenderingInformation.StencilGpuParameters);
+
+				const u32 vertSuballocationOffset = visibleShadowIndex * batch.VertexUniformBufferSuballocationSize;
+				commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.StencilVertexUniformBufferDynamicIndex, vertSuballocationOffset);
+
+				DrawFrustum(commandBuffer, frustumVertices);
+			}
+			else
+			{
 				// Need to generate near and far planes to clip the geometry within the current CSM slice.
 				// Note: If the render API supports built-in depth bound tests that could be used instead.
 
-				Vector3 near = viewProps.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo->DepthNear));
-				Vector3 far = viewProps.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo->DepthFar));
+				Vector3 near = viewProperties.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo.DepthNear));
+				Vector3 far = viewProperties.ProjTransform.Multiply(Vector3(0, 0, -shadowInfo.DepthFar));
 
 				ShadowProjectStencilMat* stencilMaterial = ShadowProjectStencilMat::GetVariation(true, true);
 				stencilMaterial->Bind(commandBuffer);
 
-				// Bind GPU parameters for stencil material
-				SPtr<GpuParameters> stencilGpuParameters = stencilMaterial->GetGPUParameters();
-				ShadowProjectionParameterBinding::BindStencilProjectionParameters(stencilGpuParameters, perViewBuffer, shadowProjectVertBuffer);
+				commandBuffer.SetGpuParameters(shadowRenderingInformation.StencilGpuParameters);
 
-				// Bind parameters to pipeline
-				stencilMaterial->BindParameters(commandBuffer);
+				const u32 vertSuballocationOffset = visibleShadowIndex * batch.VertexUniformBufferSuballocationSize;
+				commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.StencilVertexUniformBufferDynamicIndex, vertSuballocationOffset);
 
-				DrawNearFarPlanes(commandBuffer, near.Z, far.Z, shadowInfo->CascadeIdx != 0);
+				DrawNearFarPlanes(commandBuffer, near.Z, far.Z, shadowInfo.CascadeIdx != 0);
 			}
 
-			gShadowProjectParamsDef.gFace.Set(shadowParamBuffer, (float)shadowMapFace);
-
-			ShadowProjectMat* mat = ShadowProjectMat::GetVariation(effectiveShadowQuality, isCSM, viewProps.Target.NumSamples > 1);
+			ShadowProjectMat* mat = ShadowProjectMat::GetVariation(shadowRenderingInformation.ShadowQuality, isCSM, batch.MSAA);
 			mat->Bind(commandBuffer);
 
-			// Bind GPU parameters explicitly
-			SPtr<GpuParameters> gpuParams = mat->GetGPUParameters();
-			ShadowProjectionParameterBinding::BindProjectionParameters(gpuParams, commandBuffer.GetGpuDevice(), shadowMap, shadowParamBuffer, perViewBuffer, shadowProjectVertBuffer, gbuffer);
+			commandBuffer.SetGpuParameters(shadowRenderingInformation.PrimaryGpuParameters);
 
-			// Bind parameters to pipeline
-			mat->BindParameters(commandBuffer);
+			// Calculate sub-allocation offsets
+			const u32 shadowSuballocationOffset = visibleShadowIndex * batch.UniformBufferSuballocationSize;
+			const u32 vertSuballocationOffset = visibleShadowIndex * batch.VertexUniformBufferSuballocationSize;
+
+			commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.PrimaryUniformBufferDynamicIndex, shadowSuballocationOffset);
+			commandBuffer.SetDynamicBufferOffset(shadowRenderingInformation.PrimaryVertexUniformBufferDynamicIndex, vertSuballocationOffset);
 
 			if(!isCSM)
 				DrawFrustum(commandBuffer, frustumVertices);
@@ -1255,8 +1377,8 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 
 	if(!view.GetRenderSettings().EnableShadows)
 	{
-		lightShadows.StartIdx = -1;
-		lightShadows.NumShadows = 0;
+		lightShadows.StartIndex = -1;
+		lightShadows.ShadowCount = 0;
 		return;
 	}
 
@@ -1387,8 +1509,8 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 		shadowMap.SetShadowInfo(i, shadowInfo);
 	}
 
-	lightShadows.StartIdx = shadowInfo.TextureIdx;
-	lightShadows.NumShadows = 1;
+	lightShadows.StartIndex = shadowInfo.TextureIdx;
+	lightShadows.ShadowCount = 1;
 }
 
 void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo)
@@ -1485,8 +1607,8 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 
 	LightShadows& lightShadows = mSpotLightShadows[options.LightIdx];
 
-	mShadowInfos[lightShadows.StartIdx + lightShadows.NumShadows] = mapInfo;
-	lightShadows.NumShadows++;
+	mShadowInfos[lightShadows.StartIndex + lightShadows.ShadowCount] = mapInfo;
+	lightShadows.ShadowCount++;
 }
 
 void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RenderBeastScene& scene, const FrameInfo& frameInfo)
@@ -1687,8 +1809,8 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 
 	LightShadows& lightShadows = mRadialLightShadows[options.LightIdx];
 
-	mShadowInfos[lightShadows.StartIdx + lightShadows.NumShadows] = mapInfo;
-	lightShadows.NumShadows++;
+	mShadowInfos[lightShadows.StartIndex + lightShadows.ShadowCount] = mapInfo;
+	lightShadows.ShadowCount++;
 }
 
 void ShadowRendering::CalcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup, u32 border, u32& size, TInlineArray<float, 6>& fadePercents, float& maxFadePercent) const

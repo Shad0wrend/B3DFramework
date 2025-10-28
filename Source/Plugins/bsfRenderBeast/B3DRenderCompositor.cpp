@@ -1076,18 +1076,31 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 			u32 lightCount = lightData.GetShadowedLightCount(lightType);
 			u32 offset = lightData.GetUnshadowedLightCount(lightType);
 
-			for(u32 lightIndex = 0; lightIndex < lightCount; lightIndex++)
+			for(u32 shadowedLightIndex = 0; shadowedLightIndex < lightCount; shadowedLightIndex++)
 			{
-				commandBuffer.BeginRenderPass(mLightOcclusionRT, RT_DEPTH, RT_DEPTH_STENCIL);
+				u32 rendererLightId = offset + shadowedLightIndex;
+				const RendererLight& light = *lights[rendererLightId];
+
+				ShadowRendering::ProjectedShadowRenderingBatchInformation shadowProjectionRenderingBatch =
+					shadowRenderer.PrepareParametersForRenderShadowProjection(commandBuffer.GetGpuDevice(), inputs.View, light, gbuffer);
+
+				RenderPassCreateInformation shadowProjectionPassInfo(mLightOcclusionRT, RT_DEPTH, RT_DEPTH_STENCIL);
+				for(const auto& shadowProjectionRenderingInfo : shadowProjectionRenderingBatch.Shadows)
+				{
+					shadowProjectionPassInfo.Parameters.Add(shadowProjectionRenderingInfo.PrimaryGpuParameters);
+
+					if(shadowProjectionRenderingInfo.StencilGpuParameters != nullptr)
+						shadowProjectionPassInfo.Parameters.Add(shadowProjectionRenderingInfo.StencilGpuParameters);
+				}
+
+				commandBuffer.BeginRenderPass(shadowProjectionPassInfo);
 
 				Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 				commandBuffer.SetViewport(area);
 
 				commandBuffer.ClearViewport(FBT_COLOR, Color::kZero);
 
-				u32 lightIdx = offset + lightIndex;
-				const RendererLight& light = *lights[lightIdx];
-				shadowRenderer.RenderShadowOcclusion(commandBuffer, inputs.View, light, gbuffer);
+				shadowRenderer.RenderShadowProjectionBatch(commandBuffer, inputs.View, light, shadowProjectionRenderingBatch);
 				commandBuffer.EndRenderPass();
 
 				commandBuffer.IssueBarriers({{ GpuTextureBarrier(Output->LightAccumulationTex->Texture, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Write )}});

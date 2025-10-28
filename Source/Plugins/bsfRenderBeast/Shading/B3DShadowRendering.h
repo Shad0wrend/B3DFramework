@@ -508,8 +508,8 @@ namespace b3d
 			/** Contains references to all shadows cast by a specific light. */
 			struct LightShadows
 			{
-				u32 StartIdx = 0;
-				u32 NumShadows = 0;
+				u32 StartIndex = 0;
+				u32 ShadowCount = 0;
 			};
 
 			/** Contains references to all shadows cast by a specific light, per view. */
@@ -519,16 +519,47 @@ namespace b3d
 			};
 
 		public:
+			/** Contains information that can be used for rendering a single shadows prepared via a call to PrepareParametrersForRenderShadowProjection. */
+			struct ProjectedShadowRenderingInformation
+			{
+				const ShadowInfo* ShadowInfo; /**< Note this will be invalidated if any new shadows are rendered via RenderShadowMaps(). */
+
+				SPtr<GpuParameters> PrimaryGpuParameters;
+				SPtr<GpuParameters> StencilGpuParameters;
+
+				u32 ShadowQuality;
+				bool IsViewerInsideLightVolume;
+
+				u32 PrimaryUniformBufferDynamicIndex;
+				u32 PrimaryVertexUniformBufferDynamicIndex;
+
+				u32 StencilVertexUniformBufferDynamicIndex;
+			};
+
+			/** Contains information that can be used for rendering all shadows prepared via a single call to PrepareParametrersForRenderShadowProjection. */
+			struct ProjectedShadowRenderingBatchInformation
+			{
+				bool MSAA;
+
+				u32 UniformBufferSuballocationSize;
+				u32 VertexUniformBufferSuballocationSize;
+
+				TArray<ProjectedShadowRenderingInformation> Shadows;;
+			};
+
 			ShadowRendering(u32 shadowMapSize);
 
 			/** For each visible shadow casting light, renders a shadow map from its point of view. */
 			void RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
+			/** Prepares all the GpuParameters required for rendering projected shadows for the specified light. Should be followed by RenderShadowProjectionBatch. */
+			ProjectedShadowRenderingBatchInformation PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, const RendererLight& rendererLight, GBufferTextures gbuffer) const;
+
 			/**
 			 * Renders shadow occlusion values for the specified light, through the provided view, into the currently bound
-			 * render target. The system uses shadow maps rendered by renderShadowMaps().
+			 * render target. User must have started a render pass externally. The system uses shadow maps rendered by RenderShadowMaps().
 			 */
-			void RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, const RendererView& view, const RendererLight& light, GBufferTextures gbuffer) const;
+			void RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, const RendererLight& rendererLight, const ProjectedShadowRenderingBatchInformation& batch) const;
 
 			/** Changes the default shadow map size. Will cause all shadow maps to be rebuilt. */
 			void SetShadowMapSize(u32 size);
