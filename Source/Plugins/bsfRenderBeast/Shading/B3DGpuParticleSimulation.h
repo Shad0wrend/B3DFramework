@@ -9,6 +9,7 @@
 #include "Allocators/B3DPoolAlloc.h"
 #include "Utility/B3DTextureRowAllocator.h"
 #include "Utility/B3DGpuSort.h"
+#include "B3DGpuParticleSimulationMaterials.h"
 
 namespace b3d
 {
@@ -361,15 +362,6 @@ namespace b3d
 		class GpuParticleResources
 		{
 		public:
-			static constexpr u32 kTexSize = 1024;
-			static constexpr u32 kTileSize = 4;
-			static constexpr u32 kParticlesPerTile = kTileSize * kTileSize;
-			static constexpr u32 kTileCount1D = kTexSize / kTileSize;
-			static constexpr u32 kTileCount = kTileCount1D * kTileCount1D;
-
-			static_assert((kTexSize & (kTexSize - 1)) == 0, "Particle texture size not a power of two");
-			static_assert((kTileSize & (kTileSize - 1)) == 0, "Particle tile size not a power of two");
-
 			GpuParticleResources();
 
 			/** Swap the read and write state textures. */
@@ -444,8 +436,8 @@ namespace b3d
 
 			u32 mWriteBufferIdx = 0;
 
-			u32 mFreeTiles[kTileCount];
-			u32 mNumFreeTiles = kTileCount;
+			u32 mFreeTiles[GpuParticleConstants::kTileCount];
+			u32 mNumFreeTiles = GpuParticleConstants::kTileCount;
 		};
 
 		/** @} */
