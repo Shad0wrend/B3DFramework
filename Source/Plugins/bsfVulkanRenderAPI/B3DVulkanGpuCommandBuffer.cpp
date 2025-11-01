@@ -1185,8 +1185,7 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 	mState = State::Recording;
 	mIsRenderPassInterrupted = isInternalInterrupt;
 
-	if(isInternalInterrupt)
-		mRenderPassGpuParametersCache.clear();
+	mRenderPassGpuParametersCache.clear();
 
 	// In case the same GPU params from last pass get used, this makes sure the states we reset above, get re-applied
 	mBoundParamsDirty = true;
