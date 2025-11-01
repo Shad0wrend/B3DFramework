@@ -39,12 +39,12 @@ namespace b3d
 			RMAT_DEF("ShadowDepthNormal.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <bool skinned, bool morph>
+			template <bool SKINNED, bool MORPH>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SKINNED", skinned),
-					  ShaderVariationParameter("MORPH", morph) });
+					{ ShaderVariationParameter("SKINNED", SKINNED),
+					  ShaderVariationParameter("MORPH", MORPH) });
 
 				return variation;
 			}
@@ -53,10 +53,10 @@ namespace b3d
 			ShadowDepthNormalMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
 
-			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams);
+			/** Binds all the provided buffers to the provided GpuParameters object. */
+			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -73,12 +73,12 @@ namespace b3d
 			RMAT_DEF("ShadowDepthNormalNoPS.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <bool skinned, bool morph>
+			template <bool SKINNED, bool MORPH>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SKINNED", skinned),
-					  ShaderVariationParameter("MORPH", morph) });
+					{ ShaderVariationParameter("SKINNED", SKINNED),
+					  ShaderVariationParameter("MORPH", MORPH) });
 
 				return variation;
 			}
@@ -87,10 +87,10 @@ namespace b3d
 			ShadowDepthNormalNoPSMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
 
-			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams);
+			/** Binds all the provided buffers to the provided GpuParameters object. */
+			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -107,12 +107,12 @@ namespace b3d
 			RMAT_DEF("ShadowDepthDirectional.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <bool skinned, bool morph>
+			template <bool SKINNED, bool MORPH>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SKINNED", skinned),
-					  ShaderVariationParameter("MORPH", morph) });
+					{ ShaderVariationParameter("SKINNED", SKINNED),
+					  ShaderVariationParameter("MORPH", MORPH) });
 
 				return variation;
 			}
@@ -121,10 +121,10 @@ namespace b3d
 			ShadowDepthDirectionalMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
 
-			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams);
+			/** Binds all the provided buffers to the provided GpuParameters object. */
+			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -153,12 +153,12 @@ namespace b3d
 			RMAT_DEF("ShadowDepthCube.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <bool skinned, bool morph>
+			template <bool SKINNED, bool MORPH>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SKINNED", skinned),
-					  ShaderVariationParameter("MORPH", morph) });
+					{ ShaderVariationParameter("SKINNED", SKINNED),
+					  ShaderVariationParameter("MORPH", MORPH) });
 
 				return variation;
 			}
@@ -167,10 +167,11 @@ namespace b3d
 			ShadowDepthCubeMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeParams);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
 
-			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams, const SPtr<GpuBuffer>& shadowCubeMasks);
+			/** Binds all the provided buffers to the provided GpuParameters object. */
+			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeMatrices,
+				const SPtr<GpuBuffer>& shadowCubeMasks, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -193,12 +194,12 @@ namespace b3d
 			RMAT_DEF("ShadowProjectStencil.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <bool directional, bool useZFailStencil>
+			template <bool DIRECTIONAL, bool USE_Z_FAIL_STENCIL>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("NEEDS_TRANSFORM", !directional),
-					  ShaderVariationParameter("USE_ZFAIL_STENCIL", useZFailStencil) });
+					{ ShaderVariationParameter("NEEDS_TRANSFORM", !DIRECTIONAL),
+					  ShaderVariationParameter("USE_ZFAIL_STENCIL", USE_Z_FAIL_STENCIL) });
 
 				return variation;
 			}
@@ -347,7 +348,7 @@ namespace b3d
 			/** Updates normalized area coordinates based on the non-normalized ones and the provided atlas size. */
 			void UpdateNormArea(u32 atlasSize);
 
-			u32 LightIdx; /**< Index of the light casting this shadow. */
+			u32 LightId; /**< Index of the light casting this shadow. */
 			Area2I Area; /**< Area of the shadow map in pixels, relative to its source texture. */
 			Area2 NormArea; /**< Normalized shadow map area in [0, 1] range. */
 			u32 TextureIdx; /**< Index of the texture the shadow map is stored in. */
@@ -391,7 +392,7 @@ namespace b3d
 			bool AddMap(u32 size, Area2I& area, u32 border = 4);
 
 			/** Clears all shadow maps from the atlas. Increments the last used counter.*/
-			void Clear();
+			void MarkAsUnused();
 
 			/** Checks have any maps been added to the atlas. */
 			bool IsEmpty() const;
@@ -430,7 +431,7 @@ namespace b3d
 			u32 GetSize() const { return mSize; }
 
 			/** Makes the shadow map available for re-use and increments the counter returned by getLastUsedCounter(). */
-			void Clear()
+			void MarkAsUnused()
 			{
 				mIsUsed = false;
 				mLastUsedCounter++;
@@ -506,7 +507,7 @@ namespace b3d
 			};
 
 			/** Contains references to all shadows cast by a specific light. */
-			struct LightShadows
+			struct LocalLightShadows
 			{
 				u32 StartIndex = 0;
 				u32 ShadowCount = 0;
@@ -515,7 +516,7 @@ namespace b3d
 			/** Contains references to all shadows cast by a specific light, per view. */
 			struct PerViewLightShadows
 			{
-				TInlineArray<LightShadows, 6> ViewShadows;
+				TInlineArray<LocalLightShadows, 6> ViewShadows;
 			};
 
 		public:
@@ -679,15 +680,15 @@ namespace b3d
 
 			u32 mShadowMapSize;
 
-			Vector<ShadowMapAtlas> mDynamicShadowMaps;
+			Vector<ShadowMapAtlas> mAtlasShadowMaps;
 			Vector<ShadowCascadedMap> mCascadedShadowMaps;
 			Vector<ShadowCubemap> mShadowCubemaps;
 
 			Vector<ShadowInfo> mShadowInfos;
 
-			Vector<LightShadows> mSpotLightShadows;
-			Vector<LightShadows> mRadialLightShadows;
-			Vector<PerViewLightShadows> mDirectionalLightShadows;
+			Vector<LocalLightShadows> mSpotLightShadows; /**< Maps a spot light in SceneInfo to zero or multiple ShadowInformation structures. */
+			Vector<LocalLightShadows> mRadialLightShadows; /**< Maps a radial light in SceneInfo to zero or multiple ShadowInformation structures. */
+			Vector<PerViewLightShadows> mDirectionalLightShadows; /**< Maps a directional in SceneInfo to zero or multiple ShadowInformation structures. */
 
 			SPtr<VertexDescription> mPositionOnlyVertexDescription;
 
