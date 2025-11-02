@@ -101,7 +101,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 				visibleElement.Layout->AddElement(label);
 				visibleElement.Layout->AddElement(arrow);
 
-				visibleElement.UnderlayButton->OnHover.Connect([elementIndex, currentVisibleIndex, &fnOnHover] { fnOnHover(elementIndex, currentVisibleIndex); });
+				visibleElement.UnderlayButton->OnHover.Connect([elementIndex, currentVisibleIndex, fnOnHover] { fnOnHover(elementIndex, currentVisibleIndex); });
 			}
 			else if(mIsToggle)
 			{
@@ -134,8 +134,8 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 			else
 			{
 				visibleElement.Button = GUIButton::Create(GetElementLocalizedName(elementIndex), kButtonStyleClass);
-				visibleElement.Button->OnHover.Connect([elementIndex, currentVisibleIndex, &fnOnHover] { fnOnHover(elementIndex, currentVisibleIndex); });
-				visibleElement.Button->OnClick.Connect([elementIndex, currentVisibleIndex, &fnOnClick] { fnOnClick(elementIndex, currentVisibleIndex); });
+				visibleElement.Button->OnHover.Connect([elementIndex, currentVisibleIndex, fnOnHover] { fnOnHover(elementIndex, currentVisibleIndex); });
+				visibleElement.Button->OnClick.Connect([elementIndex, currentVisibleIndex, fnOnClick] { fnOnClick(elementIndex, currentVisibleIndex); });
 				visibleElement.Layout->AddElement(visibleElement.Button);
 			}
 
