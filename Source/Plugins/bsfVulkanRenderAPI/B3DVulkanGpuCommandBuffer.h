@@ -229,7 +229,7 @@ namespace b3d
 			 * or dispatch call. Transfers the image to the provided layout and issues any necessary execution and memory
 			 * barriers.
 			 */
-			void RegisterImageShader(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages);
+			void RegisterImageShader(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, GpuResourceUseFlags useFlag, GpuAccessFlags access); // TODO - Unify with RegisterImageTransfer below
 
 			/**
 			 * Lets the command buffer know that the provided image will be used for a transfer operation. Transfers the image

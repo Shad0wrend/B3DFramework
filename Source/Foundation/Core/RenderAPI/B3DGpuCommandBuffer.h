@@ -46,10 +46,10 @@ namespace b3d
 		enum class GpuResourceUseFlag
 		{
 			Undefined = 0,
-			ShaderAccess = 1 << 0, /**< Sampled or unordered access in any shader stage. */
+			ShaderAccess = 1 << 0, /**< Sampled or unordered access in any shader stage. Shader stage must be provided explicitly via one or multiple Stage* values. */
 			IndexBuffer = 1 << 1, /**< Index buffer (read only). */
 			VertexBuffer = 1 << 2, /**< Vertex buffer (read only). */
-			UniformBuffer = 1 << 3, /**< Uniform buffer (read only). */
+			UniformBuffer = 1 << 3, /**< Uniform buffer (read only) used in any shader stage. Shader stage must be provided explicitly via one or multiple Stage* values. */
 			Transfer = 1 << 4, /**< Transfer source or destination. */
 			ColorAttachment = 1 << 5, /**< Color attachment. */
 			DepthStencilAttachment = 1 << 6, /**< Depth/stencil attachment. */
@@ -59,6 +59,8 @@ namespace b3d
 			StageVertexShader = 1 << 7, /**< Access in vertex shader. */
 			StageFragmentShader = 1 << 8, /**< Access in fragment shader. */
 			StageComputeShader = 1 << 9, /**< Access in compute shader. */
+
+			AnyStage = StageVertexShader | StageFragmentShader | StageComputeShader
 		};
 
 		typedef Flags<GpuResourceUseFlag> GpuResourceUseFlags;

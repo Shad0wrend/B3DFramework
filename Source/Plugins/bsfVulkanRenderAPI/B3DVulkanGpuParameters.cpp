@@ -939,12 +939,11 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 
 			// Register with command buffer
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(set);
-			VkPipelineStageFlags stages = VulkanUtility::ShaderToPipelineStage(perSetBindings[usedBindingSequentialIndex].stageFlags);
 
-			const GpuAccessFlags useFlags = GpuAccessFlag::Read | GpuAccessFlag::Write;
+			const GpuResourceUseFlags useFlags = VulkanUtility::ShaderToResourceUseFlags(perSetBindings[usedBindingSequentialIndex].stageFlags) | GpuResourceUseFlag::ShaderAccess;
 			const VkImageSubresourceRange range = vulkanImage->GetRange(surface);
 
-			commandBuffer.RegisterImageShader(vulkanImage, range, VK_IMAGE_LAYOUT_GENERAL, useFlags, stages);
+			commandBuffer.RegisterImageShader(vulkanImage, range, VK_IMAGE_LAYOUT_GENERAL, useFlags, GpuAccessFlag::Read | GpuAccessFlag::Write);
 
 			// Check if internal resource changed from what was previously bound in the descriptor set
 			B3D_ASSERT(perDeviceData.StorageImages[sequentialResourceIndex] != VK_NULL_HANDLE);
@@ -1024,9 +1023,9 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 			VkImageSubresourceRange range = vulkanImage->GetRange(surface);
 
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(set);
-			VkPipelineStageFlags stages = VulkanUtility::ShaderToPipelineStage(perSetBindings[usedBindingSequentialIndex].stageFlags);
 
-			commandBuffer.RegisterImageShader(vulkanImage, range, layout, GpuAccessFlag::Read, stages);
+			const GpuResourceUseFlags useFlags = VulkanUtility::ShaderToResourceUseFlags(perSetBindings[usedBindingSequentialIndex].stageFlags) | GpuResourceUseFlag::ShaderAccess;
+			commandBuffer.RegisterImageShader(vulkanImage, range, layout, useFlags, GpuAccessFlag::Read);
 
 			// Actual layout might be different than requested if the image is also used as a FB attachment
 			layout = commandBuffer.GetCurrentLayout(vulkanImage, range, true);

@@ -42,17 +42,13 @@ namespace b3d::render
 	{
 		static constexpr u32 kPipelineStageCount = 16;
 
-		static constexpr VkPipelineStageFlags kAllPipelines = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT | VK_PIPELINE_STAGE_VERTEX_INPUT_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
-			VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT |
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT;
-
 		/** For each pipeline stage, stores in which pipelines is it safe to access the pipeline. */
-		std::array<VkPipelineStageFlags, kPipelineStageCount> SafeAccess;
+		std::array<VulkanAccessStageFlags, kPipelineStageCount> SafeAccess;
 
 		WriteHazardPipelineTracking();
 
 		/** Clears safe access for all provided pipeline stages. */
-		void ClearStageSafeAccess(VkPipelineStageFlags stages);
+		void ClearStageSafeAccess(VulkanAccessStageFlags stages);
 
 		/**
 		 * Adds safe access for all provided pipeline stages.
@@ -60,26 +56,22 @@ namespace b3d::render
 		 * @param	sourceStages		One or multiple stages to add the safe access to.
 		 * @param	destinationStages	Stages to register as being safe to access from.
 		 */
-		void AddStageSafeAccess(VkPipelineStageFlags sourceStages, VkPipelineStageFlags destinationStages);
+		void AddStageSafeAccess(VulkanAccessStageFlags sourceStages, VulkanAccessStageFlags destinationStages);
 
 		/** Checks is it safe to access the resource in all the provided pipeline stages. */
-		bool IsAccessSafe(VkPipelineStageFlags stages) const;
+		bool IsAccessSafe(VulkanAccessStageFlags stages) const;
 
 		/** Returns a list of all source stages that we cannot safely access data from the provided @p stages. */
-		VkPipelineStageFlags GetUnsafeAccessStages(VkPipelineStageFlags stages) const;
+		VulkanAccessStageFlags GetUnsafeAccessStages(VulkanAccessStageFlags stages) const;
 
 		/** Writes a descriptive error message when access is unsafe. */
-		void LogUnsafeAccess(VkPipelineStageFlags stages, GpuAccessFlags currentAccessType, GpuAccessFlags previousAccessType) const;
+		void LogUnsafeAccess(VulkanAccessStageFlags stages, GpuAccessFlags currentAccessType, GpuAccessFlags previousAccessType) const;
 	};
 
 	/** Tracking that is used for validation when memory barriers need to be issued. */
 	struct WriteHazardTracking
 	{
 		GpuAccessFlags Access; /**< Has the buffer been read or written so far. */
-
-		// TODO - Instead of tracking by VK_PIPELINE_STAGE only, also track by VK_ACCESS, because when issuing barriers we need to determine the access mask from the pipeline
-		// flags, and in some cases it cannot be directly determined (e.g. for vertex input stage, input could have been index or vertex attribute, for shader input the input
-		// could be shader read or uniform read). We can just add our own enum mimicing VK_PIPELINE_STAGE with two extra cases added for the above.
 
 		/** Keeps track of all pipeline stages that the resource was read from, and which of those stages can be safely accessed by a write operation (and on which stage). */
 		WriteHazardPipelineTracking ReadAccessStages;
@@ -154,13 +146,10 @@ namespace b3d::render
 			// ends (e.g. image unbound as FB attachment, or memory barrier executed)
 
 			/** Use flags when subresource is bound for shader reads or writes. Reset after resource is unbound. */
-			ResourcePipelineUse ShaderUse;
+			GpuAccessFlags ShaderUse;
 
 			/** Use flags when subresource is bound as a framebuffer attachment. Reset after resource is unbound. */
-			ResourcePipelineUse FramebufferUse;
-
-			/** Use flags when subresource is bound for a transfer operation. Currently unused. */
-			ResourcePipelineUse TransferUse;
+			GpuAccessFlags FramebufferUse;
 
 			/**
 			 * Specifies how will the subresource be used during the current render pass or dispatch call. Reset
@@ -217,10 +206,10 @@ namespace b3d::render
 		 * Lets the tracker know that the provided buffer resource has been queued on the associated command buffer.
 		 * 
 		 * @param	buffer				Buffer to track.
-		 * @param	useFlags			Categorizes how the buffer will be used (shader access, vertex input, etc.).
-		 * @param	access				Access flags specifying how the buffer will be accessed (read/write).
+		 * @param	useFlags			Categorizes how the buffer will be used (shader access, vertex input, etc.), and on which stages.
+		 * @param	accessFlags			Access flags specifying how the buffer will be accessed (read/write).
 		 */
-		void TrackBufferUsage(VulkanBuffer* buffer, GpuResourceUseFlags useFlags, GpuAccessFlags access);
+		void TrackBufferUsage(VulkanBuffer* buffer, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags);
 
 		/**
 		 * Lets the tracker know that the provided image resource has been queued on the associated command buffer. Use this only for images
@@ -231,10 +220,10 @@ namespace b3d::render
 		 * @param	use					Categorizes how the image will be used (shader, framebuffer, or transfer).
 		 * @param	layout				Expected layout the image should be during use.
 		 * @param	finalLayout			Layout the image will be in after render pass completes (relevant only for framebuffer attachments).
-		 * @param	access				Access flags specifying how the image will be accessed (read/write).
-		 * @param	stages				Pipeline stages during which the image will be accessed.
+		 * @param	useFlags			Categorizes how the image be used (shader access, color attachment, depth attachment, etc.), and on which stages.
+		 * @param	accessFlags			Access flags specifying how the image will be accessed (read/write).
 		 */
-		void TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+		void TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags);
 
 		/**
 		 * Lets the tracker know that the provided framebuffer has been queued on the associated command buffer. All associated attachment images
@@ -342,10 +331,10 @@ namespace b3d::render
 
 #if B3D_HAZARD_TRACKING
 		/** Updates write hazard tracking for a single buffer after a barrier has been issued. */
-		void UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
+		void UpdateWriteHazardTrackingAfterBarrier(VulkanBuffer* buffer, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccess, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccess);
 
 		/** Updates write hazard tracking for a single image after a barrier has been issued. */
-		void UpdateWriteHazardTrackingAfterBarrier(VulkanImage* image, const VkImageSubresourceRange& range, GpuAccessFlags sourceAccess, VkPipelineStageFlags sourceStages, GpuAccessFlags destinationAccess, VkPipelineStageFlags destinationStages);
+		void UpdateWriteHazardTrackingAfterBarrier(VulkanImage* image, const VkImageSubresourceRange& range, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccess, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccess);
 #endif
 
 		/** Returns the internal map of all tracked buffers and their tracking states. */
@@ -392,7 +381,7 @@ namespace b3d::render
 		 * and barriers based on previous subresource usage.
 		 */
 		// TODO - Refactor this signature, try to clean it up once we have explicit layout transitions
-		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuAccessFlags access, VkPipelineStageFlags stages);
+		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags);
 
 		/**
 		 * Private overload of IterateAndCreateOverlappingImageSubresourceTrackingState that operates on an existing ImageTrackingState.

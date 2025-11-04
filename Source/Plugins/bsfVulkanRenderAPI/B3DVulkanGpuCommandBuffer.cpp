@@ -406,8 +406,8 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 
 	if(mFramebuffer != nullptr)
 	{
-		const VkPipelineStageFlags kSourceStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-		const VkPipelineStageFlags kDestinationStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+		const VulkanAccessStageFlags kSourceAccessStageFlags = VulkanAccessStageFlag::AllShader;
+		const VulkanAccessStageFlags kDestinationAccessStageFlags = VulkanAccessStageFlag::ColorAttachment | VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests;
 
 		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 		const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
@@ -417,7 +417,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 			VulkanImage* const image = attachment.Image;
 			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
 
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read, kSourceStages, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationStages);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read, kDestinationAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write);
 		}
 
 		if(renderPass->HasDepthAttachment())
@@ -426,7 +426,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 			VulkanImage* const image = attachment.Image;
 			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
 
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read, kSourceStages, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationStages);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read, kDestinationAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write);
 		}
 	}
 #endif
@@ -1155,8 +1155,8 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 	if(mFramebuffer != nullptr)
 	{
 		// These are guaranteed by the render pass external dependency. It's always safe to read an attachment in a shader after render pass.
-		const VkPipelineStageFlags kSourceStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-		const VkPipelineStageFlags kDestinationStages = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+		const VulkanAccessStageFlags kSourceAccessStageFlags = VulkanAccessStageFlag::ColorAttachment | VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests;
+		const VulkanAccessStageFlags kDestinationAccessStageFlags = VulkanAccessStageFlag::AllShader;
 
 		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 		const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
@@ -1166,8 +1166,8 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 			VulkanImage* const image = attachment.Image;
 			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
 
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read | GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Read, kDestinationStages);
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Write, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationAccessStageFlags, GpuAccessFlag::Read);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Write, VulkanAccessStageFlag::ColorAttachment, GpuAccessFlag::Write);
 		}
 
 		if(renderPass->HasDepthAttachment())
@@ -1176,8 +1176,8 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 			VulkanImage* const image = attachment.Image;
 			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
 
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Read | GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Read, kDestinationStages);
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, GpuAccessFlag::Write, kSourceStages, GpuAccessFlag::Write, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationAccessStageFlags, GpuAccessFlag::Read);
+			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Write, VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests, GpuAccessFlag::Write);
 		}
 	}
 #endif
@@ -2045,7 +2045,7 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 
 	mResourceTracker.TrackBufferUsage(source, source->GetUseFlags(), source->GetAccessFlags());
 #if !B3D_LEGACY_TRANSFER_BARRIERS
-	mResourceTracker.TrackImageUsage(destination, subresourceRange, ImageUseFlagBits::Transfer, layout, layout, GpuAccessFlag::Write, VK_PIPELINE_STAGE_TRANSFER_BIT);
+	mResourceTracker.TrackImageUsage(destination, subresourceRange, ImageUseFlagBits::Transfer, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
 #endif
 }
 
@@ -2307,10 +2307,10 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 	barrierHelper.Execute();
 }
 
-void VulkanGpuCommandBuffer::RegisterImageShader(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, GpuAccessFlags access, VkPipelineStageFlags stages)
+void VulkanGpuCommandBuffer::RegisterImageShader(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, GpuResourceUseFlags useFlag, GpuAccessFlags access)
 {
 	B3D_ASSERT(layout != VK_IMAGE_LAYOUT_UNDEFINED);
-	mResourceTracker.TrackImageUsage(image, range, ImageUseFlagBits::Shader, layout, layout, access, stages);
+	mResourceTracker.TrackImageUsage(image, range, ImageUseFlagBits::Shader, layout, layout, useFlag, access);
 
 	// If any layout transitions were queued, we need to end render pass to execute them
 	if(!mResourceTracker.GetQueuedLayoutTransitions().empty() && IsInRenderPass())
@@ -2329,7 +2329,7 @@ void VulkanGpuCommandBuffer::RegisterImageTransfer(VulkanImage* image, const VkI
 #endif
 
 	B3D_ASSERT(layout != VK_IMAGE_LAYOUT_UNDEFINED);
-	mResourceTracker.TrackImageUsage(image, range, ImageUseFlagBits::Transfer, layout, layout, access, VK_PIPELINE_STAGE_TRANSFER_BIT);
+	mResourceTracker.TrackImageUsage(image, range, ImageUseFlagBits::Transfer, layout, layout, GpuResourceUseFlag::Transfer, access);
 }
 
 void VulkanGpuCommandBuffer::NotifyRenderTargetModified()

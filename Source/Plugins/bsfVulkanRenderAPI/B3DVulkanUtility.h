@@ -145,16 +145,6 @@ namespace b3d
 			/** Converts a VkImageLayout enum value to a readable string representing the layout name. */
 			static const char* GetImageLayoutName(VkImageLayout layout);
 
-			/** Converts resource use flag and access flag combination into VkAccessFlags. */
-			static VkAccessFlags GetAccessMaskFromUsage(GpuResourceUseFlags usage, GpuAccessFlags access);
-
-			/**
-			 * Converts pipeline stages and access flag combination into VkAccessFlags. Note for buffers it may not be
-			 * possible to determine exact access flags just from pipeline stages, so the returned flags may be more
-			 * conservative than they need to be.
-			 */
-			static VkAccessFlags GetAccessMaskFromPipelineStages(VkPipelineStageFlags stages, GpuAccessFlags access); // TODO - Deprecate in favor of GetPipelineStageAndAccessMask
-
 			/**
 			 * Returns pipeline stages based on the resource usage flags. This allows for fine-grained control
 			 * of which shader stages are involved when individual shader stage flags are used (VertexShader,
@@ -163,11 +153,11 @@ namespace b3d
 			 */
 			static VkPipelineStageFlags GetPipelineStageFlags(GpuResourceUseFlags usage, VkAccessFlags accessFlags);
 
-			/** Returns a set of GpuAccessFlags that correspond to the provided VkAccessFlags. */
-			static GpuAccessFlags GetAccessFlagsFromAccessMask(VkAccessFlags accessFlags);
-
 			/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
 			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
+
+			/** Converts a single VulkanResourceAccessTypeFlag into a single VkPipelineStageFlag bit. */
+			static VkPipelineStageFlagBits GetPipelineStage(VulkanAccessStageFlag accessStage);
 
 			/**
 			 * Converts VulkanResourceAccessTypeFlags and access flags into VkPipelineStageFlags and VkAccessFlags.
@@ -178,6 +168,9 @@ namespace b3d
 			 * @param outAccessMask Output parameter that receives the corresponding Vulkan access flags.
 			 */
 			static void GetPipelineStageAndAccessMask(VulkanAccessStageFlags accessStage, GpuAccessFlags access, VkPipelineStageFlags& outStages, VkAccessFlags& outAccessMask);
+
+			/** Converts resource usage flags into VulkanResourceAccessTypeFlags. */
+			static VulkanAccessStageFlags GetVulkanAccessStageFlags(GpuResourceUseFlags usage);
 		};
 
 		/** @} */
