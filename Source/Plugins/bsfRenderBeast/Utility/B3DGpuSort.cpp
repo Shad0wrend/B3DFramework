@@ -280,10 +280,10 @@ u32 GpuSort::Sort(GpuCommandBuffer& commandBuffer, const GpuSortBuffers& buffers
 
 			RadixSortCountMat::Get()->Execute(commandBuffer, gpuSortProps.NumGroups, params, buffers.Keys[inputBufferIdx], mHelperBuffers[0]);
 
-			// Read-after-write for mHelperBuffers[0], write-after-read for mHelperBuffers[0] (if not first pass)
+			// Read-after-write for mHelperBuffers[0], write-after-read for mHelperBuffers[1] (if not first pass)
 			commandBuffer.IssueBarriers({{
 					GpuBufferBarrier(mHelperBuffers[0], GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Read),
-					GpuBufferBarrier(executedPassCount > 0 ? mHelperBuffers[1] : nullptr, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Read),
+					GpuBufferBarrier(executedPassCount > 0 ? mHelperBuffers[1] : nullptr, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Read, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write),
 				}});
 
 			RadixSortPrefixScanMat::Get()->Execute(commandBuffer, params, mHelperBuffers[0], mHelperBuffers[1]);

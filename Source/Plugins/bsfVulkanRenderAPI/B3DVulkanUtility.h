@@ -136,11 +136,11 @@ namespace b3d
 			 */
 			static u32 CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset);
 
-			/** Converts a VkPipelineStageFlag to a readable string of characters representing the stage name. */
-			static const char* GetPipelineStageName(VkPipelineStageFlagBits stage);
+			/** Converts a VulkanAccessStageFlag to a readable string of characters representing the access and stage. */
+			static const char* GetAccessStageName(VulkanAccessStageFlag flag);
 
-			/** Converts all bits set in VkPipelineStageFlagFlags into a list readable pipeline names that will be appended to @p output, using "|" as separator. */
-			static void GetPipelineStageNames(VkPipelineStageFlags stages, StringStream& output);
+			/** Converts all bits set in VulkanAccessStageFlag into a list readable access and stage specifiers that will be appended to @p output, using "|" as separator. */
+			static void GetAccessStageNames(VulkanAccessStageFlags flags, StringStream& output);
 
 			/** Converts a VkImageLayout enum value to a readable string representing the layout name. */
 			static const char* GetImageLayoutName(VkImageLayout layout);
@@ -155,9 +155,6 @@ namespace b3d
 
 			/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
 			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
-
-			/** Converts a single VulkanResourceAccessTypeFlag into a single VkPipelineStageFlag bit. */
-			static VkPipelineStageFlagBits GetPipelineStage(VulkanAccessStageFlag accessStage);
 
 			/**
 			 * Converts VulkanResourceAccessTypeFlags and access flags into VkPipelineStageFlags and VkAccessFlags.

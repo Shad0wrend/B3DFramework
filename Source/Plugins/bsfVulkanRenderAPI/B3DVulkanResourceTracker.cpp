@@ -77,15 +77,14 @@ void WriteHazardPipelineTracking::LogUnsafeAccess(VulkanAccessStageFlags stages,
 		if((safeStages & stages) != stages)
 		{
 			const VulkanAccessStageFlag accessStageFlags = (VulkanAccessStageFlag)(1 << stageIndex);
-			const VkPipelineStageFlagBits stageMask = VulkanUtility::GetPipelineStage(accessStageFlags);
 
 			stream << "A resource was previously " << (previousAccessType.IsSet(GpuAccessFlag::Write) ? "WRITTEN" : "READ") << " ";
-			stream << "on stage [" << VulkanUtility::GetPipelineStageName(stageMask) << "], ";
+			stream << "on stage [" << VulkanUtility::GetAccessStageName(accessStageFlags) << "], ";
 
 			stream << "and it's now being accessed for ";
 			stream << (currentAccessType.IsSet(GpuAccessFlag::Write) ? "WRITE" : "READ") << " on stage(s) [";
 
-			VulkanUtility::GetPipelineStageNames(stages, stream);
+			VulkanUtility::GetAccessStageNames(stages, stream);
 
 			stream << "] without a barrier being issued. Issue a barrier with correct usage between those two accesses.";
 		}

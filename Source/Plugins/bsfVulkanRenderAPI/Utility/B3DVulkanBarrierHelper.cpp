@@ -39,9 +39,7 @@ void VulkanBarrierHelper::AddBufferBarrier(VulkanBuffer* buffer, GpuResourceUseF
 	GpuAccessFlags sourceAccessFlags;
 
 #if B3D_HAZARD_TRACKING
-	// Stages that we have previously read or written the image on require a barrier
-
-	// RAW or WAW hazard
+	// WAW or RAW hazard
 	const VulkanAccessStageFlags writeAccessStageFlags = bufferTrackingState->WriteHazardTracking->WriteAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
 	if(destinationAccess.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 	{
@@ -159,9 +157,7 @@ void VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubre
 		GpuAccessFlags sourceAccessFlags;
 
 	#if B3D_HAZARD_TRACKING
-		// Stages that we have previously read or written the image on require a barrier
-
-		// RAW or WAW hazard
+		// WAW or RAW hazard
 		const VulkanAccessStageFlags writeAccessStageFlags = subresourceTrackingState.WriteHazardTracking->WriteAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
 		if(callbackParameters->DestinationAccess.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 		{

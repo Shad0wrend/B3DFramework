@@ -933,42 +933,47 @@ u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType t
 		return size;
 }
 
-const char* VulkanUtility::GetPipelineStageName(VkPipelineStageFlagBits stage)
+const char* VulkanUtility::GetAccessStageName(VulkanAccessStageFlag flag)
 {
-	switch(stage)
+	switch(flag)
 	{
-		case VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT: return "DrawnIndirect";
-		case VK_PIPELINE_STAGE_VERTEX_INPUT_BIT: return "VertexInput";
-		case VK_PIPELINE_STAGE_VERTEX_SHADER_BIT: return "VertexShader";
-		case VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT: return "TessellationControlShader";
-		case VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT: return "TessellationEvaluationShader";
-		case VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT: return "GeometryShader";
-		case VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT: return "FragmentShader";
-		case VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT: return "EarlyFragmentTests";
-		case VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT: return "LateFragmentTests";
-		case VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT: return "ColorAttachmentOutput";
-		case VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT: return "ComputeShader";
-		case VK_PIPELINE_STAGE_TRANSFER_BIT: return "Transfer";
-		case VK_PIPELINE_STAGE_HOST_BIT: return "Host";
-		default: return "Unknown";
+	case VulkanAccessStageFlag::None: return "None";
+	case VulkanAccessStageFlag::DrawIndirect: return "DrawIndirect";
+	case VulkanAccessStageFlag::VertexInputAttributes: return "VertexInputAttributes";
+	case VulkanAccessStageFlag::VertexInputIndices: return "VertexInputIndices";
+	case VulkanAccessStageFlag::VertexShaderNonUniform: return "VertexShaderNonUniform";
+	case VulkanAccessStageFlag::FragmentShaderNonUniform: return "FragmentShaderNonUniform";
+	case VulkanAccessStageFlag::ComputeShaderNonUniform: return "ComputeShaderNonUniform";
+	case VulkanAccessStageFlag::VertexShaderUniform: return "VertexShaderUniform";
+	case VulkanAccessStageFlag::FragmentShaderUniform: return "FragmentShaderUniform";
+	case VulkanAccessStageFlag::ComputeShaderUniform: return "ComputeShaderUniform";
+	case VulkanAccessStageFlag::EarlyFragmentTests: return "EarlyFragmentTests";
+	case VulkanAccessStageFlag::LateFragmentTests: return "LateFragmentTests";
+	case VulkanAccessStageFlag::ColorAttachment: return "ColorAttachment";
+	case VulkanAccessStageFlag::Transfer: return "Transfer";
+	case VulkanAccessStageFlag::Host: return "Host";
+	case VulkanAccessStageFlag::AllShader: return "AllShader";
+	case VulkanAccessStageFlag::All: return "All";
+	default: return "Unknown";
 	}
 }
 
-void VulkanUtility::GetPipelineStageNames(VkPipelineStageFlags stages, StringStream& output)
+void VulkanUtility::GetAccessStageNames(VulkanAccessStageFlags flags, StringStream& output)
 {
-	bool isFirstStage = true;
-	while(stages != 0)
+	bool isFirst = true;
+	u32 flagsAsInteger = (u32)flags;
+	while(flagsAsInteger != 0)
 	{
-		const u32 stageFlagIndex = Bitwise::LeastSignificantBit(stages);
-		const VkPipelineStageFlagBits stage = (VkPipelineStageFlagBits)(1 << stageFlagIndex);
+		const u32 flagIndex = Bitwise::LeastSignificantBit(flagsAsInteger);
+		const VulkanAccessStageFlag flag = (VulkanAccessStageFlag)(1 << flagIndex);
 
-		if(!isFirstStage)
+		if(!isFirst)
 			output << " | ";
 
-		output << GetPipelineStageName(stage);
+		output << GetAccessStageName(flag);
 	
-		stages &= ~(1 << stageFlagIndex);
-		isFirstStage = false;
+		flagsAsInteger &= ~(1 << flagIndex);
+		isFirst = false;
 	}
 }
 
@@ -1053,31 +1058,6 @@ VkPipelineStageFlags VulkanUtility::GetPipelineStageFlags(GpuResourceUseFlags us
 		flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
 	return flags;
-}
-
-VkPipelineStageFlagBits VulkanUtility::GetPipelineStage(VulkanAccessStageFlag accessStage)
-{
-	switch(accessStage)
-	{
-	default:
-	case VulkanAccessStageFlag::None: return (VkPipelineStageFlagBits)0;
-	case VulkanAccessStageFlag::DrawIndirect: return VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-	case VulkanAccessStageFlag::VertexInputAttributes: return VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
-	case VulkanAccessStageFlag::VertexInputIndices: return VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
-	case VulkanAccessStageFlag::VertexShaderNonUniform: return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-	case VulkanAccessStageFlag::FragmentShaderNonUniform: return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	case VulkanAccessStageFlag::ComputeShaderNonUniform: return VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-	case VulkanAccessStageFlag::VertexShaderUniform: return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-	case VulkanAccessStageFlag::FragmentShaderUniform: return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	case VulkanAccessStageFlag::ComputeShaderUniform: return VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-	case VulkanAccessStageFlag::EarlyFragmentTests: return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	case VulkanAccessStageFlag::LateFragmentTests: return VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	case VulkanAccessStageFlag::ColorAttachment: return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	case VulkanAccessStageFlag::Transfer: return VK_PIPELINE_STAGE_TRANSFER_BIT;
-	case VulkanAccessStageFlag::Host: return VK_PIPELINE_STAGE_HOST_BIT;
-	case VulkanAccessStageFlag::All: return VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
-	}
-	
 }
 
 VkPipelineStageFlags VulkanUtility::GetPipelineStageFlags(VkAccessFlags accessFlags)
@@ -1203,7 +1183,7 @@ VulkanAccessStageFlags VulkanUtility::GetVulkanAccessStageFlags(GpuResourceUseFl
 			accessStageFlags |= VulkanAccessStageFlag::ComputeShaderNonUniform;
 
 		// Assume all stages if none are set explicitly
-		if(!usage.IsSet(GpuResourceUseFlag::AnyStage))
+		if(!usage.IsSetAny(GpuResourceUseFlag::AnyStage))
 			accessStageFlags |= VulkanAccessStageFlag::VertexShaderNonUniform | VulkanAccessStageFlag::FragmentShaderNonUniform | VulkanAccessStageFlag::ComputeShaderNonUniform;
 	}
 
@@ -1225,7 +1205,7 @@ VulkanAccessStageFlags VulkanUtility::GetVulkanAccessStageFlags(GpuResourceUseFl
 			accessStageFlags |= VulkanAccessStageFlag::ComputeShaderUniform;
 
 		// Assume all stages if none are set explicitly
-		if(!usage.IsSet(GpuResourceUseFlag::AnyStage))
+		if(!usage.IsSetAny(GpuResourceUseFlag::AnyStage))
 			accessStageFlags |= VulkanAccessStageFlag::VertexShaderUniform | VulkanAccessStageFlag::FragmentShaderUniform | VulkanAccessStageFlag::ComputeShaderUniform;
 	}
 
