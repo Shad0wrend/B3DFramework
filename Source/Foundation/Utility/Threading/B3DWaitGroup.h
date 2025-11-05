@@ -24,24 +24,33 @@ namespace b3d
 		inline void Wait();
 
 	private:
-		Mutex mMutex;
-		Signal mSignal;
-		std::atomic<u32> mOperationCount;
+		struct Data
+		{
+			Mutex Mutex;
+			Signal Signal;
+			std::atomic<u32> OperationCount;
+		};
+
+		// Important to keep data as shared, so worker threads calling NotifyDone() maintain ownership until they exit.
+		// Otherwise the thread waiting on the wait group could destroy the wait group (and the mutex) before the worker fully exits NotifyDone (i.e. while mutex is still locked in NotifyDone).
+		const SPtr<Data> mData; 
 	};
 
 	WaitGroup::WaitGroup(u32 initialOperationCount)
-		: mOperationCount(initialOperationCount)
-	{ }
+		: mData(B3DMakeShared<Data>())
+	{
+		mData->OperationCount = initialOperationCount;
+	}
 
 	bool WaitGroup::NotifyDone()
 	{
-		const u32 newCount = --mOperationCount;
+		const u32 newCount = --mData->OperationCount;
 		B3D_ENSURE(newCount != std::numeric_limits<u32>::max()); // Overflow
 
 		if(newCount == 0)
 		{
-			Lock lock(mMutex);
-			mSignal.NotifyAll();
+			Lock lock(mData->Mutex);
+			mData->Signal.NotifyAll();
 
 			return true;
 		}
@@ -51,13 +60,13 @@ namespace b3d
 
 	void WaitGroup::Increment(u32 count)
 	{
-		mOperationCount += count;
+		mData->OperationCount += count;
 	}
 
 	void WaitGroup::Wait()
 	{
-		Lock lock(mMutex);
+		Lock lock(mData->Mutex);
 
-		mSignal.Wait(lock, [this] { return mOperationCount == 0; });
+		mData->Signal.Wait(lock, [this] { return mData->OperationCount == 0; });
 	}
 }  // namespace b3d
