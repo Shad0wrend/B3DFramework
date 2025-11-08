@@ -251,6 +251,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		// Begin render pass WITH GPU parameters
 		render::RenderPassCreateInformation renderPassCreateInformation(renderTarget, gpuParameters, RT_NONE, RT_NONE);
 		renderPassCreateInformation.ClearMask = RT_ALL;
+		renderPassCreateInformation.ClearColor = Color::kZero;
 
 		commandBuffer->BeginRenderPass(renderPassCreateInformation);
 		commandBuffer->SetViewport(Area2(0.0f, 0.0f, 1.0f, 1.0f));
