@@ -277,7 +277,7 @@ namespace b3d
 			bool WriteAlpha = false;
 
 			/** Helper to create blit information with commonly used settings for copying a color texture (no blending, no filtering, no UV flip). */
-			static BlitInformation BlitColor(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask loadMask = RT_NONE, RenderSurfaceMask readOnlyMask = RT_NONE)
+			static BlitInformation BlitColor(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
 			{
 				BlitInformation blitInformation;
 				blitInformation.InputTexture = inputTexture;
@@ -290,18 +290,18 @@ namespace b3d
 			}
 
 			/** Helper to create blit information with commonly used settings for copying a depth texture (no blending, no filtering, no UV flip). */
-			static BlitInformation BlitDepth(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask loadMask = RT_NONE, RenderSurfaceMask readOnlyMask = RT_NONE)
+			static BlitInformation BlitDepth(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
 			{
-				BlitInformation blitInformation = BlitColor(inputTexture, outputRenderTarget, inputArea, loadMask, readOnlyMask);
+				BlitInformation blitInformation = BlitColor(inputTexture, outputRenderTarget, inputArea, readOnlyMask, loadMask);
 				blitInformation.IsDepth = true;
 
 				return blitInformation;
 			}
 
 			/** Helper to create blit information with commonly used settings for blending a color texture with the currently bound render target (no filtering, no UV flip). */
-			static BlitInformation Blend(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask loadMask = RT_NONE, RenderSurfaceMask readOnlyMask = RT_NONE)
+			static BlitInformation Blend(const SPtr<Texture>& inputTexture, const SPtr<RenderTarget>& outputRenderTarget, const Area2I& inputArea = Area2I::kEmpty, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
 			{
-				BlitInformation blitInformation = BlitColor(inputTexture, outputRenderTarget, inputArea, loadMask, readOnlyMask);
+				BlitInformation blitInformation = BlitColor(inputTexture, outputRenderTarget, inputArea, readOnlyMask, loadMask);
 				blitInformation.UseBlend = true;
 
 				return blitInformation;

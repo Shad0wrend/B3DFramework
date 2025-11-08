@@ -312,7 +312,7 @@ void RendererUtility::Blit(GpuCommandBuffer& commandBuffer, const BlitInformatio
 	const SPtr<GpuParameters> gpuParameters = blitMaterial->Prepare(blitInformation.InputTexture);
 
 	// Begin render pass
-	RenderPassCreateInformation renderPassInfo(blitInformation.OutputRenderTarget, gpuParameters, blitInformation.LoadMask, blitInformation.ReadOnlyMask);
+	RenderPassCreateInformation renderPassInfo(blitInformation.OutputRenderTarget, gpuParameters, blitInformation.ReadOnlyMask, blitInformation.LoadMask);
 	commandBuffer.BeginRenderPass(renderPassInfo);
 
 	if(blitInformation.OutputArea.has_value())
