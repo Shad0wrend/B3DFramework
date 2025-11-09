@@ -419,14 +419,6 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 					isGpuSortingUsed = true;
 			}
 		}
-
-		if(isGpuSortingUsed)
-		{
-			const SPtr<GpuBuffer>& sortedIndices = gpuSimResources.GetSortedIndices();
-
-			// Make sorted indices readable
-			inputs.ActiveCommandBuffer->IssueBarriers({{ GpuBufferBarrier(sortedIndices, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Read)}});
-		}
 	}
 
 	//// Prepare decals
@@ -537,11 +529,6 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		msaaCoverageStencilMaterial->Execute(commandBuffer, inputs.View);
 		commandBuffer.EndRenderPass();
 	}
-
-	// Ensure depth stencil can be read
-	commandBuffer.IssueBarriers({{
-		GpuTextureBarrier(sceneDepthNode->DepthTex->Texture, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Write, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Read)
-	}});
 
 	// Render decals after all normal objects, using a read-only depth buffer
 	const Vector<RenderQueueElement>& decalElements = inputs.View.GetDecalQueue()->GetSortedElements();
@@ -1101,8 +1088,6 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 				shadowRenderer.RenderShadowProjectionBatch(commandBuffer, inputs.View, light, shadowProjectionRenderingBatch);
 				commandBuffer.EndRenderPass();
 
-				commandBuffer.IssueBarriers({{ GpuTextureBarrier(Output->LightAccumulationTex->Texture, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::StageComputeShader, GpuAccessFlag::Write, GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Write )}});
-
 				StandardDeferred::LightBatches batches = StandardDeferred::Instance().PrepareLightBatches({ &light }, inputs.View, gbuffer, lightOcclusionTex->Texture);
 
 				RenderPassCreateInformation lightingPassInfo(Output->RenderTarget, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
@@ -1203,11 +1188,6 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 	if(inputs.View.GetRenderSettings().EnableSkybox)
 		skybox = inputs.Scene.Skybox;
 
-	// Ensure the light accumulation texture was previously written by shader in tile deferred lighting, ensure it can be used as an attachment now
-	commandBuffer.IssueBarriers(GpuTextureBarrier(lightAccumNode->LightAccumulationTex->Texture,
-		GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write,
-		GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Read | GpuAccessFlag::Write));
-
 	evaluateMat->Execute(commandBuffer, inputs.View, gbuffer, volumeIndicesTex, lpInfo, skybox, ssaoNode->Output, lightAccumNode->RenderTarget);
 
 	volumeIndices = nullptr;
@@ -1268,9 +1248,6 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		if(sceneColorNode->SceneColorTexArray)
 			iblInputs.SceneColorTexArray = sceneColorNode->SceneColorTexArray->Texture;
-
-		// Ensure any reads to the scene color texture finish before attempting the write
-		commandBuffer.IssueBarriers(GpuTextureBarrier(sceneColorNode->SceneColorTex->Texture, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Read, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write));
 
 		material->Execute(*inputs.ActiveCommandBuffer, inputs.View, inputs.Scene, inputs.ViewGroup.GetVisibleReflProbeData(), iblInputs);
 
@@ -1707,9 +1684,6 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderQueueElements(commandBuffer, opaqueElements);
 	commandBuffer.EndRenderPass();
 
-	// Allow depth-testing against the depth buffer after the writes above
-	commandBuffer.IssueBarriers(GpuTextureBarrier(sceneDepthNode->DepthTex->Texture, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Write, GpuResourceUseFlag::DepthStencilAttachment, GpuAccessFlag::Read));
-
 	// Collect all GpuParameters that will be used in the transparent pass
 	const Vector<RenderQueueElement>& transparentElements = transparentQueue->GetSortedElements();
 	RenderPassCreateInformation transparentPassInfo(renderTarget, RT_DEPTH, RT_ALL);
@@ -1782,9 +1756,6 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 
 	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
 	RCNodeSceneColor* sceneColorNode = dependencies.Get<RCNodeSceneColor>();
-
-	// Ensure the scene color texture can be used as a color attachment, as previously it was written by a shader
-	commandBuffer.IssueBarriers(GpuTextureBarrier(sceneColorNode->SceneColorTex->Texture, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Read | GpuAccessFlag::Write));
 
 	commandBuffer.BeginRenderPass(RenderPassCreateInformation(sceneColorNode->RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL));
 
@@ -1961,9 +1932,6 @@ void RCNodeEyeAdaptation::Render(const RenderCompositorNodeInputs& inputs)
 			EyeAdaptHistogramMat* eyeAdaptHistogramMat = EyeAdaptHistogramMat::Get();
 			eyeAdaptHistogramMat->Execute(commandBuffer, downsampledScene->Texture, eyeAdaptHistogram->Texture, settings.AutoExposure);
 
-			// Ensure eye adaptation histogram texture can be read after the write above
-			commandBuffer.IssueBarriers(GpuTextureBarrier(eyeAdaptHistogram->Texture, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read));
-
 			// Reduce histogram
 			SPtr<PooledRenderTexture> reducedHistogram = resPool.Get(EyeAdaptHistogramReduceMat::GetOutputDesc());
 
@@ -2113,9 +2081,6 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 					createLUT->Prepare(settings);
 					createLUT->Execute(commandBuffer, mTonemapLUT->RenderTexture);
 				}
-
-				// Ensure tonemap LUT can be read by the tonemapping shader after the write above
-				commandBuffer.IssueBarriers(GpuTextureBarrier(mTonemapLUT->Texture, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read));
 
 				mTonemapLastUpdateHash = latestHash;
 			}
@@ -2541,9 +2506,6 @@ void RCNodeHalfSceneColor::Render(const RenderCompositorNodeInputs& inputs)
 
 	Output = GetGpuResourcePool().Get(DownsampleMat::GetOutputDesc(input));
 
-	// Ensure the scene color texture can be read by a shader
-	inputs.ActiveCommandBuffer->IssueBarriers(GpuTextureBarrier(sceneColorNode->SceneColorTex->Texture, GpuResourceUseFlag::ShaderAccess | GpuResourceUseFlag::ColorAttachment, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read));
-
 	downsampleMat->Execute(*inputs.ActiveCommandBuffer, input, Output->RenderTexture);
 }
 
@@ -2954,9 +2916,6 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	else
 	{
 		sceneColor = lightAccumNode->LightAccumulationTex->Texture;
-
-		// Light accumulation was written by a shader and used as a color attachment, issue barrier so its safe to read
-		commandBuffer.IssueBarriers(GpuTextureBarrier(sceneColor, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read));
 	}
 
 	GBufferTextures gbuffer;

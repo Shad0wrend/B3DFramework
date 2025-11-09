@@ -106,14 +106,6 @@ void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Ve
 	clearMat->Execute(commandBuffer, mLightsLLHeads, clearColor);
 	clearMat->Execute(commandBuffer, mProbesLLHeads, clearColor);
 
-	// Ensure we can safely write to the light & probe LL head & counter buffers
-	commandBuffer.IssueBarriers({{
-		GpuBufferBarrier(mLightsCounter, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write),
-		GpuBufferBarrier(mProbesCounter, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write),
-		GpuBufferBarrier(mLightsLLHeads, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write),
-		GpuBufferBarrier(mProbesLLHeads, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write),
-	}});
-
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 	mLightBufferParam.Set(lightsBuffer);
 	mProbesBufferParam.Set(probesBuffer);
@@ -219,9 +211,6 @@ void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const V
 	ClearLoadStoreMat* clearMat = ClearLoadStoreMat::GetVariation(ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int, 1);
 	clearMat->Execute(commandBuffer, mGridDataCounter);
 
-	// Ensure we can safely write to the grid data counter buffer
-	commandBuffer.IssueBarriers(GpuBufferBarrier(mGridDataCounter, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write));
-
 	mGPUParameters->SetUniformBuffer("GridParams", gridParams);
 
 	mLightsLLHeadsParam.Set(lightsLLHeads);
@@ -312,18 +301,6 @@ void LightGrid::UpdateGrid(GpuCommandBuffer& commandBuffer, const RendererView& 
 	SPtr<GpuBuffer> probeLLHeads;
 	SPtr<GpuBuffer> probeLL;
 	creationMat->GetOutputs(lightLLHeads, lightLL, probeLLHeads, probeLL);
-
-	// Make the buffer readable
-	commandBuffer.IssueBarriers({{
-		GpuBufferBarrier(lightLLHeads, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-		GpuBufferBarrier(lightLL, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-		GpuBufferBarrier(probeLLHeads, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-		GpuBufferBarrier(probeLL, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-
-		// Note: These are only necessary because our shader compiler ignores the read-only access modifier, so the validation systems thinks these buffers are being written even though they're not
-		GpuBufferBarrier(lightData.GetLightBuffer(), GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-		GpuBufferBarrier(probeData.GetProbeBuffer(), GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Write, GpuResourceUseFlag::ShaderAccess, GpuAccessFlag::Read),
-	}});
 
 	LightGridLLReductionMat* reductionMat = LightGridLLReductionMat::Get();
 	reductionMat->SetParams(commandBuffer, gridSize, mGridParamBuffer, lightLLHeads, lightLL, probeLLHeads, probeLL);
