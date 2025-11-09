@@ -47,7 +47,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBa
 	GpuAccessFlags sourceAccessFlags;
 
 	// WAW or RAW hazard
-	const VulkanAccessStageFlags writeAccessStageFlags = bufferTrackingState.WriteHazardTracking->WriteAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
+	const VulkanAccessStageFlags writeAccessStageFlags = bufferTrackingState.WriteHazardTracking->MemoryBarrierTracking.GetUnsafeAccessStages(destinationAccessStageFlags);
 	if(destinationAccess.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 	{
 		sourceAccessStageFlags |= writeAccessStageFlags;
@@ -57,7 +57,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBa
 	}
 
 	// WAR hazard
-	const VulkanAccessStageFlags readAccessStageFlags = bufferTrackingState.WriteHazardTracking->ReadAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
+	const VulkanAccessStageFlags readAccessStageFlags = bufferTrackingState.WriteHazardTracking->ExecutionBarrierTracking.GetUnsafeAccessStages(destinationAccessStageFlags);
 	if(destinationAccess.IsSet(GpuAccessFlag::Write))
 	{
 		sourceAccessStageFlags |= readAccessStageFlags;
@@ -175,7 +175,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddSubresou
 	GpuAccessFlags sourceAccessFlags;
 
 	// WAW or RAW hazard
-	const VulkanAccessStageFlags writeAccessStageFlags = subresourceTrackingState.WriteHazardTracking->WriteAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
+	const VulkanAccessStageFlags writeAccessStageFlags = subresourceTrackingState.WriteHazardTracking->MemoryBarrierTracking.GetUnsafeAccessStages(destinationAccessStageFlags);
 	if(destinationAccess.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 	{
 		sourceAccessStageFlags |= writeAccessStageFlags;
@@ -185,7 +185,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddSubresou
 	}
 
 	// WAR hazard
-	const VulkanAccessStageFlags readAccessStageFlags = subresourceTrackingState.WriteHazardTracking->ReadAccessStages.GetUnsafeAccessStages(destinationAccessStageFlags);
+	const VulkanAccessStageFlags readAccessStageFlags = subresourceTrackingState.WriteHazardTracking->ExecutionBarrierTracking.GetUnsafeAccessStages(destinationAccessStageFlags);
 	if(destinationAccess.IsSet(GpuAccessFlag::Write))
 	{
 		sourceAccessStageFlags |= readAccessStageFlags;

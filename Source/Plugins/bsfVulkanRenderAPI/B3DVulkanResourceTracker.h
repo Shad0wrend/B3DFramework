@@ -72,13 +72,27 @@ namespace b3d::render
 	{
 		GpuAccessFlags Access; /**< Has the buffer been read or written so far. */
 
-		/** Keeps track of all pipeline stages that the resource was read from, and which of those stages can be safely accessed by a write operation (and on which stage). */
-		WriteHazardPipelineTracking ReadAccessStages; // TODO - Rename to ExecutionBarrierTracking
+		/**
+		 * Keeps track of all pipeline stages that the resource was read from, and which of those stages can be safely accessed by a write operation (and on which stage).
+		 * A write following a read requires an execution barrier.
+		 */
+		WriteHazardPipelineTracking ExecutionBarrierTracking;
 
-		/** Keeps track of all pipeline stages that the resource was written to, and which of those stages can be safely accessed by a read or write operation (and on which stage). */
-		WriteHazardPipelineTracking WriteAccessStages; // TODO - Rename to MemoryBarrierTracking
+		/**
+		 * Keeps track of all pipeline stages that the resource was written to, and which of those stages can be safely accessed by a read or write operation
+		 * (and on which stage). Any operation following a write requires a memory barrier. Memory barrier implies an execution barrier as well.
+		 */
+		WriteHazardPipelineTracking MemoryBarrierTracking;
 
-		// TODO - Add LayoutTransitionTracking - Tracks last use of an imagine in a specific layout, and which layouts can be safely transitioned to/from without a barrier
+		/** Updates execution and memory barrier tracking by marking access as safe in the destination stages, from the source stages. */
+		void AddSafeAccess(VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccess, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccess);
+
+#if B3D_VERIFY_BARRIERS
+		/** Verifies that the access is safe from the provided stage and access type. Logs errors if not. */
+		void VerifySafeAccess(VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccess) const;
+#endif
+
+		// Note - Add LayoutTransitionTracking? Tracks last use of an imagine in a specific layout, and which layouts can be safely transitioned to/from without a barrier
 	};
 
 	/**
