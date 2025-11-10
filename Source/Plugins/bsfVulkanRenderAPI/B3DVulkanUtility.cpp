@@ -1031,7 +1031,7 @@ VkPipelineStageFlags VulkanUtility::GetPipelineStageFlags(GpuResourceUseFlags us
 
 			// MoltenVK doesn't support geometry and tessellation shaders
 			// Note: Once we upgrade to a newer version they should be supported and we can remove this
-#if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
+#if !B3D_PLATFORM_MACOS
 			flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
 			flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
 			flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;

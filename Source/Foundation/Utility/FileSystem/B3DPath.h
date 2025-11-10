@@ -133,7 +133,7 @@ namespace b3d
 		 *
 		 * This method is equivalent to toWString() on Windows, and to toString() elsewhere.
 		 */
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 		WString ToPlatformString() const;
 #else
 		String toPlatformString() const

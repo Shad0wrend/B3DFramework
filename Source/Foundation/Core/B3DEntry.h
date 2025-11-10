@@ -9,7 +9,7 @@
 int bs_main(int argc, char* argv[]);
 
 #ifndef B3D_CODEGEN // Needed to avoid including windows.h, as it includes macros that use commonly used names
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include <windows.h>
 
 int CALLBACK WinMain(

@@ -5,7 +5,7 @@
 #include "B3DThread.h"
 #include "Debug/B3DDebug.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include "windows.h"
 
 #	if B3D_COMPILER == B3D_COMPILER_ID_MSVC
@@ -14,7 +14,7 @@
 #		pragma warning(disable : 4509)
 #	endif // B3D_COMPILER == B3D_COMPILER_ID_MSVC
 
-#endif // B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#endif // B3D_PLATFORM_WIN32
 
 using namespace b3d;
 
@@ -82,7 +82,7 @@ void PooledThread::Run()
 			}
 		}
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 		RunFunctionHelper(worker);
 #else
 		worker();
@@ -101,7 +101,7 @@ void PooledThread::Run()
 	}
 }
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 void PooledThread::RunFunctionHelper(const std::function<void()>& function) const
 {
 	__try

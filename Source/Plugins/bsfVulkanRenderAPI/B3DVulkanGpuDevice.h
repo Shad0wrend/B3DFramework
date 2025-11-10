@@ -31,7 +31,7 @@ namespace b3d
 		class VulkanGpuDevice : public GpuDevice
 		{
 		public:
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 			static constexpr const char* kGpuProgramLanguageName = "mvksl";
 #else
 			static constexpr const char* kGpuProgramLanguageName = "vksl";

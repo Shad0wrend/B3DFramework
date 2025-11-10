@@ -11,7 +11,7 @@
 #include "FileSystem/B3DDataStream.h"
 #include "B3DVulkanGpuBackend.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 #	include <MoltenVK/vk_mvk_moltenvk.h>
 #endif
 
@@ -67,7 +67,7 @@ void VulkanGpuProgram::Initialize()
 	}
 
 	if(!mBytecode ||
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 	   mBytecode->CompilerId != MOLTENVK_COMPILER_ID || mBytecode->CompilerVersion != MOLTENVK_COMPILER_VERSION)
 #else
 	   mBytecode->CompilerId != VULKAN_COMPILER_ID || mBytecode->CompilerVersion != VULKAN_COMPILER_VERSION)
@@ -77,7 +77,7 @@ void VulkanGpuProgram::Initialize()
 		createInformation.Name = mName;
 		createInformation.Type = mType;
 		createInformation.EntryPoint = mEntryPoint;
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 		desc.language = "mvksl";
 #else
 		createInformation.Language = "vksl";
@@ -95,7 +95,7 @@ void VulkanGpuProgram::Initialize()
 		u32 codeSize = mBytecode->Instructions.Size;
 		u8* code = mBytecode->Instructions.Data;
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 		u32 workgroupSize[3] = { 1, 1, 1 };
 		if(mType == GPT_COMPUTE_PROGRAM)
 		{
@@ -122,7 +122,7 @@ void VulkanGpuProgram::Initialize()
 		VkResult result = vkCreateShaderModule(vkDevice, &moduleCI, gVulkanAllocator, &shaderModule);
 		B3D_ASSERT(result == VK_SUCCESS);
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 		if(mType == GPT_COMPUTE_PROGRAM)
 			vkSetWorkgroupSizeMVK(shaderModule, workgroupSize[0], workgroupSize[1], workgroupSize[2]);
 #endif

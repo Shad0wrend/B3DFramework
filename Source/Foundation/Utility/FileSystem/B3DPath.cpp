@@ -81,9 +81,9 @@ void Path::Assign(const char* pathStr, u32 characterCount, PathType type)
 		ParseUnix(pathStr, characterCount);
 		break;
 	default:
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 		ParseWindows(pathStr, characterCount);
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS || B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_MACOS || B3D_PLATFORM_LINUX
 		parseUnix(pathStr, characterCount);
 #else
 		static_assert(false, "Unsupported platform for path.");
@@ -92,7 +92,7 @@ void Path::Assign(const char* pathStr, u32 characterCount, PathType type)
 	}
 }
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 WString Path::ToPlatformString() const
 {
 	return UTF8::ToWide(ToString());
@@ -108,9 +108,9 @@ String Path::ToString(PathType type) const
 	case PathType::Unix:
 		return BuildUnix();
 	default:
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 		return BuildWindows();
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS || B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_MACOS || B3D_PLATFORM_LINUX
 		return buildUnix();
 #else
 		static_assert(false, "Unsupported platform for path.");

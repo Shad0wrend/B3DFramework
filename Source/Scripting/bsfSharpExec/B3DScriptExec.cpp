@@ -7,7 +7,7 @@
 #include "B3DEngineScriptLibrary.h"
 
 /** Main entry point into the application. */
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include <windows.h>
 
 int CALLBACK WinMain(

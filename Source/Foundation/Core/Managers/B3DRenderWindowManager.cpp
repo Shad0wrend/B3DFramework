@@ -5,11 +5,11 @@
 #include "B3DApplication.h"
 #include "Platform/B3DPlatform.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32RenderWindow.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 #	include "Private/Linux/B3DLinuxRenderWindow.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 #	include "Private/MacOS/B3DMacOSRenderWindow.h"
 #endif
 
@@ -20,11 +20,11 @@ SPtr<RenderWindow> RenderWindowManager::CreateRenderWindow(const RenderWindowCre
 	const u32 id = mNextWindowId++;
 
 	SPtr<RenderWindow> renderWindow;
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	renderWindow = B3DMakeShared<Win32RenderWindow>(createInformation, id, parentWindow);
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 	renderWindow = B3DMakeShared<LinuxRenderWindow>(createInformation, id, parentWindow);
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 	renderWindow = B3DMakeShared<MacOSRenderWindow>(createInformation, id, parentWindow);
 #endif
 

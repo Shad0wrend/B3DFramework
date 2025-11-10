@@ -14,7 +14,7 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 	VkSurfaceKHR vkSurface;
 
 	// Create Vulkan surface
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	VkWin32SurfaceCreateInfoKHR surfaceCreateInfo;
 	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	surfaceCreateInfo.pNext = nullptr;
@@ -29,7 +29,7 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 
 	VkResult result = vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, gVulkanAllocator, &vkSurface);
 	B3D_ASSERT(result == VK_SUCCESS);
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 	VkXlibSurfaceCreateInfoKHR surfaceCreateInfo;
 	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	surfaceCreateInfo.pNext = nullptr;
@@ -42,7 +42,7 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 	// externally, but XInitThreads might be required if problems occur.
 	VkResult result = vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, gVulkanAllocator, &vkSurface);
 	B3D_ASSERT(result == VK_SUCCESS);
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 	MacOSPlatform::lockWindows();
 
 		CocoaWindow* const window = MacOSPlatform::getWindow(mCocoaWindowId);

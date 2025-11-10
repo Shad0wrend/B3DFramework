@@ -30,7 +30,7 @@
 
 using namespace b3d;
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 namespace
 {
 	constexpr size_t MaxCoreCount = std::numeric_limits<decltype(CPUCore::Windows.IndexWithinGroup)>::max() + 1L;
@@ -93,7 +93,7 @@ namespace
 		return groups;
 	}
 }  // namespace
-#endif // B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#endif // B3D_PLATFORM_WIN32
 
 ThreadCoreMask::ThreadCoreMask(std::initializer_list<CPUCore> initializerList)
 {
@@ -143,7 +143,7 @@ ThreadCoreMask ThreadCoreMask::CreateAnyThreadMask()
 {
 	ThreadCoreMask output;
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	const auto& processorGroups = GetProcessorGroups();
 	for (size_t groupIndex = 0; groupIndex < processorGroups.Groups.Size(); groupIndex++)
 	{
@@ -161,7 +161,7 @@ ThreadCoreMask ThreadCoreMask::CreateAnyThreadMask()
 			}
 		}
 	}
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX || B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_LINUX || B3D_PLATFORM_MACOS
 	auto thread = pthread_self();
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);

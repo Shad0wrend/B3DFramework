@@ -9,11 +9,11 @@
 #include "Managers/B3DVulkanDescriptorManager.h"
 #include "Managers/B3DVulkanQueries.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32VideoModeInfo.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 #	include "Private/Linux/B3DLinuxVideoModeInfo.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 #	include "Private/MacOS/B3DMacOSVideoModeInfo.h"
 #	include <MoltenVK/vk_mvk_moltenvk.h>
 #else
@@ -213,11 +213,11 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	mBuiltinResources.Initialize();
 
 	// Initialize video mode information
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	mVideoModeInfo = B3DMakeShared<Win32VideoModeInfo>();
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 	mVideoModeInfo = B3DMakeShared<LinuxVideoModeInfo>();
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 	mVideoModeInfo = B3DMakeShared<MacOSVideoModeInfo>();
 #else
 	static_assert(false, "mVideoModeInfo needs to be created.");
@@ -251,7 +251,7 @@ SPtr<GpuProgramBytecode> VulkanGpuDevice::CompileGpuProgramBytecode(const GpuPro
 
 	SPtr<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation);
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 	// We'll just re-purpose the existing data structure
 	SPtr<GpuProgramBytecode> msl = spirv;
 	msl->compilerId = MOLTENVK_COMPILER_ID;

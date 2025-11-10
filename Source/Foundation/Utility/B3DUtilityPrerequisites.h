@@ -174,7 +174,7 @@
 #endif
 
 // Windows Settings
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 // Win32 compilers use _DEBUG for specifying debug builds.
 // for MinGW, we set DEBUG
 #	if defined(_DEBUG) || defined(DEBUG)
@@ -186,7 +186,7 @@
 #endif
 
 // Linux/Apple Settings
-#if B3D_PLATFORM == B3D_PLATFORM_ID_LINUX || B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_LINUX || B3D_PLATFORM_MACOS
 // A quick define to overcome different names for the same function
 #	define stricmp strcasecmp
 

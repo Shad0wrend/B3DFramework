@@ -14,7 +14,7 @@
 #endif
 
 #if B3D_COMPILER == B3D_COMPILER_ID_CLANG
-#	if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#	if B3D_PLATFORM_WIN32
 #		include "intrin.h"
 #	else
 #		include <x86intrin.h>

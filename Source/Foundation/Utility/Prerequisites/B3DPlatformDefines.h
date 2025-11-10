@@ -108,6 +108,13 @@
 #	define B3D_PLATFORM B3D_PLATFORM_ID_LINUX
 #endif
 
+// Boolean convenience macros
+#define B3D_PLATFORM_WIN32 (B3D_PLATFORM == B3D_PLATFORM_ID_WIN32)
+#define B3D_PLATFORM_LINUX (B3D_PLATFORM == B3D_PLATFORM_ID_LINUX)
+#define B3D_PLATFORM_MACOS (B3D_PLATFORM == B3D_PLATFORM_ID_MACOS)
+#define B3D_PLATFORM_IOS (B3D_PLATFORM == B3D_PLATFORM_ID_IOS)
+#define B3D_PLATFORM_ANDROID (B3D_PLATFORM == B3D_PLATFORM_ID_ANDROID)
+
 // Find the architecture type
 #if defined(__x86_64__) || defined(_M_X64)
 #	define B3D_ARCHITECTURE B3D_ARCHITECTURE_ID_X86_64
@@ -118,7 +125,7 @@
 #endif
 
 // DLL export
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32 // Windows
+#if B3D_PLATFORM_WIN32 // Windows
 #	if B3D_COMPILER == B3D_COMPILER_ID_MSVC
 #		if defined(B3D_STATIC_LIB)
 #			define B3D_EXPORT
@@ -147,7 +154,7 @@
 #endif
 
 // DLL export for plugins
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32 // Windows
+#if B3D_PLATFORM_WIN32 // Windows
 #	if B3D_COMPILER == B3D_COMPILER_ID_MSVC
 #		define B3D_PLUGIN_EXPORT __declspec(dllexport)
 #	else
@@ -160,7 +167,7 @@
 #endif
 
 // Windows Settings
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 
 #include <intrin.h>
 
@@ -181,7 +188,7 @@
 #endif
 
 // Linux
-#if B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#if B3D_PLATFORM_LINUX
 #	ifdef DEBUG
 #		define B3D_DEBUG 1
 #	else
@@ -202,7 +209,7 @@
 #endif
 
 // Mac Settings
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 #	ifdef DEBUG
 #		define B3D_DEBUG 1
 #	else
@@ -223,13 +230,13 @@
 #endif
 
 // iOS
-#if B3D_PLATFORM == B3D_PLATFORM_ID_IOS
+#if B3D_PLATFORM_IOS
 #	define B3D_BREAK() __builtin_trap()
 #	define B3D_CODE_SECTION(name) __attribute__((section("__TEXT,__" name ",regular,pure_instructions"))) __attribute__((aligned(4)))
 #endif
 
 // Android
-#if B3D_PLATFORM == B3D_PLATFORM_ID_ANDROID
+#if B3D_PLATFORM_ANDROID
 #	define B3D_BREAK() raise(SIGTRAP)
 #	define B3D_CODE_SECTION(name) __attribute__((section(name)))
 #endif

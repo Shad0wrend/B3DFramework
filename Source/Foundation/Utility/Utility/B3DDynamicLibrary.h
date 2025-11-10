@@ -4,7 +4,7 @@
 
 #include "B3DUtilityPrerequisites.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 struct HINSTANCE__;
 typedef struct HINSTANCE__* hInstance;
 #endif
@@ -15,13 +15,13 @@ namespace b3d
 	 *  @{
 	 */
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	define DYNLIB_HANDLE hInstance
 #	define DYNLIB_LOAD(a) LoadLibraryEx(a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH)
 #	define DYNLIB_GETSYM(a, b) GetProcAddress(a, b)
 #	define DYNLIB_UNLOAD(a) !FreeLibrary(a)
 
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX || B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_LINUX || B3D_PLATFORM_MACOS
 #	define DYNLIB_HANDLE void*
 #	define DYNLIB_LOAD(a) dlopen(a, RTLD_LAZY | RTLD_GLOBAL)
 #	define DYNLIB_GETSYM(a, b) dlsym(a, b)
@@ -34,22 +34,22 @@ namespace b3d
 	{
 	public:
 		/** Platform-specific file extension for a dynamic library (e.g. "dll"). */
-#if B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#if B3D_PLATFORM_LINUX
 		static constexpr const char* EXTENSION = "so";
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 		static constexpr const char* EXTENSION = "dylib";
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#elif B3D_PLATFORM_WIN32
 		static constexpr const char* kExtension = "dll";
 #else
 #	error Unhandled platform
 #endif
 
 		/** Platform-specific name suffix for a dynamic library (e.g. "lib" on Unix) */
-#if B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#if B3D_PLATFORM_LINUX
 		static constexpr const char* PREFIX = "lib";
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 		static constexpr const char* PREFIX = "lib";
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#elif B3D_PLATFORM_WIN32
 		static constexpr const char* kPrefix = nullptr;
 #else
 #	error Unhandled platform

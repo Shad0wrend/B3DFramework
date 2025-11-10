@@ -5,7 +5,7 @@
 #include "B3DPrerequisites.h"
 
 // DLL export
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32 // Windows
+#if B3D_PLATFORM_WIN32 // Windows
 #	if B3D_COMPILER == B3D_COMPILER_ID_MSVC
 #		if defined(BS_MONO_STATIC_LIB)
 #			define B3D_MONO_EXPORT
@@ -86,7 +86,7 @@ namespace b3d
 	};
 } // namespace b3d
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	define B3D_THUNKCALL B3D_STDCALL
 #else
 #	define B3D_THUNKCALL

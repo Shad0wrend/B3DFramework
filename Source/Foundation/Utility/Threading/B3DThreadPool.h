@@ -66,7 +66,7 @@ namespace b3d
 		/** Primary worker method that is ran when the thread is first initialized. */
 		void Run();
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 		void RunFunctionHelper(const std::function<void()>& function) const;
 #endif
 

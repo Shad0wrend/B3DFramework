@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <utility>
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#if B3D_PLATFORM_LINUX
 #	include <malloc.h>
 #endif
 
@@ -25,7 +25,7 @@ namespace b3d
 	 *  @{
 	 */
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	inline void* PlatformAlignedAlloc16(size_t size)
 	{
 		return _aligned_malloc(size, 16);
@@ -45,7 +45,7 @@ namespace b3d
 	{
 		_aligned_free(ptr);
 	}
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX || B3D_PLATFORM == B3D_PLATFORM_ID_ANDROID
+#elif B3D_PLATFORM_LINUX || B3D_PLATFORM_ANDROID
 	inline void* platformAlignedAlloc16(size_t size)
 	{
 		return ::memalign(16, size);

@@ -15,18 +15,18 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "Win32/B3DRenderDocFrameCapture.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32VideoModeInfo.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 #	include "Private/Linux/B3DLinuxVideoModeInfo.h"
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 #	include "Private/MacOS/B3DMacOSVideoModeInfo.h"
 #	include <MoltenVK/vk_mvk_moltenvk.h>
 #else
 static_assert(false, "Other platform includes go here.");
 #endif
 
-#if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
+#if !B3D_PLATFORM_MACOS
 #	define B3D_BUILD_WITH_VULKAN_VALIDATION_LAYERS 1
 #else
 #	define B3D_BUILD_WITH_VULKAN_VALIDATION_LAYERS 0
@@ -216,7 +216,7 @@ void VulkanGpuBackend::OnStartUp()
 
 	// MoltenVK doesn't support 1.1, but we don't need it since the only feature we use from it right now is SPIR-V 1.3,
 	// and that's not relevant for MoltenVK as SPIR-V gets translated to MSL anyway.
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 	appInfo.apiVersion = VK_API_VERSION_1_0;
 #else
 	appInfo.apiVersion = VK_API_VERSION_1_1;
@@ -260,13 +260,13 @@ void VulkanGpuBackend::OnStartUp()
 
 	extensions[0] = VK_KHR_SURFACE_EXTENSION_NAME;
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 	extensions[1] = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_ANDROID
+#elif B3D_PLATFORM_ANDROID
 	extensions[1] = VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+#elif B3D_PLATFORM_LINUX
 	extensions[1] = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#elif B3D_PLATFORM_MACOS
 	extensions[1] = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
 #else
 	static_assert(false, "Other platform includes go here.");
@@ -342,7 +342,7 @@ void VulkanGpuBackend::OnStartUp()
 		vkSetDebugUtilsObjectNameEXT = GET_INSTANCE_PROC_ADDR(mInstance, SetDebugUtilsObjectNameEXT)
 	}
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+#if B3D_PLATFORM_MACOS
 	MVKConfiguration mvkConfig;
 	size_t mvkConfigSize = sizeof(MVKConfiguration);
 	vkGetMoltenVKConfigurationMVK(mInstance, &mvkConfig, &mvkConfigSize);

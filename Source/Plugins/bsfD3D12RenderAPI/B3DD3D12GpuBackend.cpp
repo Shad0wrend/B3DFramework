@@ -8,7 +8,7 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32VideoModeInfo.h"
 #else
 	static_assert(false, "DirectX 12 is only supported on Windows.");

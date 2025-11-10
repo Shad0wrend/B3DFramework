@@ -19,7 +19,7 @@ using namespace b3d;
 The entry point differs depending on the platform. On Windows, you need to use `WinMain`, while on other platforms you use the standard `main` function:
 
 ~~~~~~~~~~~~~{.cpp}
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #include <windows.h>
 
 int CALLBACK WinMain(
@@ -111,7 +111,7 @@ Here's a complete code example. The code opens up a basic window and adds a came
 #include "Components/B3DCamera.h"
 #include "RenderAPI/B3DRenderWindow.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #include <windows.h>
 
 int CALLBACK WinMain(

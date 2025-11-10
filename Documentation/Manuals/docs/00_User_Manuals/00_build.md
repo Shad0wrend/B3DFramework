@@ -77,7 +77,7 @@ The CMake file above references `Main.cpp` file. The most basic file that runs t
 ```
 #include "B3DApplication.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #include <windows.h>
 
 int CALLBACK WinMain(
@@ -178,7 +178,7 @@ The CMake file above references `Main.cpp` file. The most basic file that runs t
 ```
 #include "B3DApplication.h"
 
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+#if B3D_PLATFORM_WIN32
 #include <windows.h>
 
 int CALLBACK WinMain(

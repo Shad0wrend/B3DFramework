@@ -81,7 +81,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 	{
 		// Mailbox comes with lower input latency than FIFO, but can waste GPU power by rendering frames that are never
 		// displayed, especially if the app runs much faster than the refresh rate. This is a concern for mobiles.
-#if B3D_PLATFORM != B3D_PLATFORM_ID_ANDROID && B3D_PLATFORM != B3D_PLATFORM_ID_IOS
+#if !B3D_PLATFORM_ANDROID && !B3D_PLATFORM_IOS
 		for(u32 i = 0; i < presentModeCount; i++)
 		{
 
