@@ -943,7 +943,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 			const GpuResourceUseFlags useFlags = VulkanUtility::ShaderToResourceUseFlags(perSetBindings[usedBindingSequentialIndex].stageFlags) | GpuResourceUseFlag::ShaderAccess;
 			const VkImageSubresourceRange range = vulkanImage->GetRange(surface);
 
-			resourceTracker.TrackImageUsage(vulkanImage, range, ImageUseFlagBits::Shader, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, useFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, barrierHelper);
+			resourceTracker.TrackImageUsage(vulkanImage, range, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL, useFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, barrierHelper);
 
 			// Check if internal resource changed from what was previously bound in the descriptor set
 			B3D_ASSERT(perDeviceData.StorageImages[sequentialResourceIndex] != VK_NULL_HANDLE);
@@ -1025,7 +1025,7 @@ void VulkanGpuParameters::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, 
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(set);
 
 			const GpuResourceUseFlags useFlags = VulkanUtility::ShaderToResourceUseFlags(perSetBindings[usedBindingSequentialIndex].stageFlags) | GpuResourceUseFlag::ShaderAccess;
-			resourceTracker.TrackImageUsage(vulkanImage, range, ImageUseFlagBits::Shader, layout, layout, useFlags, GpuAccessFlag::Read, barrierHelper);
+			resourceTracker.TrackImageUsage(vulkanImage, range, layout, layout, useFlags, GpuAccessFlag::Read, barrierHelper);
 
 			// Actual layout might be different than requested if the image is also used as a FB attachment
 			layout = commandBuffer.GetCurrentLayout(vulkanImage, range, true); // TODO - Might not be necessary provided the resource tracker is aware the image is being used in the framebuffer

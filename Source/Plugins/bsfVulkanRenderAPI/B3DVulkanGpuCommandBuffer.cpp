@@ -1596,7 +1596,7 @@ bool VulkanGpuCommandBuffer::BindGraphicsPipeline()
 		const VulkanFramebufferAttachment& framebufferAttachment = mFramebuffer->GetColorAttachment(i);
 		const VulkanResourceTracker::ImageSubresourceTrackingState& subresourceTrackingState = mResourceTracker.GetSubresourceTrackingState(framebufferAttachment.Image, framebufferAttachment.Surface.Face, framebufferAttachment.Surface.MipLevel);
 
-		if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsColorReadOnly(i))
+		if(subresourceTrackingState.ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write) && !pipeline->IsColorReadOnly(i))
 		{
 			B3D_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but color writes "
 										   "aren't disabled. This will result in undefined behavior.");
@@ -1608,7 +1608,7 @@ bool VulkanGpuCommandBuffer::BindGraphicsPipeline()
 		const VulkanFramebufferAttachment& framebufferAttachment = mFramebuffer->GetDepthStencilAttachment();
 		const VulkanResourceTracker::ImageSubresourceTrackingState& subresourceTrackingState = mResourceTracker.GetSubresourceTrackingState(framebufferAttachment.Image, framebufferAttachment.Surface.Face, framebufferAttachment.Surface.MipLevel);
 
-		if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsDepthReadOnly())
+		if(subresourceTrackingState.ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write) && !pipeline->IsDepthReadOnly())
 		{
 			B3D_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but depth/stencil "
 										   "writes aren't disabled. This will result in undefined behavior.");
@@ -1840,7 +1840,7 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 
 	mResourceTracker.TrackBufferUsage(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, subresourceRange, ImageUseFlagBits::Transfer, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
+	mResourceTracker.TrackImageUsage(destination, subresourceRange, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
 
 	barrierHelper.Execute(*this);
 
@@ -1873,7 +1873,7 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 
 	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 
-	mResourceTracker.TrackImageUsage(source, subresourceRangeForBarrier, ImageUseFlagBits::Transfer, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
+	mResourceTracker.TrackImageUsage(source, subresourceRangeForBarrier, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
 	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
 
 	barrierHelper.Execute(*this);
@@ -1894,8 +1894,8 @@ void VulkanGpuCommandBuffer::CopyImageToImage(VulkanImage* source, VulkanImage* 
 
 	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
 
 	barrierHelper.Execute(*this);
 
@@ -1915,8 +1915,8 @@ void VulkanGpuCommandBuffer::Blit(VulkanImage* source, VulkanImage* destination,
 
 	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
 
 	barrierHelper.Execute(*this);
 
@@ -1935,8 +1935,8 @@ void VulkanGpuCommandBuffer::Resolve(VulkanImage* source, VulkanImage* destinati
 
 	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, ImageUseFlagBits::Transfer, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
 
 	barrierHelper.Execute(*this);
 

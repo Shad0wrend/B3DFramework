@@ -208,7 +208,7 @@ void VulkanResourceTracker::TrackBufferUsage(VulkanBuffer* buffer, GpuResourceUs
 	TrackBufferUsage(buffer, bufferTrackingState, useFlags, accessFlags, barrierHelper);
 }
 
-void VulkanResourceTracker::TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper)
+void VulkanResourceTracker::TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper)
 {
 	ImageTrackingState& imageTrackingState = GetOrCreateImageTrackingState(image);
 
@@ -220,20 +220,19 @@ void VulkanResourceTracker::TrackImageUsage(VulkanImage* image, VkImageSubresour
 		VulkanResourceTracker* Self;
 		VulkanBarrierHelper* BarrierHelper;
 		VulkanImage* Image;
-		ImageUseFlagBits Use;
 		VkImageLayout Layout;
 		VkImageLayout FinalLayout;
 		GpuResourceUseFlags UseFlags;
 		GpuAccessFlags AccessFlags;
 	};
 
-	CallbackParameters callbackParameters { this, &barrierHelper, image, use, layout, finalLayout, useFlags, accessFlags };
+	CallbackParameters callbackParameters { this, &barrierHelper, image, layout, finalLayout, useFlags, accessFlags };
 	IterateAndCreateOverlappingImageSubresourceTrackingState(imageTrackingState, *image, subresourceRange, [](u32 globalSubresourceIndex, void* userData)
 	{
 		CallbackParameters* const callbackParameters = (CallbackParameters*)userData;
 		VulkanResourceTracker* self = callbackParameters->Self;
 
-		self->TrackSubresourceUsage(callbackParameters->Image, globalSubresourceIndex, callbackParameters->Use, callbackParameters->Layout, callbackParameters->FinalLayout, callbackParameters->UseFlags, callbackParameters->AccessFlags, *callbackParameters->BarrierHelper);
+		self->TrackSubresourceUsage(callbackParameters->Image, globalSubresourceIndex, callbackParameters->Layout, callbackParameters->FinalLayout, callbackParameters->UseFlags, callbackParameters->AccessFlags, *callbackParameters->BarrierHelper);
 	}, &callbackParameters);
 
 	// Register any sub-resources
@@ -252,8 +251,12 @@ void VulkanResourceTracker::TrackImageUsage(VulkanImage* image, VkImageSubresour
 	}
 }
 
-void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper)
+void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper)
 {
+	const bool isShaderUse = useFlags.IsSet(GpuResourceUseFlag::ShaderAccess);
+	const bool isFramebufferUse = useFlags.IsSetAny(GpuResourceUseFlag::ColorAttachment | GpuResourceUseFlag::DepthStencilAttachment);
+	const bool isTransferUse = useFlags.IsSetAny(GpuResourceUseFlag::Transfer);
+
 	ImageSubresourceTrackingState& subresourceTrackingState = mSubresourceTrackingState[globalSubresourceIndex];
 	if(subresourceTrackingState.Access == GpuAccessFlag::None) // New subresource
 	{
@@ -267,11 +270,11 @@ void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 global
 	else
 	{
 		// Determine required layout
-		if(use == ImageUseFlagBits::Shader)
+		if(isShaderUse)
 		{
 			// Register the necessary layout transition, but only if the image isn't bound for framebuffer bind. If it is
 			// then we are forced to use the layout that's expected by the framebuffer.
-			if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
+			if(subresourceTrackingState.FramebufferUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 			{
 				// Currently the system doesn't support image being bound to framebuffer, yet being written to by the
 				// shader. This seems like an unlikely scenario.
@@ -282,14 +285,15 @@ void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 global
 				// Check if the image had a layout previously assigned, and if so check if multiple different layouts
 				// were requested. In that case we wish to transfer the image to GENERAL layout.
 
-				const bool firstUseInRenderPass = !subresourceTrackingState.UseFlags.IsSetAny(ImageUseFlagBits::Shader | ImageUseFlagBits::Framebuffer);
+				const bool firstUseInRenderPass = !subresourceTrackingState.ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write)
+					&& !subresourceTrackingState.FramebufferUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write);
 				if(firstUseInRenderPass || subresourceTrackingState.RequiredLayout == VK_IMAGE_LAYOUT_UNDEFINED)
 					subresourceTrackingState.RequiredLayout = layout;
 				else if(subresourceTrackingState.RequiredLayout != layout)
 					subresourceTrackingState.RequiredLayout = VK_IMAGE_LAYOUT_GENERAL;
 			}
 		}
-		else if(use == ImageUseFlagBits::Framebuffer)
+		else if(isFramebufferUse)
 		{
 			// Framebuffer expects a certain layout and we must respect it. In the case when the FB attachment is also bound
 			// for shader reads, this will override the layout required for shader read (GENERAL or DEPTH_READ_ONLY), but that
@@ -297,7 +301,7 @@ void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 global
 			subresourceTrackingState.RequiredLayout = layout;
 			subresourceTrackingState.RenderPassLayout = finalLayout;
 		}
-		else if(use == ImageUseFlagBits::Transfer)
+		else if(isTransferUse)
 		{
 			subresourceTrackingState.RequiredLayout = layout;
 		}
@@ -326,22 +330,15 @@ void VulkanResourceTracker::TrackSubresourceUsage(VulkanImage* image, u32 global
 	if(accessFlags.IsSet(GpuAccessFlag::Write))
 		writeHazardTracking->MemoryBarrierTracking.ClearStageSafeAccess(accessStageFlags);
 
-	subresourceTrackingState.UseFlags |= use;
 	subresourceTrackingState.Access |= accessFlags;
 
-	switch(use)
+	if(isShaderUse)
 	{
-	default:
-	case ImageUseFlagBits::Shader:
 		subresourceTrackingState.ShaderUse |= accessFlags;
-		break;
-	case ImageUseFlagBits::Framebuffer:
-		subresourceTrackingState.FramebufferUse |= accessFlags;
-		break;
-	}
-
-	if(use == ImageUseFlagBits::Shader)
 		mRenderPassSubresources.insert(globalSubresourceIndex);
+	}
+	else if(isFramebufferUse)
+		subresourceTrackingState.FramebufferUse |= accessFlags;
 }
 
 void VulkanResourceTracker::TrackResourceUsage(VulkanResource* resource, GpuAccessFlags access)
@@ -401,7 +398,7 @@ void VulkanResourceTracker::TrackFramebufferUsage(VulkanFramebuffer* framebuffer
 		GpuAccessFlag access = readOnlyMask.IsSet((RenderSurfaceMaskBits)(1 << colorAttachmentIndex)) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
 
 		VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
-		TrackImageUsage(attachment.Image, range, ImageUseFlagBits::Framebuffer, layout, attachment.FinalLayout, GpuResourceUseFlag::ColorAttachment, access, barrierHelper);
+		TrackImageUsage(attachment.Image, range, layout, attachment.FinalLayout, GpuResourceUseFlag::ColorAttachment, access, barrierHelper);
 	}
 
 	if(renderPass->HasDepthAttachment())
@@ -420,7 +417,7 @@ void VulkanResourceTracker::TrackFramebufferUsage(VulkanFramebuffer* framebuffer
 		const GpuAccessFlag access = readOnlyMask.IsSet(RT_DEPTH) ? GpuAccessFlag::Read : GpuAccessFlag::Write;
 
 		VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
-		TrackImageUsage(attachment.Image, range, ImageUseFlagBits::Framebuffer, layout, attachment.FinalLayout, GpuResourceUseFlag::DepthStencilAttachment, access, barrierHelper);
+		TrackImageUsage(attachment.Image, range, layout, attachment.FinalLayout, GpuResourceUseFlag::DepthStencilAttachment, access, barrierHelper);
 	}
 }
 
@@ -742,7 +739,7 @@ u32 VulkanResourceTracker::CopySubresourceTrackingStateWithNewRange(u32 copyFrom
 		*subresourceCopy.WriteHazardTracking = *copyFromSubresource->WriteHazardTracking;
 
 	const u32 newSubresourceIndex = (u32)mSubresourceTrackingState.size();
-	if(copyFromSubresource->UseFlags.IsSet(ImageUseFlagBits::Shader))
+	if(copyFromSubresource->ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write))
 		mRenderPassSubresources.insert(newSubresourceIndex);
 
 	mSubresourceTrackingState.push_back(subresourceCopy);
@@ -968,8 +965,6 @@ void VulkanResourceTracker::ClearFramebufferFlagsForImage(VulkanImage* image)
 	for(u32 localSubresourceIndex = 0; localSubresourceIndex < imageTrackingState.SubresourceInfoCount; localSubresourceIndex++)
 	{
 		ImageSubresourceTrackingState& subresourceTrackingState = subresourceTrackingStates[localSubresourceIndex];
-
-		subresourceTrackingState.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
 		subresourceTrackingState.FramebufferUse = GpuAccessFlag::None;
 	}
 }
@@ -979,8 +974,6 @@ void VulkanResourceTracker::ClearShaderFlagsForAllRenderPassImageSubresources()
 	for(const auto& subresourceIndex : mRenderPassSubresources)
 	{
 		ImageSubresourceTrackingState& subresourceTrackingState = mSubresourceTrackingState[subresourceIndex];
-
-		subresourceTrackingState.UseFlags.Unset(ImageUseFlagBits::Shader);
 		subresourceTrackingState.ShaderUse = GpuAccessFlag::None;
 	}
 
@@ -1012,7 +1005,7 @@ VkImageLayout VulkanResourceTracker::GetCurrentSubresourceLayout(VulkanImage* im
 		   mip >= subresourceTrackingState.Range.baseMipLevel && mip < (subresourceTrackingState.Range.baseMipLevel + subresourceTrackingState.Range.levelCount))
 		{
 			// If it's a FB attachment, retrieve its layout after the render pass begins
-			if(subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Framebuffer) && framebuffer != nullptr)
+			if(subresourceTrackingState.FramebufferUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write) && framebuffer != nullptr)
 			{
 				RenderSurfaceMask readMask = GetFramebufferReadOnlyMask(framebuffer, explicitReadOnlyMask);
 
@@ -1072,7 +1065,7 @@ RenderSurfaceMask VulkanResourceTracker::GetFramebufferReadOnlyMask(VulkanFrameb
 		const VulkanFramebufferAttachment& fbAttachment = framebuffer->GetColorAttachment(colorAttachmentIndex);
 		const ImageSubresourceTrackingState& subresourceTrackingState = GetSubresourceTrackingState(fbAttachment.Image, fbAttachment.Surface.Face, fbAttachment.Surface.MipLevel);
 
-		const bool readOnly = subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Shader);
+		const bool readOnly = subresourceTrackingState.ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write); // Note: Should report error if shader write is used
 
 		if(readOnly)
 			readMask.Set((RenderSurfaceMaskBits)(1 << colorAttachmentIndex));
@@ -1083,7 +1076,7 @@ RenderSurfaceMask VulkanResourceTracker::GetFramebufferReadOnlyMask(VulkanFrameb
 		const VulkanFramebufferAttachment& fbAttachment = framebuffer->GetDepthStencilAttachment();
 		const ImageSubresourceTrackingState& subresourceTrackingState = GetSubresourceTrackingState(fbAttachment.Image, fbAttachment.Surface.Face, fbAttachment.Surface.MipLevel);
 
-		const bool readOnly = subresourceTrackingState.UseFlags.IsSet(ImageUseFlagBits::Shader);
+		const bool readOnly = subresourceTrackingState.ShaderUse.IsSetAny(GpuAccessFlag::Read | GpuAccessFlag::Write); // Note: Should report error if shader write is used
 
 		if(readOnly)
 			readMask.Set(RT_DEPTH);

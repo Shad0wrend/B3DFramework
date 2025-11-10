@@ -24,18 +24,6 @@ namespace b3d::render
 	 *  @{
 	 */
 
-	/** Bits that represent different ways an image subresource can be used. */
-	enum class ImageUseFlagBits // TODO - Remove these in favor of GpuResourceUsageFlags
-	{
-		None = 0,
-		Shader = 1 << 0,
-		Framebuffer = 1 << 1,
-		Transfer = 1 << 2
-	};
-
-	typedef Flags<ImageUseFlagBits> ImageUseFlags;
-	B3D_FLAGS_OPERATORS(ImageUseFlagBits)
-
 	/** Keeps track on which pipelines was a resource written/read, and on which pipelines may it be safely accessed from. */
 	struct WriteHazardPipelineTracking
 	{
@@ -163,12 +151,6 @@ namespace b3d::render
 			/** Use flags when subresource is bound as a framebuffer attachment. Reset after resource is unbound. */
 			GpuAccessFlags FramebufferUse;
 
-			/**
-			 * Specifies how will the subresource be used during the current render pass or dispatch call. Reset
-			 * after use.
-			 */
-			ImageUseFlags UseFlags;
-
 			/** Specifies how will the subresource be accessed during the current render pass or dispatch call. Unlike accesses in *Use structs, this one is not reset after render pass. */
 			GpuAccessFlags Access;
 
@@ -230,14 +212,13 @@ namespace b3d::render
 		 *
 		 * @param	image				Image to track.
 		 * @param	subresourceRange	Subresource range of the image to track.
-		 * @param	use					Categorizes how the image will be used (shader, framebuffer, or transfer).
 		 * @param	layout				Expected layout the image should be during use.
 		 * @param	finalLayout			Layout the image will be in after render pass completes (relevant only for framebuffer attachments).
 		 * @param	useFlags			Categorizes how the image be used (shader access, color attachment, depth attachment, etc.), and on which stages.
 		 * @param	accessFlags			Access flags specifying how the image will be accessed (read/write).
 		 * @param	barrierHelper		If there are any necessary layout transitions or memory barriers before the buffer can be used they will be recorded into the provided object.
 		 */
-		void TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper);
+		void TrackImageUsage(VulkanImage* image, VkImageSubresourceRange subresourceRange, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper);
 
 		/**
 		 * Lets the tracker know that the provided framebuffer will be queued on the associated command buffer. All associated attachment images
@@ -380,7 +361,7 @@ namespace b3d::render
 		 * and barriers based on previous subresource usage.
 		 */
 		// TODO - Refactor this signature, try to clean it up once we have explicit layout transitions
-		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, ImageUseFlagBits use, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper);
+		void TrackSubresourceUsage(VulkanImage* image, u32 globalSubresourceIndex, VkImageLayout layout, VkImageLayout finalLayout, GpuResourceUseFlags useFlags, GpuAccessFlags accessFlags, VulkanBarrierHelper& barrierHelper);
 
 		/**
 		 * Private overload of IterateAndCreateOverlappingImageSubresourceTrackingState that operates on an existing ImageTrackingState.
