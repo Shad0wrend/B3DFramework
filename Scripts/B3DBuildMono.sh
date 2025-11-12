@@ -101,4 +101,11 @@ else
     cp -a -r -- "artifacts/bin/mono/linux.x64.Release/include/mono-2.0/." "$MonoOutputFolder/include/"
 fi
 
-
+echo ""
+echo "======================================================================"
+echo "Build complete!"
+echo "======================================================================"
+echo ""
+echo "Mono has been built and installed to:"
+echo "  $MonoOutputFolder"
+echo ""
