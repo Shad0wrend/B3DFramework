@@ -14,6 +14,7 @@
 #include "Math/B3DArea2.h"
 #include "RenderAPI/B3DGpuDeviceCapabilities.h"
 #include "Utility/B3DDenseMap.h"
+#include "Utility/B3DVulkanBarrierHelper.h"
 
 namespace b3d
 {
@@ -485,9 +486,8 @@ namespace b3d
 			RenderSurfaceMask mRenderTargetReadOnlyMask = RT_NONE;
 
 			VulkanResourceTracker mResourceTracker;
+			VulkanBarrierHelper mBarrierHelper;
 			GpuQueueId mSubmittedQueueId;
-
-			PoolAlloc<sizeof(WriteHazardTracking)> mWriteHazardPool;
 
 			SPtr<VulkanGpuGraphicsPipelineState> mGraphicsPipeline;
 			SPtr<VulkanGpuComputePipelineState> mComputePipeline;

@@ -107,7 +107,7 @@ VulkanRenderPass::VulkanRenderPass(const VkDevice& device, const VulkanRenderPas
 			vkAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 			if(createInformation.IsOffscreenSurface)
-				vkAttachmentDescription.finalLayout = attachmentCreateInformation.IsShaderReadAllowed ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				vkAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 			else
 				vkAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
@@ -168,25 +168,21 @@ VulkanRenderPass::VulkanRenderPass(const VkDevice& device, const VulkanRenderPas
 	else
 		mSubpassDescription.pDepthStencilAttachment = nullptr;
 
-	// TODO - This should be refactored in order to keep only the cheap barriers: Color & Depth-stencil writes should automatically be safe in another render pass
-	// - But shader reads/writes should require explicit synchronization
-
-	// Any textures read by a shader before a render pass are safe to be used as attachments in the render pass
+	// No external memory barriers, we handle them explicitly
 	mDependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
 	mDependencies[0].dstSubpass = 0;
-	mDependencies[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-	mDependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	mDependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	mDependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	mDependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	mDependencies[0].srcAccessMask = 0;
+	mDependencies[0].dstStageMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+	mDependencies[0].dstAccessMask = 0;
 	mDependencies[0].dependencyFlags = 0;
 
-	// Any render pass attachments are safe to read by shaders after renderpass
 	mDependencies[1].srcSubpass = 0;
 	mDependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
-	mDependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	mDependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	mDependencies[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	mDependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	mDependencies[1].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	mDependencies[1].srcAccessMask = 0;
+	mDependencies[1].dstStageMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+	mDependencies[1].dstAccessMask = 0;
 	mDependencies[1].dependencyFlags = 0;
 
 	// Any other use-case other than those above require an explicit barrier
@@ -227,7 +223,7 @@ VkRenderPass VulkanRenderPass::CreateVariant(RenderSurfaceMask loadMask, RenderS
 		if(loadMask.IsSet((RenderSurfaceMaskBits)(1 << attachmentIndex)))
 		{
 			vkAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			vkAttachmentDescription.initialLayout = mIsShaderReadAllowedForColorAttachment[attachmentIndex] ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			vkAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		}
 		else if(clearMask.IsSet((RenderSurfaceMaskBits)(1 << attachmentIndex)))
 		{

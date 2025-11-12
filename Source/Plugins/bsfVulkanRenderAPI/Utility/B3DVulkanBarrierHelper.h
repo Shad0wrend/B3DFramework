@@ -3,11 +3,15 @@
 #pragma once
 
 #include "B3DVulkanPrerequisites.h"
-#include "B3DVulkanGpuCommandBuffer.h"
+#include "B3DVulkanResource.h"
 #include "Allocators/B3DFrameAllocator.h"
+#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "RenderAPI/B3DGpuDevice.h"
+#include "B3DVulkanResourceTracker.h"
 
 namespace b3d::render
 {
+	class VulkanResourceTracker;
 	class VulkanBuffer;
 	class VulkanImage;
 
@@ -171,18 +175,18 @@ namespace b3d::render
 
 		VulkanResourceTracker* mResourceTracker;
 
-		FrameVector<VkBufferMemoryBarrier> mBufferBarriers;
-		FrameVector<VkImageMemoryBarrier> mImageBarriers;
+		TInlineArray<VkBufferMemoryBarrier, 4> mBufferBarriers;
+		TInlineArray<VkImageMemoryBarrier, 4> mImageBarriers;
 
 		VkPipelineStageFlags mCombinedSourceStages = 0;
 		VkPipelineStageFlags mCombinedDestinationStages = 0;
 		GpuAccessFlags mCombinedSourceAccess = GpuAccessFlag::None;
 		GpuAccessFlags mCombinedDestinationAccess = GpuAccessFlag::None;
 
-		FrameVector<LayoutTrackingInfo> mImageLayoutTracking;
+		TInlineArray<LayoutTrackingInfo, 4> mImageLayoutTracking;
 		bool mHasLayoutTransition = false;
 
-		FrameVector<BarrierTrackingInfo> mBarrierTracking;
+		TInlineArray<BarrierTrackingInfo, 8> mBarrierTracking;
 	};
 
 	/** @} */

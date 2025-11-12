@@ -169,7 +169,7 @@ const Color kDebugLabelColor = Color::kBansheeOrange;
 constexpr u32 kMaximumBoundDescriptorSets = 64;
 
 VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanGpuCommandBufferPool& pool, u32 id, VkCommandBuffer commandBufferHandle, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
-	: GpuCommandBuffer(device, ownerThread, queueType, createInformation), mId(id), mCommandBufferHandle(commandBufferHandle), mPool(pool), mOwnerThread(ownerThread), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false), mResourceTracker(this)
+	: GpuCommandBuffer(device, ownerThread, queueType, createInformation), mId(id), mCommandBufferHandle(commandBufferHandle), mPool(pool), mOwnerThread(ownerThread), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false), mResourceTracker(this), mBarrierHelper(&mResourceTracker)
 {
 	const u32 maximumBoundDescriptorSets = Math::Min(kMaximumBoundDescriptorSets, device.GetDeviceProperties().limits.maxBoundDescriptorSets);
 	mDescriptorSetsTemp = (VkDescriptorSet*)B3DAllocate(sizeof(VkDescriptorSet) * maximumBoundDescriptorSets);
@@ -354,36 +354,9 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 	mFramebuffer = newFramebuffer;
 	mRenderTargetReadOnlyMask = readOnlyMask;
 
-	// These are guaranteed by the render pass external dependency. It's always safe to use read images from shaders as attachments.
-	// Note: Must be called before registering the framebuffer, as that will register new write hazards that need to be resolved
-	const VulkanAccessStageFlags kSourceAccessStageFlags = VulkanAccessStageFlag::AllShader;
-	const VulkanAccessStageFlags kDestinationAccessStageFlags = VulkanAccessStageFlag::ColorAttachment | VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests;
-
-	VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-	const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
-	for(u32 colorAttachmentIndex = 0; colorAttachmentIndex < colorAttachmentCount; colorAttachmentIndex++)
-	{
-		const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(colorAttachmentIndex);
-		VulkanImage* const image = attachment.Image;
-		const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
-
-		mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read, kDestinationAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write);
-	}
-
-	if(renderPass->HasDepthAttachment())
-	{
-		const VulkanFramebufferAttachment& attachment = mFramebuffer->GetDepthStencilAttachment();
-		VulkanImage* const image = attachment.Image;
-		const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
-
-		mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read, kDestinationAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write);
-	}
-
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-
 	// Register framebuffer & swap chain. Note this needs to happen before binding parameters, because if texture is used as a read-only attachment GPU parameters need to be
 	// aware to pick the correct layout
-	mResourceTracker.TrackFramebufferUsage(mFramebuffer, loadMask, readOnlyMask, barrierHelper);
+	mResourceTracker.TrackFramebufferUsage(mFramebuffer, loadMask, readOnlyMask, mBarrierHelper);
 
 	if(swapChain)
 		mResourceTracker.TrackSwapChainUsage(swapChain);
@@ -417,7 +390,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 
 		// Use mDescriptorSetsTemp for temporary storage and call PrepareForBind
 		TInlineArray<u32, 4> tempDynamicOffsets;
-		vkParams->PrepareForBind(*this, mResourceTracker, barrierHelper, mDescriptorSetsTemp, tempDynamicOffsets);
+		vkParams->PrepareForBind(*this, mResourceTracker, mBarrierHelper, mDescriptorSetsTemp, tempDynamicOffsets);
 
 		// Cache the preparation results for later use by SetGpuParameters
 		CachedGpuParameterData& cacheData = mRenderPassGpuParametersCache[parameters.get()];
@@ -426,7 +399,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 		cacheData.DynamicOffsets = std::move(tempDynamicOffsets);
 	}
 
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	// Re-set the params as they will need to be re-bound
 	SetGpuParameters(mBoundParams);
@@ -442,11 +415,13 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 	const RenderSurfaceMask originalClearMask = createInformation.ClearMask;
 	Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1> clearValues = BuildClearValues(originalClearMask, createInformation.ClearColor, createInformation.ClearDepth, createInformation.ClearStencil);
 
+	VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 	RenderSurfaceMask clearMask = createInformation.ClearMask;
 
 #if B3D_DEBUG
 	const VkClearColorValue kDebugClearColor = { { 1.0f, 0.0f, 1.0f, 1.0f } }; // Bright pink
 
+	const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
 	for(u32 sequentialColorAttachmentIndex = 0; sequentialColorAttachmentIndex < colorAttachmentCount; sequentialColorAttachmentIndex++)
 	{
 		const VulkanFramebufferAttachment& colorAttachment = mFramebuffer->GetColorAttachment(sequentialColorAttachmentIndex);
@@ -812,11 +787,10 @@ void VulkanGpuCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanc
 	if(!IsReadyForRender())
 		return;
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-	BindGpuParameters(barrierHelper);
+	BindGpuParameters(mBarrierHelper);
 
 	// All barriers should have been issued during begin render pass
-	B3D_ENSURE(!barrierHelper.HasBarriers());
+	B3D_ENSURE(!mBarrierHelper.HasBarriers());
 
 	if(mGfxPipelineRequiresBind)
 	{
@@ -868,11 +842,10 @@ void VulkanGpuCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 ver
 	if(!IsReadyForRender())
 		return;
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-	BindGpuParameters(barrierHelper);
+	BindGpuParameters(mBarrierHelper);
 
 	// All barriers should have been issued during begin render pass
-	B3D_ENSURE(!barrierHelper.HasBarriers());
+	B3D_ENSURE(!mBarrierHelper.HasBarriers());
 
 	if(mGfxPipelineRequiresBind)
 	{
@@ -928,10 +901,9 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 		return;
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-	BindGpuParameters(barrierHelper);
+	BindGpuParameters(mBarrierHelper);
 
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	if(mCmpPipelineRequiresBind)
 	{
@@ -1078,35 +1050,6 @@ void VulkanGpuCommandBuffer::EndRenderPass()
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
 			mResourceTracker.ClearFramebufferFlagsForImage(fbAttachment.Image);
-		}
-	}
-
-	if(mFramebuffer != nullptr)
-	{
-		// These are guaranteed by the render pass external dependency. It's always safe to read an attachment in a shader after render pass.
-		const VulkanAccessStageFlags kSourceAccessStageFlags = VulkanAccessStageFlag::ColorAttachment | VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests;
-		const VulkanAccessStageFlags kDestinationAccessStageFlags = VulkanAccessStageFlag::AllShader;
-
-		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-		const u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
-		for(u32 colorAttachmentIndex = 0; colorAttachmentIndex < colorAttachmentCount; colorAttachmentIndex++)
-		{
-			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(colorAttachmentIndex);
-			VulkanImage* const image = attachment.Image;
-			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
-
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationAccessStageFlags, GpuAccessFlag::Read);
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Write, VulkanAccessStageFlag::ColorAttachment, GpuAccessFlag::Write);
-		}
-
-		if(renderPass->HasDepthAttachment())
-		{
-			const VulkanFramebufferAttachment& attachment = mFramebuffer->GetDepthStencilAttachment();
-			VulkanImage* const image = attachment.Image;
-			const VkImageSubresourceRange range = image->GetRange(attachment.Surface);
-
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Read | GpuAccessFlag::Write, kDestinationAccessStageFlags, GpuAccessFlag::Read);
-			mResourceTracker.UpdateWriteHazardTrackingAfterBarrier(image, range, kSourceAccessStageFlags, GpuAccessFlag::Write, VulkanAccessStageFlag::EarlyFragmentTests | VulkanAccessStageFlag::LateFragmentTests, GpuAccessFlag::Write);
 		}
 	}
 
@@ -1668,7 +1611,6 @@ void VulkanGpuCommandBuffer::BindDynamicStates(bool forceAll)
 
 void VulkanGpuCommandBuffer::BindVertexInputs()
 {
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
 	if(mRequiredVertexBufferBindingCount > 0)
 	{
 		const VulkanBuiltinResources& vulkanBuiltinResources = GetVulkanGpuDevice().GetBuiltinResources();
@@ -1684,7 +1626,7 @@ void VulkanGpuCommandBuffer::BindVertexInputs()
 				resource = dummyVertexBuffer;
 
 			mVertexBuffersTemp[bindingIndex] = resource->GetVulkanHandle();
-			mResourceTracker.TrackBufferUsage(resource, GpuResourceUseFlag::VertexBuffer, GpuAccessFlag::Read, barrierHelper);
+			mResourceTracker.TrackBufferUsage(resource, GpuResourceUseFlag::VertexBuffer, GpuAccessFlag::Read, mBarrierHelper);
 		}
 
 		vkCmdBindVertexBuffers(mCommandBufferHandle, 0, mRequiredVertexBufferBindingCount, mVertexBuffersTemp, mVertexBufferOffsetsTemp);
@@ -1701,14 +1643,14 @@ void VulkanGpuCommandBuffer::BindVertexInputs()
 			if(B3D_ENSURE(mIndexBuffer->GetInformation().Type == GpuBufferType::Index))
 				indexType = VulkanUtility::GetIndexType(mIndexBuffer->GetInformation().Index.Type);
 
-			mResourceTracker.TrackBufferUsage(resource, GpuResourceUseFlag::IndexBuffer, GpuAccessFlag::Read, barrierHelper);
+			mResourceTracker.TrackBufferUsage(resource, GpuResourceUseFlag::IndexBuffer, GpuAccessFlag::Read, mBarrierHelper);
 
 			vkCmdBindIndexBuffer(mCommandBufferHandle, vkBuffer, 0, indexType);
 		}
 	}
 
 	// Not allowed to issue barriers at this point, everything has to be done before render pass. If this proves an issue then all vertex/index buffers will need to be pre-declared in RenderPassCreateInformation.
-	B3D_ENSURE(!barrierHelper.HasBarriers());
+	B3D_ENSURE(!mBarrierHelper.HasBarriers());
 }
 
 void VulkanGpuCommandBuffer::BindGpuParameters(VulkanBarrierHelper& barrierHelper)
@@ -1779,23 +1721,10 @@ void VulkanGpuCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, V
 {
 	// TODO - Down the line we should make these barriers explicit, so user can batch multiple updates and issue one set of barriers, rather than barriers for each update. Same applied to other transfer ops below.
 
-	if(destination->IsBound()) // No need for barrier if this buffer hasn't yet been used on any command buffer
-	{
-		FrameScope frameScope;
-		VulkanBarrierHelper barrierHelper(&mResourceTracker);
-		barrierHelper.AddBufferBarrier(destination, destination->GetUseFlags(), destination->GetAccessFlags(), GpuResourceUseFlag::Transfer, GpuAccessFlag::Write);
-		barrierHelper.Execute(*this);
-	}
+	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdUpdateBuffer(GetVulkanHandle(), destination->GetVulkanHandle(), offset, length, (uint32_t*)data);
-
-	// Issue post-update barrier
-	FrameScope frameScope;
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-	barrierHelper.AddBufferBarrier(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, destination->GetUseFlags(), destination->GetAccessFlags());
-	barrierHelper.Execute(*this);
-
-	mResourceTracker.TrackBufferUsage(destination, destination->GetUseFlags(), destination->GetAccessFlags(), barrierHelper);
 }
 
 void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuffer* destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize length)
@@ -1807,12 +1736,10 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuff
 	region.srcOffset = sourceOffset;
 	region.dstOffset = destinationOffset;
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackBufferUsage(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackBufferUsage(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdCopyBuffer(GetVulkanHandle(), source->GetVulkanHandle(), destination->GetVulkanHandle(), 1, &region);
 }
@@ -1837,12 +1764,10 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 	copyRegion.imageExtent = region;
 	copyRegion.imageSubresource = rangeLayers;
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackBufferUsage(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackImageUsage(destination, subresourceRange, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackBufferUsage(source, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, subresourceRange, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdCopyBufferToImage(GetVulkanHandle(), source->GetVulkanHandle(), destination->GetVulkanHandle(), layout, 1, &copyRegion);
 }
@@ -1871,12 +1796,10 @@ void VulkanGpuCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer
 	VkImageSubresourceRange subresourceRangeForBarrier = subresourceRange;
 	subresourceRangeForBarrier.aspectMask = source->GetAspectFlags(); 
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackImageUsage(source, subresourceRangeForBarrier, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackImageUsage(source, subresourceRangeForBarrier, layout, layout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackBufferUsage(destination, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdCopyImageToBuffer(GetVulkanHandle(), source->GetVulkanHandle(), layout, destination->GetVulkanHandle(), 1, &copyRegion);
 }
@@ -1892,12 +1815,10 @@ void VulkanGpuCommandBuffer::CopyImageToImage(VulkanImage* source, VulkanImage* 
 	VkImageSubresourceRange destinationSubresourceRangeForBarrier = destinationSubresourceRange;
 	destinationSubresourceRangeForBarrier.aspectMask = source->GetAspectFlags(); 
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdCopyImage(GetVulkanHandle(), source->GetVulkanHandle(), sourceLayout, destination->GetVulkanHandle(), destinationLayout, regionCount, regions);
 }
@@ -1913,12 +1834,10 @@ void VulkanGpuCommandBuffer::Blit(VulkanImage* source, VulkanImage* destination,
 	VkImageSubresourceRange destinationSubresourceRangeForBarrier = destinationSubresourceRange;
 	destinationSubresourceRangeForBarrier.aspectMask = source->GetAspectFlags(); 
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdBlitImage(GetVulkanHandle(), source->GetVulkanHandle(), sourceLayout, destination->GetVulkanHandle(), destinationLayout, regionCount, regions, VK_FILTER_LINEAR);
 }
@@ -1933,12 +1852,10 @@ void VulkanGpuCommandBuffer::Resolve(VulkanImage* source, VulkanImage* destinati
 	VkImageSubresourceRange destinationSubresourceRangeForBarrier = destinationSubresourceRange;
 	destinationSubresourceRangeForBarrier.aspectMask = source->GetAspectFlags(); 
 
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
+	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, mBarrierHelper);
+	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, mBarrierHelper);
 
-	mResourceTracker.TrackImageUsage(source, sourceSubresourceRangeForBarrier, sourceLayout, sourceLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Read, barrierHelper);
-	mResourceTracker.TrackImageUsage(destination, destinationSubresourceRangeForBarrier, destinationLayout, destinationLayout, GpuResourceUseFlag::Transfer, GpuAccessFlag::Write, barrierHelper);
-
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 
 	vkCmdResolveImage(GetVulkanHandle(), source->GetVulkanHandle(), sourceLayout, destination->GetVulkanHandle(), destinationLayout, regionCount, regions);
 }
@@ -1973,11 +1890,8 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 	if(!B3D_ENSURE(!IsInRenderPass()))
 		return;
 
-	FrameScope frameScope;
-	VulkanBarrierHelper barrierHelper(&mResourceTracker);
-
 	// Helper lambda to process a single image with the barrier
-	auto fnAddImageBarrier = [this, &barrierHelper](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange, const GpuSurfaceBarrier& barrier)
+	auto fnAddImageBarrier = [this](VulkanImage* vulkanImage, const GpuTextureSubresourceRange& subresourceRange, const GpuSurfaceBarrier& barrier)
 	{
 		if(vulkanImage == nullptr)
 			return;
@@ -1995,7 +1909,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 			const GpuSurfaceBarrier& Barrier;
 		};
 
-		CallbackParameters callbackParameters { &barrierHelper, &mResourceTracker, vulkanImage, barrier};
+		CallbackParameters callbackParameters { &mBarrierHelper, &mResourceTracker, vulkanImage, barrier};
 		mResourceTracker.IterateAndCreateOverlappingImageSubresourceTrackingState(vulkanImage, vkSubresourceRange, [](u32 globalSubresourceIndex, void* userData)
 		{
 			CallbackParameters* const callbackParameters = static_cast<CallbackParameters*>(userData);
@@ -2020,7 +1934,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 			continue;
 
 		VulkanBuffer* const vulkanBuffer = vulkanGpuBuffer->GetVulkanResource();
-		barrierHelper.AddBufferBarrier(vulkanBuffer, barrier.DestinationUsage, barrier.DestinationAccess);
+		mBarrierHelper.AddBufferBarrier(vulkanBuffer, barrier.DestinationUsage, barrier.DestinationAccess);
 	}
 
 	for(const auto& barrier : barriers.TextureBarriers)
@@ -2091,7 +2005,7 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		}
 	}
 
-	barrierHelper.Execute(*this);
+	mBarrierHelper.Execute(*this);
 }
 
 void VulkanGpuCommandBuffer::NotifyRenderTargetModified()

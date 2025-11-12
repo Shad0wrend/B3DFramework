@@ -391,7 +391,7 @@ void VulkanResourceTracker::TrackFramebufferUsage(VulkanFramebuffer* framebuffer
 		// these values because that's what VulkanFramebuffer expects as initialLayout.
 		VkImageLayout layout;
 		if(loadMask.IsSet((RenderSurfaceMaskBits)(1 << colorAttachmentIndex)))
-			layout = attachment.Image->IsShaderReadAllowed() ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 		else
 			layout = VK_IMAGE_LAYOUT_UNDEFINED;
 

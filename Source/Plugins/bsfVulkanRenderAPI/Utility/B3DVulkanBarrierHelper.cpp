@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DVulkanBarrierHelper.h"
 #include "B3DVulkanGpuBuffer.h"
+#include "B3DVulkanGpuCommandBuffer.h"
 #include "B3DVulkanTexture.h"
 #include "B3DVulkanUtility.h"
 
@@ -10,8 +11,7 @@ using namespace b3d::render;
 
 VulkanBarrierHelper::VulkanBarrierHelper(VulkanResourceTracker* resourceTracker)
 	: mResourceTracker(resourceTracker)
-{
-}
+{ }
 
 const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBarrier(VulkanBuffer* buffer, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
 {
@@ -102,7 +102,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBa
 		barrier.offset = 0;
 		barrier.size = VK_WHOLE_SIZE;
 
-		mBufferBarriers.push_back(barrier);
+		mBufferBarriers.Add(barrier);
 	}
 	else
 	{
@@ -116,7 +116,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBa
 	trackingInfo.SourceAccessStages = sourceAccessStageFlags;
 	trackingInfo.DestinationAccess = destinationAccessFlags;
 	trackingInfo.DestinationAccessStages = destinationAccessStageFlags;
-	mBarrierTracking.push_back(trackingInfo);
+	mBarrierTracking.Add(trackingInfo);
 
 	return &mBarrierTracking.back();
 }
@@ -194,7 +194,11 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddSubresou
 			sourceAccessFlags |= GpuAccessFlag::Read;
 	}
 
-	if(sourceAccessFlags == GpuAccessFlag::None && (subresourceTrackingState.CurrentLayout == newLayout || newLayout == VK_IMAGE_LAYOUT_UNDEFINED))
+	// No layout transition if destination layout is undefined
+	if(newLayout == VK_IMAGE_LAYOUT_UNDEFINED)
+		newLayout = subresourceTrackingState.CurrentLayout;
+
+	if(sourceAccessFlags == GpuAccessFlag::None && subresourceTrackingState.CurrentLayout == newLayout)
 		return nullptr;
 
 	return AddImageBarrier(image, subresourceTrackingState.Range, sourceAccessStageFlags, sourceAccessFlags, destinationAccessStageFlags, destinationAccess, subresourceTrackingState.CurrentLayout, newLayout);
@@ -234,7 +238,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBar
 		barrier.image = image->GetVulkanHandle();
 		barrier.subresourceRange = subresourceRange;
 
-		mImageBarriers.push_back(barrier);
+		mImageBarriers.Add(barrier);
 	}
 	else
 	{
@@ -259,7 +263,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBar
 			layoutTrackingInfo.SubresourceRange = subresourceRange;
 			layoutTrackingInfo.OldLayout = oldLayout;
 			layoutTrackingInfo.NewLayout = newLayout;
-			mImageLayoutTracking.push_back(layoutTrackingInfo);
+			mImageLayoutTracking.Add(layoutTrackingInfo);
 		}
 		else
 		{
@@ -279,7 +283,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBar
 	barrierTrackingInfo.SourceAccessStages = sourceAccessStageFlags;
 	barrierTrackingInfo.DestinationAccess = destinationAccessFlags;
 	barrierTrackingInfo.DestinationAccessStages = destinationAccessStageFlags;
-	mBarrierTracking.push_back(barrierTrackingInfo);
+	mBarrierTracking.Add(barrierTrackingInfo);
 
 	return &mBarrierTracking.back();
 }
@@ -359,20 +363,20 @@ void VulkanBarrierHelper::Execute(VulkanGpuCommandBuffer& commandBuffer)
 
 void VulkanBarrierHelper::Clear()
 {
-	mBufferBarriers.clear();
-	mImageBarriers.clear();
+	mBufferBarriers.Clear();
+	mImageBarriers.Clear();
 	mCombinedSourceStages = 0;
 	mCombinedDestinationStages = 0;
 	mCombinedSourceAccess = GpuAccessFlag::None;
 	mCombinedDestinationAccess = GpuAccessFlag::None;
 
-	mImageLayoutTracking.clear();
+	mImageLayoutTracking.Clear();
 	mHasLayoutTransition = false;
 
-	mBarrierTracking.clear();
+	mBarrierTracking.Clear();
 }
 
 bool VulkanBarrierHelper::HasBarriers() const
 {
-	return !mBufferBarriers.empty() || !mImageBarriers.empty();
+	return !mBufferBarriers.Empty() || !mImageBarriers.Empty();
 }
