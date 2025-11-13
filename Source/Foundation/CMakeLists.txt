@@ -1,6 +1,6 @@
 # Source files
 set(coreSourceFoldersToIgnore "")
-if(NOT B3D_EXPERIMENTAL_ENABLE_NETWORKING)
+if(NOT B3D_ENABLE_NETWORKING)
 	list(APPEND coreSourceFoldersToIgnore "Network")
 endif()
 
@@ -11,21 +11,13 @@ if(MSVC)
 	list(APPEND B3D_CORE_SOURCE_FILES "Core/VSVisualizations.natvis")
 endif()
 
-# Ensure pre-built binary dependencies are up to date
-if(B3D_USE_BUNDLED_LIBRARIES)
-	if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)
-		set(B3D_RAKNET_PREBUILT_DEPENDENCY_VERSION 1) # Tick this when you change the binaries
-		B3DCheckAndUpdatePrebuiltDependencies(bsfDep_RakNet ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/RakNet RakNet ${B3D_RAKNET_PREBUILT_DEPENDENCY_VERSION})
-	endif()
-endif()
-
 # Packages
 find_package(snappy REQUIRED)
 find_package(nvtt REQUIRED)
 find_package(freetype REQUIRED)
 
-if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)
-	find_package(RakNet REQUIRED)
+if(B3D_ENABLE_NETWORKING)
+	find_package(GameNetworkingSockets REQUIRED)
 endif()
 
 if(LINUX)
@@ -113,9 +105,9 @@ target_link_libraries(bsf PRIVATE ${snappy_LIBRARIES})
 ## External lib: Freetype
 target_link_libraries(bsf PRIVATE ${freetype_LIBRARIES})
 
-## External lib: RakNet
-if(B3D_EXPERIMENTAL_ENABLE_NETWORKING)
-	target_link_libraries(bsf PRIVATE ${RakNet_LIBRARIES})
+## External lib: GameNetworkingSockets
+if(B3D_ENABLE_NETWORKING)
+	target_link_libraries(bsf PRIVATE ${GameNetworkingSockets_LIBRARIES})
 endif()
 
 ## External libs: Header only libraries

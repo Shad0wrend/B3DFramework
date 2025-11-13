@@ -2,164 +2,550 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 
 #include "B3DNetwork.h"
-#include "RakNet/RakPeer.h"
-#include "RakNet/MessageIdentifiers.h"
-#include "Allocators/B3DPoolAlloc.h"
-#include "Serialization/B3DSerializedObject.h"
-#include "Serialization/B3DBinarySerializer.h"
-#include "FileSystem/B3DDataStream.h"
-#include "Math/B3DMath.h"
-#include "Serialization/B3DBinaryDiff.h"
-#include "Reflection/B3DRTTIType.h"
-
-using namespace RakNet;
+#include <steam/steamnetworkingsockets.h>
+#include <steam/isteamnetworkingutils.h>
+#include "Debug/B3DDebug.h"
+#include "Threading/B3DTaskScheduler.h"
 
 using namespace b3d;
 
-static_assert(NETWORK_BACKEND_FIRST_FREE_ID == ID_USER_PACKET_ENUM, "");
-
-/** Converts a RakNet SystemAddress into the framework's NetworkAddress type. */
-void systemToNetworkAddress(const SystemAddress& address, NetworkAddress& output)
+namespace
 {
-	if(address.address.addr4.sin_family == AF_INET)
+	/** Converts GameNetworkingSockets address to NetworkAddress. */
+	void GNSToNetworkAddress(const SteamNetworkingIPAddr& gnsAddress, NetworkAddress& outAddress)
 	{
-		output.ipType = IPV4;
-		output.port = address.address.addr4.sin_port;
-		memcpy(output.ip, &address.address.addr4.sin_addr, 4);
-	}
-	else
-	{
-		output.ipType = IPV6;
-		output.port = address.address.addr6.sin6_port;
-		output.ip6FlowInfo = address.address.addr6.sin6_flowinfo;
-		output.ip6ScopeId = address.address.addr6.sin6_scope_id;
-		memcpy(output.ip, &address.address.addr6.sin6_addr, 16);
-	}
-}
-
-/**
- * Same as systemToNetworkAddress(const SystemAddress&, NetworkAddress&) except it returns a brand new NetworkAddress
- * object.
- */
-NetworkAddress systemToNetworkAddress(const SystemAddress& address)
-{
-	NetworkAddress output;
-	systemToNetworkAddress(address, output);
-	return output;
-}
-
-/** Converts the framework's NetworkAddress into RakNet's SystemAddres type. */
-SystemAddress networkToSystemAddress(const NetworkAddress& address)
-{
-	SystemAddress output;
-	output.address.addr4.sin_port = address.port;
-
-	if(address.ipType == IPV4)
-	{
-		output.address.addr4.sin_family = AF_INET;
-		memcpy(&output.address.addr4.sin_addr, address.ip, 4);
-	}
-	else
-	{
-		output.address.addr6.sin6_family = AF_INET6;
-		output.address.addr6.sin6_flowinfo = (ULONG)address.ip6FlowInfo;
-		output.address.addr6.sin6_scope_id = (ULONG)address.ip6ScopeId;
-		memcpy(&output.address.addr6.sin6_addr, address.ip, 16);
-	}
-
-	return output;
-}
-
-/** Converts PacketChannel reliability, priority and ordering into equivalent RakNet enums. */
-void mapChannelToRakNet(const PacketChannel& channel, ::PacketReliability& reliability, ::PacketPriority& priority)
-{
-	switch(channel.priority)
-	{
-	case PacketPriority::Immediate:
-		priority = IMMEDIATE_PRIORITY;
-		break;
-	case PacketPriority::High:
-		priority = HIGH_PRIORITY;
-		break;
-	default:
-	case PacketPriority::Medium:
-		priority = MEDIUM_PRIORITY;
-		break;
-	case PacketPriority::Low:
-		priority = LOW_PRIORITY;
-		break;
-	}
-
-	if(channel.reliability == PacketReliability::Unreliable)
-	{
-		if(channel.ordering == PacketOrdering::Ordered || channel.ordering == PacketOrdering::Sequenced)
-			reliability = UNRELIABLE_SEQUENCED;
-		else
-			reliability = UNRELIABLE;
-	}
-	else
-	{
-		switch(channel.ordering)
+		if(gnsAddress.IsIPv4())
 		{
+			outAddress.IPType = IPV4;
+			outAddress.Port = gnsAddress.m_port;
+			// Extract IPv4 address from IPv6-mapped format
+			u32 ipv4 = gnsAddress.GetIPv4();
+			memcpy(outAddress.IP, &ipv4, 4);
+		}
+		else
+		{
+			outAddress.IPType = IPV6;
+			outAddress.Port = gnsAddress.m_port;
+			memcpy(outAddress.IP, gnsAddress.m_ipv6, 16);
+		}
+	}
+
+	/** Converts NetworkAddress to GameNetworkingSockets address. */
+	SteamNetworkingIPAddr NetworkToGNSAddress(const NetworkAddress& address)
+	{
+		SteamNetworkingIPAddr gnsAddress;
+		gnsAddress.Clear();
+
+		if(address.IPType == IPV4)
+		{
+			u32 ipv4;
+			memcpy(&ipv4, address.IP, 4);
+			gnsAddress.SetIPv4(ipv4, address.Port);
+		}
+		else
+		{
+			gnsAddress.SetIPv6(address.IP, address.Port);
+		}
+
+		return gnsAddress;
+	}
+
+	/** Maps NetworkSendFlags to GameNetworkingSockets send flags. */
+	int32 MapSendFlagsToGNS(NetworkSendFlags flags)
+	{
+		int32 gnsFlags = 0;
+
+		if(flags.IsSet(NetworkSendFlagBits::Reliable))
+			gnsFlags |= k_nSteamNetworkingSend_Reliable;
+
+		if(flags.IsSet(NetworkSendFlagBits::NoNagle))
+			gnsFlags |= k_nSteamNetworkingSend_NoNagle;
+
+		if(flags.IsSet(NetworkSendFlagBits::NoDelay))
+			gnsFlags |= k_nSteamNetworkingSend_NoDelay;
+
+		if(flags.IsSet(NetworkSendFlagBits::UnreliableNoDelay))
+			gnsFlags |= k_nSteamNetworkingSend_UnreliableNoDelay;
+
+		if(flags.IsSet(NetworkSendFlagBits::UseCurrentThread))
+			gnsFlags |= k_nSteamNetworkingSend_UseCurrentThread;
+
+		return gnsFlags;
+	}
+}
+
+struct NetworkPeer::Impl
+{
+	ISteamNetworkingSockets* Sockets = nullptr;
+	HSteamListenSocket ListenSocket = k_HSteamListenSocket_Invalid;
+	HSteamNetConnection ClientConnection = k_HSteamNetConnection_Invalid;
+
+	bool IsServer = false;
+	u32 MaxConnections = 0;
+
+	// Connection tracking
+	UnorderedMap<HSteamNetConnection, ConnectionID> ConnectionToID;
+	UnorderedMap<u64, HSteamNetConnection> IDToConnection;
+	u64 NextConnectionID = 1;
+
+	// Message pool for received messages
+	Vector<ISteamNetworkingMessage*> MessagePool;
+
+	/** Maps a GNS connection handle to a ConnectionID, allocating if needed. */
+	ConnectionID GetOrAllocateConnectionID(HSteamNetConnection handle)
+	{
+		auto it = ConnectionToID.find(handle);
+		if(it != ConnectionToID.end())
+			return it->second;
+
+		u64 id = NextConnectionID++;
+		ConnectionID connectionID(id);
+
+		ConnectionToID[handle] = connectionID;
+		IDToConnection[id] = handle;
+
+		return connectionID;
+	}
+
+	/** Maps a ConnectionID to a GNS connection handle. */
+	HSteamNetConnection GetConnectionHandle(ConnectionID id) const
+	{
+		auto it = IDToConnection.find(id.GetID());
+		if(it != IDToConnection.end())
+			return it->second;
+
+		return k_HSteamNetConnection_Invalid;
+	}
+
+	/** Removes a connection from tracking. */
+	void RemoveConnection(ConnectionID id)
+	{
+		auto it = IDToConnection.find(id.GetID());
+		if(it != IDToConnection.end())
+		{
+			HSteamNetConnection handle = it->second;
+			IDToConnection.erase(it);
+			ConnectionToID.erase(handle);
+		}
+	}
+
+	/** Process connection state changes. */
+	void OnConnectionStateChanged(SteamNetConnectionStatusChangedCallback_t* info)
+	{
+		switch(info->m_info.m_eState)
+		{
+		case k_ESteamNetworkingConnectionState_None:
+			break;
+
+		case k_ESteamNetworkingConnectionState_Connecting:
+			// Incoming connection request (server only)
+			if(IsServer)
+			{
+				if(ConnectionToID.size() < MaxConnections)
+				{
+					if(Sockets->AcceptConnection(info->m_hConn) == k_EResultOK)
+					{
+						GetOrAllocateConnectionID(info->m_hConn);
+					}
+				}
+				else
+				{
+					Sockets->CloseConnection(info->m_hConn, 0, "Server full", false);
+				}
+			}
+			break;
+
+		case k_ESteamNetworkingConnectionState_Connected:
+			// Connection established
+			GetOrAllocateConnectionID(info->m_hConn);
+			break;
+
+		case k_ESteamNetworkingConnectionState_ClosedByPeer:
+		case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+			{
+				ConnectionID id = GetOrAllocateConnectionID(info->m_hConn);
+				Sockets->CloseConnection(info->m_hConn, 0, nullptr, false);
+				RemoveConnection(id);
+			}
+			break;
+
 		default:
-		case PacketOrdering::Unordered:
-			reliability = RELIABLE;
 			break;
-		case PacketOrdering::Ordered:
-			reliability = RELIABLE_ORDERED;
-			break;
-		case PacketOrdering::Sequenced:
-			reliability = RELIABLE_SEQUENCED;
-			break;
+		}
+	}
+};
+
+NetworkPeer::NetworkPeer()
+	: m(B3DNew<Impl>())
+{
+	// Initialize GameNetworkingSockets
+	SteamDatagramErrMsg errMsg;
+	if(!GameNetworkingSockets_Init(nullptr, errMsg))
+	{
+		B3D_LOG(Error, Network, "Failed to initialize GameNetworkingSockets: {0}", errMsg);
+		return;
+	}
+
+	m->Sockets = SteamNetworkingSockets();
+}
+
+NetworkPeer::~NetworkPeer()
+{
+	DisconnectAll();
+
+	// Cleanup
+	GameNetworkingSockets_Kill();
+
+	B3DDelete(m);
+}
+
+bool NetworkPeer::StartServer(u16 port, u32 maxConnections)
+{
+	if(!m->Sockets)
+	{
+		B3D_LOG(Error, Network, "Cannot start server, sockets not initialized.");
+		return false;
+	}
+
+	if(m->ListenSocket != k_HSteamListenSocket_Invalid || m->ClientConnection != k_HSteamNetConnection_Invalid)
+	{
+		B3D_LOG(Error, Network, "Cannot start server, peer already active.");
+		return false;
+	}
+
+	// Create listen socket
+	SteamNetworkingIPAddr serverAddress;
+	serverAddress.Clear();
+	serverAddress.m_port = port;
+
+	m->ListenSocket = m->Sockets->CreateListenSocketIP(serverAddress, 0, nullptr);
+	if(m->ListenSocket == k_HSteamListenSocket_Invalid)
+	{
+		B3D_LOG(Error, Network, "Failed to create listen socket on port {0}.", port);
+		return false;
+	}
+
+	m->IsServer = true;
+	m->MaxConnections = maxConnections;
+
+	B3D_LOG(Info, Network, "Server started on port {0}, max connections: {1}", port, maxConnections);
+	return true;
+}
+
+ConnectionID NetworkPeer::Connect(const NetworkAddress& address)
+{
+	if(!m->Sockets)
+	{
+		B3D_LOG(Error, Network, "Cannot connect, sockets not initialized.");
+		return ConnectionID::Invalid();
+	}
+
+	if(m->ListenSocket != k_HSteamListenSocket_Invalid || m->ClientConnection != k_HSteamNetConnection_Invalid)
+	{
+		B3D_LOG(Error, Network, "Cannot connect, peer already active.");
+		return ConnectionID::Invalid();
+	}
+
+	SteamNetworkingIPAddr serverAddress = NetworkToGNSAddress(address);
+
+	m->ClientConnection = m->Sockets->ConnectByIPAddress(serverAddress, 0, nullptr);
+	if(m->ClientConnection == k_HSteamNetConnection_Invalid)
+	{
+		B3D_LOG(Error, Network, "Failed to initiate connection to {0}", address.ToString(true));
+		return ConnectionID::Invalid();
+	}
+
+	m->IsServer = false;
+	return m->GetOrAllocateConnectionID(m->ClientConnection);
+}
+
+void NetworkPeer::Disconnect(ConnectionID connection)
+{
+	if(!m->Sockets)
+		return;
+
+	HSteamNetConnection handle = m->GetConnectionHandle(connection);
+	if(handle == k_HSteamNetConnection_Invalid)
+		return;
+
+	m->Sockets->CloseConnection(handle, 0, "Disconnected", true);
+	m->RemoveConnection(connection);
+}
+
+void NetworkPeer::DisconnectAll()
+{
+	if(!m->Sockets)
+		return;
+
+	// Close all connections
+	for(auto& pair : m->IDToConnection)
+	{
+		m->Sockets->CloseConnection(pair.second, 0, "Shutdown", true);
+	}
+
+	m->ConnectionToID.clear();
+	m->IDToConnection.clear();
+
+	// Close listen socket
+	if(m->ListenSocket != k_HSteamListenSocket_Invalid)
+	{
+		m->Sockets->CloseListenSocket(m->ListenSocket);
+		m->ListenSocket = k_HSteamListenSocket_Invalid;
+	}
+
+	// Close client connection
+	if(m->ClientConnection != k_HSteamNetConnection_Invalid)
+	{
+		m->Sockets->CloseConnection(m->ClientConnection, 0, "Shutdown", true);
+		m->ClientConnection = k_HSteamNetConnection_Invalid;
+	}
+}
+
+void NetworkPeer::PollMessages(Vector<NetworkMessage>& outMessages, u32 maxMessages)
+{
+	outMessages.clear();
+
+	if(!m->Sockets)
+		return;
+
+	// Poll connection state changes
+	m->Sockets->RunCallbacks();
+
+	// Allocate temporary buffer for messages
+	m->MessagePool.clear();
+	m->MessagePool.resize(maxMessages);
+
+	int32 messageCount = 0;
+
+	if(m->IsServer)
+	{
+		// Server: receive from all connections
+		messageCount = m->Sockets->ReceiveMessagesOnListenSocket(
+			m->ListenSocket,
+			m->MessagePool.data(),
+			maxMessages);
+	}
+	else
+	{
+		// Client: receive from server connection
+		if(m->ClientConnection != k_HSteamNetConnection_Invalid)
+		{
+			messageCount = m->Sockets->ReceiveMessagesOnConnection(
+				m->ClientConnection,
+				m->MessagePool.data(),
+				maxMessages);
+		}
+	}
+
+	// Convert GNS messages to NetworkMessage
+	for(int32 i = 0; i < messageCount; ++i)
+	{
+		ISteamNetworkingMessage* gnsMessage = m->MessagePool[i];
+
+		NetworkMessage message;
+		message.Sender = m->GetOrAllocateConnectionID(gnsMessage->m_conn);
+		message.Data = (const u8*)gnsMessage->GetData();
+		message.Length = gnsMessage->GetSize();
+		message.MessageType = (message.Length > 0) ? message.Data[0] : 0;
+		message.BackendData = gnsMessage;
+
+		outMessages.push_back(message);
+	}
+}
+
+void NetworkPeer::SendMessage(ConnectionID connection, const u8* data, u32 size, NetworkSendFlags flags)
+{
+	if(!m->Sockets)
+		return;
+
+	HSteamNetConnection handle = m->GetConnectionHandle(connection);
+	if(handle == k_HSteamNetConnection_Invalid)
+	{
+		B3D_LOG(Error, Network, "Cannot send message, invalid connection ID.");
+		return;
+	}
+
+	int32 gnsFlags = MapSendFlagsToGNS(flags);
+
+	EResult result = m->Sockets->SendMessageToConnection(
+		handle,
+		data,
+		size,
+		gnsFlags,
+		nullptr);
+
+	if(result != k_EResultOK)
+	{
+		B3D_LOG(Warning, Network, "Failed to send message, error code: {0}", (int32)result);
+	}
+}
+
+void NetworkPeer::BroadcastMessage(const u8* data, u32 size, NetworkSendFlags flags)
+{
+	if(!m->Sockets || !m->IsServer)
+		return;
+
+	int32 gnsFlags = MapSendFlagsToGNS(flags);
+
+	// Send to all connected clients
+	for(auto& pair : m->IDToConnection)
+	{
+		m->Sockets->SendMessageToConnection(
+			pair.second,
+			data,
+			size,
+			gnsFlags,
+			nullptr);
+	}
+}
+
+bool NetworkPeer::GetConnectionInfo(ConnectionID connection, ConnectionInformation& outInfo) const
+{
+	if(!m->Sockets)
+		return false;
+
+	HSteamNetConnection handle = m->GetConnectionHandle(connection);
+	if(handle == k_HSteamNetConnection_Invalid)
+		return false;
+
+	SteamNetConnectionRealTimeStatus_t status;
+	if(m->Sockets->GetConnectionRealTimeStatus(handle, &status, 0, nullptr) != k_EResultOK)
+		return false;
+
+	SteamNetConnectionInfo_t connectionInfo;
+	if(!m->Sockets->GetConnectionInfo(handle, &connectionInfo))
+		return false;
+
+	outInfo.ID = connection;
+	GNSToNetworkAddress(connectionInfo.m_addrRemote, outInfo.RemoteAddress);
+	outInfo.PingMS = status.m_nPing;
+	outInfo.PacketLossPercent = status.m_flOutPacketsDroppedPct * 100.0f;
+	outInfo.JitterMS = status.m_usecMaxJitter / 1000.0f;
+	outInfo.BytesSentPerSecond = status.m_flOutBytesPerSec;
+	outInfo.BytesReceivedPerSecond = status.m_flInBytesPerSec;
+
+	return true;
+}
+
+bool NetworkPeer::IsConnected(ConnectionID connection) const
+{
+	return GetConnectionState(connection) == ConnectionState::Connected;
+}
+
+ConnectionState NetworkPeer::GetConnectionState(ConnectionID connection) const
+{
+	if(!m->Sockets)
+		return ConnectionState::None;
+
+	HSteamNetConnection handle = m->GetConnectionHandle(connection);
+	if(handle == k_HSteamNetConnection_Invalid)
+		return ConnectionState::None;
+
+	SteamNetConnectionInfo_t info;
+	if(!m->Sockets->GetConnectionInfo(handle, &info))
+		return ConnectionState::None;
+
+	switch(info.m_eState)
+	{
+	case k_ESteamNetworkingConnectionState_None:
+		return ConnectionState::None;
+	case k_ESteamNetworkingConnectionState_Connecting:
+		return ConnectionState::Connecting;
+	case k_ESteamNetworkingConnectionState_FindingRoute:
+		return ConnectionState::Connecting;
+	case k_ESteamNetworkingConnectionState_Connected:
+		return ConnectionState::Connected;
+	case k_ESteamNetworkingConnectionState_ClosedByPeer:
+		return ConnectionState::Disconnected;
+	case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+		return ConnectionState::Problem;
+	default:
+		return ConnectionState::None;
+	}
+}
+
+void NetworkPeer::FreeMessage(NetworkMessage& message)
+{
+	if(message.BackendData)
+	{
+		ISteamNetworkingMessage* gnsMessage = (ISteamNetworkingMessage*)message.BackendData;
+		gnsMessage->Release();
+		message.BackendData = nullptr;
+	}
+}
+
+NetworkAddress::NetworkAddress(const char* address)
+{
+	// Parse address string (may contain port after '|')
+	String addressString(address);
+	size_t pipePos = addressString.find('|');
+
+	if(pipePos != String::npos)
+	{
+		String ipString = addressString.substr(0, pipePos);
+		String portString = addressString.substr(pipePos + 1);
+		Port = (u16)std::stoi(portString);
+
+		// Parse IP portion
+		SteamNetworkingIPAddr gnsAddress;
+		if(gnsAddress.ParseString(ipString.c_str()))
+		{
+			GNSToNetworkAddress(gnsAddress, *this);
+		}
+	}
+	else
+	{
+		// No port specified
+		SteamNetworkingIPAddr gnsAddress;
+		if(gnsAddress.ParseString(address))
+		{
+			GNSToNetworkAddress(gnsAddress, *this);
 		}
 	}
 }
 
-NetworkAddress NetworkAddress::UNASSIGNED;
-
-NetworkAddress::NetworkAddress(const char* address)
-{
-	SystemAddress systemAddress(address);
-	systemToNetworkAddress(systemAddress, *this);
-}
-
 NetworkAddress::NetworkAddress(const char* ip, u16 port)
 {
-	SystemAddress systemAddress(ip, port);
-	systemToNetworkAddress(systemAddress, *this);
+	SteamNetworkingIPAddr gnsAddress;
+	if(gnsAddress.ParseString(ip))
+	{
+		GNSToNetworkAddress(gnsAddress, *this);
+		Port = port;
+	}
 }
 
-String NetworkAddress::toString(bool withPort) const
+String NetworkAddress::ToString(bool withPort) const
 {
-	SystemAddress systemAddress = networkToSystemAddress(*this);
-	return String(systemAddress.ToString(withPort, '|'));
+	SteamNetworkingIPAddr gnsAddress = NetworkToGNSAddress(*this);
+	char buffer[128];
+	gnsAddress.ToString(buffer, sizeof(buffer), withPort);
+	return String(buffer);
 }
 
-bool NetworkAddress::compareIP(const NetworkAddress& other) const
+bool NetworkAddress::CompareIP(const NetworkAddress& other) const
 {
-	if(ipType != other.ipType)
+	if(IPType != other.IPType)
 		return false;
 
-	if(ipType == IPV4)
-		return memcmp(ip, other.ip, 4) == 0;
+	if(IPType == IPV4)
+		return memcmp(IP, other.IP, 4) == 0;
 
-	return (memcmp(ip, other.ip, sizeof(ip)) == 0 && ip6FlowInfo == other.ip6FlowInfo && ip6ScopeId == other.ip6ScopeId);
+	return (memcmp(IP, other.IP, sizeof(IP)) == 0 && IP6FlowInfo == other.IP6FlowInfo && IP6ScopeId == other.IP6ScopeId);
 }
 
 NetworkAddress& NetworkAddress::operator=(const NetworkAddress& rhs)
 {
-	ipType = rhs.ipType;
-	port = rhs.port;
-	ip6FlowInfo = rhs.ip6FlowInfo;
-	ip6ScopeId = rhs.ip6ScopeId;
-
-	memcpy(&ip, &rhs.ip, sizeof(ip));
+	IPType = rhs.IPType;
+	Port = rhs.Port;
+	IP6FlowInfo = rhs.IP6FlowInfo;
+	IP6ScopeId = rhs.IP6ScopeId;
+	memcpy(&IP, &rhs.IP, sizeof(IP));
 	return *this;
 }
 
 bool NetworkAddress::operator==(const NetworkAddress& rhs) const
 {
-	return port == rhs.port && compareIP(rhs);
+	return Port == rhs.Port && CompareIP(rhs);
 }
 
 bool NetworkAddress::operator!=(const NetworkAddress& rhs) const
@@ -167,567 +553,9 @@ bool NetworkAddress::operator!=(const NetworkAddress& rhs) const
 	return !(*this == rhs);
 }
 
-/** Contains information associated with a single connected peer. */
-struct NetworkConnection
-{
-	NetworkId id;
-	NetworkAddress networkAddress;
-	SystemAddress systemAddress;
-	RakNetGUID guid;
-};
+NetworkAddress NetworkAddress::UNASSIGNED;
 
-struct NetworkPeer::Pimpl
-{
-	RakPeerInterface* peer;
-	Vector<NetworkConnection> networkIdMapping;
-	PoolAlloc<sizeof(NetworkEvent)> eventPool;
-
-	/** Maps a network ID into a RakNet system address. Returns null if the ID is not valid. */
-	const SystemAddress* getSystemAddress(const NetworkId& id)
-	{
-		if(id.id < 0 || id.id >= (i32)networkIdMapping.size())
-			return nullptr;
-
-		return &networkIdMapping[id.id].systemAddress;
-	}
-
-	/** Maps a network ID into a RakNet GUID. Returns null if the ID is not valid. */
-	const RakNetGUID* getGUID(const NetworkId& id)
-	{
-		if(id.id < 0 || id.id >= (i32)networkIdMapping.size())
-			return nullptr;
-
-		return &networkIdMapping[id.id].guid;
-	}
-
-	/**
-	 * Using a RakNet address or a GUID, attempts to retrieve a network ID, or allocates a new ID if one cannot be
-	 * found.
-	 */
-	NetworkId getOrRegisterNetworkId(const SystemAddress& address, const RakNetGUID& guid)
-	{
-		i32 systemIndex = address.systemIndex;
-		B3D_ASSERT(systemIndex >= 0 && systemIndex < (i32)networkIdMapping.size());
-
-		NetworkConnection& connection = networkIdMapping[systemIndex];
-		if(connection.systemAddress != address || connection.guid != guid)
-		{
-			connection.networkAddress = systemToNetworkAddress(address);
-			connection.systemAddress = address;
-			connection.guid = guid;
-		}
-
-		return connection.id;
-	}
-
-	/** Allocates a new network event, responsible for reporting data received in @p packet. */
-	NetworkEvent* allocNetworkEvent(Packet* packet)
-	{
-		NetworkEvent* event = eventPool.construct<NetworkEvent>();
-		event->_backendData = packet;
-		event->sender = getOrRegisterNetworkId(packet->systemAddress, packet->guid);
-
-		switch(packet->data[0])
-		{
-		case ID_CONNECTION_REQUEST_ACCEPTED:
-			event->type = NetworkEventType::ConnectingDone;
-			break;
-		case ID_CONNECTION_ATTEMPT_FAILED:
-			event->type = NetworkEventType::ConnectingFailed;
-			break;
-		case ID_ALREADY_CONNECTED:
-			event->type = NetworkEventType::AlreadyConnected;
-			break;
-		case ID_NEW_INCOMING_CONNECTION:
-			event->type = NetworkEventType::IncomingNew;
-			break;
-		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			event->type = NetworkEventType::IncomingNoFree;
-			break;
-		case ID_DISCONNECTION_NOTIFICATION:
-			event->type = NetworkEventType::Disconnected;
-			break;
-		case ID_CONNECTION_LOST:
-			event->type = NetworkEventType::LostConnection;
-			break;
-		default:
-			event->type = NetworkEventType::Data;
-			event->data.bytes = packet->data;
-			event->data.length = packet->length;
-			break;
-		}
-
-		return event;
-	}
-
-	/** Frees an event allocated with allocNetworkEvent(). */
-	void freeNetworkEvent(NetworkEvent* event)
-	{
-		Packet* packet = (Packet*)event->_backendData;
-
-		peer->DeallocatePacket(packet);
-		eventPool.free(event);
-	}
-};
-
-NetworkPeer::NetworkPeer(const NETWORK_PEER_DESC& desc)
-	: m(B3DNew<Pimpl>())
-{
-	m->peer = RakPeerInterface::GetInstance();
-	m->networkIdMapping.resize(desc.maxNumConnections);
-
-	for(i32 networkIdIndex = 0; networkIdIndex < (i32)m->networkIdMapping.size(); networkIdIndex++)
-		m->networkIdMapping[networkIdIndex].id = NetworkId(networkIdIndex);
-
-	u32 descriptorCount = (u32)desc.listenAddresses.size();
-	SocketDescriptor* descriptors = B3DStackAllocate<SocketDescriptor>(descriptorCount);
-
-	for(u32 descriptorIndex = 0; descriptorIndex < descriptorCount; descriptorIndex++)
-	{
-		const NetworkAddress& address = desc.listenAddresses[descriptorIndex];
-
-		if(address.compareIP(NetworkAddress::UNASSIGNED))
-		{
-			if(address.port == 0)
-				descriptors[descriptorIndex] = SocketDescriptor();
-			else
-				descriptors[descriptorIndex] = SocketDescriptor(address.port, nullptr);
-		}
-		else
-		{
-			if(address.ipType == IPV6)
-			{
-				B3D_LOG(Error, Network, "IPV6 not supported for listener addreses on this backend");
-				descriptors[descriptorIndex] = SocketDescriptor();
-			}
-			else // IPV4
-			{
-				String addressStr = address.toString();
-				descriptors[descriptorIndex] = SocketDescriptor(address.port, addressStr.c_str());
-			}
-		}
-	}
-
-	StartupResult result = m->peer->Startup(desc.maxNumConnections, descriptors, descriptorCount);
-
-	B3DStackFree(descriptors);
-
-	switch(result)
-	{
-	case RAKNET_ALREADY_STARTED:
-		B3D_LOG(Warning, Network, "Failed to start RakNet peer, RakNet already started.");
-		break;
-	case INVALID_SOCKET_DESCRIPTORS:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, invalid socket descriptors provided.");
-		break;
-	case INVALID_MAX_CONNECTIONS:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, invalid max. connection count provided.");
-		break;
-	case SOCKET_FAMILY_NOT_SUPPORTED:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket family not supported.");
-		break;
-	case SOCKET_PORT_ALREADY_IN_USE:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, port already in use.");
-		break;
-	case SOCKET_FAILED_TO_BIND:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket failed to bind.");
-		break;
-	case SOCKET_FAILED_TEST_SEND:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket failed to test send.");
-		break;
-	case PORT_CANNOT_BE_ZERO:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, port cannot be zero.");
-		break;
-	case FAILED_TO_CREATE_NETWORK_THREAD:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, failed to create the network thread.");
-		break;
-	case COULD_NOT_GENERATE_GUID:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, failed to generate GUID.");
-		break;
-	case STARTUP_OTHER_FAILURE:
-		B3D_LOG(Error, Network, "Failed to start RakNet peer, unknown failure.");
-		break;
-	default:
-		break;
-	}
-
-	if(desc.maxNumIncomingConnections > 0)
-		m->peer->SetMaximumIncomingConnections(desc.maxNumIncomingConnections);
-}
-
-NetworkPeer::~NetworkPeer()
-{
-	RakPeerInterface::DestroyInstance(m->peer);
-
-	B3DDelete(m);
-}
-
-bool NetworkPeer::connect(const char* host, u16 port)
-{
-	ConnectionAttemptResult result = m->peer->Connect(host, port, nullptr, 0);
-
-	if(result != CONNECTION_ATTEMPT_STARTED)
-	{
-		switch(result)
-		{
-		case INVALID_PARAMETER:
-			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, invalid parameter.", host, port);
-			break;
-		case CANNOT_RESOLVE_DOMAIN_NAME:
-			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, domain name cannot be resolved.", host, port);
-			break;
-		case ALREADY_CONNECTED_TO_ENDPOINT:
-			B3D_LOG(Warning, Network, "Unable to connect to {0}|{1}, already connected.", host, port);
-			break;
-		case CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS:
-			B3D_LOG(Warning, Network, "Unable to connect to {0}|{1}, connection attempt already in progress.", host, port);
-			break;
-		case SECURITY_INITIALIZATION_FAILED:
-			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, security initialization failed.", host, port);
-			break;
-		default:
-			break;
-		}
-
-		return false;
-	}
-
-	return true;
-}
-
-void NetworkPeer::disconnect(const NetworkAddress& address, bool silent)
-{
-	m->peer->CloseConnection(networkToSystemAddress(address), !silent);
-}
-
-void NetworkPeer::disconnect(const NetworkId& id, bool silent)
-{
-	const RakNetGUID* guid = m->GetGUID(id);
-	if(!guid)
-	{
-		B3D_LOG(Error, Network, "Cannot disconnect from {0}, invalid network ID provided.", id.id);
-		return;
-	}
-
-	m->peer->CloseConnection(*guid, !silent);
-}
-
-NetworkEvent* NetworkPeer::receive() const
-{
-	Packet* packet = m->peer->Receive();
-	if(!packet || packet->length == 0)
-		return nullptr;
-
-	return m->allocNetworkEvent(packet);
-}
-
-void NetworkPeer::free(NetworkEvent* event)
-{
-	if(!event)
-		return;
-
-	m->freeNetworkEvent(event);
-}
-
-void NetworkPeer::send(const PacketData& data, const NetworkAddress& address, const PacketChannel& channel)
-{
-	::PacketReliability reliability;
-	::PacketPriority priority;
-
-	mapChannelToRakNet(channel, reliability, priority);
-
-	m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, networkToSystemAddress(address), false);
-}
-
-void NetworkPeer::send(const PacketData& data, const NetworkId& id, const PacketChannel& channel)
-{
-	const RakNetGUID* guid = m->GetGUID(id);
-	if(!guid)
-	{
-		B3D_LOG(Error, Network, "Cannot send to {0}, invalid network ID provided.", id.id);
-		return;
-	}
-
-	::PacketReliability reliability;
-	::PacketPriority priority;
-
-	mapChannelToRakNet(channel, reliability, priority);
-
-	m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, *guid, false);
-}
-
-void NetworkPeer::broadcast(const PacketData& data, const PacketChannel& channel)
-{
-	::PacketReliability reliability;
-	::PacketPriority priority;
-
-	mapChannelToRakNet(channel, reliability, priority);
-
-	m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, UNASSIGNED_RAKNET_GUID, true);
-}
-
-NetworkObject::~NetworkObject()
-{
-	Network::Instance().NotifyNetworkObjectDestroyedInternal(this);
-}
-
-NetworkObjectState NetworkObject::getNetworkState() const
-{
-	// We know serialization will maintain object state, so safely remove the const
-	NetworkObject* thisObject = const_cast<NetworkObject*>(this);
-
-	NetworkObjectState state;
-	state.state = SerializedObject::Create(*thisObject, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
-
-	return state;
-}
-
-void NetworkObject::networkSpawn()
-{
-	if(mState != NotReplicated || !Network::Instance().isHost())
-		return;
-
-	Network::Instance().NotifyNetworkObjectSpawnedInternal(this);
-	mState = Replicated;
-	// TODO
-}
-
-void NetworkObject::networkDespawn()
-{
-	if(mState != Replicated || !Network::Instance().isHost())
-		return;
-
-	Network::Instance().NotifyNetworkObjectDespawnedInternal(this);
-	mState = NotReplicated;
-	// TODO
-}
-
-NetworkEncoder::NetworkEncoder()
-{
-	mWriteBuffer = (u8*)B3DAllocate(WRITE_BUFFER_SIZE);
-}
-
-NetworkEncoder::~NetworkEncoder()
-{
-	B3D_ASSERT(mBufferPieces.empty());
-
-	for(auto& entry : mBufferPiecePool)
-		B3DFree(entry.buffer);
-
-	if(mResultBuffer)
-		B3DFree(mResultBuffer);
-
-	B3DFree(mWriteBuffer);
-}
-
-void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context)
-{
-	BinarySerializer binarySerializer;
-
-	auto fnFlushToBuffer = [this](u8* bufferStart, u32 bytesWritten, u32& newBufferSize)
-	{
-		if(mBufferPieces.empty())
-			allocBufferPiece();
-
-		B3D_ASSERT(bytesWritten <= WRITE_BUFFER_SIZE);
-
-		u32 bufferSize = WRITE_BUFFER_SIZE - mBufferPieces.back().size;
-
-		u32 amountToCopy = std::min(bufferSize, bytesWritten);
-		memcpy(mBufferPieces.back().buffer + mBufferPieces.back().size, bufferStart, amountToCopy);
-		mBufferPieces.back().size += amountToCopy;
-
-		if(bufferSize < bytesWritten)
-		{
-			allocBufferPiece();
-			memcpy(mBufferPieces.back().buffer, bufferStart + bufferSize, bytesWritten - bufferSize);
-			mBufferPieces.back().size = bytesWritten - bufferSize;
-		}
-
-		mWriteBufferOffset = 0;
-		newBufferSize = WRITE_BUFFER_SIZE;
-		return mWriteBuffer;
-	};
-
-	auto fnWriteToBuffer = [this, &fnFlushToBuffer](auto data)
-	{
-		u32 size = rttiGetElemSize(data);
-		if((mWriteBufferOffset + size) > WRITE_BUFFER_SIZE)
-		{
-			u32 newBufferSize;
-			fnFlushToBuffer(mWriteBuffer, mWriteBufferOffset, newBufferSize);
-		}
-
-		rttiWriteElem(data, (char*)mWriteBuffer + mWriteBufferOffset);
-
-		mWriteBufferOffset += size;
-		mBytesWritten += size;
-	};
-
-	auto fnWriteToOffset = [this](u32 offset, auto data)
-	{
-		u32 currentOffset = 0;
-		for(auto& entry : mBufferPieces)
-		{
-			if(offset >= currentOffset && offset < (currentOffset + entry.size))
-			{
-				u32 localOffset = offset - currentOffset;
-				rttiWriteElem(data, (char*)entry.buffer + localOffset);
-				break;
-			}
-		}
-	};
-
-	fnWriteToBuffer(type);
-	fnWriteToBuffer(uuid);
-
-	u32 sizeWriteOffset = mBytesWritten;
-	fnWriteToBuffer(0);
-
-	if(object)
-	{
-		u8* writeStart = mWriteBuffer + mWriteBufferOffset;
-		u32 remainingBufferSize = WRITE_BUFFER_SIZE - mWriteBufferOffset;
-		u32 objectBytesWritten = 0;
-		binarySerializer.encode(object, writeStart, remainingBufferSize, &objectBytesWritten, fnFlushToBuffer, false, context);
-		mBytesWritten += objectBytesWritten;
-
-		fnWriteToOffset(sizeWriteOffset, objectBytesWritten);
-	}
-}
-
-u8* NetworkEncoder::getOutput(u32& size)
-{
-	u32 bytesRequired = mBytesWritten + 1; // Reserve first byte for message type
-
-	if(mResultBufferSize < bytesRequired)
-	{
-		if(mResultBuffer)
-			B3DFree(mResultBuffer);
-
-		u32 bufferSize = (u32)(bytesRequired * 1.25f); // 25% extra
-
-		mResultBuffer = (u8*)B3DAllocate(bufferSize);
-		mResultBufferSize = bufferSize;
-	}
-
-	u32 offset = 1; // First byte reserved for message type, set externally
-	for(auto iterator = mBufferPieces.begin(); iterator != mBufferPieces.end(); ++iterator)
-	{
-		if(iterator->size > 0)
-		{
-			memcpy(mResultBuffer + offset, iterator->buffer, iterator->size);
-			offset += iterator->size;
-		}
-	}
-
-	for(auto iterator = mBufferPieces.rbegin(); iterator != mBufferPieces.rend(); ++iterator)
-		mBufferPiecePool.push_back(*iterator);
-
-	mBufferPieces.clear();
-
-	size = bytesRequired;
-	return mResultBuffer;
-}
-
-void NetworkEncoder::clear()
-{
-	mWriteBufferOffset = 0;
-	mBytesWritten = 0;
-}
-
-NetworkEncoder::BufferPiece NetworkEncoder::allocBufferPiece()
-{
-	BufferPiece piece;
-	if(!mBufferPiecePool.empty())
-	{
-		piece = mBufferPiecePool.back();
-		mBufferPiecePool.pop_back();
-	}
-	else
-		piece.buffer = (u8*)B3DAllocate(WRITE_BUFFER_SIZE);
-
-	piece.size = 0;
-	mBufferPieces.push_back(piece);
-	return piece;
-}
-
-NetworkDecoder::NetworkDecoder(const SPtr<MemoryDataStream>& data)
-	: mInputStream(data)
-{
-	mInputStream->skip(1); // Skip the network message type byte
-}
-
-SPtr<IReflectable> NetworkDecoder::decode(u8& type, UUID& uuid, SerializationContext* context)
-{
-	if(mInputStream->eof())
-		return nullptr;
-
-	char* data = (char*)mInputStream->GetCurrentPtr();
-	u32 offset = 0;
-	data = B3DRTTIRead(type, data, offset);
-	data = B3DRTTIRead(uuid, data, offset);
-
-	mInputStream->skip(offset);
-
-	u32 objectSize = 0;
-	mInputStream->read(&objectSize, sizeof(objectSize));
-
-	if(objectSize > 0)
-	{
-		BinarySerializer binarySerializer;
-		SPtr<IReflectable> object = binarySerializer.decode(mInputStream, objectSize, context);
-
-		return object;
-	}
-
-	return nullptr;
-}
-
-PacketChannel CHANNEL_RELIABLE_ORDERED = { PacketPriority::Medium, PacketReliability::Reliable, PacketOrdering::Ordered };
-PacketChannel CHANNEL_UNRELIABLE_ORDERED = { PacketPriority::Medium, PacketReliability::Unreliable, PacketOrdering::Ordered };
-
-void Network::NotifyNetworkObjectSpawnedInternal(NetworkObject* object)
-{
-	object->mNetworkUUID = UUIDGenerator::generateRandom();
-	mActions.emplace_back(object->mNetworkUUID, Spawning);
-
-	ObjectInfo objectInfo;
-	objectInfo.obj = object;
-	objectInfo.state = object->GetNetworkState();
-
-	mNetworkObjects[object->mNetworkUUID] = objectInfo;
-
-	// TODO - This queues sync on next tick. Allow caller to force sync immediately though some flag, and/or
-	// change the tick rate. The same applies to other _notify functions.
-}
-
-void Network::NotifyNetworkObjectDespawnedInternal(NetworkObject* object)
-{
-	object->mNetworkUUID = UUID::EMPTY;
-	mActions.emplace_back(object->mNetworkUUID, Despawning);
-
-	mNetworkObjects[object->mNetworkUUID].obj = nullptr;
-}
-
-void Network::NotifyNetworkObjectDestroyedInternal(NetworkObject* object)
-{
-	if(object->mState == NetworkObject::Replicated)
-		NotifyNetworkObjectDespawnedInternal(object);
-	else
-		mNetworkObjects[object->mNetworkUUID].obj = nullptr;
-}
-
-// TODO - Need a method that receives state updates and handles spawn, despawn and sync
-
-enum class NetworkActionType
-{
-	Spawn,
-	Sync,
-	Despawn
-};
-
-void Network::host(const TInlineArray<NetworkAddress, 4>& listenAddresses, u32 tickRate, u32 maxConnections)
+void Network::Host(u16 port, u32 maxConnections)
 {
 	if(mPeer)
 	{
@@ -735,18 +563,17 @@ void Network::host(const TInlineArray<NetworkAddress, 4>& listenAddresses, u32 t
 		return;
 	}
 
-	NETWORK_PEER_DESC desc;
-	desc.listenAddresses = listenAddresses;
-	desc.maxNumConnections = maxConnections;
-	desc.maxNumIncomingConnections = maxConnections;
+	mPeer = B3DMakeUnique<NetworkPeer>();
+	if(!mPeer->StartServer(port, maxConnections))
+	{
+		mPeer = nullptr;
+		return;
+	}
 
-	mPeer = B3DMakeUnique<NetworkPeer>(desc);
 	mState = NetworkState::Hosting;
-	mTickRate = tickRate;
-	mTimeAccumulator = 0.0f;
 }
 
-void Network::connect(const char* host, u16 port)
+void Network::Connect(const char* host, u16 port)
 {
 	if(mPeer)
 	{
@@ -754,144 +581,28 @@ void Network::connect(const char* host, u16 port)
 		return;
 	}
 
-	NETWORK_PEER_DESC desc;
-	desc.maxNumConnections = 1;
+	NetworkAddress serverAddress(host, port);
 
-	mPeer = B3DMakeUnique<NetworkPeer>(desc);
-	mPeer->connect(host, port);
+	mPeer = B3DMakeUnique<NetworkPeer>();
+	ConnectionID connection = mPeer->Connect(serverAddress);
+
+	if(!connection.IsValid())
+	{
+		mPeer = nullptr;
+		return;
+	}
+
 	mState = NetworkState::Connecting;
 }
 
-void Network::disconnect()
+void Network::Disconnect()
 {
 	mPeer = nullptr;
 	mState = NetworkState::Disconnected;
 }
 
-void Network::update(float dt)
+void Network::Update(float dt)
 {
-	if(mPeer)
-	{
-		NetworkEvent* event = mPeer->receive();
-
-		while(event)
-		{
-			switch(event->type)
-			{
-			case NetworkEventType::ConnectingDone:
-				if(mState == NetworkState::Connecting)
-					mState = NetworkState::Connected;
-
-				break;
-			case NetworkEventType::ConnectingFailed:
-				if(mState == NetworkState::Connecting)
-					mState = NetworkState::Disconnected;
-
-				break;
-			case NetworkEventType::AlreadyConnected: break;
-			case NetworkEventType::IncomingNew:
-				// TODO - Need to send state for all current objects to the newly connected peer
-				break;
-			case NetworkEventType::IncomingNoFree:
-				B3D_LOG(Warning, Network, "Refused incoming connection due to maximum connection count being reached.");
-				break;
-			case NetworkEventType::Disconnected: break;
-			case NetworkEventType::LostConnection: break;
-			case NetworkEventType::Data:
-				if(event->data.bytes[0] == NWM_ReplicationSync)
-				{
-					// TODO - Spawn/despawn objects, sync state
-				}
-
-				break;
-			default:
-				break;
-			}
-
-			mPeer->free(event);
-			event = mPeer->receive();
-		}
-	}
-
-	if(isHost())
-	{
-		// TODO - Support setting different tick times for different objects (or object types)
-		if(mTimeAccumulator >= 0.0f)
-		{
-			for(auto& entry : mActions)
-			{
-				auto findIterator = mNetworkObjects.find(entry.uuid);
-				B3D_ASSERT(findIterator != mNetworkObjects.end());
-
-				ObjectInfo& objectInfo = findIterator->second;
-
-				switch(entry.type)
-				{
-				case Spawning:
-					mEncoder.encode((u32)NetworkActionType::Spawn, entry.uuid, objectInfo.state.state.get());
-					break;
-				case Spawned:
-					// TODO - No purpose. Remove this?
-					break;
-				case Despawning:
-					mEncoder.encode((u32)NetworkActionType::Despawn, entry.uuid, nullptr);
-					mNetworkObjects.erase(findIterator);
-					break;
-				default:
-					break;
-				}
-			}
-
-			mActions.clear();
-
-			{
-				PacketData data;
-				data.bytes = mEncoder.getOutput(data.length);
-				data.bytes[0] = NWM_ReplicationSync;
-
-				mPeer->broadcast(data, CHANNEL_RELIABLE_ORDERED);
-				mEncoder.clear();
-			}
-
-			for(auto& entry : mNetworkObjects)
-			{
-				// TODO - This needs to be rewritten as a specialized method that avoids doing a SerializedObject
-				// conversion. The method should check previous SerializedObject state with actual state in IReflectable.
-				// It should also auto-update the previous state to new state, if modifications are detected.
-
-				// TODO - Add a manual overridable method to a NetworkObject that allows the user to determine if
-				// a network object needs sync or not
-
-				SPtr<SerializedObject> newState = SerializedObject::Create(*entry.second.obj, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
-
-				IDiff& diffHandler = entry.second.obj->GetRtti()->GetDiffHandler();
-				SPtr<SerializedObject> diff = diffHandler.generateDiff(entry.second.state.state, newState);
-				if(diff == nullptr)
-					continue;
-
-				entry.second.state.state = newState;
-
-				mEncoder.encode((u32)NetworkActionType::Sync, entry.first, diff.get());
-			}
-
-			// TODO - Perhaps allow an object to force sync to be reliable?
-			{
-				PacketData data;
-				data.bytes = mEncoder.getOutput(data.length);
-				data.bytes[0] = NWM_ReplicationSync;
-
-				mPeer->broadcast(data, CHANNEL_UNRELIABLE_ORDERED);
-				mEncoder.clear();
-			}
-
-			// TODO - Add relevant sets. Don't send all messages to every connected client
-
-			mEncoder.clear();
-
-			float tickLength = 1.0f / mTickRate;
-			mTimeAccumulator = Math::Repeat(mTimeAccumulator, tickLength) - tickLength;
-		}
-
-		mTimeAccumulator += dt;
-	}
+	// Placeholder for future high-level networking features
+	// For Phase 1.1, users interact directly with NetworkPeer
 }

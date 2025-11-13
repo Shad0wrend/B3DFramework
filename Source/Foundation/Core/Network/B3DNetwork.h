@@ -6,30 +6,11 @@
 
 namespace b3d
 {
-	struct SerializationContext;
-	/** @addtogroup Network-Internal
-	 *  @{
-	 */
-
-	static constexpr u8 NETWORK_BACKEND_FIRST_FREE_ID = 134;
-
-	// TODO - Doc
-	enum NetworkMessageType
-	{
-		NWM_ReplicationSync = NETWORK_BACKEND_FIRST_FREE_ID,
-
-		NWM_User
-	};
-
-	/** @} */
-
 	/** @addtogroup Network
 	 *  @{
 	 */
 
-	static constexpr u8 NETWORK_USER_MESSAGE_ID = NWM_User;
-
-	/** Supported versions of internet protocol (IP) and they're representative address formats. */
+	/** Supported versions of internet protocol (IP) and their representative address formats. */
 	enum IPType
 	{
 		IPV4,
@@ -67,7 +48,7 @@ namespace b3d
 		 * @return					Printable IP string, such as "192.0.0.1" or "2001:db8:63b3:1::3490". If
 		 *							@p withPort is true the string will also include a port component.
 		 */
-		String toString(bool withPort = false) const;
+		String ToString(bool withPort = false) const;
 
 		/**
 		 * Compares the IP portion of a network address with another address (ignoring port).
@@ -75,7 +56,7 @@ namespace b3d
 		 * @param	other	Other address to compare with.
 		 * @return			True if the IP addresses match, false otherwise.
 		 */
-		bool compareIP(const NetworkAddress& other) const;
+		bool CompareIP(const NetworkAddress& other) const;
 
 		NetworkAddress& operator=(const NetworkAddress& rhs);
 		bool operator==(const NetworkAddress& rhs) const;
@@ -84,457 +65,355 @@ namespace b3d
 		/** Represents the default unassigned (null) network address. */
 		static NetworkAddress UNASSIGNED;
 
-		u8 ip[16] = { 0 };
-		u16 port = 0;
-		IPType ipType = IPV4;
-		u64 ip6FlowInfo = 0;
-		u64 ip6ScopeId = 0;
+		u8 IP[16] = { 0 };
+		u16 Port = 0;
+		IPType IPType = IPV4;
+		u64 IP6FlowInfo = 0;
+		u64 IP6ScopeId = 0;
 	};
 
 	/** ID uniquely representing a network connection. */
-	struct NetworkId
+	struct ConnectionID
 	{
-		NetworkId() = default;
+		ConnectionID() = default;
 
-		NetworkId(i32 id)
-			: id(id) {}
+		explicit ConnectionID(u64 id)
+			: mID(id)
+		{
+		}
 
-		i32 id = -1;
+		bool IsValid() const
+		{
+			return mID != 0;
+		}
+
+		static ConnectionID Invalid()
+		{
+			return ConnectionID(0);
+		}
+
+		static ConnectionID Server()
+		{
+			return ConnectionID(~0ULL);
+		}
+
+		bool operator==(const ConnectionID& other) const
+		{
+			return mID == other.mID;
+		}
+
+		bool operator!=(const ConnectionID& other) const
+		{
+			return mID != other.mID;
+		}
+
+		u64 GetID() const
+		{
+			return mID;
+		}
+
+	private:
+		u64 mID = 0;
 	};
 
-	/** List of possible events that can be returned by the networking system. */
-	enum class NetworkEventType
+	/** Flags controlling how messages are sent over the network. */
+	enum class NetworkSendFlagBits : u32
 	{
-		/** Requested connection has been established. */
-		ConnectingDone,
+		/** Default unreliable send. */
+		None = 0,
 
-		/** Failed establishing a connection. */
-		ConnectingFailed,
+		/** Ensure reliable delivery (message will be resent until acknowledged). */
+		Reliable = 1 << 0,
 
-		/** Attempting to connect to a peer we're already connected to. */
-		AlreadyConnected,
+		/** Disable Nagle's algorithm (send immediately, don't wait to coalesce). */
+		NoNagle = 1 << 1,
 
-		/** New incoming connection request has been received and accepted. */
-		IncomingNew,
+		/** Bypass queue and send immediately (combines NoNagle with additional priority). */
+		NoDelay = 1 << 2,
 
-		/**
-		 * New incoming connection request has been received but cannot be fulfilled as we have reached the maximum
-		 * incoming connection capacity.
-		 */
-		IncomingNoFree,
+		/** Optimized unreliable + no delay combination. */
+		UnreliableNoDelay = 1 << 3,
 
-		/**
-		 * A peer has gracefully disconnected from us. This can be a client disconnecting from a server, or a server going
-		 * offline.
-		 */
-		Disconnected,
-
-		/** A peer can no longer be reached and the connection has been lost. */
-		LostConnection,
-
-		/** Event contains a user-specified message type and data. */
-		Data
+		/** Use calling thread for sending instead of background thread. */
+		UseCurrentThread = 1 << 4
 	};
 
-	/** Determines when are packets sent. */
-	enum class PacketPriority
+	typedef Flags<NetworkSendFlagBits> NetworkSendFlags;
+	B3D_FLAGS_OPERATORS(NetworkSendFlagBits);
+
+	/** Represents a message received from the network. */
+	struct NetworkMessage
 	{
-		/**
-		 * Packets will be send immediately (not waiting for the next network thread update). This also means the packets
-		 * will not be aggregated, resulting in higher per-packet overhead at the benefit to latency.
-		 */
-		Immediate,
+		/** Type of message (user-defined). */
+		u8 MessageType = 0;
 
-		/** More of these packets will be sent compared to medium priority ones. */
-		High,
+		/** Connection that sent this message. */
+		ConnectionID Sender;
 
-		/** More of these packets will be sent compared to low priority ones. */
-		Medium,
+		/** Pointer to message data (includes the MessageType byte as first byte). */
+		const u8* Data = nullptr;
 
-		/** Lowest packet priority, resulting in least packets sent comapred to other priorities. */
-		Low
-	};
-
-	/** Determines how should packets that were failed to be delivered be handled. */
-	enum class PacketReliability
-	{
-		/**
-		 * Lost packets will send again until successfuly delivered. Internally this comes with an overhead as each
-		 * packet delivery must be confirmed, as well as the overhead for retransmisson itself.
-		 */
-		Reliable,
-
-		/**
-		 * Lost packets will be ignored and never received by the remote. Internally this comes with low overhead as
-		 * packets can be sent using a 'fire-and-forget' approach.
-		 */
-		Unreliable
-	};
-
-	/** Determines in what order are sent packets allowed to arrive in. */
-	enum class PacketOrdering
-	{
-		/** Packets are allowed to be received in order different from the order they were sent in. */
-		Unordered,
-
-		/**
-		 * Packets will arrive in the order you have sent them. This means events might be delayed waiting for
-		 * out-of-order packets. When used with 'Unreliable' reliability this is the same as 'Sequenced'.
-		 */
-		Ordered,
-
-		/**
-		 * Packets will arrive in the order you have sent them, but ones older than the last received packet will
-		 * be ignored.
-		 */
-		Sequenced
-	};
-
-	/** Controls reliability, ordering and priority of sent packets. */
-	struct PacketChannel
-	{
-		PacketPriority priority;
-		PacketReliability reliability;
-		PacketOrdering ordering;
-
-		static PacketChannel DEFAULT;
-
-		// TODO - Use template or create static versions of common channels
-	};
-
-	/** Raw bytes representing data sent or received over a network. First byte always contains the message ID. */
-	struct PacketData
-	{
-		u8* bytes = nullptr;
-		u32 length = 0;
-	};
-
-	/** Represents a piece of information received by the network peer. */
-	struct NetworkEvent
-	{
-		/** Type of the network event. */
-		NetworkEventType type;
-
-		/** Identifier of the peer that sent the event. */
-		NetworkId sender;
-
-		/** User-specified data attached to the event. Only relevant if event type is 'Data'. */
-		PacketData data;
+		/** Total length of message data in bytes. */
+		u32 Length = 0;
 
 		/** @name Internal
 		 *  @{
 		 */
 
-		void* _backendData = nullptr;
+		void* BackendData = nullptr;
 
 		/** @} */
 	};
 
-	/** Information required for initializing a new network peer. */
-	struct NETWORK_PEER_DESC
+	/** Connection state information and quality metrics. */
+	struct ConnectionInformation
 	{
-		/**
-		 * A list of addresses and ports the peer should be listening on. For clients this can usually be a single
-		 * null network address. For servers this can usually be a single network address with a port to listen on.
-		 */
-		TInlineArray<NetworkAddress, 4> listenAddresses;
+		/** Unique identifier for this connection. */
+		ConnectionID ID;
 
-		/**
-		 * Maximum number of connections (both incoming and outgoing) allowed to be established by the peer. In a regular
-		 * client-server model, this should be 1 for client, and same as @p maxNumIncomingConnections for server.
-		 */
-		u32 maxNumConnections = 1;
+		/** Remote address of the peer. */
+		NetworkAddress RemoteAddress;
 
-		/**
-		 * Maximum number of incoming connections allowed to be accepted by the peer. In a regular client-server model
-		 * this should be 0 for the client, and N for server, where N is the maximum number of clients allowed to be
-		 * connected at once.
-		 */
-		u32 maxNumIncomingConnections = 0;
+		/** Current round-trip ping time in milliseconds. */
+		float PingMS = 0.0f;
+
+		/** Packet loss percentage (0.0 to 100.0). */
+		float PacketLossPercent = 0.0f;
+
+		/** Connection quality (jitter) in milliseconds. */
+		float JitterMS = 0.0f;
+
+		/** Outgoing bandwidth in bytes per second. */
+		u64 BytesSentPerSecond = 0;
+
+		/** Incoming bandwidth in bytes per second. */
+		u64 BytesReceivedPerSecond = 0;
+	};
+
+	/** Connection state. */
+	enum class ConnectionState
+	{
+		/** No connection. */
+		None,
+
+		/** Attempting to connect. */
+		Connecting,
+
+		/** Successfully connected. */
+		Connected,
+
+		/** Connection is being closed. */
+		Disconnecting,
+
+		/** Connection has been closed. */
+		Disconnected,
+
+		/** Connection problem detected. */
+		Problem
 	};
 
 	/**
-	 * Represents a single peer in a network hierarchy. Allows you to connect to other peers on the network by sending
-	 * explicit connection requests, or listening for incoming requests. Allows you to send and receive data from
-	 * connected peers.
+	 * Represents a single peer in a network hierarchy. Allows you to create a server that listens for incoming
+	 * connections, or connect as a client to a remote server. Supports sending and receiving messages with
+	 * configurable reliability and ordering guarantees.
 	 */
 	class B3D_EXPORT NetworkPeer
 	{
 	public:
-		/** Constructs a new network peer using the provided initial setting descriptor. */
-		NetworkPeer(const NETWORK_PEER_DESC& desc);
+		NetworkPeer();
 		~NetworkPeer();
 
-		// TODO Low Priority - Perhaps disallow domain-name here and use NetworkAddress directly?
-		//  - Add a separate async method for resolving domain name beforehand
+		/**
+		 * Starts the peer as a server, listening for incoming connections on the specified port.
+		 *
+		 * @param	port				Port to listen on.
+		 * @param	maxConnections		Maximum number of simultaneous connections allowed.
+		 * @return						True if the server started successfully, false otherwise.
+		 */
+		bool StartServer(u16 port, u32 maxConnections);
 
 		/**
-		 * Attempts to connect to a new peer. This will execute asynchronously and you must query @p receive() for a
-		 * network event of type 'ConnectingDone' to confirm the connection has been established.
+		 * Connects to a remote server as a client.
 		 *
-		 * @param	host	Host name of the peer to connect to. This can be an IP address or a domain name.
-		 * @param	port	Port on which to try connecting to.
-		 * @return			True if the connection attempt succesfully started, and false otherwise. If false
-		 *					the relevant error message will be printed in the log.
+		 * @param	address		Network address of the server to connect to.
+		 * @return				Connection ID that will be valid once connection completes, or Invalid if the
+		 *						connection attempt failed to start.
 		 */
-		bool connect(const char* host, u16 port);
+		ConnectionID Connect(const NetworkAddress& address);
 
 		/**
-		 * Disconnects from a previously connected remote peer.
+		 * Disconnects from a specific peer.
 		 *
-		 * @param	address		Address of the peer to disconnect from.
-		 * @param	silent		If true the peer will neatly disconnect from the remote by first sending a disconnect
-		 *						message. If false the peer will immediately close the connection without notifying the
-		 *						remote.
+		 * @param	connection	Connection ID to disconnect.
 		 */
-		void disconnect(const NetworkAddress& address, bool silent = false);
+		void Disconnect(ConnectionID connection);
 
 		/**
-		 * Disconnects from a previously connected remote peer.
-		 *
-		 * @param	id		Unique network id of the peer to disconnect from.
-		 * @param	silent	If true the peer will neatly disconnect from the remote by first sending a disconnect
-		 *					message. If false the peer will immediately close the connection without notifying the
-		 *					remote.
+		 * Disconnects all connected peers and shuts down the peer.
 		 */
-		void disconnect(const NetworkId& id, bool silent = false);
-
-		// TODO Low priority - Maybe make use of UPtr to free the event? Instead on relying on the user to manually
-		// free them
+		void DisconnectAll();
 
 		/**
-		 * Checks if there are any available network events and returns the first available event.
+		 * Polls for new messages received from the network. Messages are appended to the provided container.
 		 *
-		 * @return	First available event, or null of none available. Received events must be freed by calling
-		 *			free().
+		 * @param	outMessages		Container to fill with received messages. Will be cleared before filling.
+		 *							Users should maintain a persistent container to avoid per-frame allocations.
+		 * @param	maxMessages		Maximum number of messages to retrieve in a single poll.
+		 *
+		 * @warning	You MUST call FreeMessage() for each message after processing to avoid memory leaks.
+		 *			Failure to free messages will leak memory from the underlying network backend.
+		 *
+		 * Example:
+		 * @code
+		 * Vector<NetworkMessage> messages;
+		 * peer.PollMessages(messages);
+		 * for(auto& msg : messages)
+		 * {
+		 *     // Process message...
+		 *     peer.FreeMessage(msg);  // Must free each message!
+		 * }
+		 * @endcode
 		 */
-		NetworkEvent* receive() const;
-
-		// TODO Low priority - Hide NETWORK_USER_MESSAGE_ID from the outside world. Allow user to use an ID starting at 0.
+		void PollMessages(Vector<NetworkMessage>& outMessages, u32 maxMessages = 32);
 
 		/**
-		 * Attempts to send some data to the specified remote peer.
+		 * Sends a message to a specific connection.
 		 *
-		 * @param	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *						the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *						reserved).
-		 * @param	destination	Network address to send the message to. You must be currently connected to the
-		 *						peer at the specified address.
-		 * @param	channel		Channel determining reliability, ordering and priority of the sent data.
-		 *
-		 * @note	Whenever possible prefer to use the variant of this method that accepts NetworkId for the
-		 *			destination parameter, as it is faster.
+		 * @param	connection	Connection ID to send to.
+		 * @param	data		Pointer to message data. First byte should be the message type.
+		 * @param	size		Size of the message data in bytes.
+		 * @param	flags		Flags controlling send behavior (reliability, priority, etc.).
 		 */
-		void send(const PacketData& data, const NetworkAddress& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
+		void SendMessage(ConnectionID connection, const u8* data, u32 size, NetworkSendFlags flags = NetworkSendFlagBits::Reliable);
 
 		/**
-		 * Attempts to send some data to the specified remote peer.
+		 * Broadcasts a message to all connected peers.
 		 *
-		 * @param	data		Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *						the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *						reserved).
-		 * @param	destination	Network id of the peer to send the message to.
-		 * @param	channel		Channel determining reliability, ordering and priority of the sent data.
+		 * @param	data	Pointer to message data. First byte should be the message type.
+		 * @param	size	Size of the message data in bytes.
+		 * @param	flags	Flags controlling send behavior (reliability, priority, etc.).
 		 */
-		void send(const PacketData& data, const NetworkId& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
+		void BroadcastMessage(const u8* data, u32 size, NetworkSendFlags flags = NetworkSendFlagBits::Reliable);
 
 		/**
-		 * Broadcasts some data to all currently connected peers.
+		 * Retrieves connection quality information for a specific connection.
 		 *
-		 * @param	data	Data to send in the form of raw bytes. The first byte of your message /must/ contain
-		 *					the message identifier, starting with NETWORK_USER_MESSAGE_ID (lower identifiers are
-		 *					reserved).
-		 * @param	channel	Channel determining reliability, ordering and priority of the sent data.
+		 * @param	connection	Connection to query.
+		 * @param	outInfo		Structure to fill with connection information.
+		 * @return				True if connection info was retrieved successfully, false if connection is invalid.
 		 */
-		void broadcast(const PacketData& data, const PacketChannel& channel);
+		bool GetConnectionInfo(ConnectionID connection, ConnectionInformation& outInfo) const;
 
-		/** Frees a network event received though a call to receive(). */
-		void free(NetworkEvent* event);
+		/**
+		 * Checks if a connection is currently active.
+		 *
+		 * @param	connection	Connection to check.
+		 * @return				True if connected, false otherwise.
+		 */
+		bool IsConnected(ConnectionID connection) const;
 
-		// TODO - Other methods needed:
-		// AveragePing(AddrOrId)
-		// LastPing(AddOrId)
-		// GetConnectionList
-		// GetConnectionState(AddrOrId)
-		// GetMyId
-		// GetMyInternalIp(AddrOrId)
-		// GetMyExternalIp(AddrOrId)
-		// Ping(AddrOrId)
-		// NetworkId getNetworkId(const NetworkAddress& address);
-		// NetworkAddress getNetworkAddress(const NetworkId& id);
+		/**
+		 * Retrieves the current state of a connection.
+		 *
+		 * @param	connection	Connection to query.
+		 * @return				Current connection state.
+		 */
+		ConnectionState GetConnectionState(ConnectionID connection) const;
 
-		// TODO - create() methods
-		// - Simple ones for server (port only), and client (no listeners or incoming connections)
+		/**
+		 * Frees a message received via PollMessages. Must be called for each message after processing.
+		 *
+		 * @param	message		Message to free.
+		 */
+		void FreeMessage(NetworkMessage& message);
 
 	private:
-		struct Pimpl;
-		Pimpl* m;
-	};
-
-	/** Represents a particular state of a network object at a certain point in time. */
-	struct B3D_EXPORT NetworkObjectState
-	{
-		SPtr<SerializedObject> state;
-	};
-
-	/** Base class for all objects that can be manipulated using the high-level networking system. */
-	class B3D_EXPORT NetworkObject : public virtual IReflectable
-	{
-		enum State
-		{
-			NotReplicated,
-			Replicated,
-		};
-
-		// TODO - Doc
-		const UUID& getNetworkUUID() const { return mNetworkUUID; }
-
-		// TODO - Special case for spawning prefabs, to avoid syncing all their state
-		// (Probably not part of this class, but keeping the comment here so I don't forget)
-
-		/**
-		 * Spawns the network object across all relevant clients. Only usable on the server. If the object is already
-		 * spawned, no change is made.
-		 */
-		void networkSpawn();
-
-		/**
-		 * Destroys the object across all clients it was spawned on. Only usable on the server. If the object is already
-		 * destroyed, or hasn't been spawned at all, no change is made.
-		 */
-		void networkDespawn();
-
-		/** Gets the current state of all replicable fields on an object. */
-		NetworkObjectState getNetworkState() const;
-
-	public:
-		NetworkObject() = default;
-		~NetworkObject();
-
-	private:
-		friend class Network;
-
-		UUID mNetworkUUID;
-		State mState = NotReplicated;
-	};
-
-	// TODO - Refactor this class so it uses more optimal data layout and uses Bitstream, instead of just calling the
-	// generic BinarySerializer. When serializing entire state there is no need to write field information, as long as the
-	// peers keep their data scheme in sync.
-	// TODO - Doc
-	class NetworkEncoder
-	{
-		static constexpr const u32 WRITE_BUFFER_SIZE = 16384;
-
-		struct BufferPiece
-		{
-			u8* buffer = nullptr;
-			u32 size = 0;
-		};
-
-	public:
-		NetworkEncoder();
-		~NetworkEncoder();
-
-		void encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context = nullptr);
-		u8* getOutput(u32& size);
-		void clear();
-
-	private:
-		BufferPiece allocBufferPiece();
-
-		Vector<BufferPiece> mBufferPieces;
-		Vector<BufferPiece> mBufferPiecePool;
-
-		u8* mWriteBuffer = nullptr;
-		u32 mWriteBufferOffset = 0;
-
-		u32 mResultBufferSize = 0;
-		u8* mResultBuffer = nullptr;
-		u32 mBytesWritten = 0;
-	};
-
-	class NetworkDecoder
-	{
-	public:
-		NetworkDecoder(const SPtr<MemoryDataStream>& data);
-
-		SPtr<IReflectable> decode(u8& type, UUID& uuid, SerializationContext* context = nullptr);
-
-	private:
-		SPtr<MemoryDataStream> mInputStream;
+		struct Impl;
+		Impl* m;
 	};
 
 	/**
-	 * High-level networking class that utilizes the low-level networking systems to easily host a server, connect to
-	 * a server, and handle high level concepts such as object data replication and remote procedure calls.
+	 * High-level networking class that wraps NetworkPeer to provide simple server/client functionality.
+	 *
+	 * This is a convenience wrapper around NetworkPeer for applications that need basic networking
+	 * without manual peer management. For Phase 1.1, this class provides only basic hosting/connecting
+	 * functionality. High-level features like entity replication will be added in future phases.
+	 *
+	 * Example usage as server:
+	 * @code
+	 * Network::Instance().Host(7777, 32);  // Host on port 7777, max 32 clients
+	 * @endcode
+	 *
+	 * Example usage as client:
+	 * @code
+	 * Network::Instance().Connect("127.0.0.1", 7777);
+	 * @endcode
+	 *
+	 * For full control over networking, use NetworkPeer directly instead of this wrapper.
 	 */
 	class B3D_EXPORT Network : public Module<Network>
 	{
 	public:
-		// TODO- Doc
+		/**
+		 * Checks if this instance is currently hosting a server.
+		 *
+		 * @return True if hosting, false otherwise.
+		 */
+		bool IsHost() const
+		{
+			return mState == NetworkState::Hosting;
+		}
 
-		bool isHost() const { return mState == NetworkState::Hosting; }
+		/**
+		 * Checks if this instance is a connected or connecting client.
+		 *
+		 * @return True if client connection is active or being established, false otherwise.
+		 */
+		bool IsClient() const
+		{
+			return mState == NetworkState::Connected || mState == NetworkState::Connecting;
+		}
 
-		bool isClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
+		/**
+		 * Starts hosting a server on the specified port.
+		 *
+		 * @param port			Port to listen on for incoming connections.
+		 * @param maxConnections	Maximum number of simultaneous client connections allowed.
+		 */
+		void Host(u16 port, u32 maxConnections = 64);
 
-		// TODO - Handle cases when network is already in host or client state when one of these is called again
-		void host(const TInlineArray<NetworkAddress, 4>& listenAddresses, u32 tickRate = 30, u32 maxConnections = 64);
-		void connect(const char* host, u16 port);
-		void disconnect();
+		/**
+		 * Connects to a remote server.
+		 *
+		 * @param host	Hostname or IP address of the server (e.g., "127.0.0.1" or "example.com").
+		 * @param port	Port of the server to connect to.
+		 */
+		void Connect(const char* host, u16 port);
 
-		void update(float dt);
+		/**
+		 * Disconnects from the current network session (server or client).
+		 */
+		void Disconnect();
 
-		void NotifyNetworkObjectSpawnedInternal(NetworkObject* object);
-		void NotifyNetworkObjectDespawnedInternal(NetworkObject* object);
-		void NotifyNetworkObjectDestroyedInternal(NetworkObject* object);
+		/**
+		 * Updates the network system. Currently a stub for Phase 1.1.
+		 *
+		 * @param dt	Time elapsed since last update, in seconds.
+		 */
+		void Update(float dt);
 
 	private:
-		enum ObjectActionType
-		{
-			Spawning,
-			Spawned,
-			Despawning
-		};
-
 		enum class NetworkState
 		{
 			Disconnected,
 			Connected,
 			Hosting,
-
-			// Intermediate states
 			Connecting,
 		};
 
-		struct ObjectAction
-		{
-			ObjectAction(const UUID& uuid, ObjectActionType type)
-				: uuid(uuid), type(type)
-			{}
-
-			ObjectActionType type;
-			UUID uuid;
-		};
-
-		struct ObjectInfo
-		{
-			NetworkObject* obj;
-			NetworkObjectState state;
-		};
-
 		NetworkState mState = NetworkState::Disconnected;
-		u32 mTickRate = 30; // TODO - Allow different objects to have different tick rates (globally perhaps provide a multiplier? and a default rate?)
-
-		Vector<ObjectAction> mActions;
-		UnorderedMap<UUID, ObjectInfo> mNetworkObjects;
-
-		float mTimeAccumulator = 0.0f;
-		NetworkEncoder mEncoder;
-		NetworkDecoder mDecoder;
-
 		UPtr<NetworkPeer> mPeer;
 	};
 
 	/** @} */
-} // namespace b3d
+}
