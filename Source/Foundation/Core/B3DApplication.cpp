@@ -68,6 +68,7 @@ namespace b3d
 	B3D_LOG_CATEGORY(Scene)
 	B3D_LOG_CATEGORY(Physics)
 	B3D_LOG_CATEGORY(Audio)
+	B3D_LOG_CATEGORY(Network)
 	B3D_LOG_CATEGORY(RenderBackend)
 	B3D_LOG_CATEGORY(BSLCompiler)
 	B3D_LOG_CATEGORY(Particles)
