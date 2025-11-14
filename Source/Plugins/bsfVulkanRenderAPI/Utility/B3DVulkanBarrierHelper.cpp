@@ -121,15 +121,18 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddBufferBa
 	return &mBarrierTracking.back();
 }
 
-const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccessFlags, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout)
+const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccessFlags, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccessFlags, ImageLayout oldLayout, ImageLayout newLayout)
 {
 	const VulkanAccessStageFlags sourceAccessStageFlags = VulkanUtility::GetVulkanAccessStageFlags(sourceUsage);
 	const VulkanAccessStageFlags destinationAccessStageFlags = VulkanUtility::GetVulkanAccessStageFlags(destinationUsage);
 
-	return AddImageBarrier(image, subresourceRange, sourceAccessStageFlags, sourceAccessFlags, destinationAccessStageFlags, destinationAccessFlags, oldLayout, newLayout);
+	const VkImageLayout vkOldLayout = VulkanUtility::GetImageLayout(oldLayout);
+	const VkImageLayout vkNewLayout = VulkanUtility::GetImageLayout(newLayout);
+
+	return AddSubresourceBarrier(image, subresourceRange, sourceAccessStageFlags, sourceAccessFlags, destinationAccessStageFlags, destinationAccessFlags, vkOldLayout, vkNewLayout);
 }
 
-const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, VkImageLayout newLayout)
+const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, ImageLayout newLayout)
 {
 	if(image == nullptr)
 		return nullptr;
@@ -145,7 +148,7 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBar
 		VulkanImage* Image;
 		GpuResourceUseFlags DestinationUsage;
 		GpuAccessFlags DestinationAccess;
-		VkImageLayout NewLayout;
+		ImageLayout NewLayout;
 		const BarrierTrackingInfo* OutTrackingInfo;
 	};
 
@@ -157,8 +160,10 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBar
 		VulkanResourceTracker& resourceTracker = *callbackParameters->ResourceTracker;
 		const VulkanResourceTracker::ImageSubresourceTrackingState& subresourceTrackingState = resourceTracker.GetSubresourceTrackingStateAtIndex(globalSubresourceIndex);
 
+		const VkImageLayout vkNewLayout = VulkanUtility::GetImageLayout(callbackParameters->NewLayout);
+
 		VulkanBarrierHelper& barrierHelper = *callbackParameters->BarrierHelper;
-		callbackParameters->OutTrackingInfo = barrierHelper.AddSubresourceBarrier(callbackParameters->Image, subresourceTrackingState, callbackParameters->DestinationUsage, callbackParameters->DestinationAccess, callbackParameters->NewLayout);
+		callbackParameters->OutTrackingInfo = barrierHelper.AddSubresourceBarrier(callbackParameters->Image, subresourceTrackingState, callbackParameters->DestinationUsage, callbackParameters->DestinationAccess, vkNewLayout);
 	}, &callbackParameters);
 
 	return callbackParameters.OutTrackingInfo;
@@ -201,10 +206,10 @@ const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddSubresou
 	if(sourceAccessFlags == GpuAccessFlag::None && subresourceTrackingState.CurrentLayout == newLayout)
 		return nullptr;
 
-	return AddImageBarrier(image, subresourceTrackingState.Range, sourceAccessStageFlags, sourceAccessFlags, destinationAccessStageFlags, destinationAccess, subresourceTrackingState.CurrentLayout, newLayout);
+	return AddSubresourceBarrier(image, subresourceTrackingState.Range, sourceAccessStageFlags, sourceAccessFlags, destinationAccessStageFlags, destinationAccess, subresourceTrackingState.CurrentLayout, newLayout);
 }
 
-const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccessFlags, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout)
+const VulkanBarrierHelper::BarrierTrackingInfo* VulkanBarrierHelper::AddSubresourceBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccessFlags, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
 	if(image == nullptr)
 		return nullptr;

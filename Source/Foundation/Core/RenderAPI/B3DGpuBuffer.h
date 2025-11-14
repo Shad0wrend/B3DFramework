@@ -567,20 +567,44 @@ namespace b3d::render
 		static SPtr<GpuBuffer> CreateStaging(const SPtr<GpuBuffer>& buffer, bool readable);
 
 		/**
-		 * Writes data into a portion of the buffer from the source memory.
+		 * Writes data into a buffer while accounting for the fact that the buffer might not be directly CPU-writable. Only buffers with
+		 * StoreOnCPUWithGPUAccess flag, or staging write buffers are directly writable by the CPU. And only in the case they are not currently being
+		 * used by the GPU.
 		 *
-		 * If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPUWithGPUAccess flag, and is not a staging buffer) this will
-		 * internally create a staging buffer, on which the contents will be copied before being written by the GPU, using the provided command buffer).
+		 * If a buffer is being used by the GPU, or is not directly CPU-writable, this method will internally create a staging buffer, write the data into it,
+		 * and then copy the staging buffer into the destination buffer using the provided command buffer. If no command buffer is provided, it will use
+		 * a transfer buffer which will be submitted automatically before the next regular command buffer submission.
 		 *
-		 * @param	offset			Offset in bytes from which to copy the data.
+		 * @param	offset			Offset in bytes into the destination buffer at which to copy the data to.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	source			Source buffer containing the data to write. Data is read from the start of the buffer (@p offset is only applied to the destination).
-		 * @param	writeFlags		Optional write flags that may affect performance.
-		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
+		 * @param	writeFlags		Optional write flags that may you can use to control behavior of the write operation if the buffer is used by the GPU.
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly writeable. If not provided
 		 *							the operation will be queued on a transfer command buffer that will be submitted just before next regular command
 		 *							buffer submission (or at the latest, at the end of the current frame).
 		 */
-		static bool Write(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags, SPtr<GpuCommandBuffer> commandBuffer);
+		static void Write(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags, SPtr<GpuCommandBuffer> commandBuffer = nullptr);
+
+		/**
+		 * Reads data from a buffer while accounting for the fact that the buffer might not be directly CPU-readable. Only buffers with
+		 * StoreOnCPUWithGPUAccess flag, or staging read buffers are directly readable by the CPU. And only in the case they are not currently being
+		 * used by the GPU.
+		 *
+		 * If a buffer is being used by the GPU, or is not directly CPU-readable, this method will internally create a staging buffer, copy the source
+		 * buffer into the staging buffer using the provided GPU queue, and then read the data from the staging buffer. If no GPU queue is provided,
+		 * it will use the default graphics queue.
+		 *
+		 * Note if the buffer is currently used on the GPU, this method will block until the GPU is done executing, stalling the pipeline.
+		 *
+		 * @param	buffer			Buffer to read from.
+		 * @param	offset			Offset in bytes from which to copy the data.
+		 * @param	length			Length of the area you want to copy, in bytes.
+		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start of the buffer (@p offset is only applied to the source).
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
+		 *							the operation will be queued on a transfer command buffer that will be submitted immediately (note this will also flush
+		 *							any other transfer buffer operations).
+		 */
+		static void Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, SPtr<GpuCommandBuffer> commandBuffer = nullptr);
 	};
 
 } // namespace b3d::render

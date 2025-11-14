@@ -53,6 +53,7 @@ namespace b3d
 			Transfer = 1 << 4, /**< Transfer source or destination. */
 			ColorAttachment = 1 << 5, /**< Color attachment. */
 			DepthStencilAttachment = 1 << 6, /**< Depth/stencil attachment. */
+			Host = 1 << 7, /**< Access by the host (CPU). */
 
 			// Stage flags can be combined with ShaderAccess or UniformBuffer usages, to clearly define at which stage the use is happening.
 			// If not provided system usually assumes potential use in all shader stages.
@@ -119,9 +120,7 @@ namespace b3d
 			 * Layout for presenting to swap chain.
 			 * Only used for swap chain images.
 			 */
-			Present,
-
-			Automatic /**< Let the system decide the optimal layout based on usage. Only valid in certain situations. */
+			Present
 		};
 
 		/** Object describing a GpuCommandBufferPool. */
@@ -217,11 +216,15 @@ namespace b3d
 		/** Describes common fields for both buffer and texture barriers. See GpuCommandBuffer::IssueBarrier. */
 		struct GpuBarrier
 		{
-			GpuBarrier(GpuResourceUseFlags sourceUsage = GpuResourceUseFlag::Undefined, GpuAccessFlags sourceAccess = GpuAccessFlag::None, GpuResourceUseFlags destinationUsage = GpuResourceUseFlag::Undefined, GpuAccessFlags destinationAccess = GpuAccessFlag::None)
+			GpuBarrier(GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
+				: SourceUsage(GpuResourceUseFlag::Undefined), SourceAccess(GpuAccessFlag::None), DestinationUsage(destinationUsage), DestinationAccess(destinationAccess)
+			{ }
+
+			GpuBarrier(GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
 				: SourceUsage(sourceUsage), SourceAccess(sourceAccess), DestinationUsage(destinationUsage), DestinationAccess(destinationAccess)
 			{ }
 
-			GpuResourceUseFlags SourceUsage; /**< Determines how was resource used before the barrier. Barrier will only work for provided accesses. */
+			GpuResourceUseFlags SourceUsage; /**< Determines how was resource used before the barrier. Barrier will only work for provided accesses. If undefined, source usage, access and layout is automatically deduced based on current buffer use. */
 			GpuAccessFlags SourceAccess; /**< Determines if the resource was read or written before the barrier. */
 			GpuResourceUseFlags DestinationUsage; /**< Determines how was resource will be used after the barrier. Barrier will only work for provided accesses. Images will transition to a layout compatible for this usage - incompatible usages are not allowed. */
 			GpuAccessFlags DestinationAccess; /**< Determines if the resource will be read or written after the barrier. */
@@ -230,8 +233,8 @@ namespace b3d
 		/** Describes a barrier for a GpuBuffer. */
 		struct GpuBufferBarrier : GpuBarrier
 		{
-			GpuBufferBarrier(const SPtr<GpuBuffer>& object)
-				: Object(object)
+			GpuBufferBarrier(const SPtr<GpuBuffer>& object, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
+				: GpuBarrier(destinationUsage, destinationAccess), Object(object)
 			{ }
 
 			GpuBufferBarrier(const SPtr<GpuBuffer>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess)
@@ -244,6 +247,15 @@ namespace b3d
 		/** Describes a common set of barrier information used both by Texture and RenderTarget barrier. */
 		struct GpuSurfaceBarrier : GpuBarrier
 		{
+			GpuSurfaceBarrier(GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuBarrier(destinationUsage, destinationAccess), SubresourceRange(subResourceRange)
+			{ }
+
+			GpuSurfaceBarrier(GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess,
+				ImageLayout sourceLayout, ImageLayout destinationLayout, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuBarrier(destinationUsage, destinationAccess), SubresourceRange(subResourceRange), SourceLayout(sourceLayout), DestinationLayout(destinationLayout)
+			{ }
+
 			GpuSurfaceBarrier(GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess,
 				GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
 				: GpuBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess), SubresourceRange(subResourceRange)
@@ -255,13 +267,22 @@ namespace b3d
 			{ }
 
 			GpuTextureSubresourceRange SubresourceRange; /**< Subresources (mips, array levels) of the textures to apply the barrier to. */
-			ImageLayout SourceLayout = ImageLayout::Automatic; /**< Source image layout. If set to Automatic, layout is determined from the current usage of the texture object. */
+			ImageLayout SourceLayout = ImageLayout::Undefined; /**< Source image layout. If usage is set to undefined, layout is determined from the current usage of the texture object, otherwise it must be provided. */
 			ImageLayout DestinationLayout = ImageLayout::Undefined; /**< Destination image layout. If set to Undefined, no layout transition will be performed. */
 		};
 
 		/** Describes a barrier for a Texture. */
 		struct GpuTextureBarrier : GpuSurfaceBarrier
 		{
+			GpuTextureBarrier(const SPtr<Texture>& object, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuSurfaceBarrier(destinationUsage, destinationAccess, subResourceRange), Object(object)
+			{ }
+
+			GpuTextureBarrier(const SPtr<Texture>& object, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess,
+				ImageLayout sourceLayout, ImageLayout destinationLayout, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuSurfaceBarrier(destinationUsage, destinationAccess, sourceLayout, destinationLayout, subResourceRange), Object(object)
+			{ }
+
 			GpuTextureBarrier(const SPtr<Texture>& object, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess,
 				GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subResourceRange = GpuTextureSubresourceRange::AllSubresources())
 				: GpuSurfaceBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess, subResourceRange), Object(object)
@@ -285,6 +306,16 @@ namespace b3d
 		 */
 		struct GpuRenderTargetBarrier : GpuSurfaceBarrier
 		{
+			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, RenderSurfaceMaskBits surfaceMask, 
+				GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuSurfaceBarrier(destinationUsage, destinationAccess, subresourceRange), Object(object), SurfaceMask(surfaceMask)
+			{ }
+
+			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, RenderSurfaceMaskBits surfaceMask,
+				GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, ImageLayout sourceLayout, ImageLayout destinationLayout, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
+				: GpuSurfaceBarrier(destinationUsage, destinationAccess, sourceLayout, destinationLayout, subresourceRange), Object(object), SurfaceMask(surfaceMask)
+			{ }
+
 			GpuRenderTargetBarrier(const SPtr<RenderTarget>& object, RenderSurfaceMaskBits surfaceMask, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccess,
 				GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, const GpuTextureSubresourceRange& subresourceRange = GpuTextureSubresourceRange::AllSubresources())
 				: GpuSurfaceBarrier(sourceUsage, sourceAccess, destinationUsage, destinationAccess, subresourceRange), Object(object), SurfaceMask(surfaceMask)
@@ -543,21 +574,9 @@ namespace b3d
 			 * Issues a memory and/or execution barrier that guarantees that the contents of GPU buffers will be correctly visible for the provided destination stages.
 			 * Additionally, transitions the images to the correct layout to be used in the destination.
 			 *
-			 * Note that system automatically issues barriers when needed, you do not need to call this method manually. This method is mainly a remnant since before
-			 * automatic barrier management was implemented, and is still provided for advanced use-cases where you might need more control.
-			 *
-			 * The barrier must be issued when performing writes to an image or a buffer. For example if writing to a buffer/image:
-			 *  - a write-after-read barrier must be issued to ensure any GPU operations reading from the buffer complete before we start writing to it.
-			 *  - a read-after-write/write-after-write barrier must be issued to ensure any GPU operations writing to the buffer complete before we start reading it (or doing another wring).
-			 *
-			 * The barrier must be issued when the destination usage requires a different image layout (relevant for images only):
-			 *  - Texture used for shader reads will in a read-only layout
-			 *  - Texture used for shader writes will be in general purpose layout
-			 *  - Texture used for color attachment writes will be in the color attachment layout
-			 *  - Texture used for color attachment reads will be in the general purpose layout (can also be read by the shader)
-			 *  - Texture used for depth-stencil attachment writes will be in the depth-stencil attachment layout
-			 *  - Texture used for read-only depth-stencil attachments will be in the read-only depth stencil attachment layout (can also be read by the shader)
-			 *  - Textures with TU_DYNAMIC usage are always in general purpose layout, regardless of usages above
+			 * Note that system automatically issues barriers when needed, you do not need to call this method manually in almost all cases. Currently the only case
+			 * you need to call this manually is when you read from a non-staging buffer that was written by the GPU, and you want to read the data on the CPU right
+			 * after GPU execution completes.
 			 */
 			virtual void IssueBarriers(const GpuBarriers& barriers) = 0;
 

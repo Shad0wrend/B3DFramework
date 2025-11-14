@@ -6,7 +6,6 @@
 #include "B3DVulkanGpuDevice.h"
 #include "B3DVulkanUtility.h"
 #include "B3DVulkanGpuCommandBuffer.h"
-#include "B3DVulkanTexture.h"
 #include "B3DVulkanGpuBackend.h"
 
 using namespace b3d;
@@ -99,69 +98,6 @@ VkBufferView VulkanBuffer::GetOrCreateView(VkFormat format)
 
 	mViews.Add(ViewInformation(format, view));
 	return view;
-}
-
-VkAccessFlags VulkanBuffer::GetVkAccessFlags() const
-{
-	VkAccessFlags accessFlags = 0;
-	switch(mType)
-	{
-	case GpuBufferType::SimpleStorage:
-	case GpuBufferType::StructuredStorage:
-		accessFlags |= VK_ACCESS_SHADER_READ_BIT;
-		break;
-	case GpuBufferType::Index:
-		accessFlags |= VK_ACCESS_INDEX_READ_BIT;
-		break;
-	case GpuBufferType::Vertex:
-		accessFlags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
-		break;
-	case GpuBufferType::Uniform:
-		accessFlags |= VK_ACCESS_UNIFORM_READ_BIT;
-		break;
-	case GpuBufferType::StagingRead:
-		accessFlags |= VK_ACCESS_HOST_READ_BIT;
-		break;
-	case GpuBufferType::StagingWrite:
-		accessFlags |= VK_ACCESS_HOST_WRITE_BIT;
-		break;
-	}
-
-	if(mFlags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
-		accessFlags |= VK_ACCESS_SHADER_WRITE_BIT;
-
-	return accessFlags;
-}
-
-GpuResourceUseFlags VulkanBuffer::GetUseFlags() const
-{
-	switch(mType)
-	{
-	case GpuBufferType::SimpleStorage:
-	case GpuBufferType::StructuredStorage:
-		return GpuResourceUseFlag::ShaderAccess;
-	case GpuBufferType::Index:
-		return GpuResourceUseFlag::IndexBuffer;
-	case GpuBufferType::Vertex:
-		return GpuResourceUseFlag::VertexBuffer;
-	case GpuBufferType::Uniform:
-		return GpuResourceUseFlag::UniformBuffer;
-	case GpuBufferType::StagingRead:
-	case GpuBufferType::StagingWrite:
-		return GpuResourceUseFlag::Transfer;
-	default:
-		return GpuResourceUseFlag::ShaderAccess;
-	}
-}
-
-GpuAccessFlags VulkanBuffer::GetAccessFlags() const
-{
-	GpuAccessFlags access = GpuAccessFlag::Read;
-	if(mFlags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
-		access |= GpuAccessFlag::Write;
-	if(mType == GpuBufferType::StagingWrite)
-		access = GpuAccessFlag::Write;
-	return access;
 }
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)

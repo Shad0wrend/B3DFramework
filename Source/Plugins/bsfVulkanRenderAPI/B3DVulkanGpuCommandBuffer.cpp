@@ -1901,30 +1901,10 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 		// Filter out invalid aspect mask to avoid validation warnings
 		vkSubresourceRange.aspectMask &= vulkanImage->GetAspectFlags();
 
-		struct CallbackParameters
-		{
-			VulkanBarrierHelper* BarrierHelper;
-			VulkanResourceTracker* ResourceTracker;
-			VulkanImage* Image;
-			const GpuSurfaceBarrier& Barrier;
-		};
-
-		CallbackParameters callbackParameters { &mBarrierHelper, &mResourceTracker, vulkanImage, barrier};
-		mResourceTracker.IterateAndCreateOverlappingImageSubresourceTrackingState(vulkanImage, vkSubresourceRange, [](u32 globalSubresourceIndex, void* userData)
-		{
-			CallbackParameters* const callbackParameters = static_cast<CallbackParameters*>(userData);
-			const GpuSurfaceBarrier& barrier = callbackParameters->Barrier;
-
-			VulkanResourceTracker& resourceTracker = *callbackParameters->ResourceTracker;
-			const VulkanResourceTracker::ImageSubresourceTrackingState& subresourceTrackingState = resourceTracker.GetSubresourceTrackingStateAtIndex(globalSubresourceIndex);
-
-			// TODO - Move this code into VulkanBarrierHelper
-			const VkImageLayout oldLayout = (barrier.SourceLayout != ImageLayout::Automatic) ?  VulkanUtility::GetImageLayout(barrier.SourceLayout) : subresourceTrackingState.CurrentLayout;
-			const VkImageLayout newLayout = (barrier.DestinationLayout != ImageLayout::Undefined) ?  VulkanUtility::GetImageLayout(barrier.DestinationLayout) : oldLayout; // Undefined means no layout transition
-
-			callbackParameters->BarrierHelper->AddImageBarrier(callbackParameters->Image, subresourceTrackingState.Range, barrier.SourceUsage, barrier.SourceAccess, barrier.DestinationUsage, barrier.DestinationAccess, oldLayout, newLayout);
-
-		}, &callbackParameters);
+		if(barrier.SourceUsage == GpuResourceUseFlag::Undefined)
+			mBarrierHelper.AddImageBarrier(vulkanImage, vkSubresourceRange, barrier.DestinationUsage, barrier.DestinationAccess, barrier.DestinationLayout);
+		else
+			mBarrierHelper.AddImageBarrier(vulkanImage, vkSubresourceRange, barrier.SourceUsage, barrier.SourceAccess, barrier.DestinationUsage, barrier.DestinationAccess, barrier.SourceLayout, barrier.DestinationLayout);
 	};
 
 	for(const auto& barrier : barriers.BufferBarriers)
@@ -1934,7 +1914,11 @@ void VulkanGpuCommandBuffer::IssueBarriers(const GpuBarriers& barriers)
 			continue;
 
 		VulkanBuffer* const vulkanBuffer = vulkanGpuBuffer->GetVulkanResource();
-		mBarrierHelper.AddBufferBarrier(vulkanBuffer, barrier.DestinationUsage, barrier.DestinationAccess);
+
+		if(barrier.SourceUsage == GpuResourceUseFlag::Undefined)
+			mBarrierHelper.AddBufferBarrier(vulkanBuffer, barrier.DestinationUsage, barrier.DestinationAccess);
+		else
+			mBarrierHelper.AddBufferBarrier(vulkanBuffer, barrier.SourceUsage, barrier.SourceAccess, barrier.DestinationUsage, barrier.DestinationAccess);
 	}
 
 	for(const auto& barrier : barriers.TextureBarriers)

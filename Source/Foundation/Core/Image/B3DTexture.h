@@ -241,15 +241,6 @@ namespace b3d
 		GpuTextureAspectFlags AspectMask = GpuTextureAspectFlag::Color;
 	};
 
-	/** Represents layout that a texture can be in. Layout determines what kind of operations can be performed on the texture. */
-	enum class GpuTextureLayout
-	{
-		ShaderRead, /**< Most common layout for textures. Texture can be sampled by the shader. */
-		UnorderedAccess, /**< Supports unordered access reads or writes. */
-		TransferSource, /**< Texture will be used as a source of a transfer operation. */
-		TransferDestination, /**< Texture will be used as a destination of a transfer operation. */
-	};
-
 	/**
 	 * Abstract class representing a texture. Specific render systems have their own Texture implementations. Internally
 	 * represented as one or more surfaces with pixels in a certain number of dimensions, backed by a hardware buffer.

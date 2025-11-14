@@ -52,6 +52,9 @@ ImageLayout FrameGraphLayoutHelper::GetLayoutForUsage(GpuResourceUseFlags usage,
 		return ImageLayout::TransferSource;
 	}
 
+	if(usage.IsSet(GpuResourceUseFlag::Host))
+		return ImageLayout::General;
+
 	// Default to general layout for undefined or complex cases
 	if (usage != GpuResourceUseFlag::Undefined)
 		return ImageLayout::General;

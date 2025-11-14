@@ -1212,6 +1212,9 @@ VulkanAccessStageFlags VulkanUtility::GetVulkanAccessStageFlags(GpuResourceUseFl
 	if(usage.IsSet(GpuResourceUseFlag::Transfer))
 		accessStageFlags |= VulkanAccessStageFlag::Transfer;
 
+	if(usage.IsSet(GpuResourceUseFlag::Host))
+		accessStageFlags |= VulkanAccessStageFlag::Host;
+
 	if(usage.IsSet(GpuResourceUseFlag::ColorAttachment))
 		accessStageFlags |= VulkanAccessStageFlag::ColorAttachment;
 

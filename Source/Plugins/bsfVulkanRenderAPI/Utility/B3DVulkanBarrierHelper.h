@@ -110,7 +110,7 @@ namespace b3d::render
 		 * @param newLayout					Layout the image will be transitioned to after the barrier.
 		 * @return							Information about a barrier that was queued, or null if none was queued. Only valid until next call to Add/Execute/Clear.
 		 */
-		const BarrierTrackingInfo* AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccessFlags, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout);
+		const BarrierTrackingInfo* AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags sourceUsage, GpuAccessFlags sourceAccessFlags, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccessFlags, ImageLayout oldLayout, ImageLayout newLayout);
 
 		/**
 		 * Adds a memory barrier for an image resource. Automatically deduces source usage/access and layout from current tracked state.
@@ -122,7 +122,7 @@ namespace b3d::render
 		 * @param newLayout				Layout the image will be transitioned to after the barrier.
 		 * @return						Information about a barrier that was queued, or null if none was queued. Only valid until next call to Add/Execute/Clear.
 		 */
-		const BarrierTrackingInfo* AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, VkImageLayout newLayout);
+		const BarrierTrackingInfo* AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, GpuResourceUseFlags destinationUsage, GpuAccessFlags destinationAccess, ImageLayout newLayout);
 
 		/**
 		 * Adds a memory barrier for an existing subresource of an image resource. Automatically deduces source usage/access and layout from provided tracked state.
@@ -159,7 +159,7 @@ namespace b3d::render
 
 	private:
 		/** Low-level overload of AddImageBarrier that uses VulkanAccessStageFlags directly. */
-		const BarrierTrackingInfo* AddImageBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccessFlags, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout);
+		const BarrierTrackingInfo* AddSubresourceBarrier(VulkanImage* image, const VkImageSubresourceRange& subresourceRange, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccessFlags, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccessFlags, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 		/** Low-level overload of AddBufferBarrier that uses VulkanAccessStageFlags directly. */
 		const BarrierTrackingInfo* AddBufferBarrier(VulkanBuffer* buffer, VulkanAccessStageFlags sourceAccessStageFlags, GpuAccessFlags sourceAccessFlags, VulkanAccessStageFlags destinationAccessStageFlags, GpuAccessFlags destinationAccessFlags);

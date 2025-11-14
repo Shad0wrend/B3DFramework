@@ -18,6 +18,14 @@ namespace b3d
 	/**	Structure containing parameters for starting the application. */
 	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) ApplicationCreateInformation
 	{
+		ApplicationCreateInformation() = default;
+		ApplicationCreateInformation(const VideoMode& videoMode, const String& title, bool fullscreen)
+		{
+			PrimaryWindow.VideoMode = videoMode;
+			PrimaryWindow.Title = title;
+			PrimaryWindow.Fullscreen = fullscreen;
+		}
+
 		String RenderApi; /**< Name of the render system plugin to use. */
 		String Renderer; /**< Name of the renderer plugin to use. */
 		String Physics; /**< Name of physics plugin to use. */
