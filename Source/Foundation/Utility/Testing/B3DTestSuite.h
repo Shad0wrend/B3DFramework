@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DUtilityPrerequisites.h"
+#include "Debug/B3DLog.h"
 
 namespace b3d
 {
@@ -28,6 +29,19 @@ namespace b3d
 	public:
 		typedef void (TestSuite::*Func)();
 
+		/** Controls how logs are handled during test execution. */
+		enum class LogMode
+		{
+			/** Capture and verify logs, fail on unexpected warnings/errors. */
+			Strict,
+
+			/** Capture logs but don't fail on warnings/errors. */
+			Permissive,
+
+			/** Disable log capture entirely. */
+			Disabled
+		};
+
 	private:
 		/** Contains data about a single unit test. */
 		struct TestEntry
@@ -37,6 +51,28 @@ namespace b3d
 			Func Test;
 			String Name;
 		};
+
+		/** Information about an ignored log entry (may or may not occur). */
+		struct IgnoredLogEntry
+		{
+			LogVerbosity Verbosity;
+			String Pattern;
+			bool WasMatched = false;
+		};
+
+		/** Information about an expected log entry (MUST occur). */
+		struct ExpectedLogEntry
+		{
+			LogVerbosity Verbosity;
+			String Pattern;
+			bool WasFound = false;
+		};
+
+		/** Log callback handler. */
+		bool OnLogEntry(const String& message, LogVerbosity verbosity, const char* categoryName);
+
+		/** Verify logs at end of test. */
+		void VerifyLogs();
 
 	public:
 		virtual ~TestSuite() = default;
@@ -74,13 +110,50 @@ namespace b3d
 		/** @} */
 
 	protected:
-		TestSuite() = default;
+		TestSuite(const String& name = "TestSuite")
+			: mSuiteName(name) {}
 
 		/** Called right before any tests are ran. */
 		virtual void StartUp() {}
 
 		/**	Called after all tests and child suite's tests are ran. */
 		virtual void ShutDown() {}
+
+		/**
+		 * Override to specify log handling mode for this suite.
+		 * Default is Strict (fail on unexpected warnings/errors).
+		 */
+		virtual LogMode GetLogMode() const { return LogMode::Strict; }
+
+		/**
+		 * Declare that a specific warning/error may occur and should not fail the test.
+		 * Test passes whether or not the log actually occurs.
+		 *
+		 * @param	verbosity	Log level to ignore (Warning, Error, etc.)
+		 * @param	pattern		Substring to match in the log message.
+		 */
+		void IgnoreLog(LogVerbosity verbosity, const String& pattern);
+
+		/** Convenience for ignoring warnings. */
+		void IgnoreWarning(const String& pattern);
+
+		/** Convenience for ignoring errors. */
+		void IgnoreError(const String& pattern);
+
+		/**
+		 * Declare that a warning/error is expected and MUST occur.
+		 * Test fails if the expected log is not found.
+		 *
+		 * @param	verbosity	Log level that must occur (Warning, Error, etc.)
+		 * @param	pattern		Substring to match in the log message.
+		 */
+		void ExpectLog(LogVerbosity verbosity, const String& pattern);
+
+		/** Convenience for expecting warnings. */
+		void ExpectWarning(const String& pattern);
+
+		/** Convenience for expecting errors. */
+		void ExpectError(const String& pattern);
 
 		/**
 		 * Register a new unit test.
@@ -90,12 +163,21 @@ namespace b3d
 		 */
 		void AddTest(Func test, const String& name);
 
+	private:
+		String mSuiteName;
 		Vector<TestEntry> mTests;
 		Vector<SPtr<TestSuite>> mSuites;
 
 		// Transient
 		TestOutput* mOutput = nullptr;
 		String mActiveTestName;
+		u32 mFailureCount = 0;
+
+		Vector<LogEntry> mCapturedLogs; /**< Logs captured during current test. */
+		Vector<IgnoredLogEntry> mIgnoredLogs; /**< Logs that may occur and should be ignored. */
+		Vector<ExpectedLogEntry> mExpectedLogs; /**< Logs that MUST occur for test to pass. */
+
+		bool mLogCaptureActive = false; /**< True if log capture is currently active. */
 	};
 
 /** Registers a new unit test within an implementation of TestSuite. */

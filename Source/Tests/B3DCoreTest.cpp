@@ -20,6 +20,7 @@
 #include "Resources/B3DResources.h"
 #include "Scene/B3DPrefabUtility.h"
 #include "Scene/B3DSceneInstance.h"
+#include "Utility/B3DCommandLine.h"
 
 using namespace b3d;
 
@@ -71,6 +72,7 @@ private:
 };
 
 CoreTestSuite::CoreTestSuite()
+	: TestSuite("CoreTestSuite")
 {
 	B3D_ADD_TEST(CoreTestSuite::TestAnimCurveIntegration)
 	B3D_ADD_TEST(CoreTestSuite::TestLookupTable)
@@ -1337,17 +1339,21 @@ void CoreTestSuite::TestPrefabScenario10()
 
 using namespace b3d;
 
-int main()
+int main(int argc, char* argv[])
 {
+	CrashHandler::StartUp();
+	CommandLine::Initialize(argc, argv);
+
 	VideoMode videoMode(1280, 720);
 	Application::StartUp(videoMode, "UnitTests", false);
 
 	SPtr<TestSuite> tests = CoreTestSuite::Create<CoreTestSuite>();
 
-	ExceptionTestOutput testOutput;
+	ConsoleTestOutput testOutput;
 	tests->Run(testOutput);
 
 	Application::ShutDown();
+	CrashHandler::ShutDown();
 
-	return 0;
+	return testOutput.GetExitCode();
 }

@@ -95,6 +95,7 @@ void ECSTestSuite::StartUp() { }
 void ECSTestSuite::ShutDown() { }
 
 ECSTestSuite::ECSTestSuite()
+	: TestSuite("ECSTestSuite")
 {
 	B3D_ADD_TEST(ECSTestSuite::TestSparseSet)
 	B3D_ADD_TEST(ECSTestSuite::TestRegistry)

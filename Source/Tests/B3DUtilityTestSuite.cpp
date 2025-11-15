@@ -105,6 +105,7 @@ void UtilityTestSuite::ShutDown()
 }
 
 UtilityTestSuite::UtilityTestSuite()
+	: TestSuite("UtilityTestSuite")
 {
 	B3D_ADD_TEST(UtilityTestSuite::TestOctree);
 	B3D_ADD_TEST(UtilityTestSuite::TestBitfield);

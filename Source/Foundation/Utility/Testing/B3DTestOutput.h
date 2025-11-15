@@ -19,12 +19,54 @@ namespace b3d
 		/**
 		 * Triggered when a unit test fails.
 		 *
-		 * @param	desc		Reason why the unit test failed.
+		 * @param	description	Reason why the unit test failed.
 		 * @param	function	Name of the function the test failed in.
 		 * @param	file		File the unit test failed in.
 		 * @param	line		Line of code the unit test failed on.
 		 */
-		virtual void OutputFail(const String& desc, const String& function, const String& file, long line) = 0;
+		virtual void OutputFail(const String& description, const String& function, const String& file, long line) = 0;
+
+		/**
+		 * Triggered when a test suite starts executing.
+		 *
+		 * @param	suiteName	Name of the test suite being executed.
+		 */
+		virtual void OnSuiteStart(const String& suiteName) {}
+
+		/**
+		 * Triggered when a test suite finishes executing.
+		 *
+		 * @param	suiteName		Name of the test suite that finished.
+		 * @param	totalTests		Total number of tests in the suite.
+		 * @param	passedTests		Number of tests that passed.
+		 * @param	failedTests		Number of tests that failed.
+		 * @param	durationMs		Total execution time in milliseconds.
+		 */
+		virtual void OnSuiteEnd(const String& suiteName, u32 totalTests, u32 passedTests,
+		                        u32 failedTests, u64 durationMs) {}
+
+		/**
+		 * Triggered when an individual test starts executing.
+		 *
+		 * @param	testName	Name of the test being executed.
+		 */
+		virtual void OnTestStart(const String& testName) {}
+
+		/**
+		 * Triggered when an individual test finishes executing.
+		 *
+		 * @param	testName	Name of the test that finished.
+		 * @param	passed		True if the test passed, false if it failed.
+		 * @param	durationMs	Execution time in milliseconds.
+		 */
+		virtual void OnTestEnd(const String& testName, bool passed, u64 durationMs) {}
+
+		/**
+		 * Triggered when a unit test succeeds (optional to implement).
+		 *
+		 * @param	testName	Name of the test that succeeded.
+		 */
+		virtual void OutputSuccess(const String& testName) {}
 	};
 
 	/** Outputs unit test results so that failures are reported as exceptions. Success is not reported. */
