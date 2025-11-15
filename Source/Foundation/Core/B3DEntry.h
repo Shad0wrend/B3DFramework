@@ -34,12 +34,17 @@ int main(int __argc, char* __argv[])
 {
 	using namespace b3d;
 
+	CrashHandler::StartUp();
+
 #if B3D_PLATFORM_WIN32
 	CommandLine::Initialize(::GetCommandLineA());
 #else
 	CommandLine::Initialize(__argc, __argv);
 #endif
 
-	return B3DMain();
+	const int returnValue = B3DMain();
+	CrashHandler::ShutDown();
+
+	return returnValue;
 }
 #endif
