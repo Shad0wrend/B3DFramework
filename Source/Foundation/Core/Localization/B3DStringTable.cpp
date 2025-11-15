@@ -103,7 +103,7 @@ void LocalizedStringData::UpdateString(const b3d::String& _string)
 				{
 					removedCharacterCount += parameterCharacterCount + 2; // +2 for open and closed brackets
 
-					u32 parameterIndex = Parseu32(bracketChars.str());
+					u32 parameterIndex = ParseU32(bracketChars.str());
 					paramOffsets.push_back(ParamOffset(parameterIndex, charIndex + 1 - removedCharacterCount));
 				}
 				else

@@ -105,13 +105,13 @@ namespace b3d
 			Vector<b3d::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
-				Major = Parsei32(tokens[0]);
+				Major = ParseI32(tokens[0]);
 				if(tokens.size() > 1)
-					Minor = Parsei32(tokens[1]);
+					Minor = ParseI32(tokens[1]);
 				if(tokens.size() > 2)
-					Release = Parsei32(tokens[2]);
+					Release = ParseI32(tokens[2]);
 				if(tokens.size() > 3)
-					Build = Parsei32(tokens[3]);
+					Build = ParseI32(tokens[3]);
 			}
 		}
 

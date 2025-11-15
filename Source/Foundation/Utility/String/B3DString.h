@@ -314,28 +314,28 @@ namespace b3d
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT i32 Parsei32(const String& val, i32 defaultValue = 0);
+	B3D_EXPORT i32 ParseI32(const String& val, i32 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT u32 Parseu32(const String& val, u32 defaultValue = 0);
+	B3D_EXPORT u32 ParseU32(const String& val, u32 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT i64 Parsei64(const String& val, i64 defaultValue = 0);
+	B3D_EXPORT i64 ParseI64(const String& val, i64 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT u64 Parseu64(const String& val, u64 defaultValue = 0);
+	B3D_EXPORT u64 ParseU64(const String& val, u64 defaultValue = 0);
 
 	/**
 	 * Converts a String to a boolean.
@@ -360,28 +360,28 @@ namespace b3d
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT i32 Parsei32(const WString& val, i32 defaultValue = 0);
+	B3D_EXPORT i32 ParseI32(const WString& val, i32 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT u32 Parseu32(const WString& val, u32 defaultValue = 0);
+	B3D_EXPORT u32 ParseU32(const WString& val, u32 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT i64 Parsei64(const WString& val, i64 defaultValue = 0);
+	B3D_EXPORT i64 ParseI64(const WString& val, i64 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	B3D_EXPORT u64 Parseu64(const WString& val, u64 defaultValue = 0);
+	B3D_EXPORT u64 ParseU64(const WString& val, u64 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a boolean.

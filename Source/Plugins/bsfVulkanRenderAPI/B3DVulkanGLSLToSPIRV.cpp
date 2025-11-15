@@ -815,7 +815,7 @@ struct GLSLAttribute
 			return -1;
 
 		u32 length = (u32)mName.size();
-		return Parsei32(name.substr(length));
+		return ParseI32(name.substr(length));
 	}
 
 	/**	Returns the semantic of this attribute. */

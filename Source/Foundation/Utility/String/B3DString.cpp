@@ -729,7 +729,7 @@ float ParseFloat(const String& val, float defaultValue)
 	return ret;
 }
 
-i32 Parsei32(const String& val, i32 defaultValue)
+i32 ParseI32(const String& val, i32 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	StringStream str(val);
@@ -739,7 +739,7 @@ i32 Parsei32(const String& val, i32 defaultValue)
 	return ret;
 }
 
-u32 Parseu32(const String& val, u32 defaultValue)
+u32 ParseU32(const String& val, u32 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	StringStream str(val);
@@ -749,7 +749,7 @@ u32 Parseu32(const String& val, u32 defaultValue)
 	return ret;
 }
 
-i64 Parsei64(const String& val, i64 defaultValue)
+i64 ParseI64(const String& val, i64 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	StringStream str(val);
@@ -759,7 +759,7 @@ i64 Parsei64(const String& val, i64 defaultValue)
 	return ret;
 }
 
-u64 Parseu64(const String& val, u64 defaultValue)
+u64 ParseU64(const String& val, u64 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	StringStream str(val);
@@ -797,7 +797,7 @@ float ParseFloat(const WString& val, float defaultValue)
 	return ret;
 }
 
-i32 Parsei32(const WString& val, i32 defaultValue)
+i32 ParseI32(const WString& val, i32 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	WStringStream str(val);
@@ -807,7 +807,7 @@ i32 Parsei32(const WString& val, i32 defaultValue)
 	return ret;
 }
 
-u32 Parseu32(const WString& val, u32 defaultValue)
+u32 ParseU32(const WString& val, u32 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	WStringStream str(val);
@@ -817,7 +817,7 @@ u32 Parseu32(const WString& val, u32 defaultValue)
 	return ret;
 }
 
-i64 Parsei64(const WString& val, i64 defaultValue)
+i64 ParseI64(const WString& val, i64 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	WStringStream str(val);
@@ -827,7 +827,7 @@ i64 Parsei64(const WString& val, i64 defaultValue)
 	return ret;
 }
 
-u64 Parseu64(const WString& val, u64 defaultValue)
+u64 ParseU64(const WString& val, u64 defaultValue)
 {
 	// Use istringstream for direct correspondence with toString
 	WStringStream str(val);

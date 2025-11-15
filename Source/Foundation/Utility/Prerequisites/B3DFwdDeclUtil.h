@@ -218,6 +218,7 @@ namespace b3d
 	class Math;
 	class Rect3;
 	class Color;
+	class CommandLine;
 	class DynamicLibrary;
 	class DynamicLibraryManager;
 	class DataStream;

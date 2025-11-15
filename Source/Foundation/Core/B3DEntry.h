@@ -4,15 +4,26 @@
 
 #include "B3DApplication.h"
 #include "CoreObject/B3DRenderThread.h"
+#include "Utility/B3DCommandLine.h"
 
 /** Provides an entry point for executables. */
 int B3DMain();
 
 #ifndef B3D_CODEGEN // Needed to avoid including windows.h, as it includes macros that use commonly used names
 #if B3D_PLATFORM_WIN32
-#include <windows.h>
 
-int CALLBACK WinMain(
+#define WINAPI __stdcall
+
+typedef void* HANDLE;
+typedef HANDLE HINSTANCE;
+typedef char* LPSTR;
+
+extern "C"
+{
+	LPSTR WINAPI GetCommandLineA(void);
+}
+
+int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_ HINSTANCE hPrevInstance,
 	_In_ LPSTR lpCmdLine,
@@ -22,6 +33,13 @@ int main(int __argc, char* __argv[])
 #endif
 {
 	using namespace b3d;
+
+#if B3D_PLATFORM_WIN32
+	CommandLine::Initialize(::GetCommandLineA());
+#else
+	CommandLine::Initialize(__argc, __argv);
+#endif
+
 	return B3DMain();
 }
 #endif
