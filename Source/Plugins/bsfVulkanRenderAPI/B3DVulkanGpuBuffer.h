@@ -113,7 +113,6 @@ namespace b3d
 			~VulkanGpuBuffer();
 
 			void SetName(const StringView& name) override;
-			void ReadData(u32 offset, u32 length, void* destination, const SPtr<GpuQueue>& gpuQueue = nullptr) override;
 			GpuQueueMask GetUseMask(GpuAccessFlags accessFlags) override;
 			u32 GetBoundCount() const override { return mBuffer->GetBoundCount(); }
 			u32 GetUseCount() const override { return mBuffer->GetUseCount(); }

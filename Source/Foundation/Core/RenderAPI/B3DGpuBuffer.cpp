@@ -460,9 +460,6 @@ namespace b3d::render
 		if(!B3D_ENSURE(buffer != nullptr))
 			return;
 
-		buffer->ReadData(offset, length, destination);
-		return;
-
 		if((offset + length) > buffer->GetTotalSize())
 			return;
 
@@ -538,7 +535,7 @@ namespace b3d::render
 		stagingBuffer->Destroy();
 	}
 
-	TAsyncOp<SPtr<MemoryDataStream>> GpuBufferUtility::ReadDataAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer)
+	TAsyncOp<SPtr<MemoryDataStream>> GpuBufferUtility::ReadAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer)
 	{
 		if(buffer == nullptr)
 			return {};

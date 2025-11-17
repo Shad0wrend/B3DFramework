@@ -379,21 +379,6 @@ namespace b3d::render
 		}
 
 		/**
-		 * Reads data from a portion of the buffer and copies it to the destination buffer. Caller must ensure destination buffer is large enough.
-		 *
-		 * @note	If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPU or StoreOnCPUWithGPUAccess flags) this will
-		 *			internally create a staging buffer, on which the contents will be copied before being read by the CPU, using an internal command buffer.
-		 * @note	If the buffer is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
-		 *			method in very rare circumstances.
-		 *
-		 * @param	offset			Offset in bytes from which to copy the data.
-		 * @param	length			Length of the area you want to copy, in bytes.
-		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start of the buffer (@p offset is only applied to the source).
-		 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default queue will be used.
-		 */
-		virtual void ReadData(u32 offset, u32 length, void* destination, const SPtr<GpuQueue>& gpuQueue = nullptr) = 0;
-
-		/**
 		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
 		 * for the data to actually reach the underlying buffer you must call FlushCache().
 		 */
@@ -572,7 +557,7 @@ namespace b3d::render
 		 * @param	length			Length of the area you want to read, in bytes.
 		 * @return					Operation that will be signaled when the data is ready to be read.
 		 */
-		static TAsyncOp<SPtr<MemoryDataStream>> ReadDataAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer);
+		static TAsyncOp<SPtr<MemoryDataStream>> ReadAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer);
 	};
 
 } // namespace b3d::render
