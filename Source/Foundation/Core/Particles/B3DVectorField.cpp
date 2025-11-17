@@ -149,7 +149,7 @@ SPtr<Resource> FGAImporter::Import(const Path& filePath, SPtr<const ImportOption
 		data = stream->GetAsString();
 	}
 
-	auto chars = B3DManagedStackAllocate<char>((u32)data.size() + 1);
+	StackMemory<char[]> chars((u32)data.size() + 1);
 	memcpy(chars, data.data(), data.size());
 	chars[data.size()] = '\0';
 
@@ -192,7 +192,7 @@ SPtr<Resource> FGAImporter::Import(const Path& filePath, SPtr<const ImportOption
 	};
 
 	VECTOR_FIELD_DESC desc;
-	char* readPos = chars;
+	char* readPos = chars.Data();
 
 	// Read X, Y, Z sizes
 	Vector3I size;

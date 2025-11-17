@@ -7,6 +7,7 @@
 
 #include "Prerequisites/B3DTypes.h"
 #include "Prerequisites/B3DStdHeaders.h"
+#include "Utility/B3DNonCopyable.h"
 
 #include "Threading/B3DThreading.h"
 
@@ -349,120 +350,60 @@ namespace b3d
 		MemStack::DeallocLast((u8*)data);
 	}
 
-	inline void B3DStackDelete(void* data, u32 count)
-	{
-		MemStack::DeallocLast((u8*)data);
-	}
-
 	/** @copydoc MemStackInternal::Dealloc() */
 	inline void B3DStackFree(void* data)
 	{
 		return MemStack::DeallocLast((u8*)data);
 	}
 
-	/**
-	 * An object used to transparently clean up a stack allocation when it's no longer in scope. Make sure to take great
-	 * care not to free non-managed stack allocations out of order or to free the stack allocation managed by this object!
-	 */
+	/** Allocates memory on the stack and automatically frees it when it goes out of scope. */
 	template <typename T>
-	struct StackMemory
+	struct StackMemory : INonCopyable
 	{
-		/*
-		 * Provide implicit conversion to the allocated buffer so that users of this code can "pretend" this object is a
-		 * pointer to the stack buffer that they wanted.
-		 */
-		constexpr operator T*() const& noexcept
-		{
-			return mPtr;
-		}
-
-		/*
-		 * This ensures that the result of B3DManagedStackAllocate() doesn't get passed to a function call as a temporary,
-		 * or immediately assigned as a T*. Instead, the user of this class is forced to deal with this class as itself,
-		 * when handling the return value of B3DManagedStackAllocate() preventing an immediate (and erroneous) call to
-		 * B3DStackFree().
-		 */
-		constexpr operator T*() const&& noexcept = delete;
-
-		explicit constexpr StackMemory(T* p, size_t count = 1)
-			: mPtr(p), mCount(count)
+		template<typename... Arguments>
+		explicit constexpr StackMemory(Arguments&&... arguments)
+			: mData(B3DStackNew<T>(std::forward<Arguments>(arguments)...))
 		{}
 
-		/** Needed until c++17 */
-		StackMemory(StackMemory&& other)
-			: mPtr(std::exchange(other.mPtr, nullptr))
-			, mCount(std::exchange(other.mCount, 0))
-		{}
-
-		StackMemory(StackMemory const&) = delete;
-		StackMemory& operator=(StackMemory&&) = delete;
-		StackMemory& operator=(StackMemory const&) = delete;
-
-		/** Frees the stack allocation. */
 		~StackMemory()
 		{
-			if(mPtr != nullptr)
-			{
-				if(mCount >= 1)
-					B3DStackDelete(mPtr, (u32)mCount);
-				else
-					B3DStackFree(mPtr);
-			}
+			if(mData != nullptr)
+				B3DStackDelete(mData);
 		}
 
+		constexpr operator T*() const& noexcept { return mData; }
+		constexpr T* operator->() const noexcept { return mData; }
+
+		constexpr T* Data() const noexcept { return mData; }
+
 	private:
-		T* mPtr = nullptr;
-		size_t mCount = 0;
+		T* mData = nullptr;
 	};
 
-	/**
-	 * Same as B3DStackAllocate() except the returned object takes care of automatically cleaning up when it goes out of
-	 * scope.
-	 */
-	inline StackMemory<void> B3DManagedStackAllocate(u32 amount)
+	/** Allocates memory on the stack and automatically frees it when it goes out of scope. */
+	template <typename T>
+	struct StackMemory<T[]> : INonCopyable
 	{
-		return StackMemory<void>(B3DStackAllocate(amount));
-	}
+		template<typename... Arguments>
+		explicit constexpr StackMemory(Arguments&&... arguments, u32 count)
+			: mData(B3DStackNew<T>(std::forward<Arguments>(arguments)..., count))
+		{}
 
-	/**
-	 * Same as B3DStackAllocate() except the returned object takes care of automatically cleaning up when it goes out of
-	 * scope.
-	 */
-	template <class T>
-	StackMemory<T> B3DManagedStackAllocate()
-	{
-		return StackMemory<T>(B3DStackAllocate<T>());
-	}
+		~StackMemory()
+		{
+			if(mData != nullptr)
+				B3DStackDelete(mData, (u32)mCount);
+		}
 
-	/**
-	 * Same as B3DStackAllocate() except the returned object takes care of automatically cleaning up when it goes out of
-	 * scope.
-	 */
-	template <class T>
-	StackMemory<T> B3DManagedStackAllocate(u32 amount)
-	{
-		return StackMemory<T>(B3DStackAllocate<T>(amount));
-	}
+		constexpr operator T*() const& noexcept { return mData; }
+		constexpr T& operator[](size_t index) const noexcept { return mData[index]; }
 
-	/**
-	 * Same as B3DStackNew() except the returned object takes care of automatically cleaning up when it goes out of
-	 * scope.
-	 */
-	template <class T>
-	StackMemory<T> B3DManagedStackNew(size_t count = 1)
-	{
-		return StackMemory<T>(B3DStackNew<T>(count), count);
-	}
+		constexpr T* Data() const noexcept { return mData; }
 
-	/**
-	 * Same as B3DStackNew() except the returned object takes care of automatically cleaning up when it goes out of
-	 * scope.
-	 */
-	template <class T, class... Args>
-	StackMemory<T> B3DManagedStackNew(Args&&... args, size_t count = 1)
-	{
-		return StackMemory<T>(B3DStackNew<T>(std::forward<Args>(args)..., count), count);
-	}
+	private:
+		T* mData = nullptr;
+		size_t mCount = 0;
+	};
 
 	/** @} */
 	/** @addtogroup Internal-Utility

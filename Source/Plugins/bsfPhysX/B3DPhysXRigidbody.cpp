@@ -201,7 +201,7 @@ void PhysXRigidbody::SetFlags(RigidbodyFlags flags)
 
 		// Enable/disable CCD on shapes so the filter can handle them properly
 		const u32 shapeCount = mPxRigidDynamic->getNbShapes();
-		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(shapeCount);
+		StackMemory<PxShape*[]> shapes(shapeCount);
 
 		mPxRigidDynamic->getShapes(shapes, sizeof(PxShape*) * shapeCount);
 
@@ -265,10 +265,10 @@ void PhysXRigidbody::UpdateMassDistribution(bool autoMassEnabled)
 			return;
 		}
 
-		StackMemory<PxShape*> shapes = B3DManagedStackAllocate<PxShape*>(shapeCount);
+		StackMemory<PxShape*[]> shapes(shapeCount);
 		mPxRigidDynamic->getShapes(shapes, shapeCount);
 
-		StackMemory<float> masses = B3DManagedStackAllocate<float>(shapeCount);
+		StackMemory<float[]> masses(shapeCount);
 		for(u32 shapeIndex = 0; shapeIndex < shapeCount; shapeIndex++)
 			masses[shapeIndex] = ((ColliderShape*)shapes[shapeIndex]->userData)->GetMass();
 

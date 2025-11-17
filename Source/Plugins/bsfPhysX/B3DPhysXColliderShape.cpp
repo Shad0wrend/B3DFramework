@@ -201,7 +201,7 @@ void PhysXColliderShape::SetGeometry(const physx::PxGeometry& geometry)
 			const u32 bufferSize = sizeof(PxMaterial*) * materialCount;
 
 			{
-				StackMemory<PxMaterial*> materials = B3DManagedStackAllocate<PxMaterial*>(materialCount);
+				StackMemory<PxMaterial*[]> materials(materialCount);
 
 				mShape->getMaterials(materials, bufferSize);
 				newShape->setMaterials(materials, materialCount);
