@@ -269,6 +269,8 @@ void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
 	// barrier below.
 	const bool isUsedOnGPU = !useMask.IsEmpty() || mSupportsGPUWrites; // TODO - mSupportsGPUWrites check doesn't seem right here. 
 
+	// TODO - Not issuing barrier here
+
 	const bool isReadRequired = options == GBL_READ_ONLY || options == GBL_READ_WRITE;
 	const bool isWrite = options != GBL_READ_ONLY;
 

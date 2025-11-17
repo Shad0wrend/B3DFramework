@@ -6,6 +6,7 @@
 #include "B3DGpuDevice.h"
 #include "B3DGpuDeviceCapabilities.h"
 #include "CoreObject/B3DCoreObjectSync.h"
+#include "FileSystem/B3DDataStream.h"
 
 using namespace b3d;
 
@@ -459,6 +460,9 @@ namespace b3d::render
 		if(!B3D_ENSURE(buffer != nullptr))
 			return;
 
+		buffer->ReadData(offset, length, destination);
+		return;
+
 		if((offset + length) > buffer->GetTotalSize())
 			return;
 
@@ -532,5 +536,35 @@ namespace b3d::render
 
 		stagingBuffer->Unlock();
 		stagingBuffer->Destroy();
+	}
+
+	TAsyncOp<SPtr<MemoryDataStream>> GpuBufferUtility::ReadDataAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer)
+	{
+		if(buffer == nullptr)
+			return {};
+
+		TAsyncOp<SPtr<MemoryDataStream>> op;
+		auto fnOnCommandBufferCompleted = [buffer, offset, length, op]() mutable
+		{
+			const SPtr<MemoryDataStream> dataStream = B3DMakeShared<MemoryDataStream>(buffer->GetTotalSize());
+			Read(buffer, offset, length, dataStream->Data());
+
+			op.CompleteOperation(dataStream);
+		};
+
+		auto fnOnCommandBufferDestroyed = [buffer, op](bool isSubmitted) mutable
+		{
+			// In this case the completion callback will trigger.
+			if(isSubmitted)
+				return;
+
+			buffer->Destroy();
+			op.CompleteOperation(nullptr);
+		};
+
+		commandBuffer.OnDidComplete.Connect(fnOnCommandBufferCompleted);
+		commandBuffer.OnDestroyed.Connect(fnOnCommandBufferDestroyed);
+
+		return op;
 	}
 }

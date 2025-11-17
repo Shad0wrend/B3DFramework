@@ -457,7 +457,7 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 			return;
 		}
 
-		mIndexBuffer->ReadData(0, indicesSize, indices);
+		GpuBufferUtility::Read(mIndexBuffer, 0, indicesSize, indices);
 	}
 
 	if(mVertexData)
@@ -497,7 +497,7 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuf
 			}
 
 			u8* destination = meshData.GetStreamData(streamIndex);
-			vertexBuffer->ReadData(0, bufferSize, destination);
+			GpuBufferUtility::Read(vertexBuffer, 0, bufferSize, destination);
 
 			streamIndex++;
 		}

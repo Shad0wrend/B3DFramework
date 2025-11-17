@@ -562,6 +562,17 @@ namespace b3d::render
 		 *							any other transfer buffer operations).
 		 */
 		static void Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, SPtr<GpuCommandBuffer> commandBuffer = nullptr);
+
+		/**
+		 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
+		 * and the asynchronous operation will be signaled with the return value.
+		 *
+		 * @param	commandBuffer	Command buffer to queue the operation on.
+		 * @param	offset			Offset in bytes from which to read the data.
+		 * @param	length			Length of the area you want to read, in bytes.
+		 * @return					Operation that will be signaled when the data is ready to be read.
+		 */
+		static TAsyncOp<SPtr<MemoryDataStream>> ReadDataAsync(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer);
 	};
 
 } // namespace b3d::render

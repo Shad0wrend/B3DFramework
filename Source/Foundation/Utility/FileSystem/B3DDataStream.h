@@ -187,7 +187,7 @@ namespace b3d
 		u16 mAccess;
 	};
 
-	/** Data stream for handling data from memory. */
+	/** Data stream for handling data from memory. Data is stored in a memory block that is either owned by the stream (freed when stream goes out of scope), or owned externally. */
 	class B3D_EXPORT MemoryDataStream : public DataStream
 	{
 	public:

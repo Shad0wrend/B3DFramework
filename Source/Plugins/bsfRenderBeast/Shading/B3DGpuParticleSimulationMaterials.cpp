@@ -133,7 +133,7 @@ AABox GpuParticleBoundsMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	Vector3 max = -Vector3::kInfinite;
 
 	Vector3* data = (Vector3*)B3DStackAllocate(output->GetTotalSize());
-	output->ReadData(0, output->GetTotalSize(), data);
+	GpuBufferUtility::Read(output, 0, output->GetTotalSize(), data);
 
 	for(u32 i = 0; i < numGroups; i++)
 	{
