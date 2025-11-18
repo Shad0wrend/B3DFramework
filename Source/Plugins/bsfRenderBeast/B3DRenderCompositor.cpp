@@ -1928,8 +1928,8 @@ void RCNodeEyeAdaptation::Render(const RenderCompositorNodeInputs& inputs)
 		{
 			// Generate histogram
 			SPtr<PooledRenderTexture> eyeAdaptHistogram =
-				resPool.Get(EyeAdaptHistogramMat::GetOutputDesc(downsampledScene->Texture));
-			EyeAdaptHistogramMat* eyeAdaptHistogramMat = EyeAdaptHistogramMat::Get();
+				resPool.Get(EyeAdaptHistogramMaterial::GetOutputDesc(downsampledScene->Texture));
+			EyeAdaptHistogramMaterial* eyeAdaptHistogramMat = EyeAdaptHistogramMaterial::Get();
 			eyeAdaptHistogramMat->Execute(commandBuffer, downsampledScene->Texture, eyeAdaptHistogram->Texture, settings.AutoExposure);
 
 			// Reduce histogram

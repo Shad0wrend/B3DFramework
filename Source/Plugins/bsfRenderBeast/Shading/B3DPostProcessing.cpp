@@ -45,29 +45,29 @@ void DownsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 	B3D_PROFILE_RENDERER_MATERIAL
 
 	// Populate parameter buffer
-	GpuBufferSuballocation parameterBuffer = gDownsampleUniformDefinition.AllocateTransient();
+	GpuBufferSuballocation uniformBuffer = gDownsampleUniformDefinition.AllocateTransient();
 	const TextureProperties& rtProps = input->GetProperties();
 
 	bool MSAA = mVariationParameters.GetI32("MSAA") > 0;
 	if(MSAA)
 	{
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, Vector2(-1.0f, -1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, Vector2(1.0f, -1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, Vector2(-1.0f, 1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, Vector2(1.0f, 1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, Vector2(-1.0f, -1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, Vector2(1.0f, -1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, Vector2(-1.0f, 1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, Vector2(1.0f, 1.0f));
 	}
 	else
 	{
 		Vector2 invTextureSize(1.0f / rtProps.Width, 1.0f / rtProps.Height);
 
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, invTextureSize * Vector2(-1.0f, -1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, invTextureSize * Vector2(1.0f, -1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, invTextureSize * Vector2(-1.0f, 1.0f));
-		gDownsampleUniformDefinition.gOffsets.Set(parameterBuffer, invTextureSize * Vector2(1.0f, 1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, invTextureSize * Vector2(-1.0f, -1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, invTextureSize * Vector2(1.0f, -1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, invTextureSize * Vector2(-1.0f, 1.0f));
+		gDownsampleUniformDefinition.gOffsets.Set(uniformBuffer, invTextureSize * Vector2(1.0f, 1.0f));
 	}
 
 	// Set parameters
-	mUniformBufferParameter.Set(parameterBuffer);
+	mUniformBufferParameter.Set(uniformBuffer);
 	mInputTextureParameter.Set(input);
 
 	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGPUParameters, RT_DEPTH_STENCIL));
@@ -110,18 +110,16 @@ DownsampleMaterial* DownsampleMaterial::GetVariation(u32 quality, bool msaa)
 	}
 }
 
-EyeAdaptHistogramParamDef gEyeAdaptHistogramParamDef;
+EyeAdaptHistogramUniformDefinition gEyeAdaptHistogramUniformDefinition;
 
-void EyeAdaptHistogramMat::Initialize()
+void EyeAdaptHistogramMaterial::Initialize()
 {
-	mParamBuffer = gEyeAdaptHistogramParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
-	mGPUParameters->GetSampledTextureParameter("gSceneColorTex", mSceneColor);
-	mGPUParameters->GetStorageTextureParameter("gOutputTex", mOutputTex);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGPUParameters->GetSampledTextureParameter("gSceneColorTex", mSceneColorParameter);
+	mGPUParameters->GetStorageTextureParameter("gOutputTex", mOutputTextureParameter);
 }
 
-void EyeAdaptHistogramMat::InitDefinesInternal(ShaderDefines& defines)
+void EyeAdaptHistogramMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("THREADGROUP_SIZE_X", kThreadGroupSizeX);
 	defines.Set("THREADGROUP_SIZE_Y", kThreadGroupSizeY);
@@ -129,31 +127,35 @@ void EyeAdaptHistogramMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("LOOP_COUNT_Y", kLoopCountY);
 }
 
-void EyeAdaptHistogramMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings)
+void EyeAdaptHistogramMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
-	// Set parameters
-	mSceneColor.Set(input);
+	// Populate parameter buffer
+	GpuBufferSuballocation uniformBuffer = gEyeAdaptHistogramUniformDefinition.AllocateTransient();
 
 	const TextureProperties& props = input->GetProperties();
 	Vector4I offsetAndSize(0, 0, (i32)props.Width, (i32)props.Height);
 
-	gEyeAdaptHistogramParamDef.gHistogramParams.Set(mParamBuffer, GetHistogramScaleOffset(settings));
-	gEyeAdaptHistogramParamDef.gPixelOffsetAndSize.Set(mParamBuffer, offsetAndSize);
+	gEyeAdaptHistogramUniformDefinition.gHistogramParams.Set(uniformBuffer, GetHistogramScaleOffset(settings));
+	gEyeAdaptHistogramUniformDefinition.gPixelOffsetAndSize.Set(uniformBuffer, offsetAndSize);
 
 	Vector2I threadGroupCount = GetThreadGroupCount(input);
-	gEyeAdaptHistogramParamDef.gThreadGroupCount.Set(mParamBuffer, threadGroupCount);
+	gEyeAdaptHistogramUniformDefinition.gThreadGroupCount.Set(uniformBuffer, threadGroupCount);
+
+	// Set parameters
+	mUniformBufferParameter.Set(uniformBuffer);
+	mSceneColorParameter.Set(input);
 
 	// Dispatch
-	mOutputTex.Set(output);
+	mOutputTextureParameter.Set(output);
 
 	Bind(commandBuffer);
 
 	commandBuffer.DispatchCompute(threadGroupCount.X, threadGroupCount.Y);
 }
 
-PooledRenderTextureCreateInformation EyeAdaptHistogramMat::GetOutputDesc(const SPtr<Texture>& target)
+PooledRenderTextureCreateInformation EyeAdaptHistogramMaterial::GetOutputDesc(const SPtr<Texture>& target)
 {
 	Vector2I threadGroupCount = GetThreadGroupCount(target);
 	u32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
@@ -161,7 +163,7 @@ PooledRenderTextureCreateInformation EyeAdaptHistogramMat::GetOutputDesc(const S
 	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, kHistogramNumTexels, numHistograms, TU_LOADSTORE);
 }
 
-Vector2I EyeAdaptHistogramMat::GetThreadGroupCount(const SPtr<Texture>& target)
+Vector2I EyeAdaptHistogramMaterial::GetThreadGroupCount(const SPtr<Texture>& target)
 {
 	const u32 texelsPerThreadGroupX = kThreadGroupSizeX * kLoopCountX;
 	const u32 texelsPerThreadGroupY = kThreadGroupSizeY * kLoopCountY;
@@ -175,7 +177,7 @@ Vector2I EyeAdaptHistogramMat::GetThreadGroupCount(const SPtr<Texture>& target)
 	return threadGroupCount;
 }
 
-Vector2 EyeAdaptHistogramMat::GetHistogramScaleOffset(const AutoExposureSettings& settings)
+Vector2 EyeAdaptHistogramMaterial::GetHistogramScaleOffset(const AutoExposureSettings& settings)
 {
 	float diff = settings.HistogramLog2Max - settings.HistogramLog2Min;
 	float scale = 1.0f / diff;
@@ -207,7 +209,7 @@ void EyeAdaptHistogramReduceMat::Prepare(const SPtr<Texture>& sceneColor, const 
 
 	mEyeAdaptationTex.Set(eyeAdaptationTex);
 
-	Vector2I threadGroupCount = EyeAdaptHistogramMat::GetThreadGroupCount(sceneColor);
+	Vector2I threadGroupCount = EyeAdaptHistogramMaterial::GetThreadGroupCount(sceneColor);
 	u32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
 	gEyeAdaptHistogramReduceParamDef.gThreadGroupCount.Set(mParamBuffer, numHistograms);
@@ -222,7 +224,7 @@ void EyeAdaptHistogramReduceMat::Execute(GpuCommandBuffer& commandBuffer, const 
 
 	Bind(commandBuffer);
 
-	Area2 drawUV(0.0f, 0.0f, (float)EyeAdaptHistogramMat::kHistogramNumTexels, 2.0f);
+	Area2 drawUV(0.0f, 0.0f, (float)EyeAdaptHistogramMaterial::kHistogramNumTexels, 2.0f);
 	GetRendererUtility().DrawScreenQuad(commandBuffer, drawUV);
 
 	commandBuffer.EndRenderPass();
@@ -230,7 +232,7 @@ void EyeAdaptHistogramReduceMat::Execute(GpuCommandBuffer& commandBuffer, const 
 
 PooledRenderTextureCreateInformation EyeAdaptHistogramReduceMat::GetOutputDesc()
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, EyeAdaptHistogramMat::kHistogramNumTexels, 2, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, EyeAdaptHistogramMaterial::kHistogramNumTexels, 2, TU_RENDERTARGET);
 }
 
 EyeAdaptationParamDef gEyeAdaptationParamDef;
@@ -245,8 +247,8 @@ void EyeAdaptationMat::Initialize()
 
 void EyeAdaptationMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	defines.Set("THREADGROUP_SIZE_X", EyeAdaptHistogramMat::kThreadGroupSizeX);
-	defines.Set("THREADGROUP_SIZE_Y", EyeAdaptHistogramMat::kThreadGroupSizeY);
+	defines.Set("THREADGROUP_SIZE_X", EyeAdaptHistogramMaterial::kThreadGroupSizeX);
+	defines.Set("THREADGROUP_SIZE_Y", EyeAdaptHistogramMaterial::kThreadGroupSizeY);
 }
 
 void EyeAdaptationMat::Prepare(const SPtr<Texture>& reducedHistogram, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
@@ -275,7 +277,7 @@ PooledRenderTextureCreateInformation EyeAdaptationMat::GetOutputDesc()
 
 void EyeAdaptationMat::PopulateParams(const SPtr<GpuBuffer>& paramBuffer, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 {
-	Vector2 histogramScaleAndOffset = EyeAdaptHistogramMat::GetHistogramScaleOffset(settings);
+	Vector2 histogramScaleAndOffset = EyeAdaptHistogramMaterial::GetHistogramScaleOffset(settings);
 
 	Vector4 eyeAdaptationParams[3];
 	eyeAdaptationParams[0].X = histogramScaleAndOffset.X;

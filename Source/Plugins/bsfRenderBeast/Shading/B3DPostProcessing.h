@@ -59,21 +59,21 @@ namespace b3d
 			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(EyeAdaptHistogramParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(EyeAdaptHistogramUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4I, gPixelOffsetAndSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gHistogramParams)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gThreadGroupCount)
 		B3D_UNIFORM_BUFFER_END
 
-		extern EyeAdaptHistogramParamDef gEyeAdaptHistogramParamDef;
+		extern EyeAdaptHistogramUniformDefinition gEyeAdaptHistogramUniformDefinition;
 
 		/** Shader that creates a luminance histogram used for eye adaptation. */
-		class EyeAdaptHistogramMat : public RendererMaterial<EyeAdaptHistogramMat>
+		class EyeAdaptHistogramMaterial : public RendererMaterial<EyeAdaptHistogramMaterial>
 		{
-			RMAT_DEF_CUSTOMIZED("PPEyeAdaptHistogram.bsl");
+			RMAT_DEF_CUSTOMIZED("PPEyeAdaptHistogram.bsl")
 
 		public:
-			EyeAdaptHistogramMat() = default;
+			EyeAdaptHistogramMaterial() = default;
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
@@ -97,9 +97,9 @@ namespace b3d
 			static const u32 kHistogramNumTexels = (kThreadGroupSizeX * kThreadGroupSizeY) / 4;
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mSceneColor;
-			GpuParameterStorageTexture mOutputTex;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mSceneColorParameter;
+			GpuParameterStorageTexture mOutputTextureParameter;
 
 			static const u32 kLoopCountX = 8;
 			static const u32 kLoopCountY = 8;
