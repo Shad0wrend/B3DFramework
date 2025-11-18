@@ -233,7 +233,7 @@ namespace b3d
 			GpuParameterSampledTexture mPreviousFrameTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(CreateTonemapLUTParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(CreateTonemapLUTUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(Vector4, gTonemapParams, 2)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gGammaAdjustment)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gGammaCorrectionType)
@@ -243,22 +243,22 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(Vector3, gOffset)
 		B3D_UNIFORM_BUFFER_END
 
-		extern CreateTonemapLUTParamDef gCreateTonemapLUTParamDef;
+		extern CreateTonemapLUTUniformDefinition gCreateTonemapLUTUniformDefinition;
 
-		B3D_UNIFORM_BUFFER_BEGIN(WhiteBalanceParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(WhiteBalanceUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gWhiteTemp)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gWhiteOffset)
 		B3D_UNIFORM_BUFFER_END
 
-		extern WhiteBalanceParamDef gWhiteBalanceParamDef;
+		extern WhiteBalanceUniformDefinition gWhiteBalanceUniformDefinition;
 
 		/** Shader that creates a 2D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma correction. Uses a vertex/fragment pipeline. */
-		class CreateTonemap2DLUTMat : public RendererMaterial<CreateTonemap2DLUTMat>
+		class CreateTonemap2DLUTMaterial : public RendererMaterial<CreateTonemap2DLUTMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("PPCreateTonemap2DLUT.bsl")
 
 		public:
-			CreateTonemap2DLUTMat() = default;
+			CreateTonemap2DLUTMaterial() = default;
 			void Initialize() override;
 
 			/** Prepares GPU parameters for rendering. Must be called before Execute(). */
@@ -270,27 +270,27 @@ namespace b3d
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			PooledRenderTextureCreateInformation GetOutputDesc() const;
 
-			/** Populates a parameter block buffer of CreateTonemapLUTParamDef type using the provided settings. */
-			static void PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer);
+			/** Populates a uniform buffer of CreateTonemapLUTUniformDefinition type using the provided settings. */
+			static void PopulateTonemappingUniformBuffer(const RenderSettings& settings, const GpuBufferSuballocation& uniformBuffer);
 
-			/** Populates a parameter block buffer of WhiteBalanceParamDef type using the provided settings. */
-			static void PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer);
+			/** Populates a uniform buffer of WhiteBalanceUniformDefinition type using the provided settings. */
+			static void PopulateWhiteBalanceUniformBuffer(const RenderSettings& settings, const GpuBufferSuballocation& uniformBuffer);
 
 			/** Size of a single dimension in the color lookup table. */
 			static const u32 kLutSize = 32;
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			SPtr<GpuBuffer> mWhiteBalanceParamBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterUniformBuffer mWhiteBalanceUniformBufferParameter;
 		};
 
 		/** Shader that creates a 3D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma correction. Uses a compute pipeline. */
-		class CreateTonemap3DLUTMat : public RendererMaterial<CreateTonemap3DLUTMat>
+		class CreateTonemap3DLUTMaterial : public RendererMaterial<CreateTonemap3DLUTMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("PPCreateTonemap3DLUT.bsl");
 
 		public:
-			CreateTonemap3DLUTMat() = default;
+			CreateTonemap3DLUTMaterial() = default;
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters, generating a 3D LUT using a compute shader. */
@@ -300,10 +300,9 @@ namespace b3d
 			PooledRenderTextureCreateInformation GetOutputDesc() const;
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			SPtr<GpuBuffer> mWhiteBalanceParamBuffer;
-
-			GpuParameterStorageTexture mOutputTex;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterUniformBuffer mWhiteBalanceUniformBufferParameter;
+			GpuParameterStorageTexture mOutputTextureParameter;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(TonemappingParamDef)

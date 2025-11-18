@@ -2066,7 +2066,7 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 			{
 				if(volumeLUT)
 				{
-					CreateTonemap3DLUTMat* createLUT = CreateTonemap3DLUTMat::Get();
+					CreateTonemap3DLUTMaterial* createLUT = CreateTonemap3DLUTMaterial::Get();
 					if(mTonemapLUT == nullptr)
 						mTonemapLUT = GetGpuResourcePool().Get(createLUT->GetOutputDesc());
 
@@ -2074,7 +2074,7 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 				}
 				else
 				{
-					CreateTonemap2DLUTMat* createLUT = CreateTonemap2DLUTMat::Get();
+					CreateTonemap2DLUTMaterial* createLUT = CreateTonemap2DLUTMaterial::Get();
 					if(mTonemapLUT == nullptr)
 						mTonemapLUT = GetGpuResourcePool().Get(createLUT->GetOutputDesc());
 
