@@ -305,7 +305,7 @@ namespace b3d
 			GpuParameterStorageTexture mOutputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(TonemappingParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(TonemappingUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gRawGamma)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gManualExposureScale)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gTexSize)
@@ -313,10 +313,10 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(int, gNumSamples)
 		B3D_UNIFORM_BUFFER_END
 
-		extern TonemappingParamDef gTonemappingParamDef;
+		extern TonemappingUniformDefinition gTonemappingUniformDefinition;
 
 		/** Shader that applies tonemapping and converts a HDR image into a LDR image. */
-		class TonemappingMat : public RendererMaterial<TonemappingMat>
+		class TonemappingMaterial : public RendererMaterial<TonemappingMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("PPTonemapping.bsl");
 
@@ -336,7 +336,7 @@ namespace b3d
 			}
 
 		public:
-			TonemappingMat() = default;
+			TonemappingMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -360,15 +360,14 @@ namespace b3d
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output);
 
 			/** Returns the material variation matching the provided parameters. */
-			static TonemappingMat* GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
+			static TonemappingMaterial* GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-
-			GpuParameterSampledTexture mInputTex;
-			GpuParameterSampledTexture mBloomTex;
-			GpuParameterSampledTexture mColorLUT;
-			GpuParameterSampledTexture mEyeAdaptationTex;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
+			GpuParameterSampledTexture mBloomTextureParameter;
+			GpuParameterSampledTexture mColorLUTParameter;
+			GpuParameterSampledTexture mEyeAdaptationTextureParameter;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(BloomClipParamDef)

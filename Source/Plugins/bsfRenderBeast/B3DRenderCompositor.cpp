@@ -2101,7 +2101,7 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 	if(gammaOnly)
 		mTonemapLUT = nullptr;
 
-	TonemappingMat* tonemapping = TonemappingMat::GetVariation(volumeLUT, gammaOnly, autoExposure, msaa);
+	TonemappingMaterial* tonemapping = TonemappingMaterial::GetVariation(volumeLUT, gammaOnly, autoExposure, msaa);
 
 	SPtr<RenderTexture> ppOutput;
 	SPtr<Texture> ppLastFrame;

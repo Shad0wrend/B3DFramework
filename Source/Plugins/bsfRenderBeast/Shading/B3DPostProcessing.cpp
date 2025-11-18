@@ -520,43 +520,45 @@ PooledRenderTextureCreateInformation CreateTonemap3DLUTMaterial::GetOutputDesc()
 	return PooledRenderTextureCreateInformation::Create3D(PF_RGBA8, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, TU_LOADSTORE);
 }
 
-TonemappingParamDef gTonemappingParamDef;
+TonemappingUniformDefinition gTonemappingUniformDefinition;
 
-void TonemappingMat::Initialize()
+void TonemappingMaterial::Initialize()
 {
-	mParamBuffer = gTonemappingParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
-	mGPUParameters->GetSampledTextureParameter("gEyeAdaptationTex", mEyeAdaptationTex);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTex);
-	mGPUParameters->GetSampledTextureParameter("gBloomTex", mBloomTex);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGPUParameters->GetSampledTextureParameter("gEyeAdaptationTex", mEyeAdaptationTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gBloomTex", mBloomTextureParameter);
 
 	if(!mVariationParameters.GetBool("GAMMA_ONLY"))
-		mGPUParameters->GetSampledTextureParameter("gColorLUT", mColorLUT);
+		mGPUParameters->GetSampledTextureParameter("gColorLUT", mColorLUTParameter);
 }
 
-void TonemappingMat::InitDefinesInternal(ShaderDefines& defines)
+void TonemappingMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("LUT_SIZE", CreateTonemap2DLUTMaterial::kLutSize);
 }
 
-void TonemappingMat::Prepare(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const RenderSettings& settings)
+void TonemappingMaterial::Prepare(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const RenderSettings& settings)
 {
 	const TextureProperties& texProps = sceneColor->GetProperties();
 
-	gTonemappingParamDef.gRawGamma.Set(mParamBuffer, 1.0f / settings.Gamma);
-	gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::RaiseToPower(2.0f, settings.ExposureScale));
-	gTonemappingParamDef.gTexSize.Set(mParamBuffer, Vector2((float)texProps.Width, (float)texProps.Height));
-	gTonemappingParamDef.gBloomTint.Set(mParamBuffer, settings.Bloom.Tint);
-	gTonemappingParamDef.gNumSamples.Set(mParamBuffer, texProps.SampleCount);
+	GpuBufferSuballocation uniformBuffer = gTonemappingUniformDefinition.AllocateTransient();
 
-	mInputTex.Set(sceneColor);
-	mColorLUT.Set(colorLUT);
-	mEyeAdaptationTex.Set(eyeAdaptation);
-	mBloomTex.Set(bloom != nullptr ? bloom : Texture::kBlack);
+	gTonemappingUniformDefinition.gRawGamma.Set(uniformBuffer, 1.0f / settings.Gamma);
+	gTonemappingUniformDefinition.gManualExposureScale.Set(uniformBuffer, Math::RaiseToPower(2.0f, settings.ExposureScale));
+	gTonemappingUniformDefinition.gTexSize.Set(uniformBuffer, Vector2((float)texProps.Width, (float)texProps.Height));
+	gTonemappingUniformDefinition.gBloomTint.Set(uniformBuffer, settings.Bloom.Tint);
+	gTonemappingUniformDefinition.gNumSamples.Set(uniformBuffer, texProps.SampleCount);
+
+	mUniformBufferParameter.Set(uniformBuffer);
+
+	mInputTextureParameter.Set(sceneColor);
+	mColorLUTParameter.Set(colorLUT);
+	mEyeAdaptationTextureParameter.Set(eyeAdaptation);
+	mBloomTextureParameter.Set(bloom != nullptr ? bloom : Texture::kBlack);
 }
 
-void TonemappingMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
+void TonemappingMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -569,7 +571,7 @@ void TonemappingMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderT
 	commandBuffer.EndRenderPass();
 }
 
-TonemappingMat* TonemappingMat::GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA)
+TonemappingMaterial* TonemappingMaterial::GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA)
 {
 	if(volumeLUT)
 	{
