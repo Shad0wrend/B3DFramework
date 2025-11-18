@@ -522,7 +522,7 @@ static TOptional<GpuUniformBufferInformation> ParseSPIRVCrossUniformBuffer(spirv
 
 	GpuUniformBufferInformation uniformBufferInformation;
 	uniformBufferInformation.Name = resource.name;
-	uniformBufferInformation.BlockSize = Math::CeilToMultiple(bufferSize / 4u, 4u); // Round to multiple of 16 bytes
+	uniformBufferInformation.Size = Math::CeilToMultiple(bufferSize / 4u, 4u); // Round to multiple of 16 bytes
 	uniformBufferInformation.IsShareable = true;
 	uniformBufferInformation.Slot = compiler.get_decoration(resource.id, spv::DecorationBinding);
 	uniformBufferInformation.Set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);

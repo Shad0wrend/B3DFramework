@@ -7,12 +7,12 @@ using namespace b3d;
 
 namespace b3d { namespace render
 {
-GpuDataParameterBlock::~GpuDataParameterBlock()
+GpuUniformBuffer::~GpuUniformBuffer()
 {
-	GpuDataParameterBlockManager::UnregisterBlock(this);
+	GpuUniformBufferManager::UnregisterBuffer(this);
 }
 
-GpuDataParameterBlockManager::GpuDataParameterBlockManager()
+GpuUniformBufferManager::GpuUniformBufferManager()
 {
 	for(auto& entry : GetToInitializeList())
 		entry->Initialize();
@@ -20,18 +20,18 @@ GpuDataParameterBlockManager::GpuDataParameterBlockManager()
 	GetToInitializeList().clear();
 }
 
-void GpuDataParameterBlockManager::RegisterBlock(GpuDataParameterBlock* parameterBlock)
+void GpuUniformBufferManager::RegisterBuffer(GpuUniformBuffer* buffer)
 {
 	if(IsStarted())
-		parameterBlock->Initialize();
+		buffer->Initialize();
 	else
-		GetToInitializeList().push_back(parameterBlock);
+		GetToInitializeList().Add(buffer);
 }
 
-void GpuDataParameterBlockManager::UnregisterBlock(GpuDataParameterBlock* parameterBlock)
+void GpuUniformBufferManager::UnregisterBuffer(GpuUniformBuffer* buffer)
 {
-	auto found = std::find(GetToInitializeList().begin(), GetToInitializeList().end(), parameterBlock);
-	if(found != GetToInitializeList().end())
-		GetToInitializeList().erase(found);
+	auto found = std::find(GetToInitializeList().Begin(), GetToInitializeList().End(), buffer);
+	if(found != GetToInitializeList().End())
+		GetToInitializeList().Erase(found);
 }
 }}

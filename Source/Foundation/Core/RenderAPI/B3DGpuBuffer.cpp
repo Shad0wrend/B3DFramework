@@ -346,6 +346,16 @@ namespace b3d::render
 		allocator.Free(syncPacket->BufferData);
 	}
 
+	void GpuBufferSuballocation::Write(const void* data, u32 size) const
+	{
+		B3D_ASSERT(IsValid());
+		B3D_ASSERT(size <= GetSize());
+
+		void* const bufferMemory = mBuffer->Lock(mSuballocationOffset, size, GBL_WRITE_ONLY);
+		memcpy(bufferMemory, data, size);
+		mBuffer->Unlock();
+	}
+
 	SPtr<GpuBuffer> GpuBufferUtility::CreateStaging(const SPtr<GpuBuffer>& buffer, bool readable)
 	{
 		if(!B3D_ENSURE(buffer != nullptr))

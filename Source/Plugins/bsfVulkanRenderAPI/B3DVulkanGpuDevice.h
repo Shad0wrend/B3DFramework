@@ -75,7 +75,7 @@ namespace b3d
 			SPtr<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize) override;
 
 			void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) override;
-			GpuUniformBufferInformation GenerateUniformBlockInformation(const String& name, Vector<GpuUniformBufferMemberInformation>& inOutUniforms) override;
+			GpuUniformBufferInformation GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms) override;
 			float ConvertTimestampToMilliseconds(u64 timestamp) override;
 
 			/** @} */

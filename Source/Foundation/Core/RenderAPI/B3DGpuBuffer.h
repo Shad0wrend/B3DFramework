@@ -496,6 +496,55 @@ namespace b3d::render
 	using GpuBufferWriteFlags = Flags<GpuBufferWriteFlag>;
 	B3D_FLAGS_OPERATORS(GpuBufferWriteFlag);
 
+	/** Represents a single sub-allocation within a specific GpuBuffer. */
+	class B3D_EXPORT GpuBufferSuballocation
+	{
+	public:
+		/** Default constructor - creates invalid suballocation. */
+		GpuBufferSuballocation() = default;
+
+		/** Gets the underlying GPU buffer. */
+		const SPtr<GpuBuffer>& GetBuffer() const { return mBuffer; }
+
+		/** Gets the zero-based suballocation index within the buffer. */
+		u32 GetSuballocationIndex() const { return mSuballocationIndex; }
+
+		/** Gets the byte offset from the start of the buffer for this suballocation. */
+		u32 GetSuballocationOffset() const { return mSuballocationOffset; }
+
+		/**
+		 * Gets the size of this suballocation in bytes (aligned).
+		 * May be larger than requested size during buffer creation due to alignment requirements.
+		 */
+		u32 GetSize() const
+		{
+			return mBuffer ? mBuffer->GetSuballocationSize() : 0;
+		}
+
+		/** Checks if this is a valid suballocation. */
+		bool IsValid() const { return mBuffer != nullptr; }
+
+		/**
+		 * Writes data to this suballocation. Note the underlying buffer must be CPU readable. Caller must flush the buffer after completing
+		 * all writes and before using it on the GPU.
+		 *
+		 * @param data  Data to write
+		 * @param size  Size of data in bytes (must be <= GetSize())
+		 */
+		void Write(const void* data, u32 size) const;
+
+	private:
+		friend class GpuBufferPool;
+
+		GpuBufferSuballocation(const SPtr<GpuBuffer>& buffer, u32 suballocationIndex, u32 suballocationOffset)
+			: mBuffer(buffer), mSuballocationIndex(suballocationIndex), mSuballocationOffset(suballocationOffset) {}
+
+	private:
+		SPtr<GpuBuffer> mBuffer;
+		u32 mSuballocationIndex = 0;
+		u32 mSuballocationOffset = 0;
+	};
+
 	/** Provides various utility operations on GpuBuffer. */
 	struct B3D_EXPORT GpuBufferUtility
 	{

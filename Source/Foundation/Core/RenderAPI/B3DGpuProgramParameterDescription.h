@@ -59,7 +59,7 @@ namespace b3d
 		String Name;
 		u32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
 		u32 Set; /** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		u32 BlockSize; /**< In multiples of 4 bytes. */
+		u32 Size; /**< In multiples of 4 bytes. */
 		bool IsShareable; /** True for blocks that can be shared between different GPU pipeline stages. */
 	};
 

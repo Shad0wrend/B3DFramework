@@ -309,7 +309,7 @@ namespace b3d
 				size += B3DRTTIWrite(data.Name, stream);
 				size += B3DRTTIWrite(data.Set, stream);
 				size += B3DRTTIWrite(data.Slot, stream);
-				size += B3DRTTIWrite(data.BlockSize, stream);
+				size += B3DRTTIWrite(data.Size, stream);
 				size += B3DRTTIWrite(data.IsShareable, stream);
 
 				return size; });
@@ -327,7 +327,7 @@ namespace b3d
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Set, stream);
 			B3DRTTIRead(data.Slot, stream);
-			B3DRTTIRead(data.BlockSize, stream);
+			B3DRTTIRead(data.Size, stream);
 			B3DRTTIRead(data.IsShareable, stream);
 
 			return size;
@@ -336,7 +336,7 @@ namespace b3d
 		static BitLength GetSize(const GpuUniformBufferInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(kVersion) + B3DRTTISize(data.Name) + B3DRTTISize(data.Set) +
-				B3DRTTISize(data.Slot) + B3DRTTISize(data.BlockSize) + B3DRTTISize(data.IsShareable);
+				B3DRTTISize(data.Slot) + B3DRTTISize(data.Size) + B3DRTTISize(data.IsShareable);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;

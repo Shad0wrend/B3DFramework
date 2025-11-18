@@ -623,41 +623,41 @@ void VulkanGpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& out
 	output[2][3] = (output[2][3] + output[3][3]) / 2;
 }
 
-GpuUniformBufferInformation VulkanGpuDevice::GenerateUniformBlockInformation(const String& name, Vector<GpuUniformBufferMemberInformation>& inOutUniforms)
+GpuUniformBufferInformation VulkanGpuDevice::GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms)
 {
-	GpuUniformBufferInformation block;
-	block.BlockSize = 0;
-	block.IsShareable = true;
-	block.Name = name;
-	block.Slot = 0;
-	block.Set = 0;
+	GpuUniformBufferInformation uniformBufferInformation;
+	uniformBufferInformation.Size = 0;
+	uniformBufferInformation.IsShareable = true;
+	uniformBufferInformation.Name = name;
+	uniformBufferInformation.Slot = 0;
+	uniformBufferInformation.Set = 0;
 
-	for(auto& param : inOutUniforms)
+	for(auto& member : inOutUniforms)
 	{
 		u32 size;
-		if(param.Type == GPDT_STRUCT)
+		if(member.Type == GPDT_STRUCT)
 		{
 			// Structs are always aligned and rounded up to vec4
-			size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
-			block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
+			size = Math::DivideAndRoundUp(member.ElementSize, 16U) * 4;
+			uniformBufferInformation.Size = Math::DivideAndRoundUp(uniformBufferInformation.Size, 4U) * 4;
 		}
 		else
-			size = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(param.Type, param.ArraySize, block.BlockSize);
+			size = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(member.Type, member.ArraySize, uniformBufferInformation.Size);
 
-		param.ElementSize = size;
-		param.ArrayElementStride = size;
-		param.CpuOffset = block.BlockSize;
-		param.GpuOffset = 0;
-		block.BlockSize += size * param.ArraySize;
-		param.ParentUniformBufferSlot = 0;
-		param.ParentUniformBufferSet = 0;
+		member.ElementSize = size;
+		member.ArrayElementStride = size;
+		member.CpuOffset = uniformBufferInformation.Size;
+		member.GpuOffset = 0;
+		uniformBufferInformation.Size += size * member.ArraySize;
+		member.ParentUniformBufferSlot = 0;
+		member.ParentUniformBufferSet = 0;
 	}
 
-	// Constant buffer size must always be a multiple of 16
-	if(block.BlockSize % 4 != 0)
-		block.BlockSize += (4 - (block.BlockSize % 4));
+	// Uniform buffer size must always be a multiple of 16
+	if(uniformBufferInformation.Size % 4 != 0)
+		uniformBufferInformation.Size += (4 - (uniformBufferInformation.Size % 4));
 
-	return block;
+	return uniformBufferInformation;
 }
 
 float VulkanGpuDevice::ConvertTimestampToMilliseconds(u64 timestamp)

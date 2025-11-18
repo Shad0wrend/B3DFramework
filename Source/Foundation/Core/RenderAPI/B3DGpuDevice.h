@@ -435,18 +435,17 @@ namespace b3d
 		virtual void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) = 0;
 
 		/**
-		 * Generates a uniform block description and calculates per-uniform offsets for the provided gpu data
-		 * parameters. The offsets are render API specific and correspond to std140 layout for OpenGL, and the default
-		 * layout in DirectX.
+		 * Generates a uniform buffer description and calculates per-uniform offsets for the provided buffer members.
+		 * The generated offsets are GPU backend specific.
 		 *
 		 * @param	name			Name to assign the uniform block.
-		 * @param	inOutUniforms	List of uniforms in the uniform block. Only name, type and array size fields need to be
+		 * @param	inOutUniforms	List of members in the uniform buffer. Only name, type and array size fields need to be
 		 * 							populated, the rest will be populated when the method returns. If a parameter is a struct
 		 * 							then the elementSize field needs to be populated with the size of the struct in bytes.
-		 * @return					Descriptor for the parameter block holding the provided parameters as laid out by the
-		 *							default render API layout.
+		 * @return					Descriptor for the uniform buffer holding the provided parameters as laid out by the
+		 *							active GPU backend's layout.
 		 */
-		virtual GpuUniformBufferInformation GenerateUniformBlockInformation(const String& name, Vector<GpuUniformBufferMemberInformation>& inOutUniforms) = 0;
+		virtual GpuUniformBufferInformation GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms) = 0;
 
 		/**
 		 * Converts a GPU timestamp into a time in milliseconds.

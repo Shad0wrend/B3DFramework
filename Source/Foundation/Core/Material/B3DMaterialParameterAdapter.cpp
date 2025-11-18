@@ -250,7 +250,7 @@ Vector<ShaderUniformBuffer> DetermineValidShareableUniformBuffers(const Vector<S
 		ShaderUniformBuffer shaderBlockDesc;
 		shaderBlockDesc.External = false;
 		shaderBlockDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWriteCachingOnCPU;
-		shaderBlockDesc.Size = curBlock.BlockSize * sizeof(u32);
+		shaderBlockDesc.Size = curBlock.Size * sizeof(u32);
 		shaderBlockDesc.Name = entry.first;
 		shaderBlockDesc.Set = curBlock.Set;
 		shaderBlockDesc.Slot = curBlock.Slot;
@@ -567,7 +567,7 @@ TMaterialParameterAdapter<IsRenderProxy>::TMaterialParameterAdapter(const SPtr<V
 				u32 globalBlockIdx = (u32)-1;
 				if(!uniformBufferInformation.IsShareable)
 				{
-					UniformBufferPointerType newParamBlockBuffer = CreateGpuBuffer<UniformBufferType>(GpuBufferCreateInformation::CreateUniform(uniformBufferInformation.BlockSize * sizeof(u32)));
+					UniformBufferPointerType newParamBlockBuffer = CreateGpuBuffer<UniformBufferType>(GpuBufferCreateInformation::CreateUniform(uniformBufferInformation.Size * sizeof(u32)));
 
 					globalBlockIdx = (u32)mUniformBuffers.size();
 

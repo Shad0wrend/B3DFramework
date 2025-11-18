@@ -70,6 +70,9 @@ namespace b3d
 		 */
 		static constexpr int kSyncBufferCount = 2;
 
+		/** Maximum number of frames that can be simultaneously in-flight. One submitted on the GPU, one on the submit thread waiting submission, and one the render thread is recording. */
+		static constexpr u32 kMaximumFramesInFlight = 3;
+
 	private:
 		bool mRenderThreadStarted = false;
 		Scheduler mScheduler;

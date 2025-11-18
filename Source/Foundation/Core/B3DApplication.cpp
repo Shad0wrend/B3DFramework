@@ -130,7 +130,7 @@ Application::~Application()
 	Input::ShutDown();
 
 	FontAtlasRenderer::ShutDown();
-	render::GpuDataParameterBlockManager::ShutDown();
+	render::GpuUniformBufferManager::ShutDown();
 	StringTableManager::ShutDown();
 	Resources::ShutDown();
 	PackageManager::ShutDown();
@@ -224,7 +224,7 @@ void Application::OnStartUp()
 
 	mPrimaryWindow = RenderWindow::Create(mStartUpDesc.PrimaryWindow, nullptr);
 
-	render::GpuDataParameterBlockManager::StartUp();
+	render::GpuUniformBufferManager::StartUp();
 	FontAtlasRenderer::StartUp();
 	Input::StartUp();
 	RendererManager::StartUp();

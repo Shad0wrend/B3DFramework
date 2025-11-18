@@ -4,6 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "RenderAPI/B3DGpuParam.h"
+#include "RenderAPI/B3DGpuBufferPool.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Resources/B3DIResourceListener.h"
 #include "Math/B3DMatrixNxM.h"
@@ -589,6 +590,55 @@ namespace b3d
 		{
 		public:
 			virtual ~GpuParameters() = default;
+
+			// Bring base class overloads into scope
+			using TGpuParameters::SetUniformBuffer;
+			using TGpuParameters::TrySetUniformBuffer;
+
+			/**
+			 * Sets uniform buffer using a pool suballocation (by set/slot).
+			 *
+			 * @param set               Descriptor set index
+			 * @param slot              Binding slot within set
+			 * @param suballocation     Pool suballocation handle
+			 * @param arrayIndex        Array index if binding is an array
+			 * @return                  True if successful, false if binding not found
+			 */
+			bool SetUniformBuffer(u32 set, u32 slot, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
+			{
+				B3D_ASSERT(suballocation.IsValid());
+				return TGpuParameters::SetUniformBuffer(set, slot, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+			}
+
+			/**
+			 * Sets uniform buffer using a pool suballocation (by name).
+			 *
+			 * @param name              Parameter name
+			 * @param suballocation     Pool suballocation handle
+			 * @param arrayIndex        Array index if binding is an array
+			 * @return                  True if successful, false if binding not found
+			 */
+			bool SetUniformBuffer(const StringView& name, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
+			{
+				B3D_ASSERT(suballocation.IsValid());
+				return TGpuParameters::SetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+			}
+
+			/**
+			 * Tries to set uniform buffer using a pool suballocation (no warnings).
+			 *
+			 * @param name              Parameter name
+			 * @param suballocation     Pool suballocation handle
+			 * @param arrayIndex        Array index if binding is an array
+			 * @return                  True if successful, false if binding not found
+			 */
+			bool TrySetUniformBuffer(const StringView& name, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
+			{
+				if (!suballocation.IsValid())
+					return false;
+
+				return TGpuParameters::TrySetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+			}
 
 		protected:
 			friend class b3d::GpuParameters;
