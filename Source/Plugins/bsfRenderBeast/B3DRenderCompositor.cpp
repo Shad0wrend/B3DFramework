@@ -2730,7 +2730,7 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 	else if(quality > 2)
 		numDownsampleLevels = 2;
 
-	SSAODownsampleMat* downsample = SSAODownsampleMat::Get();
+	SSAODownsampleMaterial* downsample = SSAODownsampleMaterial::Get();
 
 	SPtr<PooledRenderTexture> setupTex0;
 	if(numDownsampleLevels > 0)
@@ -2777,7 +2777,7 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		PooledRenderTextureCreateInformation desc = PooledRenderTextureCreateInformation::Create2D(PF_R8, downsampledSize.X, downsampledSize.Y, TU_RENDERTARGET);
 		downAOTex1 = resPool.Get(desc);
 
-		SSAOMat* ssaoMat = SSAOMat::GetVariation(false, false, quality);
+		SSAOMaterial* ssaoMat = SSAOMaterial::GetVariation(false, false, quality);
 		ssaoMat->Prepare(inputs.View, textures, downAOTex1->RenderTexture, settings);
 		ssaoMat->Execute(commandBuffer, downAOTex1->RenderTexture);
 
@@ -2800,7 +2800,7 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		downAOTex0 = resPool.Get(desc);
 
 		bool upsample = numDownsampleLevels > 1;
-		SSAOMat* ssaoMat = SSAOMat::GetVariation(upsample, false, quality);
+		SSAOMaterial* ssaoMat = SSAOMaterial::GetVariation(upsample, false, quality);
 		ssaoMat->Prepare(inputs.View, textures, downAOTex0->RenderTexture, settings);
 		ssaoMat->Execute(commandBuffer, downAOTex0->RenderTexture);
 
@@ -2820,7 +2820,7 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 			textures.AoDownsampled = downAOTex0->Texture;
 
 		bool upsample = numDownsampleLevels > 0;
-		SSAOMat* ssaoMat = SSAOMat::GetVariation(upsample, true, quality);
+		SSAOMaterial* ssaoMat = SSAOMaterial::GetVariation(upsample, true, quality);
 		ssaoMat->Prepare(inputs.View, textures, mPooledOutput->RenderTexture, settings);
 		ssaoMat->Execute(commandBuffer, mPooledOutput->RenderTexture);
 	}
@@ -2843,8 +2843,8 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		PooledRenderTextureCreateInformation desc = PooledRenderTextureCreateInformation::Create2D(PF_R8, rtProps.Width, rtProps.Height, TU_RENDERTARGET);
 		SPtr<PooledRenderTexture> blurIntermediateTex = resPool.Get(desc);
 
-		SSAOBlurMat* blurHorz = SSAOBlurMat::GetVariation(true);
-		SSAOBlurMat* blurVert = SSAOBlurMat::GetVariation(false);
+		SSAOBlurMaterial* blurHorz = SSAOBlurMaterial::GetVariation(true);
+		SSAOBlurMaterial* blurVert = SSAOBlurMaterial::GetVariation(false);
 
 		blurHorz->Prepare(inputs.View, mPooledOutput->Texture, sceneDepth, kDepthRange);
 		blurHorz->Execute(commandBuffer, blurIntermediateTex->RenderTexture);

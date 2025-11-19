@@ -1734,16 +1734,14 @@ void FXAAMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTar
 	commandBuffer.EndRenderPass();
 }
 
-SSAOParamDef gSSAOParamDef;
+SSAOUniformDefinition gSSAOUniformDefinition;
 
-void SSAOMat::Initialize()
+void SSAOMaterial::Initialize()
 {
 	bool isFinal = mVariationParameters.GetBool("FINAL_AO");
 	bool mixWithUpsampled = mVariationParameters.GetBool("MIX_WITH_UPSAMPLED");
 
-	mParamBuffer = gSSAOParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
 
 	if(isFinal)
 	{
@@ -1797,7 +1795,7 @@ void SSAOMat::Initialize()
 	SetSamplerState(mGPUParameters, "gRandomSamp", "gRandomTex", randomSampState);
 }
 
-void SSAOMat::Prepare(const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
+void SSAOMaterial::Prepare(const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
 {
 	// Scale that can be used to adjust how quickly does AO radius increase with downsampled AO. This yields a very
 	// small AO radius at highest level, and very large radius at lowest level
@@ -1832,14 +1830,16 @@ void SSAOMat::Prepare(const RendererView& view, const SSAOTextureInputs& texture
 	fadeMultiplyAdd.X = 1.0f / settings.FadeRange;
 	fadeMultiplyAdd.Y = -settings.FadeDistance / settings.FadeRange;
 
-	gSSAOParamDef.gSampleRadius.Set(mParamBuffer, radius);
-	gSSAOParamDef.gCotHalfFOV.Set(mParamBuffer, cotHalfFOV);
-	gSSAOParamDef.gTanHalfFOV.Set(mParamBuffer, tanHalfFOV);
-	gSSAOParamDef.gWorldSpaceRadiusMask.Set(mParamBuffer, 1.0f);
-	gSSAOParamDef.gBias.Set(mParamBuffer, (settings.Bias * viewScale) / 1000.0f);
-	gSSAOParamDef.gFadeMultiplyAdd.Set(mParamBuffer, fadeMultiplyAdd);
-	gSSAOParamDef.gPower.Set(mParamBuffer, settings.Power);
-	gSSAOParamDef.gIntensity.Set(mParamBuffer, settings.Intensity);
+	GpuBufferSuballocation uniformBuffer = gSSAOUniformDefinition.AllocateTransient();
+
+	gSSAOUniformDefinition.gSampleRadius.Set(uniformBuffer, radius);
+	gSSAOUniformDefinition.gCotHalfFOV.Set(uniformBuffer, cotHalfFOV);
+	gSSAOUniformDefinition.gTanHalfFOV.Set(uniformBuffer, tanHalfFOV);
+	gSSAOUniformDefinition.gWorldSpaceRadiusMask.Set(uniformBuffer, 1.0f);
+	gSSAOUniformDefinition.gBias.Set(uniformBuffer, (settings.Bias * viewScale) / 1000.0f);
+	gSSAOUniformDefinition.gFadeMultiplyAdd.Set(uniformBuffer, fadeMultiplyAdd);
+	gSSAOUniformDefinition.gPower.Set(uniformBuffer, settings.Power);
+	gSSAOUniformDefinition.gIntensity.Set(uniformBuffer, settings.Intensity);
 
 	bool upsample = mVariationParameters.GetBool("MIX_WITH_UPSAMPLED");
 	if(upsample)
@@ -1850,7 +1850,7 @@ void SSAOMat::Prepare(const RendererView& view, const SSAOTextureInputs& texture
 		downsampledPixelSize.X = 1.0f / props.Width;
 		downsampledPixelSize.Y = 1.0f / props.Height;
 
-		gSSAOParamDef.gDownsampledPixelSize.Set(mParamBuffer, downsampledPixelSize);
+		gSSAOUniformDefinition.gDownsampledPixelSize.Set(uniformBuffer, downsampledPixelSize);
 	}
 
 	// Generate a scale which we need to use in order to achieve tiling
@@ -1863,7 +1863,9 @@ void SSAOMat::Prepare(const RendererView& view, const SSAOTextureInputs& texture
 	u32 scaleHeight = (rtProps.Height + rndHeight - 1) / rndHeight;
 
 	Vector2 randomTileScale((float)scaleWidth, (float)scaleHeight);
-	gSSAOParamDef.gRandomTileScale.Set(mParamBuffer, randomTileScale);
+	gSSAOUniformDefinition.gRandomTileScale.Set(uniformBuffer, randomTileScale);
+
+	mUniformBufferParameter.Set(uniformBuffer);
 
 	mSetupAOTexture.Set(textures.AoSetup);
 
@@ -1883,7 +1885,7 @@ void SSAOMat::Prepare(const RendererView& view, const SSAOTextureInputs& texture
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void SSAOMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
+void SSAOMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -1896,7 +1898,7 @@ void SSAOMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>
 	commandBuffer.EndRenderPass();
 }
 
-SSAOMat* SSAOMat::GetVariation(bool upsample, bool finalPass, int quality)
+SSAOMaterial* SSAOMaterial::GetVariation(bool upsample, bool finalPass, int quality)
 {
 #define PICK_MATERIAL(QUALITY)                                \
 	if(upsample)                                              \
@@ -1927,13 +1929,11 @@ SSAOMat* SSAOMat::GetVariation(bool upsample, bool finalPass, int quality)
 #undef PICK_MATERIAL
 }
 
-SSAODownsampleParamDef gSSAODownsampleParamDef;
+SSAODownsampleUniformDefinition gSSAODownsampleUniformDefinition;
 
-void SSAODownsampleMat::Initialize()
+void SSAODownsampleMaterial::Initialize()
 {
-	mParamBuffer = gSSAODownsampleParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
 	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTexture);
 	mGPUParameters->GetSampledTextureParameter("gNormalsTex", mNormalsTexture);
 
@@ -1956,7 +1956,7 @@ void SSAODownsampleMat::Initialize()
 	}
 }
 
-void SSAODownsampleMat::Prepare(const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<RenderTexture>& destination, float depthRange)
+void SSAODownsampleMaterial::Prepare(const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<RenderTexture>& destination, float depthRange)
 {
 	const RendererViewProperties& viewProps = view.GetProperties();
 	const RenderTargetProperties& rtProps = destination->GetProperties();
@@ -1967,9 +1967,11 @@ void SSAODownsampleMat::Prepare(const RendererView& view, const SPtr<Texture>& d
 
 	float scale = viewProps.Target.ViewRect.Width / (float)rtProps.Width;
 
-	gSSAODownsampleParamDef.gPixelSize.Set(mParamBuffer, pixelSize);
-	gSSAODownsampleParamDef.gInvDepthThreshold.Set(mParamBuffer, (1.0f / depthRange) / scale);
+	GpuBufferSuballocation uniformBuffer = gSSAODownsampleUniformDefinition.AllocateTransient();
+	gSSAODownsampleUniformDefinition.gPixelSize.Set(uniformBuffer, pixelSize);
+	gSSAODownsampleUniformDefinition.gInvDepthThreshold.Set(uniformBuffer, (1.0f / depthRange) / scale);
 
+	mUniformBufferParameter.Set(uniformBuffer);
 	mDepthTexture.Set(depth);
 	mNormalsTexture.Set(normals);
 
@@ -1977,7 +1979,7 @@ void SSAODownsampleMat::Prepare(const RendererView& view, const SPtr<Texture>& d
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void SSAODownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
+void SSAODownsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -1990,13 +1992,11 @@ void SSAODownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Rend
 	commandBuffer.EndRenderPass();
 }
 
-SSAOBlurParamDef gSSAOBlurParamDef;
+SSAOBlurUniformDefinition gSSAOBlurUniformDefinition;
 
-void SSAOBlurMat::Initialize()
+void SSAOBlurMaterial::Initialize()
 {
-	mParamBuffer = gSSAOBlurParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
 	mGPUParameters->GetSampledTextureParameter("gInputTex", mAOTexture);
 	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTexture);
 
@@ -2018,7 +2018,7 @@ void SSAOBlurMat::Initialize()
 	}
 }
 
-void SSAOBlurMat::Prepare(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth, float depthRange)
+void SSAOBlurMaterial::Prepare(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth, float depthRange)
 {
 	const RendererViewProperties& viewProps = view.GetProperties();
 	const TextureProperties& texProps = ao->GetProperties();
@@ -2035,10 +2035,12 @@ void SSAOBlurMat::Prepare(const RendererView& view, const SPtr<Texture>& ao, con
 
 	float scale = viewProps.Target.ViewRect.Width / (float)texProps.Width;
 
-	gSSAOBlurParamDef.gPixelSize.Set(mParamBuffer, pixelSize);
-	gSSAOBlurParamDef.gPixelOffset.Set(mParamBuffer, pixelOffset);
-	gSSAOBlurParamDef.gInvDepthThreshold.Set(mParamBuffer, (1.0f / depthRange) / scale);
+	GpuBufferSuballocation uniformBuffer = gSSAOBlurUniformDefinition.AllocateTransient();
+	gSSAOBlurUniformDefinition.gPixelSize.Set(uniformBuffer, pixelSize);
+	gSSAOBlurUniformDefinition.gPixelOffset.Set(uniformBuffer, pixelOffset);
+	gSSAOBlurUniformDefinition.gInvDepthThreshold.Set(uniformBuffer, (1.0f / depthRange) / scale);
 
+	mUniformBufferParameter.Set(uniformBuffer);
 	mAOTexture.Set(ao);
 	mDepthTexture.Set(sceneDepth);
 
@@ -2046,7 +2048,7 @@ void SSAOBlurMat::Prepare(const RendererView& view, const SPtr<Texture>& ao, con
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void SSAOBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
+void SSAOBlurMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -2059,7 +2061,7 @@ void SSAOBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderText
 	commandBuffer.EndRenderPass();
 }
 
-SSAOBlurMat* SSAOBlurMat::GetVariation(bool horizontal)
+SSAOBlurMaterial* SSAOBlurMaterial::GetVariation(bool horizontal)
 {
 	if(horizontal)
 		return Get(GetVariation<true>());

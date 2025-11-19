@@ -1197,7 +1197,7 @@ namespace b3d
 			GpuParameterSampledTexture mInputTexture;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(SSAOParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(SSAOUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gSampleRadius)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gWorldSpaceRadiusMask)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gTanHalfFOV)
@@ -1210,7 +1210,7 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(float, gIntensity)
 		B3D_UNIFORM_BUFFER_END
 
-		extern SSAOParamDef gSSAOParamDef;
+		extern SSAOUniformDefinition gSSAOUniformDefinition;
 
 		/** Textures used as input when calculating SSAO. */
 		struct SSAOTextureInputs
@@ -1232,7 +1232,7 @@ namespace b3d
 		};
 
 		/** Shader that computes ambient occlusion using screen based methods. */
-		class SSAOMat : public RendererMaterial<SSAOMat>
+		class SSAOMaterial : public RendererMaterial<SSAOMaterial>
 		{
 			RMAT_DEF("PPSSAO.bsl");
 
@@ -1249,7 +1249,7 @@ namespace b3d
 			}
 
 		public:
-			SSAOMat() = default;
+			SSAOMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -1281,10 +1281,10 @@ namespace b3d
 			 * @param	quality		Integer in range [0, 4] that controls the quality of SSAO sampling. Higher numbers yield
 			 *						better quality at the cost of performance.
 			 */
-			static SSAOMat* GetVariation(bool upsample, bool finalPass, int quality);
+			static SSAOMaterial* GetVariation(bool upsample, bool finalPass, int quality);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
 			GpuParameterSampledTexture mDepthTexture;
 			GpuParameterSampledTexture mNormalsTexture;
 			GpuParameterSampledTexture mDownsampledAOTexture;
@@ -1292,23 +1292,23 @@ namespace b3d
 			GpuParameterSampledTexture mRandomTexture;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(SSAODownsampleParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(SSAODownsampleUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gPixelSize)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gInvDepthThreshold)
 		B3D_UNIFORM_BUFFER_END
 
-		extern SSAODownsampleParamDef gSSAODownsampleParamDef;
+		extern SSAODownsampleUniformDefinition gSSAODownsampleUniformDefinition;
 
 		/**
 		 * Shader that downsamples the depth & normal buffer and stores their results in a common texture, to be consumed
-		 * by SSAOMat.
+		 * by SSAOMaterial.
 		 */
-		class SSAODownsampleMat : public RendererMaterial<SSAODownsampleMat>
+		class SSAODownsampleMaterial : public RendererMaterial<SSAODownsampleMaterial>
 		{
 			RMAT_DEF("PPSSAODownsample.bsl");
 
 		public:
-			SSAODownsampleMat() = default;
+			SSAODownsampleMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -1331,23 +1331,23 @@ namespace b3d
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
 			GpuParameterSampledTexture mDepthTexture;
 			GpuParameterSampledTexture mNormalsTexture;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(SSAOBlurParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(SSAOBlurUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gPixelSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gPixelOffset)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gInvDepthThreshold)
 		B3D_UNIFORM_BUFFER_END
 
-		extern SSAOBlurParamDef gSSAOBlurParamDef;
+		extern SSAOBlurUniformDefinition gSSAOBlurUniformDefinition;
 
 		/**
 		 * Shaders that blurs the ambient occlusion output, in order to hide the noise caused by the randomization texture.
 		 */
-		class SSAOBlurMat : public RendererMaterial<SSAOBlurMat>
+		class SSAOBlurMaterial : public RendererMaterial<SSAOBlurMaterial>
 		{
 			RMAT_DEF("PPSSAOBlur.bsl");
 
@@ -1362,7 +1362,7 @@ namespace b3d
 			}
 
 		public:
-			SSAOBlurMat() = default;
+			SSAOBlurMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -1384,10 +1384,10 @@ namespace b3d
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& destination);
 
 			/** Returns the material variation matching the provided parameters. */
-			static SSAOBlurMat* GetVariation(bool horizontal);
+			static SSAOBlurMaterial* GetVariation(bool horizontal);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
 			GpuParameterSampledTexture mAOTexture;
 			GpuParameterSampledTexture mDepthTexture;
 		};
