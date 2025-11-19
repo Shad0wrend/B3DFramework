@@ -2333,9 +2333,9 @@ void RCNodeGaussianDOF::Render(const RenderCompositorNodeInputs& inputs)
 	if(!enabled)
 		return;
 
-	GaussianDOFSeparateMat* separateMat = GaussianDOFSeparateMat::GetVariation(near, far);
-	GaussianDOFCombineMat* combineMat = GaussianDOFCombineMat::GetVariation(near, far);
-	GaussianBlurMat* blurMat = GaussianBlurMat::Get();
+	GaussianDOFSeparateMaterial* separateMat = GaussianDOFSeparateMaterial::GetVariation(near, far);
+	GaussianDOFCombineMaterial* combineMat = GaussianDOFCombineMaterial::GetVariation(near, far);
+	GaussianBlurMaterial* blurMat = GaussianBlurMaterial::Get();
 
 	SPtr<RenderTexture> ppOutput;
 	SPtr<Texture> ppLastFrame;
@@ -3021,7 +3021,7 @@ void RCNodeBloom::Render(const RenderCompositorNodeInputs& inputs)
 	const u32 quality = Math::Clamp(settings.Bloom.Quality, 0U, 3U);
 	constexpr u32 NUM_STEPS_PER_QUALITY[] = { 3, 4, 5, 6 };
 
-	GaussianBlurMat* filterMat = GaussianBlurMat::GetVariation(true);
+	GaussianBlurMaterial* filterMat = GaussianBlurMaterial::GetVariation(true);
 
 	const bool autoExposure = settings.EnableHdr && settings.EnableAutoExposure;
 	BloomClipMat* clipMat = BloomClipMat::GetVariation(autoExposure);
@@ -3122,7 +3122,7 @@ void RCNodeScreenSpaceLensFlare::Render(const RenderCompositorNodeInputs& inputs
 	lensFlareMat->Execute(commandBuffer, featureTex->RenderTexture);
 
 	// Blur
-	GaussianBlurMat* filterMat = GaussianBlurMat::Get();
+	GaussianBlurMaterial* filterMat = GaussianBlurMaterial::Get();
 	filterMat->Execute(commandBuffer, featureTex->Texture, lensFlareSettings.FilterSize, downsampledTex->RenderTexture, Color::kWhite);
 
 	auto* sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[1]);

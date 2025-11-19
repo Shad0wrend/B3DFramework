@@ -854,40 +854,42 @@ void FilmGrainMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Rend
 	commandBuffer.EndRenderPass();
 }
 
-GaussianBlurParamDef gGaussianBlurParamDef;
+GaussianBlurUniformDefinition gGaussianBlurUniformDefinition;
 
-void GaussianBlurMat::Initialize()
+void GaussianBlurMaterial::Initialize()
 {
-	mParamBuffer = gGaussianBlurParamDef.CreateBuffer();
 	mIsAdditive = mVariationParameters.GetBool("ADDITIVE");
 
-	mGPUParameters->SetUniformBuffer("GaussianBlurParams", mParamBuffer);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTexture);
+	mGPUParameters->GetUniformBufferParameter("GaussianBlurParams", mUniformBufferParameter);
+	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 
 	if(mIsAdditive)
-		mGPUParameters->GetSampledTextureParameter("gAdditiveTex", mAdditiveTexture);
+		mGPUParameters->GetSampledTextureParameter("gAdditiveTex", mAdditiveTextureParameter);
 }
 
-void GaussianBlurMat::InitDefinesInternal(ShaderDefines& defines)
+void GaussianBlurMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("MAX_NUM_SAMPLES", kMaxBlurSamples);
 }
 
-void GaussianBlurMat::PrepareDirection(Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint, const SPtr<Texture>& additive)
+void GaussianBlurMaterial::PrepareDirection(Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint, const SPtr<Texture>& additive)
 {
-	PopulateBuffer(mParamBuffer, direction, source, filterSize, tint);
-	mInputTexture.Set(source);
+	GpuBufferSuballocation uniformBuffer = gGaussianBlurUniformDefinition.AllocateTransient();
+	PopulateUniformBuffer(uniformBuffer, direction, source, filterSize, tint);
+	mUniformBufferParameter.Set(uniformBuffer);
+
+	mInputTextureParameter.Set(source);
 
 	if(mIsAdditive)
 	{
 		if(additive)
-			mAdditiveTexture.Set(additive);
+			mAdditiveTextureParameter.Set(additive);
 		else
-			mAdditiveTexture.Set(Texture::kBlack);
+			mAdditiveTextureParameter.Set(Texture::kBlack);
 	}
 }
 
-void GaussianBlurMat::ExecutePass(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
+void GaussianBlurMaterial::ExecutePass(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -900,7 +902,7 @@ void GaussianBlurMat::ExecutePass(GpuCommandBuffer& commandBuffer, const SPtr<Re
 	commandBuffer.EndRenderPass();
 }
 
-void GaussianBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint, const SPtr<Texture>& additive)
+void GaussianBlurMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint, const SPtr<Texture>& additive)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -919,7 +921,7 @@ void GaussianBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Textur
 	ExecutePass(commandBuffer, destination);
 }
 
-u32 GaussianBlurMat::CalcStdDistribution(float filterRadius, std::array<float, kMaxBlurSamples>& weights, std::array<float, kMaxBlurSamples>& offsets)
+u32 GaussianBlurMaterial::CalcStdDistribution(float filterRadius, std::array<float, kMaxBlurSamples>& weights, std::array<float, kMaxBlurSamples>& offsets)
 {
 	filterRadius = Math::Clamp(filterRadius, 0.00001f, (float)(kMaxBlurSamples - 1));
 	i32 intFilterRadius = std::min(Math::CeilToInt(filterRadius), kMaxBlurSamples - 1);
@@ -989,7 +991,7 @@ u32 GaussianBlurMat::CalcStdDistribution(float filterRadius, std::array<float, k
 	return numSamples;
 }
 
-float GaussianBlurMat::CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir)
+float GaussianBlurMaterial::CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir)
 {
 	scale = Math::Clamp01(scale);
 
@@ -1003,7 +1005,7 @@ float GaussianBlurMat::CalcKernelRadius(const SPtr<Texture>& source, float scale
 	return std::min(length * scale / 2, (float)kMaxBlurSamples - 1);
 }
 
-void GaussianBlurMat::PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint)
+void GaussianBlurMaterial::PopulateUniformBuffer(const GpuBufferSuballocation& uniformBuffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint)
 {
 	const TextureProperties& srcProps = source->GetProperties();
 
@@ -1020,7 +1022,7 @@ void GaussianBlurMat::PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction di
 		Vector4 weight(tint.R, tint.G, tint.B, tint.A);
 		weight *= sampleWeights[i];
 
-		gGaussianBlurParamDef.gSampleWeights.Set(buffer, weight, i);
+		gGaussianBlurUniformDefinition.gSampleWeights.Set(uniformBuffer, weight, i);
 	}
 
 	u32 axis0 = direction == DirHorizontal ? 0 : 1;
@@ -1045,13 +1047,13 @@ void GaussianBlurMat::PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction di
 			offset[axis1 + 2] = 0.0f;
 		}
 
-		gGaussianBlurParamDef.gSampleOffsets.Set(buffer, offset, i);
+		gGaussianBlurUniformDefinition.gSampleOffsets.Set(uniformBuffer, offset, i);
 	}
 
-	gGaussianBlurParamDef.gNumSamples.Set(buffer, numSamples);
+	gGaussianBlurUniformDefinition.gNumSamples.Set(uniformBuffer, numSamples);
 }
 
-GaussianBlurMat* GaussianBlurMat::GetVariation(bool additive)
+GaussianBlurMaterial* GaussianBlurMaterial::GetVariation(bool additive)
 {
 	if(additive)
 		return Get(GetVariation<true>());
@@ -1059,15 +1061,13 @@ GaussianBlurMat* GaussianBlurMat::GetVariation(bool additive)
 	return Get(GetVariation<false>());
 }
 
-GaussianDOFParamDef gGaussianDOFParamDef;
+GaussianDOFUniformDefinition gGaussianDOFUniformDefinition;
 
-void GaussianDOFSeparateMat::Initialize()
+void GaussianDOFSeparateMaterial::Initialize()
 {
-	mParamBuffer = gGaussianDOFParamDef.CreateBuffer();
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
-	mGPUParameters->GetSampledTextureParameter("gColorTex", mColorTexture);
-	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTexture);
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGPUParameters->GetSampledTextureParameter("gColorTex", mColorTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTextureParameter);
 
 	SamplerStateCreateInformation samplerStateCreateInformation;
 	samplerStateCreateInformation.MinFilter = FO_POINT;
@@ -1081,25 +1081,29 @@ void GaussianDOFSeparateMat::Initialize()
 	SetSamplerState(mGPUParameters, "gColorSamp", "gColorTex", samplerState);
 }
 
-void GaussianDOFSeparateMat::Prepare(const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
+void GaussianDOFSeparateMaterial::Prepare(const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
 {
 	const TextureProperties& srcProps = color->GetProperties();
 	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 
-	gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
-	gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
-	gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
-	gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.NearTransitionRange);
-	gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.FarTransitionRange);
+	GpuBufferSuballocation uniformBuffer = gGaussianDOFUniformDefinition.AllocateTransient();
 
-	mColorTexture.Set(color);
-	mDepthTexture.Set(depth);
+	gGaussianDOFUniformDefinition.gHalfPixelOffset.Set(uniformBuffer, invTexSize * 0.5f);
+	gGaussianDOFUniformDefinition.gNearBlurPlane.Set(uniformBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
+	gGaussianDOFUniformDefinition.gFarBlurPlane.Set(uniformBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
+	gGaussianDOFUniformDefinition.gInvNearBlurRange.Set(uniformBuffer, 1.0f / settings.NearTransitionRange);
+	gGaussianDOFUniformDefinition.gInvFarBlurRange.Set(uniformBuffer, 1.0f / settings.FarTransitionRange);
+
+	mUniformBufferParameter.Set(uniformBuffer);
+
+	mColorTextureParameter.Set(color);
+	mDepthTextureParameter.Set(depth);
 
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void GaussianDOFSeparateMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& color)
+void GaussianDOFSeparateMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& color)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -1137,7 +1141,7 @@ void GaussianDOFSeparateMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr
 	commandBuffer.EndRenderPass();
 }
 
-SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(u32 idx)
+SPtr<PooledRenderTexture> GaussianDOFSeparateMaterial::GetOutput(u32 idx)
 {
 	if(idx == 0)
 		return mOutput0;
@@ -1147,13 +1151,13 @@ SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(u32 idx)
 	return nullptr;
 }
 
-void GaussianDOFSeparateMat::Release()
+void GaussianDOFSeparateMaterial::Release()
 {
 	mOutput0 = nullptr;
 	mOutput1 = nullptr;
 }
 
-GaussianDOFSeparateMat* GaussianDOFSeparateMat::GetVariation(bool near, bool far)
+GaussianDOFSeparateMaterial* GaussianDOFSeparateMaterial::GetVariation(bool near, bool far)
 {
 	if(near)
 	{
@@ -1166,43 +1170,45 @@ GaussianDOFSeparateMat* GaussianDOFSeparateMat::GetVariation(bool near, bool far
 		return Get(GetVariation<false, true>());
 }
 
-void GaussianDOFCombineMat::Initialize()
+void GaussianDOFCombineMaterial::Initialize()
 {
-	mParamBuffer = gGaussianDOFParamDef.CreateBuffer();
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
 
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
-
-	mGPUParameters->GetSampledTextureParameter("gFocusedTex", mFocusedTexture);
-	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTexture);
+	mGPUParameters->GetSampledTextureParameter("gFocusedTex", mFocusedTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gDepthTex", mDepthTextureParameter);
 
 	if(mGPUParameters->HasSampledTexture("gNearTex"))
-		mGPUParameters->GetSampledTextureParameter("gNearTex", mNearTexture);
+		mGPUParameters->GetSampledTextureParameter("gNearTex", mNearTextureParameter);
 
 	if(mGPUParameters->HasSampledTexture("gFarTex"))
-		mGPUParameters->GetSampledTextureParameter("gFarTex", mFarTexture);
+		mGPUParameters->GetSampledTextureParameter("gFarTex", mFarTextureParameter);
 }
 
-void GaussianDOFCombineMat::Prepare(const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
+void GaussianDOFCombineMaterial::Prepare(const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
 {
 	const TextureProperties& srcProps = focused->GetProperties();
 	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 
-	gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
-	gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
-	gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
-	gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.NearTransitionRange);
-	gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.FarTransitionRange);
+	GpuBufferSuballocation uniformBuffer = gGaussianDOFUniformDefinition.AllocateTransient();
 
-	mFocusedTexture.Set(focused);
-	mNearTexture.Set(near);
-	mFarTexture.Set(far);
-	mDepthTexture.Set(depth);
+	gGaussianDOFUniformDefinition.gHalfPixelOffset.Set(uniformBuffer, invTexSize * 0.5f);
+	gGaussianDOFUniformDefinition.gNearBlurPlane.Set(uniformBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
+	gGaussianDOFUniformDefinition.gFarBlurPlane.Set(uniformBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
+	gGaussianDOFUniformDefinition.gInvNearBlurRange.Set(uniformBuffer, 1.0f / settings.NearTransitionRange);
+	gGaussianDOFUniformDefinition.gInvFarBlurRange.Set(uniformBuffer, 1.0f / settings.FarTransitionRange);
+
+	mUniformBufferParameter.Set(uniformBuffer);
+
+	mFocusedTextureParameter.Set(focused);
+	mNearTextureParameter.Set(near);
+	mFarTextureParameter.Set(far);
+	mDepthTextureParameter.Set(depth);
 
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void GaussianDOFCombineMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
+void GaussianDOFCombineMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& output)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -1215,7 +1221,7 @@ void GaussianDOFCombineMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	commandBuffer.EndRenderPass();
 }
 
-GaussianDOFCombineMat* GaussianDOFCombineMat::GetVariation(bool near, bool far)
+GaussianDOFCombineMaterial* GaussianDOFCombineMaterial::GetVariation(bool near, bool far)
 {
 	if(near)
 	{

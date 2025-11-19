@@ -599,16 +599,16 @@ namespace b3d
 
 		const int kMaxBlurSamples = 128;
 
-		B3D_UNIFORM_BUFFER_BEGIN(GaussianBlurParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(GaussianBlurUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(Vector4, gSampleOffsets, (kMaxBlurSamples + 1) / 2)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(Vector4, gSampleWeights, kMaxBlurSamples)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gNumSamples)
 		B3D_UNIFORM_BUFFER_END
 
-		extern GaussianBlurParamDef gGaussianBlurParamDef;
+		extern GaussianBlurUniformDefinition gGaussianBlurUniformDefinition;
 
 		/** Shader that performs Gaussian blur filtering on the provided texture. */
-		class GaussianBlurMat : public RendererMaterial<GaussianBlurMat>
+		class GaussianBlurMaterial : public RendererMaterial<GaussianBlurMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("PPGaussianBlur.bsl");
 
@@ -632,7 +632,7 @@ namespace b3d
 				DirHorizontal
 			};
 
-			GaussianBlurMat() = default;
+			GaussianBlurMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -673,15 +673,15 @@ namespace b3d
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint = Color::kWhite, const SPtr<Texture>& additive = nullptr);
 
 			/**
-			 * Populates the provided parameter buffer with parameters required for a shader including gaussian blur.
+			 * Populates the provided uniform buffer with parameters required for a shader including gaussian blur.
 			 *
-			 * @param[in]	buffer		Buffer to write the parameters to. Must be created using @p GaussianBlurParamDef.
-			 * @param[in]	direction	Direction in which to perform the separable blur.
-			 * @param[in]	source		Source texture that needs to be blurred.
-			 * @param[in]	filterSize	Size of the blurring filter, in percent of the source texture. In range [0, 1].
-			 * @param[in]	tint		Optional tint to apply all filtered pixels.
+			 * @param[in]	uniformBuffer	Buffer to write the parameters to. Must be created using @p GaussianBlurUniformDefinition.
+			 * @param[in]	direction		Direction in which to perform the separable blur.
+			 * @param[in]	source			Source texture that needs to be blurred.
+			 * @param[in]	filterSize		Size of the blurring filter, in percent of the source texture. In range [0, 1].
+			 * @param[in]	tint			Optional tint to apply all filtered pixels.
 			 */
-			static void PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint = Color::kWhite);
+			static void PopulateUniformBuffer(const GpuBufferSuballocation& uniformBuffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint = Color::kWhite);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -689,7 +689,7 @@ namespace b3d
 			 * @param[in]	additive	If true the returned variation will support and additional input texture that will be
 			 *							added on top of the filtered output.
 			 */
-			static GaussianBlurMat* GetVariation(bool additive);
+			static GaussianBlurMaterial* GetVariation(bool additive);
 
 		private:
 			/** Calculates weights and offsets for the standard distribution of the specified filter size. */
@@ -698,13 +698,13 @@ namespace b3d
 			/** Calculates the radius of the blur kernel depending on the source texture size and provided scale. */
 			static float CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir);
 
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
-			GpuParameterSampledTexture mAdditiveTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
+			GpuParameterSampledTexture mAdditiveTextureParameter;
 			bool mIsAdditive = false;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(GaussianDOFParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(GaussianDOFUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gNearBlurPlane)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gFarBlurPlane)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gInvNearBlurRange)
@@ -712,7 +712,7 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gHalfPixelOffset)
 		B3D_UNIFORM_BUFFER_END
 
-		extern GaussianDOFParamDef sGaussianDOFParamDef;
+		extern GaussianDOFUniformDefinition gGaussianDOFUniformDefinition;
 
 		/**
 		 * Shader that masks pixels from the input color texture into one or two output textures. The masking is done by
@@ -720,7 +720,7 @@ namespace b3d
 		 * can pick whether to output pixels just on the near plane, just on the far plane, or both.
 		 *
 		 */
-		class GaussianDOFSeparateMat : public RendererMaterial<GaussianDOFSeparateMat>
+		class GaussianDOFSeparateMaterial : public RendererMaterial<GaussianDOFSeparateMaterial>
 		{
 			RMAT_DEF("PPGaussianDOFSeparate.bsl");
 
@@ -736,7 +736,7 @@ namespace b3d
 			}
 
 		public:
-			GaussianDOFSeparateMat() = default;
+			GaussianDOFSeparateMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -776,12 +776,12 @@ namespace b3d
 			 * @param	far		If true, far plane pixels are output to the first render target. If @p near is also enabled, the
 			 *					pixels are output to the second render target instead.
 			 */
-			static GaussianDOFSeparateMat* GetVariation(bool near, bool far);
+			static GaussianDOFSeparateMaterial* GetVariation(bool near, bool far);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mColorTexture;
-			GpuParameterSampledTexture mDepthTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mColorTextureParameter;
+			GpuParameterSampledTexture mDepthTextureParameter;
 
 			SPtr<PooledRenderTexture> mOutput0;
 			SPtr<PooledRenderTexture> mOutput1;
@@ -791,7 +791,7 @@ namespace b3d
 		 * Shader that combines pixels for near unfocused, focused and far unfocused planes, as calculated by
 		 * GaussianDOFSeparateMat. Outputs final depth-of-field filtered image.
 		 */
-		class GaussianDOFCombineMat : public RendererMaterial<GaussianDOFCombineMat>
+		class GaussianDOFCombineMaterial : public RendererMaterial<GaussianDOFCombineMaterial>
 		{
 			RMAT_DEF("PPGaussianDOFCombine.bsl");
 
@@ -809,7 +809,7 @@ namespace b3d
 			}
 
 		public:
-			GaussianDOFCombineMat() = default;
+			GaussianDOFCombineMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -842,14 +842,14 @@ namespace b3d
 			 * @param	far		If true, far plane pixels are read from the far plane texture, otherwise far plane is assumed not
 			 *					to exist.
 			 */
-			static GaussianDOFCombineMat* GetVariation(bool near, bool far);
+			static GaussianDOFCombineMaterial* GetVariation(bool near, bool far);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mFocusedTexture;
-			GpuParameterSampledTexture mNearTexture;
-			GpuParameterSampledTexture mFarTexture;
-			GpuParameterSampledTexture mDepthTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mFocusedTextureParameter;
+			GpuParameterSampledTexture mNearTextureParameter;
+			GpuParameterSampledTexture mFarTextureParameter;
+			GpuParameterSampledTexture mDepthTextureParameter;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(DepthOfFieldCommonParamDef)
