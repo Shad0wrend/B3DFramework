@@ -2265,24 +2265,21 @@ SSRTraceMaterial* SSRTraceMaterial::GetVariation(u32 quality, bool msaa, bool si
 #undef PICK_MATERIAL
 }
 
-TemporalResolveParamDef gTemporalResolveParamDef;
-TemporalFilteringParamDef gTemporalFilteringParamDef;
+TemporalResolveUniformDefinition gTemporalResolveUniformDefinition;
+TemporalFilteringUniformDefinition gTemporalFilteringUniformDefinition;
 
-void TemporalFilteringMat::Initialize()
+void TemporalFilteringMaterial::Initialize()
 {
-	mParamBuffer = gTemporalFilteringParamDef.CreateBuffer();
-	mTemporalParamBuffer = gTemporalResolveParamDef.CreateBuffer();
+	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGPUParameters->GetUniformBufferParameter("TemporalInput", mTemporalUniformBufferParameter);
 
-	mGPUParameters->GetSampledTextureParameter("gSceneDepth", mSceneDepthTexture);
-	mGPUParameters->GetSampledTextureParameter("gSceneColor", mSceneColorTexture);
-	mGPUParameters->GetSampledTextureParameter("gPrevColor", mPrevColorTexture);
+	mGPUParameters->GetSampledTextureParameter("gSceneDepth", mSceneDepthTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gSceneColor", mSceneColorTextureParameter);
+	mGPUParameters->GetSampledTextureParameter("gPrevColor", mPreviousColorTextureParameter);
 
 	mHasVelocityTexture = mVariationParameters.GetBool("PER_PIXEL_VELOCITY");
 	if(mHasVelocityTexture)
-		mGPUParameters->GetSampledTextureParameter("gVelocity", mVelocityTexture);
-
-	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
-	mGPUParameters->SetUniformBuffer("TemporalInput", mTemporalParamBuffer);
+		mGPUParameters->GetSampledTextureParameter("gVelocity", mVelocityTextureParameter);
 
 	SamplerStateInformation pointSampDesc;
 	pointSampDesc.MinFilter = FO_POINT;
@@ -2317,18 +2314,21 @@ void TemporalFilteringMat::Initialize()
 	}
 }
 
-void TemporalFilteringMat::Prepare(const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure)
+void TemporalFilteringMaterial::Prepare(const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure)
 {
+	GpuBufferSuballocation uniformBuffer = gTemporalFilteringUniformDefinition.AllocateTransient();
+	GpuBufferSuballocation temporalUniformBuffer = gTemporalResolveUniformDefinition.AllocateTransient();
+
 	SPtr<Texture> velocityTex = velocity;
 	if(!velocityTex)
 		velocityTex = Texture::kBlack;
 
-	mPrevColorTexture.Set(prevFrame);
-	mSceneColorTexture.Set(curFrame);
-	mSceneDepthTexture.Set(sceneDepth);
+	mPreviousColorTextureParameter.Set(prevFrame);
+	mSceneColorTextureParameter.Set(curFrame);
+	mSceneDepthTextureParameter.Set(sceneDepth);
 
 	if(mHasVelocityTexture)
-		mVelocityTexture.Set(velocityTex);
+		mVelocityTextureParameter.Set(velocityTex);
 
 	auto& colorProps = curFrame->GetProperties(); // Assuming prev and current frame are the same size
 	auto& depthProps = sceneDepth->GetProperties();
@@ -2343,10 +2343,10 @@ void TemporalFilteringMat::Prepare(const RendererView& view, const SPtr<Texture>
 		velocityPixelSize = Vector4(1.0f / velocityProps.Width, 1.0f / velocityProps.Height, (float)velocityProps.Width, (float)velocityProps.Height);
 	}
 
-	gTemporalFilteringParamDef.gSceneColorTexelSize.Set(mParamBuffer, colorPixelSize);
-	gTemporalFilteringParamDef.gSceneDepthTexelSize.Set(mParamBuffer, depthPixelSize);
-	gTemporalFilteringParamDef.gVelocityTexelSize.Set(mParamBuffer, velocityPixelSize);
-	gTemporalFilteringParamDef.gManualExposure.Set(mParamBuffer, 1.0f / exposure);
+	gTemporalFilteringUniformDefinition.gSceneColorTexelSize.Set(uniformBuffer, colorPixelSize);
+	gTemporalFilteringUniformDefinition.gSceneDepthTexelSize.Set(uniformBuffer, depthPixelSize);
+	gTemporalFilteringUniformDefinition.gVelocityTexelSize.Set(uniformBuffer, velocityPixelSize);
+	gTemporalFilteringUniformDefinition.gManualExposure.Set(uniformBuffer, 1.0f / exposure);
 
 	const GpuBackendConventions& gpuBackendConventions = mGpuDevice->GetCapabilities().Conventions;
 
@@ -2428,15 +2428,18 @@ void TemporalFilteringMat::Prepare(const RendererView& view, const SPtr<Texture>
 
 	for(u32 i = 0; i < 9; ++i)
 	{
-		gTemporalResolveParamDef.gSampleWeights.Set(mTemporalParamBuffer, sampleWeights[i] / totalWeights, i);
-		gTemporalResolveParamDef.gSampleWeightsLowpass.Set(mTemporalParamBuffer, sampleWeightsLowPass[i] / totalWeightsLowPass, i);
+		gTemporalResolveUniformDefinition.gSampleWeights.Set(temporalUniformBuffer, sampleWeights[i] / totalWeights, i);
+		gTemporalResolveUniformDefinition.gSampleWeightsLowpass.Set(temporalUniformBuffer, sampleWeightsLowPass[i] / totalWeightsLowPass, i);
 	}
+
+	mUniformBufferParameter.Set(uniformBuffer);
+	mTemporalUniformBufferParameter.Set(temporalUniformBuffer);
 
 	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 }
 
-void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<RenderTarget>& destination)
+void TemporalFilteringMaterial::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<RenderTarget>& destination)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -2458,7 +2461,7 @@ void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const Render
 	commandBuffer.EndRenderPass();
 }
 
-TemporalFilteringMat* TemporalFilteringMat::GetVariation(TemporalFilteringType type, bool velocity, bool msaa)
+TemporalFilteringMaterial* TemporalFilteringMaterial::GetVariation(TemporalFilteringType type, bool velocity, bool msaa)
 {
 	switch(type)
 	{

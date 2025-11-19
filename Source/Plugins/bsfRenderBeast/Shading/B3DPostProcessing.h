@@ -1527,23 +1527,23 @@ namespace b3d
 			GpuParameterSampledTexture mHiZTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(TemporalResolveParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(TemporalResolveUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(float, gSampleWeights, 9)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(float, gSampleWeightsLowpass, 9)
 		B3D_UNIFORM_BUFFER_END
 
-		extern TemporalResolveParamDef gTemporalResolveParamDef;
+		extern TemporalResolveUniformDefinition gTemporalResolveUniformDefinition;
 
-		B3D_UNIFORM_BUFFER_BEGIN(TemporalFilteringParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(TemporalFilteringUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gSceneDepthTexelSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gSceneColorTexelSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gVelocityTexelSize)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gManualExposure)
 		B3D_UNIFORM_BUFFER_END
 
-		extern TemporalFilteringParamDef gTemporalFilteringParamDef;
+		extern TemporalFilteringUniformDefinition gTemporalFilteringUniformDefinition;
 
-		/** Supported filter types by TemporalFilteringMat. */
+		/** Supported filter types by TemporalFilteringMaterial. */
 		enum class TemporalFilteringType
 		{
 			/** Temporal filter used for full screen anti-aliasing. */
@@ -1554,7 +1554,7 @@ namespace b3d
 		};
 
 		/** Shader used for combining multiple frames of information using a temporal filter, in order to yield better quality. */
-		class TemporalFilteringMat : public RendererMaterial<TemporalFilteringMat>
+		class TemporalFilteringMaterial : public RendererMaterial<TemporalFilteringMaterial>
 		{
 			RMAT_DEF("TemporalFiltering.bsl");
 
@@ -1573,7 +1573,7 @@ namespace b3d
 			}
 
 		public:
-			TemporalFilteringMat() = default;
+			TemporalFilteringMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -1601,22 +1601,22 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	type		Type of filter to use.
-			 * @param[in]	velocity	True if the filter will have access to a buffer containing per-pixel velocities.
-			 * @param[in]	msaa		True if the shader will operate on a multisampled surface. Note that previous
+			 * @param	type		Type of filter to use.
+			 * @param	velocity	True if the filter will have access to a buffer containing per-pixel velocities.
+			 * @param	msaa		True if the shader will operate on a multisampled surface. Note that previous
 			 *							and current frame color textures must be non-MSAA, regardless of this parameter.
 			 * @return					Requested variation of the material.
 			 */
-			static TemporalFilteringMat* GetVariation(TemporalFilteringType type, bool velocity, bool msaa);
+			static TemporalFilteringMaterial* GetVariation(TemporalFilteringType type, bool velocity, bool msaa);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			SPtr<GpuBuffer> mTemporalParamBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterUniformBuffer mTemporalUniformBufferParameter;
 
-			GpuParameterSampledTexture mSceneColorTexture;
-			GpuParameterSampledTexture mPrevColorTexture;
-			GpuParameterSampledTexture mSceneDepthTexture;
-			GpuParameterSampledTexture mVelocityTexture;
+			GpuParameterSampledTexture mSceneColorTextureParameter;
+			GpuParameterSampledTexture mPreviousColorTextureParameter;
+			GpuParameterSampledTexture mSceneDepthTextureParameter;
+			GpuParameterSampledTexture mVelocityTextureParameter;
 
 			bool mHasVelocityTexture = false;
 		};

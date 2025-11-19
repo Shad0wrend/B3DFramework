@@ -2251,8 +2251,8 @@ void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 
 		float exposure = inputs.View.GetCurrentExposure();
 
-		TemporalFilteringMat* temporalFilteringMat =
-			TemporalFilteringMat::GetVariation(TemporalFilteringType::FullScreenAA, true, viewProps.Target.NumSamples > 1);
+		TemporalFilteringMaterial* temporalFilteringMat =
+			TemporalFilteringMaterial::GetVariation(TemporalFilteringType::FullScreenAA, true, viewProps.Target.NumSamples > 1);
 		temporalFilteringMat->Prepare(inputs.View, mPrevFrame->Texture, sceneColor->Texture, velocityTex, sceneDepthNode->DepthTex->Texture, viewProps.TemporalJitter, exposure);
 		temporalFilteringMat->Execute(commandBuffer, inputs.View, mPooledOutput->RenderTexture);
 
@@ -2952,8 +2952,8 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		mPooledOutput = resPool.Get(PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET));
 
-		TemporalFilteringMat* temporalFilteringMat =
-			TemporalFilteringMat::GetVariation(TemporalFilteringType::SSR, false, viewProps.Target.NumSamples > 1);
+		TemporalFilteringMaterial* temporalFilteringMat =
+			TemporalFilteringMaterial::GetVariation(TemporalFilteringType::SSR, false, viewProps.Target.NumSamples > 1);
 		temporalFilteringMat->Prepare(inputs.View, mPrevFrame->Texture, traceOutput->Texture, nullptr, sceneDepthNode->DepthTex->Texture, Vector2::kZero, 1.0f);
 		temporalFilteringMat->Execute(commandBuffer, inputs.View, mPooledOutput->RenderTexture);
 
