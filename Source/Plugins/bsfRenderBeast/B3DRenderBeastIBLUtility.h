@@ -16,46 +16,46 @@ namespace b3d
 		 *  @{
 		 */
 
-		B3D_UNIFORM_BUFFER_BEGIN(ReflectionCubeDownsampleParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ReflectionCubeDownsampleUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gMipLevel)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ReflectionCubeDownsampleParamDef gReflectionCubeDownsampleParamDef;
+		extern ReflectionCubeDownsampleUniformDefinition gReflectionCubeDownsampleUniformDefinition;
 
 		/** Performs filtering on cubemap faces in order to prepare them for importance sampling. */
-		class ReflectionCubeDownsampleMat : public RendererMaterial<ReflectionCubeDownsampleMat>
+		class ReflectionCubeDownsampleMaterial : public RendererMaterial<ReflectionCubeDownsampleMaterial>
 		{
 			RMAT_DEF("ReflectionCubeDownsample.bsl")
 
 		public:
-			ReflectionCubeDownsampleMat() = default;
+			ReflectionCubeDownsampleMaterial() = default;
 			void Initialize() override;
 
 			/** Downsamples the provided texture face and outputs it to the provided target. */
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ReflectionCubeImportanceSampleParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ReflectionCubeImportanceSampleUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gMipLevel)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gNumMips)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gPrecomputedMipFactor)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ReflectionCubeImportanceSampleParamDef gReflectionCubeImportanceSampleParamDef;
+		extern ReflectionCubeImportanceSampleUniformDefinition gReflectionCubeImportanceSampleUniformDefinition;
 
 		/** Performs importance sampling on cubemap faces in order for make them suitable for specular evaluation. */
-		class ReflectionCubeImportanceSampleMat : public RendererMaterial<ReflectionCubeImportanceSampleMat>
+		class ReflectionCubeImportanceSampleMaterial : public RendererMaterial<ReflectionCubeImportanceSampleMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("ReflectionCubeImportanceSample.bsl")
 
 		public:
-			ReflectionCubeImportanceSampleMat() = default;
+			ReflectionCubeImportanceSampleMaterial() = default;
 			void Initialize() override;
 
 			/** Importance samples the provided texture face and outputs it to the provided target. */
@@ -64,8 +64,8 @@ namespace b3d
 		private:
 			static const u32 kNumSamples;
 
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
 		/** Vector representing spherical harmonic coefficients for 5 bands. */
@@ -110,16 +110,16 @@ namespace b3d
 			float Weight;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(IrradianceComputeSHParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(IrradianceComputeSHUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gFaceSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gDispatchSize)
 		B3D_UNIFORM_BUFFER_END
 
-		extern IrradianceComputeSHParamDef gIrradianceComputeSHParamDef;
+		extern IrradianceComputeSHUniformDefinition gIrradianceComputeSHUniformDefinition;
 
 		/** Computes spherical harmonic coefficients from a radiance cubemap. */
-		class IrradianceComputeSHMat : public RendererMaterial<IrradianceComputeSHMat>
+		class IrradianceComputeSHMaterial : public RendererMaterial<IrradianceComputeSHMaterial>
 		{
 			RMAT_DEF_CUSTOMIZED("IrradianceComputeSH.bsl")
 
@@ -134,13 +134,13 @@ namespace b3d
 			}
 
 		public:
-			IrradianceComputeSHMat() = default;
+			IrradianceComputeSHMaterial() = default;
 			void Initialize() override;
 
 			/**
 			 * Computes spherical harmonic coefficients from a radiance texture and outputs a buffer containing a list of
 			 * coefficient sets (one set of coefficients for each thread group). Coefficients must be reduced and normalized
-			 * by IrradianceReduceSHMat before use. Output buffer should be created by calling createOutputBuffer().
+			 * by IrradianceReduceSHMaterial before use. Output buffer should be created by calling createOutputBuffer().
 			 */
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, const SPtr<GpuBuffer>& output);
 
@@ -153,26 +153,26 @@ namespace b3d
 			 * @param order		SH order, which defines the number of coefficients and quality. Only values of 3 and 5 are
 			 *					supported.
 			 */
-			static IrradianceComputeSHMat* GetVariation(int order = 5);
+			static IrradianceComputeSHMaterial* GetVariation(int order = 5);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
-			GpuParameterStorageBuffer mOutputBuffer;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
+			GpuParameterStorageBuffer mOutputBufferParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(IrradianceReduceSHParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(IrradianceReduceSHUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gOutputIdx)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gNumEntries)
 		B3D_UNIFORM_BUFFER_END
 
-		extern IrradianceReduceSHParamDef gIrradianceReduceSHParamDef;
+		extern IrradianceReduceSHUniformDefinition gIrradianceReduceSHUniformDefinition;
 
 		/**
-		 * Sums spherical harmonic coefficients calculated by each thread group of IrradianceComputeSHMat and outputs a single
+		 * Sums spherical harmonic coefficients calculated by each thread group of IrradianceComputeSHMaterial and outputs a single
 		 * set of normalized coefficients.
 		 */
-		class IrradianceReduceSHMat : public RendererMaterial<IrradianceReduceSHMat>
+		class IrradianceReduceSHMaterial : public RendererMaterial<IrradianceReduceSHMaterial>
 		{
 			RMAT_DEF("IrradianceReduceSH.bsl")
 
@@ -187,11 +187,11 @@ namespace b3d
 			}
 
 		public:
-			IrradianceReduceSHMat() = default;
+			IrradianceReduceSHMaterial() = default;
 			void Initialize() override;
 
 			/**
-			 * Sums spherical harmonic coefficients calculated by each thread group of IrradianceComputeSHMat and outputs a
+			 * Sums spherical harmonic coefficients calculated by each thread group of IrradianceComputeSHMaterial and outputs a
 			 * single set of normalized coefficients. Output texture should be created by calling createOutputTexture(). The
 			 * value will be recorded at the @p outputIdx position in the texture.
 			 */
@@ -206,33 +206,33 @@ namespace b3d
 			 * @param order		SH order, which defines the number of coefficients and quality. Only values of 3 and 5 are
 			 *					supported.
 			 */
-			static IrradianceReduceSHMat* GetVariation(int order = 5);
+			static IrradianceReduceSHMaterial* GetVariation(int order = 5);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterStorageBuffer mInputBuffer;
-			GpuParameterStorageTexture mOutputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterStorageBuffer mInputBufferParameter;
+			GpuParameterStorageTexture mOutputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(IrradianceComputeSHFragParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(IrradianceComputeSHFragUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gFaceSize)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCoeffEntryIdx)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCoeffComponentIdx)
 		B3D_UNIFORM_BUFFER_END
 
-		extern IrradianceComputeSHFragParamDef gIrradianceComputeSHFragParamDef;
+		extern IrradianceComputeSHFragUniformDefinition gIrradianceComputeSHFragUniformDefinition;
 
 		/**
-		 * Computes spherical harmonic coefficients from a radiance cubemap. This is an alternative to IrradianceComputeSHMat
+		 * Computes spherical harmonic coefficients from a radiance cubemap. This is an alternative to IrradianceComputeSHMaterial
 		 * that does not require compute shader support.
 		 */
-		class IrradianceComputeSHFragMat : public RendererMaterial<IrradianceComputeSHFragMat>
+		class IrradianceComputeSHFragMaterial : public RendererMaterial<IrradianceComputeSHFragMaterial>
 		{
 			RMAT_DEF("IrradianceComputeSHFrag.bsl")
 
 		public:
-			IrradianceComputeSHFragMat() = default;
+			IrradianceComputeSHFragMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -252,28 +252,28 @@ namespace b3d
 			static PooledRenderTextureCreateInformation GetOutputDesc(const SPtr<Texture>& source);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(IrradianceAccumulateSHParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(IrradianceAccumulateSHUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeMip)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gHalfPixel)
 		B3D_UNIFORM_BUFFER_END
 
-		extern IrradianceAccumulateSHParamDef gIrradianceAccumulateSHParamDef;
+		extern IrradianceAccumulateSHUniformDefinition gIrradianceAccumulateSHUniformDefinition;
 
 		/**
-		 * Downsamples a cubemap face containing SH coefficient and weight values as output by IrradianceComputeSHFragMat. Each
+		 * Downsamples a cubemap face containing SH coefficient and weight values as output by IrradianceComputeSHFragMaterial. Each
 		 * downsample sums up 2x2 pixel area coefficients/weights from the previous mip level.
 		 */
-		class IrradianceAccumulateSHMat : public RendererMaterial<IrradianceAccumulateSHMat>
+		class IrradianceAccumulateSHMaterial : public RendererMaterial<IrradianceAccumulateSHMaterial>
 		{
 			RMAT_DEF("IrradianceAccumulateSH.bsl")
 
 		public:
-			IrradianceAccumulateSHMat() = default;
+			IrradianceAccumulateSHMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -289,21 +289,21 @@ namespace b3d
 			static PooledRenderTextureCreateInformation GetOutputDesc(const SPtr<Texture>& source);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
 		/**
 		 * Accumulates SH coefficient values from all six faces of a cubemap and normalizes them. The cubemap is expected to be
-		 * 1x1 in size (previously downsampled by IrradianceAccumulateSHMat). After this shader is ran for all SH coefficients
+		 * 1x1 in size (previously downsampled by IrradianceAccumulateSHMaterial). After this shader is ran for all SH coefficients
 		 * the output texture will contain final valid set of SH coefficients.
 		 */
-		class IrradianceAccumulateCubeSHMat : public RendererMaterial<IrradianceAccumulateCubeSHMat>
+		class IrradianceAccumulateCubeSHMaterial : public RendererMaterial<IrradianceAccumulateCubeSHMaterial>
 		{
 			RMAT_DEF("IrradianceAccumulateCubeSH.bsl")
 
 		public:
-			IrradianceAccumulateCubeSHMat() = default;
+			IrradianceAccumulateCubeSHMaterial() = default;
 			void Initialize() override;
 
 			/**
@@ -319,37 +319,37 @@ namespace b3d
 			static PooledRenderTextureCreateInformation GetOutputDesc();
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(IrradianceProjectSHParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(IrradianceProjectSHUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(int, gCubeFace)
 		B3D_UNIFORM_BUFFER_END
 
-		extern IrradianceProjectSHParamDef gIrradianceProjectSHParamDef;
+		extern IrradianceProjectSHUniformDefinition gIrradianceProjectSHUniformDefinition;
 
 		/**
-		 * Projects spherical harmonic coefficients calculated by IrradianceReduceSHMat and projects them onto faces of
+		 * Projects spherical harmonic coefficients calculated by IrradianceReduceSHMaterial and projects them onto faces of
 		 * a cubemap.
 		 */
-		class IrradianceProjectSHMat : public RendererMaterial<IrradianceProjectSHMat>
+		class IrradianceProjectSHMaterial : public RendererMaterial<IrradianceProjectSHMaterial>
 		{
 			RMAT_DEF("IrradianceProjectSH.bsl")
 
 		public:
-			IrradianceProjectSHMat() = default;
+			IrradianceProjectSHMaterial() = default;
 			void Initialize() override;
 
 			/**
-			 * Projects spherical harmonic coefficients calculated by IrradianceReduceSHMat and projects them onto faces of
+			 * Projects spherical harmonic coefficients calculated by IrradianceReduceSHMaterial and projects them onto faces of
 			 * a cubemap.
 			 */
 			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& shCoeffs, u32 face, const SPtr<RenderTarget>& target);
 
 		private:
-			SPtr<GpuBuffer> mParamBuffer;
-			GpuParameterSampledTexture mInputTexture;
+			GpuParameterUniformBuffer mUniformBufferParameter;
+			GpuParameterSampledTexture mInputTextureParameter;
 		};
 
 		/** Render beast implementation of IBLUtility. */
