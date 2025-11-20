@@ -1281,15 +1281,15 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		if(inputs.View.GetRenderSettings().EnableSkybox)
 			skybox = inputs.Scene.Skybox;
 
-		DeferredIBLSetupMat* const setupMaterial = DeferredIBLSetupMat::GetVariation(isMSAA, true);
-		DeferredIBLSkyMat* const skyMaterial = DeferredIBLSkyMat::GetVariation(isMSAA, true);
+		DeferredIBLSetupMaterial* const setupMaterial = DeferredIBLSetupMaterial::GetVariation(isMSAA, true);
+		DeferredIBLSkyMaterial* const skyMaterial = DeferredIBLSkyMaterial::GetVariation(isMSAA, true);
 
-		DeferredIBLSetupMat* msaaSetupMaterial = nullptr;
-		DeferredIBLSkyMat* msaaSkyMaterial = nullptr;
+		DeferredIBLSetupMaterial* msaaSetupMaterial = nullptr;
+		DeferredIBLSkyMaterial* msaaSkyMaterial = nullptr;
 		if(isMSAA)
 		{
-			msaaSetupMaterial  = DeferredIBLSetupMat::GetVariation(true, false);
-			msaaSkyMaterial = DeferredIBLSkyMat::GetVariation(true, false);
+			msaaSetupMaterial  = DeferredIBLSetupMaterial::GetVariation(true, false);
+			msaaSkyMaterial = DeferredIBLSkyMaterial::GetVariation(true, false);
 		}
 
 		// Prepare buffers and parameters for rendering
@@ -1337,7 +1337,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		// Prepare the texture for refl. probe and skybox rendering
 		{
-			DeferredIBLSetupMat* const setupMaterial = DeferredIBLSetupMat::GetVariation(isMSAA, true);
+			DeferredIBLSetupMaterial* const setupMaterial = DeferredIBLSetupMaterial::GetVariation(isMSAA, true);
 			setupMaterial->Bind(commandBuffer);
 
 			GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -1345,7 +1345,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			// Draw pixels requiring per-sample evaluation
 			if(isMSAA)
 			{
-				DeferredIBLSetupMat* msaaSetupMaterial = DeferredIBLSetupMat::GetVariation(true, false);
+				DeferredIBLSetupMaterial* msaaSetupMaterial = DeferredIBLSetupMaterial::GetVariation(true, false);
 				msaaSetupMaterial->Bind(commandBuffer);
 
 				GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -1380,16 +1380,16 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		{
 			RenderPassCreateInformation finalizePassCreateInformation(outputRT, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 
-			DeferredIBLFinalizeMat* const finalizeMaterial = DeferredIBLFinalizeMat::GetVariation(isMSAA, true);
+			DeferredIBLFinalizeMaterial* const finalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(isMSAA, true);
 			finalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
 
 			finalizePassCreateInformation.Parameters.Add(finalizeMaterial->GetGPUParameters());
 
-			DeferredIBLFinalizeMat* msaaFinalizeMaterial = nullptr;
+			DeferredIBLFinalizeMaterial* msaaFinalizeMaterial = nullptr;
 
 			if(isMSAA)
 			{
-				msaaFinalizeMaterial = DeferredIBLFinalizeMat::GetVariation(true, false);
+				msaaFinalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(true, false);
 				msaaFinalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
 
 				finalizePassCreateInformation.Parameters.Add(msaaFinalizeMaterial->GetGPUParameters());

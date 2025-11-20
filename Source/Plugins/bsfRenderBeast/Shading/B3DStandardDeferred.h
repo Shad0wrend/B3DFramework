@@ -14,7 +14,7 @@ namespace b3d
 	{
 		class RendererLight;
 
-		B3D_UNIFORM_BUFFER_BEGIN(PerLightParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(PerLightUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gLightPositionAndSrcRadius)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gLightColorAndLuminance)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gLightSpotAnglesAndSqrdInvAttRadius)
@@ -24,10 +24,10 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatConeTransform)
 		B3D_UNIFORM_BUFFER_END
 
-		extern PerLightParamDef gPerLightParamDef;
+		extern PerLightUniformDefinition gPerLightUniformDefinition;
 
 		/** Shader that renders directional light sources during deferred rendering light pass. */
-		class DeferredDirectionalLightMat : public RendererMaterial<DeferredDirectionalLightMat>
+		class DeferredDirectionalLightMaterial : public RendererMaterial<DeferredDirectionalLightMaterial>
 		{
 			RMAT_DEF("DeferredDirectionalLight.bsl");
 
@@ -43,21 +43,21 @@ namespace b3d
 			}
 
 		public:
-			DeferredDirectionalLightMat() = default;
+			DeferredDirectionalLightMaterial() = default;
 
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredDirectionalLightMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
+			static DeferredDirectionalLightMaterial* GetVariation(bool msaa, bool singleSampleMSAA = false);
 		};
 
 		/** Shader that renders point (radial & spot) light sources during deferred rendering light pass. */
-		class DeferredPointLightMat : public RendererMaterial<DeferredPointLightMat>
+		class DeferredPointLightMaterial : public RendererMaterial<DeferredPointLightMaterial>
 		{
 			RMAT_DEF("DeferredPointLight.bsl");
 
@@ -74,21 +74,21 @@ namespace b3d
 			}
 
 		public:
-			DeferredPointLightMat() = default;
+			DeferredPointLightMaterial() = default;
 
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	inside				Set to true if viewer is inside the light's stencil geometry.
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	inside				Set to true if viewer is inside the light's stencil geometry.
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredPointLightMat* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
+			static DeferredPointLightMaterial* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(PerProbeParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(PerProbeUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector3, gPosition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector3, gExtents)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gTransitionDistance)
@@ -97,7 +97,7 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(i32, gType)
 		B3D_UNIFORM_BUFFER_END
 
-		extern PerProbeParamDef gPerProbeParamDef;
+		extern PerProbeUniformDefinition gPerProbeUniformDefinition;
 
 		/**
 		 * Shader that prepares the surface for image based lighting.
@@ -105,7 +105,7 @@ namespace b3d
 		 * This is an alternative to TiledDeferredImageBasedLighting for cases when compute shaders are not usable or suitable.
 		 * Needs to be followed by execution of all other DeferredIBL* materials.
 		 */
-		class DeferredIBLSetupMat : public RendererMaterial<DeferredIBLSetupMat>
+		class DeferredIBLSetupMaterial : public RendererMaterial<DeferredIBLSetupMaterial>
 		{
 			RMAT_DEF("DeferredIBLSetup.bsl");
 
@@ -121,7 +121,7 @@ namespace b3d
 			}
 
 		public:
-			DeferredIBLSetupMat() = default;
+			DeferredIBLSetupMaterial() = default;
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
@@ -130,12 +130,12 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredIBLSetupMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
+			static DeferredIBLSetupMaterial* GetVariation(bool msaa, bool singleSampleMSAA = false);
 
 		private:
 			GBufferParameterBinding mGBufferParams;
@@ -146,9 +146,9 @@ namespace b3d
 		 * Shader that renders an individual reflection probe for image based lighting.
 		 *
 		 * This is an alternative to TiledDeferredImageBasedLighting for cases when compute shaders are not usable or suitable.
-		 * Must be preceeded by DeferredIBLSetupMat and followed by DeferredIBLSkyMat and DeferredIBLFinalizeMat.
+		 * Must be preceeded by DeferredIBLSetupMaterial and followed by DeferredIBLSkyMaterial and DeferredIBLFinalizeMaterial.
 		 */
-		class DeferredIBLProbeMat : public RendererMaterial<DeferredIBLProbeMat>
+		class DeferredIBLProbeMaterial : public RendererMaterial<DeferredIBLProbeMaterial>
 		{
 			RMAT_DEF("DeferredIBLProbe.bsl");
 
@@ -165,33 +165,33 @@ namespace b3d
 			}
 
 		public:
-			DeferredIBLProbeMat() = default;
+			DeferredIBLProbeMaterial() = default;
 
 			/** Populates the provided GPU parameters with the provided parameters. */
-			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const SPtr<GpuBuffer>& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer);
+			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer);
 
-			/** Creates a new uniform buffer containing provided per-probe data. */
-			static SPtr<GpuBuffer> CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData);
+			/** Creates a new transient uniform buffer containing provided per-probe data. */
+			static GpuBufferSuballocation CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	inside				Set to true if viewer is inside the probe's stencil geometry.
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	inside				Set to true if viewer is inside the probe's stencil geometry.
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredIBLProbeMat* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
+			static DeferredIBLProbeMaterial* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
 		};
 
 		/**
 		 * Shader that renders the sky reflections. The results are additively blended with the currently bound render target.
 		 *
 		 * This is an alternative to TiledDeferredImageBasedLighting for cases when compute shaders are not usable or suitable.
-		 * Must be preceeded by DeferredIBLSetupMat and followed by DeferredIBLFinalizeMat.
+		 * Must be preceeded by DeferredIBLSetupMaterial and followed by DeferredIBLFinalizeMaterial.
 		 */
-		class DeferredIBLSkyMat : public RendererMaterial<DeferredIBLSkyMat>
+		class DeferredIBLSkyMaterial : public RendererMaterial<DeferredIBLSkyMaterial>
 		{
 			RMAT_DEF("DeferredIBLSky.bsl");
 
@@ -207,7 +207,7 @@ namespace b3d
 			}
 
 		public:
-			DeferredIBLSkyMat() = default;
+			DeferredIBLSkyMaterial() = default;
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
@@ -216,12 +216,12 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredIBLSkyMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
+			static DeferredIBLSkyMaterial* GetVariation(bool msaa, bool singleSampleMSAA = false);
 
 		private:
 			GBufferParameterBinding mGBufferParams;
@@ -234,7 +234,7 @@ namespace b3d
 		 *
 		 * This is an alternative to TiledDeferredImageBasedLighting for cases when compute shaders are not usable or suitable.
 		 */
-		class DeferredIBLFinalizeMat : public RendererMaterial<DeferredIBLFinalizeMat>
+		class DeferredIBLFinalizeMaterial : public RendererMaterial<DeferredIBLFinalizeMaterial>
 		{
 			RMAT_DEF("DeferredIBLFinalize.bsl");
 
@@ -250,7 +250,7 @@ namespace b3d
 			}
 
 		public:
-			DeferredIBLFinalizeMat() = default;
+			DeferredIBLFinalizeMaterial() = default;
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
@@ -259,12 +259,12 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	msaa				True if the shader will operate on a multisampled surface.
-			 * @param[in]	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
+			 * @param	msaa				True if the shader will operate on a multisampled surface.
+			 * @param	singleSampleMSAA	Only relevant of @p msaa is true. When enabled only the first sample will be
 			 *									evaluated. Otherwise all samples will be evaluated.
 			 * @return							Requested variation of the material.
 			 */
-			static DeferredIBLFinalizeMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
+			static DeferredIBLFinalizeMaterial* GetVariation(bool msaa, bool singleSampleMSAA = false);
 
 		private:
 			GBufferParameterBinding mGBufferParams;

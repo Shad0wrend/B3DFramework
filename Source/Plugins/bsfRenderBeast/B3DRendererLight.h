@@ -48,7 +48,7 @@ namespace b3d
 
 			/**
 			 * Populates the provided uniform buffer with information about the light. Provided buffer's structure
-			 * must match PerLightParamDef.
+			 * must match PerLightUniformDefinition.
 			 */
 			void PopulateUniformBuffer(SPtr<GpuBuffer>& buffer, u32 index = 0) const;
 

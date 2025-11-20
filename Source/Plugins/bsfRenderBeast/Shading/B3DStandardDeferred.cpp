@@ -11,9 +11,9 @@
 namespace b3d {
 namespace render {
 
-PerLightParamDef gPerLightParamDef;
+PerLightUniformDefinition gPerLightUniformDefinition;
 
-DeferredDirectionalLightMat* DeferredDirectionalLightMat::GetVariation(bool msaa, bool singleSampleMSAA)
+DeferredDirectionalLightMaterial* DeferredDirectionalLightMaterial::GetVariation(bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -26,7 +26,7 @@ DeferredDirectionalLightMat* DeferredDirectionalLightMat::GetVariation(bool msaa
 	return Get(GetVariation<false, false>());
 }
 
-DeferredPointLightMat* DeferredPointLightMat::GetVariation(bool inside, bool msaa, bool singleSampleMSAA)
+DeferredPointLightMaterial* DeferredPointLightMaterial::GetVariation(bool inside, bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -54,15 +54,15 @@ DeferredPointLightMat* DeferredPointLightMat::GetVariation(bool inside, bool msa
 	}
 }
 
-PerProbeParamDef gPerProbeParamDef;
+PerProbeUniformDefinition gPerProbeUniformDefinition;
 
-void DeferredIBLSetupMat::Initialize()
+void DeferredIBLSetupMaterial::Initialize()
 {
 	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mIBLParams.Initialize(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSetupMat::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLSetupMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -73,7 +73,7 @@ void DeferredIBLSetupMat::Prepare(const GBufferTextures& gBufferInput, const SPt
 	mIBLParams.SsrTexParam.Set(ssr);
 }
 
-DeferredIBLSetupMat* DeferredIBLSetupMat::GetVariation(bool msaa, bool singleSampleMSAA)
+DeferredIBLSetupMaterial* DeferredIBLSetupMaterial::GetVariation(bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -88,9 +88,9 @@ DeferredIBLSetupMat* DeferredIBLSetupMat::GetVariation(bool msaa, bool singleSam
 	}
 }
 
-void DeferredIBLProbeMat::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const SPtr<GpuBuffer>& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer)
+void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer)
 {
-	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput); 
+	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput);
 	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, sceneInfo.ReflProbeCubemapsTex);
 
 	gpuParameters->SetUniformBuffer("PerCamera", perCamera);
@@ -98,29 +98,29 @@ void DeferredIBLProbeMat::PopulateParameters(GpuDevice& gpuDevice, const SPtr<Gp
 	gpuParameters->SetUniformBuffer("PerProbe", perProbeUniformBuffer);
 }
 
-SPtr<GpuBuffer> DeferredIBLProbeMat::CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData)
+GpuBufferSuballocation DeferredIBLProbeMaterial::CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData)
 {
-	SPtr<GpuBuffer> buffer = gPerProbeParamDef.CreateBuffer();
-	
-	gPerProbeParamDef.gPosition.Set(buffer, probeData.Position);
+	GpuBufferSuballocation uniformBuffer = gPerProbeUniformDefinition.AllocateTransient();
+
+	gPerProbeUniformDefinition.gPosition.Set(uniformBuffer, probeData.Position);
 
 	if(probeData.Type == 1)
-		gPerProbeParamDef.gExtents.Set(buffer, probeData.BoxExtents);
+		gPerProbeUniformDefinition.gExtents.Set(uniformBuffer, probeData.BoxExtents);
 	else
 	{
 		Vector3 extents(probeData.Radius, probeData.Radius, probeData.Radius);
-		gPerProbeParamDef.gExtents.Set(buffer, extents);
+		gPerProbeUniformDefinition.gExtents.Set(uniformBuffer, extents);
 	}
 
-	gPerProbeParamDef.gTransitionDistance.Set(buffer, probeData.TransitionDistance);
-	gPerProbeParamDef.gInvBoxTransform.Set(buffer, probeData.InvBoxTransform);
-	gPerProbeParamDef.gCubemapIdx.Set(buffer, probeData.CubemapIdx);
-	gPerProbeParamDef.gType.Set(buffer, probeData.Type);
+	gPerProbeUniformDefinition.gTransitionDistance.Set(uniformBuffer, probeData.TransitionDistance);
+	gPerProbeUniformDefinition.gInvBoxTransform.Set(uniformBuffer, probeData.InvBoxTransform);
+	gPerProbeUniformDefinition.gCubemapIdx.Set(uniformBuffer, probeData.CubemapIdx);
+	gPerProbeUniformDefinition.gType.Set(uniformBuffer, probeData.Type);
 
-	return buffer;
+	return uniformBuffer;
 }
 
-DeferredIBLProbeMat* DeferredIBLProbeMat::GetVariation(bool inside, bool msaa, bool singleSampleMSAA)
+DeferredIBLProbeMaterial* DeferredIBLProbeMaterial::GetVariation(bool inside, bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -148,13 +148,13 @@ DeferredIBLProbeMat* DeferredIBLProbeMat::GetVariation(bool inside, bool msaa, b
 	}
 }
 
-void DeferredIBLSkyMat::Initialize()
+void DeferredIBLSkyMaterial::Initialize()
 {
 	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mIBLParams.Initialize(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSkyMat::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLSkyMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -165,7 +165,7 @@ void DeferredIBLSkyMat::Prepare(const GBufferTextures& gBufferInput, const SPtr<
 		mIBLParams.SkyReflectionsTexParam.Set(skybox->GetFilteredRadiance());
 }
 
-DeferredIBLSkyMat* DeferredIBLSkyMat::GetVariation(bool msaa, bool singleSampleMSAA)
+DeferredIBLSkyMaterial* DeferredIBLSkyMaterial::GetVariation(bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -180,7 +180,7 @@ DeferredIBLSkyMat* DeferredIBLSkyMat::GetVariation(bool msaa, bool singleSampleM
 	}
 }
 
-void DeferredIBLFinalizeMat::Initialize()
+void DeferredIBLFinalizeMaterial::Initialize()
 {
 	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter("gIBLRadianceTex", mIBLRadiance);
@@ -188,7 +188,7 @@ void DeferredIBLFinalizeMat::Initialize()
 	mIBLParams.Initialize(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLFinalizeMat::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLFinalizeMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -200,7 +200,7 @@ void DeferredIBLFinalizeMat::Prepare(const GBufferTextures& gBufferInput, const 
 	mIBLRadiance.Set(iblRadiance);
 }
 
-DeferredIBLFinalizeMat* DeferredIBLFinalizeMat::GetVariation(bool msaa, bool singleSampleMSAA)
+DeferredIBLFinalizeMaterial* DeferredIBLFinalizeMaterial::GetVariation(bool msaa, bool singleSampleMSAA)
 {
 	if(msaa)
 	{
@@ -254,7 +254,7 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(const TArra
 
 	// Get GPU device for alignment calculations
 	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-	const u32 uniformBlockStride = Math::CeilToMultiple(gPerLightParamDef.GetSize(), gpuDevice->GetCapabilities().MinimumUniformBufferOffsetAlignment);
+	const u32 uniformBlockStride = Math::CeilToMultiple(gPerLightUniformDefinition.GetSize(), gpuDevice->GetCapabilities().MinimumUniformBufferOffsetAlignment);
 
 	// For each group, create instanced buffers and GPU parameters
 	for(auto& [key, batch] : batches.Batches)
@@ -262,7 +262,7 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(const TArra
 		const u32 lightCount = (u32)batch.Lights.size();
 
 		// Create instanced uniform buffer
-		batch.PerLightUniformBuffer = gPerLightParamDef.CreateBuffer(lightCount);
+		batch.PerLightUniformBuffer = gPerLightUniformDefinition.CreateBuffer(lightCount);
 		batch.UniformStride = uniformBlockStride;
 
 		// Write light parameters to buffer
@@ -275,12 +275,12 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(const TArra
 		// Get material for this group
 		if(key.Type == LightType::Directional)
 		{
-			DeferredDirectionalLightMat* const lightMaterial = DeferredDirectionalLightMat::GetVariation(key.IsMSAA, true);
+			DeferredDirectionalLightMaterial* const lightMaterial = DeferredDirectionalLightMaterial::GetVariation(key.IsMSAA, true);
 			batch.GpuParameters = lightMaterial->CreateGpuParameters();
 		}
 		else
 		{
-			DeferredPointLightMat* const lightMaterial = DeferredPointLightMat::GetVariation(key.IsInside, key.IsMSAA, true);
+			DeferredPointLightMaterial* const lightMaterial = DeferredPointLightMaterial::GetVariation(key.IsInside, key.IsMSAA, true);
 			batch.GpuParameters = lightMaterial->CreateGpuParameters();
 
 			// Cache stencil mesh
@@ -327,28 +327,28 @@ void StandardDeferred::RenderLightBatches(GpuCommandBuffer& commandBuffer, const
 			// Render the light
 			if(key.Type == LightType::Directional)
 			{
-				DeferredDirectionalLightMat* const lightMaterial = DeferredDirectionalLightMat::GetVariation(key.IsMSAA, true);
+				DeferredDirectionalLightMaterial* const lightMaterial = DeferredDirectionalLightMaterial::GetVariation(key.IsMSAA, true);
 				lightMaterial->Bind(commandBuffer, false);
 				GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 				// MSAA second pass
 				if(key.IsMSAA)
 				{
-					DeferredDirectionalLightMat* const multiSampleLightMaterial = DeferredDirectionalLightMat::GetVariation(true, false);
+					DeferredDirectionalLightMaterial* const multiSampleLightMaterial = DeferredDirectionalLightMaterial::GetVariation(true, false);
 					multiSampleLightMaterial->Bind(commandBuffer, false);
 					GetRendererUtility().DrawScreenQuad(commandBuffer);
 				}
 			}
 			else // Point or Spot
 			{
-				DeferredPointLightMat* const lightMaterial = DeferredPointLightMat::GetVariation(key.IsInside, key.IsMSAA, true);
+				DeferredPointLightMaterial* const lightMaterial = DeferredPointLightMaterial::GetVariation(key.IsInside, key.IsMSAA, true);
 				lightMaterial->Bind(commandBuffer, false);
 				GetRendererUtility().Draw(commandBuffer, batch.StencilMesh);
 
 				// MSAA second pass
 				if(key.IsMSAA)
 				{
-					DeferredPointLightMat* multiSampleLightMaterial = DeferredPointLightMat::GetVariation(key.IsInside, true, false);
+					DeferredPointLightMaterial* multiSampleLightMaterial = DeferredPointLightMaterial::GetVariation(key.IsInside, true, false);
 					multiSampleLightMaterial->Bind(commandBuffer, false);
 					GetRendererUtility().Draw(commandBuffer, batch.StencilMesh);
 				}
@@ -393,11 +393,11 @@ TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::Pre
 			renderInformation.IsViewerInside = box.Contains(viewProperties.ViewOrigin);
 		}
 
-		SPtr<GpuBuffer> perProbeBuffer = DeferredIBLProbeMat::CreatePerProbeUniformBuffer(probeData);
+		GpuBufferSuballocation perProbeBuffer = DeferredIBLProbeMaterial::CreatePerProbeUniformBuffer(probeData);
 
-		DeferredIBLProbeMat* material = DeferredIBLProbeMat::GetVariation(renderInformation.IsViewerInside, isMSAA, true);
+		DeferredIBLProbeMaterial* material = DeferredIBLProbeMaterial::GetVariation(renderInformation.IsViewerInside, isMSAA, true);
 		renderInformation.GpuParameters = material->CreateGpuParameters();
-		DeferredIBLProbeMat::PopulateParameters(device, renderInformation.GpuParameters, gBufferInput, perViewBuffer, sceneInfo, perProbeBuffer, globalReflectionProbeUniformBuffer);
+		DeferredIBLProbeMaterial::PopulateParameters(device, renderInformation.GpuParameters, gBufferInput, perViewBuffer, sceneInfo, perProbeBuffer, globalReflectionProbeUniformBuffer);
 
 		output.Add(renderInformation);
 	}
@@ -418,7 +418,7 @@ void StandardDeferred::RenderReflectionProbes(GpuCommandBuffer& commandBuffer, c
 		else // Box
 			stencilMesh = RendererUtility::Instance().GetBoxStencil();
 
-		DeferredIBLProbeMat* const material = DeferredIBLProbeMat::GetVariation(entry.IsViewerInside, isMSAA, true);
+		DeferredIBLProbeMaterial* const material = DeferredIBLProbeMaterial::GetVariation(entry.IsViewerInside, isMSAA, true);
 
 		commandBuffer.SetGpuParameters(entry.GpuParameters);
 		material->Bind(commandBuffer, false);
@@ -429,7 +429,7 @@ void StandardDeferred::RenderReflectionProbes(GpuCommandBuffer& commandBuffer, c
 		// Draw pixels requiring per-sample evaluation
 		if(isMSAA)
 		{
-			DeferredIBLProbeMat* msaaMaterial = DeferredIBLProbeMat::GetVariation(entry.IsViewerInside, true, false);
+			DeferredIBLProbeMaterial* msaaMaterial = DeferredIBLProbeMaterial::GetVariation(entry.IsViewerInside, true, false);
 			msaaMaterial->Bind(commandBuffer, false);
 
 			GetRendererUtility().Draw(commandBuffer, stencilMesh);

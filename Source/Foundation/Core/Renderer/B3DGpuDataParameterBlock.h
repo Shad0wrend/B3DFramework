@@ -237,7 +237,7 @@ namespace b3d
 				mBufferSize = 0;                                                                                                                                                                           \
 			}                                                                                                                                                                                              \
                                                                                                                                                                                                            \
-			mTransientAllocationPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU), 1, 4); \
+			mTransientAllocationPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU), 4);    \
                                                                                                                                                                                                            \
 			InitEntries();                                                                                                                                                                                 \
 		}                                                                                                                                                                                                  \
