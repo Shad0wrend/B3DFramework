@@ -12,33 +12,33 @@
 using namespace b3d;
 using namespace b3d::render;
 
-void GpuParticleClearMat::InitDefinesInternal(ShaderDefines& defines)
+void GpuParticleClearMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("TILES_PER_INSTANCE", GpuParticleConstants::kTilesPerInstance);
 }
 
-void GpuParticleClearMat::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs)
+void GpuParticleClearMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs)
 {
 	gpuParameters->SetUniformBuffer("Input", vertexInputBuffer);
 	gpuParameters->SetStorageBuffer("gTileUVs", tileUVs);
 }
 
-void GpuParticleInjectMat::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer)
+void GpuParticleInjectMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer)
 {
 	gpuParameters->SetUniformBuffer("Input", vertexInputBuffer);
 }
 
-void GpuParticleCurveInjectMat::Prepare(const SPtr<GpuBuffer>& vertexInputBuffer)
+void GpuParticleCurveInjectMaterial::Prepare(const SPtr<GpuBuffer>& vertexInputBuffer)
 {
 	mGPUParameters->SetUniformBuffer("Input", vertexInputBuffer);
 }
 
-void GpuParticleSimulateMat::InitDefinesInternal(ShaderDefines& defines)
+void GpuParticleSimulateMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("TILES_PER_INSTANCE", GpuParticleConstants::kTilesPerInstance);
 }
 
-void GpuParticleSimulateMat::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
+void GpuParticleSimulateMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
 	const SPtr<GpuBuffer>& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
 	const SPtr<GpuBuffer>& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions)
 {
@@ -67,7 +67,7 @@ void GpuParticleSimulateMat::PopulateParameters(const SPtr<GpuParameters>& gpuPa
 	}
 }
 
-GpuParticleSimulateMat* GpuParticleSimulateMat::GetVariation(bool depthCollisions, bool localSpace)
+GpuParticleSimulateMaterial* GpuParticleSimulateMaterial::GetVariation(bool depthCollisions, bool localSpace)
 {
 	if(depthCollisions)
 	{
@@ -80,29 +80,27 @@ GpuParticleSimulateMat* GpuParticleSimulateMat::GetVariation(bool depthCollision
 	return Get(GetVariation<0>());
 }
 
-void GpuParticleBoundsMat::Initialize()
+void GpuParticleBoundsMaterial::Initialize()
 {
-	mInputBuffer = gGpuParticleBoundsParamsDef.CreateBuffer();
-	mGPUParameters->SetUniformBuffer("Input", mInputBuffer);
-
+	mGPUParameters->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
 	mGPUParameters->GetStorageBufferParameter("gParticleIndices", mParticleIndicesParam);
 	mGPUParameters->GetStorageBufferParameter("gOutput", mOutputParam);
 	mGPUParameters->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
 }
 
-void GpuParticleBoundsMat::InitDefinesInternal(ShaderDefines& defines)
+void GpuParticleBoundsMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("NUM_THREADS", kNumThreads);
 }
 
-void GpuParticleBoundsMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& positionAndTime)
+void GpuParticleBoundsMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& positionAndTime)
 {
 	mPosAndTimeTexParam.Set(positionAndTime);
 
 	RendererMaterial::Bind(commandBuffer);
 }
 
-AABox GpuParticleBoundsMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& indices, u32 numParticles)
+AABox GpuParticleBoundsMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& indices, u32 numParticles)
 {
 	static constexpr u32 kMaxNumGroups = 128;
 
@@ -112,9 +110,12 @@ AABox GpuParticleBoundsMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	const u32 iterationsPerGroup = numIterations / numGroups;
 	const u32 extraIterations = numIterations % numGroups;
 
-	gGpuParticleBoundsParamsDef.gIterationsPerGroup.Set(mInputBuffer, iterationsPerGroup);
-	gGpuParticleBoundsParamsDef.gNumExtraIterations.Set(mInputBuffer, extraIterations);
-	gGpuParticleBoundsParamsDef.gNumParticles.Set(mInputBuffer, numParticles);
+	GpuBufferSuballocation inputUniformBuffer = gGpuParticleBoundsUniformDefinition.AllocateTransient();
+	gGpuParticleBoundsUniformDefinition.gIterationsPerGroup.Set(inputUniformBuffer, iterationsPerGroup);
+	gGpuParticleBoundsUniformDefinition.gNumExtraIterations.Set(inputUniformBuffer, extraIterations);
+	gGpuParticleBoundsUniformDefinition.gNumParticles.Set(inputUniformBuffer, numParticles);
+
+	mInputUniformBufferParameter.Set(inputUniformBuffer);
 
 	GpuBufferCreateInformation outputBufferCreateInformation;
 	outputBufferCreateInformation.Type = GpuBufferType::SimpleStorage;
@@ -146,30 +147,28 @@ AABox GpuParticleBoundsMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 	return AABox(min, max);
 }
 
-void GpuParticleSortPrepareMat::Initialize()
+void GpuParticleSortPrepareMaterial::Initialize()
 {
-	mInputBuffer = gGpuParticleSortPrepareParamDef.CreateBuffer();
-	mGPUParameters->SetUniformBuffer("Input", mInputBuffer);
-
+	mGPUParameters->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
 	mGPUParameters->GetStorageBufferParameter("gInputIndices", mInputIndicesParam);
 	mGPUParameters->GetStorageBufferParameter("gOutputKeys", mOutputKeysParam);
 	mGPUParameters->GetStorageBufferParameter("gOutputIndices", mOutputIndicesParam);
 	mGPUParameters->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
 }
 
-void GpuParticleSortPrepareMat::InitDefinesInternal(ShaderDefines& defines)
+void GpuParticleSortPrepareMaterial::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("NUM_THREADS", kNumThreads);
 }
 
-void GpuParticleSortPrepareMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& positionAndTime)
+void GpuParticleSortPrepareMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& positionAndTime)
 {
 	mPosAndTimeTexParam.Set(positionAndTime);
 
 	RendererMaterial::Bind(commandBuffer, false);
 }
 
-u32 GpuParticleSortPrepareMat::Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices)
+u32 GpuParticleSortPrepareMaterial::Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices)
 {
 	static constexpr u32 kMaxNumGroups = 128;
 
@@ -193,12 +192,15 @@ u32 GpuParticleSortPrepareMat::Execute(GpuCommandBuffer& commandBuffer, const Gp
 	else
 		localViewOrigin = viewOrigin;
 
-	gGpuParticleSortPrepareParamDef.gIterationsPerGroup.Set(mInputBuffer, iterationsPerGroup);
-	gGpuParticleSortPrepareParamDef.gNumExtraIterations.Set(mInputBuffer, extraIterations);
-	gGpuParticleSortPrepareParamDef.gNumParticles.Set(mInputBuffer, numParticles);
-	gGpuParticleSortPrepareParamDef.gOutputOffset.Set(mInputBuffer, offset);
-	gGpuParticleSortPrepareParamDef.gSystemKey.Set(mInputBuffer, systemIdx << 16);
-	gGpuParticleSortPrepareParamDef.gLocalViewOrigin.Set(mInputBuffer, localViewOrigin);
+	GpuBufferSuballocation inputUniformBuffer = gGpuParticleSortPrepareUniformDefinition.AllocateTransient();
+	gGpuParticleSortPrepareUniformDefinition.gIterationsPerGroup.Set(inputUniformBuffer, iterationsPerGroup);
+	gGpuParticleSortPrepareUniformDefinition.gNumExtraIterations.Set(inputUniformBuffer, extraIterations);
+	gGpuParticleSortPrepareUniformDefinition.gNumParticles.Set(inputUniformBuffer, numParticles);
+	gGpuParticleSortPrepareUniformDefinition.gOutputOffset.Set(inputUniformBuffer, offset);
+	gGpuParticleSortPrepareUniformDefinition.gSystemKey.Set(inputUniformBuffer, systemIdx << 16);
+	gGpuParticleSortPrepareUniformDefinition.gLocalViewOrigin.Set(inputUniformBuffer, localViewOrigin);
+
+	mInputUniformBufferParameter.Set(inputUniformBuffer);
 
 	mInputIndicesParam.Set(system.GetParticleIndices());
 	mOutputKeysParam.Set(outKeys);

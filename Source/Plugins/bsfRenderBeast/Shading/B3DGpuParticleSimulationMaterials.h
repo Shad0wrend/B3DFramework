@@ -16,49 +16,49 @@ namespace b3d { namespace render
 	 *  @{
 	 */
 
-	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleTileVertexParamsDef)
+	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleTileVertexUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(Vector4, gUVToNDC)
 	B3D_UNIFORM_BUFFER_END
 
-	inline GpuParticleTileVertexParamsDef gGpuParticleTileVertexParamsDef;
+	inline GpuParticleTileVertexUniformDefinition gGpuParticleTileVertexUniformDefinition;
 
 	/** Material used for clearing tiles in the texture used for particle GPU simulation. */
-	class GpuParticleClearMat : public RendererMaterial<GpuParticleClearMat>
+	class GpuParticleClearMaterial : public RendererMaterial<GpuParticleClearMaterial>
 	{
 		RMAT_DEF_CUSTOMIZED("GpuParticleClear.bsl")
 
 	public:
-		GpuParticleClearMat() = default;
+		GpuParticleClearMaterial() = default;
 
 		/** Populates GPU parameters for rendering using this material. */
 		static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs);
 	};
 
 	/** Material used for adding new particles into the particle state textures. */
-	class GpuParticleInjectMat : public RendererMaterial<GpuParticleInjectMat>
+	class GpuParticleInjectMaterial : public RendererMaterial<GpuParticleInjectMaterial>
 	{
 		RMAT_DEF("GpuParticleInject.bsl");
 
 	public:
-		GpuParticleInjectMat() = default;
+		GpuParticleInjectMaterial() = default;
 
 		/** Populates GPU parameters for rendering using this material. */
 		static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer);
 	};
 
 	/** Material used for adding new curves into the curve texture. */
-	class GpuParticleCurveInjectMat : public RendererMaterial<GpuParticleCurveInjectMat>
+	class GpuParticleCurveInjectMaterial : public RendererMaterial<GpuParticleCurveInjectMaterial>
 	{
 		RMAT_DEF("GpuParticleCurveInject.bsl");
 
 	public:
-		GpuParticleCurveInjectMat() = default;
+		GpuParticleCurveInjectMaterial() = default;
 
 		/** Populates GPU parameters for rendering using this material. */
 		void Prepare(const SPtr<GpuBuffer>& vertexInputBuffer);
 	};
 
-	B3D_UNIFORM_BUFFER_BEGIN(VectorFieldParamsDef)
+	B3D_UNIFORM_BUFFER_BEGIN(VectorFieldUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(Vector3, gFieldBounds)
 		B3D_UNIFORM_BUFFER_MEMBER(float, gFieldIntensity)
 		B3D_UNIFORM_BUFFER_MEMBER(Vector3, gFieldTiling)
@@ -67,9 +67,9 @@ namespace b3d { namespace render
 		B3D_UNIFORM_BUFFER_MEMBER(Matrix3, gFieldToWorld)
 	B3D_UNIFORM_BUFFER_END
 
-	inline VectorFieldParamsDef gVectorFieldParamsDef;
+	inline VectorFieldUniformDefinition gVectorFieldUniformDefinition;
 
-	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleDepthCollisionParamsDef)
+	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleDepthCollisionUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(float, gCollisionRange)
 		B3D_UNIFORM_BUFFER_MEMBER(float, gRestitution)
 		B3D_UNIFORM_BUFFER_MEMBER(float, gDampening)
@@ -78,9 +78,9 @@ namespace b3d { namespace render
 		B3D_UNIFORM_BUFFER_MEMBER(Vector2, gSizeScaleCurveScale)
 	B3D_UNIFORM_BUFFER_END
 
-	inline GpuParticleDepthCollisionParamsDef gGpuParticleDepthCollisionParamsDef;
+	inline GpuParticleDepthCollisionUniformDefinition gGpuParticleDepthCollisionUniformDefinition;
 
-	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleSimulateParamsDef)
+	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleSimulateUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(i32, gNumVectorFields)
 		B3D_UNIFORM_BUFFER_MEMBER(i32, gNumIterations)
 		B3D_UNIFORM_BUFFER_MEMBER(float, gDT)
@@ -88,13 +88,13 @@ namespace b3d { namespace render
 		B3D_UNIFORM_BUFFER_MEMBER(Vector3, gAcceleration)
 	B3D_UNIFORM_BUFFER_END
 
-	inline GpuParticleSimulateParamsDef gGpuParticleSimulateParamsDef;
+	inline GpuParticleSimulateUniformDefinition gGpuParticleSimulateUniformDefinition;
 
 	/**
 	 * Material used for performing GPU particle simulation. State is read from the provided input textures and output
 	 * into the output textures bound as render targets.
 	 */
-	class GpuParticleSimulateMat : public RendererMaterial<GpuParticleSimulateMat>
+	class GpuParticleSimulateMaterial : public RendererMaterial<GpuParticleSimulateMaterial>
 	{
 		RMAT_DEF_CUSTOMIZED("GpuParticleSimulate.bsl");
 
@@ -109,7 +109,7 @@ namespace b3d { namespace render
 		}
 
 	public:
-		GpuParticleSimulateMat() = default;
+		GpuParticleSimulateMaterial() = default;
 
 		/**
 		 * Populates GPU parameters for rendering using this material.
@@ -130,26 +130,26 @@ namespace b3d { namespace render
 			const SPtr<GpuBuffer>& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions);
 
 		/** Returns the material variation matching the provided parameters. */
-		static GpuParticleSimulateMat* GetVariation(bool depthCollisions, bool localSpace);
+		static GpuParticleSimulateMaterial* GetVariation(bool depthCollisions, bool localSpace);
 	};
 
-	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleBoundsParamsDef)
+	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleBoundsUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(u32, gIterationsPerGroup)
 		B3D_UNIFORM_BUFFER_MEMBER(u32, gNumExtraIterations)
 		B3D_UNIFORM_BUFFER_MEMBER(u32, gNumParticles)
 	B3D_UNIFORM_BUFFER_END
 
-	inline GpuParticleBoundsParamsDef gGpuParticleBoundsParamsDef;
+	inline GpuParticleBoundsUniformDefinition gGpuParticleBoundsUniformDefinition;
 
 	/** Material used for calculating particle system bounds. */
-	class GpuParticleBoundsMat : public RendererMaterial<GpuParticleBoundsMat>
+	class GpuParticleBoundsMaterial : public RendererMaterial<GpuParticleBoundsMaterial>
 	{
 		static constexpr u32 kNumThreads = 64;
 
 		RMAT_DEF_CUSTOMIZED("GpuParticleBounds.bsl");
 
 	public:
-		GpuParticleBoundsMat() = default;
+		GpuParticleBoundsMaterial() = default;
 		void Initialize() override;
 
 		/** Binds the material to the pipeline along with the global input texture containing particle positions and times. */
@@ -166,13 +166,13 @@ namespace b3d { namespace render
 		AABox Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& indices, u32 numParticles);
 
 	private:
+		GpuParameterUniformBuffer mInputUniformBufferParameter;
 		GpuParameterStorageBuffer mParticleIndicesParam;
 		GpuParameterStorageBuffer mOutputParam;
 		GpuParameterSampledTexture mPosAndTimeTexParam;
-		SPtr<GpuBuffer> mInputBuffer;
 	};
 
-	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleSortPrepareParamDef)
+	B3D_UNIFORM_BUFFER_BEGIN(GpuParticleSortPrepareUniformDefinition)
 		B3D_UNIFORM_BUFFER_MEMBER(i32, gIterationsPerGroup)
 		B3D_UNIFORM_BUFFER_MEMBER(i32, gNumExtraIterations)
 		B3D_UNIFORM_BUFFER_MEMBER(i32, gNumParticles)
@@ -181,17 +181,17 @@ namespace b3d { namespace render
 		B3D_UNIFORM_BUFFER_MEMBER(Vector3, gLocalViewOrigin)
 	B3D_UNIFORM_BUFFER_END
 
-	inline GpuParticleSortPrepareParamDef gGpuParticleSortPrepareParamDef;
+	inline GpuParticleSortPrepareUniformDefinition gGpuParticleSortPrepareUniformDefinition;
 
 	/** Material used for preparing key/values buffers used for particle sorting. */
-	class GpuParticleSortPrepareMat : public RendererMaterial<GpuParticleSortPrepareMat>
+	class GpuParticleSortPrepareMaterial : public RendererMaterial<GpuParticleSortPrepareMaterial>
 	{
 		static constexpr u32 kNumThreads = 64;
 
 		RMAT_DEF_CUSTOMIZED("GpuParticleSortPrepare.bsl");
 
 	public:
-		GpuParticleSortPrepareMat() = default;
+		GpuParticleSortPrepareMaterial() = default;
 		void Initialize() override;
 
 		/** Binds the material to the pipeline along with the global input texture containing particle positions and times. */
@@ -216,11 +216,11 @@ namespace b3d { namespace render
 		u32 Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices);
 
 	private:
+		GpuParameterUniformBuffer mInputUniformBufferParameter;
 		GpuParameterStorageBuffer mInputIndicesParam;
 		GpuParameterStorageBuffer mOutputKeysParam;
 		GpuParameterStorageBuffer mOutputIndicesParam;
 		GpuParameterSampledTexture mPosAndTimeTexParam;
-		SPtr<GpuBuffer> mInputBuffer;
 	};
 
 	/** @} */

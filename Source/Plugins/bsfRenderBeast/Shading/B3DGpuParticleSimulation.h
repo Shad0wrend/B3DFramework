@@ -16,7 +16,7 @@ namespace b3d
 	namespace render
 	{
 		struct RendererParticles;
-		class GpuParticleSimulateMat;
+		class GpuParticleSimulateMaterial;
 		struct GBufferTextures;
 		struct SceneInfo;
 		class GpuParticleResources;
@@ -139,9 +139,6 @@ namespace b3d
 			SPtr<GpuBuffer> mParticleIndices;
 
 			SPtr<GpuParameters> mSimulateParameters;
-			SPtr<GpuBuffer> mSimulationParams;
-			SPtr<GpuBuffer> mVectorFieldParams;
-			SPtr<GpuBuffer> mDepthCollisionParams;
 		};
 
 		/** Performs simulation for all particle systems that have GPU simulation enabled. */
