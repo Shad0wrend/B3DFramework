@@ -22,7 +22,7 @@ namespace b3d
 	 */
 
 	/**	Supported types of materials (shaders) by DebugDraw. */
-	enum class DebugDrawMaterial
+	enum class DebugDrawMaterialType
 	{
 		Solid,
 		Wire,
@@ -156,13 +156,13 @@ namespace b3d
 		/** Data about a mesh rendered by the draw manager. */
 		struct MeshRenderData
 		{
-			MeshRenderData(const SPtr<render::Mesh>& mesh, const SubMesh& subMesh, DebugDrawMaterial type)
+			MeshRenderData(const SPtr<render::Mesh>& mesh, const SubMesh& subMesh, DebugDrawMaterialType type)
 				: Mesh(mesh), SubMesh(subMesh), Type(type)
 			{}
 
 			SPtr<render::Mesh> Mesh;
 			SubMesh SubMesh;
-			DebugDrawMaterial Type;
+			DebugDrawMaterialType Type;
 		};
 
 		/** Converts mesh data from DrawHelper into mesh data usable by the debug draw renderer. */
@@ -182,15 +182,15 @@ namespace b3d
 		 *  @{
 		 */
 
-		B3D_UNIFORM_BUFFER_BEGIN(DebugDrawParamsDef)
+		B3D_UNIFORM_BUFFER_BEGIN(DebugDrawUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatViewProj)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gViewDir)
 		B3D_UNIFORM_BUFFER_END
 
-		extern DebugDrawParamsDef gDebugDrawParamsDef;
+		extern DebugDrawUniformDefinition gDebugDrawUniformDefinition;
 
 		/** Handles rendering of debug shapes. */
-		class DebugDrawMat : public RendererMaterial<DebugDrawMat>
+		class DebugDrawMaterial : public RendererMaterial<DebugDrawMaterial>
 		{
 			RMAT_DEF("DebugDraw.bsl");
 
@@ -207,13 +207,13 @@ namespace b3d
 			}
 
 		public:
-			DebugDrawMat() = default;
+			DebugDrawMaterial() = default;
 
 			/** Executes the material using the provided parameters. */
-			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh);
+			void Execute(GpuCommandBuffer& commandBuffer, const GpuBufferSuballocation& uniformBuffer, const SPtr<Mesh>& mesh, const SubMesh& subMesh);
 
 			/** Returns the material variation matching the provided parameters. */
-			static DebugDrawMat* GetVariation(DebugDrawMaterial drawMaterial);
+			static DebugDrawMaterial* GetVariation(DebugDrawMaterialType drawMaterial);
 		};
 
 		/** Performs rendering of meshes provided by DebugDraw. */
@@ -238,7 +238,6 @@ namespace b3d
 			void UpdateData(const Vector<DebugDraw::MeshRenderData>& meshes);
 
 			Vector<DebugDraw::MeshRenderData> mMeshes;
-			SPtr<GpuBuffer> mParamBuffer;
 		};
 
 		/** @} */

@@ -112,11 +112,11 @@ Vector<DebugDraw::MeshRenderData> DebugDraw::CreateMeshProxyData(const Vector<Dr
 	for(auto& entry : meshData)
 	{
 		if(entry.Type == DrawHelper::MeshType::Solid)
-			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterial::Solid));
+			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterialType::Solid));
 		else if(entry.Type == DrawHelper::MeshType::Wire)
-			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterial::Wire));
+			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterialType::Wire));
 		else if(entry.Type == DrawHelper::MeshType::Line)
-			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterial::Line));
+			proxyData.push_back(MeshRenderData(B3DGetRenderProxy(entry.Mesh), entry.SubMesh, DebugDrawMaterialType::Line));
 	}
 
 	return proxyData;
@@ -141,24 +141,24 @@ void DebugDraw::UpdateInternal()
 namespace b3d { namespace render
 {
 
-DebugDrawParamsDef gDebugDrawParamsDef;
+DebugDrawUniformDefinition gDebugDrawUniformDefinition;
 
-void DebugDrawMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh)
+void DebugDrawMaterial::Execute(GpuCommandBuffer& commandBuffer, const GpuBufferSuballocation& uniformBuffer, const SPtr<Mesh>& mesh, const SubMesh& subMesh)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
-	mGPUParameters->SetUniformBuffer("Params", params);
+	mGPUParameters->SetUniformBuffer("Params", uniformBuffer);
 
 	Bind(commandBuffer);
 	GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
 
-DebugDrawMat* DebugDrawMat::GetVariation(DebugDrawMaterial material)
+DebugDrawMaterial* DebugDrawMaterial::GetVariation(DebugDrawMaterialType material)
 {
-	if(material == DebugDrawMaterial::Solid)
+	if(material == DebugDrawMaterialType::Solid)
 		return Get(GetVariation<true, false, false>());
 
-	if(material == DebugDrawMaterial::Wire)
+	if(material == DebugDrawMaterialType::Wire)
 		return Get(GetVariation<false, false, true>());
 
 	return Get(GetVariation<false, true, false>());
@@ -172,8 +172,6 @@ DebugDrawRenderer::DebugDrawRenderer()
 void DebugDrawRenderer::Initialize(const Any& data)
 {
 	ASSERT_IF_NOT_RENDER_THREAD;
-
-	mParamBuffer = gDebugDrawParamsDef.CreateBuffer();
 }
 
 void DebugDrawRenderer::UpdateData(const Vector<DebugDraw::MeshRenderData>& meshes)
@@ -196,13 +194,15 @@ void DebugDrawRenderer::Render(const Camera& camera, const RendererViewContext& 
 	Matrix4 projMatrix = camera.GetProjectionMatrix();
 	Matrix4 viewProjMat = projMatrix * viewMatrix;
 
-	gDebugDrawParamsDef.gMatViewProj.Set(mParamBuffer, viewProjMat);
-	gDebugDrawParamsDef.gViewDir.Set(mParamBuffer, (Vector4)camera.GetWorldTransform().GetForward());
+	GpuBufferSuballocation uniformBuffer = gDebugDrawUniformDefinition.AllocateTransient();
+
+	gDebugDrawUniformDefinition.gMatViewProj.Set(uniformBuffer, viewProjMat);
+	gDebugDrawUniformDefinition.gViewDir.Set(uniformBuffer, (Vector4)camera.GetWorldTransform().GetForward());
 
 	for(auto& entry : mMeshes)
 	{
-		DebugDrawMat* material = DebugDrawMat::GetVariation(entry.Type);
-		material->Execute(*viewContext.CommandBuffer, mParamBuffer, entry.Mesh, entry.SubMesh);
+		DebugDrawMaterial* material = DebugDrawMaterial::GetVariation(entry.Type);
+		material->Execute(*viewContext.CommandBuffer, uniformBuffer, entry.Mesh, entry.SubMesh);
 	}
 }
 }}
