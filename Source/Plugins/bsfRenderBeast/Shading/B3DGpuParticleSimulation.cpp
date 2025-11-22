@@ -578,7 +578,7 @@ const SPtr<GpuParameters>& GpuParticleSystem::PrepareSimulateParameters(const Re
 
 static SPtr<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 {
-	SPtr<GpuBuffer> inputBuffer = gGpuParticleTileVertexUniformDefinition.CreateBuffer();
+	SPtr<GpuBuffer> inputBuffer = gGpuParticleTileVertexUniformDefinition.CreateBuffer(GpuBufferFlag::StoreOnGPU);
 
 	// [0, 1] -> [-1, 1] and flip Y
 	Vector4 uvToNdc(2.0f, -2.0f, -1.0f, 1.0f);
