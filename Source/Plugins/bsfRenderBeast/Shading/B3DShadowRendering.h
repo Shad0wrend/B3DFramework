@@ -24,17 +24,17 @@ namespace b3d
 		 *  @{
 		 */
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowParamsDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatViewProj)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gNDCZToDeviceZ)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gDepthBias)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gInvDepthRange)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowParamsDef gShadowParamsDef;
+		extern ShadowUniformDefinition gShadowUniformDefinition;
 
 		/** Material used for rendering a single face of a shadow map, while applying bias in the pixel shader. */
-		class ShadowDepthNormalMat : public RendererMaterial<ShadowDepthNormalMat>
+		class ShadowDepthNormalMaterial : public RendererMaterial<ShadowDepthNormalMaterial>
 		{
 			RMAT_DEF("ShadowDepthNormal.bsl");
 
@@ -50,7 +50,7 @@ namespace b3d
 			}
 
 		public:
-			ShadowDepthNormalMat() = default;
+			ShadowDepthNormalMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
 			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
@@ -61,14 +61,14 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	skinned		True if the shadow caster supports bone animation.
-			 * @param[in]	morph		True if the shadow caster supports morph shape animation.
+			 * @param	skinned		True if the shadow caster supports bone animation.
+			 * @param	morph		True if the shadow caster supports morph shape animation.
 			 */
-			static ShadowDepthNormalMat* GetVariation(bool skinned, bool morph);
+			static ShadowDepthNormalMaterial* GetVariation(bool skinned, bool morph);
 		};
 
 		/** Material used for rendering a single face of a shadow map, without running the pixel shader. */
-		class ShadowDepthNormalNoPSMat : public RendererMaterial<ShadowDepthNormalNoPSMat>
+		class ShadowDepthNormalNoPSMaterial : public RendererMaterial<ShadowDepthNormalNoPSMaterial>
 		{
 			RMAT_DEF("ShadowDepthNormalNoPS.bsl");
 
@@ -84,7 +84,7 @@ namespace b3d
 			}
 
 		public:
-			ShadowDepthNormalNoPSMat() = default;
+			ShadowDepthNormalNoPSMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
 			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
@@ -95,14 +95,14 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	skinned		True if the shadow caster supports bone animation.
-			 * @param[in]	morph		True if the shadow caster supports morph shape animation.
+			 * @param	skinned		True if the shadow caster supports bone animation.
+			 * @param	morph		True if the shadow caster supports morph shape animation.
 			 */
-			static ShadowDepthNormalNoPSMat* GetVariation(bool skinned, bool morph);
+			static ShadowDepthNormalNoPSMaterial* GetVariation(bool skinned, bool morph);
 		};
 
 		/** Material used for rendering a single face of a shadow map, for a directional light. */
-		class ShadowDepthDirectionalMat : public RendererMaterial<ShadowDepthDirectionalMat>
+		class ShadowDepthDirectionalMaterial : public RendererMaterial<ShadowDepthDirectionalMaterial>
 		{
 			RMAT_DEF("ShadowDepthDirectional.bsl");
 
@@ -118,7 +118,7 @@ namespace b3d
 			}
 
 		public:
-			ShadowDepthDirectionalMat() = default;
+			ShadowDepthDirectionalMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
 			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
@@ -129,26 +129,26 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	skinned		True if the shadow caster supports bone animation.
-			 * @param[in]	morph		True if the shadow caster supports morph shape animation.
+			 * @param	skinned		True if the shadow caster supports bone animation.
+			 * @param	morph		True if the shadow caster supports morph shape animation.
 			 */
-			static ShadowDepthDirectionalMat* GetVariation(bool skinned, bool morph);
+			static ShadowDepthDirectionalMaterial* GetVariation(bool skinned, bool morph);
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowCubeMatricesDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowCubeMatricesUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(Matrix4, gFaceVPMatrices, 6)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowCubeMatricesDef gShadowCubeMatricesDef;
+		extern ShadowCubeMatricesUniformDefinition gShadowCubeMatricesUniformDefinition;
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowCubeMasksDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowCubeMasksUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(int, gFaceMasks, 6)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowCubeMasksDef gShadowCubeMasksDef;
+		extern ShadowCubeMasksUniformDefinition gShadowCubeMasksUniformDefinition;
 
 		/** Material used for rendering an omni directional cube shadow map. */
-		class ShadowDepthCubeMat : public RendererMaterial<ShadowDepthCubeMat>
+		class ShadowDepthCubeMaterial : public RendererMaterial<ShadowDepthCubeMaterial>
 		{
 			RMAT_DEF("ShadowDepthCube.bsl");
 
@@ -164,7 +164,7 @@ namespace b3d
 			}
 
 		public:
-			ShadowDepthCubeMat() = default;
+			ShadowDepthCubeMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
 			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
@@ -176,20 +176,20 @@ namespace b3d
 			/**
 			 * Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	skinned		True if the shadow caster supports bone animation.
-			 * @param[in]	morph		True if the shadow caster supports morph shape animation.
+			 * @param	skinned		True if the shadow caster supports bone animation.
+			 * @param	morph		True if the shadow caster supports morph shape animation.
 			 */
-			static ShadowDepthCubeMat* GetVariation(bool skinned, bool morph);
+			static ShadowDepthCubeMaterial* GetVariation(bool skinned, bool morph);
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectVertParamsDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectVertUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gPositionAndScale)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowProjectVertParamsDef gShadowProjectVertParamsDef;
+		extern ShadowProjectVertUniformDefinition gShadowProjectVertUniformDefinition;
 
 		/** Material used for populating the stencil buffer when projecting non-omnidirectional shadows. */
-		class ShadowProjectStencilMat : public RendererMaterial<ShadowProjectStencilMat>
+		class ShadowProjectStencilMaterial : public RendererMaterial<ShadowProjectStencilMaterial>
 		{
 			RMAT_DEF("ShadowProjectStencil.bsl");
 
@@ -205,20 +205,20 @@ namespace b3d
 			}
 
 		public:
-			ShadowProjectStencilMat() = default;
+			ShadowProjectStencilMaterial() = default;
 
 			/** Binds the material to the pipeline (without binding parameters). */
 			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	directional		Set to true if shadows from a directional light are being rendered.
-			 * @param[in]	useZFailStencil	If true the material will use z-fail operation to modify the stencil buffer. If
+			 * @param	directional		Set to true if shadows from a directional light are being rendered.
+			 * @param	useZFailStencil	If true the material will use z-fail operation to modify the stencil buffer. If
 			 *								false z-pass will be used instead. Z-pass is a more performant alternative as it
 			 *								doesn't disable hi-z optimization, but it cannot handle the case when the viewer is
 			 *								inside the drawn geometry.
 			 */
-			static ShadowProjectStencilMat* GetVariation(bool directional, bool useZFailStencil);
+			static ShadowProjectStencilMaterial* GetVariation(bool directional, bool useZFailStencil);
 		};
 
 		/** Common parameters used by the shadow projection materials. */
@@ -244,7 +244,7 @@ namespace b3d
 			GBufferTextures Gbuffer;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectParamsDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMixedToShadowSpace)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gShadowMapSize)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector2, gShadowMapSizeInv)
@@ -255,45 +255,45 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(float, gFace)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowProjectParamsDef gShadowProjectParamsDef;
+		extern ShadowProjectUniformDefinition gShadowProjectUniformDefinition;
 
 		/** Material used for projecting depth into a shadow accumulation buffer for non-omnidirectional shadow maps. */
-		class ShadowProjectMat : public RendererMaterial<ShadowProjectMat>
+		class ShadowProjectMaterial : public RendererMaterial<ShadowProjectMaterial>
 		{
 			RMAT_DEF("ShadowProject.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <u32 quality, bool directional, bool MSAA>
+			template <u32 QUALITY, bool DIRECTIONAL, bool MSAA>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SHADOW_QUALITY", quality),
-					  ShaderVariationParameter("CASCADING", directional),
-					  ShaderVariationParameter("NEEDS_TRANSFORM", !directional),
+					{ ShaderVariationParameter("SHADOW_QUALITY", QUALITY),
+					  ShaderVariationParameter("CASCADING", DIRECTIONAL),
+					  ShaderVariationParameter("NEEDS_TRANSFORM", !DIRECTIONAL),
 					  ShaderVariationParameter("MSAA_COUNT", MSAA ? 2 : 1) });
 
 				return variation;
 			};
 
 		public:
-			ShadowProjectMat() = default;
+			ShadowProjectMaterial() = default;
 
 			/** Binds the material to the pipeline (without binding parameters). */
 			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	quality			Quality of the shadow filtering to use. In range [1, 4].
-			 * @param[in]	directional		True if rendering a shadow from a directional light.
-			 * @param[in]	MSAA			True if the GBuffer contains per-sample data.
+			 * @param	quality			Quality of the shadow filtering to use. In range [1, 4].
+			 * @param	directional		True if rendering a shadow from a directional light.
+			 * @param	MSAA			True if the GBuffer contains per-sample data.
 			 */
-			static ShadowProjectMat* GetVariation(u32 quality, bool directional, bool MSAA);
+			static ShadowProjectMaterial* GetVariation(u32 quality, bool directional, bool MSAA);
 
 			/** Returns the sampler state used for shadow sampling. */
 			static SPtr<SamplerState> GetShadowSampler(GpuDevice& gpuDevice);
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectOmniParamsDef)
+		B3D_UNIFORM_BUFFER_BEGIN(ShadowProjectOmniUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER_ARRAY(Matrix4, gFaceVPMatrices, 6)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gLightPosAndRadius)
 			B3D_UNIFORM_BUFFER_MEMBER(float, gInvResolution)
@@ -301,20 +301,20 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(float, gDepthBias)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ShadowProjectOmniParamsDef gShadowProjectOmniParamsDef;
+		extern ShadowProjectOmniUniformDefinition gShadowProjectOmniUniformDefinition;
 
 		/** Material used for projecting depth into a shadow accumulation buffer for omnidirectional shadow maps. */
-		class ShadowProjectOmniMat : public RendererMaterial<ShadowProjectOmniMat>
+		class ShadowProjectOmniMaterial : public RendererMaterial<ShadowProjectOmniMaterial>
 		{
 			RMAT_DEF("ShadowProjectOmni.bsl");
 
 			/** Helper method used for initializing variations of this material. */
-			template <u32 quality, bool inside, bool MSAA>
+			template <u32 QUALITY, bool INSIDE, bool MSAA>
 			static const ShaderVariationParameters& GetVariation()
 			{
 				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{ ShaderVariationParameter("SHADOW_QUALITY", quality),
-					  ShaderVariationParameter("VIEWER_INSIDE_VOLUME", inside),
+					{ ShaderVariationParameter("SHADOW_QUALITY", QUALITY),
+					  ShaderVariationParameter("VIEWER_INSIDE_VOLUME", INSIDE),
 					  ShaderVariationParameter("NEEDS_TRANSFORM", true),
 					  ShaderVariationParameter("MSAA_COUNT", MSAA ? 2 : 1) });
 
@@ -322,18 +322,18 @@ namespace b3d
 			};
 
 		public:
-			ShadowProjectOmniMat() = default;
+			ShadowProjectOmniMaterial() = default;
 
 			/** Binds the material to the pipeline (without binding parameters). */
 			void Bind(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
-			 * @param[in]	quality			Quality of the shadow filtering to use. In range [1, 4].
-			 * @param[in]	inside			True if the viewer is inside the light volume.
-			 * @param[in]	MSAA			True if the GBuffer contains per-sample data.
+			 * @param	quality			Quality of the shadow filtering to use. In range [1, 4].
+			 * @param	inside			True if the viewer is inside the light volume.
+			 * @param	MSAA			True if the GBuffer contains per-sample data.
 			 */
-			static ShadowProjectOmniMat* GetVariation(u32 quality, bool inside, bool MSAA);
+			static ShadowProjectOmniMaterial* GetVariation(u32 quality, bool inside, bool MSAA);
 
 			/** Returns the sampler state used for shadow cubemap sampling. */
 			static SPtr<SamplerState> GetShadowSampler(GpuDevice& gpuDevice);
