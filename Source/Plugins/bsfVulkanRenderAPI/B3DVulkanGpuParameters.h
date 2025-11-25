@@ -24,17 +24,14 @@ namespace b3d
 		class VulkanGpuParameters : public GpuParameters
 		{
 		public:
-			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 set);
 			~VulkanGpuParameters() override;
 
-			bool SetUniformBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& paramBlockBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
-			bool SetSampledTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override;
-			bool SetStorageTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex = 0) override;
-			bool SetStorageBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex = 0, GpuBufferViewInformation view = GpuBufferViewInformation()) override;
-			bool SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0) override;
-
-			/** Returns the total number of descriptor sets used by this object. */
-			u32 GetSetCount() const;
+			bool SetUniformBuffer(u32 slot, const SPtr<GpuBuffer>& uniformBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
+			bool SetSampledTexture(u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override;
+			bool SetStorageTexture(u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex = 0) override;
+			bool SetStorageBuffer(u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex = 0, GpuBufferViewInformation view = GpuBufferViewInformation()) override;
+			bool SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0) override;
 
 			/**
 			 * Prepares the internal descriptor sets for a bind operation on the provided command buffer. It generates and/or
@@ -46,19 +43,19 @@ namespace b3d
 			 * @param		commandBuffer		Buffer on which the parameters will be bound to.
 			 * @param		resourceTracker		Tracker to track usages of resources used on the command buffer.
 			 * @param		barrierHelper		Barrier helper into which to queue any required barriers.
-			 * @param		outSets				Pre-allocated buffer in which the descriptor set handled will be written. Must be of GetSetCount() size.
+			 * @param		outSet				Parameter into which the descriptor set handle will be written.
 			 * @param		outDynamicOffsets	Dynamic offsets required for binding the descriptor sets.
 			 *
 			 * @note	Thread safe.
 			 */
-			void PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VulkanBarrierHelper& barrierHelper, VkDescriptorSet* outSets, TInlineArray<u32, 4>& outDynamicOffsets);
+			void PrepareForBind(VulkanGpuCommandBuffer& commandBuffer, VulkanResourceTracker& resourceTracker, VulkanBarrierHelper& barrierHelper, VkDescriptorSet& outSet, TInlineArray<u32, 4>& outDynamicOffsets);
 
 		protected:
 			/** All GPU param data related to a single descriptor set. */
-			struct PerSetData
+			struct SetInformation
 			{
 				VulkanDescriptorSet* LastUsedSet;
-				Vector<VulkanDescriptorSet*> Sets;
+				TInlineArray<VulkanDescriptorSet*, 4> SetCache;
 
 				VkWriteDescriptorSet* WriteSetInfos;
 				VkDescriptorImageInfo* ImageWriteInfos;
@@ -69,25 +66,20 @@ namespace b3d
 				u32 LastFreeSetIndex = ~0u;
 			};
 
-			/** All GPU param data beloning to a single device. */
-			struct PerDeviceData
-			{
-				PerSetData* PerSetData;
-
-				VkImage* SampledImages;
-				VkImage* StorageImages;
-				VkBuffer* UniformBuffers;
-				VkBuffer* Buffers;
-				VkSampler* Samplers;
-			};
-
 			void Initialize() override;
 
 			VulkanGpuDevice& mGpuDevice;
-			PerDeviceData mPerDeviceData;
-			bool* mSetsDirty = nullptr;
 
-			GroupAlloc mAlloc;
+			SetInformation mSetInformation;
+			bool mSetDirty = false;
+
+			VkImage* mSampledImages = nullptr;
+			VkImage* mStorageImages = nullptr;
+			VkBuffer* mUniformBuffers = nullptr;
+			VkBuffer* mBuffers = nullptr;
+			VkSampler* mSamplers = nullptr;
+
+			GroupAlloc mAllocator;
 			Mutex mMutex;
 		};
 

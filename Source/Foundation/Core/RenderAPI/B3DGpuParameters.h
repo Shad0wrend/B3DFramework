@@ -264,7 +264,10 @@ namespace b3d
 		GpuParametersBase& operator=(const GpuParametersBase& rhs) = delete;
 
 		/** Gets the object that contains the processed information about all parameters. */
-		SPtr<GpuPipelineParameterLayout> GetPipelineParameterInformation() const { return mParameterLayout; }
+		SPtr<GpuPipelineParameterLayout> GetPipelineParameterLayout() const { return mParameterLayout; }
+
+		/** Returns the set that this object is responsible binding parameters for. */
+		u32 GetSet() const { return mSet; }
 
 		/** Checks if parameter with the specified name exists. */
 		bool HasParameter(const StringView& name) const;
@@ -291,9 +294,10 @@ namespace b3d
 		virtual void MarkResourcesDirtyInternal() {}
 
 	protected:
-		GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+		GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 		SPtr<GpuPipelineParameterLayout> mParameterLayout;
+		u32 mSet = 0;
 	};
 
 	/** Templated version of GpuParameters that contains functionality for both main and render thread versions of stored data. */
@@ -358,38 +362,37 @@ namespace b3d
 		/** @copydoc TryGetParameter */
 		bool TryGetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const;
 
-		/**	Gets a uniform buffer from the specified set/slot/array index combination. */
-		UniformBufferType GetUniformBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		/**	Gets a uniform buffer from the specified slot/array index combination. */
+		UniformBufferType GetUniformBuffer(u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a texture bound to the specified set/slot/array index combination. */
-		TextureType GetSampledTexture(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		/**	Gets a texture bound to the specified slot/array index combination. */
+		TextureType GetSampledTexture(u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a storage texture bound to the specified set/slot/array index combination. */
-		TextureType GetStorageTexture(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		/**	Gets a storage texture bound to the specified slot/array index combination. */
+		TextureType GetStorageTexture(u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a buffer bound to the specified set/slot/array index combination. */
-		BufferType GetStorageBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		/**	Gets a buffer bound to the specified slot/array index combination. */
+		BufferType GetStorageBuffer(u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a sampler state bound to the specified set/slot/array index combination. */
-		SPtr<SamplerState> GetSamplerState(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		/**	Gets a sampler state bound to the specified slot/array index combination. */
+		SPtr<SamplerState> GetSamplerState(u32 slot, u32 arrayIndex = 0) const;
 
 		/** Gets information that determines which texture surfaces to bind as a sampled texture parameter. */
-		const TextureSurface& GetTextureSurface(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		const TextureSurface& GetTextureSurface(u32 slot, u32 arrayIndex = 0) const;
 
 		/** Gets information that determines which texture surfaces to bind as a storage texture parameter. */
-		const TextureSurface& GetStorageTextureSurface(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		const TextureSurface& GetStorageTextureSurface(u32 slot, u32 arrayIndex = 0) const;
 
 		/**
-		 * Sets an uniform buffer at the specified set/slot combination. It is up to the caller to guarantee the provided buffer matches parameter block descriptor for this slot.
+		 * Sets an uniform buffer at the specified slot. It is up to the caller to guarantee the provided buffer matches uniform descriptor for this slot.
 		 *
-		 * @param	set			Set at which to bind the buffer, as defined by the pipeline GPU program.
 		 * @param	slot		Slot at which to bind the buffer, as defined by the pipeline GPU program.
 		 * @param	buffer		Buffer to bind.
 		 * @param	arrayIndex	In case the bind point represents an array, index to bind the buffer to.
 		 * @param	offset		Dynamic offset in the buffer, at which the to start reading the buffer.
 		 * @return				Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetUniformBuffer(u32 set, u32 slot, const UniformBufferType& buffer, u32 arrayIndex = 0, u32 offset = 0);
+		virtual bool SetUniformBuffer(u32 slot, const UniformBufferType& buffer, u32 arrayIndex = 0, u32 offset = 0);
 
 		/**
 		 * Sets an uniform buffer with the specified name in all GPU programs containing a buffer with that name. It is up to the caller to guarantee the provided buffer matches
@@ -407,34 +410,33 @@ namespace b3d
 		bool TrySetUniformBuffer(const StringView& name, const UniformBufferType& parameterBlockBuffer, u32 arrayIndex = 0, u32 offset = 0);
 
 		/**
-		 * Sets a texture at the specified set/slot combination.
+		 * Sets a texture at the specified slot.
 		 * Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetSampledTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0);
+		virtual bool SetSampledTexture(u32 slot, const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0);
 
 		/**
-		 * Sets a storage texture at the specified set/slot combination.
+		 * Sets a storage texture at the specified slot.
 		 * Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetStorageTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex = 0);
+		virtual bool SetStorageTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex = 0);
 
 		/**
-		 * Sets a storage buffer at the specified set/slot combination.
+		 * Sets a storage buffer at the specified slot combination.
 		 *
-		 * @param	set			Set at which to bind the buffer, as defined by the pipeline GPU program.
 		 * @param	slot		Slot at which to bind the buffer, as defined by the pipeline GPU program.
 		 * @param	buffer		Buffer to bind.
 		 * @param	arrayIndex	In case the bind point represents an array, index to bind the buffer to.
 		 * @param	view		Optional view information that controls how is the buffer viewed when bound to the pipeline.
 		 * @return				Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetStorageBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex = 0, GpuBufferViewInformation view = GpuBufferViewInformation());
+		virtual bool SetStorageBuffer(u32 slot, const BufferType& buffer, u32 arrayIndex = 0, GpuBufferViewInformation view = GpuBufferViewInformation());
 
 		/**
-		 * Sets a sampler state at the specified set/slot combination.
+		 * Sets a sampler state at the specified slot.
 		 * Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0);
+		virtual bool SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0);
 
 		/**	Assigns a data value to the parameter with the specified name. */
 		template <class T>
@@ -485,7 +487,7 @@ namespace b3d
 		}
 
 	protected:
-		TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+		TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 		virtual SPtr<GpuParametersType> GetSelf() const = 0;
 
@@ -538,20 +540,22 @@ namespace b3d
 		/**
 		 * Creates new GpuParameters object that can serve for changing the GPU program parameters on the specified pipeline.
 		 *
-		 * @param[in]	pipelineState	Pipeline state for which this object can set parameters for.
-		 * @return						New GpuParameters object.
+		 * @param	pipelineState	Pipeline state for which this object can set parameters for.
+		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
+		 * @return					New GpuParameters object.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState);
+		static SPtr<GpuParameters> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex = 0);
 
 		/** @copydoc GpuParameters::Create(const SPtr<GraphicsPipelineState>&) */
-		static SPtr<GpuParameters> Create(const SPtr<GpuComputePipelineState>& pipelineState);
+		static SPtr<GpuParameters> Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex = 0);
 
 		/**
 		 * Creates a new set of GPU parameters using an object describing the parameters for a pipeline.
 		 *
-		 * @param[in]	parameterLayout	Description of GPU parameters for a specific GPU pipeline state.
+		 * @param	parameterLayout	Description of GPU parameters for a specific GPU pipeline state.
+		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+		static SPtr<GpuParameters> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0);
 
 		/** Contains a lookup table for sizes of all data parameters. Sizes are in bytes. */
 		const static GpuDataParameterTypeInformationLookup kParamSizes;
@@ -568,7 +572,7 @@ namespace b3d
 		struct SyncPacket;
 		friend class render::GpuParameters;
 
-		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo);
+		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo, u32 setIndex);
 
 		SPtr<GpuParameters> GetSelf() const override;
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
@@ -602,27 +606,26 @@ namespace b3d
 			using TGpuParameters::TrySetUniformBuffer;
 
 			/**
-			 * Sets uniform buffer using a pool suballocation (by set/slot).
+			 * Sets uniform buffer using a pool suballocation at the specified slot.
 			 *
-			 * @param set               Descriptor set index
-			 * @param slot              Binding slot within set
-			 * @param suballocation     Pool suballocation handle
-			 * @param arrayIndex        Array index if binding is an array
-			 * @return                  True if successful, false if binding not found
+			 * @param slot				Binding slot within set.
+			 * @param suballocation		Pool suballocation handle.
+			 * @param arrayIndex		Array index if binding is an array.
+			* @return					True if successful, false if binding not found.
 			 */
-			bool SetUniformBuffer(u32 set, u32 slot, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
+			bool SetUniformBuffer(u32 slot, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
 			{
 				B3D_ASSERT(suballocation.IsValid());
-				return TGpuParameters::SetUniformBuffer(set, slot, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+				return TGpuParameters::SetUniformBuffer(slot, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
 			}
 
 			/**
 			 * Sets uniform buffer using a pool suballocation (by name).
 			 *
-			 * @param name              Parameter name
-			 * @param suballocation     Pool suballocation handle
-			 * @param arrayIndex        Array index if binding is an array
-			 * @return                  True if successful, false if binding not found
+			 * @param name				Parameter name.
+			 * @param suballocation		Pool suballocation handle.
+			 * @param arrayIndex		Array index if binding is an array.
+			 * @return					True if successful, false if binding not found.
 			 */
 			bool SetUniformBuffer(const StringView& name, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
 			{
@@ -633,10 +636,10 @@ namespace b3d
 			/**
 			 * Tries to set uniform buffer using a pool suballocation (no warnings).
 			 *
-			 * @param name              Parameter name
-			 * @param suballocation     Pool suballocation handle
-			 * @param arrayIndex        Array index if binding is an array
-			 * @return                  True if successful, false if binding not found
+			 * @param name				Parameter name.
+			 * @param suballocation		Pool suballocation handle
+			 * @param arrayIndex		Array index if binding is an array
+			 * @return					True if successful, false if binding not found
 			 */
 			bool TrySetUniformBuffer(const StringView& name, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
 			{
@@ -649,7 +652,7 @@ namespace b3d
 		protected:
 			friend class b3d::GpuParameters;
 
-			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 			SPtr<GpuParameters> GetSelf() const override;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;

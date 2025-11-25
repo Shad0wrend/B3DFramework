@@ -9,7 +9,7 @@ using namespace b3d;
 using namespace b3d::render;
 
 VulkanGpuPipelineParameterLayout::VulkanGpuPipelineParameterLayout(VulkanGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation)
-	: GpuPipelineParameterLayout(createInformation), mGpuDevice(gpuDevice), mLayouts(), mLayoutInfos()
+	: GpuPipelineParameterLayout(createInformation), mGpuDevice(gpuDevice), mLayouts(), mExtendedSetInformation()
 {}
 
 void VulkanGpuPipelineParameterLayout::Initialize()
@@ -24,21 +24,19 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 		.Reserve<GpuParameterObjectType>(mBindingCount)
 		.Reserve<GpuBufferFormat>(mBindingCount)
 		.Reserve<GpuBufferFormat>(mBindingCount)
-		.Reserve<LayoutInfo>(setCount)
+		.Reserve<ExtendedSetInformation>(setCount)
 		.Reserve<VulkanDescriptorLayout*>(setCount)
-		.Reserve<SetExtraInfo>(setCount)
 		.Reserve<u32>(totalSlotCount)
 		.Reserve<u32>(totalSlotCount)
 		.Init();
 
-	mLayoutInfos = mAlloc.Alloc<LayoutInfo>(setCount);
+	mExtendedSetInformation = mAlloc.Alloc<ExtendedSetInformation>(setCount);
 	VkDescriptorSetLayoutBinding* bindings = mAlloc.Alloc<VkDescriptorSetLayoutBinding>(mBindingCount);
 	GpuParameterObjectType* types = mAlloc.Alloc<GpuParameterObjectType>(mBindingCount);
 	GpuBufferFormat* elementTypes = mAlloc.Alloc<GpuBufferFormat>(mBindingCount);
 	u32* elementArraySizes = mAlloc.Alloc<u32>(mBindingCount);
 
 	mLayouts = mAlloc.Alloc<VulkanDescriptorLayout*>(setCount);
-	mSetExtraInfos = mAlloc.Alloc<SetExtraInfo>(setCount);
 
 	if(bindings != nullptr)
 		B3DZeroOut(bindings, mBindingCount);
@@ -56,15 +54,12 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 	u32 usedResourceSlotCount = 0;
 	for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 	{
-		mSetExtraInfos[setIndex].SlotToUsedBindingSequentialIndex = mAlloc.Alloc<u32>((u32)mSets[setIndex].Uniforms.Size());
-		mSetExtraInfos[setIndex].SlotToUsedResourceSequentialIndex = mAlloc.Alloc<u32>((u32)mSets[setIndex].Uniforms.Size());
-
-		mLayoutInfos[setIndex].BindingCount = 0;
-		mLayoutInfos[setIndex].ResourceCount = 0;
-		mLayoutInfos[setIndex].Bindings = nullptr;
-		mLayoutInfos[setIndex].Types = nullptr;
-		mLayoutInfos[setIndex].ElementTypes = nullptr;
-		mLayoutInfos[setIndex].ArraySizes = nullptr;
+		mExtendedSetInformation[setIndex].SlotToUsedBindingSequentialIndex = mAlloc.Alloc<u32>((u32)mSets[setIndex].Uniforms.Size());
+		mExtendedSetInformation[setIndex].SlotToUsedResourceSequentialIndex = mAlloc.Alloc<u32>((u32)mSets[setIndex].Uniforms.Size());
+		mExtendedSetInformation[setIndex].Bindings = nullptr;
+		mExtendedSetInformation[setIndex].Types = nullptr;
+		mExtendedSetInformation[setIndex].ElementTypes = nullptr;
+		mExtendedSetInformation[setIndex].ArraySizes = nullptr;
 
 		for(u32 slotIndex = 0; slotIndex < (u32)mSets[setIndex].Uniforms.Size(); slotIndex++)
 		{
@@ -72,8 +67,8 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 
 			if(uniformInformation == nullptr)
 			{
-				mSetExtraInfos[setIndex].SlotToUsedBindingSequentialIndex[slotIndex] = ~0u;
-				mSetExtraInfos[setIndex].SlotToUsedResourceSequentialIndex[slotIndex] = ~0u;
+				mExtendedSetInformation[setIndex].SlotToUsedBindingSequentialIndex[slotIndex] = ~0u;
+				mExtendedSetInformation[setIndex].SlotToUsedResourceSequentialIndex[slotIndex] = ~0u;
 
 				continue;
 			}
@@ -83,11 +78,8 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 			VkDescriptorSetLayoutBinding& binding = bindings[usedBindingSlotCount];
 			binding.binding = slotIndex;
 
-			mSetExtraInfos[setIndex].SlotToUsedBindingSequentialIndex[slotIndex] = usedBindingSlotCount;
-			mSetExtraInfos[setIndex].SlotToUsedResourceSequentialIndex[slotIndex] = usedResourceSlotCount;
-
-			mLayoutInfos[setIndex].BindingCount++;
-			mLayoutInfos[setIndex].ResourceCount += arraySize;
+			mExtendedSetInformation[setIndex].SlotToUsedBindingSequentialIndex[slotIndex] = usedBindingSlotCount;
+			mExtendedSetInformation[setIndex].SlotToUsedResourceSequentialIndex[slotIndex] = usedResourceSlotCount;
 
 			usedBindingSlotCount++;
 			usedResourceSlotCount += arraySize;
@@ -97,12 +89,12 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 	u32 offset = 0;
 	for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 	{
-		mLayoutInfos[setIndex].Bindings = &bindings[offset];
-		mLayoutInfos[setIndex].Types = &types[offset];
-		mLayoutInfos[setIndex].ElementTypes = &elementTypes[offset];
-		mLayoutInfos[setIndex].ArraySizes = &elementArraySizes[offset];
+		mExtendedSetInformation[setIndex].Bindings = &bindings[offset];
+		mExtendedSetInformation[setIndex].Types = &types[offset];
+		mExtendedSetInformation[setIndex].ElementTypes = &elementTypes[offset];
+		mExtendedSetInformation[setIndex].ArraySizes = &elementArraySizes[offset];
 
-		offset += mLayoutInfos[setIndex].BindingCount;
+		offset += mSets[setIndex].BindingCount;
 	}
 
 	auto fnGetShaderStageFlags = [](const GpuProgramStageBits& bits)
@@ -129,8 +121,8 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 		return flags;
 	};
 
-	using PerTypeUniformArray = std::decay_t<decltype(mUniformsPerType[0])>;
-	auto setUpBlockBindings = [this, &bindings, fnGetShaderStageFlags](const PerTypeUniformArray& uniforms, VkDescriptorType descriptorType)
+	using PerTypeUniformArray = std::decay_t<decltype(mSets[0].UniformsPerType[0])>;
+	auto fnSetUniformBindings = [this, &bindings, fnGetShaderStageFlags](const PerTypeUniformArray& uniforms, VkDescriptorType descriptorType)
 	{
 		for(const auto& entry : uniforms)
 		{
@@ -144,7 +136,7 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 		}
 	};
 
-	auto setUpBindings = [this, &bindings, &types, &elementTypes, &elementArraySizes, fnGetShaderStageFlags](const PerTypeUniformArray& uniforms, VkDescriptorType descriptorType)
+	auto fnSetBindings = [this, &bindings, &types, &elementTypes, &elementArraySizes, fnGetShaderStageFlags](const PerTypeUniformArray& uniforms, VkDescriptorType descriptorType)
 	{
 		for(const auto& entry : uniforms)
 		{
@@ -162,26 +154,61 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 		}
 	};
 
-	setUpBlockBindings(mUniformsPerType[(u32)GpuParameterType::UniformBuffer], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
-	setUpBindings(mUniformsPerType[(u32)GpuParameterType::SampledTexture], VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	setUpBindings(mUniformsPerType[(u32)GpuParameterType::StorageTexture], VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
-
-	// Set up sampler bindings
-	for(auto& entry : mUniformsPerType[(u32)GpuParameterType::Sampler])
+	for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 	{
-		const u32 usedBindingSequentialIndex = GetUsedBindingSequentialIndex(entry->Set, entry->Slot);
-		B3D_ASSERT(usedBindingSequentialIndex != ~0u);
+		const auto& uniformsPerType = mSets[setIndex].UniformsPerType;
 
-		VkDescriptorSetLayoutBinding& binding = bindings[usedBindingSequentialIndex];
+		fnSetUniformBindings(uniformsPerType[(u32)GpuParameterType::UniformBuffer], VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
+		fnSetBindings(uniformsPerType[(u32)GpuParameterType::SampledTexture], VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+		fnSetBindings(uniformsPerType[(u32)GpuParameterType::StorageTexture], VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 
-		// If we already assigned an image to this binding slot, then it's a combined image/sampler
-		if(binding.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
-			binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		else
+		// Set up sampler bindings
+		for(auto& entry : uniformsPerType[(u32)GpuParameterType::Sampler])
 		{
+			const u32 usedBindingSequentialIndex = GetUsedBindingSequentialIndex(entry->Set, entry->Slot);
+			B3D_ASSERT(usedBindingSequentialIndex != ~0u);
+
+			VkDescriptorSetLayoutBinding& binding = bindings[usedBindingSequentialIndex];
+
+			// If we already assigned an image to this binding slot, then it's a combined image/sampler
+			if(binding.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			else
+			{
+				binding.descriptorCount = entry->ArraySize;
+				binding.stageFlags |= fnGetShaderStageFlags(entry->Usage);
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+
+				types[usedBindingSequentialIndex] = entry->ObjectType;
+				elementTypes[usedBindingSequentialIndex] = entry->ElementType;
+				elementArraySizes[usedBindingSequentialIndex] = entry->ArraySize;
+			}
+		}
+
+		// Set up buffer bindings
+		for(auto& entry : uniformsPerType[(u32)GpuParameterType::StorageBuffer])
+		{
+			const u32 usedBindingSequentialIndex = GetUsedBindingSequentialIndex(entry->Set, entry->Slot);
+			B3D_ASSERT(usedBindingSequentialIndex != ~0u);
+
+			VkDescriptorSetLayoutBinding& binding = bindings[usedBindingSequentialIndex];
 			binding.descriptorCount = entry->ArraySize;
 			binding.stageFlags |= fnGetShaderStageFlags(entry->Usage);
-			binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+
+			switch(entry->ObjectType)
+			{
+			default:
+			case GPOT_BYTE_BUFFER:
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+				break;
+			case GPOT_RWBYTE_BUFFER:
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+				break;
+			case GPOT_STRUCTURED_BUFFER:
+			case GPOT_RWSTRUCTURED_BUFFER:
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+				break;
+			}
 
 			types[usedBindingSequentialIndex] = entry->ObjectType;
 			elementTypes[usedBindingSequentialIndex] = entry->ElementType;
@@ -189,38 +216,8 @@ void VulkanGpuPipelineParameterLayout::Initialize()
 		}
 	}
 
-	// Set up buffer bindings
-	for(auto& entry : mUniformsPerType[(u32)GpuParameterType::StorageBuffer])
-	{
-		const u32 usedBindingSequentialIndex = GetUsedBindingSequentialIndex(entry->Set, entry->Slot);
-		B3D_ASSERT(usedBindingSequentialIndex != ~0u);
-
-		VkDescriptorSetLayoutBinding& binding = bindings[usedBindingSequentialIndex];
-		binding.descriptorCount = entry->ArraySize;
-		binding.stageFlags |= fnGetShaderStageFlags(entry->Usage);
-
-		switch(entry->ObjectType)
-		{
-		default:
-		case GPOT_BYTE_BUFFER:
-			binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
-			break;
-		case GPOT_RWBYTE_BUFFER:
-			binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-			break;
-		case GPOT_STRUCTURED_BUFFER:
-		case GPOT_RWSTRUCTURED_BUFFER:
-			binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-			break;
-		}
-
-		types[usedBindingSequentialIndex] = entry->ObjectType;
-		elementTypes[usedBindingSequentialIndex] = entry->ElementType;
-		elementArraySizes[usedBindingSequentialIndex] = entry->ArraySize;
-	}
-
 	// Allocate layouts
 	VulkanDescriptorManager& descriptorManager = mGpuDevice.GetDescriptorManager();
 	for(u32 setIndex = 0; setIndex < setCount; setIndex++)
-		mLayouts[setIndex] = descriptorManager.GetLayout(mLayoutInfos[setIndex].Bindings, mLayoutInfos[setIndex].BindingCount);
+		mLayouts[setIndex] = descriptorManager.GetLayout(mExtendedSetInformation[setIndex].Bindings, mSets[setIndex].BindingCount);
 }

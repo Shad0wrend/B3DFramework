@@ -70,13 +70,14 @@ namespace b3d
 		~TMaterialParameterAdapter();
 
 		/**
-		 * Returns a set of GPU parameters for the specified pass.
+		 * Returns a set of GPU parameters for the specified pass and descriptor set.
 		 *
 		 * @param passIndex		Pass in which to look the GPU program for in.
+		 * @param setIndex		Descriptor set index to retrieve parameters for.
 		 * @return				GPU parameters object that can be used for setting parameters of all GPU programs
-		 *						in a pass. Returns null if pass doesn't exist.
+		 *						in a pass. Returns null if pass or set doesn't exist.
 		 */
-		SPtr<GpuParametersType> GetGpuParameters(u32 passIndex = 0);
+		SPtr<GpuParametersType> GetGpuParameters(u32 passIndex = 0, u32 setIndex = 0);
 
 		/**
 		 * Searches for a parameter uniform buffer with the specified name, and returns an index you can use for accessing it.
@@ -107,7 +108,10 @@ namespace b3d
 		void SetUniformBuffer(const String& name, const UniformBufferPointerType& buffer, bool ignoreInUpdate = false);
 
 		/** Returns the number of passes the set contains the parameters for. */
-		u32 GetPassCount() const { return (u32)mGPUParameterPerPass.size(); }
+		u32 GetPassCount() const { return (u32)mGpuParametersPerPass.size(); }
+
+		/** Returns the number of sets in the specified pass. */
+		u32 GetSetCount(u32 passIndex);
 
 		/**
 		 * Updates parameter data in underlying GpuParameter objects from the provided material parameters object.
@@ -159,7 +163,7 @@ namespace b3d
 			PassUniformBufferBindings* PassData;
 		};
 
-		Vector<SPtr<GpuParametersType>> mGPUParameterPerPass;
+		Vector<TInlineArray<SPtr<GpuParametersType>, 4>> mGpuParametersPerPass;
 		Vector<UniformBufferInfo> mUniformBuffers;
 		Vector<DataParamInfo> mDataParamInfos;
 		PassParamInfo* mPassParamInfos;

@@ -476,7 +476,8 @@ namespace b3d
 
 			/**
 			 * Applies an offset from which reads in a buffer should start in a GPU program. This allows caller to quickly change
-			 * buffer contents as seen by the shader, without having to rebind GPU program parameters.
+			 * buffer contents as seen by the shader, without having to rebind GPU program parameters. You should only call this
+			 * after binding all parameter sets, as the offsets will be reset when parameters are changed.
 			 *
 			 * @param bufferIndex		Dynamic buffer index, as retrieved from GpuPipelineParameterLayout of the currently bound GpuParameters.
 			 * @param offset			Offset to apply. Must be within the range of the currently bound buffer size and respect hardware alignment requirements.

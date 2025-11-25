@@ -368,41 +368,38 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 			continue;
 
 		VulkanGpuParameters* vkParams = static_cast<VulkanGpuParameters*>(parameters.get());
-		u32 setCount = vkParams->GetSetCount();
-
-		if(setCount == 0)
-			continue;
-
-		const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameters->GetPipelineParameterInformation();
+		const u32 set = vkParams->GetSet();
+		const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameters->GetPipelineParameterLayout();
 
 		// Flush all uniform buffers
 		// Note: We need to do this here, because updating the buffer can cause a new underlying VulkanBuffer to be created, and we need that to be ready before we call PrepareForBind below.
 		// Potential issue may arise of the buffer is updated externally beyond this point, which might need handling, but generally it should be bad practice
-		const u32 uniformBufferCount = uniformLayout->GetBindingCount(GpuParameterType::UniformBuffer);
+		const u32 uniformBufferCount = uniformLayout->GetBindingCount(set, GpuParameterType::UniformBuffer);
 		for (u32 uniformBufferIndex = 0; uniformBufferIndex < uniformBufferCount; uniformBufferIndex++)
 		{
-			const GpuParameterBinding& binding = uniformLayout->GetBinding(GpuParameterType::UniformBuffer, uniformBufferIndex);
-			SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(binding.Set, binding.Slot);
+			const u32 slot = uniformLayout->GetSlot(GpuParameterType::UniformBuffer, set, uniformBufferIndex);
+			SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(set, slot);
 
 			if (buffer != nullptr)
 				buffer->FlushCache();
 		}
 
-		// Use mDescriptorSetsTemp for temporary storage and call PrepareForBind
+		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+
 		TInlineArray<u32, 4> tempDynamicOffsets;
-		vkParams->PrepareForBind(*this, mResourceTracker, mBarrierHelper, mDescriptorSetsTemp, tempDynamicOffsets);
+		vkParams->PrepareForBind(*this, mResourceTracker, mBarrierHelper, descriptorSet, tempDynamicOffsets);
 
 		// Cache the preparation results for later use by SetGpuParameters
 		CachedGpuParameterData& cacheData = mRenderPassGpuParametersCache[parameters.get()];
-		cacheData.SetCount = setCount;
-		cacheData.DescriptorSets = TInlineArray<VkDescriptorSet, 4>(mDescriptorSetsTemp, mDescriptorSetsTemp + setCount);
+		cacheData.DescriptorSet = descriptorSet;
 		cacheData.DynamicOffsets = std::move(tempDynamicOffsets);
 	}
 
 	mBarrierHelper.Execute(*this);
 
 	// Re-set the params as they will need to be re-bound
-	SetGpuParameters(mBoundParams);
+	for(const auto& entry : mBoundGpuParameterSets) // TODO - Can likely be removed
+		SetGpuParameters(entry);
 
 	mGfxPipelineRequiresBind = true;
 
@@ -544,43 +541,43 @@ void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePip
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameters)
+void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameterSet)
 {
 	EnsureValidThread();
+
+	if(!B3D_ENSURE(parameterSet != nullptr))
+		return;
+
+	if(!B3D_ENSURE(parameterSet->GetSet() < kMaximumBoundDescriptorSets))
+		return;
+
+	const SPtr<VulkanGpuParameters>& vulkanParameterSet = std::static_pointer_cast<VulkanGpuParameters>(parameterSet);
+	const u32 set = parameterSet->GetSet();
+
+	if(set >= (u32)mBoundGpuParameterSets.Size())
+		mBoundGpuParameterSets.Resize(set + 1);
 
 	// Note: We keep an internal reference to GPU params even though we shouldn't keep a reference to a render thread
 	// object. But it should be fine since we expect the resource to be externally synchronized so it should never
 	// be allowed to go out of scope on a non-render thread anyway.
-	mBoundParams = std::static_pointer_cast<VulkanGpuParameters>(parameters);
+	mBoundGpuParameterSets[set] = std::static_pointer_cast<VulkanGpuParameters>(parameterSet);
 
-	if (mBoundParams != nullptr)
+	const SPtr<GpuPipelineParameterLayout>& uniformLayout = vulkanParameterSet->GetPipelineParameterLayout();
+
+	// Flush all uniform buffers
+	const u32 uniformBufferCount = uniformLayout->GetBindingCount(set, GpuParameterType::UniformBuffer);
+	for (u32 uniformBufferIndex = 0; uniformBufferIndex < uniformBufferCount; uniformBufferIndex++)
 	{
-		const SPtr<GpuPipelineParameterLayout>& uniformLayout = mBoundParams->GetPipelineParameterInformation();
+		const u32 slot = uniformLayout->GetSlot(GpuParameterType::UniformBuffer, set, uniformBufferIndex);
+		SPtr<GpuBuffer> buffer = parameterSet->GetUniformBuffer(set, slot);
 
-		// Flush all uniform buffers
-		const u32 uniformBufferCount = uniformLayout->GetBindingCount(GpuParameterType::UniformBuffer);
-		for (u32 uniformBufferIndex = 0; uniformBufferIndex < uniformBufferCount; uniformBufferIndex++)
-		{
-			const GpuParameterBinding& binding = uniformLayout->GetBinding(GpuParameterType::UniformBuffer, uniformBufferIndex);
-			SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(binding.Set, binding.Slot);
-
-			if (buffer != nullptr)
-				buffer->FlushCache();
-		}
+		if (buffer != nullptr)
+			buffer->FlushCache();
 	}
 
-	if(mBoundParams != nullptr)
-	{
-		mBoundParamsDirty = true;
-	}
-	else
-	{
-		mBoundDescriptorSetCount = 0;
-		mBoundParamsDirty = false;
-	}
-
+	mBoundParamsDirty = true;
 	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
-	mDynamicDescriptorOffsetsOverrides.clear();
+	mDynamicDescriptorOffsetsOverrides.clear(); // Caller is only expected call SetDynamicBufferOffset after all parameter sets are bound
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
 }
@@ -1320,7 +1317,7 @@ GpuCommandBufferSubmitInformation VulkanGpuCommandBuffer::PrepareForSubmitOnSubm
 	mCmpPipelineRequiresBind = true;
 	mFramebuffer = nullptr;
 	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
-	mBoundParams = nullptr;
+	mBoundGpuParameterSets.Clear();
 	mIndexBuffer = nullptr;
 	mVertexBuffers.clear();
 	mVertexInputsDirty = true;
@@ -1334,7 +1331,7 @@ void VulkanGpuCommandBuffer::NotifyWillQueueForSubmit()
 	// Clear everything not allowed on the submit thread
 	mGraphicsPipeline = nullptr;
 	mComputePipeline = nullptr;
-	mBoundParams = nullptr;
+	mBoundGpuParameterSets.Clear();
 	mIndexBuffer = nullptr;
 	mVertexBuffers.clear();
 }
@@ -1658,41 +1655,38 @@ void VulkanGpuCommandBuffer::BindGpuParameters(VulkanBarrierHelper& barrierHelpe
 	if(!mBoundParamsDirty)
 		return;
 
-	if(mBoundParams != nullptr)
+	mBoundDescriptorSetCount = 0;
+	mDynamicDescriptorOffsetsToBind.clear();
+	for(u32 set = 0; set < mBoundGpuParameterSets.Size(); set++)
 	{
-		mBoundDescriptorSetCount = mBoundParams->GetSetCount();
-
-		// Check if we have cached preparation data
-		auto it = mRenderPassGpuParametersCache.find(mBoundParams.get());
-		if(it != mRenderPassGpuParametersCache.end())
+		const SPtr<VulkanGpuParameters>& boundGpuParameterSet = mBoundGpuParameterSets[set];
+		if(boundGpuParameterSet != nullptr)
 		{
-			// Use cached preparation data (skip PrepareForBind)
-			const CachedGpuParameterData& cacheData = it->second;
-
-			// Copy cached descriptor sets to temp buffer
-			B3D_ASSERT(cacheData.SetCount == mBoundDescriptorSetCount);
-			memcpy(mDescriptorSetsTemp, cacheData.DescriptorSets.data(), sizeof(VkDescriptorSet) * cacheData.SetCount);
-
-			mDynamicDescriptorOffsetsToBind = cacheData.DynamicOffsets;
-		}
-		else
-		{
-			// Render pass GPU resources must all be predeclared before render pass starts otherwise we cannot issue barriers & layout transitions
-			if(IsInRenderPass())
+			auto it = mRenderPassGpuParametersCache.find(boundGpuParameterSet.get());
+			if(it != mRenderPassGpuParametersCache.end())
 			{
-				B3D_ENSURE(false);
-				B3D_LOG(Warning, RenderBackend, "SetGpuParameters() called with parameters not declared in RenderPassCreateInformation. Automatic resource barriers and layout transitions may not execute correctly.");
+				// Use cached preparation data (skip PrepareForBind)
+				const CachedGpuParameterData& cacheData = it->second;
+
+				mDescriptorSetsTemp[set] = cacheData.DescriptorSet;
+				mDynamicDescriptorOffsetsToBind.Append(cacheData.DynamicOffsets.Begin(), cacheData.DynamicOffsets.End());
+			}
+			else
+			{
+				// Render pass GPU resources must all be predeclared before render pass starts otherwise we cannot issue barriers & layout transitions
+				if(IsInRenderPass())
+				{
+					B3D_ENSURE(false);
+					B3D_LOG(Warning, RenderBackend, "SetGpuParameters() called with parameters not declared in RenderPassCreateInformation. Automatic resource barriers and layout transitions may not execute correctly.");
+				}
+
+				// Fallback: No cached data, call PrepareForBind now
+				// This handles compute dispatch and non-render-pass scenarios
+				boundGpuParameterSet->PrepareForBind(*this, mResourceTracker, barrierHelper, mDescriptorSetsTemp[set], mDynamicDescriptorOffsetsToBind);
 			}
 
-			// Fallback: No cached data, call PrepareForBind now
-			// This handles compute dispatch and non-render-pass scenarios
-			mDynamicDescriptorOffsetsToBind.clear();
-			mBoundParams->PrepareForBind(*this, mResourceTracker, barrierHelper, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
+			mBoundDescriptorSetCount++;
 		}
-	}
-	else
-	{
-		mBoundDescriptorSetCount = 0;
 	}
 
 	// Apply dynamic offset overrides

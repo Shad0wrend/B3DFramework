@@ -117,7 +117,7 @@ namespace b3d
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;
 
-			void SetGpuParameters(const SPtr<GpuParameters>& parameters) override;
+			void SetGpuParameters(const SPtr<GpuParameters>& parameterSet) override;
 			void SetDynamicBufferOffset(u32 bufferIndex, u32 offset) override;
 			void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) override;
 			void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) override;
@@ -398,9 +398,8 @@ namespace b3d
 			/** Cached data from GpuParameters that were registered during render pass start. */
 			struct CachedGpuParameterData
 			{
-				TInlineArray<VkDescriptorSet, 4> DescriptorSets;
+				VkDescriptorSet DescriptorSet;
 				TInlineArray<u32, 4> DynamicOffsets;
-				u32 SetCount = 0;
 			};
 
 			VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanGpuCommandBufferPool& pool, u32 id, VkCommandBuffer commandBufferHandle, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
@@ -510,7 +509,7 @@ namespace b3d
 			bool mVertexInputsDirty : 1;
 			bool mIsDebugLabelOpen = false;
 			DescriptorSetBindFlags mDescriptorSetsBindState;
-			SPtr<VulkanGpuParameters> mBoundParams;
+			TInlineArray<SPtr<VulkanGpuParameters>, 4> mBoundGpuParameterSets;
 
 			VkBuffer mVertexBuffersTemp[B3D_MAX_BOUND_VERTEX_BUFFERS]{};
 			VkDeviceSize mVertexBufferOffsetsTemp[B3D_MAX_BOUND_VERTEX_BUFFERS]{};

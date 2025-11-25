@@ -132,9 +132,9 @@ void ImageBasedLightingParameterBinding::Initialize(const SPtr<GpuParameters>& p
 			parameters->GetStorageBufferParameter(kReflectionProbeIndicesBufferName, ReflectionProbeIndicesParam);
 	}
 
-	parameters->GetPipelineParameterInformation()->GetBinding(kPerProbeUniformBufferName, ReflProbeParamBindings);
+	parameters->GetPipelineParameterLayout()->GetBinding(kPerProbeUniformBufferName, ReflProbeParamBindings);
 
-	parameters->GetPipelineParameterInformation()->GetBinding(kGlobalReflectionProbeUniformBufferName, ReflProbesBinding);
+	parameters->GetPipelineParameterLayout()->GetBinding(kGlobalReflectionProbeUniformBufferName, ReflProbesBinding);
 }
 
 void ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(const SPtr<GpuParameters>& parameters, const SPtr<Texture>& cubemaps, bool optional)

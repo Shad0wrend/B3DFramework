@@ -40,7 +40,7 @@ void RenderQueueElements(GpuCommandBuffer& commandBuffer, const Vector<RenderQue
 		if(entry.ApplyPass)
 			GetRendererUtility().SetPass(commandBuffer, entry.RenderElem->Material, entry.PassIdx, entry.TechniqueIdx);
 
-		GetRendererUtility().SetPassParams(commandBuffer, entry.RenderElem->Params, entry.PassIdx);
+		GetRendererUtility().SetPassParams(commandBuffer, entry.RenderElem->ParameterAdapter, entry.PassIdx);
 
 		entry.RenderElem->Draw(commandBuffer);
 	}
@@ -375,10 +375,13 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 		for(auto& element : inputs.Scene.Renderables[i]->Elements)
 		{
-			SPtr<GpuParameters> gpuParams = element.Params->GetGpuParameters();
 			const GpuParameterBinding& binding = element.PerCameraBinding;
-			if(binding.Slot != (u32)-1)
-				gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
+
+			if(binding.IsValid())
+			{
+				const SPtr<GpuParameters>& parameterSet = element.ParameterAdapter->GetGpuParameters(0, binding.Set);
+				parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
+			}
 		}
 	}
 
@@ -433,10 +436,12 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 		rendererDecal.UpdatePerCallBuffer(viewProps.ViewProjTransform);
 
-		SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParameters();
 		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
-		if(binding.Slot != (u32)-1)
-			gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
+		if(binding.IsValid())
+		{
+			const SPtr<GpuParameters>& parameterSet = renderElement.ParameterAdapter->GetGpuParameters(0, binding.Set);
+			parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
+		}
 
 		renderElement.DepthInputTexture.Set(sceneDepthTex->Texture);
 		renderElement.MaskInputTexture.Set(IdTex->Texture);
@@ -490,7 +495,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation basePassInfo(RenderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			basePassInfo.Parameters.Add(gpuParams);
 	}
@@ -535,7 +540,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation decalPassInfo(RenderTargetNoMask, RT_DEPTH, RT_ALL);
 	for(const auto& element : decalElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			decalPassInfo.Parameters.Add(gpuParams);
 	}
@@ -1461,11 +1466,13 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	if(skybox)
 		skyFilteredRadiance = skybox->GetFilteredRadiance();
 
-	const auto bindParamsForClustered = [&lightGridOutputs, &visibleLightData, &visibleReflProbeData](GpuParameters& gpuParams, const ForwardLightingParams& fwdParams, const ImageBasedLightingParameterBinding& iblParams)
+	const auto fnBindClusteredForwardParameters = [&lightGridOutputs, &visibleLightData, &visibleReflProbeData](MaterialParameterAdapter& parameterAdapter, const ForwardLightingParams& fwdParams, const ImageBasedLightingParameterBinding& iblParams)
 	{
-		const GpuParameterBinding& binding = fwdParams.GridParamsBinding;
-		if(binding.Slot != (u32)-1)
-			gpuParams.SetUniformBuffer(binding.Set, binding.Slot, lightGridOutputs.UniformBuffer);
+		if(fwdParams.GridParamsBinding.IsValid())
+		{
+			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.GridParamsBinding.Set);
+			parameterSet->SetUniformBuffer(fwdParams.GridParamsBinding.Slot, lightGridOutputs.UniformBuffer);
+		}
 
 		fwdParams.GridLightOffsetsAndSizeParam.Set(lightGridOutputs.GridLightOffsetsAndSize);
 		fwdParams.GridProbeOffsetsAndSizeParam.Set(lightGridOutputs.GridProbeOffsetsAndSize);
@@ -1477,7 +1484,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		iblParams.ReflectionProbesParam.Set(visibleReflProbeData.GetProbeBuffer());
 	};
 
-	const auto bindParamsForStandardForward = [&standardForwardBuffers, &visibleLightData, &visibleReflProbeData](GpuParameters& gpuParams, const Bounds& bounds, const ForwardLightingParams& fwdParams, const ImageBasedLightingParameterBinding& iblParams)
+	const auto fnBindStandardDeferredParameters = [&standardForwardBuffers, &visibleLightData, &visibleReflProbeData](MaterialParameterAdapter& parameterAdapter, const Bounds& bounds, const ForwardLightingParams& fwdParams, const ImageBasedLightingParameterBinding& iblParams)
 	{
 		// Allocate transient uniform buffers
 		standardForwardBuffers.LightsUniformBuffer = gLightsUniformDefinition.AllocateTransient();
@@ -1507,40 +1514,32 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		gLightAndReflProbeParamsUniformDefinition.gLightOffsets.Set(standardForwardBuffers.LightAndReflProbeParamsUniformBuffer, lightOffsets);
 		gLightAndReflProbeParamsUniformDefinition.gReflProbeCount.Set(standardForwardBuffers.LightAndReflProbeParamsUniformBuffer, numReflProbes);
 
-		if(iblParams.ReflProbesBinding.Set != (u32)-1)
+		if(iblParams.ReflProbesBinding.IsValid())
 		{
-			gpuParams.SetUniformBuffer(
-				iblParams.ReflProbesBinding.Set,
-				iblParams.ReflProbesBinding.Slot,
-				standardForwardBuffers.ReflProbesUniformBuffer);
+			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbesBinding.Set);
+			parameterSet->SetUniformBuffer(iblParams.ReflProbesBinding.Slot, standardForwardBuffers.ReflProbesUniformBuffer);
 		}
 
-		if(fwdParams.LightsParamBlockBinding.Set != (u32)-1)
+		if(fwdParams.LightsParamBlockBinding.IsValid())
 		{
-			gpuParams.SetUniformBuffer(
-				fwdParams.LightsParamBlockBinding.Set,
-				fwdParams.LightsParamBlockBinding.Slot,
-				standardForwardBuffers.LightsUniformBuffer);
+			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightsParamBlockBinding.Set);
+			parameterSet->SetUniformBuffer(fwdParams.LightsParamBlockBinding.Slot, standardForwardBuffers.LightsUniformBuffer);
 		}
 
-		if(fwdParams.LightAndReflProbeParamsParamBlockBinding.Set != (u32)-1)
+		if(fwdParams.LightAndReflProbeParamsParamBlockBinding.IsValid())
 		{
-			gpuParams.SetUniformBuffer(
-				fwdParams.LightAndReflProbeParamsParamBlockBinding.Set,
-				fwdParams.LightAndReflProbeParamsParamBlockBinding.Slot,
-				standardForwardBuffers.LightAndReflProbeParamsUniformBuffer);
+			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightAndReflProbeParamsParamBlockBinding.Set);
+			parameterSet->SetUniformBuffer(fwdParams.LightAndReflProbeParamsParamBlockBinding.Slot, standardForwardBuffers.LightAndReflProbeParamsUniformBuffer);
 		}
 	};
 
-	const auto bindCommonIBLParams = [&reflProbeParamBuffer, &skyFilteredRadiance, &sceneInfo](GpuParameters& gpuParams, ImageBasedLightingParameterBinding& iblParams)
+	const auto fnBindCommonIBLParameters = [&reflProbeParamBuffer, &skyFilteredRadiance, &sceneInfo](MaterialParameterAdapter& parameterAdapter, ImageBasedLightingParameterBinding& iblParams)
 	{
 		// Note: Ideally these should be bound once (they are the same for all renderables)
-		if(iblParams.ReflProbeParamBindings.Set != (u32)-1)
+		if(iblParams.ReflProbeParamBindings.IsValid())
 		{
-			gpuParams.SetUniformBuffer(
-				iblParams.ReflProbeParamBindings.Set,
-				iblParams.ReflProbeParamBindings.Slot,
-				reflProbeParamBuffer.Buffer);
+			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbeParamBindings.Set);
+			parameterSet->SetUniformBuffer(iblParams.ReflProbeParamBindings.Slot, reflProbeParamBuffer.Buffer);
 		}
 
 		iblParams.SkyReflectionsTexParam.Set(skyFilteredRadiance);
@@ -1601,17 +1600,16 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 			// Note: It would be nice to be able to set this once and keep it, only updating if the buffers actually
 			// change (e.g. when growing).
-			const SPtr<GpuParameters> gpuParams = element.Params->GetGpuParameters();
 			if(supportsClusteredForward)
-				bindParamsForClustered(*gpuParams, element.ForwardLightingParams, element.ImageBasedParams);
+				fnBindClusteredForwardParameters(*element.ParameterAdapter, element.ForwardLightingParams, element.ImageBasedParams);
 			else
 			{
 				// Populate light & probe buffers
 				const Bounds& bounds = sceneInfo.RenderableCullInfos[i].Bounds;
-				bindParamsForStandardForward(*gpuParams, bounds, element.ForwardLightingParams, element.ImageBasedParams);
+				fnBindStandardDeferredParameters(*element.ParameterAdapter, bounds, element.ForwardLightingParams, element.ImageBasedParams);
 			}
 
-			bindCommonIBLParams(*gpuParams, element.ImageBasedParams);
+			fnBindCommonIBLParameters(*element.ParameterAdapter, element.ImageBasedParams);
 		}
 	}
 
@@ -1641,20 +1639,18 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			if(!renderElement.IsValid())
 				continue;
 
-			const SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParameters();
-
 			// Note: It would be nice to be able to set this once and keep it, only updating if the buffers actually
 			// change (e.g. when growing).
 			if(supportsClusteredForward)
-				bindParamsForClustered(*gpuParams, renderElement.ForwardLightingParams, renderElement.ImageBasedParams);
+				fnBindClusteredForwardParameters(*renderElement.ParameterAdapter, renderElement.ForwardLightingParams, renderElement.ImageBasedParams);
 			else
 			{
 				// Populate light & probe buffers
 				const Bounds& bounds = sceneInfo.ParticleSystemCullInfos[i].Bounds;
-				bindParamsForStandardForward(*gpuParams, bounds, renderElement.ForwardLightingParams, renderElement.ImageBasedParams);
+				fnBindStandardDeferredParameters(*renderElement.ParameterAdapter, bounds, renderElement.ForwardLightingParams, renderElement.ImageBasedParams);
 			}
 
-			bindCommonIBLParams(*gpuParams, renderElement.ImageBasedParams);
+			fnBindCommonIBLParameters(*renderElement.ParameterAdapter, renderElement.ImageBasedParams);
 		}
 	}
 
@@ -1673,7 +1669,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation opaquePassInfo(renderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			opaquePassInfo.Parameters.Add(gpuParams);
 	}
@@ -1687,7 +1683,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation transparentPassInfo(renderTarget, RT_DEPTH, RT_ALL);
 	for(const auto& element : transparentElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->Params->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			transparentPassInfo.Parameters.Add(gpuParams);
 	}

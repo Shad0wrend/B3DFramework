@@ -83,124 +83,89 @@ void FrameGraphPass::UseParameters(const SPtr<GpuParameters>& params)
 	if (!params)
 		return;
 
-	auto layout = params->GetPipelineParameterInformation();
+	auto layout = params->GetPipelineParameterLayout();
 	if (!layout)
 		return;
 
-	// Import sampled textures (always read-only)
-	for (u32 setIndex = 0; setIndex < layout->GetSetCount(); setIndex++)
-	{
-		u32 sampledTextureCount = layout->GetBindingCount(GpuParameterType::SampledTexture);
-		for (u32 bindingIndex = 0; bindingIndex < sampledTextureCount; bindingIndex++)
-		{
-			u32 set, slot;
-			layout->GetBinding(GpuParameterType::SampledTexture, bindingIndex, set, slot);
+	// Each GpuParameters handles a single descriptor set
+	const u32 set = params->GetSet();
 
-			if (set == setIndex)
+	// Import sampled textures (always read-only)
+	const u32 sampledTextureCount = layout->GetBindingCount(set, GpuParameterType::SampledTexture);
+	for (u32 bindingIndex = 0; bindingIndex < sampledTextureCount; bindingIndex++)
+	{
+		const u32 arraySize = layout->GetArraySize(GpuParameterType::SampledTexture, set, bindingIndex);
+		const u32 slot = layout->GetSlot(GpuParameterType::SampledTexture, set, bindingIndex);
+
+		for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
+		{
+			auto texture = params->GetSampledTexture(slot, arrayIndex);
+			if (texture)
 			{
-				u32 arraySize = layout->GetArraySize(GpuParameterType::SampledTexture, bindingIndex);
-				for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
-				{
-					auto texture = params->GetSampledTexture(set, slot, arrayIndex);
-					if (texture)
-					{
-						auto texId = mFrameGraph->ImportTexture(
-							"Tex_" + ToString(set) + "_" + ToString(slot),
-							texture);
-						Read(texId, GpuResourceUseFlag::ShaderAccess);
-					}
-				}
+				auto texId = mFrameGraph->ImportTexture("Tex_" + ToString(set) + "_" + ToString(slot), texture);
+				Read(texId, GpuResourceUseFlag::ShaderAccess);
 			}
 		}
 	}
 
 	// Import storage textures (always read-write)
-	for (u32 setIndex = 0; setIndex < layout->GetSetCount(); setIndex++)
+	const u32 storageTextureCount = layout->GetBindingCount(set, GpuParameterType::StorageTexture);
+	for (u32 bindingIndex = 0; bindingIndex < storageTextureCount; bindingIndex++)
 	{
-		u32 storageTextureCount = layout->GetBindingCount(GpuParameterType::StorageTexture);
-		for (u32 bindingIndex = 0; bindingIndex < storageTextureCount; bindingIndex++)
-		{
-			u32 set, slot;
-			layout->GetBinding(GpuParameterType::StorageTexture, bindingIndex, set, slot);
+		const u32 arraySize = layout->GetArraySize(GpuParameterType::StorageTexture, set, bindingIndex);
+		const u32 slot = layout->GetSlot(GpuParameterType::StorageTexture, set, bindingIndex);
 
-			if (set == setIndex)
+		for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
+		{
+			auto texture = params->GetStorageTexture(slot, arrayIndex);
+			if (texture)
 			{
-				u32 arraySize = layout->GetArraySize(GpuParameterType::StorageTexture, bindingIndex);
-				for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
-				{
-					auto texture = params->GetStorageTexture(set, slot, arrayIndex);
-					if (texture)
-					{
-						auto texId = mFrameGraph->ImportTexture(
-							"StorageTex_" + ToString(set) + "_" + ToString(slot),
-							texture);
-						ReadWrite(texId, GpuResourceUseFlag::ShaderAccess);
-					}
-				}
+				auto texId = mFrameGraph->ImportTexture("StorageTex_" + ToString(set) + "_" + ToString(slot), texture);
+				ReadWrite(texId, GpuResourceUseFlag::ShaderAccess);
 			}
 		}
 	}
 
 	// Import uniform buffers (always read-only)
-	for (u32 setIndex = 0; setIndex < layout->GetSetCount(); setIndex++)
+	const u32 uniformBufferCount = layout->GetBindingCount(set, GpuParameterType::UniformBuffer);
+	for (u32 bindingIndex = 0; bindingIndex < uniformBufferCount; bindingIndex++)
 	{
-		u32 uniformBufferCount = layout->GetBindingCount(GpuParameterType::UniformBuffer);
-		for (u32 bindingIndex = 0; bindingIndex < uniformBufferCount; bindingIndex++)
-		{
-			u32 set, slot;
-			layout->GetBinding(GpuParameterType::UniformBuffer, bindingIndex, set, slot);
+		const u32 arraySize = layout->GetArraySize(GpuParameterType::UniformBuffer, set, bindingIndex);
+		const u32 slot = layout->GetSlot(GpuParameterType::UniformBuffer, set, bindingIndex);
 
-			if (set == setIndex)
+		for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
+		{
+			auto buffer = params->GetUniformBuffer(slot, arrayIndex);
+			if (buffer)
 			{
-				u32 arraySize = layout->GetArraySize(GpuParameterType::UniformBuffer, bindingIndex);
-				for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
-				{
-					auto buffer = params->GetUniformBuffer(set, slot, arrayIndex);
-					if (buffer)
-					{
-						auto bufId = mFrameGraph->ImportBuffer(
-							"UB_" + ToString(set) + "_" + ToString(slot),
-							buffer);
-						Read(bufId, GpuResourceUseFlag::UniformBuffer);
-					}
-				}
+				auto bufId = mFrameGraph->ImportBuffer("UB_" + ToString(slot) + "_" + ToString(slot), buffer);
+				Read(bufId, GpuResourceUseFlag::UniformBuffer);
 			}
 		}
 	}
 
 	// Import storage buffers (check type for access flags)
-	for (u32 setIndex = 0; setIndex < layout->GetSetCount(); setIndex++)
+	const u32 storageBufferCount = layout->GetBindingCount(set, GpuParameterType::StorageBuffer);
+	for (u32 bindingIndex = 0; bindingIndex < storageBufferCount; bindingIndex++)
 	{
-		u32 storageBufferCount = layout->GetBindingCount(GpuParameterType::StorageBuffer);
-		for (u32 bindingIndex = 0; bindingIndex < storageBufferCount; bindingIndex++)
+		const u32 arraySize = layout->GetArraySize(GpuParameterType::StorageBuffer, set, bindingIndex);
+		const u32 slot = layout->GetSlot(GpuParameterType::StorageBuffer, set, bindingIndex);
+
+		// Get uniform information to determine the object type
+		const UniformInformation* uniformInfo = layout->TryGetUniformInformation(GpuParameterBinding(set, slot));
+
+		for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
 		{
-			u32 set, slot;
-			layout->GetBinding(GpuParameterType::StorageBuffer, bindingIndex, set, slot);
-
-			if (set == setIndex)
+			auto buffer = params->GetStorageBuffer(slot, arrayIndex);
+			if (buffer)
 			{
-				// Get uniform information to determine the object type
-				const UniformInformation* uniformInfo = layout->TryGetUniformInformation(
-					GpuParameterBinding(set, slot));
+				auto bufId = mFrameGraph->ImportBuffer("StorageBuf_" + ToString(set) + "_" + ToString(slot), buffer);
 
-				u32 arraySize = layout->GetArraySize(GpuParameterType::StorageBuffer, bindingIndex);
-				for (u32 arrayIndex = 0; arrayIndex < arraySize; arrayIndex++)
-				{
-					auto buffer = params->GetStorageBuffer(set, slot, arrayIndex);
-					if (buffer)
-					{
-						auto bufId = mFrameGraph->ImportBuffer(
-							"StorageBuf_" + ToString(set) + "_" + ToString(slot),
-							buffer);
-
-						// Determine access based on type (matches PrepareForBind logic)
-						if (uniformInfo && (uniformInfo->ObjectType == GPOT_RWBYTE_BUFFER ||
-						                    uniformInfo->ObjectType == GPOT_RWSTRUCTURED_BUFFER))
-							ReadWrite(bufId, GpuResourceUseFlag::ShaderAccess);
-						else
-							Read(bufId, GpuResourceUseFlag::ShaderAccess);
-					}
-				}
+				// Determine access based on type (matches PrepareForBind logic)
+				if (uniformInfo && (uniformInfo->ObjectType == GPOT_RWBYTE_BUFFER || uniformInfo->ObjectType == GPOT_RWSTRUCTURED_BUFFER))
+					ReadWrite(bufId, GpuResourceUseFlag::ShaderAccess);
+				else
+					Read(bufId, GpuResourceUseFlag::ShaderAccess);
 			}
 		}
 	}

@@ -303,7 +303,7 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(const TArra
 		GBufferParameterBinding::Set(*gpuDevice, batch.GpuParameters, gBufferInput);
 
 		// Get dynamic offset index
-		batch.DynamicOffsetIndex = batch.GpuParameters->GetPipelineParameterInformation()->GetDynamicOffsetIndex("PerLight");
+		batch.DynamicOffsetIndex = batch.GpuParameters->GetPipelineParameterLayout()->GetDynamicOffsetIndex("PerLight");
 		B3D_ENSURE(batch.DynamicOffsetIndex != ~0u);
 	}
 

@@ -21,49 +21,49 @@ using namespace b3d;
 
 const TextureSurface TextureSurface::kComplete = TextureSurface(0, 0, 0, 0);
 
-GpuParametersBase::GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
-	: mParameterLayout(parameterLayout)
+GpuParametersBase::GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: mParameterLayout(parameterLayout), mSet(setIndex)
 {}
 
 bool GpuParametersBase::HasParameter(const StringView& name) const
 {
-	return mParameterLayout->HasUniformBufferMember(name);
+	return mParameterLayout->HasUniformBufferMember(mSet, name);
 }
 
 bool GpuParametersBase::HasSampledTexture(const StringView& name) const
 {
-	return mParameterLayout->HasUniformOfType(name, GpuParameterType::SampledTexture);
+	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::SampledTexture, mSet);
 }
 
 bool GpuParametersBase::HasStorageBuffer(const StringView& name) const
 {
-	return mParameterLayout->HasUniformOfType(name, GpuParameterType::StorageBuffer);
+	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::StorageBuffer, mSet);
 }
 
 bool GpuParametersBase::HasStorageTexture(const StringView& name) const
 {
-	return mParameterLayout->HasUniformOfType(name, GpuParameterType::StorageTexture);
+	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::StorageTexture, mSet);
 }
 
 bool GpuParametersBase::HasSamplerState(const StringView& name) const
 {
-	return mParameterLayout->HasUniformOfType(name, GpuParameterType::Sampler);
+	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::Sampler, mSet);
 }
 
 bool GpuParametersBase::HasUniformBuffer(const StringView& name) const
 {
-	return mParameterLayout->HasUniformOfType(name, GpuParameterType::UniformBuffer);
+	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::UniformBuffer, mSet);
 }
 
 template <bool IsRenderProxy>
-TGpuParameters<IsRenderProxy>::TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
-	: GpuParametersBase(parameterLayout)
+TGpuParameters<IsRenderProxy>::TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: GpuParametersBase(parameterLayout, setIndex)
 {
-	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::UniformBuffer);
-	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
-	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
-	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageBuffer);
-	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuParameterType::Sampler);
+	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::Sampler);
 
 	const u32 uniformBufferEntrySize = Math::RoundToMultiple((u32)sizeof(UniformBufferData), 16u);
 	const u32 textureEntrySize = Math::RoundToMultiple((u32)sizeof(TextureData), 16u);
@@ -115,11 +115,11 @@ TGpuParameters<IsRenderProxy>::TGpuParameters(const SPtr<GpuPipelineParameterLay
 template <bool IsRenderProxy>
 TGpuParameters<IsRenderProxy>::~TGpuParameters()
 {
-	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::UniformBuffer);
-	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
-	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
-	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageBuffer);
-	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuParameterType::Sampler);
+	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::Sampler);
 
 	for(u32 i = 0; i < uniformBufferCount; i++)
 		mUniformBufferData[i].~UniformBufferData();
@@ -147,16 +147,16 @@ TGpuParameters<IsRenderProxy>::~TGpuParameters()
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(u32 set, u32 slot, const UniformBufferType& paramBlockBuffer, u32 arrayIndex, u32 offset)
+bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(u32 slot, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
 {
-	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialResourceIndex == ~0u)
 	{
-		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with the set/slot combination: {0}/{1}", set, slot);
+		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with the set/slot combination: {0}/{1}", mSet, slot);
 		return false;
 	}
 
-	mUniformBufferData[sequentialResourceIndex].Buffer = paramBlockBuffer;
+	mUniformBufferData[sequentialResourceIndex].Buffer = buffer;
 	mUniformBufferData[sequentialResourceIndex].Offset = offset;
 
 	MarkRenderProxyDataDirtyInternal();
@@ -164,16 +164,16 @@ bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(u32 set, u32 slot, const Un
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(const StringView& name, const UniformBufferType& paramBlockBuffer, u32 arrayIndex, u32 offset)
+bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(const StringView& name, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if(!binding.IsValid())
+	if(!binding.IsValid() || binding.Set != mSet)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with name: {0}", name);
 		return false;
 	}
 
-	return SetUniformBuffer(binding.Set, binding.Slot, paramBlockBuffer, arrayIndex, offset);
+	return SetUniformBuffer(binding.Slot, buffer, arrayIndex, offset);
 }
 
 template<bool IsRenderProxy>
@@ -239,7 +239,7 @@ template <bool IsRenderProxy>
 template <class T>
 bool TGpuParameters<IsRenderProxy>::TryGetParameter(const StringView& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
 {
-	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
+	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(mSet, name);
 	if(parameterInformation == nullptr)
 	{
 		output = TGpuParameterPrimitive<T, IsRenderProxy>(nullptr, nullptr);
@@ -253,7 +253,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetParameter(const StringView& name, TGpu
 template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetStructParameter(const StringView& name, TGpuParameterStruct<IsRenderProxy>& output) const
 {
-	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(name);
+	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(mSet, name);
 	if (parameterInformation == nullptr)
 	{
 		output = TGpuParameterStruct<IsRenderProxy>(nullptr, nullptr);
@@ -268,7 +268,7 @@ template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetSampledTextureParameter(const StringView& name, TGpuParameterSampledTexture<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if (!binding.IsValid())
+	if (!binding.IsValid() || binding.Set != mSet)
 	{
 		output = TGpuParameterSampledTexture<IsRenderProxy>(GpuParameterBinding(), nullptr);
 		return false;
@@ -282,7 +282,7 @@ template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetStorageTextureParameter(const StringView& name, TGpuParameterStorageTexture<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if (!binding.IsValid())
+	if (!binding.IsValid() || binding.Set != mSet)
 	{
 		output = TGpuParameterStorageTexture<IsRenderProxy>(GpuParameterBinding(), nullptr);
 		return false;
@@ -296,7 +296,7 @@ template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetStorageBufferParameter(const StringView& name, TGpuParameterStorageBuffer<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if (!binding.IsValid())
+	if (!binding.IsValid() || binding.Set != mSet)
 	{
 		output = TGpuParameterStorageBuffer<IsRenderProxy>(GpuParameterBinding(), nullptr);
 		return false;
@@ -310,7 +310,7 @@ template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetUniformBufferParameter(const StringView& name, TGpuParameterUniformBuffer<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if (!binding.IsValid())
+	if (!binding.IsValid() || binding.Set != mSet)
 	{
 		output = TGpuParameterUniformBuffer<IsRenderProxy>(GpuParameterBinding(), nullptr);
 		return false;
@@ -324,7 +324,7 @@ template <bool IsRenderProxy>
 bool TGpuParameters<IsRenderProxy>::TryGetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
-	if (!binding.IsValid())
+	if (!binding.IsValid() || binding.Set != mSet)
 	{
 		output = TGpuParameterSampler<IsRenderProxy>(GpuParameterBinding(), nullptr);
 		return false;
@@ -335,9 +335,9 @@ bool TGpuParameters<IsRenderProxy>::TryGetSamplerStateParameter(const StringView
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::UniformBufferType TGpuParameters<IsRenderProxy>::GetUniformBuffer(u32 set, u32 slot, u32 arrayIndex) const
+typename TGpuParameters<IsRenderProxy>::UniformBufferType TGpuParameters<IsRenderProxy>::GetUniformBuffer(u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return nullptr;
 
@@ -345,9 +345,9 @@ typename TGpuParameters<IsRenderProxy>::UniformBufferType TGpuParameters<IsRende
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetSampledTexture(u32 set, u32 slot, u32 arrayIndex) const
+typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetSampledTexture(u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return TGpuParameters<IsRenderProxy>::TextureType();
 
@@ -355,9 +355,9 @@ typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetStorageTexture(u32 set, u32 slot, u32 arrayIndex) const
+typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetStorageTexture(u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return TGpuParameters<IsRenderProxy>::TextureType();
 
@@ -365,9 +365,9 @@ typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::BufferType TGpuParameters<IsRenderProxy>::GetStorageBuffer(u32 set, u32 slot, u32 arrayIndex) const
+typename TGpuParameters<IsRenderProxy>::BufferType TGpuParameters<IsRenderProxy>::GetStorageBuffer(u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return nullptr;
 
@@ -375,9 +375,9 @@ typename TGpuParameters<IsRenderProxy>::BufferType TGpuParameters<IsRenderProxy>
 }
 
 template <bool IsRenderProxy>
-SPtr<SamplerState> TGpuParameters<IsRenderProxy>::GetSamplerState(u32 set, u32 slot, u32 arrayIndex) const
+SPtr<SamplerState> TGpuParameters<IsRenderProxy>::GetSamplerState(u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return nullptr;
 
@@ -385,11 +385,11 @@ SPtr<SamplerState> TGpuParameters<IsRenderProxy>::GetSamplerState(u32 set, u32 s
 }
 
 template <bool IsRenderProxy>
-const TextureSurface& TGpuParameters<IsRenderProxy>::GetTextureSurface(u32 set, u32 slot, u32 arrayIndex) const
+const TextureSurface& TGpuParameters<IsRenderProxy>::GetTextureSurface(u32 slot, u32 arrayIndex) const
 {
 	static TextureSurface emptySurface;
 
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return emptySurface;
 
@@ -397,11 +397,11 @@ const TextureSurface& TGpuParameters<IsRenderProxy>::GetTextureSurface(u32 set, 
 }
 
 template <bool IsRenderProxy>
-const TextureSurface& TGpuParameters<IsRenderProxy>::GetStorageTextureSurface(u32 set, u32 slot, u32 arrayIndex) const
+const TextureSurface& TGpuParameters<IsRenderProxy>::GetStorageTextureSurface(u32 slot, u32 arrayIndex) const
 {
 	static TextureSurface emptySurface;
 
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return emptySurface;
 
@@ -409,12 +409,12 @@ const TextureSurface& TGpuParameters<IsRenderProxy>::GetStorageTextureSurface(u3
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetSampledTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
+bool TGpuParameters<IsRenderProxy>::SetSampledTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
-		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampled texture parameter with the set/slot combination: {0}/{1}", set, slot);
+		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampled texture parameter with the set/slot combination: {0}/{1}", mSet, slot);
 		return false;
 	}
 
@@ -428,12 +428,12 @@ bool TGpuParameters<IsRenderProxy>::SetSampledTexture(u32 set, u32 slot, const T
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetStorageTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
+bool TGpuParameters<IsRenderProxy>::SetStorageTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
-		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find storage texture parameter with the set/slot combination: {0}/{1}", set, slot);
+		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find storage texture parameter with the set/slot combination: {0}/{1}", mSet, slot);
 		return false;
 	}
 
@@ -447,12 +447,12 @@ bool TGpuParameters<IsRenderProxy>::SetStorageTexture(u32 set, u32 slot, const T
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetStorageBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex, GpuBufferViewInformation view)
+bool TGpuParameters<IsRenderProxy>::SetStorageBuffer(u32 slot, const BufferType& buffer, u32 arrayIndex, GpuBufferViewInformation view)
 {
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
-		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find buffer parameter with the set/slot combination: {0}/{1}", set, slot);
+		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find buffer parameter with the set/slot combination: {0}/{1}", mSet, slot);
 		return false;
 	}
 
@@ -466,12 +466,12 @@ bool TGpuParameters<IsRenderProxy>::SetStorageBuffer(u32 set, u32 slot, const Bu
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
+bool TGpuParameters<IsRenderProxy>::SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
-		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampler parameter with the set/slot combination: {0}/{1}", set, slot);
+		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampler parameter with the set/slot combination: {0}/{1}", mSet, slot);
 		return false;
 	}
 
@@ -540,8 +540,8 @@ namespace b3d
 }
 const GpuDataParameterTypeInformationLookup GpuParameters::kParamSizes;
 
-GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
-	: TGpuParameters(parameterLayout)
+GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: TGpuParameters(parameterLayout, setIndex)
 {
 }
 
@@ -570,19 +570,19 @@ void GpuParameters::MarkResourcesDirtyInternal()
 	MarkListenerResourcesDirty();
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuGraphicsPipelineState>& pipelineState)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex)
 {
-	return Create(pipelineState->GetParameterLayout());
+	return Create(pipelineState->GetParameterLayout(), setIndex);
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuComputePipelineState>& pipelineState)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex)
 {
-	return Create(pipelineState->GetParameterLayout());
+	return Create(pipelineState->GetParameterLayout(), setIndex);
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
-	GpuParameters* const output = new(B3DAllocate<GpuParameters>()) GpuParameters(parameterLayout);
+	GpuParameters* const output = new(B3DAllocate<GpuParameters>()) GpuParameters(parameterLayout, setIndex);
 	SPtr<GpuParameters> shared = B3DMakeSharedFromExisting<GpuParameters>(output);
 	shared->SetShared(shared);
 	shared->Initialize();
@@ -594,7 +594,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
-	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::UniformBuffer);
+	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::UniformBuffer);
 	syncPacket->UniformBufferOffsets.reserve(uniformBufferCount);
 	syncPacket->UniformBufferOffsets.reserve(uniformBufferCount);
 
@@ -604,7 +604,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 		syncPacket->UniformBuffers.push_back(B3DGetRenderProxy(mUniformBufferData[i].Buffer));
 	}
 
-	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
+	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
 	syncPacket->SampledTextureSurfaces.reserve(sampledTextureCount);
 	syncPacket->SampledTextures.reserve(sampledTextureCount);
 
@@ -614,7 +614,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 		syncPacket->SampledTextures.push_back(B3DGetRenderProxy(mSampledTextureData[i].Texture));
 	}
 
-	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
+	const u32 storageTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageTexture);
 	syncPacket->StorageTextureSurfaces.reserve(storageTextureCount);
 	syncPacket->StorageTextures.reserve(storageTextureCount);
 
@@ -624,7 +624,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 		syncPacket->StorageTextures.push_back(B3DGetRenderProxy(mStorageTextureData[i].Texture));
 	}
 
-	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageBuffer);
+	const u32 storageBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageBuffer);
 	syncPacket->StorageBufferViews.reserve(storageBufferCount);
 	syncPacket->StorageBuffers.reserve(storageBufferCount);
 
@@ -634,7 +634,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 		syncPacket->StorageBuffers.push_back(B3DGetRenderProxy(mStorageBufferData[i].Buffer));
 	}
 
-	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuParameterType::Sampler);
+	const u32 samplerCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::Sampler);
 	syncPacket->SamplerStates.reserve(samplerCount);
 
 	for(u32 i = 0; i < samplerCount; i++)
@@ -645,16 +645,16 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 
 void GpuParameters::GetListenerResources(Vector<HResource>& resources)
 {
-	u32 numTextures = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
-	u32 numStorageTextures = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
+	u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
+	u32 storageTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageTexture);
 
-	for(u32 i = 0; i < numTextures; i++)
+	for(u32 i = 0; i < sampledTextureCount; i++)
 	{
 		if(mSampledTextureData[i].Texture != nullptr)
 			resources.push_back(mSampledTextureData[i].Texture);
 	}
 
-	for(u32 i = 0; i < numStorageTextures; i++)
+	for(u32 i = 0; i < storageTextureCount; i++)
 	{
 		if(mStorageTextureData[i].Texture != nullptr)
 			resources.push_back(mStorageTextureData[i].Texture);
@@ -663,8 +663,8 @@ void GpuParameters::GetListenerResources(Vector<HResource>& resources)
 
 namespace b3d { namespace render
 {
-GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
-	: TGpuParameters(parameterLayout)
+GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: TGpuParameters(parameterLayout, setIndex)
 {
 }
 
@@ -679,11 +679,11 @@ void GpuParameters::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator&
 	if(!syncPacket)
 		return;
 
-	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::UniformBuffer);
-	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::SampledTexture);
-	const u32 storageTextureCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageTexture);
-	const u32 storageBufferCount = mParameterLayout->GetResourceCount(GpuParameterType::StorageBuffer);
-	const u32 samplerCount = mParameterLayout->GetResourceCount(GpuParameterType::Sampler);
+	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::Sampler);
 
 	if(B3D_ENSURE(syncPacket->UniformBuffers.size() == uniformBufferCount && syncPacket->UniformBufferOffsets.size() == uniformBufferCount))
 	{

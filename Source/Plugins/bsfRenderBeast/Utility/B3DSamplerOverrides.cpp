@@ -59,28 +59,28 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 				overrideLookup[entry] = overrideIdx;
 		}
 
-		u32 numPasses = paramsSet->GetPassCount();
+		u32 passCount = paramsSet->GetPassCount();
 
 		// First pass just determine if we even need to override and count the number of sampler states
-		u32* numSetsPerPass = (u32*)B3DStackAllocate<u32>(numPasses);
-		memset(numSetsPerPass, 0, sizeof(u32) * numPasses);
+		u32* numSetsPerPass = (u32*)B3DStackAllocate<u32>(passCount);
+		memset(numSetsPerPass, 0, sizeof(u32) * passCount);
 
 		u32 totalNumSets = 0;
-		for(u32 i = 0; i < numPasses; i++)
+		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
+			SPtr<GpuParameters> gpuParameters = paramsSet->GetGpuParameters(passIndex);
+			const SPtr<GpuPipelineParameterLayout> uniformLayout = gpuParameters->GetPipelineParameterLayout();
+
+			// Count sets that have samplers
 			u32 maxSamplerSet = 0;
-
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
-			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
-
-			const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
-			for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+			const u32 setCount = uniformLayout->GetSetCount();
+			for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 			{
-				u32 set = uniformLayout->GetBinding(GpuParameterType::Sampler, samplerIndex).Set;
-				maxSamplerSet = std::max(maxSamplerSet, set + 1);
+				if(uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler) > 0)
+					maxSamplerSet = std::max(maxSamplerSet, setIndex + 1);
 			}
 
-			numSetsPerPass[i] = maxSamplerSet;
+			numSetsPerPass[passIndex] = maxSamplerSet;
 			totalNumSets += maxSamplerSet;
 		}
 
@@ -89,26 +89,30 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		memset(slotsPerSet, 0, sizeof(u32) * totalNumSets);
 
 		u32* slotsPerSetIter = slotsPerSet;
-		for(u32 i = 0; i < numPasses; i++)
+		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
-			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
+			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
-			const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
-			for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+			for(u32 setIndex = 0; setIndex < numSetsPerPass[passIndex]; setIndex++)
 			{
-				const GpuParameterBinding& binding = uniformLayout->GetBinding(GpuParameterType::Sampler, samplerIndex);
-				slotsPerSetIter[binding.Set] = std::max(slotsPerSetIter[binding.Set], binding.Slot + 1);
+				const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);
+				for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+				{
+					const UniformInformation* uniformInformation = uniformLayout->TryGetUniformInformation(GpuParameterType::Sampler, setIndex, samplerIndex);
+					if(uniformInformation)
+						slotsPerSetIter[setIndex] = std::max(slotsPerSetIter[setIndex], uniformInformation->Slot + 1);
+				}
 			}
 
-			for(u32 j = 0; j < numSetsPerPass[i]; j++)
-				totalNumSamplerStates += slotsPerSetIter[j];
+			for(u32 setIndex = 0; setIndex < numSetsPerPass[passIndex]; setIndex++)
+				totalNumSamplerStates += slotsPerSetIter[setIndex];
 
-			slotsPerSetIter += numSetsPerPass[i];
+			slotsPerSetIter += numSetsPerPass[passIndex];
 		}
 
 		u32 outputSize = sizeof(MaterialSamplerOverrides) +
-			numPasses * sizeof(PassSamplerOverrides) +
+			passCount * sizeof(PassSamplerOverrides) +
 			totalNumSets * sizeof(u32*) +
 			totalNumSamplerStates * sizeof(u32) +
 			(u32)overrides.size() * sizeof(SamplerOverride);
@@ -118,50 +122,46 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		outputData += sizeof(MaterialSamplerOverrides);
 
 		output->RefCount = 0;
-		output->NumPasses = numPasses;
+		output->NumPasses = passCount;
 		output->Passes = (PassSamplerOverrides*)outputData;
 		output->IsDirty = true;
-		outputData += sizeof(PassSamplerOverrides) * numPasses;
+		outputData += sizeof(PassSamplerOverrides) * passCount;
 
 		slotsPerSetIter = slotsPerSet;
-		for(u32 i = 0; i < numPasses; i++)
+		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(i);
-			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterInformation();
+			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
-			PassSamplerOverrides& passOverrides = output->Passes[i];
-			passOverrides.NumSets = numSetsPerPass[i];
+			PassSamplerOverrides& passOverrides = output->Passes[passIndex];
+			passOverrides.NumSets = numSetsPerPass[passIndex];
 			passOverrides.StateOverrides = (u32**)outputData;
 			outputData += sizeof(u32*) * passOverrides.NumSets;
 
-			for(u32 j = 0; j < passOverrides.NumSets; j++)
+			for(u32 setIndex = 0; setIndex < passOverrides.NumSets; setIndex++)
 			{
-				passOverrides.StateOverrides[j] = (u32*)outputData;
-				outputData += sizeof(u32) * slotsPerSetIter[j];
+				passOverrides.StateOverrides[setIndex] = (u32*)outputData;
+				outputData += sizeof(u32) * slotsPerSetIter[setIndex];
+
+				// Initialize all slots to invalid
+				for(u32 slotIndex = 0; slotIndex < slotsPerSetIter[setIndex]; slotIndex++)
+					passOverrides.StateOverrides[setIndex][slotIndex] = (u32)-1;
 			}
 
-			u32 numStates = 0;
-			const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
-			for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+			// Fill in sampler overrides for each set
+			for(u32 setIndex = 0; setIndex < passOverrides.NumSets; setIndex++)
 			{
-				const GpuParameterBinding& binding = uniformLayout->GetBinding(GpuParameterType::Sampler, samplerIndex);
-				const UniformInformation* uniformInformation = uniformLayout->TryGetUniformInformation(GpuParameterType::Sampler, samplerIndex);
-				if(!B3D_ENSURE(uniformInformation))
-					continue;
-
-				while(binding.Slot > numStates)
+				const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);
+				for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
 				{
-					passOverrides.StateOverrides[binding.Set][numStates] = (u32)-1;
-					numStates++;
+					const UniformInformation* uniformInformation = uniformLayout->TryGetUniformInformation(GpuParameterType::Sampler, setIndex, samplerIndex);
+					if(!B3D_ENSURE(uniformInformation))
+						continue;
+
+					auto iterFind = overrideLookup.find(uniformInformation->Name);
+					if(iterFind != overrideLookup.end())
+						passOverrides.StateOverrides[setIndex][uniformInformation->Slot] = iterFind->second;
 				}
-
-				numStates = std::max(numStates, binding.Slot + 1);
-
-				auto iterFind = overrideLookup.find(uniformInformation->Name);
-				if(iterFind != overrideLookup.end())
-					passOverrides.StateOverrides[binding.Set][binding.Slot] = iterFind->second;
-				else
-					passOverrides.StateOverrides[binding.Set][binding.Slot] = (u32)-1;
 			}
 
 			slotsPerSetIter += passOverrides.NumSets;

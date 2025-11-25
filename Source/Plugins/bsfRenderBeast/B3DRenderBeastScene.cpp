@@ -412,30 +412,30 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 			RenderableAnimType animType = renderable->GetAnimType();
 
-			renElement.DefaultTechniqueIdx = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
+			renElement.DefaultVariationIndex = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
 
 
 
 #if B3D_DEBUG
-			ValidateBasePassMaterial(*renElement.Material, animType, renElement.DefaultTechniqueIdx, *vertexDescription);
+			ValidateBasePassMaterial(*renElement.Material, animType, renElement.DefaultVariationIndex, *vertexDescription);
 #endif
 
 			// Generate or assigned renderer specific data for the material
-			renElement.Params = renElement.Material->CreateParameterAdapter(renElement.DefaultTechniqueIdx);
-			renElement.Params->Update(renElement.Material, 0.0f, true);
+			renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(renElement.DefaultVariationIndex);
+			renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
 			if(writeVelocity)
 			{
-				renElement.WriteVelocityTechniqueIdx = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
+				renElement.WriteVelocityVariationIndex = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
 
 #if B3D_DEBUG
-				ValidateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityTechniqueIdx, *vertexDescription);
+				ValidateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityVariationIndex, *vertexDescription);
 #endif
 
 				// Note: Using the same params as the non-velocity technique. There are assumed to be no differences
 			}
 			else
-				renElement.WriteVelocityTechniqueIdx = (u32)-1;
+				renElement.WriteVelocityVariationIndex = (u32)-1;
 
 			// Generate or assign sampler state overrides
 			renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
@@ -452,7 +452,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			continue;
 		}
 
-		SPtr<GpuParameters> gpuParams = element.Params->GetGpuParameters();
+		SPtr<GpuParameters> gpuParams = element.ParameterAdapter->GetGpuParameters();
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -460,7 +460,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 		gpuParams->SetUniformBuffer("PerObject", rendererRenderable->PerObjectParamBuffer);
 		gpuParams->TrySetUniformBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
 
-		gpuParams->GetPipelineParameterInformation()->GetBinding("PerCamera", element.PerCameraBinding);
+		gpuParams->GetPipelineParameterLayout()->GetBinding("PerCamera", element.PerCameraBinding);
 
 		if(gpuParams->HasStorageBuffer("boneMatrices"))
 			gpuParams->GetStorageBufferParameter("boneMatrices", element.BoneMatrixBufferParameter);
@@ -870,7 +870,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	if(techniqueIdx == (u32)-1)
 		techniqueIdx = renElement.Material->GetDefaultVariation();
 
-	renElement.DefaultTechniqueIdx = techniqueIdx;
+	renElement.DefaultVariationIndex = techniqueIdx;
 
 	// Make sure the technique shaders are compiled
 	const SPtr<Variation>& technique = renElement.Material->GetVariation(techniqueIdx);
@@ -878,10 +878,10 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		technique->Compile();
 
 	// Generate or assigned renderer specific data for the material
-	renElement.Params = renElement.Material->CreateParameterAdapter(techniqueIdx);
-	renElement.Params->Update(renElement.Material, 0.0f, true);
+	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(techniqueIdx);
+	renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
-	SPtr<GpuParameters> gpuParams = renElement.Params->GetGpuParameters();
+	SPtr<GpuParameters> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
 
 	if(gpu)
 	{
@@ -927,7 +927,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 	gpuParams->GetStorageBufferParameter("gIndices", renElement.IndicesBuffer);
 
-	gpuParams->GetPipelineParameterInformation()->GetBinding("PerCamera", renElement.PerCameraBinding);
+	gpuParams->GetPipelineParameterLayout()->GetBinding("PerCamera", renElement.PerCameraBinding);
 
 	if(gpu)
 	{
@@ -1098,18 +1098,18 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 		}
 	}
 
-	renElement.DefaultTechniqueIdx = renElement.TechniqueIndices[0][0];
+	renElement.DefaultVariationIndex = renElement.TechniqueIndices[0][0];
 
 	// Generate or assigned renderer specific data for the material
 	// Note: This makes the assumption that all variations of the material share the same parameter set
-	renElement.Params = renElement.Material->CreateParameterAdapter(renElement.DefaultTechniqueIdx);
-	renElement.Params->Update(renElement.Material, 0.0f, true);
+	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(renElement.DefaultVariationIndex);
+	renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
 	// Generate or assign sampler state overrides
 	renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
 
 	// Prepare all parameter bindings
-	SPtr<GpuParameters> gpuParams = renElement.Params->GetGpuParameters();
+	SPtr<GpuParameters> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
 
 	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -1118,7 +1118,7 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	gpuParams->SetUniformBuffer("PerObject", rendererDecal.PerObjectParamBuffer);
 	gpuParams->SetUniformBuffer("PerCall", rendererDecal.PerCallParamBuffer);
 
-	gpuParams->GetPipelineParameterInformation()->GetBinding("PerCamera", renElement.PerCameraBinding);
+	gpuParams->GetPipelineParameterLayout()->GetBinding("PerCamera", renElement.PerCameraBinding);
 
 	if(gpuParams->HasSampledTexture("gDepthBufferTex"))
 		gpuParams->GetSampledTextureParameter("gDepthBufferTex", renElement.DepthInputTexture);
@@ -1370,30 +1370,34 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 	if(!anyDirty)
 		return;
 
-	u32 numRenderables = (u32)mInfo.Renderables.size();
-	for(u32 i = 0; i < numRenderables; i++)
+	u32 renderableCount = (u32)mInfo.Renderables.size();
+	for(u32 renderableIndex = 0; renderableIndex < renderableCount; renderableIndex++)
 	{
-		for(auto& element : mInfo.Renderables[i]->Elements)
+		for(auto& renderableElement : mInfo.Renderables[renderableIndex]->Elements)
 		{
-			MaterialSamplerOverrides* overrides = element.SamplerOverrides;
+			MaterialSamplerOverrides* overrides = renderableElement.SamplerOverrides;
 			if(overrides != nullptr && overrides->IsDirty)
 			{
-				u32 numPasses = element.Material->GetPassCount(element.DefaultTechniqueIdx);
-				for(u32 j = 0; j < numPasses; j++)
+				const u32 passCount = renderableElement.Material->GetPassCount(renderableElement.DefaultVariationIndex);
+				for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 				{
-					SPtr<GpuParameters> params = element.Params->GetGpuParameters(j);
-					const SPtr<GpuPipelineParameterLayout>& uniformLayout = params->GetPipelineParameterInformation();
-
-					const u32 samplerCount = uniformLayout->GetBindingCount(GpuParameterType::Sampler);
-					for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+					const u32 setCount = renderableElement.ParameterAdapter->GetSetCount(passIndex);
+					for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 					{
-						const GpuParameterBinding binding = uniformLayout->GetBinding(GpuParameterType::Sampler, samplerIndex);
+						const SPtr<GpuParameters>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameters(passIndex, setIndex);
+						const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameterSet->GetPipelineParameterLayout();
 
-						u32 overrideIndex = overrides->Passes[j].StateOverrides[binding.Set][binding.Slot];
-						if(overrideIndex == (u32)-1)
-							continue;
+						const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);
+						for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
+						{
+							const u32 slot = uniformLayout->GetSlot(GpuParameterType::Sampler, setIndex, samplerIndex);
 
-						params->SetSamplerState(binding.Set, binding.Slot, overrides->Overrides[overrideIndex].State);
+							const u32& overrideIndex = overrides->Passes[passIndex].StateOverrides[setIndex][slot];
+							if(overrideIndex == ~0u)
+								continue;
+
+							parameterSet->SetSamplerState(slot, overrides->Overrides[overrideIndex].State);
+						}
 					}
 				}
 			}
@@ -1456,7 +1460,7 @@ void RenderBeastScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameI
 	// changed? Although it shouldn't matter much because if the internal versions keeping track of dirty params.
 	for(auto& element : rendererRenderable->Elements)
 	{
-		element.Params->Update(element.Material, element.MaterialAnimationTime);
+		element.ParameterAdapter->Update(element.Material, element.MaterialAnimationTime);
 
 		// Note: If renderable is not writing to velocity, then these buffer don't have to be rebound every frame. Potential optimization for future.
 		if(isAnimated)
@@ -1487,7 +1491,7 @@ void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo
 	}
 
 	ParticlesRenderElement& renElement = mInfo.ParticleSystems[idx].RenderElement;
-	renElement.Params->Update(renElement.Material, 0.0f);
+	renElement.ParameterAdapter->Update(renElement.Material, 0.0f);
 
 	mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushCache();
 }
@@ -1496,7 +1500,7 @@ void RenderBeastScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 {
 	DecalRenderElement& renElement = mInfo.Decals[idx].RenderElement;
 	renElement.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
-	renElement.Params->Update(renElement.Material, renElement.MaterialAnimationTime);
+	renElement.ParameterAdapter->Update(renElement.Material, renElement.MaterialAnimationTime);
 
 	mInfo.Decals[idx].PerObjectParamBuffer->FlushCache();
 }
@@ -1528,7 +1532,7 @@ void RenderBeastScene::UpdateParticleSystemBounds(const EvaluatedParticleData* p
 
 MaterialSamplerOverrides* RenderBeastScene::AllocSamplerStateOverrides(RenderElement& elem)
 {
-	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
+	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultVariationIndex);
 	auto iterFind = mSamplerOverrides.find(samplerKey);
 	if(iterFind != mSamplerOverrides.end())
 	{
@@ -1538,7 +1542,7 @@ MaterialSamplerOverrides* RenderBeastScene::AllocSamplerStateOverrides(RenderEle
 	else
 	{
 		SPtr<Shader> shader = elem.Material->GetShader();
-		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(*mGpuDevice, shader, elem.Material->GetMaterialParameters(), elem.Params, mOptions);
+		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(*mGpuDevice, shader, elem.Material->GetMaterialParameters(), elem.ParameterAdapter, mOptions);
 
 		mSamplerOverrides[samplerKey] = samplerOverrides;
 
@@ -1549,7 +1553,7 @@ MaterialSamplerOverrides* RenderBeastScene::AllocSamplerStateOverrides(RenderEle
 
 void RenderBeastScene::FreeSamplerStateOverrides(RenderElement& elem)
 {
-	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
+	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultVariationIndex);
 
 	auto iterFind = mSamplerOverrides.find(samplerKey);
 	B3D_ASSERT(iterFind != mSamplerOverrides.end());

@@ -20,7 +20,9 @@ TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive()
 template <class T, bool IsRenderProxy>
 TGpuParameterPrimitive<T, IsRenderProxy>::TGpuParameterPrimitive(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent)
 	: mParent(parent), mParameterInformation(parameterInformation)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mParameterInformation->ParentUniformBufferSet);
+}
 
 template <class T, bool IsRenderProxy>
 void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx) const
@@ -28,7 +30,7 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	if(mParent == nullptr)
 		return;
 
-	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSet, mParameterInformation->ParentUniformBufferSlot);
+	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
 	if(paramBlock == nullptr)
 		return;
 
@@ -62,7 +64,7 @@ T TGpuParameterPrimitive<T, IsRenderProxy>::Get(u32 arrayIdx) const
 	if(mParent == nullptr)
 		return T();
 
-	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSet, mParameterInformation->ParentUniformBufferSlot);
+	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
 	if(paramBlock == nullptr)
 		return T();
 
@@ -89,7 +91,9 @@ TGpuParameterStruct<IsRenderProxy>::TGpuParameterStruct()
 template <bool IsRenderProxy>
 TGpuParameterStruct<IsRenderProxy>::TGpuParameterStruct(const GpuUniformBufferMemberInformation* parameterInformation, const GpuParamsType& parent)
 	: mParent(parent), mParameterInformation(parameterInformation)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mParameterInformation->ParentUniformBufferSet);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterStruct<IsRenderProxy>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
@@ -97,7 +101,7 @@ void TGpuParameterStruct<IsRenderProxy>::Set(const void* value, u32 sizeBytes, u
 	if(mParent == nullptr)
 		return;
 
-	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSet, mParameterInformation->ParentUniformBufferSlot);
+	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
 	if(paramBlock == nullptr)
 		return;
 
@@ -137,7 +141,7 @@ void TGpuParameterStruct<IsRenderProxy>::Get(void* value, u32 sizeBytes, u32 arr
 	if(mParent == nullptr)
 		return;
 
-	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSet, mParameterInformation->ParentUniformBufferSlot);
+	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
 	if(paramBlock == nullptr)
 		return;
 
@@ -172,12 +176,14 @@ u32 TGpuParameterStruct<IsRenderProxy>::GetElementSize() const
 
 template <bool IsRenderProxy>
 TGpuParameterSampledTexture<IsRenderProxy>::TGpuParameterSampledTexture()
-{}
+{ }
 
 template <bool IsRenderProxy>
 TGpuParameterSampledTexture<IsRenderProxy>::TGpuParameterSampledTexture(const GpuParameterBinding& binding, const GpuParamsType& parent)
 	: mParent(parent), mBinding(binding)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mBinding.Set);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterSampledTexture<IsRenderProxy>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
@@ -185,7 +191,7 @@ void TGpuParameterSampledTexture<IsRenderProxy>::Set(const TextureType& texture,
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetSampledTexture(mBinding.Set, mBinding.Slot, texture, surface, arrayIndex);
+	mParent->SetSampledTexture(mBinding.Slot, texture, surface, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -197,7 +203,7 @@ typename TGpuParameterSampledTexture<IsRenderProxy>::TextureType TGpuParameterSa
 	if(mParent == nullptr)
 		return TextureType();
 
-	return mParent->GetSampledTexture(mBinding.Set, mBinding.Slot, arrayIndex);
+	return mParent->GetSampledTexture(mBinding.Slot, arrayIndex);
 }
 
 template <bool IsRenderProxy>
@@ -207,7 +213,9 @@ TGpuParameterStorageBuffer<IsRenderProxy>::TGpuParameterStorageBuffer()
 template <bool IsRenderProxy>
 TGpuParameterStorageBuffer<IsRenderProxy>::TGpuParameterStorageBuffer(const GpuParameterBinding& binding, const GpuParamsType& parent)
 	: mParent(parent), mBinding(binding)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mBinding.Set);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterStorageBuffer<IsRenderProxy>::Set(const BufferType& buffer, u32 arrayIndex, GpuBufferViewInformation view) const
@@ -215,7 +223,7 @@ void TGpuParameterStorageBuffer<IsRenderProxy>::Set(const BufferType& buffer, u3
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetStorageBuffer(mBinding.Set, mBinding.Slot, buffer, arrayIndex, view);
+	mParent->SetStorageBuffer(mBinding.Slot, buffer, arrayIndex, view);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -227,17 +235,19 @@ typename TGpuParameterStorageBuffer<IsRenderProxy>::BufferType TGpuParameterStor
 	if(mParent == nullptr)
 		return BufferType();
 
-	return mParent->GetStorageBuffer(mBinding.Set, mBinding.Slot, arrayIndex);
+	return mParent->GetStorageBuffer(mBinding.Slot, arrayIndex);
 }
 
 template <bool IsRenderProxy>
 TGpuParameterUniformBuffer<IsRenderProxy>::TGpuParameterUniformBuffer()
-{}
+{ }
 
 template <bool IsRenderProxy>
 TGpuParameterUniformBuffer<IsRenderProxy>::TGpuParameterUniformBuffer(const GpuParameterBinding& binding, const GpuParamsType& parent)
 	: mParent(parent), mBinding(binding)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mBinding.Set);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterUniformBuffer<IsRenderProxy>::Set(const BufferType& buffer) const
@@ -245,7 +255,7 @@ void TGpuParameterUniformBuffer<IsRenderProxy>::Set(const BufferType& buffer) co
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetUniformBuffer(mBinding.Set, mBinding.Slot, buffer);
+	mParent->SetUniformBuffer(mBinding.Slot, buffer);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -258,7 +268,7 @@ B3D_EXPORT void TGpuParameterUniformBuffer<true>::Set(const render::GpuBufferSub
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetUniformBuffer(mBinding.Set, mBinding.Slot, bufferSuballocation);
+	mParent->SetUniformBuffer(mBinding.Slot, bufferSuballocation);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -280,7 +290,9 @@ TGpuParameterStorageTexture<IsRenderProxy>::TGpuParameterStorageTexture()
 template <bool IsRenderProxy>
 TGpuParameterStorageTexture<IsRenderProxy>::TGpuParameterStorageTexture(const GpuParameterBinding& binding, const GpuParamsType& parent)
 	: mParent(parent), mBinding(binding)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mBinding.Set);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterStorageTexture<IsRenderProxy>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
@@ -288,7 +300,7 @@ void TGpuParameterStorageTexture<IsRenderProxy>::Set(const TextureType& texture,
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetStorageTexture(mBinding.Set, mBinding.Slot, texture, surface, arrayIndex);
+	mParent->SetStorageTexture(mBinding.Slot, texture, surface, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -300,7 +312,7 @@ typename TGpuParameterStorageTexture<IsRenderProxy>::TextureType TGpuParameterSt
 	if(mParent == nullptr)
 		return TextureType();
 
-	return mParent->GetSampledTexture(mBinding.Set, mBinding.Slot, arrayIndex);
+	return mParent->GetSampledTexture(mBinding.Slot, arrayIndex);
 }
 
 template <bool IsRenderProxy>
@@ -310,7 +322,9 @@ TGpuParameterSampler<IsRenderProxy>::TGpuParameterSampler()
 template <bool IsRenderProxy>
 TGpuParameterSampler<IsRenderProxy>::TGpuParameterSampler(const GpuParameterBinding& binding, const GpuParamsType& parent)
 	: mParent(parent), mBinding(binding)
-{}
+{
+	B3D_ASSERT(mParent->GetSet() == mBinding.Set);
+}
 
 template <bool IsRenderProxy>
 void TGpuParameterSampler<IsRenderProxy>::Set(const SPtr<SamplerState>& samplerState, u32 arrayIndex) const
@@ -318,7 +332,7 @@ void TGpuParameterSampler<IsRenderProxy>::Set(const SPtr<SamplerState>& samplerS
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetSamplerState(mBinding.Set, mBinding.Slot, samplerState, arrayIndex);
+	mParent->SetSamplerState(mBinding.Slot, samplerState, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -330,7 +344,7 @@ SPtr<SamplerState> TGpuParameterSampler<IsRenderProxy>::Get(u32 arrayIndex) cons
 	if (mParent == nullptr)
 		return nullptr;
 
-	return mParent->GetSamplerState(mBinding.Set, mBinding.Slot, arrayIndex);
+	return mParent->GetSamplerState(mBinding.Slot, arrayIndex);
 }
 
 template class TGpuParameterPrimitive<float, false>;
