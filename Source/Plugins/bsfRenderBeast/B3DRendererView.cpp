@@ -578,12 +578,12 @@ void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 			u32 techniqueIdx;
 			if(needsVelocity)
 			{
-				techniqueIdx = renderElem.WriteVelocityTechniqueIdx != (u32)-1
-					? renderElem.WriteVelocityTechniqueIdx
-					: renderElem.DefaultTechniqueIdx;
+				techniqueIdx = renderElem.WriteVelocityVariationIndex != (u32)-1
+					? renderElem.WriteVelocityVariationIndex
+					: renderElem.DefaultVariationIndex;
 			}
 			else
-				techniqueIdx = renderElem.DefaultTechniqueIdx;
+				techniqueIdx = renderElem.DefaultVariationIndex;
 
 			ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
@@ -613,11 +613,11 @@ void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 		ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
 		if(shaderFlags.IsSet(ShaderFlag::Transparent))
-			mTransparentQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
+			mTransparentQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultVariationIndex);
 		else if(shaderFlags.IsSet(ShaderFlag::Forward))
-			mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
+			mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultVariationIndex);
 		else
-			mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
+			mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultVariationIndex);
 	}
 
 	// Queue decals

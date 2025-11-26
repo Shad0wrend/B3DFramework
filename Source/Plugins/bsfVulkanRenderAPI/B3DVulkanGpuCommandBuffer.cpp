@@ -378,7 +378,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 		for (u32 uniformBufferIndex = 0; uniformBufferIndex < uniformBufferCount; uniformBufferIndex++)
 		{
 			const u32 slot = uniformLayout->GetSlot(GpuParameterType::UniformBuffer, set, uniformBufferIndex);
-			SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(set, slot);
+			SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(slot);
 
 			if (buffer != nullptr)
 				buffer->FlushCache();
@@ -569,7 +569,7 @@ void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& paramet
 	for (u32 uniformBufferIndex = 0; uniformBufferIndex < uniformBufferCount; uniformBufferIndex++)
 	{
 		const u32 slot = uniformLayout->GetSlot(GpuParameterType::UniformBuffer, set, uniformBufferIndex);
-		SPtr<GpuBuffer> buffer = parameterSet->GetUniformBuffer(set, slot);
+		SPtr<GpuBuffer> buffer = parameterSet->GetUniformBuffer(slot);
 
 		if (buffer != nullptr)
 			buffer->FlushCache();

@@ -27,13 +27,13 @@ namespace b3d
 			SPtr<Material> Material;
 
 			/** Index of the technique in the material to render the element with. */
-			u32 DefaultTechniqueIdx = 0;
+			u32 DefaultVariationIndex = 0;
 
 			/** Index of the technique in the material to render the element with when velocity writes are supported. */
-			u32 WriteVelocityTechniqueIdx = (u32)-1;
+			u32 WriteVelocityVariationIndex = ~0u;
 
 			/** All GPU parameters from the material used by the renderable. */
-			SPtr<MaterialParameterAdapter> Params;
+			SPtr<MaterialParameterAdapter> ParameterAdapter;
 
 			/** Renderer specific value that identifies the type of this renderable element. */
 			u32 Type = 0;

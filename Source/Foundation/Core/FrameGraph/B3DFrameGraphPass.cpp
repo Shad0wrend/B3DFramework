@@ -138,7 +138,7 @@ void FrameGraphPass::UseParameters(const SPtr<GpuParameters>& params)
 			auto buffer = params->GetUniformBuffer(slot, arrayIndex);
 			if (buffer)
 			{
-				auto bufId = mFrameGraph->ImportBuffer("UB_" + ToString(slot) + "_" + ToString(slot), buffer);
+				auto bufId = mFrameGraph->ImportBuffer("UB_" + ToString(set) + "_" + ToString(slot), buffer);
 				Read(bufId, GpuResourceUseFlag::UniformBuffer);
 			}
 		}

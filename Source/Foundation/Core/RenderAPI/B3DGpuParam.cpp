@@ -280,7 +280,7 @@ typename TGpuParameterUniformBuffer<IsRenderProxy>::BufferType TGpuParameterUnif
 	if(mParent == nullptr)
 		return BufferType();
 
-	return mParent->GetUniformBuffer(mBinding.Set, mBinding.Slot);
+	return mParent->GetUniformBuffer(mBinding.Slot);
 }
 
 template <bool IsRenderProxy>
