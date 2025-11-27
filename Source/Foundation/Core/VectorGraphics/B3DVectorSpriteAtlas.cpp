@@ -113,6 +113,7 @@ GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& 
 
 	{
 		Lock lock(mAllocationsMutex);
+		B3D_ASSERT(mAllocations.find(key) == mAllocations.end());
 		mAllocations[key] = AllocationInformation(atlasTexture, uvRange, allocationHandleShared);
 	}
 
