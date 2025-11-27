@@ -49,7 +49,10 @@ GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& 
 		{
 			const AllocationInformation& allocationInformation = found->second;
 
-			return GUIVectorSpriteAtlasAllocation(allocationInformation.AtlasTexture, allocationInformation.UVRange, allocationInformation.AllocationHandle->shared_from_this());
+			// Note the allocation can be destroyed mid-iteration by another thread, make sure to skip such allocations. They will be removed
+			// from the map as soon as the allocation mutex is removed.
+			if(SPtr<GUIVectorSpriteAtlasAllocationHandle> allocationHandle = allocationInformation.AllocationHandle.lock())
+				return GUIVectorSpriteAtlasAllocation(allocationInformation.AtlasTexture, allocationInformation.UVRange, allocationHandle);
 		}
 	}
 
@@ -110,7 +113,7 @@ GUIVectorSpriteAtlasAllocation GUIVectorSpriteAtlas::Allocate(const VectorPath& 
 
 	{
 		Lock lock(mAllocationsMutex);
-		mAllocations[key] = AllocationInformation(atlasTexture, uvRange, allocationHandle);
+		mAllocations[key] = AllocationInformation(atlasTexture, uvRange, allocationHandleShared);
 	}
 
 	DirtySpriteInformation dirtySpriteInformation;
@@ -133,7 +136,7 @@ void GUIVectorSpriteAtlas::NotifyAllocationReleased(GUIVectorSpriteAtlasAllocati
 	if(!B3D_ENSURE(found != mAllocations.end()))
 		return;
 
-	mFreeAllocations.push_back(found->second);
+	mFreeAllocations.push_back(FreeAllocationInformation(found->second.AtlasTexture, allocationHandle));
 	mAllocations.erase(found);
 }
 

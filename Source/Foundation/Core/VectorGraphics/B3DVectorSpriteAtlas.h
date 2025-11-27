@@ -163,12 +163,24 @@ namespace b3d
 		{
 		public:
 			AllocationInformation() = default;
-			AllocationInformation(const HTexture& atlasTexture, const Area2& uvRange, GUIVectorSpriteAtlasAllocationHandle* allocationHandle)
+			AllocationInformation(const HTexture& atlasTexture, const Area2& uvRange, const WeakSPtr<GUIVectorSpriteAtlasAllocationHandle>& allocationHandle)
 				: AtlasTexture(atlasTexture), UVRange(uvRange), AllocationHandle(allocationHandle)
 			{ }
 
 			HTexture AtlasTexture;
 			Area2 UVRange;
+			WeakSPtr<GUIVectorSpriteAtlasAllocationHandle> AllocationHandle;
+		};
+
+		/** Information about allocation to free. */
+		struct FreeAllocationInformation
+		{
+			FreeAllocationInformation() = default;
+			FreeAllocationInformation(const HTexture& atlasTexture, GUIVectorSpriteAtlasAllocationHandle* allocationHandle)
+				: AtlasTexture(atlasTexture), AllocationHandle(allocationHandle)
+			{}
+
+			HTexture AtlasTexture;
 			GUIVectorSpriteAtlasAllocationHandle* AllocationHandle = nullptr;
 		};
 
@@ -181,8 +193,8 @@ namespace b3d
 		UnorderedMap<u32, HTexture> mUniqueTextures;
 
 		Mutex mAllocationsMutex;
-		Vector<AllocationInformation> mFreeAllocations; // Allocations recorded here in a thread safe manner
-		Vector<AllocationInformation> mFreeAllocationsTemp; // Temporary buffer when iterating over the array on the main thread
+		Vector<FreeAllocationInformation> mFreeAllocations; // Allocations recorded here in a thread safe manner
+		Vector<FreeAllocationInformation> mFreeAllocationsTemp; // Temporary buffer when iterating over the array on the main thread
 
 		u32 mDirtySpriteWriteBufferIndex = 0;
 		Vector<DirtySpriteInformation> mDirtySpriteBuffers[RenderThread::kSyncBufferCount + 1];// Dirty sprites recorded here in a thread safe manner
