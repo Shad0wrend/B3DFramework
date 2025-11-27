@@ -102,7 +102,7 @@ Vector3 RendererLight::GetShiftedLightPosition() const
 		return tfrm.GetPosition();
 }
 
-void GBufferParameterBinding::Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameters>& gpuParams)
+void GBufferParameterBinding::Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameterSet>& gpuParams)
 {
 	mParams = gpuParams;
 
@@ -134,7 +134,7 @@ void GBufferParameterBinding::Bind(const GBufferTextures& gbuffer)
 	mGBufferDepth.Set(gbuffer.Depth);
 }
 
-void GBufferParameterBinding::Set(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& textures)
+void GBufferParameterBinding::Set(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& textures)
 {
 	if(gpuParameters->HasSampledTexture(kAlbedoTextureName))
 		gpuParameters->SetSampledTexture(kAlbedoTextureName, textures.Albedo);
@@ -163,7 +163,7 @@ void GBufferParameterBinding::Set(GpuDevice& gpuDevice, const SPtr<GpuParameters
 	}
 }
 
-void ForwardLightingParams::Populate(const SPtr<GpuParameters>& params, bool clustered)
+void ForwardLightingParams::Populate(const SPtr<GpuParameterSet>& params, bool clustered)
 {
 	if(clustered)
 	{

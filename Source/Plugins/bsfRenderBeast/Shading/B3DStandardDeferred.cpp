@@ -88,7 +88,7 @@ DeferredIBLSetupMaterial* DeferredIBLSetupMaterial::GetVariation(bool msaa, bool
 	}
 }
 
-void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer)
+void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer)
 {
 	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput);
 	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, sceneInfo.ReflProbeCubemapsTex);

@@ -49,7 +49,7 @@ namespace b3d
 #endif
 
 				const u32 offset = CalculateSuballocationOffset(uniformBuffer, suballocationIndex, arrayIndex);
-				const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameters::kParamSizes.Lookup[mMemberInformation.Type];
+				const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameterSet::kParamSizes.Lookup[mMemberInformation.Type];
 
 				const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 				const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;

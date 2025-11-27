@@ -111,10 +111,10 @@ namespace b3d
 			 * @param[in]	gridIndices	Set to true if grid indices (used by light grid) parameter is required.
 			 * @param[in]	probeArray	True if the refl. probe data is to be provided in a structured buffer.
 			 */
-			void Initialize(const SPtr<GpuParameters>& parameters, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray);
+			void Initialize(const SPtr<GpuParameterSet>& parameters, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray);
 
 			/** Sets the reflection probe cubemaps texture in the provided @p parameters object. */
-			static void SetReflectionProbeCubemaps(const SPtr<GpuParameters>& parameters, const SPtr<Texture>& cubemaps, bool optional = false);
+			static void SetReflectionProbeCubemaps(const SPtr<GpuParameterSet>& parameters, const SPtr<Texture>& cubemaps, bool optional = false);
 
 			GpuParameterSampledTexture SkyReflectionsTexParam;
 			GpuParameterSampledTexture AmbientOcclusionTexParam;

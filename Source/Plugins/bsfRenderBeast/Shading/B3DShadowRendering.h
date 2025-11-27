@@ -53,10 +53,10 @@ namespace b3d
 			ShadowDepthNormalMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters);
 
 			/** Binds all the provided buffers to the provided GpuParameters object. */
-			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
+			static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -87,10 +87,10 @@ namespace b3d
 			ShadowDepthNormalNoPSMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters);
 
 			/** Binds all the provided buffers to the provided GpuParameters object. */
-			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
+			static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -121,10 +121,10 @@ namespace b3d
 			ShadowDepthDirectionalMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters);
 
 			/** Binds all the provided buffers to the provided GpuParameters object. */
-			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
+			static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -167,10 +167,10 @@ namespace b3d
 			ShadowDepthCubeMaterial() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters);
 
 			/** Binds all the provided buffers to the provided GpuParameters object. */
-			static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const GpuBufferSuballocation& shadowCubeMatrices, const GpuBufferSuballocation& shadowCubeMasks, const SPtr<GpuBuffer>& perObjectParams);
+			static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const GpuBufferSuballocation& shadowCubeMatrices, const GpuBufferSuballocation& shadowCubeMasks, const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -524,8 +524,8 @@ namespace b3d
 			{
 				const ShadowInfo* ShadowInfo; /**< Note this will be invalidated if any new shadows are rendered via RenderShadowMaps(). */
 
-				SPtr<GpuParameters> PrimaryGpuParameters;
-				SPtr<GpuParameters> StencilGpuParameters;
+				SPtr<GpuParameterSet> PrimaryGpuParameters;
+				SPtr<GpuParameterSet> StencilGpuParameters;
 
 				u32 ShadowQuality;
 				bool IsViewerInsideLightVolume;

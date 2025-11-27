@@ -68,7 +68,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32 totalNumSets = 0;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameters> gpuParameters = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> gpuParameters = paramsSet->GetGpuParameters(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = gpuParameters->GetPipelineParameterLayout();
 
 			// Count sets that have samplers
@@ -91,7 +91,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32* slotsPerSetIter = slotsPerSet;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> paramsPtr = paramsSet->GetGpuParameters(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
 			for(u32 setIndex = 0; setIndex < numSetsPerPass[passIndex]; setIndex++)
@@ -130,7 +130,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		slotsPerSetIter = slotsPerSet;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameters> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> paramsPtr = paramsSet->GetGpuParameters(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
 			PassSamplerOverrides& passOverrides = output->Passes[passIndex];

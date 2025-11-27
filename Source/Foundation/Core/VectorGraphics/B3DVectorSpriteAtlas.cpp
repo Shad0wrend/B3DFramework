@@ -250,7 +250,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		SPtr<render::RenderTexture> renderTarget = render::RenderTexture::Create(renderTextureCreateInformation);
 
 		// Prepare GPU parameters just before render pass
-		SPtr<render::GpuParameters> gpuParameters = entry.Renderable->Prepare();
+		SPtr<render::GpuParameterSet> gpuParameters = entry.Renderable->Prepare();
 
 		// Begin render pass WITH GPU parameters
 		render::RenderPassCreateInformation renderPassCreateInformation(renderTarget, gpuParameters, RT_NONE, RT_NONE);

@@ -149,7 +149,7 @@ namespace b3d
 		 * @param	clipRegionCount		Number of regions in @p clipRegionBuffer.
 		 * @param	additionalData		Optional additional data that might be required by the renderer.
 		 */
-		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::GpuParameters>& parameters, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
+		virtual void Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::GpuParameterSet>& parameters, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const;
 
 		/** Writes the provided parameters into a uniform buffer created from GUISpriteUniformBufferDefinition. */
 		static void PopulateUniformBuffer(const render::GpuBufferSuballocation& buffer, const Vector2I& viewportOffset, float inverseViewportWidth, float inverseViewportHeight, bool flipY, float animationTime, u32 clipRegionCount, const Matrix4& transform, const render::SpriteMaterialInfo& materialInformation);

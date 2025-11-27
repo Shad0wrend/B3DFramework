@@ -452,7 +452,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			continue;
 		}
 
-		SPtr<GpuParameters> gpuParams = element.ParameterAdapter->GetGpuParameters();
+		SPtr<GpuParameterSet> gpuParams = element.ParameterAdapter->GetGpuParameters();
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -881,7 +881,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(techniqueIdx);
 	renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
-	SPtr<GpuParameters> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
+	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
 
 	if(gpu)
 	{
@@ -1109,7 +1109,7 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
 
 	// Prepare all parameter bindings
-	SPtr<GpuParameters> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
+	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
 
 	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -1384,7 +1384,7 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 					const u32 setCount = renderableElement.ParameterAdapter->GetSetCount(passIndex);
 					for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 					{
-						const SPtr<GpuParameters>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameters(passIndex, setIndex);
+						const SPtr<GpuParameterSet>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameters(passIndex, setIndex);
 						const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameterSet->GetPipelineParameterLayout();
 
 						const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);

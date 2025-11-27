@@ -402,7 +402,7 @@ namespace b3d
 		 * @param	setIndex				Index of the parameter set that the object will be used for binding parameters for.
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
-		virtual SPtr<render::GpuParameters> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0, bool deferredInitialize = false) = 0;
+		virtual SPtr<render::GpuParameterSet> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0, bool deferredInitialize = false) = 0;
 
 		/**
 		 * Creates a graphics pipeline.

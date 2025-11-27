@@ -253,15 +253,15 @@ namespace b3d
 	};
 
 	/** Contains functionality common for both main and render thread versions of GpuParameters. */
-	class B3D_EXPORT GpuParametersBase
+	class B3D_EXPORT GpuParametersSetBase
 	{
 	public:
-		virtual ~GpuParametersBase() = default;
+		virtual ~GpuParametersSetBase() = default;
 
 		// Note: Disallow copy/assign because it would require some care when copying (copy internal data shared_ptr and
 		// all the internal buffers too). Trivial to implement but not needed at this time. Un-delete and implement if necessary.
-		GpuParametersBase(const GpuParametersBase& other) = delete;
-		GpuParametersBase& operator=(const GpuParametersBase& rhs) = delete;
+		GpuParametersSetBase(const GpuParametersSetBase& other) = delete;
+		GpuParametersSetBase& operator=(const GpuParametersSetBase& rhs) = delete;
 
 		/** Gets the object that contains the processed information about all parameters. */
 		SPtr<GpuPipelineParameterLayout> GetPipelineParameterLayout() const { return mParameterLayout; }
@@ -294,7 +294,7 @@ namespace b3d
 		virtual void MarkResourcesDirtyInternal() {}
 
 	protected:
-		GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
+		GpuParametersSetBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 		SPtr<GpuPipelineParameterLayout> mParameterLayout;
 		u32 mSet = 0;
@@ -302,15 +302,15 @@ namespace b3d
 
 	/** Templated version of GpuParameters that contains functionality for both main and render thread versions of stored data. */
 	template <bool IsRenderProxy>
-	class B3D_EXPORT TGpuParameters : public GpuParametersBase
+	class B3D_EXPORT TGpuParameterSet : public GpuParametersSetBase
 	{
 	public:
-		using GpuParametersType = CoreVariantType<GpuParameters, IsRenderProxy>;
+		using GpuParametersType = CoreVariantType<GpuParameterSet, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 		using UniformBufferType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;
 
-		virtual ~TGpuParameters();
+		virtual ~TGpuParameterSet();
 
 		/**
 		 * Returns a handle for the parameter with the specified name. Handle may then be stored and used for quickly
@@ -487,7 +487,7 @@ namespace b3d
 		}
 
 	protected:
-		TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
+		TGpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 		virtual SPtr<GpuParametersType> GetSelf() const = 0;
 
@@ -532,10 +532,10 @@ namespace b3d
 	 *
 	 * @note	Main thread only.
 	 */
-	class B3D_EXPORT GpuParameters : public CoreObject, public TGpuParameters<false>, public IResourceListener
+	class B3D_EXPORT GpuParameterSet : public CoreObject, public TGpuParameterSet<false>, public IResourceListener
 	{
 	public:
-		~GpuParameters() {}
+		~GpuParameterSet() {}
 
 		/**
 		 * Creates new GpuParameters object that can serve for changing the GPU program parameters on the specified pipeline.
@@ -544,10 +544,10 @@ namespace b3d
 		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
 		 * @return					New GpuParameters object.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex = 0);
+		static SPtr<GpuParameterSet> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex = 0);
 
 		/** @copydoc GpuParameters::Create(const SPtr<GraphicsPipelineState>&) */
-		static SPtr<GpuParameters> Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex = 0);
+		static SPtr<GpuParameterSet> Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex = 0);
 
 		/**
 		 * Creates a new set of GPU parameters using an object describing the parameters for a pipeline.
@@ -555,7 +555,7 @@ namespace b3d
 		 * @param	parameterLayout	Description of GPU parameters for a specific GPU pipeline state.
 		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0);
+		static SPtr<GpuParameterSet> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0);
 
 		/** Contains a lookup table for sizes of all data parameters. Sizes are in bytes. */
 		const static GpuDataParameterTypeInformationLookup kParamSizes;
@@ -570,11 +570,11 @@ namespace b3d
 		/** @} */
 	protected:
 		struct SyncPacket;
-		friend class render::GpuParameters;
+		friend class render::GpuParameterSet;
 
-		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo, u32 setIndex);
+		GpuParameterSet(const SPtr<GpuPipelineParameterLayout>& paramInfo, u32 setIndex);
 
-		SPtr<GpuParameters> GetSelf() const override;
+		SPtr<GpuParameterSet> GetSelf() const override;
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
@@ -596,14 +596,14 @@ namespace b3d
 		 *
 		 * @note	Render thread only.
 		 */
-		class B3D_EXPORT GpuParameters : public RenderProxy, public TGpuParameters<true>
+		class B3D_EXPORT GpuParameterSet : public RenderProxy, public TGpuParameterSet<true>
 		{
 		public:
-			virtual ~GpuParameters() = default;
+			virtual ~GpuParameterSet() = default;
 
 			// Bring base class overloads into scope
-			using TGpuParameters::SetUniformBuffer;
-			using TGpuParameters::TrySetUniformBuffer;
+			using TGpuParameterSet::SetUniformBuffer;
+			using TGpuParameterSet::TrySetUniformBuffer;
 
 			/**
 			 * Sets uniform buffer using a pool suballocation at the specified slot.
@@ -616,7 +616,7 @@ namespace b3d
 			bool SetUniformBuffer(u32 slot, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
 			{
 				B3D_ASSERT(suballocation.IsValid());
-				return TGpuParameters::SetUniformBuffer(slot, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+				return TGpuParameterSet::SetUniformBuffer(slot, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
 			}
 
 			/**
@@ -630,7 +630,7 @@ namespace b3d
 			bool SetUniformBuffer(const StringView& name, const GpuBufferSuballocation& suballocation, u32 arrayIndex = 0)
 			{
 				B3D_ASSERT(suballocation.IsValid());
-				return TGpuParameters::SetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+				return TGpuParameterSet::SetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
 			}
 
 			/**
@@ -646,15 +646,15 @@ namespace b3d
 				if (!suballocation.IsValid())
 					return false;
 
-				return TGpuParameters::TrySetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
+				return TGpuParameterSet::TrySetUniformBuffer(name, suballocation.GetBuffer(), arrayIndex, suballocation.GetSuballocationOffset());
 			}
 
 		protected:
-			friend class b3d::GpuParameters;
+			friend class b3d::GpuParameterSet;
 
-			GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
+			GpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
-			SPtr<GpuParameters> GetSelf() const override;
+			SPtr<GpuParameterSet> GetSelf() const override;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 		};
 

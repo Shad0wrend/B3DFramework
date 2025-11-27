@@ -629,8 +629,8 @@ u32 Shader::GetDataParamSize(GpuDataParameterType type)
 	static const GpuDataParameterTypeInformationLookup kParamSizes;
 
 	u32 idx = (u32)type;
-	if(idx < sizeof(GpuParameters::kParamSizes.Lookup))
-		return GpuParameters::kParamSizes.Lookup[idx].Size;
+	if(idx < sizeof(GpuParameterSet::kParamSizes.Lookup))
+		return GpuParameterSet::kParamSizes.Lookup[idx].Size;
 
 	return 0;
 }

@@ -44,7 +44,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Creates a new set of GpuParameters and assigns the provided texture. */
-			SPtr<GpuParameters> Prepare(const SPtr<Texture>& source);
+			SPtr<GpuParameterSet> Prepare(const SPtr<Texture>& source);
 
 			/**
 			 * Executes the blit operation using pre-configured GPU parameters.
@@ -55,7 +55,7 @@ namespace b3d
 			 *                          this controls the sampled region. For filtered blits, normalized (0,1) UVs are used.
 			 * @param flipUV            If true, vertical texture coordinates are flipped.
 			 */
-			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters, const Area2& area, bool flipUV);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters, const Area2& area, bool flipUV);
 
 			/**
 			 * Returns the material variation matching the provided parameters.

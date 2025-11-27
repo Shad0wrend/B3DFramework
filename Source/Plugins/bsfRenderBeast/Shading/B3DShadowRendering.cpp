@@ -22,14 +22,14 @@ namespace b3d
 
 		ShadowUniformDefinition gShadowUniformDefinition;
 
-		void ShadowDepthNormalMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters)
+		void ShadowDepthNormalMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters)
 		{
 			commandBuffer.SetGpuGraphicsPipelineState(mGraphicsPipeline);
 			commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 			commandBuffer.SetGpuParameters(gpuParameters);
 		}
 
-		void ShadowDepthNormalMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
+		void ShadowDepthNormalMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
 		{
 			gpuParameters->SetUniformBuffer("ShadowParams", shadowUniforms);
 			gpuParameters->SetUniformBuffer("PerObject", perObjectParams);
@@ -53,14 +53,14 @@ namespace b3d
 			}
 		}
 
-		void ShadowDepthNormalNoPSMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters)
+		void ShadowDepthNormalNoPSMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters)
 		{
 			commandBuffer.SetGpuGraphicsPipelineState(mGraphicsPipeline);
 			commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 			commandBuffer.SetGpuParameters(gpuParameters);
 		}
 
-		void ShadowDepthNormalNoPSMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
+		void ShadowDepthNormalNoPSMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
 		{
 			gpuParameters->SetUniformBuffer("ShadowParams", shadowUniforms);
 			gpuParameters->SetUniformBuffer("PerObject", perObjectParams);
@@ -84,14 +84,14 @@ namespace b3d
 			}
 		}
 
-		void ShadowDepthDirectionalMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters)
+		void ShadowDepthDirectionalMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters)
 		{
 			commandBuffer.SetGpuGraphicsPipelineState(mGraphicsPipeline);
 			commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 			commandBuffer.SetGpuParameters(gpuParameters);
 		}
 
-		void ShadowDepthDirectionalMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
+		void ShadowDepthDirectionalMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const SPtr<GpuBuffer>& perObjectParams)
 		{
 			gpuParameters->SetUniformBuffer("ShadowParams", shadowUniforms);
 			gpuParameters->SetUniformBuffer("PerObject", perObjectParams);
@@ -118,14 +118,14 @@ namespace b3d
 		ShadowCubeMatricesUniformDefinition gShadowCubeMatricesUniformDefinition;
 		ShadowCubeMasksUniformDefinition gShadowCubeMasksUniformDefinition;
 
-		void ShadowDepthCubeMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters)
+		void ShadowDepthCubeMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters)
 		{
 			commandBuffer.SetGpuGraphicsPipelineState(mGraphicsPipeline);
 			commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 			commandBuffer.SetGpuParameters(gpuParameters);
 		}
 
-		void ShadowDepthCubeMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const GpuBufferSuballocation& shadowCubeMatrices, const GpuBufferSuballocation& shadowCubeMasks, const SPtr<GpuBuffer>& perObjectParams)
+		void ShadowDepthCubeMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& shadowUniforms, const GpuBufferSuballocation& shadowCubeMatrices, const GpuBufferSuballocation& shadowCubeMasks, const SPtr<GpuBuffer>& perObjectParams)
 		{
 			gpuParameters->SetUniformBuffer("ShadowParams", shadowUniforms);
 			gpuParameters->SetUniformBuffer("ShadowCubeMatrices", shadowCubeMatrices);
@@ -276,7 +276,7 @@ namespace b3d
 			 * @param perCameraBuffer        The per-camera parameter buffer.
 			 * @param shadowParameterBuffer  Optional shadow-specific parameter buffer (for projection materials).
 			 */
-			static void BindCommonParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
+			static void BindCommonParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
 			{
 				// Set vertex parameters
 				gpuParameters->TrySetUniformBuffer("VertParams", vertexParameterBuffer);
@@ -294,7 +294,7 @@ namespace b3d
 			 *
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 */
-			static void BindStencilProjectionParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer)
+			static void BindStencilProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Default light position for spot/directional lights
@@ -307,7 +307,7 @@ namespace b3d
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 * @param gpuDevice     The GPU device used to retrieve the sampler state.
 			 */
-			static void BindProjectionParameters(const SPtr<GpuParameters>& gpuParameters, GpuDevice& gpuDevice, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
+			static void BindProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Default light position for spot/directional lights
@@ -331,7 +331,7 @@ namespace b3d
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 * @param gpuDevice     The GPU device used to retrieve the sampler state.
 			 */
-			static void BindOmnidirectionalProjectionParameters(const SPtr<GpuParameters>& gpuParameters, GpuDevice& gpuDevice, const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
+			static void BindOmnidirectionalProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Set light position and radius for omnidirectional light
@@ -468,7 +468,7 @@ namespace b3d
 					RendererRenderable* Renderable;
 				};
 
-				SPtr<GpuParameters> GpuParameters;
+				SPtr<GpuParameterSet> GpuParameters;
 
 				bool IsElement : 1;
 			};
@@ -1095,7 +1095,7 @@ namespace b3d
 
 					ShadowProjectOmniMaterial* const shadowProjectOmniMaterial = ShadowProjectOmniMaterial::GetVariation(effectiveShadowQuality, viewerInsideVolume, viewProperties.Target.NumSamples > 1);
 
-					const SPtr<GpuParameters>& gpuParameters = shadowProjectOmniMaterial->CreateGpuParameters();
+					const SPtr<GpuParameterSet>& gpuParameters = shadowProjectOmniMaterial->CreateGpuParameters();
 
 					ProjectedShadowRenderingInformation shadowRenderingInfo;
 					shadowRenderingInfo.ShadowInfo = &shadowInfo;
@@ -1228,7 +1228,7 @@ namespace b3d
 						ShadowProjectStencilMaterial* const stencilMaterial = ShadowProjectStencilMaterial::GetVariation(false, viewerInsideFrustum);
 
 						// Bind GPU parameters for stencil material
-						SPtr<GpuParameters> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
+						SPtr<GpuParameterSet> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
 						ShadowProjectionParameterBinding::BindStencilProjectionParameters(stencilGpuParameters, perViewBuffer, shadowProjectVertBuffer);
 
 						shadowRenderingInfo.StencilGpuParameters = stencilGpuParameters;
@@ -1242,7 +1242,7 @@ namespace b3d
 						ShadowProjectStencilMaterial* const stencilMaterial = ShadowProjectStencilMaterial::GetVariation(true, true);
 
 						// Bind GPU parameters for stencil material
-						SPtr<GpuParameters> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
+						SPtr<GpuParameterSet> stencilGpuParameters = stencilMaterial->CreateGpuParameters();
 						ShadowProjectionParameterBinding::BindStencilProjectionParameters(stencilGpuParameters, perViewBuffer, shadowProjectVertBuffer);
 
 						shadowRenderingInfo.StencilGpuParameters = stencilGpuParameters;
@@ -1259,7 +1259,7 @@ namespace b3d
 					ShadowProjectMaterial* const primaryMaterial = ShadowProjectMaterial::GetVariation(effectiveShadowQuality, isCSM, viewProperties.Target.NumSamples > 1);
 
 					// Bind GPU parameters explicitly
-					SPtr<GpuParameters> gpuParameters = primaryMaterial->CreateGpuParameters();
+					SPtr<GpuParameterSet> gpuParameters = primaryMaterial->CreateGpuParameters();
 					ShadowProjectionParameterBinding::BindProjectionParameters(gpuParameters, gpuDevice, shadowMap, shadowParamBuffer, perViewBuffer, shadowProjectVertBuffer, gbuffer);
 
 					shadowRenderingInfo.PrimaryGpuParameters = gpuParameters;

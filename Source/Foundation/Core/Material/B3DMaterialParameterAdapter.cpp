@@ -459,19 +459,19 @@ SPtr<render::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBuf
 }
 
 template <bool IsRenderProxy>
-SPtr<CoreVariantType<GpuParameters, IsRenderProxy>> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+SPtr<CoreVariantType<GpuParameterSet, IsRenderProxy>> CreateGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
 	return nullptr;
 }
 
 template <>
-SPtr<GpuParameters> CreateGpuParameters<false>(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+SPtr<GpuParameterSet> CreateGpuParameters<false>(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
-	return GpuParameters::Create(parameterLayout, setIndex);
+	return GpuParameterSet::Create(parameterLayout, setIndex);
 }
 
 template <>
-SPtr<render::GpuParameters> CreateGpuParameters<true>(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+SPtr<render::GpuParameterSet> CreateGpuParameters<true>(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
 	const SPtr<GpuDevice>& device = GetApplication().GetPrimaryGpuDevice();
 	return device->CreateGpuParameters(parameterLayout, setIndex);
@@ -948,7 +948,7 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 
 		if(materialParamInfo->DataType != GPDT_STRUCT)
 		{
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)materialParamInfo->DataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[(int)materialParamInfo->DataType];
 
 			u32 paramSize;
 			if(materialParamInfo->DataType != GPDT_COLOR)
@@ -1269,7 +1269,7 @@ namespace b3d::render
 			const u32 passCount = (u32)mGpuParametersPerPass.size();
 			for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 			{
-				TInlineArray<SPtr<GpuParameters>, 4>& gpuParametersForPass = mGpuParametersPerPass[passIndex];
+				TInlineArray<SPtr<GpuParameterSet>, 4>& gpuParametersForPass = mGpuParametersPerPass[passIndex];
 				for(u32 stageIndex = 0; stageIndex < kNumStages; stageIndex++)
 				{
 					GpuProgramType gpuProgramType = (GpuProgramType)stageIndex;
@@ -1278,7 +1278,7 @@ namespace b3d::render
 
 					if(binding.Slot != ~0u && binding.Set < gpuParametersForPass.Size())
 					{
-						SPtr<GpuParameters>& gpuParameters = gpuParametersForPass[binding.Set];
+						SPtr<GpuParameterSet>& gpuParameters = gpuParametersForPass[binding.Set];
 						if(gpuParameters)
 							gpuParameters->SetUniformBuffer(binding.Slot, suballocation);
 					}

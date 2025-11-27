@@ -470,7 +470,7 @@ AABox GpuParticleSystem::GetBounds() const
 	return settings.CustomBounds;
 }
 
-const SPtr<GpuParameters>& GpuParticleSystem::PrepareSimulateParameters(const RendererParticles& rendererInfo, float dt)
+const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const RendererParticles& rendererInfo, float dt)
 {
 	// Note: Many of those could only be updated when relevant settings change, but for simplicity we update them every frame.
 
@@ -703,7 +703,7 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 
 		const bool supportsDepthCollisions = gpuSimulationSettings.DepthCollision.Enabled;
 
-		const SPtr<GpuParameters>& systemParams = entry->PrepareSimulateParameters(rendererParticles, dt);
+		const SPtr<GpuParameterSet>& systemParams = entry->PrepareSimulateParameters(rendererParticles, dt);
 
 		// Populate remaining parameters (textures and other buffers)
 		GpuParticleSimulateMaterial::PopulateParameters(systemParams, m->Resources, m->ParticleVertexInputBuffer, viewParams,
@@ -758,7 +758,7 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 				continue;
 
 			// Get the pre-populated parameters
-			SPtr<GpuParameters> systemParams = entry->GetSimulateParameters();
+			SPtr<GpuParameterSet> systemParams = entry->GetSimulateParameters();
 
 			// Bind parameters and draw
 			commandBuffer.SetGpuParameters(systemParams);

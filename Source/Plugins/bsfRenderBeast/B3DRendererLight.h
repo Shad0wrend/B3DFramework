@@ -83,16 +83,16 @@ namespace b3d
 			static constexpr const char* kDepthSamplerName = "gDepthBufferSamp";
 
 			/** Initializes the required parameters. To be called once before use. */
-			void Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameters>& gpuParams);
+			void Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameterSet>& gpuParams);
 
 			/** Binds the GBuffer textures to the pipeline. */
 			void Bind(const GBufferTextures& gbuffer);
 
 			/** Assigns the provided GBuffer textures to the provided GPU parameters object. */
-			static void Set(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& textures);
+			static void Set(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& textures);
 
 		private:
-			SPtr<GpuParameters> mParams;
+			SPtr<GpuParameterSet> mParams;
 
 			GpuParameterSampledTexture mGBufferA;
 			GpuParameterSampledTexture mGBufferB;
@@ -110,7 +110,7 @@ namespace b3d
 			 * @param[in]	clustered	If true, set up parameters for clustered forward rendering. If false, set up parameters
 			 *							for normal forward rendering.
 			 */
-			void Populate(const SPtr<GpuParameters>& params, bool clustered);
+			void Populate(const SPtr<GpuParameterSet>& params, bool clustered);
 
 			/** Binding indices representing where should lights param block buffer be bound to. */
 			GpuParameterBinding GridParamsBinding;

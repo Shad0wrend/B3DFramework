@@ -257,7 +257,7 @@ namespace b3d::render
 		 *
 		 * @param params  GpuParameters object containing resources to import
 		 */
-		void UseParameters(const SPtr<GpuParameters>& params);
+		void UseParameters(const SPtr<GpuParameterSet>& params);
 
 		/** Get color attachments (for render passes) */
 		const UnorderedMap<u32, FrameGraphResourceId>& GetColorAttachments() const { return mColorAttachments; }

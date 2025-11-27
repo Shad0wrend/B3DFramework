@@ -117,7 +117,7 @@ namespace b3d
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;
 
-			void SetGpuParameters(const SPtr<GpuParameters>& parameterSet) override;
+			void SetGpuParameters(const SPtr<GpuParameterSet>& parameterSet) override;
 			void SetDynamicBufferOffset(u32 bufferIndex, u32 offset) override;
 			void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) override;
 			void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) override;
@@ -519,7 +519,7 @@ namespace b3d
 			Vector<SwapChainImageInformation> mAcquiredSwapChainImages;
 			TInlineArray<u32, 4> mDynamicDescriptorOffsetsToBind;
 			UnorderedMap<u32, u32> mDynamicDescriptorOffsetsOverrides;
-			UnorderedMap<GpuParameters*, CachedGpuParameterData> mRenderPassGpuParametersCache;
+			UnorderedMap<GpuParameterSet*, CachedGpuParameterData> mRenderPassGpuParametersCache;
 
 			SPtr<RenderTarget> mRenderTarget;
 			bool mRenderTargetModified = false;

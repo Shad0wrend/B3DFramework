@@ -17,7 +17,7 @@ namespace b3d
 	template <bool IsRenderProxy>
 	class B3D_EXPORT TMaterialParameterAdapter
 	{
-		using GpuParametersType = CoreVariantType<GpuParameters, IsRenderProxy>;
+		using GpuParametersType = CoreVariantType<GpuParameterSet, IsRenderProxy>;
 		using MaterialParametersType = CoreVariantType<MaterialParameters, IsRenderProxy>;
 		using MaterialType = CoreVariantHandleType<Material, IsRenderProxy>;
 		using UniformBufferPointerType = SPtr<CoreVariantType<GpuBuffer, IsRenderProxy>>;

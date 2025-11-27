@@ -194,7 +194,7 @@ void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr
 
 void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& params, u32 passIdx)
 {
-	const SPtr<GpuParameters>& gpuParams = params->GetGpuParameters(passIdx);
+	const SPtr<GpuParameterSet>& gpuParams = params->GetGpuParameters(passIdx);
 	if(gpuParams == nullptr)
 		return;
 
@@ -312,7 +312,7 @@ void RendererUtility::Blit(GpuCommandBuffer& commandBuffer, const BlitInformatio
 	BlitMat* const blitMaterial = BlitMat::GetVariation(textureProperties.SampleCount, !blitInformation.IsDepth, blitInformation.UseFiltering, blitInformation.UseBlend, blitInformation.WriteAlpha);
 
 	// Get GPU parameters and configure source texture
-	const SPtr<GpuParameters> gpuParameters = blitMaterial->Prepare(blitInformation.InputTexture);
+	const SPtr<GpuParameterSet> gpuParameters = blitMaterial->Prepare(blitInformation.InputTexture);
 
 	// Begin render pass
 	RenderPassCreateInformation renderPassInfo(blitInformation.OutputRenderTarget, gpuParameters, blitInformation.ReadOnlyMask, blitInformation.LoadMask);
@@ -421,15 +421,15 @@ void BlitMat::Initialize()
 	mIsFiltered = mVariationParameters.GetI32("MODE") == 1;
 }
 
-SPtr<GpuParameters> BlitMat::Prepare(const SPtr<Texture>& source)
+SPtr<GpuParameterSet> BlitMat::Prepare(const SPtr<Texture>& source)
 {
-	SPtr<GpuParameters> gpuParameters = CreateGpuParameters();
+	SPtr<GpuParameterSet> gpuParameters = CreateGpuParameters();
 	gpuParameters->SetSampledTexture("gSource", source);
 
 	return gpuParameters;
 }
 
-void BlitMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameters>& gpuParameters, const Area2& area, bool flipUV)
+void BlitMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSet>& gpuParameters, const Area2& area, bool flipUV)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 

@@ -21,7 +21,7 @@ namespace b3d
 		 */
 
 		/** Vulkan implementation of GpuParameters, containing resource descriptors for all shader stages. */
-		class VulkanGpuParameters : public GpuParameters
+		class VulkanGpuParameters : public GpuParameterSet
 		{
 		public:
 			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 set);

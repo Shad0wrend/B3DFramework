@@ -100,7 +100,7 @@ void RendererReflectionProbe::GetParameters(ReflectioneProbeData& output) const
 	output.InvBoxTransform.SetInverseTrs(output.Position, tfrm.GetRotation(), output.BoxExtents);
 }
 
-void ImageBasedLightingParameterBinding::Initialize(const SPtr<GpuParameters>& parameters, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray)
+void ImageBasedLightingParameterBinding::Initialize(const SPtr<GpuParameterSet>& parameters, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray)
 {
 	// Sky
 	if(!optional || parameters->HasSampledTexture(kSkyReflectionTextureName))
@@ -137,7 +137,7 @@ void ImageBasedLightingParameterBinding::Initialize(const SPtr<GpuParameters>& p
 	parameters->GetPipelineParameterLayout()->GetBinding(kGlobalReflectionProbeUniformBufferName, ReflProbesBinding);
 }
 
-void ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(const SPtr<GpuParameters>& parameters, const SPtr<Texture>& cubemaps, bool optional)
+void ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(const SPtr<GpuParameterSet>& parameters, const SPtr<Texture>& cubemaps, bool optional)
 {
 	if(!optional || parameters->HasSampledTexture(kReflectionProbeCubemapsTextureName))
 		parameters->SetSampledTexture(kReflectionProbeCubemapsTextureName, cubemaps);

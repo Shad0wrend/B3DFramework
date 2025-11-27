@@ -21,43 +21,43 @@ using namespace b3d;
 
 const TextureSurface TextureSurface::kComplete = TextureSurface(0, 0, 0, 0);
 
-GpuParametersBase::GpuParametersBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+GpuParametersSetBase::GpuParametersSetBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 	: mParameterLayout(parameterLayout), mSet(setIndex)
 {}
 
-bool GpuParametersBase::HasParameter(const StringView& name) const
+bool GpuParametersSetBase::HasParameter(const StringView& name) const
 {
 	return mParameterLayout->HasUniformBufferMember(mSet, name);
 }
 
-bool GpuParametersBase::HasSampledTexture(const StringView& name) const
+bool GpuParametersSetBase::HasSampledTexture(const StringView& name) const
 {
 	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::SampledTexture, mSet);
 }
 
-bool GpuParametersBase::HasStorageBuffer(const StringView& name) const
+bool GpuParametersSetBase::HasStorageBuffer(const StringView& name) const
 {
 	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::StorageBuffer, mSet);
 }
 
-bool GpuParametersBase::HasStorageTexture(const StringView& name) const
+bool GpuParametersSetBase::HasStorageTexture(const StringView& name) const
 {
 	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::StorageTexture, mSet);
 }
 
-bool GpuParametersBase::HasSamplerState(const StringView& name) const
+bool GpuParametersSetBase::HasSamplerState(const StringView& name) const
 {
 	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::Sampler, mSet);
 }
 
-bool GpuParametersBase::HasUniformBuffer(const StringView& name) const
+bool GpuParametersSetBase::HasUniformBuffer(const StringView& name) const
 {
 	return mParameterLayout->HasUniformOfTypeAndSet(name, GpuParameterType::UniformBuffer, mSet);
 }
 
 template <bool IsRenderProxy>
-TGpuParameters<IsRenderProxy>::TGpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
-	: GpuParametersBase(parameterLayout, setIndex)
+TGpuParameterSet<IsRenderProxy>::TGpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: GpuParametersSetBase(parameterLayout, setIndex)
 {
 	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::UniformBuffer);
 	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(setIndex, GpuParameterType::SampledTexture);
@@ -113,7 +113,7 @@ TGpuParameters<IsRenderProxy>::TGpuParameters(const SPtr<GpuPipelineParameterLay
 }
 
 template <bool IsRenderProxy>
-TGpuParameters<IsRenderProxy>::~TGpuParameters()
+TGpuParameterSet<IsRenderProxy>::~TGpuParameterSet()
 {
 	const u32 uniformBufferCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::UniformBuffer);
 	const u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
@@ -147,7 +147,7 @@ TGpuParameters<IsRenderProxy>::~TGpuParameters()
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(u32 slot, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
+bool TGpuParameterSet<IsRenderProxy>::SetUniformBuffer(u32 slot, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
 {
 	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialResourceIndex == ~0u)
@@ -164,7 +164,7 @@ bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(u32 slot, const UniformBuff
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(const StringView& name, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
+bool TGpuParameterSet<IsRenderProxy>::SetUniformBuffer(const StringView& name, const UniformBufferType& buffer, u32 arrayIndex, u32 offset)
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if(!binding.IsValid() || binding.Set != mSet)
@@ -177,7 +177,7 @@ bool TGpuParameters<IsRenderProxy>::SetUniformBuffer(const StringView& name, con
 }
 
 template<bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TrySetUniformBuffer(const StringView& name, const UniformBufferType& parameterBlockBuffer, u32 arrayIndex, u32 offset)
+bool TGpuParameterSet<IsRenderProxy>::TrySetUniformBuffer(const StringView& name, const UniformBufferType& parameterBlockBuffer, u32 arrayIndex, u32 offset)
 {
 	if (!HasUniformBuffer(name))
 		return false;
@@ -187,49 +187,49 @@ bool TGpuParameters<IsRenderProxy>::TrySetUniformBuffer(const StringView& name, 
 
 template <bool IsRenderProxy>
 template <class T>
-void TGpuParameters<IsRenderProxy>::GetParameter(const StringView& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetParameter(const StringView& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
 {
 	if(!TryGetParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetStructParameter(const StringView& name, TGpuParameterStruct<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetStructParameter(const StringView& name, TGpuParameterStruct<IsRenderProxy>& output) const
 {
 	if(!TryGetStructParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetSampledTextureParameter(const StringView& name, TGpuParameterSampledTexture<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetSampledTextureParameter(const StringView& name, TGpuParameterSampledTexture<IsRenderProxy>& output) const
 {
 	if(!TryGetSampledTextureParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetStorageTextureParameter(const StringView& name, TGpuParameterStorageTexture<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetStorageTextureParameter(const StringView& name, TGpuParameterStorageTexture<IsRenderProxy>& output) const
 {
 	if(!TryGetStorageTextureParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find storage texture parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetStorageBufferParameter(const StringView& name, TGpuParameterStorageBuffer<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetStorageBufferParameter(const StringView& name, TGpuParameterStorageBuffer<IsRenderProxy>& output) const
 {
 	if(!TryGetStorageBufferParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find storage buffer parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetUniformBufferParameter(const StringView& name, TGpuParameterUniformBuffer<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetUniformBufferParameter(const StringView& name, TGpuParameterUniformBuffer<IsRenderProxy>& output) const
 {
 	if(!TryGetUniformBufferParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find uniform buffer parameter with the name: '{0}'", name);
 }
 
 template <bool IsRenderProxy>
-void TGpuParameters<IsRenderProxy>::GetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const
+void TGpuParameterSet<IsRenderProxy>::GetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const
 {
 	if(!TryGetSamplerStateParameter(name, output))
 		B3D_LOG(Warning, RenderBackend, "Cannot find sampler parameter with the name: '{0}'", name);
@@ -237,7 +237,7 @@ void TGpuParameters<IsRenderProxy>::GetSamplerStateParameter(const StringView& n
 
 template <bool IsRenderProxy>
 template <class T>
-bool TGpuParameters<IsRenderProxy>::TryGetParameter(const StringView& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetParameter(const StringView& name, TGpuParameterPrimitive<T, IsRenderProxy>& output) const
 {
 	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(mSet, name);
 	if(parameterInformation == nullptr)
@@ -251,7 +251,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetParameter(const StringView& name, TGpu
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetStructParameter(const StringView& name, TGpuParameterStruct<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetStructParameter(const StringView& name, TGpuParameterStruct<IsRenderProxy>& output) const
 {
 	const GpuUniformBufferMemberInformation* parameterInformation = mParameterLayout->TryGetUniformBufferMemberInformation(mSet, name);
 	if (parameterInformation == nullptr)
@@ -265,7 +265,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetStructParameter(const StringView& name
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetSampledTextureParameter(const StringView& name, TGpuParameterSampledTexture<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetSampledTextureParameter(const StringView& name, TGpuParameterSampledTexture<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if (!binding.IsValid() || binding.Set != mSet)
@@ -279,7 +279,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetSampledTextureParameter(const StringVi
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetStorageTextureParameter(const StringView& name, TGpuParameterStorageTexture<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetStorageTextureParameter(const StringView& name, TGpuParameterStorageTexture<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if (!binding.IsValid() || binding.Set != mSet)
@@ -293,7 +293,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetStorageTextureParameter(const StringVi
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetStorageBufferParameter(const StringView& name, TGpuParameterStorageBuffer<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetStorageBufferParameter(const StringView& name, TGpuParameterStorageBuffer<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if (!binding.IsValid() || binding.Set != mSet)
@@ -307,7 +307,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetStorageBufferParameter(const StringVie
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetUniformBufferParameter(const StringView& name, TGpuParameterUniformBuffer<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetUniformBufferParameter(const StringView& name, TGpuParameterUniformBuffer<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if (!binding.IsValid() || binding.Set != mSet)
@@ -321,7 +321,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetUniformBufferParameter(const StringVie
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::TryGetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const
+bool TGpuParameterSet<IsRenderProxy>::TryGetSamplerStateParameter(const StringView& name, TGpuParameterSampler<IsRenderProxy>& output) const
 {
 	const GpuParameterBinding binding = mParameterLayout->GetBinding(name);
 	if (!binding.IsValid() || binding.Set != mSet)
@@ -335,7 +335,7 @@ bool TGpuParameters<IsRenderProxy>::TryGetSamplerStateParameter(const StringView
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::UniformBufferType TGpuParameters<IsRenderProxy>::GetUniformBuffer(u32 slot, u32 arrayIndex) const
+typename TGpuParameterSet<IsRenderProxy>::UniformBufferType TGpuParameterSet<IsRenderProxy>::GetUniformBuffer(u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
@@ -345,27 +345,27 @@ typename TGpuParameters<IsRenderProxy>::UniformBufferType TGpuParameters<IsRende
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetSampledTexture(u32 slot, u32 arrayIndex) const
+typename TGpuParameterSet<IsRenderProxy>::TextureType TGpuParameterSet<IsRenderProxy>::GetSampledTexture(u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
-		return TGpuParameters<IsRenderProxy>::TextureType();
+		return TGpuParameterSet<IsRenderProxy>::TextureType();
 
 	return mSampledTextureData[sequentialResourceIndex].Texture;
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::TextureType TGpuParameters<IsRenderProxy>::GetStorageTexture(u32 slot, u32 arrayIndex) const
+typename TGpuParameterSet<IsRenderProxy>::TextureType TGpuParameterSet<IsRenderProxy>::GetStorageTexture(u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
-		return TGpuParameters<IsRenderProxy>::TextureType();
+		return TGpuParameterSet<IsRenderProxy>::TextureType();
 
 	return mStorageTextureData[sequentialResourceIndex].Texture;
 }
 
 template <bool IsRenderProxy>
-typename TGpuParameters<IsRenderProxy>::BufferType TGpuParameters<IsRenderProxy>::GetStorageBuffer(u32 slot, u32 arrayIndex) const
+typename TGpuParameterSet<IsRenderProxy>::BufferType TGpuParameterSet<IsRenderProxy>::GetStorageBuffer(u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialResourceIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
@@ -375,7 +375,7 @@ typename TGpuParameters<IsRenderProxy>::BufferType TGpuParameters<IsRenderProxy>
 }
 
 template <bool IsRenderProxy>
-SPtr<SamplerState> TGpuParameters<IsRenderProxy>::GetSamplerState(u32 slot, u32 arrayIndex) const
+SPtr<SamplerState> TGpuParameterSet<IsRenderProxy>::GetSamplerState(u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
@@ -385,7 +385,7 @@ SPtr<SamplerState> TGpuParameters<IsRenderProxy>::GetSamplerState(u32 slot, u32 
 }
 
 template <bool IsRenderProxy>
-const TextureSurface& TGpuParameters<IsRenderProxy>::GetTextureSurface(u32 slot, u32 arrayIndex) const
+const TextureSurface& TGpuParameterSet<IsRenderProxy>::GetTextureSurface(u32 slot, u32 arrayIndex) const
 {
 	static TextureSurface emptySurface;
 
@@ -397,7 +397,7 @@ const TextureSurface& TGpuParameters<IsRenderProxy>::GetTextureSurface(u32 slot,
 }
 
 template <bool IsRenderProxy>
-const TextureSurface& TGpuParameters<IsRenderProxy>::GetStorageTextureSurface(u32 slot, u32 arrayIndex) const
+const TextureSurface& TGpuParameterSet<IsRenderProxy>::GetStorageTextureSurface(u32 slot, u32 arrayIndex) const
 {
 	static TextureSurface emptySurface;
 
@@ -409,7 +409,7 @@ const TextureSurface& TGpuParameters<IsRenderProxy>::GetStorageTextureSurface(u3
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetSampledTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
+bool TGpuParameterSet<IsRenderProxy>::SetSampledTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -428,7 +428,7 @@ bool TGpuParameters<IsRenderProxy>::SetSampledTexture(u32 slot, const TextureTyp
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetStorageTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
+bool TGpuParameterSet<IsRenderProxy>::SetStorageTexture(u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -447,7 +447,7 @@ bool TGpuParameters<IsRenderProxy>::SetStorageTexture(u32 slot, const TextureTyp
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetStorageBuffer(u32 slot, const BufferType& buffer, u32 arrayIndex, GpuBufferViewInformation view)
+bool TGpuParameterSet<IsRenderProxy>::SetStorageBuffer(u32 slot, const BufferType& buffer, u32 arrayIndex, GpuBufferViewInformation view)
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -466,7 +466,7 @@ bool TGpuParameters<IsRenderProxy>::SetStorageBuffer(u32 slot, const BufferType&
 }
 
 template <bool IsRenderProxy>
-bool TGpuParameters<IsRenderProxy>::SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
+bool TGpuParameterSet<IsRenderProxy>::SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(mSet, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -483,50 +483,50 @@ bool TGpuParameters<IsRenderProxy>::SetSamplerState(u32 slot, const SPtr<Sampler
 	return true;
 }
 
-template class TGpuParameters<false>;
-template class TGpuParameters<true>;
+template class TGpuParameterSet<false>;
+template class TGpuParameterSet<true>;
 
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<float>(const StringView&, TGpuParameterPrimitive<float, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<int>(const StringView&, TGpuParameterPrimitive<int, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Color>(const StringView&, TGpuParameterPrimitive<Color, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector2>(const StringView&, TGpuParameterPrimitive<Vector2, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector3>(const StringView&, TGpuParameterPrimitive<Vector3, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector4>( const StringView&, TGpuParameterPrimitive<Vector4, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector2I>(const StringView&, TGpuParameterPrimitive<Vector2I, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector3I>(const StringView&, TGpuParameterPrimitive<Vector3I, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Vector4I>(const StringView&, TGpuParameterPrimitive<Vector4I, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix2>(const StringView&, TGpuParameterPrimitive<Matrix2, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix2x3>(const StringView&, TGpuParameterPrimitive<Matrix2x3, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix2x4>(const StringView&, TGpuParameterPrimitive<Matrix2x4, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix3>(const StringView&, TGpuParameterPrimitive<Matrix3, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix3x2>(const StringView&, TGpuParameterPrimitive<Matrix3x2, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix3x4>(const StringView&, TGpuParameterPrimitive<Matrix3x4, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix4>(const StringView&, TGpuParameterPrimitive<Matrix4, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix4x2>(const StringView&, TGpuParameterPrimitive<Matrix4x2, false>&) const;
-template B3D_EXPORT void TGpuParameters<false>::GetParameter<Matrix4x3>(const StringView&, TGpuParameterPrimitive<Matrix4x3, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<float>(const StringView&, TGpuParameterPrimitive<float, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<int>(const StringView&, TGpuParameterPrimitive<int, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Color>(const StringView&, TGpuParameterPrimitive<Color, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector2>(const StringView&, TGpuParameterPrimitive<Vector2, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector3>(const StringView&, TGpuParameterPrimitive<Vector3, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector4>( const StringView&, TGpuParameterPrimitive<Vector4, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector2I>(const StringView&, TGpuParameterPrimitive<Vector2I, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector3I>(const StringView&, TGpuParameterPrimitive<Vector3I, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Vector4I>(const StringView&, TGpuParameterPrimitive<Vector4I, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix2>(const StringView&, TGpuParameterPrimitive<Matrix2, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix2x3>(const StringView&, TGpuParameterPrimitive<Matrix2x3, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix2x4>(const StringView&, TGpuParameterPrimitive<Matrix2x4, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix3>(const StringView&, TGpuParameterPrimitive<Matrix3, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix3x2>(const StringView&, TGpuParameterPrimitive<Matrix3x2, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix3x4>(const StringView&, TGpuParameterPrimitive<Matrix3x4, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix4>(const StringView&, TGpuParameterPrimitive<Matrix4, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix4x2>(const StringView&, TGpuParameterPrimitive<Matrix4x2, false>&) const;
+template B3D_EXPORT void TGpuParameterSet<false>::GetParameter<Matrix4x3>(const StringView&, TGpuParameterPrimitive<Matrix4x3, false>&) const;
 
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<float>(const StringView&, TGpuParameterPrimitive<float, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<int>(const StringView&, TGpuParameterPrimitive<int, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Color>(const StringView&, TGpuParameterPrimitive<Color, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector2>(const StringView&, TGpuParameterPrimitive<Vector2, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector3>(const StringView&, TGpuParameterPrimitive<Vector3, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector4>(const StringView&, TGpuParameterPrimitive<Vector4, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector2I>(const StringView&, TGpuParameterPrimitive<Vector2I, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector3I>(const StringView&, TGpuParameterPrimitive<Vector3I, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Vector4I>(const StringView&, TGpuParameterPrimitive<Vector4I, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix2>(const StringView&, TGpuParameterPrimitive<Matrix2, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix2x3>(const StringView&, TGpuParameterPrimitive<Matrix2x3, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix2x4>(const StringView&, TGpuParameterPrimitive<Matrix2x4, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix3>(const StringView&, TGpuParameterPrimitive<Matrix3, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix3x2>(const StringView&, TGpuParameterPrimitive<Matrix3x2, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix3x4>(const StringView&, TGpuParameterPrimitive<Matrix3x4, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix4>(const StringView&, TGpuParameterPrimitive<Matrix4, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix4x2>(const StringView&, TGpuParameterPrimitive<Matrix4x2, true>&) const;
-template B3D_EXPORT void TGpuParameters<true>::GetParameter<Matrix4x3>(const StringView&, TGpuParameterPrimitive<Matrix4x3, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<float>(const StringView&, TGpuParameterPrimitive<float, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<int>(const StringView&, TGpuParameterPrimitive<int, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Color>(const StringView&, TGpuParameterPrimitive<Color, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector2>(const StringView&, TGpuParameterPrimitive<Vector2, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector3>(const StringView&, TGpuParameterPrimitive<Vector3, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector4>(const StringView&, TGpuParameterPrimitive<Vector4, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector2I>(const StringView&, TGpuParameterPrimitive<Vector2I, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector3I>(const StringView&, TGpuParameterPrimitive<Vector3I, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Vector4I>(const StringView&, TGpuParameterPrimitive<Vector4I, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix2>(const StringView&, TGpuParameterPrimitive<Matrix2, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix2x3>(const StringView&, TGpuParameterPrimitive<Matrix2x3, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix2x4>(const StringView&, TGpuParameterPrimitive<Matrix2x4, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix3>(const StringView&, TGpuParameterPrimitive<Matrix3, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix3x2>(const StringView&, TGpuParameterPrimitive<Matrix3x2, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix3x4>(const StringView&, TGpuParameterPrimitive<Matrix3x4, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix4>(const StringView&, TGpuParameterPrimitive<Matrix4, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix4x2>(const StringView&, TGpuParameterPrimitive<Matrix4x2, true>&) const;
+template B3D_EXPORT void TGpuParameterSet<true>::GetParameter<Matrix4x3>(const StringView&, TGpuParameterPrimitive<Matrix4x3, true>&) const;
 
 namespace b3d
 {
-	B3D_SYNC_BLOCK_BEGIN(GpuParameters, SyncPacket)
+	B3D_SYNC_BLOCK_BEGIN(GpuParameterSet, SyncPacket)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<HTexture>, SampledTextures)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<TextureSurface>, SampledTextureSurfaces)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<HTexture>, StorageTextures)
@@ -538,19 +538,19 @@ namespace b3d
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Vector<SPtr<SamplerState>>, SamplerStates)
 	B3D_SYNC_BLOCK_END
 }
-const GpuDataParameterTypeInformationLookup GpuParameters::kParamSizes;
+const GpuDataParameterTypeInformationLookup GpuParameterSet::kParamSizes;
 
-GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
-	: TGpuParameters(parameterLayout, setIndex)
+GpuParameterSet::GpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: TGpuParameterSet(parameterLayout, setIndex)
 {
 }
 
-SPtr<GpuParameters> GpuParameters::GetSelf() const
+SPtr<GpuParameterSet> GpuParameterSet::GetSelf() const
 {
-	return std::static_pointer_cast<GpuParameters>(GetShared());
+	return std::static_pointer_cast<GpuParameterSet>(GetShared());
 }
 
-SPtr<render::RenderProxy> GpuParameters::CreateRenderProxy() const
+SPtr<render::RenderProxy> GpuParameterSet::CreateRenderProxy() const
 {
 	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 	if(!gpuDevice)
@@ -560,37 +560,37 @@ SPtr<render::RenderProxy> GpuParameters::CreateRenderProxy() const
 	return gpuDevice->CreateGpuParameters(parameterLayout, true);
 }
 
-void GpuParameters::MarkRenderProxyDataDirtyInternal()
+void GpuParameterSet::MarkRenderProxyDataDirtyInternal()
 {
 	MarkRenderProxyDataDirty();
 }
 
-void GpuParameters::MarkResourcesDirtyInternal()
+void GpuParameterSet::MarkResourcesDirtyInternal()
 {
 	MarkListenerResourcesDirty();
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex)
+SPtr<GpuParameterSet> GpuParameterSet::Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex)
 {
 	return Create(pipelineState->GetParameterLayout(), setIndex);
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex)
+SPtr<GpuParameterSet> GpuParameterSet::Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex)
 {
 	return Create(pipelineState->GetParameterLayout(), setIndex);
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+SPtr<GpuParameterSet> GpuParameterSet::Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
-	GpuParameters* const output = new(B3DAllocate<GpuParameters>()) GpuParameters(parameterLayout, setIndex);
-	SPtr<GpuParameters> shared = B3DMakeSharedFromExisting<GpuParameters>(output);
+	GpuParameterSet* const output = new(B3DAllocate<GpuParameterSet>()) GpuParameterSet(parameterLayout, setIndex);
+	SPtr<GpuParameterSet> shared = B3DMakeSharedFromExisting<GpuParameterSet>(output);
 	shared->SetShared(shared);
 	shared->Initialize();
 
 	return shared;
 }
 
-RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+RenderProxySyncPacket* GpuParameterSet::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
 	SyncPacket* const syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 
@@ -643,7 +643,7 @@ RenderProxySyncPacket* GpuParameters::CreateRenderProxySyncPacket(FrameAllocator
 	return syncPacket;
 }
 
-void GpuParameters::GetListenerResources(Vector<HResource>& resources)
+void GpuParameterSet::GetListenerResources(Vector<HResource>& resources)
 {
 	u32 sampledTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::SampledTexture);
 	u32 storageTextureCount = mParameterLayout->GetResourceCount(mSet, GpuParameterType::StorageTexture);
@@ -663,19 +663,19 @@ void GpuParameters::GetListenerResources(Vector<HResource>& resources)
 
 namespace b3d { namespace render
 {
-GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
-	: TGpuParameters(parameterLayout, setIndex)
+GpuParameterSet::GpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
+	: TGpuParameterSet(parameterLayout, setIndex)
 {
 }
 
-SPtr<GpuParameters> GpuParameters::GetSelf() const
+SPtr<GpuParameterSet> GpuParameterSet::GetSelf() const
 {
-	return std::static_pointer_cast<GpuParameters>(GetShared());
+	return std::static_pointer_cast<GpuParameterSet>(GetShared());
 }
 
-void GpuParameters::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
+void GpuParameterSet::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
 {
-	auto* const syncPacket = data.GetSyncPacket<b3d::GpuParameters::SyncPacket>();
+	auto* const syncPacket = data.GetSyncPacket<b3d::GpuParameterSet::SyncPacket>();
 	if(!syncPacket)
 		return;
 

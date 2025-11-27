@@ -898,7 +898,7 @@ bool VulkanUtility::RangeEquals(const VkImageSubresourceRange& a, const VkImageS
 
 u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset)
 {
-	const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[type];
+	const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameterSet::kParamSizes.Lookup[type];
 	u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
 	u32 alignment = typeInfo.Alignment / 4;
 

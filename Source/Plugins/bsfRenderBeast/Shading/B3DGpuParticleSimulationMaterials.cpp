@@ -17,13 +17,13 @@ void GpuParticleClearMaterial::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("TILES_PER_INSTANCE", GpuParticleConstants::kTilesPerInstance);
 }
 
-void GpuParticleClearMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs)
+void GpuParticleClearMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs)
 {
 	gpuParameters->SetUniformBuffer("Input", vertexInputBuffer);
 	gpuParameters->SetStorageBuffer("gTileUVs", tileUVs);
 }
 
-void GpuParticleInjectMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer)
+void GpuParticleInjectMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer)
 {
 	gpuParameters->SetUniformBuffer("Input", vertexInputBuffer);
 }
@@ -38,7 +38,7 @@ void GpuParticleSimulateMaterial::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("TILES_PER_INSTANCE", GpuParticleConstants::kTilesPerInstance);
 }
 
-void GpuParticleSimulateMaterial::PopulateParameters(const SPtr<GpuParameters>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
+void GpuParticleSimulateMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
 	const SPtr<GpuBuffer>& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
 	const SPtr<GpuBuffer>& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions)
 {

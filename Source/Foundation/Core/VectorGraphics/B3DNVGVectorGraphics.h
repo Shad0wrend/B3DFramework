@@ -140,7 +140,7 @@ namespace b3d
 		public:
 			NVGVectorPathRenderable(const b3d::VectorPath& vectorPath, const VectorGraphicsSettings& settings);
 
-			SPtr<GpuParameters> Prepare() override;
+			SPtr<GpuParameterSet> Prepare() override;
 			void Render(GpuCommandBuffer& commandBuffer) override;
 
 		private:
@@ -152,7 +152,7 @@ namespace b3d
 				SPtr<GpuBuffer> IndexBuffer;
 				SPtr<GpuBuffer> ViewUniformBuffer;
 				SPtr<GpuBuffer> RenderUniformBuffer;
-				SPtr<GpuParameters> GpuParameters;
+				SPtr<GpuParameterSet> GpuParameters;
 			};
 
 			/** Context that will be filled by NanoVG callbacks when executing NanoVG path commands. */

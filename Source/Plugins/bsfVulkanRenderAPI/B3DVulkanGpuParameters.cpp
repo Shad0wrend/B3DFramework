@@ -62,7 +62,7 @@ static bool EnsureImageViewValidForShader(const VulkanImageView& view, const Gpu
 }
 
 VulkanGpuParameters::VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 set)
-	: GpuParameters(parameterLayout, set), mGpuDevice(gpuDevice)
+	: GpuParameterSet(parameterLayout, set), mGpuDevice(gpuDevice)
 {
 }
 
@@ -287,12 +287,12 @@ void VulkanGpuParameters::Initialize()
 		}
 	}
 
-	GpuParameters::Initialize();
+	GpuParameterSet::Initialize();
 }
 
 bool VulkanGpuParameters::SetUniformBuffer(u32 slot,const SPtr<GpuBuffer>& uniformBuffer, u32 arrayIndex, u32 offset)
 {
-	if (!GpuParameters::SetUniformBuffer(slot, uniformBuffer, arrayIndex, offset))
+	if (!GpuParameterSet::SetUniformBuffer(slot, uniformBuffer, arrayIndex, offset))
 		return false;
 
 	VulkanGpuPipelineParameterLayout& pipelineParameterInformation = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
@@ -347,7 +347,7 @@ bool VulkanGpuParameters::SetUniformBuffer(u32 slot,const SPtr<GpuBuffer>& unifo
 
 bool VulkanGpuParameters::SetSampledTexture(u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	if (!GpuParameters::SetSampledTexture(slot, texture, surface, arrayIndex))
+	if (!GpuParameterSet::SetSampledTexture(slot, texture, surface, arrayIndex))
 		return false;
 
 	VulkanGpuPipelineParameterLayout& pipelineParameterInformation = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
@@ -413,7 +413,7 @@ bool VulkanGpuParameters::SetSampledTexture(u32 slot, const SPtr<Texture>& textu
 
 bool VulkanGpuParameters::SetStorageTexture(u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	if (!GpuParameters::SetStorageTexture(slot, texture, surface, arrayIndex))
+	if (!GpuParameterSet::SetStorageTexture(slot, texture, surface, arrayIndex))
 		return false;
 
 	VulkanGpuPipelineParameterLayout& pipelineParameterInformation = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
@@ -478,7 +478,7 @@ bool VulkanGpuParameters::SetStorageTexture(u32 slot, const SPtr<Texture>& textu
 
 bool VulkanGpuParameters::SetStorageBuffer(u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex, GpuBufferViewInformation view)
 {
-	if (!GpuParameters::SetStorageBuffer(slot, buffer, arrayIndex, view))
+	if (!GpuParameterSet::SetStorageBuffer(slot, buffer, arrayIndex, view))
 		return false;
 
 	VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
@@ -569,7 +569,7 @@ bool VulkanGpuParameters::SetStorageBuffer(u32 slot, const SPtr<GpuBuffer>& buff
 
 bool VulkanGpuParameters::SetSamplerState(u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
 {
-	if (!GpuParameters::SetSamplerState(slot, sampler, arrayIndex))
+	if (!GpuParameterSet::SetSamplerState(slot, sampler, arrayIndex))
 		return false;
 
 	VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);

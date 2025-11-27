@@ -114,7 +114,7 @@ void SpriteMaterial::Prepare(const SPtr<render::MaterialParameterAdapter>& param
 
 	parameterAdapter->SetUniformBuffer("GUIParams", uniformBuffer);
 
-	const SPtr<render::GpuParameters>& gpuParameters = parameterAdapter->GetGpuParameters();
+	const SPtr<render::GpuParameterSet>& gpuParameters = parameterAdapter->GetGpuParameters();
 	gpuParameters->SetStorageBuffer("gVertices", vertexBuffer);
 
 	if(clipRegionBuffer != nullptr)
@@ -122,7 +122,7 @@ void SpriteMaterial::Prepare(const SPtr<render::MaterialParameterAdapter>& param
 }
 
 
-void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::GpuParameters>& parameters, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const
+void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<render::GpuParameterSet>& parameters, const SPtr<render::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<render::GpuBuffer>& clipRegionBuffer, u32 clipRegionCount, const SPtr<SpriteMaterialExtraInfo>& additionalData) const
 {
 	if(clipRegionBuffer != nullptr)
 	{

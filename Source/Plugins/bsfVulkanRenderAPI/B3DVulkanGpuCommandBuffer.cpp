@@ -362,7 +362,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 		mResourceTracker.TrackSwapChainUsage(swapChain);
 
 	// Pre-register all GPU parameters before the render pass, so we can automatically issue barriers
-	for(const SPtr<GpuParameters>& parameters : createInformation.Parameters)
+	for(const SPtr<GpuParameterSet>& parameters : createInformation.Parameters)
 	{
 		if(parameters == nullptr)
 			continue;
@@ -541,7 +541,7 @@ void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePip
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameterSet)
+void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameterSet>& parameterSet)
 {
 	EnsureValidThread();
 

@@ -31,7 +31,7 @@ namespace b3d { namespace render
 		GpuParticleClearMaterial() = default;
 
 		/** Populates GPU parameters for rendering using this material. */
-		static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs);
+		static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer, const SPtr<GpuBuffer>& tileUVs);
 	};
 
 	/** Material used for adding new particles into the particle state textures. */
@@ -43,7 +43,7 @@ namespace b3d { namespace render
 		GpuParticleInjectMaterial() = default;
 
 		/** Populates GPU parameters for rendering using this material. */
-		static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer);
+		static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexInputBuffer);
 	};
 
 	/** Material used for adding new curves into the curve texture. */
@@ -125,7 +125,7 @@ namespace b3d { namespace render
 		 * @param	vectorFieldTexture			3D texture representing the vector field, or null if none.
 		 * @param	supportsDepthCollisions		True if this material variation supports depth collisions
 		 */
-		static void PopulateParameters(const SPtr<GpuParameters>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
+		static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
 			const SPtr<GpuBuffer>& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
 			const SPtr<GpuBuffer>& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions);
 

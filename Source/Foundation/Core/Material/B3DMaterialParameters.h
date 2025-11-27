@@ -119,7 +119,7 @@ namespace b3d
 
 			const DataParamInfo& paramInfo = mDataParameterMetaData[param->Index + arrayIdx];
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			memcpy(output, &mDataParamsBuffer[paramInfo.Offset], sizeof(paramTypeSize));
@@ -147,7 +147,7 @@ namespace b3d
 
 			const DataParamInfo& paramInfo = mDataParameterMetaData[param->Index + arrayIdx];
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			memcpy(&mDataParamsBuffer[paramInfo.Offset], input, sizeof(paramTypeSize));
@@ -292,7 +292,7 @@ namespace b3d
 
 			const DataParamInfo& paramInfo = mDataParameterMetaData[param.Index + arrayIdx];
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			B3D_ASSERT(sizeof(output) == paramTypeSize);
@@ -322,7 +322,7 @@ namespace b3d
 				paramInfo.ColorGradient = nullptr;
 			}
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			B3D_ASSERT(sizeof(input) == paramTypeSize);
@@ -504,7 +504,7 @@ namespace b3d
 	class B3D_EXPORT TMaterialParameters : public MaterialParametersBase
 	{
 	public:
-		using GpuParametersType = CoreVariantType<GpuParameters, IsRenderProxy>;
+		using GpuParametersType = CoreVariantType<GpuParameterSet, IsRenderProxy>;
 		using TextureType = CoreVariantHandleType<Texture, IsRenderProxy>;
 		using ShaderType = CoreVariantHandleType<Shader, IsRenderProxy>;
 		using SpriteImageType = CoreVariantHandleType<SpriteImage, IsRenderProxy>;

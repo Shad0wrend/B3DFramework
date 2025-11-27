@@ -41,7 +41,7 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	}
 #endif
 
-	const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameters::kParamSizes.Lookup[mParameterInformation->Type];
+	const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameterSet::kParamSizes.Lookup[mParameterInformation->Type];
 
 	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 	const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;

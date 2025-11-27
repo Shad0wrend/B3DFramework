@@ -661,7 +661,7 @@ namespace b3d
 			const VectorGraphicsSettings& GetSettings() const { return mSettings; }
 
 			/** Prepares GPU parameters for rendering. Must be called before Render(). */
-			virtual SPtr<GpuParameters> Prepare() = 0;
+			virtual SPtr<GpuParameterSet> Prepare() = 0;
 
 			/**
 			 * Records command required for rasterizing the path into pixels. Before calling this the user is required to have bound a render target containing

@@ -428,7 +428,7 @@ namespace b3d
 			 * Set of all GPU parameters that will be bound during this render pass. The command buffer will pre-register all resources
 			 * from these parameters, allowing barriers and layout transitions to be issued before the render pass begins.
 			 */
-			TInlineArray<SPtr<GpuParameters>, 4> Parameters;
+			TInlineArray<SPtr<GpuParameterSet>, 4> Parameters;
 
 			RenderPassCreateInformation() = default;
 
@@ -436,7 +436,7 @@ namespace b3d
 				: Target(target), ReadOnlyMask(readOnlyMask), LoadMask(loadMask)
 			{ }
 
-			RenderPassCreateInformation(const SPtr<RenderTarget>& target, const SPtr<GpuParameters>& parameters, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
+			RenderPassCreateInformation(const SPtr<RenderTarget>& target, const SPtr<GpuParameterSet>& parameters, RenderSurfaceMask readOnlyMask = RT_NONE, RenderSurfaceMask loadMask = RT_NONE)
 				: Target(target), ReadOnlyMask(readOnlyMask), LoadMask(loadMask)
 			{
 				if(parameters != nullptr)
@@ -472,7 +472,7 @@ namespace b3d
 			 * in their GPU programs. The caller must ensure the provided parameters match the bound graphics/compute pipeline
 			 * at the time of the draw/dispatch call.
 			 */
-			virtual void SetGpuParameters(const SPtr<GpuParameters>& parameters) = 0;
+			virtual void SetGpuParameters(const SPtr<GpuParameterSet>& parameters) = 0;
 
 			/**
 			 * Applies an offset from which reads in a buffer should start in a GPU program. This allows caller to quickly change

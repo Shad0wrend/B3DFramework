@@ -1737,7 +1737,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	{
 		const GUIMeshRenderData* RenderData = nullptr;
 		FrameVector<Area2I> OverlappingRegions;
-		SPtr<render::GpuParameters> GpuParameters;
+		SPtr<render::GpuParameterSet> GpuParameters;
 		SPtr<GpuBuffer> ClipRegionBuffer;
 		u32 ClipRegionCount = 0;
 	};

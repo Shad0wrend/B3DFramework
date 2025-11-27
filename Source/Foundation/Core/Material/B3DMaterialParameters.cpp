@@ -55,7 +55,7 @@ MaterialParametersBase::MaterialParametersBase(
 		}
 		else
 		{
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)param.second.Type];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[(int)param.second.Type];
 			u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			mDataSize += arraySize * paramSize;
@@ -112,7 +112,7 @@ MaterialParametersBase::MaterialParametersBase(
 		{
 			dataParam.Index = dataParamIdx;
 
-			const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)dataParam.DataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[(int)dataParam.DataType];
 			const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 			for(u32 i = 0; i < arraySize; i++)
 			{
@@ -880,7 +880,7 @@ MaterialParameters::SyncPacket* MaterialParameters::CreateSyncPacket(FrameAlloca
 				}
 				else
 				{
-					const GpuDataParameterTypeInformation& typeInfo = GpuParameters::kParamSizes.Lookup[(int)param.DataType];
+					const GpuDataParameterTypeInformation& typeInfo = GpuParameterSet::kParamSizes.Lookup[(int)param.DataType];
 					const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 					const u32 dataSize = arraySize * paramSize;
@@ -1119,7 +1119,7 @@ void MaterialParameters::ApplyAndDestroySyncPacket(FrameAllocator& allocator, co
 		}
 		else
 		{
-			const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameters::kParamSizes.Lookup[(int)parameterData.DataType];
+			const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameterSet::kParamSizes.Lookup[(int)parameterData.DataType];
 			const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			const DataParamInfo& parameterInformation = mDataParameterMetaData[parameterData.Index];

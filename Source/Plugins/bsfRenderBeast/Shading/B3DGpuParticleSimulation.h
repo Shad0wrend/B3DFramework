@@ -119,10 +119,10 @@ namespace b3d
 			u32 GetSortOffset() const { return mSortOffset; }
 
 			/** Prepares simulation parameter buffers for this system. */
-			const SPtr<GpuParameters>& PrepareSimulateParameters(const RendererParticles& rendererInfo, float dt);
+			const SPtr<GpuParameterSet>& PrepareSimulateParameters(const RendererParticles& rendererInfo, float dt);
 
 			/** Returns GPU parameters used for simulation. Parameters must have been prepared via a previous call to PrepareSimulationParameters. */
-			const SPtr<GpuParameters>& GetSimulateParameters() const { return mSimulateParameters; }
+			const SPtr<GpuParameterSet>& GetSimulateParameters() const { return mSimulateParameters; }
 
 		private:
 			ParticleSystem* mParent = nullptr;
@@ -138,7 +138,7 @@ namespace b3d
 			SPtr<GpuBuffer> mTileUVs;
 			SPtr<GpuBuffer> mParticleIndices;
 
-			SPtr<GpuParameters> mSimulateParameters;
+			SPtr<GpuParameterSet> mSimulateParameters;
 		};
 
 		/** Performs simulation for all particle systems that have GPU simulation enabled. */
@@ -150,7 +150,7 @@ namespace b3d
 			struct TileClearParameters
 			{
 				SPtr<GpuBuffer> ScratchBuffer;
-				SPtr<GpuParameters> GpuParameters;
+				SPtr<GpuParameterSet> GpuParameters;
 
 				/** Returns true if the buffer is not currently bound to any command buffer. */
 				bool IsAvailable() const
@@ -163,7 +163,7 @@ namespace b3d
 			struct ParticleInjectParameters
 			{
 				SPtr<GpuBuffer> ScratchBuffer;
-				SPtr<GpuParameters> GpuParameters;
+				SPtr<GpuParameterSet> GpuParameters;
 
 				/** Returns true if the buffer is not currently bound to any command buffer. */
 				bool IsAvailable() const

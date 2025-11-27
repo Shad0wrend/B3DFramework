@@ -16,7 +16,7 @@
 
 namespace b3d { namespace render {
 
-void SetSamplerState(const SPtr<GpuParameters>& params, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
+void SetSamplerState(const SPtr<GpuParameterSet>& params, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
 {
 	if(params->HasSamplerState(name))
 		params->SetSamplerState(name, samplerState);

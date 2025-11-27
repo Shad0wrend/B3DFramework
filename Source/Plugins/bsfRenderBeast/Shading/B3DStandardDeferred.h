@@ -168,7 +168,7 @@ namespace b3d
 			DeferredIBLProbeMaterial() = default;
 
 			/** Populates the provided GPU parameters with the provided parameters. */
-			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameters>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer);
+			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer);
 
 			/** Creates a new transient uniform buffer containing provided per-probe data. */
 			static GpuBufferSuballocation CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData);
@@ -311,7 +311,7 @@ namespace b3d
 
 				// Shared GPU resources
 				SPtr<GpuBuffer> PerLightUniformBuffer; // Instanced buffer
-				SPtr<GpuParameters> GpuParameters; // Single GpuParameters for all lights
+				SPtr<GpuParameterSet> GpuParameters; // Single GpuParameters for all lights
 				u32 DynamicOffsetIndex; // Index for SetDynamicBufferOffset
 				u32 UniformStride; // Stride between light instances in buffer
 			};
@@ -327,7 +327,7 @@ namespace b3d
 			{
 				bool IsViewerInside = false;
 				u32 Type = 0;
-				SPtr<GpuParameters> GpuParameters;
+				SPtr<GpuParameterSet> GpuParameters;
 			};
 
 			/**

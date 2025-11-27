@@ -127,10 +127,10 @@ namespace b3d
 			SPtr<Shader> GetShader() const { return mShader; }
 
 			/** Returns the internal parameter set containing GPU bindable parameters. */
-			SPtr<GpuParameters> GetGPUParameters() const { return mGPUParameters; }
+			SPtr<GpuParameterSet> GetGPUParameters() const { return mGPUParameters; }
 
 			/** Creates a new instance of GPU parameters for this material. */
-			virtual SPtr<GpuParameters> CreateGpuParameters() const = 0;
+			virtual SPtr<GpuParameterSet> CreateGpuParameters() const = 0;
 
 			/** Returns the material's graphics pipeline state. This will be null if the material is a compute material. */
 			SPtr<GpuGraphicsPipelineState> GetGraphicsPipeline() const { return mGraphicsPipeline; }
@@ -151,7 +151,7 @@ namespace b3d
 		protected:
 			friend class b3d::RendererMaterialManager;
 
-			SPtr<GpuParameters> mGPUParameters;
+			SPtr<GpuParameterSet> mGPUParameters;
 			SPtr<GpuGraphicsPipelineState> mGraphicsPipeline;
 			SPtr<GpuComputePipelineState> mComputePipeline;
 			u32 mStencilReferenceValue = 0;
@@ -198,7 +198,7 @@ namespace b3d
 			static ShaderDefines GetShaderDefines() { return mMetaData.Defines; }
 
 			/** Creates a new instance of GPU parameters for this material. */
-			SPtr<GpuParameters> CreateGpuParameters() const override;
+			SPtr<GpuParameterSet> CreateGpuParameters() const override;
 
 		protected:
 			RendererMaterial();
@@ -546,7 +546,7 @@ namespace b3d
 		RendererMaterialMetaData RendererMaterial<T>::mMetaData;
 
 		template <class T>
-		SPtr<GpuParameters> RendererMaterial<T>::CreateGpuParameters() const
+		SPtr<GpuParameterSet> RendererMaterial<T>::CreateGpuParameters() const
 		{
 			if(mGraphicsPipeline != nullptr)
 				return mGpuDevice->CreateGpuParameters(mGraphicsPipeline->GetParameterLayout());

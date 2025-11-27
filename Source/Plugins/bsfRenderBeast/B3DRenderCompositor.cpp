@@ -379,7 +379,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 			if(binding.IsValid())
 			{
-				const SPtr<GpuParameters>& parameterSet = element.ParameterAdapter->GetGpuParameters(0, binding.Set);
+				const SPtr<GpuParameterSet>& parameterSet = element.ParameterAdapter->GetGpuParameters(0, binding.Set);
 				parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
 			}
 		}
@@ -439,7 +439,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
 		if(binding.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = renderElement.ParameterAdapter->GetGpuParameters(0, binding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = renderElement.ParameterAdapter->GetGpuParameters(0, binding.Set);
 			parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
 		}
 
@@ -495,7 +495,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation basePassInfo(RenderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			basePassInfo.Parameters.Add(gpuParams);
 	}
@@ -540,7 +540,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation decalPassInfo(RenderTargetNoMask, RT_DEPTH, RT_ALL);
 	for(const auto& element : decalElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			decalPassInfo.Parameters.Add(gpuParams);
 	}
@@ -1470,7 +1470,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		if(fwdParams.GridParamsBinding.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.GridParamsBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.GridParamsBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.GridParamsBinding.Slot, lightGridOutputs.UniformBuffer);
 		}
 
@@ -1516,19 +1516,19 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 		if(iblParams.ReflProbesBinding.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbesBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbesBinding.Set);
 			parameterSet->SetUniformBuffer(iblParams.ReflProbesBinding.Slot, standardForwardBuffers.ReflProbesUniformBuffer);
 		}
 
 		if(fwdParams.LightsParamBlockBinding.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightsParamBlockBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightsParamBlockBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.LightsParamBlockBinding.Slot, standardForwardBuffers.LightsUniformBuffer);
 		}
 
 		if(fwdParams.LightAndReflProbeParamsParamBlockBinding.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightAndReflProbeParamsParamBlockBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightAndReflProbeParamsParamBlockBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.LightAndReflProbeParamsParamBlockBinding.Slot, standardForwardBuffers.LightAndReflProbeParamsUniformBuffer);
 		}
 	};
@@ -1538,7 +1538,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		// Note: Ideally these should be bound once (they are the same for all renderables)
 		if(iblParams.ReflProbeParamBindings.IsValid())
 		{
-			const SPtr<GpuParameters>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbeParamBindings.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbeParamBindings.Set);
 			parameterSet->SetUniformBuffer(iblParams.ReflProbeParamBindings.Slot, reflProbeParamBuffer.Buffer);
 		}
 
@@ -1669,7 +1669,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation opaquePassInfo(renderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			opaquePassInfo.Parameters.Add(gpuParams);
 	}
@@ -1683,7 +1683,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation transparentPassInfo(renderTarget, RT_DEPTH, RT_ALL);
 	for(const auto& element : transparentElements)
 	{
-		SPtr<GpuParameters> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
 		if(gpuParams != nullptr)
 			transparentPassInfo.Parameters.Add(gpuParams);
 	}

@@ -78,7 +78,7 @@ void FrameGraphPass::ReadDepth(FrameGraphResourceId resource)
 	Read(resource, GpuResourceUseFlag::DepthStencilAttachment);
 }
 
-void FrameGraphPass::UseParameters(const SPtr<GpuParameters>& params)
+void FrameGraphPass::UseParameters(const SPtr<GpuParameterSet>& params)
 {
 	if (!params)
 		return;
