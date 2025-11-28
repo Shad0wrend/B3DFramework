@@ -483,7 +483,7 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 	const bool localSpace = systemSettings.SimulationSpace == ParticleSimulationSpace::Local;
 
 	GpuParticleSimulateMaterial* const simulateMaterial = GpuParticleSimulateMaterial::GetVariation(supportsDepthCollisions, localSpace);
-	mSimulateParameters = simulateMaterial->CreateGpuParameters();
+	mSimulateParameters = simulateMaterial->CreateGpuParameterSet();
 
 	// Get parent system settings
 	const ParticleSystemSettings& settings = mParent->GetSettings();
@@ -761,7 +761,7 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 			SPtr<GpuParameterSet> systemParams = entry->GetSimulateParameters();
 
 			// Bind parameters and draw
-			commandBuffer.SetGpuParameters(systemParams);
+			commandBuffer.SetGpuParameterSet(systemParams);
 
 			const u32 tileCount = entry->GetTileCount();
 			const u32 numInstances = Math::DivideAndRoundUp(tileCount, GpuParticleConstants::kTilesPerInstance);
@@ -836,7 +836,7 @@ void GpuParticleSimulation::DrawClearTiles(GpuCommandBuffer& commandBuffer)
 
 	for(const TileClearBatch& batch : m->PreparedTileClearBatches)
 	{
-		commandBuffer.SetGpuParameters(batch.Parameters.GpuParameters);
+		commandBuffer.SetGpuParameterSet(batch.Parameters.GpuParameters);
 		commandBuffer.DrawIndexed(0, GpuParticleConstants::kTilesPerInstance * 6, 0, GpuParticleConstants::kTilesPerInstance * 4, batch.InstanceCount);
 	}
 }
@@ -855,7 +855,7 @@ void GpuParticleSimulation::DrawInjectParticles(GpuCommandBuffer& commandBuffer)
 
 	for(const ParticleInjectBatch& batch : m->PreparedParticleInjectBatches)
 	{
-		commandBuffer.SetGpuParameters(batch.Parameters.GpuParameters);
+		commandBuffer.SetGpuParameterSet(batch.Parameters.GpuParameters);
 
 		SPtr<GpuBuffer> vertexBuffers[] = { batch.Parameters.ScratchBuffer, m->HelperBuffers.ParticleUVs };
 		commandBuffer.SetVertexBuffers(0, vertexBuffers, (u32)B3DSize(vertexBuffers));
@@ -881,7 +881,7 @@ GpuParticleSimulation::TileClearParameters GpuParticleSimulation::CreateTileClea
 	TileClearParameters output;
 	output.ScratchBuffer = gpuDevice->CreateGpuBuffer(tileScratchBufferCreateInformation);
 
-	output.GpuParameters = GpuParticleClearMaterial::Get()->CreateGpuParameters();
+	output.GpuParameters = GpuParticleClearMaterial::Get()->CreateGpuParameterSet();
 	GpuParticleClearMaterial::PopulateParameters(output.GpuParameters, m->ParticleVertexInputBuffer, output.ScratchBuffer);
 
 	return output;
@@ -900,7 +900,7 @@ GpuParticleSimulation::ParticleInjectParameters GpuParticleSimulation::CreatePar
 	ParticleInjectParameters output;
 	output.ScratchBuffer = gpuDevice->CreateGpuBuffer(injectScratchBufferCreateInformation);
 
-	output.GpuParameters = GpuParticleInjectMaterial::Get()->CreateGpuParameters();
+	output.GpuParameters = GpuParticleInjectMaterial::Get()->CreateGpuParameterSet();
 	GpuParticleInjectMaterial::PopulateParameters(output.GpuParameters, m->ParticleVertexInputBuffer);
 
 	return output;
@@ -1156,7 +1156,7 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 	injectMat->Prepare(CreateGpuParticleVertexInputBuffer());
 	injectMat->Bind(commandBuffer);
 
-	RenderPassCreateInformation renderPassCreateInformation(mRT, injectMat->GetGPUParameters(), RT_NONE, RT_ALL);
+	RenderPassCreateInformation renderPassCreateInformation(mRT, injectMat->GetGpuParameterSet(), RT_NONE, RT_ALL);
 
 	commandBuffer.BeginRenderPass(renderPassCreateInformation);
 	commandBuffer.SetVertexDescription(mInjectVertexDescription);

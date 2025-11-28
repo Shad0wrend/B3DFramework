@@ -114,7 +114,7 @@ void SpriteMaterial::Prepare(const SPtr<render::MaterialParameterAdapter>& param
 
 	parameterAdapter->SetUniformBuffer("GUIParams", uniformBuffer);
 
-	const SPtr<render::GpuParameterSet>& gpuParameters = parameterAdapter->GetGpuParameters();
+	const SPtr<render::GpuParameterSet>& gpuParameters = parameterAdapter->GetGpuParameterSet();
 	gpuParameters->SetStorageBuffer("gVertices", vertexBuffer);
 
 	if(clipRegionBuffer != nullptr)
@@ -127,14 +127,14 @@ void SpriteMaterial::Render(render::GpuCommandBuffer& commandBuffer, const SPtr<
 	if(clipRegionBuffer != nullptr)
 	{
 		render::GetRendererUtility().SetPass(commandBuffer, mMaterial, 0, mWithClippingVariationIndex);
-		commandBuffer.SetGpuParameters(parameters);
+		commandBuffer.SetGpuParameterSet(parameters);
 
 		render::GetRendererUtility().Draw(commandBuffer, mesh, subMesh, clipRegionCount);
 	}
 	else
 	{
 		render::GetRendererUtility().SetPass(commandBuffer, mMaterial, 0, mWithoutClippingVariationIndex);
-		commandBuffer.SetGpuParameters(parameters);
+		commandBuffer.SetGpuParameterSet(parameters);
 		
 		render::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 	}

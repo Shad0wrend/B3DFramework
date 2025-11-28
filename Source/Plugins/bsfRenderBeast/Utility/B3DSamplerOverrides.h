@@ -69,7 +69,7 @@ namespace b3d
 			 * Generates a set of sampler overrides for the specified set of GPU program parameters. Overrides are generates
 			 * according to the provided render options.
 			 */
-			static MaterialSamplerOverrides* GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& params, const SPtr<MaterialParameterAdapter>& paramsSet, const SPtr<RenderBeastOptions>& options);
+			static MaterialSamplerOverrides* GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& params, const SPtr<MaterialParameterAdapter>& materialParameterAdapter, const SPtr<RenderBeastOptions>& options);
 
 			/**	Destroys sampler overrides previously generated with generateSamplerOverrides(). */
 			static void DestroySamplerOverrides(MaterialSamplerOverrides* overrides);

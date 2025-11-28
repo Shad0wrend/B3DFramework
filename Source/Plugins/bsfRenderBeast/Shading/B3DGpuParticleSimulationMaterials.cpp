@@ -30,7 +30,7 @@ void GpuParticleInjectMaterial::PopulateParameters(const SPtr<GpuParameterSet>& 
 
 void GpuParticleCurveInjectMaterial::Prepare(const SPtr<GpuBuffer>& vertexInputBuffer)
 {
-	mGPUParameters->SetUniformBuffer("Input", vertexInputBuffer);
+	mGpuParameterSet->SetUniformBuffer("Input", vertexInputBuffer);
 }
 
 void GpuParticleSimulateMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -82,10 +82,10 @@ GpuParticleSimulateMaterial* GpuParticleSimulateMaterial::GetVariation(bool dept
 
 void GpuParticleBoundsMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
-	mGPUParameters->GetStorageBufferParameter("gParticleIndices", mParticleIndicesParam);
-	mGPUParameters->GetStorageBufferParameter("gOutput", mOutputParam);
-	mGPUParameters->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
+	mGpuParameterSet->GetStorageBufferParameter("gParticleIndices", mParticleIndicesParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutput", mOutputParam);
+	mGpuParameterSet->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
 }
 
 void GpuParticleBoundsMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -149,11 +149,11 @@ AABox GpuParticleBoundsMaterial::Execute(GpuCommandBuffer& commandBuffer, const 
 
 void GpuParticleSortPrepareMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
-	mGPUParameters->GetStorageBufferParameter("gInputIndices", mInputIndicesParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputKeys", mOutputKeysParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputIndices", mOutputIndicesParam);
-	mGPUParameters->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mInputUniformBufferParameter);
+	mGpuParameterSet->GetStorageBufferParameter("gInputIndices", mInputIndicesParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputKeys", mOutputKeysParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputIndices", mOutputIndicesParam);
+	mGpuParameterSet->GetSampledTextureParameter("gPosAndTimeTex", mPosAndTimeTexParam);
 }
 
 void GpuParticleSortPrepareMaterial::InitDefinesInternal(ShaderDefines& defines)

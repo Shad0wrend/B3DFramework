@@ -106,7 +106,7 @@ SPtr<GpuBuffer> CreateHelperBuffer()
 
 void RadixSortClearMaterial::Initialize()
 {
-	mGPUParameters->GetStorageBufferParameter("gOutput", MOutputParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutput", MOutputParam);
 }
 
 void RadixSortClearMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -126,8 +126,8 @@ void RadixSortClearMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr
 
 void RadixSortCountMaterial::Initialize()
 {
-	mGPUParameters->GetStorageBufferParameter("gInputKeys", MInputKeysParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputCounts", MOutputCountsParam);
+	mGpuParameterSet->GetStorageBufferParameter("gInputKeys", MInputKeysParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputCounts", MOutputCountsParam);
 }
 
 void RadixSortCountMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -142,7 +142,7 @@ void RadixSortCountMaterial::Execute(GpuCommandBuffer& commandBuffer, u32 numGro
 	MInputKeysParam.Set(inputKeys);
 	MOutputCountsParam.Set(outputOffsets);
 
-	mGPUParameters->SetUniformBuffer("Params", params);
+	mGpuParameterSet->SetUniformBuffer("Params", params);
 
 	Bind(commandBuffer);
 	commandBuffer.DispatchCompute(numGroups);
@@ -150,8 +150,8 @@ void RadixSortCountMaterial::Execute(GpuCommandBuffer& commandBuffer, u32 numGro
 
 void RadixSortPrefixScanMaterial::Initialize()
 {
-	mGPUParameters->GetStorageBufferParameter("gInputCounts", MInputCountsParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputOffsets", MOutputOffsetsParam);
+	mGpuParameterSet->GetStorageBufferParameter("gInputCounts", MInputCountsParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputOffsets", MOutputOffsetsParam);
 }
 
 void RadixSortPrefixScanMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -166,7 +166,7 @@ void RadixSortPrefixScanMaterial::Execute(GpuCommandBuffer& commandBuffer, const
 	MInputCountsParam.Set(inputCounts);
 	MOutputOffsetsParam.Set(outputOffsets);
 
-	mGPUParameters->SetUniformBuffer("Params", params);
+	mGpuParameterSet->SetUniformBuffer("Params", params);
 
 	Bind(commandBuffer);
 	commandBuffer.DispatchCompute(1);
@@ -174,11 +174,11 @@ void RadixSortPrefixScanMaterial::Execute(GpuCommandBuffer& commandBuffer, const
 
 void RadixSortReorderMaterial::Initialize()
 {
-	mGPUParameters->GetStorageBufferParameter("gInputOffsets", MInputOffsetsBufferParam);
-	mGPUParameters->GetStorageBufferParameter("gInputKeys", MInputKeysBufferParam);
-	mGPUParameters->GetStorageBufferParameter("gInputValues", MInputValuesBufferParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputKeys", MOutputKeysBufferParam);
-	mGPUParameters->GetStorageBufferParameter("gOutputValues", MOutputValuesBufferParam);
+	mGpuParameterSet->GetStorageBufferParameter("gInputOffsets", MInputOffsetsBufferParam);
+	mGpuParameterSet->GetStorageBufferParameter("gInputKeys", MInputKeysBufferParam);
+	mGpuParameterSet->GetStorageBufferParameter("gInputValues", MInputValuesBufferParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputKeys", MOutputKeysBufferParam);
+	mGpuParameterSet->GetStorageBufferParameter("gOutputValues", MOutputValuesBufferParam);
 }
 
 void RadixSortReorderMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -198,7 +198,7 @@ void RadixSortReorderMaterial::Execute(GpuCommandBuffer& commandBuffer, u32 numG
 	MOutputKeysBufferParam.Set(buffers.Keys[outputBufferIdx]);
 	MOutputValuesBufferParam.Set(buffers.Values[outputBufferIdx], 0, BF_32X1U);
 
-	mGPUParameters->SetUniformBuffer("Params", params);
+	mGpuParameterSet->SetUniformBuffer("Params", params);
 
 	Bind(commandBuffer);
 	commandBuffer.DispatchCompute(numGroups);

@@ -379,7 +379,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 			if(binding.IsValid())
 			{
-				const SPtr<GpuParameterSet>& parameterSet = element.ParameterAdapter->GetGpuParameters(0, binding.Set);
+				const SPtr<GpuParameterSet>& parameterSet = element.ParameterAdapter->GetGpuParameterSet(0, binding.Set);
 				parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
 			}
 		}
@@ -439,7 +439,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
 		if(binding.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = renderElement.ParameterAdapter->GetGpuParameters(0, binding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = renderElement.ParameterAdapter->GetGpuParameterSet(0, binding.Set);
 			parameterSet->SetUniformBuffer(binding.Slot, inputs.View.GetPerViewBuffer());
 		}
 
@@ -495,7 +495,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation basePassInfo(RenderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIdx);
 		if(gpuParams != nullptr)
 			basePassInfo.Parameters.Add(gpuParams);
 	}
@@ -521,7 +521,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		MSAACoverageMaterial* const msaaCoverageMaterial = MSAACoverageMaterial::GetVariation(viewProps.Target.NumSamples);
 		msaaCoverageMaterial->Prepare(inputs.View, gbuffer);
 
-		RenderPassCreateInformation msaaCoverageInfo(msaaCoverageNode->Output->RenderTexture, msaaCoverageMaterial->GetGPUParameters());
+		RenderPassCreateInformation msaaCoverageInfo(msaaCoverageNode->Output->RenderTexture, msaaCoverageMaterial->GetGpuParameterSet());
 		commandBuffer.BeginRenderPass(msaaCoverageInfo);
 		msaaCoverageMaterial->Execute(commandBuffer, inputs.View);
 		commandBuffer.EndRenderPass();
@@ -529,7 +529,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		MSAACoverageStencilMaterial* msaaCoverageStencilMaterial = MSAACoverageStencilMaterial::Get();
 		msaaCoverageStencilMaterial->Prepare(msaaCoverageNode->Output->Texture);
 
-		RenderPassCreateInformation msaaStencilInfo(sceneDepthNode->DepthTex->RenderTexture, msaaCoverageStencilMaterial->GetGPUParameters());
+		RenderPassCreateInformation msaaStencilInfo(sceneDepthNode->DepthTex->RenderTexture, msaaCoverageStencilMaterial->GetGpuParameterSet());
 		commandBuffer.BeginRenderPass(msaaStencilInfo);
 		msaaCoverageStencilMaterial->Execute(commandBuffer, inputs.View);
 		commandBuffer.EndRenderPass();
@@ -540,7 +540,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation decalPassInfo(RenderTargetNoMask, RT_DEPTH, RT_ALL);
 	for(const auto& element : decalElements)
 	{
-		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIdx);
 		if(gpuParams != nullptr)
 			decalPassInfo.Parameters.Add(gpuParams);
 	}
@@ -648,7 +648,7 @@ void RCNodeSceneColor::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
 	material->Prepare(SceneColorTexArray->Texture, SceneColorTex->Texture);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGpuParameterSet(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -904,7 +904,7 @@ void RCNodeLightAccumulation::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuf
 	TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::Get();
 	material->Prepare(LightAccumulationTexArray->Texture, LightAccumulationTex->Texture);
 	
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(RenderTarget, material->GetGpuParameterSet(), RT_DEPTH_STENCIL, RT_DEPTH_STENCIL));
 
 	material->Execute(commandBuffer, LightAccumulationTex->Texture);
 
@@ -1304,12 +1304,12 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		RenderPassCreateInformation mainPassCreateInformation(iblRadianceRT, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 		{
 			setupMaterial->Prepare(gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflectionProbeUniformBuffer.Buffer);
-			mainPassCreateInformation.Parameters.Add(setupMaterial->GetGPUParameters());
+			mainPassCreateInformation.Parameters.Add(setupMaterial->GetGpuParameterSet());
 
 			if(isMSAA)
 			{
 				msaaSetupMaterial->Prepare( gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflectionProbeUniformBuffer.Buffer);
-				mainPassCreateInformation.Parameters.Add(msaaSetupMaterial->GetGPUParameters());
+				mainPassCreateInformation.Parameters.Add(msaaSetupMaterial->GetGpuParameterSet());
 			}
 		}
 
@@ -1328,12 +1328,12 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			if(skyFilteredRadiance)
 			{
 				skyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflectionProbeUniformBuffer.Buffer);
-				mainPassCreateInformation.Parameters.Add(skyMaterial->GetGPUParameters());
+				mainPassCreateInformation.Parameters.Add(skyMaterial->GetGpuParameterSet());
 
 				if(isMSAA)
 				{
 					msaaSkyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflectionProbeUniformBuffer.Buffer);
-					mainPassCreateInformation.Parameters.Add(msaaSkyMaterial->GetGPUParameters());
+					mainPassCreateInformation.Parameters.Add(msaaSkyMaterial->GetGpuParameterSet());
 				}
 			}
 		}
@@ -1388,7 +1388,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			DeferredIBLFinalizeMaterial* const finalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(isMSAA, true);
 			finalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
 
-			finalizePassCreateInformation.Parameters.Add(finalizeMaterial->GetGPUParameters());
+			finalizePassCreateInformation.Parameters.Add(finalizeMaterial->GetGpuParameterSet());
 
 			DeferredIBLFinalizeMaterial* msaaFinalizeMaterial = nullptr;
 
@@ -1397,7 +1397,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 				msaaFinalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(true, false);
 				msaaFinalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
 
-				finalizePassCreateInformation.Parameters.Add(msaaFinalizeMaterial->GetGPUParameters());
+				finalizePassCreateInformation.Parameters.Add(msaaFinalizeMaterial->GetGpuParameterSet());
 			}
 
 			commandBuffer.BeginRenderPass(finalizePassCreateInformation);
@@ -1470,7 +1470,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		if(fwdParams.GridParamsBinding.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.GridParamsBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameterSet(0, fwdParams.GridParamsBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.GridParamsBinding.Slot, lightGridOutputs.UniformBuffer);
 		}
 
@@ -1516,19 +1516,19 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 		if(iblParams.ReflProbesBinding.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbesBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameterSet(0, iblParams.ReflProbesBinding.Set);
 			parameterSet->SetUniformBuffer(iblParams.ReflProbesBinding.Slot, standardForwardBuffers.ReflProbesUniformBuffer);
 		}
 
 		if(fwdParams.LightsParamBlockBinding.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightsParamBlockBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameterSet(0, fwdParams.LightsParamBlockBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.LightsParamBlockBinding.Slot, standardForwardBuffers.LightsUniformBuffer);
 		}
 
 		if(fwdParams.LightAndReflProbeParamsParamBlockBinding.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, fwdParams.LightAndReflProbeParamsParamBlockBinding.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameterSet(0, fwdParams.LightAndReflProbeParamsParamBlockBinding.Set);
 			parameterSet->SetUniformBuffer(fwdParams.LightAndReflProbeParamsParamBlockBinding.Slot, standardForwardBuffers.LightAndReflProbeParamsUniformBuffer);
 		}
 	};
@@ -1538,7 +1538,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		// Note: Ideally these should be bound once (they are the same for all renderables)
 		if(iblParams.ReflProbeParamBindings.IsValid())
 		{
-			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameters(0, iblParams.ReflProbeParamBindings.Set);
+			const SPtr<GpuParameterSet>& parameterSet = parameterAdapter.GetGpuParameterSet(0, iblParams.ReflProbeParamBindings.Set);
 			parameterSet->SetUniformBuffer(iblParams.ReflProbeParamBindings.Slot, reflProbeParamBuffer.Buffer);
 		}
 
@@ -1669,7 +1669,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation opaquePassInfo(renderTarget, RT_NONE, RT_ALL);
 	for(const auto& element : opaqueElements)
 	{
-		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIdx);
 		if(gpuParams != nullptr)
 			opaquePassInfo.Parameters.Add(gpuParams);
 	}
@@ -1683,7 +1683,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	RenderPassCreateInformation transparentPassInfo(renderTarget, RT_DEPTH, RT_ALL);
 	for(const auto& element : transparentElements)
 	{
-		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameters(element.PassIdx);
+		SPtr<GpuParameterSet> gpuParams = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIdx);
 		if(gpuParams != nullptr)
 			transparentPassInfo.Parameters.Add(gpuParams);
 	}
@@ -1751,7 +1751,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	auto dependencies = GetDependencyDefinition().ResolveDependencies(inputs);
 	RCNodeSceneColor* sceneColorNode = dependencies.Get<RCNodeSceneColor>();
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(sceneColorNode->RenderTarget, material->GetGPUParameters(), RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(sceneColorNode->RenderTarget, material->GetGpuParameterSet(), RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL));
 
 	Area2 area(0.0f, 0.0f, 1.0f, 1.0f);
 	commandBuffer.SetViewport(area);
@@ -2922,7 +2922,7 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	stencilMat->Prepare(inputs.View, gbuffer, settings);
 
 	// Note: Making the assumption that the stencil buffer is clear at this point
-	RenderPassCreateInformation stencilInfo(resolvedSceneDepthNode->Output->RenderTexture, stencilMat->GetGPUParameters(), RT_DEPTH, RT_DEPTH_STENCIL);
+	RenderPassCreateInformation stencilInfo(resolvedSceneDepthNode->Output->RenderTexture, stencilMat->GetGpuParameterSet(), RT_DEPTH, RT_DEPTH_STENCIL);
 	commandBuffer.BeginRenderPass(stencilInfo);
 	stencilMat->Execute(commandBuffer, inputs.View);
 	commandBuffer.EndRenderPass();

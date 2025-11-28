@@ -472,7 +472,7 @@ namespace b3d
 			 * in their GPU programs. The caller must ensure the provided parameters match the bound graphics/compute pipeline
 			 * at the time of the draw/dispatch call.
 			 */
-			virtual void SetGpuParameters(const SPtr<GpuParameterSet>& parameters) = 0;
+			virtual void SetGpuParameterSet(const SPtr<GpuParameterSet>& parameters) = 0;
 
 			/**
 			 * Applies an offset from which reads in a buffer should start in a GPU program. This allows caller to quickly change

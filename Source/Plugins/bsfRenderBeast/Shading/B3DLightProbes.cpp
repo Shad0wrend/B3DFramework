@@ -19,7 +19,7 @@ TetrahedraRenderUniformDefinition gTetrahedraRenderUniformDefinition;
 
 void TetrahedraRenderMaterial::Initialize()
 {
-	mGPUParameters->GetSampledTextureParameter("gDepthBufferTex", mDepthBufferTextureParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gDepthBufferTex", mDepthBufferTextureParameter);
 
 	SamplerStateInformation pointSamplerStateCreateInformation;
 	pointSamplerStateCreateInformation.MinFilter = FO_POINT;
@@ -31,12 +31,12 @@ void TetrahedraRenderMaterial::Initialize()
 
 	SPtr<SamplerState> pointSampState = mGpuDevice->FindOrCreateSamplerState(pointSamplerStateCreateInformation);
 
-	if(mGPUParameters->HasSamplerState("gDepthBufferSamp"))
-		mGPUParameters->SetSamplerState("gDepthBufferSamp", pointSampState);
-	else if(mGPUParameters->HasSamplerState("gDepthBufferTex"))
-		mGPUParameters->SetSamplerState("gDepthBufferTex", pointSampState);
+	if(mGpuParameterSet->HasSamplerState("gDepthBufferSamp"))
+		mGpuParameterSet->SetSamplerState("gDepthBufferSamp", pointSampState);
+	else if(mGpuParameterSet->HasSamplerState("gDepthBufferTex"))
+		mGpuParameterSet->SetSamplerState("gDepthBufferTex", pointSampState);
 
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
 }
 
 void TetrahedraRenderMaterial::Prepare(const RendererView& view, const SPtr<Texture>& sceneDepth)
@@ -50,14 +50,14 @@ void TetrahedraRenderMaterial::Prepare(const RendererView& view, const SPtr<Text
 
 	mUniformBufferParameter.Set(uniformBuffer);
 	mDepthBufferTextureParameter.Set(sceneDepth);
-	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
+	mGpuParameterSet->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 }
 
 void TetrahedraRenderMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Mesh>& mesh, const SPtr<RenderTexture>& output)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
-	RenderPassCreateInformation info(output, mGPUParameters);
+	RenderPassCreateInformation info(output, mGpuParameterSet);
 	commandBuffer.BeginRenderPass(info);
 
 	Bind(commandBuffer);
@@ -94,21 +94,21 @@ IrradianceEvaluateUniformDefinition gIrradianceEvaluateUniformDefinition;
 
 void IrradianceEvaluateMaterial::Initialize()
 {
-	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGpuParameterSet);
 	mSkyOnly = mVariationParameters.GetBool("SKY_ONLY");
 
-	mGPUParameters->GetSampledTextureParameter("gSkyIrradianceTex", mSkyIrradianceTextureParameter);
-	mGPUParameters->GetSampledTextureParameter("gAmbientOcclusionTex", mAmbientOcclusionTextureParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gSkyIrradianceTex", mSkyIrradianceTextureParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gAmbientOcclusionTex", mAmbientOcclusionTextureParameter);
 
 	if(!mSkyOnly)
 	{
-		mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
-		mGPUParameters->GetSampledTextureParameter("gSHCoeffs", mSHCoeffsTextureParameter);
-		mGPUParameters->GetStorageBufferParameter("gTetrahedra", mTetrahedraBufferParameter);
-		mGPUParameters->GetStorageBufferParameter("gTetFaces", mTetFacesBufferParameter);
+		mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+		mGpuParameterSet->GetSampledTextureParameter("gSHCoeffs", mSHCoeffsTextureParameter);
+		mGpuParameterSet->GetStorageBufferParameter("gTetrahedra", mTetrahedraBufferParameter);
+		mGpuParameterSet->GetStorageBufferParameter("gTetFaces", mTetFacesBufferParameter);
 	}
 
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
 }
 
 void IrradianceEvaluateMaterial::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output)
@@ -154,10 +154,10 @@ void IrradianceEvaluateMaterial::Execute(GpuCommandBuffer& commandBuffer, const 
 		loadMask |= RT_DEPTH_STENCIL;
 	}
 
-	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
+	mGpuParameterSet->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 
 	// Render
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGPUParameters, RT_DEPTH_STENCIL, loadMask));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGpuParameterSet, RT_DEPTH_STENCIL, loadMask));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer, Area2(0.0f, 0.0f, (float)viewProps.Target.ViewRect.Width, (float)viewProps.Target.ViewRect.Height));

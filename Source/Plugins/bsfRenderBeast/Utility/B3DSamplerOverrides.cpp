@@ -13,7 +13,7 @@
 namespace b3d {
 namespace render {
 
-MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& params, const SPtr<MaterialParameterAdapter>& paramsSet, const SPtr<RenderBeastOptions>& options)
+MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParameters>& params, const SPtr<MaterialParameterAdapter>& materialParameterAdapter, const SPtr<RenderBeastOptions>& options)
 {
 	MaterialSamplerOverrides* output = nullptr;
 
@@ -59,7 +59,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 				overrideLookup[entry] = overrideIdx;
 		}
 
-		u32 passCount = paramsSet->GetPassCount();
+		u32 passCount = materialParameterAdapter->GetPassCount();
 
 		// First pass just determine if we even need to override and count the number of sampler states
 		u32* numSetsPerPass = (u32*)B3DStackAllocate<u32>(passCount);
@@ -68,7 +68,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32 totalNumSets = 0;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameterSet> gpuParameters = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> gpuParameters = materialParameterAdapter->GetGpuParameterSet(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = gpuParameters->GetPipelineParameterLayout();
 
 			// Count sets that have samplers
@@ -91,7 +91,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32* slotsPerSetIter = slotsPerSet;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameterSet> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> paramsPtr = materialParameterAdapter->GetGpuParameterSet(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
 			for(u32 setIndex = 0; setIndex < numSetsPerPass[passIndex]; setIndex++)
@@ -130,7 +130,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		slotsPerSetIter = slotsPerSet;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameterSet> paramsPtr = paramsSet->GetGpuParameters(passIndex);
+			SPtr<GpuParameterSet> paramsPtr = materialParameterAdapter->GetGpuParameterSet(passIndex);
 			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
 
 			PassSamplerOverrides& passOverrides = output->Passes[passIndex];

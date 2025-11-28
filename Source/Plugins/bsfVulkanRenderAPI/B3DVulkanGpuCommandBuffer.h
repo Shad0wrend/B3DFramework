@@ -117,7 +117,7 @@ namespace b3d
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;
 
-			void SetGpuParameters(const SPtr<GpuParameterSet>& parameterSet) override;
+			void SetGpuParameterSet(const SPtr<GpuParameterSet>& parameterSet) override;
 			void SetDynamicBufferOffset(u32 bufferIndex, u32 offset) override;
 			void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) override;
 			void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) override;
@@ -509,7 +509,7 @@ namespace b3d
 			bool mVertexInputsDirty : 1;
 			bool mIsDebugLabelOpen = false;
 			DescriptorSetBindFlags mDescriptorSetsBindState;
-			TInlineArray<SPtr<VulkanGpuParameters>, 4> mBoundGpuParameterSets;
+			TInlineArray<SPtr<VulkanGpuParameterSet>, 4> mBoundGpuParameterSets;
 
 			VkBuffer mVertexBuffersTemp[B3D_MAX_BOUND_VERTEX_BUFFERS]{};
 			VkDeviceSize mVertexBufferOffsetsTemp[B3D_MAX_BOUND_VERTEX_BUFFERS]{};

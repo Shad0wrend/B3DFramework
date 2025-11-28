@@ -127,10 +127,10 @@ namespace b3d
 			SPtr<Shader> GetShader() const { return mShader; }
 
 			/** Returns the internal parameter set containing GPU bindable parameters. */
-			SPtr<GpuParameterSet> GetGPUParameters() const { return mGPUParameters; }
+			SPtr<GpuParameterSet> GetGpuParameterSet() const { return mGpuParameterSet; }
 
 			/** Creates a new instance of GPU parameters for this material. */
-			virtual SPtr<GpuParameterSet> CreateGpuParameters() const = 0;
+			virtual SPtr<GpuParameterSet> CreateGpuParameterSet(u32 set = 0) const = 0;
 
 			/** Returns the material's graphics pipeline state. This will be null if the material is a compute material. */
 			SPtr<GpuGraphicsPipelineState> GetGraphicsPipeline() const { return mGraphicsPipeline; }
@@ -151,7 +151,7 @@ namespace b3d
 		protected:
 			friend class b3d::RendererMaterialManager;
 
-			SPtr<GpuParameterSet> mGPUParameters;
+			SPtr<GpuParameterSet> mGpuParameterSet;
 			SPtr<GpuGraphicsPipelineState> mGraphicsPipeline;
 			SPtr<GpuComputePipelineState> mComputePipeline;
 			u32 mStencilReferenceValue = 0;
@@ -198,7 +198,7 @@ namespace b3d
 			static ShaderDefines GetShaderDefines() { return mMetaData.Defines; }
 
 			/** Creates a new instance of GPU parameters for this material. */
-			SPtr<GpuParameterSet> CreateGpuParameters() const override;
+			SPtr<GpuParameterSet> CreateGpuParameterSet(u32 set = 0) const override;
 
 		protected:
 			RendererMaterial();
@@ -492,11 +492,11 @@ namespace b3d
 
 			mGraphicsPipeline = pass->GetGraphicsPipelineState();
 			if(mGraphicsPipeline != nullptr)
-				mGPUParameters = mGpuDevice->CreateGpuParameters(mGraphicsPipeline->GetParameterLayout());
+				mGpuParameterSet = mGpuDevice->CreateGpuParameterSet(mGraphicsPipeline->GetParameterLayout());
 			else
 			{
 				mComputePipeline = pass->GetComputePipelineState();
-				mGPUParameters = mGpuDevice->CreateGpuParameters(mComputePipeline->GetParameterLayout());
+				mGpuParameterSet = mGpuDevice->CreateGpuParameterSet(mComputePipeline->GetParameterLayout());
 			}
 
 			// Assign default values from the shader
@@ -509,10 +509,10 @@ namespace b3d
 
 				for(auto& varName : param.second.GpuVariableNames)
 				{
-					if(mGPUParameters->HasSampledTexture(varName))
+					if(mGpuParameterSet->HasSampledTexture(varName))
 					{
 						const SPtr<Texture> texture = param.second.Type == GPOT_TEXTURE3D ? mShader->GetDefault3DTexture(defaultValueIdx) : mShader->GetDefault2DTexture(defaultValueIdx);
-						mGPUParameters->SetSampledTexture(varName, texture);
+						mGpuParameterSet->SetSampledTexture(varName, texture);
 					}
 				}
 			}
@@ -526,10 +526,10 @@ namespace b3d
 
 				for(auto& varName : param.second.GpuVariableNames)
 				{
-					if(mGPUParameters->HasSamplerState(varName))
+					if(mGpuParameterSet->HasSamplerState(varName))
 					{
 						SPtr<SamplerState> samplerState = mShader->GetDefaultSampler(defaultValueIdx);
-						mGPUParameters->SetSamplerState(varName, samplerState);
+						mGpuParameterSet->SetSamplerState(varName, samplerState);
 					}
 				}
 			}
@@ -546,12 +546,12 @@ namespace b3d
 		RendererMaterialMetaData RendererMaterial<T>::mMetaData;
 
 		template <class T>
-		SPtr<GpuParameterSet> RendererMaterial<T>::CreateGpuParameters() const
+		SPtr<GpuParameterSet> RendererMaterial<T>::CreateGpuParameterSet(u32 set) const
 		{
 			if(mGraphicsPipeline != nullptr)
-				return mGpuDevice->CreateGpuParameters(mGraphicsPipeline->GetParameterLayout());
+				return mGpuDevice->CreateGpuParameterSet(mGraphicsPipeline->GetParameterLayout(), set);
 			else if(mComputePipeline != nullptr)
-				return mGpuDevice->CreateGpuParameters(mComputePipeline->GetParameterLayout());
+				return mGpuDevice->CreateGpuParameterSet(mComputePipeline->GetParameterLayout(), set);
 
 			return nullptr;
 		}

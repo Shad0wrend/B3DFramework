@@ -20,10 +20,10 @@ void RendererMaterialBase::Bind(GpuCommandBuffer& commandBuffer, bool bindParame
 		commandBuffer.SetGpuComputePipelineState(mComputePipeline);
 
 	if(bindParameters)
-		commandBuffer.SetGpuParameters(mGPUParameters);
+		commandBuffer.SetGpuParameterSet(mGpuParameterSet);
 }
 
 void RendererMaterialBase::BindParameters(GpuCommandBuffer& commandBuffer) const
 {
-	commandBuffer.SetGpuParameters(mGPUParameters);
+	commandBuffer.SetGpuParameterSet(mGpuParameterSet);
 }

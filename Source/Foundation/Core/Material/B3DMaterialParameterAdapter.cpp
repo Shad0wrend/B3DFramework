@@ -474,7 +474,7 @@ template <>
 SPtr<render::GpuParameterSet> CreateGpuParameters<true>(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex)
 {
 	const SPtr<GpuDevice>& device = GetApplication().GetPrimaryGpuDevice();
-	return device->CreateGpuParameters(parameterLayout, setIndex);
+	return device->CreateGpuParameterSet(parameterLayout, setIndex);
 }
 
 template <bool IsRenderProxy>
@@ -827,7 +827,7 @@ TMaterialParameterAdapter<IsRenderProxy>::~TMaterialParameterAdapter()
 }
 
 template <bool IsRenderProxy>
-SPtr<typename TMaterialParameterAdapter<IsRenderProxy>::GpuParametersType> TMaterialParameterAdapter<IsRenderProxy>::GetGpuParameters(u32 passIndex, u32 setIndex)
+SPtr<typename TMaterialParameterAdapter<IsRenderProxy>::GpuParametersType> TMaterialParameterAdapter<IsRenderProxy>::GetGpuParameterSet(u32 passIndex, u32 setIndex)
 {
 	if(passIndex >= mGpuParametersPerPass.size())
 		return nullptr;

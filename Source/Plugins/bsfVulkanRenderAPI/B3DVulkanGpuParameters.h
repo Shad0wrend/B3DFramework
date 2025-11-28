@@ -21,11 +21,11 @@ namespace b3d
 		 */
 
 		/** Vulkan implementation of GpuParameterSet, containing resource descriptors for a single descriptor set. */
-		class VulkanGpuParameters : public GpuParameterSet
+		class VulkanGpuParameterSet : public GpuParameterSet
 		{
 		public:
-			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 set);
-			~VulkanGpuParameters() override;
+			VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 set);
+			~VulkanGpuParameterSet() override;
 
 			bool SetUniformBuffer(u32 slot, const SPtr<GpuBuffer>& uniformBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
 			bool SetSampledTexture(u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override;

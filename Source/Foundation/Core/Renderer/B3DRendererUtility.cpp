@@ -194,11 +194,11 @@ void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr
 
 void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& params, u32 passIdx)
 {
-	const SPtr<GpuParameterSet>& gpuParams = params->GetGpuParameters(passIdx);
+	const SPtr<GpuParameterSet>& gpuParams = params->GetGpuParameterSet(passIdx);
 	if(gpuParams == nullptr)
 		return;
 
-	commandBuffer.SetGpuParameters(gpuParams);
+	commandBuffer.SetGpuParameterSet(gpuParams);
 }
 
 void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances)
@@ -423,7 +423,7 @@ void BlitMat::Initialize()
 
 SPtr<GpuParameterSet> BlitMat::Prepare(const SPtr<Texture>& source)
 {
-	SPtr<GpuParameterSet> gpuParameters = CreateGpuParameters();
+	SPtr<GpuParameterSet> gpuParameters = CreateGpuParameterSet();
 	gpuParameters->SetSampledTexture("gSource", source);
 
 	return gpuParameters;
@@ -434,7 +434,7 @@ void BlitMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuParameterSe
 	B3D_PROFILE_RENDERER_MATERIAL
 
 	Bind(commandBuffer, false);
-	commandBuffer.SetGpuParameters(gpuParameters);
+	commandBuffer.SetGpuParameterSet(gpuParameters);
 
 	if(!mIsFiltered)
 		GetRendererUtility().DrawScreenQuad(commandBuffer, area, Vector2I(1, 1), 1, flipUV);
@@ -504,7 +504,7 @@ ClearUniformDefinition gClearUniformDefinition;
 
 void ClearMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
 }
 
 void ClearMaterial::Execute(GpuCommandBuffer& commandBuffer, u32 value)
@@ -524,8 +524,8 @@ CompositeUniformDefinition gCompositeUniformDefinition;
 
 void CompositeMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gSource", mSourceTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gSource", mSourceTextureParameter);
 }
 
 void CompositeMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
@@ -539,7 +539,7 @@ void CompositeMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Text
 	mSourceTextureParameter.Set(source);
 
 	// Render
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -551,8 +551,8 @@ BicubicUpsampleUniformDefinition gBicubicUpsampleUniformDefinition;
 
 void BicubicUpsampleMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gSource", mSourceTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gSource", mSourceTextureParameter);
 }
 
 void BicubicUpsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
@@ -575,7 +575,7 @@ void BicubicUpsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPt
 	mSourceTextureParameter.Set(source);
 
 	// Render
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);

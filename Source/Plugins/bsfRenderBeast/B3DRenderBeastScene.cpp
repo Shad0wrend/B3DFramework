@@ -452,21 +452,21 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			continue;
 		}
 
-		SPtr<GpuParameterSet> gpuParams = element.ParameterAdapter->GetGpuParameters();
+		SPtr<GpuParameterSet> gpuParameterSet = element.ParameterAdapter->GetGpuParameterSet();
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
-		gpuParams->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
-		gpuParams->SetUniformBuffer("PerObject", rendererRenderable->PerObjectParamBuffer);
-		gpuParams->TrySetUniformBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
+		gpuParameterSet->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
+		gpuParameterSet->SetUniformBuffer("PerObject", rendererRenderable->PerObjectParamBuffer);
+		gpuParameterSet->TrySetUniformBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
 
-		gpuParams->GetPipelineParameterLayout()->GetBinding("PerCamera", element.PerCameraBinding);
+		gpuParameterSet->GetPipelineParameterLayout()->GetBinding("PerCamera", element.PerCameraBinding);
 
-		if(gpuParams->HasStorageBuffer("boneMatrices"))
-			gpuParams->GetStorageBufferParameter("boneMatrices", element.BoneMatrixBufferParameter);
+		if(gpuParameterSet->HasStorageBuffer("boneMatrices"))
+			gpuParameterSet->GetStorageBufferParameter("boneMatrices", element.BoneMatrixBufferParameter);
 
-		if(gpuParams->HasStorageBuffer("prevBoneMatrices"))
-			gpuParams->GetStorageBufferParameter("prevBoneMatrices", element.PreviousBoneMatrixBufferParameter);
+		if(gpuParameterSet->HasStorageBuffer("prevBoneMatrices"))
+			gpuParameterSet->GetStorageBufferParameter("prevBoneMatrices", element.PreviousBoneMatrixBufferParameter);
 
 		ShaderFlags shaderFlags = shader->GetFlags();
 		const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward) || shaderFlags.IsSet(ShaderFlag::Transparent);
@@ -475,8 +475,8 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 		{
 			const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 
-			element.ForwardLightingParams.Populate(gpuParams, supportsClusteredForward);
-			element.ImageBasedParams.Initialize(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
+			element.ForwardLightingParams.Populate(gpuParameterSet, supportsClusteredForward);
+			element.ImageBasedParams.Initialize(gpuParameterSet, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
 		}
 	}
 }
@@ -881,7 +881,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(techniqueIdx);
 	renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
-	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
+	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	if(gpu)
 	{
@@ -1109,7 +1109,7 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
 
 	// Prepare all parameter bindings
-	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameters();
+	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -1384,7 +1384,7 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 					const u32 setCount = renderableElement.ParameterAdapter->GetSetCount(passIndex);
 					for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 					{
-						const SPtr<GpuParameterSet>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameters(passIndex, setIndex);
+						const SPtr<GpuParameterSet>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameterSet(passIndex, setIndex);
 						const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameterSet->GetPipelineParameterLayout();
 
 						const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);

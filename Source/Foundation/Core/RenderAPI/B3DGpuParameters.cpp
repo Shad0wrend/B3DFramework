@@ -557,7 +557,7 @@ SPtr<render::RenderProxy> GpuParameterSet::CreateRenderProxy() const
 		return nullptr;
 
 	SPtr<GpuPipelineParameterLayout> parameterLayout = std::static_pointer_cast<GpuPipelineParameterLayout>(mParameterLayout);
-	return gpuDevice->CreateGpuParameters(parameterLayout, true);
+	return gpuDevice->CreateGpuParameterSet(parameterLayout, true);
 }
 
 void GpuParameterSet::MarkRenderProxyDataDirtyInternal()

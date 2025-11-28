@@ -14,8 +14,8 @@ ReflectionCubeDownsampleUniformDefinition gReflectionCubeDownsampleUniformDefini
 
 void ReflectionCubeDownsampleMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 }
 
 void ReflectionCubeDownsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target)
@@ -40,7 +40,7 @@ void ReflectionCubeDownsampleMaterial::Execute(GpuCommandBuffer& commandBuffer, 
 
 	mUniformBufferParameter.Set(uniformBuffer);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -53,8 +53,8 @@ ReflectionCubeImportanceSampleUniformDefinition gReflectionCubeImportanceSampleU
 
 void ReflectionCubeImportanceSampleMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Input", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Input", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 }
 
 void ReflectionCubeImportanceSampleMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -83,7 +83,7 @@ void ReflectionCubeImportanceSampleMaterial::Execute(GpuCommandBuffer& commandBu
 	mUniformBufferParameter.Set(uniformBuffer);
 	mInputTextureParameter.Set(source);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -102,9 +102,9 @@ const static u32 kPixelsPerThread = 4;
 
 void IrradianceComputeSHMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
-	mGPUParameters->GetStorageBufferParameter("gOutput", mOutputBufferParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetStorageBufferParameter("gOutput", mOutputBufferParameter);
 }
 
 void IrradianceComputeSHMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -177,8 +177,8 @@ IrradianceComputeSHFragUniformDefinition gIrradianceComputeSHFragUniformDefiniti
 
 void IrradianceComputeSHFragMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 }
 
 void IrradianceComputeSHFragMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 coefficientIdx, const SPtr<RenderTarget>& output)
@@ -195,7 +195,7 @@ void IrradianceComputeSHFragMaterial::Execute(GpuCommandBuffer& commandBuffer, c
 	mUniformBufferParameter.Set(uniformBuffer);
 	mInputTextureParameter.Set(source);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -213,8 +213,8 @@ IrradianceAccumulateSHUniformDefinition gIrradianceAccumulateSHUniformDefinition
 
 void IrradianceAccumulateSHMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 }
 
 void IrradianceAccumulateSHMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 sourceMip, const SPtr<RenderTarget>& output)
@@ -233,7 +233,7 @@ void IrradianceAccumulateSHMaterial::Execute(GpuCommandBuffer& commandBuffer, co
 	mUniformBufferParameter.Set(uniformBuffer);
 	mInputTextureParameter.Set(source);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
@@ -253,8 +253,8 @@ PooledRenderTextureCreateInformation IrradianceAccumulateSHMaterial::GetOutputDe
 
 void IrradianceAccumulateCubeSHMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gInputTex", mInputTextureParameter);
 }
 
 void IrradianceAccumulateCubeSHMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 sourceMip, const Vector2I& outputOffset, u32 coefficientIdx, const SPtr<RenderTarget>& output)
@@ -284,7 +284,7 @@ void IrradianceAccumulateCubeSHMaterial::Execute(GpuCommandBuffer& commandBuffer
 	viewRect.Height = 1.0f / rtProps.Height;
 
 	// Render
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(output, mGpuParameterSet));
 	commandBuffer.SetViewport(viewRect);
 
 	Bind(commandBuffer);
@@ -304,9 +304,9 @@ IrradianceReduceSHUniformDefinition gIrradianceReduceSHUniformDefinition;
 
 void IrradianceReduceSHMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetStorageBufferParameter("gInput", mInputBufferParameter);
-	mGPUParameters->GetStorageTextureParameter("gOutput", mOutputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetStorageBufferParameter("gInput", mInputBufferParameter);
+	mGpuParameterSet->GetStorageTextureParameter("gOutput", mOutputTextureParameter);
 }
 
 void IrradianceReduceSHMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& source, u32 numCoeffSets, const SPtr<Texture>& output, u32 outputIdx)
@@ -356,8 +356,8 @@ IrradianceProjectSHUniformDefinition gIrradianceProjectSHUniformDefinition;
 
 void IrradianceProjectSHMaterial::Initialize()
 {
-	mGPUParameters->GetUniformBufferParameter("Params", mUniformBufferParameter);
-	mGPUParameters->GetSampledTextureParameter("gSHCoeffs", mInputTextureParameter);
+	mGpuParameterSet->GetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->GetSampledTextureParameter("gSHCoeffs", mInputTextureParameter);
 }
 
 void IrradianceProjectSHMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& shCoeffs, u32 face, const SPtr<RenderTarget>& target)
@@ -371,7 +371,7 @@ void IrradianceProjectSHMaterial::Execute(GpuCommandBuffer& commandBuffer, const
 	mUniformBufferParameter.Set(uniformBuffer);
 	mInputTextureParameter.Set(shCoeffs);
 
-	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGPUParameters));
+	commandBuffer.BeginRenderPass(RenderPassCreateInformation(target, mGpuParameterSet));
 
 	Bind(commandBuffer);
 	GetRendererUtility().DrawScreenQuad(commandBuffer);

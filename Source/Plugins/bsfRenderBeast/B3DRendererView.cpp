@@ -22,15 +22,15 @@ SkyboxUniformDefinition gSkyboxUniformDefinition;
 
 void SkyboxMaterial::Initialize()
 {
-	if(mGPUParameters->HasSampledTexture("gSkyTex"))
-		mGPUParameters->GetSampledTextureParameter("gSkyTex", mSkyTextureParameter);
+	if(mGpuParameterSet->HasSampledTexture("gSkyTex"))
+		mGpuParameterSet->GetSampledTextureParameter("gSkyTex", mSkyTextureParameter);
 
-	mGPUParameters->TryGetUniformBufferParameter("Params", mUniformBufferParameter);
+	mGpuParameterSet->TryGetUniformBufferParameter("Params", mUniformBufferParameter);
 }
 
 void SkyboxMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
 {
-	mGPUParameters->SetUniformBuffer("PerCamera", perCamera);
+	mGpuParameterSet->SetUniformBuffer("PerCamera", perCamera);
 
 	GpuBufferSuballocation uniformBuffer = gSkyboxUniformDefinition.AllocateTransient();
 	gSkyboxUniformDefinition.gClearColor.Set(uniformBuffer, solidColor);

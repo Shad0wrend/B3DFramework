@@ -147,7 +147,7 @@ void DebugDrawMaterial::Execute(GpuCommandBuffer& commandBuffer, const GpuBuffer
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
-	mGPUParameters->SetUniformBuffer("Params", uniformBuffer);
+	mGpuParameterSet->SetUniformBuffer("Params", uniformBuffer);
 
 	Bind(commandBuffer);
 	GetRendererUtility().Draw(commandBuffer, mesh, subMesh);

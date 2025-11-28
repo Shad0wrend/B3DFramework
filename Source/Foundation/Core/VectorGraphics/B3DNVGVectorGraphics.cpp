@@ -801,7 +801,7 @@ namespace b3d::render
 		if(!mRenderBuffers.GpuParameters)
 		{
 			// Create new GPU parameters object
-			mRenderBuffers.GpuParameters = VectorGraphicsMaterial::Get()->CreateGpuParameters();
+			mRenderBuffers.GpuParameters = VectorGraphicsMaterial::Get()->CreateGpuParameterSet();
 
 			// Set uniform buffers
 			mRenderBuffers.GpuParameters->SetUniformBuffer("RenderUniforms", mRenderBuffers.RenderUniformBuffer);
@@ -830,7 +830,7 @@ namespace b3d::render
 		const u32 renderUniformBufferDynamicIndex = gpuParameters->GetPipelineParameterLayout()->GetDynamicOffsetIndex("RenderUniforms");
 		B3D_ENSURE(renderUniformBufferDynamicIndex != ~0u);
 
-		commandBuffer.SetGpuParameters(gpuParameters);
+		commandBuffer.SetGpuParameterSet(gpuParameters);
 
 		const u32 vertexCount = (u32)mRawRenderData.Vertices.size();
 

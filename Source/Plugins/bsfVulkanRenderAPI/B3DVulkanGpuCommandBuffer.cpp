@@ -367,7 +367,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 		if(parameters == nullptr)
 			continue;
 
-		VulkanGpuParameters* vkParams = static_cast<VulkanGpuParameters*>(parameters.get());
+		VulkanGpuParameterSet* vkParams = static_cast<VulkanGpuParameterSet*>(parameters.get());
 		const u32 set = vkParams->GetSet();
 		const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameters->GetPipelineParameterLayout();
 
@@ -399,7 +399,7 @@ void VulkanGpuCommandBuffer::BeginRenderPass(const RenderPassCreateInformation& 
 
 	// Re-set the params as they will need to be re-bound
 	for(const auto& entry : mBoundGpuParameterSets) // TODO - Can likely be removed
-		SetGpuParameters(entry);
+		SetGpuParameterSet(entry);
 
 	mGfxPipelineRequiresBind = true;
 
@@ -541,7 +541,7 @@ void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePip
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameterSet>& parameterSet)
+void VulkanGpuCommandBuffer::SetGpuParameterSet(const SPtr<GpuParameterSet>& parameterSet)
 {
 	EnsureValidThread();
 
@@ -551,7 +551,7 @@ void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameterSet>& param
 	if(!B3D_ENSURE(parameterSet->GetSet() < kMaximumBoundDescriptorSets))
 		return;
 
-	const SPtr<VulkanGpuParameters>& vulkanParameterSet = std::static_pointer_cast<VulkanGpuParameters>(parameterSet);
+	const SPtr<VulkanGpuParameterSet>& vulkanParameterSet = std::static_pointer_cast<VulkanGpuParameterSet>(parameterSet);
 	const u32 set = parameterSet->GetSet();
 
 	if(set >= (u32)mBoundGpuParameterSets.Size())
@@ -560,7 +560,7 @@ void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameterSet>& param
 	// Note: We keep an internal reference to GPU params even though we shouldn't keep a reference to a render thread
 	// object. But it should be fine since we expect the resource to be externally synchronized so it should never
 	// be allowed to go out of scope on a non-render thread anyway.
-	mBoundGpuParameterSets[set] = std::static_pointer_cast<VulkanGpuParameters>(parameterSet);
+	mBoundGpuParameterSets[set] = std::static_pointer_cast<VulkanGpuParameterSet>(parameterSet);
 
 	const SPtr<GpuPipelineParameterLayout>& uniformLayout = vulkanParameterSet->GetPipelineParameterLayout();
 
@@ -1659,7 +1659,7 @@ void VulkanGpuCommandBuffer::BindGpuParameters(VulkanBarrierHelper& barrierHelpe
 	mDynamicDescriptorOffsetsToBind.clear();
 	for(u32 set = 0; set < mBoundGpuParameterSets.Size(); set++)
 	{
-		const SPtr<VulkanGpuParameters>& boundGpuParameterSet = mBoundGpuParameterSets[set];
+		const SPtr<VulkanGpuParameterSet>& boundGpuParameterSet = mBoundGpuParameterSets[set];
 		if(boundGpuParameterSet != nullptr)
 		{
 			auto it = mRenderPassGpuParametersCache.find(boundGpuParameterSet.get());

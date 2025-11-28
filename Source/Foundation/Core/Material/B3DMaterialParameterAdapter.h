@@ -77,7 +77,7 @@ namespace b3d
 		 * @return				GPU parameters object that can be used for setting parameters of all GPU programs
 		 *						in a pass. Returns null if pass or set doesn't exist.
 		 */
-		SPtr<GpuParametersType> GetGpuParameters(u32 passIndex = 0, u32 setIndex = 0);
+		SPtr<GpuParametersType> GetGpuParameterSet(u32 passIndex = 0, u32 setIndex = 0);
 
 		/**
 		 * Searches for a parameter uniform buffer with the specified name, and returns an index you can use for accessing it.

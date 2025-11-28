@@ -1832,7 +1832,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				PreparedMeshData preparedData;
 				preparedData.RenderData = meshRenderData;
 				preparedData.OverlappingRegions = meshToDraw.OverlappingRegions;
-				preparedData.GpuParameters = materialParameterAdapter->GetGpuParameters();
+				preparedData.GpuParameters = materialParameterAdapter->GetGpuParameterSet();
 				preparedData.ClipRegionBuffer = clipRegionBuffer;
 				preparedData.ClipRegionCount = (u32)meshToDraw.OverlappingRegions.size();
 
