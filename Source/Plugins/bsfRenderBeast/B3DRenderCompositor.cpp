@@ -364,14 +364,11 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	// Prepare all visible objects. Note that this also prepares non-opaque objects.
 	//// Prepare normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto numRenderables = (u32)inputs.Scene.Renderables.size();
-	for(u32 i = 0; i < numRenderables; i++)
+	const auto renderableCount = (u32)inputs.Scene.Renderables.size();
+	for(u32 i = 0; i < renderableCount; i++)
 	{
 		if(!visibility.Renderables[i])
 			continue;
-
-		RendererRenderable* rendererRenderable = inputs.Scene.Renderables[i];
-		rendererRenderable->UpdatePerCallBuffer(viewProps.ViewProjTransform);
 
 		for(auto& element : inputs.Scene.Renderables[i]->Elements)
 		{
@@ -425,16 +422,14 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	//// Prepare decals
-	const auto numDecals = (u32)inputs.Scene.Decals.size();
-	for(u32 i = 0; i < numDecals; i++)
+	const auto decalCount = (u32)inputs.Scene.Decals.size();
+	for(u32 i = 0; i < decalCount; i++)
 	{
 		if(!visibility.Decals[i])
 			continue;
 
 		const RendererDecal& rendererDecal = inputs.Scene.Decals[i];
 		DecalRenderElement& renderElement = rendererDecal.RenderElement;
-
-		rendererDecal.UpdatePerCallBuffer(viewProps.ViewProjTransform);
 
 		const GpuParameterBinding& binding = renderElement.PerCameraBinding;
 		if(binding.IsValid())

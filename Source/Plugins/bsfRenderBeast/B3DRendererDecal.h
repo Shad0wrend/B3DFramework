@@ -99,14 +99,6 @@ namespace b3d
 			/** Updates the per-object GPU buffer according to the currently set properties. */
 			void UpdatePerObjectBuffer();
 
-			/**
-			 * Updates the per-call GPU buffer according to the provided parameters.
-			 *
-			 * @param[in]	viewProj	Combined view-projection matrix of the current camera.
-			 * @param[in]	flush		True if the buffer contents should be immediately flushed to the GPU.
-			 */
-			void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true) const;
-
 			Decal* Decal;
 			mutable DecalRenderElement RenderElement;
 

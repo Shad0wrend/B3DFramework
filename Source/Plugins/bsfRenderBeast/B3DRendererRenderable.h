@@ -18,7 +18,7 @@ namespace b3d
 		 *  @{
 		 */
 
-		B3D_UNIFORM_BUFFER_BEGIN(PerObjectParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(PerObjectUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatWorld)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatInvWorld)
 			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatWorldNoScale)
@@ -28,13 +28,7 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(i32, gLayer)
 		B3D_UNIFORM_BUFFER_END
 
-		extern PerObjectParamDef gPerObjectParamDef;
-
-		B3D_UNIFORM_BUFFER_BEGIN(PerCallParamDef)
-			B3D_UNIFORM_BUFFER_MEMBER(Matrix4, gMatWorldViewProj)
-		B3D_UNIFORM_BUFFER_END
-
-		extern PerCallParamDef gPerCallParamDef;
+		extern PerObjectUniformDefinition gPerObjectUniformDefinition;
 
 		/** Helper class used for manipulating the PerObject parameter buffer. */
 		class PerObjectBuffer
@@ -103,14 +97,6 @@ namespace b3d
 			/** Updates the per-object GPU buffer according to the currently set properties. */
 			void UpdatePerObjectBuffer();
 
-			/**
-			 * Updates the per-call GPU buffer according to the provided parameters.
-			 *
-			 * @param[in]	viewProj	Combined view-projection matrix of the current camera.
-			 * @param[in]	flush		True if the buffer contents should be immediately flushed to the GPU.
-			 */
-			void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true);
-
 			Matrix4 WorldTfrm = Matrix4::kIdentity;
 			Matrix4 PrevWorldTfrm = Matrix4::kIdentity;
 			PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
@@ -119,7 +105,6 @@ namespace b3d
 			Vector<RenderableElement> Elements;
 
 			SPtr<GpuBuffer> PerObjectParamBuffer;
-			SPtr<GpuBuffer> PerCallParamBuffer;
 		};
 
 		/** @} */

@@ -458,7 +458,6 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
 		gpuParameterSet->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
 		gpuParameterSet->SetUniformBuffer("PerObject", rendererRenderable->PerObjectParamBuffer);
-		gpuParameterSet->TrySetUniformBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
 
 		gpuParameterSet->GetPipelineParameterLayout()->GetBinding("PerCamera", element.PerCameraBinding);
 
@@ -770,7 +769,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		return;
 	}
 
-	rendererParticles.PerObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
+	rendererParticles.PerObjectParamBuffer = gPerObjectUniformDefinition.CreateBuffer();
 	rendererParticles.UpdatePerObjectBuffer();
 
 	SPtr<GpuBuffer> particlesParamBuffer = gParticlesParamDef.CreateBuffer();

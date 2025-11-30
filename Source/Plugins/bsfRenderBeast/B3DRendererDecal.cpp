@@ -19,8 +19,7 @@ void DecalRenderElement::Draw(GpuCommandBuffer& commandBuffer) const
 RendererDecal::RendererDecal()
 {
 	DecalParamBuffer = gDecalParamDef.CreateBuffer();
-	PerObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
-	PerCallParamBuffer = gPerCallParamDef.CreateBuffer();
+	PerObjectParamBuffer = gPerObjectUniformDefinition.CreateBuffer();
 }
 
 void RendererDecal::UpdatePerObjectBuffer()
@@ -61,15 +60,5 @@ void RendererDecal::UpdatePerObjectBuffer()
 	gDecalParamDef.gNormalTolerance.Set(DecalParamBuffer, normalTolerance);
 	gDecalParamDef.gFlipDerivatives.Set(DecalParamBuffer, flipDerivatives);
 	gDecalParamDef.gLayerMask.Set(DecalParamBuffer, (i32)Decal->GetLayerMask());
-}
-
-void RendererDecal::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush) const
-{
-	const Matrix4 worldViewProjMatrix = viewProj * Decal->GetWorldTransformMatrix();
-
-	gPerCallParamDef.gMatWorldViewProj.Set(PerCallParamBuffer, worldViewProjMatrix);
-
-	if(flush)
-		PerCallParamBuffer->FlushCache();
 }
 }} // namespace b3d::render

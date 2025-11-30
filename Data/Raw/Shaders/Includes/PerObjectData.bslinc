@@ -13,11 +13,5 @@ mixin PerObjectData
 			float gWorldDeterminantSign;
 			uint gLayer;
 		}	
-
-		[internal]
-		cbuffer PerCall
-		{
-			float4x4 gMatWorldViewProj;
-		}			
 	};
 };
