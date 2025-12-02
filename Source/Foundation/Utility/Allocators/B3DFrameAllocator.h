@@ -95,7 +95,23 @@ namespace b3d
 		};
 
 #if B3D_DEBUG
-		static constexpr u32 kDebugHeaderSize = sizeof(u32) * 2;  // [allocationSize][frameDepth]
+		/** Size of guard pattern (fence post) in bytes. */
+		static constexpr u32 kGuardSize = 4;
+
+		/** Pattern written to guard bytes to detect buffer overruns/underruns. */
+		static constexpr u32 kGuardPattern = 0xFDFDFDFD;
+
+		/** Pattern used to fill uninitialized memory. */
+		static constexpr u8 kUninitPattern = 0xCD;
+
+		/** Pattern used to fill freed memory (detect use-after-free). */
+		static constexpr u8 kFreedPattern = 0xDD;
+
+		/** Debug header size: pre_guard(4) + totalSize(4) + depth(4) + userSize(4) = 16 bytes. */
+		static constexpr u32 kDebugHeaderSize = kGuardSize + sizeof(u32) * 3;
+
+		/** Debug trailer size (post-guard). */
+		static constexpr u32 kDebugTrailerSize = kGuardSize;
 #endif
 		static constexpr u32 kDefaultBlockSize = 1024 * 1024;  // 1 MB
 		static constexpr u32 kBlockAlignment = 16;
@@ -211,6 +227,24 @@ namespace b3d
 		 */
 		void Clear();
 
+#if B3D_DEBUG
+		/**
+		 * Validates integrity of all allocations in the frame allocator.
+		 * Walks through all memory blocks and checks guard bytes for buffer overruns/underruns.
+		 *
+		 * @return	True if all allocations are intact, false if corruption detected.
+		 * @note	Only available in debug builds.
+		 */
+		bool CheckMemory() const;
+
+		/**
+		 * Sets the frequency of automatic memory integrity checks.
+		 *
+		 * @param	frequency	Check every N allocations. Set to 0 to disable automatic checks.
+		 */
+		void SetCheckFrequency(u32 frequency) { mCheckFrequency = frequency; }
+#endif
+
 	private:
 		u32 mBlockSize;
 		Vector<MemoryBlock*> mBlocks;
@@ -222,6 +256,8 @@ namespace b3d
 
 #if B3D_DEBUG
 		ThreadId mOwnerThread;
+		u32 mAllocationCount = 0;
+		u32 mCheckFrequency = 50;
 #endif
 
 		/**
@@ -235,22 +271,34 @@ namespace b3d
 
 #if B3D_DEBUG
 		/**
-		 * Writes the debug header (allocation size and frame depth) before the user data.
+		 * Writes the debug header (guard, allocation size, frame depth, user size) before the user data.
 		 *
 		 * @param	data			Pointer to the start of the allocation (header location).
-		 * @param	allocationSize	Total size of the allocation including header.
+		 * @param	totalSize		Total size of the allocation including header and trailer.
 		 * @param	frameDepth		Frame depth at which this allocation was made.
+		 * @param	userSize		Size of user-requested data (excluding debug overhead).
 		 */
-		void WriteDebugHeader(u8* data, u32 allocationSize, u32 frameDepth);
+		void WriteDebugHeader(u8* data, u32 totalSize, u32 frameDepth, u32 userSize);
 
 		/**
-		 * Reads the debug header to retrieve allocation size and frame depth.
+		 * Reads the debug header to retrieve allocation metadata.
 		 *
 		 * @param	data			Pointer to the start of the allocation (header location).
-		 * @param	outSize			[out] Allocation size stored in header.
+		 * @param	outTotalSize	[out] Total allocation size stored in header.
 		 * @param	outDepth		[out] Frame depth stored in header.
+		 * @param	outUserSize		[out] User-requested data size stored in header.
 		 */
-		void ReadDebugHeader(const u8* data, u32& outSize, u32& outDepth);
+		void ReadDebugHeader(const u8* data, u32& outTotalSize, u32& outDepth, u32& outUserSize) const;
+
+		/**
+		 * Validates the guard bytes of a single allocation.
+		 *
+		 * @param	data			Pointer to the start of the allocation (header location).
+		 * @param	totalSize		Total allocation size from header.
+		 * @param	userSize		User data size from header.
+		 * @return	True if guards are intact, false if corruption detected.
+		 */
+		bool ValidateAllocation(const u8* data, u32 totalSize, u32 userSize) const;
 #endif
 	};
 
@@ -485,6 +533,22 @@ namespace b3d
 
 	/** @copydoc FrameAllocator::Clear */
 	B3D_EXPORT void B3DClearAllocatorFrame();
+
+#if B3D_DEBUG
+	/**
+	 * Checks memory integrity of the global frame allocator.
+	 *
+	 * @return	True if all allocations are intact, false if corruption detected.
+	 */
+	B3D_EXPORT bool B3DFrameCheckMemory();
+
+	/**
+	 * Sets the automatic check frequency for the global frame allocator.
+	 *
+	 * @param	frequency	Check every N allocations. 0 disables automatic checks.
+	 */
+	B3D_EXPORT void B3DFrameSetCheckFrequency(u32 frequency);
+#endif
 
 	/** Opens a frame scope on construction and closes it on destruction. See B3DMarkAllocatorFrame(). */
 	struct FrameAllocatorScope

@@ -35,22 +35,48 @@ FrameAllocator::~FrameAllocator()
 }
 
 #if B3D_DEBUG
-void FrameAllocator::WriteDebugHeader(u8* data, u32 allocationSize, u32 frameDepth)
+void FrameAllocator::WriteDebugHeader(u8* data, u32 totalSize, u32 frameDepth, u32 userSize)
 {
-	u32* sizePointer = reinterpret_cast<u32*>(data);
-	u32* depthPointer = reinterpret_cast<u32*>(data + sizeof(u32));
+	// Write pre-guard
+	u32* preGuard = reinterpret_cast<u32*>(data);
+	*preGuard = kGuardPattern;
 
-	*sizePointer = allocationSize;
+	// Write header fields after pre-guard
+	u32* sizePointer = reinterpret_cast<u32*>(data + kGuardSize);
+	u32* depthPointer = sizePointer + 1;
+	u32* userSizePointer = depthPointer + 1;
+
+	*sizePointer = totalSize;
 	*depthPointer = frameDepth;
+	*userSizePointer = userSize;
 }
 
-void FrameAllocator::ReadDebugHeader(const u8* data, u32& outSize, u32& outDepth)
+void FrameAllocator::ReadDebugHeader(const u8* data, u32& outTotalSize, u32& outDepth, u32& outUserSize) const
 {
-	const u32* sizePointer = reinterpret_cast<const u32*>(data);
-	const u32* depthPointer = reinterpret_cast<const u32*>(data + sizeof(u32));
+	// Read header fields (after pre-guard)
+	const u32* sizePointer = reinterpret_cast<const u32*>(data + kGuardSize);
+	const u32* depthPointer = sizePointer + 1;
+	const u32* userSizePointer = depthPointer + 1;
 
-	outSize = *sizePointer;
+	outTotalSize = *sizePointer;
 	outDepth = *depthPointer;
+	outUserSize = *userSizePointer;
+}
+
+bool FrameAllocator::ValidateAllocation(const u8* data, u32 totalSize, u32 userSize) const
+{
+	// Check pre-guard
+	const u32* preGuard = reinterpret_cast<const u32*>(data);
+	if (*preGuard != kGuardPattern)
+		return false;  // Buffer underrun detected
+
+	// Check post-guard
+	const u8* userData = data + kDebugHeaderSize;
+	const u32* postGuard = reinterpret_cast<const u32*>(userData + userSize);
+	if (*postGuard != kGuardPattern)
+		return false;  // Buffer overrun detected
+
+	return true;
 }
 #endif
 
@@ -60,8 +86,11 @@ u8* FrameAllocator::Allocate(u32 allocationSize)
 	// Validate thread ownership
 	B3D_ASSERT(mOwnerThread == ThreadId() && "FrameAllocator accessed from different thread than owner");
 
-	// Expand allocation to include debug header: [u32 size][u32 depth]
-	allocationSize += kDebugHeaderSize;
+	// Store original user-requested size before expanding
+	u32 userSize = allocationSize;
+
+	// Expand allocation to include debug header and trailer
+	allocationSize += kDebugHeaderSize + kDebugTrailerSize;
 #endif
 
 	// Check if current block has enough free memory
@@ -80,11 +109,26 @@ u8* FrameAllocator::Allocate(u32 allocationSize)
 	// Update total allocation tracking
 	mTotalAllocatedBytes.fetch_add(allocationSize, std::memory_order_relaxed);
 
-	// Write debug header with size and current frame depth
-	WriteDebugHeader(data, allocationSize, mCurrentFrameDepth);
+	// Write debug header with guard, size, depth, and user size
+	WriteDebugHeader(data, allocationSize, mCurrentFrameDepth, userSize);
+
+	// Calculate user data pointer
+	u8* userData = data + kDebugHeaderSize;
+
+	// Fill user memory with uninitialized pattern
+	std::memset(userData, kUninitPattern, userSize);
+
+	// Write post-guard after user data
+	u32* postGuard = reinterpret_cast<u32*>(userData + userSize);
+	*postGuard = kGuardPattern;
+
+	// Periodic integrity check
+	mAllocationCount++;
+	if(mCheckFrequency > 0 && (mAllocationCount % mCheckFrequency) == 0)
+		CheckMemory();
 
 	// Return pointer past the debug header to user
-	return data + kDebugHeaderSize;
+	return userData;
 #else
 	return data;
 #endif
@@ -96,8 +140,11 @@ u8* FrameAllocator::AllocateAligned(u32 allocationSize, u32 alignment)
 	// Validate thread ownership
 	B3D_ASSERT(mOwnerThread == ThreadId() && "FrameAllocator accessed from different thread than owner");
 
-	// Expand allocation to include debug header
-	allocationSize += kDebugHeaderSize;
+	// Store original user-requested size before expanding
+	u32 userSize = allocationSize;
+
+	// Expand allocation to include debug header and trailer
+	allocationSize += kDebugHeaderSize + kDebugTrailerSize;
 #endif
 
 	u32 freeMemory = 0;
@@ -148,10 +195,25 @@ u8* FrameAllocator::AllocateAligned(u32 allocationSize, u32 alignment)
 	mTotalAllocatedBytes.fetch_add(allocationSize, std::memory_order_relaxed);
 
 	// Write debug header at the aligned position (after alignment offset)
-	WriteDebugHeader(data + alignmentOffset, allocationSize, mCurrentFrameDepth);
+	WriteDebugHeader(data + alignmentOffset, allocationSize, mCurrentFrameDepth, userSize);
+
+	// Calculate user data pointer
+	u8* userData = data + alignmentOffset + kDebugHeaderSize;
+
+	// Fill user memory with uninitialized pattern
+	std::memset(userData, kUninitPattern, userSize);
+
+	// Write post-guard after user data
+	u32* postGuard = reinterpret_cast<u32*>(userData + userSize);
+	*postGuard = kGuardPattern;
+
+	// Periodic integrity check
+	mAllocationCount++;
+	if(mCheckFrequency > 0 && (mAllocationCount % mCheckFrequency) == 0)
+		CheckMemory();
 
 	// Return pointer past both alignment offset and debug header
-	return data + kDebugHeaderSize + alignmentOffset;
+	return userData;
 #else
 	return data + alignmentOffset;
 #endif
@@ -168,18 +230,29 @@ void FrameAllocator::Free(u8* data)
 		// Step back to the start of the allocation (before debug header)
 		data -= kDebugHeaderSize;
 
-		// Read debug header to get size and frame depth
-		u32 allocationSize;
+		// Read debug header to get size, frame depth, and user size
+		u32 totalSize;
 		u32 allocationDepth;
-		ReadDebugHeader(data, allocationSize, allocationDepth);
+		u32 userSize;
+		ReadDebugHeader(data, totalSize, allocationDepth, userSize);
+
+		// Validate guards before freeing
+		if(!ValidateAllocation(data, totalSize, userSize))
+		{
+			B3D_ASSERT(false && "Memory corruption detected on Free(): guard bytes overwritten");
+		}
 
 		// Validate that memory is being freed at the same frame depth it was allocated
 		B3D_ASSERT(allocationDepth == mCurrentFrameDepth &&
 			"Memory allocated at one frame depth is being freed at a different depth. "
 			"This violates the frame allocator contract.");
 
+		// Fill user memory with freed pattern to detect use-after-free
+		u8* userData = data + kDebugHeaderSize;
+		std::memset(userData, kFreedPattern, userSize);
+
 		// Update total allocation tracking
-		mTotalAllocatedBytes.fetch_sub(allocationSize, std::memory_order_relaxed);
+		mTotalAllocatedBytes.fetch_sub(totalSize, std::memory_order_relaxed);
 	}
 #endif
 }
@@ -221,14 +294,16 @@ void FrameAllocator::Clear()
 		// Decrement frame depth since we're exiting a frame scope. Need to do this before the Free call below.
 		mCurrentFrameDepth--;
 
-		// Free the frame marker allocation itself before we lose the pointer
+		// Save the frame pointer and follow linked list BEFORE calling Free,
+		// because Free fills memory with 0xDD pattern in debug builds
+		u8* framePointer = (u8*)mLastFrame;
+		void* previousFrame = *(void**)mLastFrame;
+
+		// Free the frame marker allocation (this will fill memory with freed pattern)
 		Free((u8*)mLastFrame);
 
-		// Dereference the frame marker to get the actual marker position in memory
-		u8* framePointer = (u8*)mLastFrame;
-
-		// Follow the linked list to the previous frame marker
-		mLastFrame = *(void**)mLastFrame;
+		// Update to previous frame marker
+		mLastFrame = previousFrame;
 
 #if B3D_DEBUG
 		// In debug builds, step back past the debug header to get to the actual allocation start
@@ -416,6 +491,39 @@ void FrameAllocator::DeallocateBlock(MemoryBlock* block)
 	B3DFreeAligned16(block);
 }
 
+#if B3D_DEBUG
+bool FrameAllocator::CheckMemory() const
+{
+	B3D_ASSERT(mOwnerThread == ThreadId() && "FrameAllocator accessed from different thread than owner");
+
+	bool allValid = true;
+
+	// Walk through all active blocks
+	for(u32 blockIndex = 0; blockIndex < mNextBlockIndex; ++blockIndex)
+	{
+		MemoryBlock* block = mBlocks[blockIndex];
+		u8* current = block->Data;
+		u8* end = block->Data + block->FreePointer;
+
+		// Walk through allocations in this block
+		while(current < end)
+		{
+			u32 totalSize;
+			u32 frameDepth;
+			u32 userSize;
+			ReadDebugHeader(current, totalSize, frameDepth, userSize);
+
+			if(!ValidateAllocation(current, totalSize, userSize))
+				allValid = false;
+
+			current += totalSize;
+		}
+	}
+
+	return allValid;
+}
+#endif
+
 namespace b3d
 {
 B3D_THREADLOCAL FrameAllocator* _GlobalFrameAlloc = nullptr;
@@ -461,4 +569,16 @@ B3D_EXPORT void B3DClearAllocatorFrame()
 {
 	GetFrameAllocator().Clear();
 }
+
+#if B3D_DEBUG
+B3D_EXPORT bool B3DFrameCheckMemory()
+{
+	return GetFrameAllocator().CheckMemory();
+}
+
+B3D_EXPORT void B3DFrameSetCheckFrequency(u32 frequency)
+{
+	GetFrameAllocator().SetCheckFrequency(frequency);
+}
+#endif
 } // namespace b3d
