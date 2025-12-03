@@ -8,7 +8,7 @@
 #include "Material/B3DMaterialParam.h"
 #include "RenderAPI/B3DGpuPipelineParameterLayout.h"
 #include "Renderer/B3DRendererMaterial.h"
-#include "Utility/B3DRenderableUniformBufferManager.h"
+#include "B3DRendererObject.h"
 
 namespace b3d
 {
@@ -93,18 +93,20 @@ namespace b3d
 		};
 
 		/** Contains information about a Decal, used by the Renderer. */
-		struct RendererDecal
+		struct RendererDecal : RendererObject
 		{
 			RendererDecal();
 
-			/** Updates the per-object GPU buffer according to the currently set properties. */
-			void UpdatePerObjectBuffer();
+			/** Updates the DecalParamBuffer with decal-specific properties. */
+			void UpdateDecalParamBuffer();
+
+			/** Updates the per-object data from the current Decal state. */
+			void UpdatePerObjectData();
 
 			Decal* Decal;
 			mutable DecalRenderElement RenderElement;
 
 			SPtr<GpuBuffer> DecalParamBuffer;
-			RenderableUniformBufferManager::RenderableAllocation BufferAllocation;
 		};
 
 		/** @} */

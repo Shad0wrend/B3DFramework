@@ -21,30 +21,19 @@ RendererDecal::RendererDecal()
 	DecalParamBuffer = gDecalParamDef.CreateBuffer();
 }
 
-void RendererDecal::UpdatePerObjectBuffer()
+void RendererDecal::UpdateDecalParamBuffer()
 {
+	const Transform& tfrm = Decal->GetWorldTransform();
+
 	const Vector2 size = Decal->GetWorldSize();
 	const Vector2 extent = size * 0.5f;
 	const float maxDistance = Decal->GetWorldMaxDistance();
 
-	const Vector3 scale(extent.X, extent.Y, maxDistance * 0.5f);
-	const Vector3 offset(0.0f, 0.0f, -maxDistance * 0.5f);
-
-	const Matrix4 scaleAndOffset = Matrix4::TRS(offset, Quaternion::kIdentity, scale);
-
-	const Matrix4 worldTransform = Decal->GetWorldTransformMatrix() * scaleAndOffset;
-	const Matrix4 worldNoScaleTransform = Decal->GetWorldTransformMatrixWithoutScale() * scaleAndOffset;
-
-	// Note: Not providing the previous frame matrix here
-	PerObjectBuffer::Update(BufferAllocation.PerObjectSuballocation, worldTransform, worldNoScaleTransform, worldTransform, 0);
-
-	const Transform& tfrm = Decal->GetWorldTransform();
-
 	const Matrix4 view = Matrix4::View(tfrm.GetPosition(), tfrm.GetRotation());
-	const Matrix4 proj = Matrix4::ProjectionOrthographic(-extent.X, extent.X, -extent.Y, extent.Y, 0.0f, Decal->GetWorldMaxDistance());
+	const Matrix4 proj = Matrix4::ProjectionOrthographic(-extent.X, extent.X, -extent.Y, extent.Y, 0.0f, maxDistance);
 
 	const Matrix4 worldToDecal = proj * view;
-	const Vector3 decalNormal = -Decal->GetWorldTransform().GetRotation().ZAxis();
+	const Vector3 decalNormal = -tfrm.GetRotation().ZAxis();
 	const float normalTolerance = -0.05f;
 
 	float flipDerivatives = 1.0f;
@@ -60,4 +49,21 @@ void RendererDecal::UpdatePerObjectBuffer()
 	gDecalParamDef.gFlipDerivatives.Set(DecalParamBuffer, flipDerivatives);
 	gDecalParamDef.gLayerMask.Set(DecalParamBuffer, (i32)Decal->GetLayerMask());
 }
+
+void RendererDecal::UpdatePerObjectData()
+{
+	const Vector2 size = Decal->GetWorldSize();
+	const Vector2 extent = size * 0.5f;
+	const float maxDistance = Decal->GetWorldMaxDistance();
+
+	const Vector3 scale(extent.X, extent.Y, maxDistance * 0.5f);
+	const Vector3 offset(0.0f, 0.0f, -maxDistance * 0.5f);
+	const Matrix4 scaleAndOffset = Matrix4::TRS(offset, Quaternion::kIdentity, scale);
+
+	WorldTransform = Decal->GetWorldTransformMatrix() * scaleAndOffset;
+	WorldNoScale = Decal->GetWorldTransformMatrixWithoutScale() * scaleAndOffset;
+	PrevWorldTransform = WorldTransform; // Decals don't track previous frame
+	Layer = 0;
+}
+
 }} // namespace b3d::render

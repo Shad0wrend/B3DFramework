@@ -118,7 +118,7 @@ namespace b3d
 				if(this != &other)
 				{
 					Cache = std::move(other.Cache);
-					EntryPath = std::exchange(other.EntryPath, nullptr);
+					EntryPath = std::exchange(other.EntryPath, Path::kBlank);
 					Type = other.Type;
 				}
 

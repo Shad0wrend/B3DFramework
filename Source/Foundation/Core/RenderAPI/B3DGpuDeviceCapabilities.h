@@ -178,6 +178,12 @@ namespace b3d
 		/** Minimum alignment required for uniform buffers that are sub-allocated within a larger buffer. */
 		u32 MinimumUniformBufferOffsetAlignment = 16;
 
+		/** Optimal alignment for offsets used in buffers for copy source or destination operations, when copying from a buffer to another buffer. */
+		u32 OptimalBufferToBufferCopyOffsetAlignment = 16;
+
+		/** Optimal alignment for offsets used in buffers for copy source or destination operations, when copying from a buffer to an image, or vice versa. */
+		u32 OptimalBufferToImageCopyOffsetAlignment = 16;
+
 		/** Horizontal texel offset used for mapping texels to pixels. */
 		float HorizontalTexelOffset = 0.0f;
 

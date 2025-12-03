@@ -216,10 +216,7 @@ u32 GpuBuffer::CalculateSuballocatedBufferSize(const GpuBufferInformation& infor
 	const u32 unalignedBufferSize = CalculateUnalignedGpuBufferSize(information);
 
 	if(information.SuballocationCount > 1 && gpuDevice)
-	{
-		B3D_ENSURE(information.Type == GpuBufferType::Uniform); // Currently only supported for uniform buffers
-		return Math::CeilToMultiple(unalignedBufferSize, gpuDevice->GetCapabilities().MinimumUniformBufferOffsetAlignment);
-	}
+		return CalculateSuballocatedBufferSize(information, *gpuDevice);
 	
 	return unalignedBufferSize;
 }
@@ -230,8 +227,12 @@ u32 GpuBuffer::CalculateSuballocatedBufferSize(const GpuBufferInformation& infor
 
 	if(information.SuballocationCount > 1)
 	{
-		B3D_ENSURE(information.Type == GpuBufferType::Uniform); // Currently only supported for uniform buffers
-		return Math::CeilToMultiple(unalignedBufferSize, gpuDevice.GetCapabilities().MinimumUniformBufferOffsetAlignment);
+		if(information.Type == GpuBufferType::Uniform)
+			return Math::CeilToMultiple(unalignedBufferSize, gpuDevice.GetCapabilities().MinimumUniformBufferOffsetAlignment);
+		else if(information.Type == GpuBufferType::StagingWrite || information.Type == GpuBufferType::StagingRead)
+			return Math::CeilToMultiple(unalignedBufferSize, gpuDevice.GetCapabilities().OptimalBufferToBufferCopyOffsetAlignment); // Note: Note handling buffers used for image copies here, presumably we don't suballocate those
+		else
+			B3D_ENSURE(false);
 	}
 	
 	return unalignedBufferSize;

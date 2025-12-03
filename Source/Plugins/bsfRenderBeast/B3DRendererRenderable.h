@@ -9,7 +9,7 @@
 #include "Material/B3DMaterialParam.h"
 #include "RenderAPI/B3DGpuPipelineParameterLayout.h"
 #include "B3DRendererReflectionProbe.h"
-#include "Utility/B3DRenderableUniformBufferManager.h"
+#include "B3DRendererObject.h"
 
 namespace b3d
 {
@@ -30,14 +30,6 @@ namespace b3d
 		B3D_UNIFORM_BUFFER_END
 
 		extern PerObjectUniformDefinition gPerObjectUniformDefinition;
-
-		/** Helper class used for manipulating the PerObject parameter buffer. */
-		class PerObjectBuffer
-		{
-		public:
-			/** Updates the provided buffer with the data from the provided matrices. */
-			static void Update(const GpuBufferSuballocation& suballocation, const Matrix4& tfrm, const Matrix4& tfrmNoScale, const Matrix4& prevTfrm, u32 layer);
-		};
 
 		struct MaterialSamplerOverrides;
 
@@ -91,19 +83,13 @@ namespace b3d
 		};
 
 		/** Contains information about a Renderable, used by the Renderer. */
-		struct RendererRenderable
+		struct RendererRenderable : RendererObject
 		{
-			/** Updates the per-object GPU buffer according to the currently set properties. */
-			void UpdatePerObjectBuffer();
-
-			Matrix4 WorldTfrm = Matrix4::kIdentity;
-			Matrix4 PrevWorldTfrm = Matrix4::kIdentity;
-			PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
+			/** Updates the per-object data from the current Renderable state. */
+			void UpdatePerObjectData();
 
 			Renderable* Renderable = nullptr;
 			Vector<RenderableElement> Elements;
-
-			RenderableUniformBufferManager::RenderableAllocation BufferAllocation;
 		};
 
 		/** @} */

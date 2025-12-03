@@ -10,7 +10,7 @@
 #include "Allocators/B3DPoolAlloc.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "Utility/B3DTextureRowAllocator.h"
-#include "Utility/B3DRenderableUniformBufferManager.h"
+#include "B3DRendererObject.h"
 #include "B3DRendererLight.h"
 #include "B3DRendererReflectionProbe.h"
 #include "Shading/B3DGpuParticleSimulation.h"
@@ -205,22 +205,13 @@ namespace b3d
 		};
 
 		/** Contains information about a ParticleSystem, used by the Renderer. */
-		struct RendererParticles
+		struct RendererParticles : RendererObject
 		{
 			/** Owner particle system. */
 			ParticleSystem* ParticleSystem = nullptr;
 
 			/** Variant of the particle system used for simulating the particles on the GPU. */
 			GpuParticleSystem* GpuParticleSystem = nullptr;
-
-			/** Matrix that transforms the particle system to world space. */
-			Matrix4 LocalToWorld = Matrix4::kIdentity;
-
-			/** Previous frame's local -> world transform matrix. */
-			Matrix4 PrevLocalToWorld = Matrix4::kIdentity;
-
-			/** Determines if the previous frame properties require updating. */
-			PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 
 			/** Element used for sorting and rendering the particle system. */
 			mutable ParticlesRenderElement RenderElement;
@@ -231,31 +222,28 @@ namespace b3d
 			/** Extra parameters required by the particle rendering shader if the particle system is GPU simulated. */
 			SPtr<GpuBuffer> GpuParticlesParamBuffer;
 
-			/** Allocation for the per-object buffer from the uniform buffer manager. */
-			RenderableUniformBufferManager::RenderableAllocation BufferAllocation;
-
 			/** Information about the color over lifetime curve stored in the global curve texture. */
 			TextureRowAllocation ColorCurveAlloc;
 
 			/** Information about the size over lifetime / frame index curve stored in the global curve texture. */
 			TextureRowAllocation SizeScaleFrameIdxCurveAlloc;
 
-			/** Updates the per-object GPU buffer according to the currently set properties. */
-			void UpdatePerObjectBuffer();
+			/** Updates the per-object data from the current ParticleSystem state. */
+			void UpdatePerObjectData();
 
 			/**
 			 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the CPU.
 			 *
-			 * @param[in]	renderData		Render data representing the state of a CPU simulated particle system.
-			 * @param[in]	view			View the particle system is being rendered from.
+			 * @param renderData	Render data representing the state of a CPU simulated particle system.
+			 * @param view			View the particle system is being rendered from.
 			 */
 			void BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const;
 
 			/**
 			 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the GPU.
 			 *
-			 * @param[in]	gpuSimResources	Resources containing global data for all GPU simulated particle systems.
-			 * @param[in]	view			View the particle system is being rendered from.
+			 * @param gpuSimResources	Resources containing global data for all GPU simulated particle systems.
+			 * @param view				View the particle system is being rendered from.
 			 */
 			void BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const;
 		};

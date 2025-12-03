@@ -1,8 +1,10 @@
 //************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DRenderableUniformBufferManager.h"
+#include "B3DRendererObject.h"
 #include "B3DRendererRenderable.h"
 #include "B3DRendererDecal.h"
+#include "RenderAPI/B3DGpuDevice.h"
 
 using namespace b3d;
 using namespace b3d::render;
@@ -20,6 +22,13 @@ void RenderableUniformBufferManager::Initialize(GpuDevice& device)
 	GpuBufferCreateInformation decalCreateInfo = GpuBufferCreateInformation::CreateUniform(decalSize, GpuBufferFlag::StoreOnGPU);
 
 	mDecalPool.Initialize(device, decalCreateInfo, kDecalEntriesPerBuffer, 1);
+
+	GpuBufferCreateInformation stagingCreateInfo;
+	stagingCreateInfo.Type = GpuBufferType::StagingWrite;
+	stagingCreateInfo.Staging.Size = perObjectSize;
+	stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU; // TODO - Only while GpuUniformBuffer doesn't support non-cached writes
+
+	mStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
 }
 
 RenderableUniformBufferManager::RenderableAllocation RenderableUniformBufferManager::AllocateForRenderable(const SPtr<GpuPipelineParameterLayout>& layout)
@@ -116,4 +125,30 @@ void RenderableUniformBufferManager::ReleaseParameterSet(const SPtr<GpuBuffer>& 
 	iter->second.RefCount--;
 	if(iter->second.RefCount == 0)
 		mParameterSetsByBuffer.erase(iter);
+}
+
+void RenderableUniformBufferManager::UpdatePerObjectBuffer(const RendererObject& object, const SPtr<GpuCommandBuffer>& commandBuffer)
+{
+	if(!object.BufferAllocation.PerObjectSuballocation.IsValid())
+		return;
+
+	GpuBufferSuballocation staging = mStagingPool.Allocate();
+
+	gPerObjectUniformDefinition.gMatWorld.Set(staging, object.WorldTransform);
+	gPerObjectUniformDefinition.gMatInvWorld.Set(staging, object.WorldTransform.InverseAffine());
+	gPerObjectUniformDefinition.gMatWorldNoScale.Set(staging, object.WorldNoScale);
+	gPerObjectUniformDefinition.gMatInvWorldNoScale.Set(staging, object.WorldNoScale.InverseAffine());
+	gPerObjectUniformDefinition.gMatPrevWorld.Set(staging, object.PrevWorldTransform);
+	gPerObjectUniformDefinition.gWorldDeterminantSign.Set(staging, object.WorldTransform.Determinant3x3() >= 0.0f ? 1.0f : -1.0f);
+	gPerObjectUniformDefinition.gLayer.Set(staging, (i32)object.Layer);
+
+	const SPtr<GpuCommandBuffer>& actualCommandBuffer = commandBuffer ? commandBuffer : mDevice->GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
+
+	const GpuBufferSuballocation& destination = object.BufferAllocation.PerObjectSuballocation;
+	actualCommandBuffer->CopyBufferToBuffer(staging.GetBuffer(), destination.GetBuffer(), staging.GetSuballocationOffset(), destination.GetSuballocationOffset(), staging.GetSize());
+}
+
+void RenderableUniformBufferManager::AdvanceFrame()
+{
+	mStagingPool.AdvanceFrame();
 }

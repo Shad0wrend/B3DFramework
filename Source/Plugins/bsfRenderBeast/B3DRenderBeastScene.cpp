@@ -20,6 +20,7 @@
 #include "Components/B3DDecal.h"
 #include "Renderer/B3DIBLUtility.h"
 #include "Renderer/B3DRendererUtility.h"
+#include "Utility/B3DBitwise.h"
 
 namespace b3d { namespace render {
 
@@ -360,8 +361,8 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 	RendererRenderable* rendererRenderable = mInfo.Renderables.back();
 	rendererRenderable->Renderable = renderable;
-	rendererRenderable->WorldTfrm = renderable->GetWorldTransformMatrix();
-	rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
+	rendererRenderable->WorldTransform = renderable->GetWorldTransformMatrix();
+	rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 
 	SPtr<Mesh> mesh = renderable->GetMesh();
@@ -448,7 +449,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 		rendererRenderable->BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layout);
 	}
 
-	rendererRenderable->UpdatePerObjectBuffer();
+	mRenderableUniformBufferManager.UpdatePerObjectBuffer(*rendererRenderable);
 
 	// Prepare all parameter bindings
 	for(auto& element : rendererRenderable->Elements)
@@ -460,8 +461,10 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			continue;
 		}
 
-		// Store shared parameter set pointer for render-time binding
+		// Store shared parameter set and dynamic offset info for render-time binding
 		element.SharedPerObjectParameterSet = rendererRenderable->BufferAllocation.SharedParameterSet;
+		element.PerObjectDynamicOffsetIndex = rendererRenderable->BufferAllocation.PerObjectDynamicOffsetIndex;
+		element.PerObjectBufferOffset = rendererRenderable->BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
 
 		SPtr<GpuParameterSet> gpuParameterSet = element.ParameterAdapter->GetGpuParameterSet();
 
@@ -497,12 +500,13 @@ void RenderBeastScene::UpdateRenderable(Renderable* renderable)
 	RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
 
 	if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Updated)
-		rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
+		rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
 
-	rendererRenderable->WorldTfrm = renderable->GetWorldTransformMatrix();
+	rendererRenderable->WorldTransform = renderable->GetWorldTransformMatrix();
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
-	mInfo.Renderables[renderableId]->UpdatePerObjectBuffer();
+	mRenderableUniformBufferManager.UpdatePerObjectBuffer(*rendererRenderable);
+
 	mInfo.RenderableCullInfos[renderableId].Bounds = renderable->GetBounds();
 	mInfo.RenderableCullInfos[renderableId].CullDistanceFactor = renderable->GetCullDistanceFactor();
 }
@@ -755,7 +759,7 @@ void RenderBeastScene::RegisterParticleSystem(ParticleSystem* particleSystem)
 
 	UpdateParticleSystem(particleSystem, false);
 
-	rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+	rendererParticles.PrevWorldTransform = rendererParticles.WorldTransform;
 	rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 }
 
@@ -764,21 +768,21 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	const u32 rendererId = particleSystem->GetRendererId();
 	RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
 
-	rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+	rendererParticles.PrevWorldTransform = rendererParticles.WorldTransform;
 	rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
 	const ParticleSystemSettings& settings = particleSystem->GetSettings();
 	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
 	{
 		const Transform& tfrm = particleSystem->GetWorldTransform();
-		rendererParticles.LocalToWorld = tfrm.GetMatrix();
+		rendererParticles.WorldTransform = tfrm.GetMatrix();
 	}
 	else
-		rendererParticles.LocalToWorld = Matrix4::kIdentity;
+		rendererParticles.WorldTransform = Matrix4::kIdentity;
 
 	if(tfrmOnly)
 	{
-		rendererParticles.UpdatePerObjectBuffer();
+		mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererParticles);
 		return;
 	}
 
@@ -896,11 +900,13 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	SPtr<GpuPipelineParameterLayout> layout = gpuParams->GetPipelineParameterLayout();
 	rendererParticles.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layout);
 
-	// Store shared parameter set pointer for render-time binding
+	// Store shared parameter set and dynamic offset info for render-time binding
 	renElement.SharedPerObjectParameterSet = rendererParticles.BufferAllocation.SharedParameterSet;
+	renElement.PerObjectDynamicOffsetIndex = rendererParticles.BufferAllocation.PerObjectDynamicOffsetIndex;
+	renElement.PerObjectBufferOffset = rendererParticles.BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
 
 	// Now update the per-object buffer (allocation is ready)
-	rendererParticles.UpdatePerObjectBuffer();
+	mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererParticles);
 
 	if(gpu)
 	{
@@ -1135,11 +1141,14 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	SPtr<GpuPipelineParameterLayout> layout = gpuParams->GetPipelineParameterLayout();
 	rendererDecal.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layout);
 
-	// Store shared parameter set pointer for render-time binding
+	// Store shared parameter set and dynamic offset info for render-time binding
 	renElement.SharedPerObjectParameterSet = rendererDecal.BufferAllocation.SharedParameterSet;
+	renElement.PerObjectDynamicOffsetIndex = rendererDecal.BufferAllocation.PerObjectDynamicOffsetIndex;
+	renElement.PerObjectBufferOffset = rendererDecal.BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
 
 	// Now update the per-object buffer (allocation is ready)
-	rendererDecal.UpdatePerObjectBuffer();
+	rendererDecal.UpdateDecalParamBuffer();
+	mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererDecal);
 
 	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
@@ -1158,8 +1167,11 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 void RenderBeastScene::UpdateDecal(Decal* decal)
 {
 	const u32 rendererId = decal->GetRendererId();
+	RendererDecal& rendererDecal = mInfo.Decals[rendererId];
 
-	mInfo.Decals[rendererId].UpdatePerObjectBuffer();
+	rendererDecal.UpdateDecalParamBuffer();
+	mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererDecal);
+
 	mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
 }
 
@@ -1458,9 +1470,10 @@ void RenderBeastScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
 			rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
 		else if(rendererRenderable->PrevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
 		{
-			rendererRenderable->PrevWorldTfrm = mInfo.Renderables[idx]->WorldTfrm;
+			rendererRenderable->PrevWorldTransform = mInfo.Renderables[idx]->WorldTransform;
 			rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
-			rendererRenderable->UpdatePerObjectBuffer();
+
+			mRenderableUniformBufferManager.UpdatePerObjectBuffer(*rendererRenderable);
 		}
 	}
 }
@@ -1515,9 +1528,10 @@ void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo
 			rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
 		else if(rendererParticles.PrevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
 		{
-			rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+			rendererParticles.PrevWorldTransform = rendererParticles.WorldTransform;
 			rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
-			rendererParticles.UpdatePerObjectBuffer();
+
+			mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererParticles);
 		}
 	}
 
@@ -1550,7 +1564,7 @@ void RenderBeastScene::UpdateParticleSystemBounds(const EvaluatedParticleData* p
 
 		const ParticleSystemSettings& settings = entry.ParticleSystem->GetSettings();
 		if(settings.SimulationSpace == ParticleSimulationSpace::Local)
-			worldAABox.TransformAffine(entry.LocalToWorld);
+			worldAABox.TransformAffine(entry.WorldTransform);
 
 		const Sphere worldSphere(worldAABox.GetCenter(), worldAABox.GetRadius());
 		mInfo.ParticleSystemCullInfos[rendererId].Bounds = Bounds(worldAABox, worldSphere);

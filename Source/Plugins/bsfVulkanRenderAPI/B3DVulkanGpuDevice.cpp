@@ -982,6 +982,8 @@ void VulkanGpuDevice::InitializeCapabilities()
 
 	mCapabilities.NumCombinedLoadStoreTextureUnits = mCapabilities.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] + mCapabilities.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
 	mCapabilities.MinimumUniformBufferOffsetAlignment = (u32)deviceLimits.minUniformBufferOffsetAlignment;
+	mCapabilities.OptimalBufferToBufferCopyOffsetAlignment = (u32)deviceLimits.optimalBufferCopyOffsetAlignment;
+	mCapabilities.OptimalBufferToImageCopyOffsetAlignment = (u32)deviceLimits.optimalBufferCopyRowPitchAlignment;
 
 	mCapabilities.AddShaderProfile("glsl");
 }

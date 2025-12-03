@@ -11,6 +11,7 @@
 #include "B3DRendererView.h"
 #include "Mesh/B3DMeshUtility.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "Utility/B3DBitwise.h"
 
 namespace b3d {
 namespace render {
@@ -104,22 +105,6 @@ void ParticlesRenderElement::Draw(GpuCommandBuffer& commandBuffer) const
 		else
 			ParticleRenderer::Instance().DrawBillboards(commandBuffer, NumParticles);
 	}
-}
-
-void RendererParticles::UpdatePerObjectBuffer()
-{
-	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
-	const u32 layer = Bitwise::MostSignificantBit(ParticleSystem->GetLayer());
-	Matrix4 localToWorldNoScale;
-	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
-	{
-		const Transform& tfrm = ParticleSystem->GetWorldTransform();
-		localToWorldNoScale = Matrix4::TRS(tfrm.GetPosition(), tfrm.GetRotation(), Vector3::kOne);
-	}
-	else
-		localToWorldNoScale = Matrix4::kIdentity;
-
-	PerObjectBuffer::Update(BufferAllocation.PerObjectSuballocation, LocalToWorld, localToWorldNoScale, PrevLocalToWorld, layer);
 }
 
 void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const
@@ -484,4 +469,23 @@ void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& 
 	}
 	B3DClearAllocatorFrame();
 }
+
+void RendererParticles::UpdatePerObjectData()
+{
+	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
+	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
+	{
+		const Transform& tfrm = ParticleSystem->GetWorldTransform();
+		WorldTransform = tfrm.GetMatrix();
+		WorldNoScale = Matrix4::TRS(tfrm.GetPosition(), tfrm.GetRotation(), Vector3::kOne);
+	}
+	else
+	{
+		WorldTransform = Matrix4::kIdentity;
+		WorldNoScale = Matrix4::kIdentity;
+	}
+
+	Layer = Bitwise::MostSignificantBit(ParticleSystem->GetLayer());
+}
+
 }} // namespace b3d::render

@@ -533,7 +533,7 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 		const Vector3 scale = vfDesc.Bounds.GetSize() * simSettings.VectorField.Scale;
 
 		Matrix4 fieldToWorld = Matrix4::TRS(offset, rotation, scale);
-		fieldToWorld = rendererInfo.LocalToWorld * fieldToWorld;
+		fieldToWorld = rendererInfo.WorldTransform * fieldToWorld;
 
 		const Matrix3 fieldToWorld3x3 = fieldToWorld.Get3x3();
 

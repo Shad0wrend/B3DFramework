@@ -8,6 +8,8 @@
 
 namespace b3d::render
 {
+	struct RendererObject;
+
 	/** @addtogroup RenderBeast
 	 *  @{
 	 */
@@ -73,9 +75,23 @@ namespace b3d::render
 		 */
 		void Release(const DecalAllocation& allocation);
 
+		/**
+		 * Updates per-object buffer using transform data stored in a renderer object.
+		 *
+		 * @param object		Renderer object whose per-object buffer should be updated.
+		 * @param commandBuffer	Command buffer to queue the copy on. If null, uses the transfer command buffer.
+		 */
+		void UpdatePerObjectBuffer(const RendererObject& object, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+
+		/**
+		 * Advances the staging pool frame counter. Call at end of each render frame.
+		 */
+		void AdvanceFrame();
+
 	private:
 		static constexpr u32 kRenderableEntriesPerBuffer = 1024;
 		static constexpr u32 kDecalEntriesPerBuffer = 256;
+		static constexpr u32 kStagingEntriesPerBuffer = 256;
 
 		/** Composite key for parameter set lookup: (PerObjectBuffer, DecalBuffer or nullptr). */
 		using BufferKey = std::pair<GpuBuffer*, GpuBuffer*>;
@@ -120,6 +136,7 @@ namespace b3d::render
 
 		GpuBufferPool mRenderablePool;
 		GpuBufferPool mDecalPool;
+		TransientGpuBufferPool mStagingPool;
 		UnorderedMap<BufferKey, BufferParameterSetEntry, BufferKeyHash> mParameterSetsByBuffer;
 		GpuDevice* mDevice = nullptr;
 	};

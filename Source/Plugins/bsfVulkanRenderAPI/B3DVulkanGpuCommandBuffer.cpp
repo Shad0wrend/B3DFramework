@@ -571,7 +571,7 @@ void VulkanGpuCommandBuffer::SetGpuParameterSet(const SPtr<GpuParameterSet>& par
 		const u32 slot = uniformLayout->GetSlot(GpuParameterType::UniformBuffer, set, uniformBufferIndex);
 		SPtr<GpuBuffer> buffer = parameterSet->GetUniformBuffer(slot);
 
-		if (buffer != nullptr)
+		if (buffer != nullptr && buffer->GetInformation().Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
 			buffer->FlushCache();
 	}
 

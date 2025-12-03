@@ -250,6 +250,8 @@ void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameDat
 			FrameInfo frameInfo(timings, false, PerSceneFrameData());
 			RenderScene(*entry, frameInfo);
 		}
+
+		entry->GetRenderableUniformBufferManager().AdvanceFrame();
 	}
 
 	mDevice->EndFrame();

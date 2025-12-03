@@ -46,12 +46,13 @@ void TransientGpuBufferPool::Initialize(GpuDevice& device, const GpuBufferCreate
 {
 	mDevice = &device;
 	mBufferCreateInformation = createInfo;
+	mBufferCreateInformation.SuballocationCount = suballocationsPerBuffer;
 	mSuballocationsPerBuffer = suballocationsPerBuffer;
 
 	B3D_ASSERT(suballocationsPerBuffer > 0 && "Suballocations per buffer must be greater than 0");
 
 	// Calculate aligned suballocation size
-	mSuballocationSize = b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInfo, device);
+	mSuballocationSize = b3d::GpuBuffer::CalculateSuballocatedBufferSize(mBufferCreateInformation, device);
 
 	for (u32 bufferIndex = 0; bufferIndex < initialBufferCount; bufferIndex++)
 		AddNewBufferToPool();
@@ -107,10 +108,7 @@ void TransientGpuBufferPool::AddNewBufferToPool()
 	B3D_ASSERT(mDevice != nullptr && "GpuBufferPool not initialized");
 
 	// Create new GpuBuffer with suballocations
-	GpuBufferCreateInformation bufferCreateInformation = mBufferCreateInformation;
-	bufferCreateInformation.SuballocationCount = mSuballocationsPerBuffer;
-
-	SPtr<GpuBuffer> newBuffer = mDevice->CreateGpuBuffer(bufferCreateInformation);
+	SPtr<GpuBuffer> newBuffer = mDevice->CreateGpuBuffer(mBufferCreateInformation);
 	mBuffers.Add(newBuffer);
 
 	// Get the actual aligned stride
