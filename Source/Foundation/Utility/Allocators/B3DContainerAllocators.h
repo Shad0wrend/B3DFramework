@@ -119,23 +119,37 @@ namespace b3d
 
 				if(!other.HasDynamicAllocations())
 				{
-					// Use assignment copy if we have more elements than the other array, and destroy any excess elements
+					// First, clean up our heap allocation
+					if(HasDynamicAllocations())
+					{
+						// Destroy elements in our heap allocation
+						for(u64 index = 0; index < mySize; ++index)
+							mElements[index].~ElementType();
+
+						mSecondaryAllocator.Resize(mySize, 0);
+						mySize = 0;
+					}
+
+					// Use assignment move if we have more elements than the other array, and destroy any excess elements
+					ElementType* stackElements = (ElementType*)mStackStorage;
 					if(mySize > otherSize)
 					{
-						ElementType* newEnd = otherSize > 0 ? std::move(other.GetElements(), other.GetElements() + otherSize, GetElements()) : GetElements();
+						ElementType* newEnd = otherSize > 0 ? std::move(other.GetElements(), other.GetElements() + otherSize, stackElements) : stackElements;
 
-						for(; newEnd != GetElements() + mySize; ++newEnd)
+						for(; newEnd != stackElements + mySize; ++newEnd)
 							(*newEnd).~ElementType();
 					}
 					else
 					{
+						// Assignment move existing elements
 						if(mySize > 0)
-							std::move(other.GetElements(), other.GetElements() + mySize, GetElements());
+							std::move(other.GetElements(), other.GetElements() + mySize, stackElements);
 
+						// Construct new elements
 						std::uninitialized_move(
 							other.GetElements() + mySize,
 							other.GetElements() + otherSize,
-							GetElements() + mySize);
+							stackElements + mySize);
 					}
 
 					mElements = (ElementType*)mStackStorage;
