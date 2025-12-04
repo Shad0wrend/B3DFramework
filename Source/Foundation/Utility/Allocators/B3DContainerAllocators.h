@@ -156,6 +156,18 @@ namespace b3d
 				}
 				else
 				{
+					// Source uses heap storage - take ownership of their allocation
+
+					// First, destroy our existing elements if they're in stack storage
+					// (mSecondaryAllocator.Move handles the case when we have dynamic allocations)
+					if(!HasDynamicAllocations())
+					{
+						for(u64 index = 0; index < mySize; ++index)
+							((ElementType*)mStackStorage)[index].~ElementType();
+
+						mySize = 0;
+					}
+
 					mSecondaryAllocator.Move(mySize, otherSize, std::move(other.mSecondaryAllocator));
 					mElements = std::exchange(other.mElements, nullptr);
 				}

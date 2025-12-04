@@ -304,7 +304,7 @@ namespace b3d::render
 		mIsCacheDirty = true;
 	}
 
-	void GpuBuffer::FlushCache()
+	void GpuBuffer::FlushCache(u32 suballocationIndex)
 	{
 		if(!B3D_ENSURE(mCache != nullptr))
 			return;
@@ -312,8 +312,20 @@ namespace b3d::render
 		if(!mIsCacheDirty)
 			return;
 
+		u32 offset = 0;
+		u32 length = mTotalSize;
+
+		if(suballocationIndex != ~0u)
+		{
+			if(!B3D_ENSURE(suballocationIndex < mInformation.SuballocationCount))
+				return;
+
+			offset = suballocationIndex * mSuballocationSize;
+			length = mSuballocationSize;
+		}
+
 		// TODO - This should write to CPU cached buffer directly via map/unmap. But we need a ring buffer to handle usage over multiple frames
-		GpuBufferUtility::Write(std::static_pointer_cast<GpuBuffer>(GetShared()), 0, mTotalSize, mCache);
+		GpuBufferUtility::Write(std::static_pointer_cast<GpuBuffer>(GetShared()), offset, length, mCache + offset);
 
 		mIsCacheDirty = false;
 	}

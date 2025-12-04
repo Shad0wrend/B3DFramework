@@ -403,8 +403,13 @@ namespace b3d::render
 		 */
 		void ReadCached(u32 offset, u32 length, void* destination);
 
-		/** Flushes the cached to the underlying buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. */
-		virtual void FlushCache();
+		/**
+		 * Flushes the cache to the underlying buffer. Buffer must have been created with AllowWriteCachingOnCPU flag.
+		 *
+		 * @param suballocationIndex	Optional suballocation index to flush. If ~0u (default), the entire buffer is flushed.
+		 *								Otherwise only the specified suballocation is flushed.
+		 */
+		virtual void FlushCache(u32 suballocationIndex = ~0u);
 
 		/** Returns the total size of this buffer in bytes. */
 		u32 GetTotalSize() const { return mTotalSize; }

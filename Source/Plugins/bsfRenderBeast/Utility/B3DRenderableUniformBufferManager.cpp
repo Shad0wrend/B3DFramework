@@ -4,6 +4,7 @@
 #include "B3DRendererObject.h"
 #include "B3DRendererRenderable.h"
 #include "B3DRendererDecal.h"
+#include "RenderAPI/B3DGpuBackend.h"
 #include "RenderAPI/B3DGpuDevice.h"
 
 using namespace b3d;
@@ -141,6 +142,8 @@ void RenderableUniformBufferManager::UpdatePerObjectBuffer(const RendererObject&
 	gPerObjectUniformDefinition.gMatPrevWorld.Set(staging, object.PrevWorldTransform);
 	gPerObjectUniformDefinition.gWorldDeterminantSign.Set(staging, object.WorldTransform.Determinant3x3() >= 0.0f ? 1.0f : -1.0f);
 	gPerObjectUniformDefinition.gLayer.Set(staging, (i32)object.Layer);
+
+	staging.GetBuffer()->FlushCache(staging.GetSuballocationIndex());
 
 	const SPtr<GpuCommandBuffer>& actualCommandBuffer = commandBuffer ? commandBuffer : mDevice->GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
 
