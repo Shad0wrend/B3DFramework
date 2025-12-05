@@ -1425,12 +1425,12 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 					for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 					{
 						const SPtr<GpuParameterSet>& parameterSet = renderableElement.ParameterAdapter->GetGpuParameterSet(passIndex, setIndex);
-						const SPtr<GpuPipelineParameterLayout>& uniformLayout = parameterSet->GetPipelineParameterLayout();
+						const SPtr<GpuPipelineParameterLayoutSet>& uniformLayoutSet = parameterSet->GetPipelineParameterLayoutSet();
 
-						const u32 samplerCount = uniformLayout->GetBindingCount(setIndex, GpuParameterType::Sampler);
+						const u32 samplerCount = uniformLayoutSet->GetBindingCount(GpuParameterType::Sampler);
 						for(u32 samplerIndex = 0; samplerIndex < samplerCount; ++samplerIndex)
 						{
-							const u32 slot = uniformLayout->GetSlot(GpuParameterType::Sampler, setIndex, samplerIndex);
+							const u32 slot = uniformLayoutSet->GetSlot(GpuParameterType::Sampler, samplerIndex);
 
 							const u32& overrideIndex = overrides->Passes[passIndex].StateOverrides[setIndex][slot];
 							if(overrideIndex == ~0u)

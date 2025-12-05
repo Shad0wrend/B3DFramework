@@ -602,81 +602,6 @@ void GpuPipelineParameterLayout::Initialize()
 		mSets[set].Set = CreateSet(mPerSetParameterDescriptions[set]);
 }
 
-u32 GpuPipelineParameterLayout::GetSequentialResourceIndex(u32 set, u32 slot, u32 arrayIndex) const
-{
-#if B3D_DEBUG
-	if(set >= mSets.size())
-	{
-		B3D_LOG(Error, RenderBackend, "Set index out of range: Valid range: [0, {0}). Requested: {1}.", mSets.size(), set);
-		return ~0u;
-	}
-
-	if(slot >= mSets[set].Uniforms.size() || mSets[set].Uniforms[slot] == nullptr)
-	{
-		B3D_LOG(Error, RenderBackend, "Slot index doesn't exist in the set. Requested: {1}.", slot);
-		return ~0u;
-	}
-#endif
-
-	const UniformInformation& uniformInformation = *mSets[set].Uniforms[slot];
-
-#if B3D_DEBUG
-	if(arrayIndex >= uniformInformation.ArraySize)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot retrieve sequential resource index. Array index out of range: Valid range: [0, {0}). Requested: {1}.", uniformInformation.ArraySize, arrayIndex);
-		return -1;
-	}
-#endif
-
-	return uniformInformation.SequentialResourceIndex != ~0u ? uniformInformation.SequentialResourceIndex + arrayIndex : ~0u;
-}
-
-
-u32 GpuPipelineParameterLayout::GetSequentialBindingIndex(u32 set, u32 slot) const
-{
-#if B3D_DEBUG
-	if(set >= mSets.size())
-	{
-		B3D_LOG(Error, RenderBackend, "Set index out of range: Valid range: [0, {0}). Requested: {1}.", mSets.size(), set);
-		return ~0u;
-	}
-
-	if(slot >= mSets[set].Uniforms.size() || mSets[set].Uniforms[slot] == nullptr)
-	{
-		B3D_LOG(Error, RenderBackend, "Slot index doesn't exist in the set. Requested: {0}.", slot);
-		return ~0u;
-	}
-#endif
-
-	return mSets[set].Uniforms[slot]->SequentialBindingIndex;
-}
-
-u32 GpuPipelineParameterLayout::GetSlot(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const
-{
-#if B3D_DEBUG
-	if(set >= (u32)mSets.size())
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot retrieve array size. Set index out of range: Valid range: [0, {0}). Requested: {1}.", mSets.size(), set);
-		return 0;
-	}
-#endif
-
-	const SetInformation& setInformation = mSets[set];
-
-#if B3D_DEBUG
-	if(sequentialBindingIndex >= setInformation.UniformsPerType[(u32)type].size())
-	{
-		B3D_LOG(Error, RenderBackend, "Sequential slot index out of range: Valid range: [0, {0}). Requested: {1}.", setInformation.UniformsPerType[(u32)type].size(), sequentialBindingIndex);
-		return 0;
-	}
-
-	if(!B3D_ENSURE(setInformation.UniformsPerType[(u32)type][sequentialBindingIndex]))
-		return 0;
-#endif
-
-	return setInformation.UniformsPerType[(u32)type][sequentialBindingIndex]->Slot;
-}
-
 GpuParameterBinding GpuPipelineParameterLayout::GetBinding(const StringView& name) const
 {
 	GpuParameterBinding output;
@@ -688,39 +613,6 @@ GpuParameterBinding GpuPipelineParameterLayout::GetBinding(const StringView& nam
 	}
 
 	return output;
-}
-
-u32 GpuPipelineParameterLayout::GetArraySize(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const
-{
-#if B3D_DEBUG
-	if(set >= (u32)mSets.size())
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot retrieve array size. Set index out of range: Valid range: [0, {0}). Requested: {1}.", mSets.size(), set);
-		return 0;
-	}
-#endif
-
-	const SetInformation& setInformation = mSets[set];
-
-#if B3D_DEBUG
-	if(sequentialBindingIndex >= setInformation.UniformsPerType[(u32)type].size())
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot retrieve array size. Sequential binding index out of range: Valid range: [0, {0}). Requested: {1}.", setInformation.UniformsPerType[(u32)type].size(), sequentialBindingIndex);
-		return 0;
-	}
-
-	if(!B3D_ENSURE(setInformation.UniformsPerType[(u32)type][sequentialBindingIndex]))
-		return 0;
-#endif
-
-	return setInformation.UniformsPerType[(u32)type][sequentialBindingIndex]->ArraySize;
-}
-
-u32 GpuPipelineParameterLayout::GetDynamicOffsetCount(u32 set) const
-{
-	if(set >= mSets.size())
-		return 0;
-	return mSets[set].DynamicOffsetCount;
 }
 
 u32 GpuPipelineParameterLayout::GetDynamicOffsetIndex(u32 set, u32 slot, u32 arrayIndex) const
@@ -760,30 +652,6 @@ u32 GpuPipelineParameterLayout::GetDynamicOffsetIndex(const StringView& name, u3
 	return ~0u;
 }
 
-bool GpuPipelineParameterLayout::HasUniformOfType(const StringView& name, GpuParameterType type) const
-{
-	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
-		return found->second.Type == type;
-
-	return false;
-}
-
-bool GpuPipelineParameterLayout::HasUniformOfTypeAndSet(const StringView& name, GpuParameterType type, u32 set) const
-{
-	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
-		return found->second.Type == type && found->second.Set == set;
-
-	return false;
-}
-
-const UniformInformation* GpuPipelineParameterLayout::TryGetUniformInformation(const StringView& name) const
-{
-	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
-		return &found->second;
-
-	return nullptr;
-}
-
 const UniformInformation* GpuPipelineParameterLayout::TryGetUniformInformation(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const
 {
 	if(set >= (u32)mSets.size())
@@ -794,23 +662,4 @@ const UniformInformation* GpuPipelineParameterLayout::TryGetUniformInformation(G
 		return nullptr;
 
 	return setInformation.UniformsPerType[(u32)type][sequentialBindingIndex];
-}
-
-const UniformInformation* GpuPipelineParameterLayout::TryGetUniformInformation(const GpuParameterBinding& binding) const
-{
-	if(binding.Set >= (u32)mSets.size())
-		return nullptr;
-
-	if(binding.Slot >= (u32)mSets[binding.Set].Uniforms.size())
-		return nullptr;
-
-	return mSets[binding.Set].Uniforms[binding.Slot];
-}
-
-const GpuUniformBufferMemberInformation* GpuPipelineParameterLayout::TryGetUniformBufferMemberInformation(u32 set, const StringView& name) const
-{
-	if(auto found = mSets[set].UniformBufferMembers.find(name); found != mSets[set].UniformBufferMembers.end())
-		return &found->second;
-
-	return nullptr;
 }

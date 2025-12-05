@@ -91,8 +91,8 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDe
 		u32* slotsPerSetIter = slotsPerSet;
 		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 		{
-			SPtr<GpuParameterSet> paramsPtr = materialParameterAdapter->GetGpuParameterSet(passIndex);
-			const SPtr<GpuPipelineParameterLayout> uniformLayout = paramsPtr->GetPipelineParameterLayout();
+			SPtr<GpuParameterSet> parameterSet = materialParameterAdapter->GetGpuParameterSet(passIndex);
+			const SPtr<GpuPipelineParameterLayout> uniformLayout = parameterSet->GetPipelineParameterLayout();
 
 			for(u32 setIndex = 0; setIndex < numSetsPerPass[passIndex]; setIndex++)
 			{

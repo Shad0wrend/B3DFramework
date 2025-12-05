@@ -508,7 +508,9 @@ TMaterialParameterAdapter<IsRenderProxy>::TMaterialParameterAdapter(const SPtr<V
 		mGpuParametersPerPass[passIndex].Resize(setCount);
 		for(u32 setIndex = 0; setIndex < setCount; setIndex++)
 		{
-			const u32 resourceCount = parameterLayout->GetResourceCount(setIndex);
+			const SPtr<GpuPipelineParameterLayoutSet>& layoutSet = parameterLayout->GetSet(setIndex);
+
+			const u32 resourceCount = layoutSet->GetResourceCount();
 			if(resourceCount > 0)
 				mGpuParametersPerPass[passIndex][setIndex] = CreateGpuParameters<IsRenderProxy>(parameterLayout, setIndex);
 		}

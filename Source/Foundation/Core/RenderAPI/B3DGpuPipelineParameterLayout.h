@@ -175,48 +175,14 @@ namespace b3d
 		/** Returns pipeline layout for a particular set. */
 		SPtr<GpuPipelineParameterLayoutSet> GetSet(u32 set) const { return mSets[set].Set; }
 
-		/** Returns the total number of elements in a particular set. */
-		u32 GetResourceCount(u32 set) const { return mSets[set].ResourceCount; }
-
-		/** Returns the number of elements in a particular set for the specified parameter type. */
-		u32 GetResourceCount(u32 set, GpuParameterType type) const { return mSets[set].ResourceCountPerType[(u32)type]; }
-
-		/** Returns the total number of binding slots in a particular set. */
-		u32 GetBindingCount(u32 set) const { return mSets[set].BindingCount; }
-
 		/** Returns the number of binding slots in a particular set for the specified parameter type. */
 		u32 GetBindingCount(u32 set, GpuParameterType type) const { return (u32)mSets[set].UniformsPerType[(u32)type].Size(); }
-
-		/**
-		 * Converts a set/slot/array index combination into a sequential index that maps to the parameter in that parameter type's array. The sequential
-		 * index is relative to the provided set.
-		 *
-		 * If the set, slot or array index is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
-		 */
-		u32 GetSequentialResourceIndex(u32 set, u32 slot, u32 arrayIndex) const;
-
-		/**
-		 * Converts a set and slot combination into a sequential index that maps to the parameter in that parameter type's array. This is similar to
-		 * GetSequentialResourceIndex(), but does not account for array indices. The sequential index is relative to the provided set.
-		 *
-		 * If the set or slot is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
-		 */
-		u32 GetSequentialBindingIndex(u32 set, u32 slot) const;
-
-		/** Retrieves a slot from a set and sequential binding index. */
-		u32 GetSlot(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const;
 
 		/** String specific overload until we have heterogeneous lookup in UnorderedMap, to avoid re-constructing String. */
 		void GetBinding(const StringView& name, GpuParameterBinding& binding) const { binding = GetBinding(name); }
 
 		/** Finds set/slot indices of a parameter with the specified name. Set/slot indices are set to ~0u if parameter cannot be found. */
 		GpuParameterBinding GetBinding(const StringView& name) const;
-
-		/** Returns the number of entries in the array at the specified set and sequential binding index. */
-		u32 GetArraySize(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const;
-
-		/** Returns the number of dynamic offset slots in the specified set. */
-		u32 GetDynamicOffsetCount(u32 set) const;
 
 		/**
 		 * Returns an index that can be used for applying a dynamic offset for buffer lookup. The index can be provided
@@ -236,29 +202,8 @@ namespace b3d
 		 */
 		u32 GetDynamicOffsetIndex(const StringView& name, u32 arrayIndex = 0) const;
 
-		/** Returns true if the layout has a uniform with the specified name. */
-		bool HasUniform(const StringView& name) const { return mUniformMap.find(name) != mUniformMap.end(); }
-
-		/** Returns true if the layout has a uniform with the specified name and type. */
-		bool HasUniformOfType(const StringView& name, GpuParameterType type) const;
-
-		/** Returns true if the layout has a uniform with the specified name and type, in the specified set. */
-		bool HasUniformOfTypeAndSet(const StringView& name, GpuParameterType type, u32 set) const;
-
-		/** Returns information about a uniform parameter by the specified name, or null if not found. */
-		const UniformInformation* TryGetUniformInformation(const StringView& name) const;
-
 		/** Returns information about a uniform parameter by the specified type, set and sequential index, or null if not found. */
 		const UniformInformation* TryGetUniformInformation(GpuParameterType type, u32 set, u32 sequentialBindingIndex) const;
-
-		/** Returns information about a uniform parameter by the specified binding, or null if not found. */
-		const UniformInformation* TryGetUniformInformation(const GpuParameterBinding& binding) const;
-
-		/** Returns true if the layout has a uniform buffer member with the specified name, in the provided set. */
-		bool HasUniformBufferMember(u32 set, const StringView& name) const { return mSets[set].UniformBufferMembers.find(name) != mSets[set].UniformBufferMembers.end(); }
-
-		/** Returns information about a member of a uniform buffer by the specified name, or null if not found. */
-		const GpuUniformBufferMemberInformation* TryGetUniformBufferMemberInformation(u32 set, const StringView& name) const;
 
 	protected:
 		GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation);

@@ -266,6 +266,9 @@ namespace b3d
 		/** Gets the object that contains the processed information about all parameters. */
 		SPtr<GpuPipelineParameterLayout> GetPipelineParameterLayout() const { return mParameterLayout; }
 
+		/** Gets the object that contains the processed information about all parameters. */
+		SPtr<GpuPipelineParameterLayoutSet> GetPipelineParameterLayoutSet() const { return mParameterLayoutSet; }
+
 		/** Returns the set that this object is responsible binding parameters for. */
 		u32 GetSet() const { return mSet; }
 
