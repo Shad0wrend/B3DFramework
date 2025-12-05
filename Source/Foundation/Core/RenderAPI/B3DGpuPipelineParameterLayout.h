@@ -104,6 +104,9 @@ namespace b3d
 		/** Retrieves a slot from sequential binding index. */
 		u32 GetSlot(GpuParameterType type, u32 sequentialBindingIndex) const;
 
+		/** Finds slot index of a parameter with the specified name. Slot index is set to ~0u if parameter cannot be found. */
+		u32 GetSlot(const StringView& name) const;
+
 		/** Returns the number of entries in the array at the specified sequential binding index. */
 		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex) const;
 
@@ -119,8 +122,20 @@ namespace b3d
 		 */
 		u32 GetDynamicOffsetIndex(u32 slot, u32 arrayIndex = 0) const;
 
+		/** Returns true if the layout has a uniform with the specified name. */
+		bool HasUniform(const StringView& name) const { return mUniformMap.find(name) != mUniformMap.end(); }
+
+		/** Returns true if the layout has a uniform with the specified name and type. */
+		bool HasUniformOfType(const StringView& name, GpuParameterType type) const;
+
+		/** Returns information about a uniform parameter by the specified name, or null if not found. */
+		const UniformInformation* TryGetUniformInformation(const StringView& name) const;
+
 		/** Returns information about a uniform parameter by the specified type and sequential index, or null if not found. */
 		const UniformInformation* TryGetUniformInformation(GpuParameterType type, u32 sequentialBindingIndex) const;
+
+		/** Returns information about a uniform parameter by the specified slot, or null if not found. */
+		const UniformInformation* TryGetUniformInformation(u32 slot) const;
 
 		/** Returns true if the layout has a uniform buffer member with the specified name in the set. */
 		bool HasUniformBufferMember(const StringView& name) const { return mUniformBufferMembers.find(name) != mUniformBufferMembers.end(); }
@@ -156,6 +171,9 @@ namespace b3d
 
 		/** Gets the total number of sets. */
 		u32 GetSetCount() const { return (u32)mSets.Size(); }
+
+		/** Returns pipeline layout for a particular set. */
+		SPtr<GpuPipelineParameterLayoutSet> GetSet(u32 set) const { return mSets[set].Set; }
 
 		/** Returns the total number of elements in a particular set. */
 		u32 GetResourceCount(u32 set) const { return mSets[set].ResourceCount; }

@@ -253,6 +253,14 @@ u32 GpuPipelineParameterLayoutSet::GetSlot(GpuParameterType type, u32 sequential
 	return mUniformsPerType[(u32)type][sequentialBindingIndex]->Slot;
 }
 
+u32 GpuPipelineParameterLayoutSet::GetSlot(const StringView& name) const
+{
+	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
+		return found->second.Slot;
+
+	return ~0u;
+}
+
 u32 GpuPipelineParameterLayoutSet::GetArraySize(GpuParameterType type, u32 sequentialBindingIndex) const
 {
 #if B3D_DEBUG
@@ -292,12 +300,36 @@ u32 GpuPipelineParameterLayoutSet::GetDynamicOffsetIndex(u32 slot, u32 arrayInde
 	return uniformInformation.DynamicOffsetIndex + arrayIndex;
 }
 
+bool GpuPipelineParameterLayoutSet::HasUniformOfType(const StringView& name, GpuParameterType type) const
+{
+	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
+		return found->second.Type == type;
+
+	return false;
+}
+
+const UniformInformation* GpuPipelineParameterLayoutSet::TryGetUniformInformation(const StringView& name) const
+{
+	if(auto found = mUniformMap.find(name); found != mUniformMap.end())
+		return &found->second;
+
+	return nullptr;
+}
+
 const UniformInformation* GpuPipelineParameterLayoutSet::TryGetUniformInformation(GpuParameterType type, u32 sequentialBindingIndex) const
 {
 	if(sequentialBindingIndex >= mUniformsPerType[(u32)type].size())
 		return nullptr;
 
 	return mUniformsPerType[(u32)type][sequentialBindingIndex];
+}
+
+const UniformInformation* GpuPipelineParameterLayoutSet::TryGetUniformInformation(u32 slot) const
+{
+	if(slot >= (u32)mUniforms.size())
+		return nullptr;
+
+	return mUniforms[slot];
 }
 
 const GpuUniformBufferMemberInformation* GpuPipelineParameterLayoutSet::TryGetUniformBufferMemberInformation(const StringView& name) const

@@ -297,6 +297,7 @@ namespace b3d
 		GpuParametersSetBase(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex);
 
 		SPtr<GpuPipelineParameterLayout> mParameterLayout;
+		SPtr<GpuPipelineParameterLayoutSet> mParameterLayoutSet;
 		u32 mSet = 0;
 	};
 
@@ -538,22 +539,9 @@ namespace b3d
 		~GpuParameterSet() {}
 
 		/**
-		 * Creates new GpuParameterSet object that can serve for changing the GPU program parameters on the specified pipeline.
-		 *
-		 * @param	pipelineState	Pipeline state for which this object can set parameters for.
-		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
-		 * @return					New GpuParameterSet object.
-		 */
-		static SPtr<GpuParameterSet> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState, u32 setIndex = 0);
-
-		/** @copydoc GpuParameterSet::Create(const SPtr<GraphicsPipelineState>&) */
-		static SPtr<GpuParameterSet> Create(const SPtr<GpuComputePipelineState>& pipelineState, u32 setIndex = 0);
-
-		/**
-		 * Creates a new set of GPU parameters using an object describing the parameters for a pipeline.
+		 * Creates a new set of GPU parameters using an object describing the parameters.
 		 *
 		 * @param	parameterLayout	Description of GPU parameters for a specific GPU pipeline state.
-		 * @param	setIndex		Index of the parameter set that the object will be used for binding parameters for.
 		 */
 		static SPtr<GpuParameterSet> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex = 0);
 
