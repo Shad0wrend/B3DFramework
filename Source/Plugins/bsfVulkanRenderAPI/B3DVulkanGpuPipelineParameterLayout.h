@@ -14,9 +14,52 @@ namespace b3d
 		 *  @{
 		 */
 
+		/** Holds meta-data about a single GPU parameter set. */
+		class VulkanGpuPipelineParameterLayoutSet : public GpuPipelineParameterLayoutSet
+		{
+		public:
+			VulkanGpuPipelineParameterLayoutSet(VulkanGpuDevice& gpuDevice, const GpuProgramParameterDescription& parameterDescription);
+			~VulkanGpuPipelineParameterLayoutSet() = default;
+
+			/** Returns a pointer to an array of bindings for the set. */
+			TArrayView<const VkDescriptorSetLayoutBinding> GetBindings() const { return mBindings; }
+
+			/** Returns a pointer to any array of types expected by layout bindings. */
+			TArrayView<const GpuParameterObjectType> GetTypes() const { return mTypes; }
+
+			/** Returns a pointer to any array of underlying element types for textures/buffers. */
+			TArrayView<const GpuBufferFormat> GetElementTypes() const { return mElementTypes; }
+
+			/** Returns a pointer to any array of underlying element array sizes for textures/buffers. */
+			TArrayView<const u32> GetElementArraySizes() const { return mArraySizes; }
+
+			/** Returns the sequential index of the binding at the specific slot. Returns ~0u if slot is not used. */
+			u32 GetUsedBindingSequentialIndex(u32 slot) const { return mSlotToUsedBindingSequentialIndex[slot]; }
+
+			/** Returns the sequential index of the resource at the specific slot. Returns ~0u if slot is not used. Similar to GetUsedBindingSequentialIndex(), but also accounts for array sizes of each binding. */
+			u32 GetUsedResourceSequentialIndex(u32 slot, u32 arrayIndex) const { return mSlotToUsedResourceSequentialIndex[slot] != ~0u ? mSlotToUsedResourceSequentialIndex[slot] + arrayIndex : ~0u; }
+
+			/** Returns a layout for the set. */
+			VulkanDescriptorLayout* GetLayout() const { return mLayout; }
+
+		private:
+			VulkanGpuDevice& mGpuDevice;
+			GroupAllocator mAllocator;
+
+			TArrayView<VkDescriptorSetLayoutBinding> mBindings;
+			TArrayView<GpuParameterObjectType> mTypes;
+			TArrayView<GpuBufferFormat> mElementTypes;
+			TArrayView<u32> mArraySizes;
+			TArrayView<u32> mSlotToUsedBindingSequentialIndex;
+			TArrayView<u32> mSlotToUsedResourceSequentialIndex;
+
+			VulkanDescriptorLayout* mLayout = nullptr;
+		};
+
 		/** Holds meta-data about a set of GPU parameters used by a single pipeline state. */
 		class VulkanGpuPipelineParameterLayout : public GpuPipelineParameterLayout
 		{
+			using Super = GpuPipelineParameterLayout;
 		public:
 			VulkanGpuPipelineParameterLayout(VulkanGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation);
 			~VulkanGpuPipelineParameterLayout() = default;
@@ -45,6 +88,8 @@ namespace b3d
 			VulkanDescriptorLayout* GetLayout(u32 set) const { return mLayouts[set]; }
 
 		private:
+			SPtr<GpuPipelineParameterLayoutSet> CreateSet(const GpuProgramParameterDescription& parameterDescription) const override;
+
 			/** Data related to a single descriptor set layout. */
 			struct ExtendedSetInformation
 			{

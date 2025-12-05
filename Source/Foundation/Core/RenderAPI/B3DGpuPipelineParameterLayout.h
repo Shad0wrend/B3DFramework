@@ -73,20 +73,17 @@ namespace b3d
 	public:
 		virtual ~GpuPipelineParameterLayoutSet() = default;
 
-		/** Initializes the object. The object should not be used before this is called. */
-		virtual void Initialize() { }
-
 		/** Returns the total number of elements in the set. */
-		u32 GetResourceCount() const { return ResourceCount; }
+		u32 GetResourceCount() const { return mResourceCount; }
 
 		/** Returns the number of elements in a particular set for the specified parameter type. */
-		u32 GetResourceCount(GpuParameterType type) const { return ResourceCountPerType[(u32)type]; }
+		u32 GetResourceCount(GpuParameterType type) const { return mResourceCountPerType[(u32)type]; }
 
 		/** Returns the total number of binding slots in the set. */
-		u32 GetBindingCount() const { return BindingCount; }
+		u32 GetBindingCount() const { return mBindingCount; }
 
 		/** Returns the number of binding slots in the set for the specified parameter type. */
-		u32 GetBindingCount(GpuParameterType type) const { return (u32)UniformsPerType[(u32)type].Size(); }
+		u32 GetBindingCount(GpuParameterType type) const { return (u32)mUniformsPerType[(u32)type].Size(); }
 
 		/**
 		 * Converts a slot/array index combination into a sequential index that maps to the parameter in that parameter type's array. The sequential
@@ -111,7 +108,7 @@ namespace b3d
 		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex) const;
 
 		/** Returns the number of dynamic offset slots in the set. */
-		u32 GetDynamicOffsetCount() const { return DynamicOffsetCount; }
+		u32 GetDynamicOffsetCount() const { return mDynamicOffsetCount; }
 
 		/**
 		 * Returns an index that can be used for applying a dynamic offset for buffer lookup. The index can be provided
@@ -126,7 +123,7 @@ namespace b3d
 		const UniformInformation* TryGetUniformInformation(GpuParameterType type, u32 sequentialBindingIndex) const;
 
 		/** Returns true if the layout has a uniform buffer member with the specified name in the set. */
-		bool HasUniformBufferMember(const StringView& name) const { return UniformBufferMembers.find(name) != UniformBufferMembers.end(); }
+		bool HasUniformBufferMember(const StringView& name) const { return mUniformBufferMembers.find(name) != mUniformBufferMembers.end(); }
 
 		/** Returns information about a member of a uniform buffer by the specified name, or null if not found. */
 		const GpuUniformBufferMemberInformation* TryGetUniformBufferMemberInformation(const StringView& name) const;
@@ -135,13 +132,13 @@ namespace b3d
 		GpuPipelineParameterLayoutSet(const GpuProgramParameterDescription& parameterDescription);
 
 		Map<String, UniformInformation, std::less<>> mUniformMap; /**< A map of all uniforms. */ // TODO - Map instead of UnorderedMap to support heterogeneous lookup, until we port to C++20
-		TInlineArray<UniformInformation*, 32> Uniforms; /**< Uniform for each slot index. */
-		Array<TInlineArray<UniformInformation*, 16>, (u32)GpuParameterType::Count> UniformsPerType;
-		Array<u32, (u32)GpuParameterType::Count> ResourceCountPerType;
-		Map<String, GpuUniformBufferMemberInformation, std::less<>> UniformBufferMembers; /**< All data parameters in all uniform buffers. */ // TODO - Map instead of UnorderedMap to support heterogeneous lookup, until we port to C++20
-		u32 ResourceCount = 0;
-		u32 BindingCount = 0;
-		u32 DynamicOffsetCount = 0; /**< Number of dynamic offset slots in this set. */
+		TInlineArray<UniformInformation*, 32> mUniforms; /**< Uniform for each slot index. */
+		Array<TInlineArray<UniformInformation*, 16>, (u32)GpuParameterType::Count> mUniformsPerType;
+		Array<u32, (u32)GpuParameterType::Count> mResourceCountPerType;
+		Map<String, GpuUniformBufferMemberInformation, std::less<>> mUniformBufferMembers; /**< All data parameters in all uniform buffers. */ // TODO - Map instead of UnorderedMap to support heterogeneous lookup, until we port to C++20
+		u32 mResourceCount = 0;
+		u32 mBindingCount = 0;
+		u32 mDynamicOffsetCount = 0; /**< Number of dynamic offset slots in this set. */
 	};
 
 	/**
@@ -155,7 +152,7 @@ namespace b3d
 		virtual ~GpuPipelineParameterLayout() = default;
 
 		/** Initializes the object. The object should not be used before this is called. */
-		virtual void Initialize() { }
+		virtual void Initialize();
 
 		/** Gets the total number of sets. */
 		u32 GetSetCount() const { return (u32)mSets.Size(); }
@@ -248,6 +245,9 @@ namespace b3d
 	protected:
 		GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation);
 
+		/** Creates pipeline parameter layout for a single set. */
+		virtual SPtr<GpuPipelineParameterLayoutSet> CreateSet(const GpuProgramParameterDescription& parameterDescription) const = 0;
+
 		/** Information about a single set in the param info object. */
 		struct SetInformation
 		{
@@ -258,11 +258,15 @@ namespace b3d
 			u32 ResourceCount = 0;
 			u32 BindingCount = 0;
 			u32 DynamicOffsetCount = 0; /**< Number of dynamic offset slots in this set. */
+
+			SPtr<GpuPipelineParameterLayoutSet> Set;
 		};
 
 		Map<String, UniformInformation, std::less<>> mUniformMap; /**< A map of all uniforms. */ // TODO - Map instead of UnorderedMap to support heterogeneous lookup, until we port to C++20
 		TInlineArray<SetInformation, 2> mSets;
 		u32 mBindingCount = 0;
+
+		TInlineArray<GpuProgramParameterDescription, 4> mPerSetParameterDescriptions;
 	};
 
 	/** @} */

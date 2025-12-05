@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
+#include "Utility/B3DResult.h"
 
 namespace b3d
 {
@@ -75,6 +76,25 @@ namespace b3d
 		Map<String, GpuObjectParameterInformation> SampledTextures;
 		Map<String, GpuObjectParameterInformation> StorageTextures;
 		Map<String, GpuObjectParameterInformation> Buffers;
+
+		/**
+		 * Attempts to combine another parameter description into this one. Parameters with the same name
+		 * have their stage fields combined. Parameters with the same name but different type, slot, or array size
+		 * will cause the method to fail.
+		 *
+		 * @param other		The parameter description to combine into this one.
+		 * @param stage		The GPU program stage bit to apply to all parameters from @p other.
+		 * @return			Result indicating success or failure with an error message.
+		 */
+		Result TryCombine(const GpuProgramParameterDescription& other, GpuProgramStageBit stage);
+
+		/**
+		 * Splits this parameter description into multiple descriptions, one per set. Each output description
+		 * contains only the parameters belonging to that set index.
+		 *
+		 * @param output	Array to receive the per-set parameter descriptions. Will be resized as needed.
+		 */
+		void SplitBySet(TInlineArray<GpuProgramParameterDescription, 4>& output) const;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
