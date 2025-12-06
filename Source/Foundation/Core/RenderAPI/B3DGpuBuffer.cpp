@@ -456,12 +456,12 @@ namespace b3d::render
 
 		const bool isBoundWithoutUse = boundCount > useCount;
 
-		// If a buffer is bound a command buffer, and we're using a transfer buffer to update, warn as only the latest update will persist on the transfer buffer
 		if(isBoundWithoutUse && commandBuffer == nullptr)
 		{
-			if(!canDiscardBuffer)
+			if(canDiscardBuffer)
 			{
-				B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", buffer->GetName());
+				// TODO - Disabling this warning as it triggers too often for suballocated buffers. Ideally we track of the exact range of the buffer that was bound, and can only warn if the same range is bound
+				//B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", buffer->GetName());
 			}
 			else
 				buffer->RecreateInternalBuffer();
