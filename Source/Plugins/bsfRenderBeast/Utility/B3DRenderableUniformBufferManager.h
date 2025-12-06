@@ -50,18 +50,16 @@ namespace b3d::render
 		/**
 		 * Allocates per-object buffer for a renderable.
 		 *
-		 * @param layoutSet	Pipeline parameter layout set to use creating the shared GpuParameterSet.
 		 * @return			Allocation containing suballocation and shared parameter set.
 		 */
-		RenderableAllocation AllocateForRenderable(const SPtr<GpuPipelineParameterSetLayout>& layoutSet);
+		RenderableAllocation AllocateForRenderable();
 
 		/**
 		 * Allocates per-object buffers for a decal (PerObject + DecalParams).
 		 *
-		 * @param layoutSet	Pipeline parameter layout set for creating the shared GpuParameterSet.
 		 * @return			Allocation containing suballocations and shared parameter set.
 		 */
-		DecalAllocation AllocateForDecal(const SPtr<GpuPipelineParameterSetLayout>& layoutSet);
+		DecalAllocation AllocateForDecal();
 
 		/**
 		 * Releases a renderable allocation back to the pool.
@@ -121,10 +119,9 @@ namespace b3d::render
 		 *
 		 * @param perObjectBuffer	The per-object uniform buffer.
 		 * @param decalBuffer		The decal parameter buffer, or nullptr for non-decals.
-		 * @param layoutSet			Pipeline parameter layout set containing the meta-data to create the parameter set.
 		 * @return					Shared GpuParameterSet for set #1.
 		 */
-		SPtr<GpuParameterSet> GetOrCreateParameterSet(const SPtr<GpuBuffer>& perObjectBuffer, const SPtr<GpuBuffer>& decalBuffer, const SPtr<GpuPipelineParameterSetLayout>& layoutSet);
+		SPtr<GpuParameterSet> GetOrCreateParameterSet(const SPtr<GpuBuffer>& perObjectBuffer, const SPtr<GpuBuffer>& decalBuffer);
 
 		/**
 		 * Decrements ref count for a buffer combination's shared parameter set, removing if zero.
@@ -138,6 +135,7 @@ namespace b3d::render
 		GpuBufferPool mDecalPool;
 		TransientGpuBufferPool mStagingPool;
 		UnorderedMap<BufferKey, BufferParameterSetEntry, BufferKeyHash> mParameterSetsByBuffer;
+		SPtr<GpuPipelineParameterSetLayout> mParameterSetLayout;
 		GpuDevice* mDevice = nullptr;
 	};
 

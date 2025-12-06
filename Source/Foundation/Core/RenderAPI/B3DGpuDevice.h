@@ -422,12 +422,19 @@ namespace b3d
 		virtual SPtr<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/**
-		 * Creates a pipeline layout from a set of GPU program parameter descriptions. 
+		 * Creates a pipeline layout from a set of GPU program parameter descriptions.
 		 *
 		 * @param	createInformation		Object describing the layout to create.
-		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
-		virtual SPtr<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation) = 0;
+
+		/**
+		 * Creates a single GPU pipeline parameter set layout from a parameter description.
+		 *
+		 * @param	parameterDescription	Description of parameters in the set.
+		 * @return							The created set layout.
+		 */
+		virtual SPtr<GpuPipelineParameterSetLayout> CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription) = 0;
 
 		/************************************************************************/
 		/* 								UTILITY METHODS                    		*/

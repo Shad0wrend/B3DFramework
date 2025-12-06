@@ -16,7 +16,7 @@ pipelineCreateInfo.Program = myComputeProgram;
 SPtr<GpuComputePipelineState> computePipelineState = device->CreateGpuComputePipelineState(pipelineCreateInfo);
 
 // Create GPU parameter set for binding resources (set 0)
-SPtr<GpuParameterSet> parameterSet = device->CreateGpuParameterSet(computePipelineState->GetParameterLayout(), 0);
+SPtr<GpuParameterSet> parameterSet = device->CreateGpuParameterSet(computePipelineState->GetParameterLayout()->GetSet(0), 0);
 
 // Set parameters (buffers, textures, etc.)
 parameterSet->SetStorageBuffer("inputBuffer", myInputBuffer);

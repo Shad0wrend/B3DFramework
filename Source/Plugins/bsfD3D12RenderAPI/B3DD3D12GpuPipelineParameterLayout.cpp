@@ -8,20 +8,16 @@
 using namespace b3d;
 using namespace b3d::render;
 
-D3D12GpuPipelineParameterLayout::D3D12GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, GpuDevice& device)
-	: GpuPipelineParameterLayout(createInformation)
-	, mDevice(static_cast<D3D12GpuDevice&>(device))
+D3D12GpuPipelineParameterLayout::D3D12GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, D3D12GpuDevice& device)
+	: GpuPipelineParameterLayout(device, createInformation)
+	, mDevice(device)
 {
+	CreateRootSignature();
 }
 
 D3D12GpuPipelineParameterLayout::~D3D12GpuPipelineParameterLayout()
 {
 	mRootSignature.Reset();
-}
-
-void D3D12GpuPipelineParameterLayout::Initialize()
-{
-	CreateRootSignature();
 }
 
 void D3D12GpuPipelineParameterLayout::CreateRootSignature()
@@ -35,11 +31,7 @@ void D3D12GpuPipelineParameterLayout::CreateRootSignature()
 	{
 		// Each set may contain multiple types of descriptors
 		// We need to count how many ranges we need
-		for (u32 slotIndex = 0; slotIndex < (u32)mSets[setIndex].Uniforms.Size(); slotIndex++)
-		{
-			if (mSets[setIndex].Uniforms[slotIndex] != nullptr)
-				totalDescriptorRangeCount++;
-		}
+		totalDescriptorRangeCount += mSets[setIndex]->GetBindingCount();
 	}
 
 	if (totalDescriptorRangeCount == 0)
@@ -164,31 +156,41 @@ void D3D12GpuPipelineParameterLayout::CreateRootSignature()
 	// Build root parameters from uniform information
 	for (u32 setIndex = 0; setIndex < setCount; setIndex++)
 	{
-		for (u32 slotIndex = 0; slotIndex < (u32)mSets[setIndex].Uniforms.Size(); slotIndex++)
+		const SPtr<GpuPipelineParameterSetLayout>& setLayout = mSets[setIndex];
+		const u32 bindingCount = setLayout->GetBindingCount();
+
+		// Iterate through all parameter types to find all uniforms
+		for (u32 typeIndex = 0; typeIndex < (u32)GpuParameterType::Count; typeIndex++)
 		{
-			UniformInformation* uniformInfo = mSets[setIndex].Uniforms[slotIndex];
-			if (uniformInfo == nullptr)
-				continue;
+			const GpuParameterType type = (GpuParameterType)typeIndex;
+			const u32 typeBindingCount = setLayout->GetBindingCount(type);
 
-			// Create descriptor range
-			D3D12_DESCRIPTOR_RANGE range = {};
-			range.RangeType = getDescriptorRangeType(uniformInfo->Type, uniformInfo->ObjectType);
-			range.NumDescriptors = uniformInfo->ArraySize;
-			range.BaseShaderRegister = slotIndex; // Use slot as shader register
-			range.RegisterSpace = setIndex; // Use set as register space
-			range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+			for (u32 sequentialIndex = 0; sequentialIndex < typeBindingCount; sequentialIndex++)
+			{
+				const UniformInformation* uniformInfo = setLayout->TryGetUniformInformation(type, sequentialIndex);
+				if (uniformInfo == nullptr)
+					continue;
 
-			u32 rangeIndex = (u32)descriptorRanges.size();
-			descriptorRanges.push_back(range);
+				// Create descriptor range
+				D3D12_DESCRIPTOR_RANGE range = {};
+				range.RangeType = getDescriptorRangeType(uniformInfo->Type, uniformInfo->ObjectType);
+				range.NumDescriptors = uniformInfo->ArraySize;
+				range.BaseShaderRegister = uniformInfo->Slot; // Use slot as shader register
+				range.RegisterSpace = setIndex; // Use set as register space
+				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-			// Create root parameter for this descriptor table
-			D3D12_ROOT_PARAMETER rootParam = {};
-			rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-			rootParam.ShaderVisibility = getShaderVisibility(uniformInfo->Usage);
-			rootParam.DescriptorTable.NumDescriptorRanges = 1;
-			rootParam.DescriptorTable.pDescriptorRanges = &descriptorRanges[rangeIndex];
+				u32 rangeIndex = (u32)descriptorRanges.size();
+				descriptorRanges.push_back(range);
 
-			rootParameters.push_back(rootParam);
+				// Create root parameter for this descriptor table
+				D3D12_ROOT_PARAMETER rootParam = {};
+				rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+				rootParam.ShaderVisibility = getShaderVisibility(uniformInfo->Usage);
+				rootParam.DescriptorTable.NumDescriptorRanges = 1;
+				rootParam.DescriptorTable.pDescriptorRanges = &descriptorRanges[rangeIndex];
+
+				rootParameters.push_back(rootParam);
+			}
 		}
 	}
 

@@ -442,12 +442,9 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 		}
 	}
 
-	// Allocate from the uniform buffer manager after the first element's ParameterAdapter is created
+	// Allocate from the uniform buffer manager
 	if(!rendererRenderable->Elements.empty())
-	{
-		SPtr<GpuPipelineParameterSetLayout> layoutSet = rendererRenderable->Elements[0].ParameterAdapter->GetGpuParameterSet()->GetLayout();
-		rendererRenderable->BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layoutSet);
-	}
+		rendererRenderable->BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
 
 	mRenderableUniformBufferManager.UpdatePerObjectBuffer(*rendererRenderable);
 
@@ -886,8 +883,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	SPtr<GpuPipelineParameterSetLayout> layoutSet = gpuParams->GetLayout();
-	rendererParticles.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layoutSet);
+	rendererParticles.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
 
 	// Store shared parameter set and dynamic offset info for render-time binding
 	renElement.SharedPerObjectParameterSet = rendererParticles.BufferAllocation.SharedParameterSet;
@@ -1126,8 +1122,7 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	SPtr<GpuParameterSet> gpuParameterSet = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	SPtr<GpuPipelineParameterSetLayout> layoutSet = gpuParameterSet->GetLayout();
-	rendererDecal.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable(layoutSet);
+	rendererDecal.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
 
 	// Store shared parameter set and dynamic offset info for render-time binding
 	renElement.SharedPerObjectParameterSet = rendererDecal.BufferAllocation.SharedParameterSet;

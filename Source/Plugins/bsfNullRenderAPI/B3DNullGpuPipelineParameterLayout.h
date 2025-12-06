@@ -21,8 +21,6 @@ namespace b3d
 		public:
 			NullGpuPipelineParameterLayout(NullGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation);
 			~NullGpuPipelineParameterLayout() = default;
-
-			void Initialize() override {}
 		};
 
 		/** @} */

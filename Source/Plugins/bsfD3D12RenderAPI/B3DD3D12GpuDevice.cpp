@@ -220,9 +220,9 @@ SPtr<GpuProgram> D3D12GpuDevice::CreateGpuProgram(const GpuProgramCreateInformat
 	return output;
 }
 
-SPtr<render::GpuParameterSet> D3D12GpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex, bool deferredInitialize)
+SPtr<render::GpuParameterSet> D3D12GpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex, bool deferredInitialize)
 {
-	SPtr<GpuParameterSet> output = B3DMakeSharedFromExisting(new (B3DAllocate<D3D12GpuParameters>()) D3D12GpuParameters(parameterLayout, *this));
+	SPtr<GpuParameterSet> output = B3DMakeSharedFromExisting(new (B3DAllocate<D3D12GpuParameters>()) D3D12GpuParameters(parameterSetLayout, *this, setIndex));
 	output->SetShared(output);
 
 	if (!deferredInitialize)
@@ -253,15 +253,15 @@ SPtr<GpuComputePipelineState> D3D12GpuDevice::CreateGpuComputePipelineState(cons
 	return output;
 }
 
-SPtr<GpuPipelineParameterLayout> D3D12GpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuPipelineParameterLayout> D3D12GpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation)
 {
-	SPtr<D3D12GpuPipelineParameterLayout> output = B3DMakeSharedFromExisting<D3D12GpuPipelineParameterLayout>(
+	return B3DMakeSharedFromExisting<D3D12GpuPipelineParameterLayout>(
 		new (B3DAllocate<D3D12GpuPipelineParameterLayout>()) D3D12GpuPipelineParameterLayout(createInformation, *this));
+}
 
-	if (!deferredInitialize)
-		output->Initialize();
-
-	return output;
+SPtr<GpuPipelineParameterSetLayout> D3D12GpuDevice::CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
+{
+	return B3DMakeShared<GpuPipelineParameterSetLayout>(parameterDescription);
 }
 
 void D3D12GpuDevice::WaitUntilIdle()
@@ -328,14 +328,14 @@ void D3D12GpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& outp
 	output[2][3] = (output[2][3] + output[3][3]) / 2;
 }
 
-GpuDataParameterBlockInformation D3D12GpuDevice::GenerateUniformBlockInformation(const String& name, Vector<GpuDataParameterInformation>& inOutUniforms)
+GpuUniformBufferInformation D3D12GpuDevice::GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms)
 {
-	GpuDataParameterBlockInformation block;
-	block.BlockSize = 0;
-	block.IsShareable = true;
-	block.Name = name;
-	block.Slot = 0;
-	block.Set = 0;
+	GpuUniformBufferInformation buffer;
+	buffer.Size = 0;
+	buffer.IsShareable = true;
+	buffer.Name = name;
+	buffer.Slot = 0;
+	buffer.Set = 0;
 
 	// D3D12 uses HLSL constant buffer packing rules (similar to std140)
 	for (auto& param : inOutUniforms)
@@ -345,28 +345,28 @@ GpuDataParameterBlockInformation D3D12GpuDevice::GenerateUniformBlockInformation
 		{
 			// Structs are always aligned and rounded up to vec4 (16 bytes)
 			size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
-			block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
+			buffer.Size = Math::DivideAndRoundUp(buffer.Size, 4U) * 4;
 		}
 		else
 		{
 			// Calculate size based on HLSL packing rules
-			size = D3D12Utility::CalcConstantBufferElementSizeAndOffset(param.Type, param.ArraySize, block.BlockSize);
+			size = D3D12Utility::CalcConstantBufferElementSizeAndOffset(param.Type, param.ArraySize, buffer.Size);
 		}
 
 		param.ElementSize = size;
 		param.ArrayElementStride = size;
-		param.CpuOffset = block.BlockSize;
+		param.CpuOffset = buffer.Size;
 		param.GpuOffset = 0;
-		block.BlockSize += size * param.ArraySize;
+		buffer.Size += size * param.ArraySize;
 		param.ParentUniformBufferSlot = 0;
 		param.ParentUniformBufferSet = 0;
 	}
 
 	// Constant buffer size must always be a multiple of 16 bytes (256 bits)
-	if (block.BlockSize % 4 != 0)
-		block.BlockSize += (4 - (block.BlockSize % 4));
+	if (buffer.Size % 4 != 0)
+		buffer.Size += (4 - (buffer.Size % 4));
 
-	return block;
+	return buffer;
 }
 
 float D3D12GpuDevice::ConvertTimestampToMilliseconds(u64 timestamp)

@@ -12,9 +12,9 @@
 using namespace b3d;
 using namespace b3d::render;
 
-D3D12GpuParameters::D3D12GpuParameters(const SPtr<GpuPipelineParameterLayout>& parameterLayout, GpuDevice& device)
-	: GpuParameters(parameterLayout, device)
-	, mDevice(static_cast<D3D12GpuDevice&>(device))
+D3D12GpuParameters::D3D12GpuParameters(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, D3D12GpuDevice& device, u32 setIndex)
+	: GpuParameterSet(parameterSetLayout, setIndex)
+	, mDevice(device)
 {
 }
 
@@ -26,61 +26,55 @@ D3D12GpuParameters::~D3D12GpuParameters()
 
 void D3D12GpuParameters::Initialize()
 {
-	GpuParameters::Initialize();
-
-	// Get the pipeline parameter layout
-	D3D12GpuPipelineParameterLayout* d3d12Layout = static_cast<D3D12GpuPipelineParameterLayout*>(mParameterLayout.get());
-	if (!d3d12Layout)
+	// TODO: D3D12 backend needs proper implementation
+	// For now, initialize descriptor tables based on the set layout
+	const SPtr<GpuPipelineParameterSetLayout>& setLayout = GetParameterSetLayout();
+	if (!setLayout)
 		return;
 
-	const GpuProgramParameterLayout& layout = d3d12Layout->GetLayout();
+	// Count descriptors needed for this set (separate for CBV/SRV/UAV and Samplers)
+	u32 resourceDescriptorCount = 0;
+	u32 samplerDescriptorCount = 0;
 
-	// Initialize descriptor tables for each set
-	for (const auto& setEntry : layout.Sets)
+	// Iterate through all parameter types
+	for (u32 typeIndex = 0; typeIndex < (u32)GpuParameterType::Count; typeIndex++)
 	{
-		u32 setIndex = setEntry.first;
-		const GpuProgramParameterSet& paramSet = setEntry.second;
+		const GpuParameterType type = (GpuParameterType)typeIndex;
+		const u32 bindingCount = setLayout->GetBindingCount(type);
 
-		// Count descriptors needed for this set (separate for CBV/SRV/UAV and Samplers)
-		u32 resourceDescriptorCount = 0;
-		u32 samplerDescriptorCount = 0;
-
-		for (const auto& slotEntry : paramSet.Uniforms)
+		for (u32 sequentialIndex = 0; sequentialIndex < bindingCount; sequentialIndex++)
 		{
-			const GpuProgramUniformInformation& uniformInfo = slotEntry.second;
+			const UniformInformation* uniformInfo = setLayout->TryGetUniformInformation(type, sequentialIndex);
+			if (uniformInfo == nullptr)
+				continue;
 
-			if (uniformInfo.Type == GPT_SAMPLER)
-			{
-				samplerDescriptorCount += uniformInfo.ArraySize;
-			}
+			if (type == GpuParameterType::Sampler)
+				samplerDescriptorCount += uniformInfo->ArraySize;
 			else
-			{
-				// CBV, SRV, UAV
-				resourceDescriptorCount += uniformInfo.ArraySize;
-			}
+				resourceDescriptorCount += uniformInfo->ArraySize;
 		}
+	}
 
-		// Create resource descriptor table if needed
-		if (resourceDescriptorCount > 0)
-		{
-			DescriptorTable& table = mDescriptorTables[setIndex];
-			table.SetIndex = setIndex;
-			table.RootParameterIndex = setIndex; // TODO: Map correctly from layout
-			table.DescriptorCount = resourceDescriptorCount;
-			table.Descriptors.resize(resourceDescriptorCount);
-			table.IsDirty = true;
-		}
+	// Create resource descriptor table if needed
+	if (resourceDescriptorCount > 0)
+	{
+		DescriptorTable& table = mDescriptorTables[mSetIndex];
+		table.SetIndex = mSetIndex;
+		table.RootParameterIndex = mSetIndex; // TODO: Map correctly from layout
+		table.DescriptorCount = resourceDescriptorCount;
+		table.Descriptors.resize(resourceDescriptorCount);
+		table.IsDirty = true;
+	}
 
-		// Create sampler descriptor table if needed
-		if (samplerDescriptorCount > 0)
-		{
-			DescriptorTable& table = mSamplerTables[setIndex];
-			table.SetIndex = setIndex;
-			table.RootParameterIndex = setIndex + 100; // TODO: Map correctly from layout
-			table.DescriptorCount = samplerDescriptorCount;
-			table.Descriptors.resize(samplerDescriptorCount);
-			table.IsDirty = true;
-		}
+	// Create sampler descriptor table if needed
+	if (samplerDescriptorCount > 0)
+	{
+		DescriptorTable& table = mSamplerTables[mSetIndex];
+		table.SetIndex = mSetIndex;
+		table.RootParameterIndex = mSetIndex + 100; // TODO: Map correctly from layout
+		table.DescriptorCount = samplerDescriptorCount;
+		table.Descriptors.resize(samplerDescriptorCount);
+		table.IsDirty = true;
 	}
 }
 

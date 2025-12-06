@@ -71,10 +71,10 @@ SPtr<GpuGraphicsPipelineState> pipelineState = gpuDevice->CreateGpuGraphicsPipel
 
 ## Creating GPU parameter sets
 
-GPU parameter sets are created from the pipeline state's parameter layout and will hold uniform buffers, textures, and samplers for a specific descriptor set:
+GPU parameter sets are created from the pipeline state's parameter set layout (obtained via `GetParameterLayout()->GetSet()`) and will hold uniform buffers, textures, and samplers for a specific descriptor set:
 
 ~~~~~~~~~~~~~{.cpp}
-SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipelineState->GetParameterLayout(), 0);
+SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipelineState->GetParameterLayout()->GetSet(0), 0);
 ~~~~~~~~~~~~~
 
 ## Creating vertex description

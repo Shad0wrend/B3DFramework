@@ -59,16 +59,9 @@ namespace b3d
 		/** Holds meta-data about a set of GPU parameters used by a single pipeline state. */
 		class VulkanGpuPipelineParameterLayout : public GpuPipelineParameterLayout
 		{
-			using Super = GpuPipelineParameterLayout;
 		public:
 			VulkanGpuPipelineParameterLayout(VulkanGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation);
 			~VulkanGpuPipelineParameterLayout() = default;
-
-		private:
-			SPtr<GpuPipelineParameterSetLayout> CreateSet(const GpuProgramParameterDescription& parameterDescription) const override;
-
-			VulkanGpuDevice& mGpuDevice;
-			GroupAllocator mAllocator;
 		};
 
 		/** @} */

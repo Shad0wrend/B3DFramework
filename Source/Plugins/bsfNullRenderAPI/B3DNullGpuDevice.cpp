@@ -11,6 +11,7 @@
 #include "B3DNullGpuParameterSet.h"
 #include "B3DNullGpuPipelineParameterLayout.h"
 #include "B3DNullSamplerState.h"
+#include "RenderAPI/B3DGpuProgramParameterDescription.h"
 #include "B3DNullEventQuery.h"
 #include "B3DNullGpuQueryPool.h"
 #include "RenderAPI/B3DVideoModeInfo.h"
@@ -167,9 +168,9 @@ namespace b3d
 			return program;
 		}
 
-		SPtr<GpuParameterSet> NullGpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterLayout>& parameterLayout, u32 setIndex, bool deferredInitialize)
+		SPtr<GpuParameterSet> NullGpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex, bool deferredInitialize)
 		{
-			SPtr<NullGpuParameters> parameters = B3DMakeShared<NullGpuParameters>(*this, parameterLayout);
+			SPtr<NullGpuParameters> parameters = B3DMakeShared<NullGpuParameters>(*this, parameterSetLayout);
 
 			if (!deferredInitialize)
 				parameters->Initialize();
@@ -197,14 +198,14 @@ namespace b3d
 			return pipelineState;
 		}
 
-		SPtr<GpuPipelineParameterLayout> NullGpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize)
+		SPtr<GpuPipelineParameterLayout> NullGpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation)
 		{
-			SPtr<NullGpuPipelineParameterLayout> layout = B3DMakeShared<NullGpuPipelineParameterLayout>(*this, createInformation);
+			return B3DMakeShared<NullGpuPipelineParameterLayout>(*this, createInformation);
+		}
 
-			if (!deferredInitialize)
-				layout->Initialize();
-
-			return layout;
+		SPtr<GpuPipelineParameterSetLayout> NullGpuDevice::CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
+		{
+			return B3DMakeShared<GpuPipelineParameterSetLayout>(parameterDescription);
 		}
 
 		void NullGpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& output)
@@ -212,21 +213,21 @@ namespace b3d
 			output = input;
 		}
 
-		GpuDataParameterBlockInformation NullGpuDevice::GenerateUniformBlockInformation(const String& name, Vector<GpuDataParameterInformation>& inOutUniforms)
+		GpuUniformBufferInformation NullGpuDevice::GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms)
 		{
-			GpuDataParameterBlockInformation blockInfo;
-			blockInfo.Name = name;
-			blockInfo.BlockSize = 0;
-			blockInfo.IsShareable = true;
+			GpuUniformBufferInformation bufferInfo;
+			bufferInfo.Name = name;
+			bufferInfo.Size = 0;
+			bufferInfo.IsShareable = true;
 
 			for (auto& uniform : inOutUniforms)
 			{
-				uniform.GpuOffset = blockInfo.BlockSize;
-				uniform.CpuOffset = blockInfo.BlockSize;
-				blockInfo.BlockSize += uniform.ElementSize;
+				uniform.GpuOffset = bufferInfo.Size;
+				uniform.CpuOffset = bufferInfo.Size;
+				bufferInfo.Size += uniform.ElementSize;
 			}
 
-			return blockInfo;
+			return bufferInfo;
 		}
 
 		SPtr<SamplerState> NullGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize)

@@ -175,9 +175,6 @@ namespace b3d
 	public:
 		virtual ~GpuPipelineParameterLayout() = default;
 
-		/** Initializes the object. The object should not be used before this is called. */
-		virtual void Initialize();
-
 		/** Gets the total number of sets. */
 		u32 GetSetCount() const { return (u32)mSets.Size(); }
 
@@ -185,13 +182,9 @@ namespace b3d
 		SPtr<GpuPipelineParameterSetLayout> GetSet(u32 set) const { return mSets[set]; }
 
 	protected:
-		GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation);
-
-		/** Creates pipeline parameter layout for a single set. */
-		virtual SPtr<GpuPipelineParameterSetLayout> CreateSet(const GpuProgramParameterDescription& parameterDescription) const = 0;
+		GpuPipelineParameterLayout(GpuDevice& device, const GpuPipelineParameterLayoutCreateInformation& createInformation);
 
 		TInlineArray<SPtr<GpuPipelineParameterSetLayout>, 2> mSets;
-		TInlineArray<GpuProgramParameterDescription, 4> mPerSetParameterDescriptions;
 	};
 
 	/** @} */

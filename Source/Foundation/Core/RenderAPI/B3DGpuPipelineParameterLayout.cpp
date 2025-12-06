@@ -348,7 +348,7 @@ const GpuUniformBufferMemberInformation* GpuPipelineParameterSetLayout::TryGetUn
 	return nullptr;
 }
 
-GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation)
+GpuPipelineParameterLayout::GpuPipelineParameterLayout(GpuDevice& device, const GpuPipelineParameterLayoutCreateInformation& createInformation)
 {
 	Array<SPtr<GpuProgramParameterDescription>, GPT_COUNT> perProgramParameterDescriptions;
 	perProgramParameterDescriptions[GPT_FRAGMENT_PROGRAM] = createInformation.Fragment;
@@ -359,6 +359,7 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 	perProgramParameterDescriptions[GPT_COMPUTE_PROGRAM] = createInformation.Compute;
 
 	// Build per-set parameter descriptions by iterating over all per-program parameter descriptions
+	TInlineArray<GpuProgramParameterDescription, 4> perSetParameterDescriptions;
 	for(u32 programIndex = 0; programIndex < GPT_COUNT; programIndex++)
 	{
 		const SPtr<GpuProgramParameterDescription>& parameterDescription = perProgramParameterDescriptions[programIndex];
@@ -371,20 +372,18 @@ GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParamete
 		TInlineArray<GpuProgramParameterDescription, 4> programPerSetDescriptions;
 		parameterDescription->SplitBySet(programPerSetDescriptions);
 
-		while(mPerSetParameterDescriptions.size() < programPerSetDescriptions.size())
-			mPerSetParameterDescriptions.Add(GpuProgramParameterDescription());
+		while(perSetParameterDescriptions.size() < programPerSetDescriptions.size())
+			perSetParameterDescriptions.Add(GpuProgramParameterDescription());
 
 		// Combine each set's description
 		for(u32 setIndex = 0; setIndex < programPerSetDescriptions.size(); setIndex++)
 		{
-			if(Result result = mPerSetParameterDescriptions[setIndex].TryCombine(programPerSetDescriptions[setIndex], stageBit); !result.IsSuccessful())
+			if(Result result = perSetParameterDescriptions[setIndex].TryCombine(programPerSetDescriptions[setIndex], stageBit); !result.IsSuccessful())
 				B3D_LOG(Warning, RenderBackend, "{0}", result.GetFullErrorMessage());
 		}
 	}
-}
 
-void GpuPipelineParameterLayout::Initialize()
-{
-	for(u32 set = 0; set < (u32)mPerSetParameterDescriptions.Size(); ++set)
-		mSets.Add(CreateSet(mPerSetParameterDescriptions[set]));
+	// Create sets
+	for(u32 set = 0; set < (u32)perSetParameterDescriptions.Size(); ++set)
+		mSets.Add(device.CreateGpuPipelineParameterSetLayout(perSetParameterDescriptions[set]));
 }

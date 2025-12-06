@@ -174,12 +174,7 @@ VulkanGpuPipelineParameterSetLayout::VulkanGpuPipelineParameterSetLayout(VulkanG
 }
 
 VulkanGpuPipelineParameterLayout::VulkanGpuPipelineParameterLayout(VulkanGpuDevice& gpuDevice, const GpuPipelineParameterLayoutCreateInformation& createInformation)
-	: GpuPipelineParameterLayout(createInformation), mGpuDevice(gpuDevice)
+	: GpuPipelineParameterLayout(gpuDevice, createInformation)
 {}
-
-SPtr<GpuPipelineParameterSetLayout> VulkanGpuPipelineParameterLayout::CreateSet(const GpuProgramParameterDescription& parameterDescription) const
-{
-	return B3DMakeShared<VulkanGpuPipelineParameterSetLayout>(mGpuDevice, parameterDescription);
-}
 
 

@@ -102,18 +102,32 @@ You can access information about GPU program parameters by calling @b3d::GpuProg
 
 You generally don't need to use this information directly. It is instead automatically parsed when you create a GPU pipeline. Once you have a pipeline you can use it to create @b3d::render::GpuParameterSet objects that allow you to assign values to parameters within a specific descriptor set of the pipeline.
 
+## GpuPipelineParameterLayout and GpuPipelineParameterSetLayout
+When a GPU pipeline is created, it generates a @b3d::GpuPipelineParameterLayout that describes all parameters used by the pipeline's GPU programs. This layout is organized into one or more **descriptor sets**, each represented by a @b3d::GpuPipelineParameterSetLayout.
+
+- **GpuPipelineParameterLayout** - Container for all parameter set layouts in a pipeline. Accessed via @b3d::GpuGraphicsPipelineState::GetParameterLayout or @b3d::GpuComputePipelineState::GetParameterLayout.
+- **GpuPipelineParameterSetLayout** - Describes parameters within a single descriptor set (set 0, set 1, etc.). Accessed via @b3d::GpuPipelineParameterLayout::GetSet.
+
+This separation allows for efficient parameter binding - you can update only the sets that change between draw calls, rather than rebinding all parameters.
+
 ## GpuParameterSet
 **GpuParameterSet** is a container for parameters within a single descriptor set of a GPU pipeline. Each **GpuParameterSet** represents one descriptor set (e.g., set 0, set 1, etc.), allowing for efficient updates when only some parameters change between draw calls. It allows you to set textures, samplers, buffers, and primitive values used by GPU programs. Parameter values are stored on the CPU side and are only submitted to the GPU when the parameters are bound to the command buffer during rendering.
 
 ### Creating GpuParameterSet
-To create a **GpuParameterSet** object, use the GPU device's @b3d::GpuDevice::CreateGpuParameterSet method with the pipeline's parameter layout and the set index as parameters.
+To create a **GpuParameterSet** object, use the GPU device's @b3d::GpuDevice::CreateGpuParameterSet method with the set layout (obtained from the pipeline's parameter layout) and the set index as parameters.
 
 ~~~~~~~~~~~~~{.cpp}
 SPtr<GpuDevice> device = ...;
 SPtr<GpuGraphicsPipelineState> graphicsPipeline = ...;
 
+// Get the parameter layout for the pipeline
+SPtr<GpuPipelineParameterLayout> pipelineLayout = graphicsPipeline->GetParameterLayout();
+
+// Get the set layout for descriptor set 0
+SPtr<GpuPipelineParameterSetLayout> setLayout = pipelineLayout->GetSet(0);
+
 // Create a parameter set for descriptor set 0
-SPtr<GpuParameterSet> parameterSet = device->CreateGpuParameterSet(graphicsPipeline->GetParameterLayout(), 0);
+SPtr<GpuParameterSet> parameterSet = device->CreateGpuParameterSet(setLayout, 0);
 ~~~~~~~~~~~~~
 
 The created **GpuParameterSet** object will be initialized with parameter layout information for the specified descriptor set, allowing the system to validate parameter assignments and manage internal storage.
@@ -402,7 +416,7 @@ pipelineInfo.FragmentProgram = fragmentProgram;
 SPtr<GpuGraphicsPipelineState> pipeline = gpuDevice.CreateGpuGraphicsPipelineState(pipelineInfo);
 
 // 3. Create GpuParameterSet for the pipeline (set 0)
-SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipeline->GetParameterLayout(), 0);
+SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipeline->GetParameterLayout()->GetSet(0), 0);
 
 // 4. Set up uniform buffer using uniform buffer definition
 B3D_UNIFORM_BUFFER_BEGIN(PerObjectParamDef)

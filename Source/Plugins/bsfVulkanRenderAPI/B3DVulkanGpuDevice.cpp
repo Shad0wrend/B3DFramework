@@ -561,14 +561,14 @@ SPtr<GpuComputePipelineState> VulkanGpuDevice::CreateGpuComputePipelineState(con
 	return output;
 }
 
-SPtr<GpuPipelineParameterLayout> VulkanGpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuPipelineParameterLayout> VulkanGpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation)
 {
-	SPtr<VulkanGpuPipelineParameterLayout> output = B3DMakeSharedFromExisting<VulkanGpuPipelineParameterLayout>(new(B3DAllocate<VulkanGpuPipelineParameterLayout>()) VulkanGpuPipelineParameterLayout(*this, createInformation));
-	
-	if(!deferredInitialize)
-		output->Initialize();
+	return B3DMakeSharedFromExisting<VulkanGpuPipelineParameterLayout>(new(B3DAllocate<VulkanGpuPipelineParameterLayout>()) VulkanGpuPipelineParameterLayout(*this, createInformation));
+}
 
-	return output;
+SPtr<GpuPipelineParameterSetLayout> VulkanGpuDevice::CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
+{
+	return B3DMakeShared<VulkanGpuPipelineParameterSetLayout>(*this, parameterDescription);
 }
 
 void VulkanGpuDevice::WaitUntilIdle()

@@ -17,11 +17,8 @@ namespace b3d
 		class D3D12GpuPipelineParameterLayout : public GpuPipelineParameterLayout
 		{
 		public:
-			D3D12GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, GpuDevice& device);
+			D3D12GpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, D3D12GpuDevice& device);
 			~D3D12GpuPipelineParameterLayout() override;
-
-			/** @copydoc GpuPipelineParameterLayout::Initialize */
-			void Initialize() override;
 
 			/** Returns the D3D12 root signature. */
 			ID3D12RootSignature* GetRootSignature() const { return mRootSignature.Get(); }
@@ -30,6 +27,7 @@ namespace b3d
 			/** Creates the D3D12 root signature. */
 			void CreateRootSignature();
 
+			D3D12GpuDevice& mDevice;
 			ComPtr<ID3D12RootSignature> mRootSignature;
 		};
 
