@@ -1131,25 +1131,24 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
 	{
-		UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::PoolType::DecalPool);
+		UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::DecalPool);
 		rendererDecal.PerObjectBufferAllocationHandle = result.Handle;
 		rendererDecal.PerObjectParameterSet = result.ParameterSet;
 		rendererDecal.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
+		rendererDecal.DecalParamSuballocation = result.GetSuballocation(UniformBufferPools::DecalBuffer);
 	}
 
-	// Store shared parameter set and buffer offset for render-time binding
+	// Store shared parameter set and buffer offsets for render-time binding
 	renElement.SharedPerObjectParameterSet = rendererDecal.PerObjectParameterSet;
 	renElement.PerObjectBufferOffset = rendererDecal.PerObjectSuballocation.GetSuballocationOffset();
+	renElement.DecalParamBufferOffset = rendererDecal.DecalParamSuballocation.GetSuballocationOffset();
 
-	// Now update the per-object buffer (allocation is ready)
-	rendererDecal.UpdateDecalParamBuffer();
+	// Now update the uniform buffers (allocation is ready)
 	rendererDecal.UpdatePerObjectData();
 	mUniformBufferPools.UpdatePerObjectBuffer(rendererDecal);
+	mUniformBufferPools.UpdateDecalParamBuffer(rendererDecal);
 
-	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
-	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
-	gpuParameterSet->SetUniformBuffer("PerFrame", mPerFrameParamBuffer);
-	gpuParameterSet->SetUniformBuffer("DecalParams", rendererDecal.DecalParamBuffer);
+	gpuParameterSet->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
 
 	gpuParameterSet->TryGetUniformBufferParameter("PerCamera", renElement.PerCameraUniformBufferParameter);
 	gpuParameterSet->TryGetSampledTextureParameter("gDepthBufferTex", renElement.DepthInputTexture);
@@ -1161,9 +1160,9 @@ void RenderBeastScene::UpdateDecal(Decal* decal)
 	const u32 rendererId = decal->GetRendererId();
 	RendererDecal& rendererDecal = mInfo.Decals[rendererId];
 
-	rendererDecal.UpdateDecalParamBuffer();
 	rendererDecal.UpdatePerObjectData();
 	mUniformBufferPools.UpdatePerObjectBuffer(rendererDecal);
+	mUniformBufferPools.UpdateDecalParamBuffer(rendererDecal);
 
 	mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
 }

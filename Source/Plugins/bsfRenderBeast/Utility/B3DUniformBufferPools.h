@@ -9,6 +9,7 @@
 namespace b3d::render
 {
 	struct RendererObject;
+	struct RendererDecal;
 
 	/** @addtogroup RenderBeast
 	 *  @{
@@ -126,7 +127,15 @@ namespace b3d::render
 		void UpdatePerObjectBuffer(const RendererObject& object, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 		/**
-		 * Advances the staging pool frame counter. Call at end of each render frame.
+		 * Updates decal parameter buffer using data from a renderer decal.
+		 *
+		 * @param decal			Renderer decal whose decal param buffer should be updated.
+		 * @param commandBuffer	Command buffer to queue the copy on. If null, uses the transfer command buffer.
+		 */
+		void UpdateDecalParamBuffer(const RendererDecal& decal, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+
+		/**
+		 * Advances the staging pool frame counters. Call at end of each render frame.
 		 */
 		void AdvanceFrame();
 
@@ -226,7 +235,8 @@ namespace b3d::render
 
 		TInlineArray<PoolGroup, 4> mPoolGroups;
 		Vector<PoolConfiguration> mPendingConfigurations;
-		TransientGpuBufferPool mStagingPool;
+		TransientGpuBufferPool mPerObjectStagingPool;
+		TransientGpuBufferPool mDecalParamStagingPool;
 		GpuDevice* mDevice = nullptr;
 		bool mInitialized = false;
 	};

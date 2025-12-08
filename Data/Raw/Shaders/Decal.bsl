@@ -189,7 +189,7 @@ shader Surface
 		};
 	
 		[internal]
-		cbuffer DecalParams
+		cbuffer DecalParams : register(c1, space1)
 		{
 			float4x4 gWorldToDecal;
 			float3 gDecalNormal;

@@ -4,6 +4,7 @@
 #include "B3DRendererObject.h"
 #include "B3DRendererRenderable.h"
 #include "B3DRendererDecal.h"
+#include "Components/B3DDecal.h"
 #include "RenderAPI/B3DGpuBackend.h"
 #include "RenderAPI/B3DGpuDevice.h"
 
@@ -21,14 +22,27 @@ void UniformBufferPools::Initialize(GpuDevice& device)
 	B3D_ASSERT(!mInitialized);
 	mDevice = &device;
 
-	// Initialize staging pool (shared across all types)
-	const u32 perObjectSize = gPerObjectUniformDefinition.GetSize();
-	GpuBufferCreateInformation stagingCreateInfo;
-	stagingCreateInfo.Type = GpuBufferType::StagingWrite;
-	stagingCreateInfo.Staging.Size = perObjectSize;
-	stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU; // TODO - Only while GpuUniformBuffer doesn't support non-cached writes
+	// Initialize per-object staging pool
+	{
+		const u32 perObjectSize = gPerObjectUniformDefinition.GetSize();
+		GpuBufferCreateInformation stagingCreateInfo;
+		stagingCreateInfo.Type = GpuBufferType::StagingWrite;
+		stagingCreateInfo.Staging.Size = perObjectSize;
+		stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU; // TODO - Only while GpuUniformBuffer doesn't support non-cached writes
 
-	mStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
+		mPerObjectStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
+	}
+
+	// Initialize decal param staging pool
+	{
+		const u32 decalParamSize = gDecalParamDef.GetSize();
+		GpuBufferCreateInformation stagingCreateInfo;
+		stagingCreateInfo.Type = GpuBufferType::StagingWrite;
+		stagingCreateInfo.Staging.Size = decalParamSize;
+		stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU;
+
+		mDecalParamStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
+	}
 
 	// Create pool groups from pending configurations
 	for (const PoolConfiguration& config : mPendingConfigurations)
@@ -164,7 +178,7 @@ SPtr<render::GpuParameterSet> UniformBufferPools::GetOrCreateParameterSet(PoolGr
 		return iter->second.ParameterSet;
 	}
 
-	SPtr<render::GpuParameterSet> parameterSet = mDevice->CreateGpuParameterSet(group.ParameterSetLayout, GpuPipelineSet::kPerObject);
+	SPtr<GpuParameterSet> parameterSet = mDevice->CreateGpuParameterSet(group.ParameterSetLayout, GpuPipelineSet::kPerObject);
 
 	// Bind all buffers by their uniform buffer names
 	for (u32 poolIndex = 0; poolIndex < entry.Suballocations.Size(); ++poolIndex)
@@ -201,7 +215,7 @@ void UniformBufferPools::UpdatePerObjectBuffer(const RendererObject& object, con
 	if (!object.PerObjectSuballocation.IsValid())
 		return;
 
-	GpuBufferSuballocation staging = mStagingPool.Allocate();
+	GpuBufferSuballocation staging = mPerObjectStagingPool.Allocate();
 
 	gPerObjectUniformDefinition.gMatWorld.Set(staging, object.WorldTransform);
 	gPerObjectUniformDefinition.gMatInvWorld.Set(staging, object.WorldTransform.InverseAffine());
@@ -219,7 +233,47 @@ void UniformBufferPools::UpdatePerObjectBuffer(const RendererObject& object, con
 	actualCommandBuffer->CopyBufferToBuffer(staging.GetBuffer(), destination.GetBuffer(), staging.GetSuballocationOffset(), destination.GetSuballocationOffset(), staging.GetSize());
 }
 
+void UniformBufferPools::UpdateDecalParamBuffer(const RendererDecal& decal, const SPtr<GpuCommandBuffer>& commandBuffer)
+{
+	if (!decal.DecalParamSuballocation.IsValid())
+		return;
+
+	const Transform& tfrm = decal.Decal->GetWorldTransform();
+
+	const Vector2 size = decal.Decal->GetWorldSize();
+	const Vector2 extent = size * 0.5f;
+	const float maxDistance = decal.Decal->GetWorldMaxDistance();
+
+	const Matrix4 view = Matrix4::View(tfrm.GetPosition(), tfrm.GetRotation());
+	const Matrix4 proj = Matrix4::ProjectionOrthographic(-extent.X, extent.X, -extent.Y, extent.Y, 0.0f, maxDistance);
+
+	const Matrix4 worldToDecal = proj * view;
+	const Vector3 decalNormal = -tfrm.GetRotation().ZAxis();
+	const float normalTolerance = -0.05f;
+
+	float flipDerivatives = 1.0f;
+	const GpuBackendConventions& gpuBackendConventions = mDevice->GetCapabilities().Conventions;
+	if (gpuBackendConventions.UvYAxis == GpuBackendConventions::Axis::Up)
+		flipDerivatives = -1.0f;
+
+	GpuBufferSuballocation staging = mDecalParamStagingPool.Allocate();
+
+	gDecalParamDef.gWorldToDecal.Set(staging, worldToDecal);
+	gDecalParamDef.gDecalNormal.Set(staging, decalNormal);
+	gDecalParamDef.gNormalTolerance.Set(staging, normalTolerance);
+	gDecalParamDef.gFlipDerivatives.Set(staging, flipDerivatives);
+	gDecalParamDef.gLayerMask.Set(staging, (i32)decal.Decal->GetLayerMask());
+
+	staging.GetBuffer()->FlushCache(staging.GetSuballocationIndex());
+
+	const SPtr<GpuCommandBuffer>& actualCommandBuffer = commandBuffer ? commandBuffer : mDevice->GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
+
+	const GpuBufferSuballocation& destination = decal.DecalParamSuballocation;
+	actualCommandBuffer->CopyBufferToBuffer(staging.GetBuffer(), destination.GetBuffer(), staging.GetSuballocationOffset(), destination.GetSuballocationOffset(), staging.GetSize());
+}
+
 void UniformBufferPools::AdvanceFrame()
 {
-	mStagingPool.AdvanceFrame();
+	mPerObjectStagingPool.AdvanceFrame();
+	mDecalParamStagingPool.AdvanceFrame();
 }

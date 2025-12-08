@@ -89,24 +89,23 @@ namespace b3d
 			/** Texture input for the mask buffer. */
 			GpuParameterSampledTexture MaskInputTexture;
 
+			/** Dynamic buffer offset for the decal parameters buffer. */
+			u32 DecalParamBufferOffset = 0;
+
 			void Draw(GpuCommandBuffer& commandBuffer) const override;
 		};
 
 		/** Contains information about a Decal, used by the Renderer. */
 		struct RendererDecal : RendererObject
 		{
-			RendererDecal();
-
-			/** Updates the DecalParamBuffer with decal-specific properties. */
-			void UpdateDecalParamBuffer();
-
 			/** Updates the per-object data from the current Decal state. */
 			void UpdatePerObjectData();
 
 			Decal* Decal;
 			mutable DecalRenderElement RenderElement;
 
-			SPtr<GpuBuffer> DecalParamBuffer;
+			/** Suballocation for decal-specific uniform buffer data. */
+		GpuBufferSuballocation DecalParamSuballocation;
 		};
 
 		/** @} */

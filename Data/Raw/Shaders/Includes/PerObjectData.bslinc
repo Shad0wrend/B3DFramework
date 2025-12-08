@@ -3,7 +3,7 @@ mixin PerObjectData
 	code
 	{
 		[internal]
-		cbuffer PerObject : register(space1)
+		cbuffer PerObject : register(c0, space1)
 		{
 			float4x4 gMatWorld;
 			float4x4 gMatInvWorld;
