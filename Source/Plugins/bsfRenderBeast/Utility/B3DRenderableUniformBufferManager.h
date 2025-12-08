@@ -5,6 +5,7 @@
 #include "B3DRenderBeastPrerequisites.h"
 #include "RenderAPI/B3DGpuBufferPool.h"
 #include "RenderAPI/B3DGpuParameterSet.h"
+#include <variant>
 
 namespace b3d::render
 {
@@ -21,20 +22,50 @@ namespace b3d::render
 	class RenderableUniformBufferManager
 	{
 	public:
-		/** Allocation result for a renderable. */
-		struct RenderableAllocation
+		/** Type of allocation, determining which buffers are allocated. */
+		enum class AllocationType
 		{
-			SPtr<GpuParameterSet> SharedParameterSet;
-
-			GpuBufferSuballocation PerObjectSuballocation;
-			u32 PerObjectDynamicOffsetIndex = 0;
+			Normal,   /**< Just per-object buffer. */
+			Decal     /**< Per-object buffer + decal parameter buffer. */
 		};
 
-		/** Allocation result for a decal (includes DecalParamBuffer). */
-		struct DecalAllocation : RenderableAllocation // TODO - The allocation result should return a union (or variant) of all possible extra sub-allocations. And there should only be one Allocate method that takes an enum indicating type of allocation needed.
+		/** Opaque handle for a uniform buffer allocation. Used for releasing. */
+		struct AllocationHandle
+		{
+			/** Checks if this handle is valid. */
+			bool IsValid() const { return Index != kInvalidIndex; }
+
+			/** Invalidates this handle. */
+			void Invalidate() { Index = kInvalidIndex; }
+
+			static constexpr u32 kInvalidIndex = ~0u;
+
+		private:
+			friend class RenderableUniformBufferManager;
+
+			u32 Index = kInvalidIndex;
+			AllocationType Type = AllocationType::Normal;
+		};
+
+		/** Extra suballocation for decal rendering. */
+		struct DecalExtraSuballocation
 		{
 			GpuBufferSuballocation DecalSuballocation;
-			u32 DecalDynamicOffsetIndex = 0;
+		};
+
+		/** Variant holding optional extra suballocations. std::monostate represents no extras. */
+		using ExtraSuballocations = std::variant<std::monostate, DecalExtraSuballocation>;
+
+		/** Result of a uniform buffer allocation. */
+		struct AllocationResult
+		{
+			AllocationHandle Handle;
+			SPtr<GpuParameterSet> ParameterSet;
+			GpuBufferSuballocation PerObjectSuballocation;
+			ExtraSuballocations Extras;
+
+			/** Checks if this result is valid. */
+			bool IsValid() const { return Handle.IsValid(); }
 		};
 
 		RenderableUniformBufferManager() = default;
@@ -43,35 +74,29 @@ namespace b3d::render
 		/**
 		 * Initializes the manager. Must be called before use.
 		 *
-		 * @param device	GPU device for buffer creation.
+		 * @param device					GPU device for buffer creation.
+		 * @param renderableParameterSetLayout	Layout for normal renderable per-object parameter sets.
+		 * @param decalParameterSetLayout		Layout for decal per-object parameter sets.
 		 */
-		void Initialize(GpuDevice& device);
+		void Initialize(
+			GpuDevice& device,
+			const SPtr<GpuPipelineParameterSetLayout>& renderableParameterSetLayout,
+			const SPtr<GpuPipelineParameterSetLayout>& decalParameterSetLayout);
 
 		/**
-		 * Allocates per-object buffer for a renderable.
+		 * Allocates uniform buffer(s) for a renderable.
 		 *
-		 * @return			Allocation containing suballocation and shared parameter set.
+		 * @param type		Type indicating which buffers to allocate.
+		 * @return			Result containing handle, parameter set, and suballocations.
 		 */
-		RenderableAllocation AllocateForRenderable();
+		AllocationResult Allocate(AllocationType type = AllocationType::Normal);
 
 		/**
-		 * Allocates per-object buffers for a decal (PerObject + DecalParams).
+		 * Releases a uniform buffer allocation.
 		 *
-		 * @return			Allocation containing suballocations and shared parameter set.
+		 * @param handle	Handle from a previous Allocate() call.
 		 */
-		DecalAllocation AllocateForDecal();
-
-		/**
-		 * Releases a renderable allocation back to the pool.
-		 * @param allocation	Allocation to release.
-		 */
-		void Release(const RenderableAllocation& allocation);
-
-		/**
-		 * Releases a decal allocation back to the pool.
-		 * @param allocation	Allocation to release.
-		 */
-		void Release(const DecalAllocation& allocation);
+		void Release(AllocationHandle handle);
 
 		/**
 		 * Updates per-object buffer using transform data stored in a renderer object.
@@ -114,6 +139,15 @@ namespace b3d::render
 			u32 RefCount = 0;
 		};
 
+		/** Internal entry tracking a single allocation. */
+		struct AllocationEntry
+		{
+			GpuBufferSuballocation PerObjectSuballocation;
+			GpuBufferSuballocation DecalSuballocation;
+			AllocationType Type = AllocationType::Normal;
+			u32 NextFreeIndex = ~0u;
+		};
+
 		/**
 		 * Gets or creates a shared GpuParameterSet for the given buffer combination.
 		 *
@@ -138,6 +172,12 @@ namespace b3d::render
 		SPtr<GpuPipelineParameterSetLayout> mRenderableParameterSetLayout;
 		SPtr<GpuPipelineParameterSetLayout> mDecalParameterSetLayout;
 		GpuDevice* mDevice = nullptr;
+
+		/** Pool of allocation entries indexed by handle. */
+		Vector<AllocationEntry> mAllocationEntries;
+
+		/** Head of free-list for reusing released entries. */
+		u32 mFreeListHead = ~0u;
 	};
 
 	/** @} */

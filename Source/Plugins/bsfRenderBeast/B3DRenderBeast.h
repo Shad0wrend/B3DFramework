@@ -33,6 +33,21 @@ namespace b3d
 			bool IsUsingAsynchronousAnimation;
 		};
 
+		/** Per-object parameter set layout and dynamic offset index for normal renderables. */
+		struct RenderableParameterSetInfo
+		{
+			SPtr<GpuPipelineParameterSetLayout> Layout;
+			u32 PerObjectDynamicOffsetIndex = 0;
+		};
+
+		/** Per-object parameter set layout and dynamic offset indices for decals. */
+		struct DecalParameterSetInfo
+		{
+			SPtr<GpuPipelineParameterSetLayout> Layout;
+			u32 PerObjectDynamicOffsetIndex = 0;
+			u32 DecalDynamicOffsetIndex = 0;
+		};
+
 		/**
 		 * Default framework renderer. Performs frustum culling, sorting and renders all scene objects while applying
 		 * lighting, shadowing, special effects and post-processing.
@@ -57,6 +72,12 @@ namespace b3d
 
 			/** Returns the feature set the renderer is operating on. Render thread only. */
 			RenderBeastFeatureSet GetFeatureSet() const { return mFeatureSet; }
+
+			/** Returns the per-object parameter set info for normal renderables. */
+			const RenderableParameterSetInfo& GetRenderableParameterSetInfo() const { return mRenderableParameterSetInfo; }
+
+			/** Returns the per-object parameter set info for decals. */
+			const DecalParameterSetInfo& GetDecalParameterSetInfo() const { return mDecalParameterSetInfo; }
 
 			void Initialize(const SPtr<GpuDevice>& gpuDevice) override;
 			void Destroy() override;
@@ -146,6 +167,10 @@ namespace b3d
 			// Render thread only fields
 			RenderBeastFeatureSet mFeatureSet = RenderBeastFeatureSet::Desktop;
 			bool mIsFrameCaptureRequested = false;
+
+			// Per-object parameter set layouts and dynamic offset indices
+			RenderableParameterSetInfo mRenderableParameterSetInfo;
+			DecalParameterSetInfo mDecalParameterSetInfo;
 
 			// Scene data
 			Vector<RenderBeastScene*> mScenes;

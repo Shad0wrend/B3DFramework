@@ -36,13 +36,10 @@ namespace b3d
 			SPtr<MaterialParameterAdapter> ParameterAdapter;
 
 			/** Shared parameter set for per-object data (set #1), bound at render time. */
-			SPtr<GpuParameterSet> SharedPerObjectParameterSet; // TODO - Store this in RendererObject
-
-			/** Index for SetDynamicBufferOffset to select per-object data within the shared buffer. */
-			u32 PerObjectDynamicOffsetIndex = 0; // TODO - Store this in RendererObject
+			SPtr<GpuParameterSet> SharedPerObjectParameterSet;
 
 			/** Byte offset of this element's per-object data within the shared buffer. */
-			u32 PerObjectBufferOffset = 0; // TODO - Store this in RendererObject
+			u32 PerObjectBufferOffset = 0;
 
 			/** Renderer specific value that identifies the type of this renderable element. */
 			u32 Type = 0;

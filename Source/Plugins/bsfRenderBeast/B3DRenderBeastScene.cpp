@@ -444,7 +444,12 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 	// Allocate from the uniform buffer manager
 	if(!rendererRenderable->Elements.empty())
-		rendererRenderable->BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
+	{
+		auto result = mRenderableUniformBufferManager.Allocate();
+		rendererRenderable->PerObjectBufferAllocationHandle = result.Handle;
+		rendererRenderable->PerObjectParameterSet = result.ParameterSet;
+		rendererRenderable->PerObjectSuballocation = result.PerObjectSuballocation;
+	}
 
 	mRenderableUniformBufferManager.UpdatePerObjectBuffer(*rendererRenderable);
 
@@ -458,10 +463,9 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			continue;
 		}
 
-		// Store shared parameter set and dynamic offset info for render-time binding
-		element.SharedPerObjectParameterSet = rendererRenderable->BufferAllocation.SharedParameterSet;
-		element.PerObjectDynamicOffsetIndex = rendererRenderable->BufferAllocation.PerObjectDynamicOffsetIndex;
-		element.PerObjectBufferOffset = rendererRenderable->BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
+		// Store shared parameter set and buffer offset for render-time binding
+		element.SharedPerObjectParameterSet = rendererRenderable->PerObjectParameterSet;
+		element.PerObjectBufferOffset = rendererRenderable->PerObjectSuballocation.GetSuballocationOffset();
 
 		SPtr<GpuParameterSet> gpuParameterSet = element.ParameterAdapter->GetGpuParameterSet();
 
@@ -518,7 +522,7 @@ void RenderBeastScene::UnregisterRenderable(Renderable* renderable)
 	}
 
 	// Release the buffer allocation
-	mRenderableUniformBufferManager.Release(rendererRenderable->BufferAllocation);
+	mRenderableUniformBufferManager.Release(rendererRenderable->PerObjectBufferAllocationHandle);
 
 	if(renderableId != lastRenderableId)
 	{
@@ -883,12 +887,16 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	rendererParticles.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
+	{
+		auto result = mRenderableUniformBufferManager.Allocate();
+		rendererParticles.PerObjectBufferAllocationHandle = result.Handle;
+		rendererParticles.PerObjectParameterSet = result.ParameterSet;
+		rendererParticles.PerObjectSuballocation = result.PerObjectSuballocation;
+	}
 
-	// Store shared parameter set and dynamic offset info for render-time binding
-	renElement.SharedPerObjectParameterSet = rendererParticles.BufferAllocation.SharedParameterSet;
-	renElement.PerObjectDynamicOffsetIndex = rendererParticles.BufferAllocation.PerObjectDynamicOffsetIndex;
-	renElement.PerObjectBufferOffset = rendererParticles.BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
+	// Store shared parameter set and buffer offset for render-time binding
+	renElement.SharedPerObjectParameterSet = rendererParticles.PerObjectParameterSet;
+	renElement.PerObjectBufferOffset = rendererParticles.PerObjectSuballocation.GetSuballocationOffset();
 
 	// Now update the per-object buffer (allocation is ready)
 	mRenderableUniformBufferManager.UpdatePerObjectBuffer(rendererParticles);
@@ -1044,7 +1052,7 @@ void RenderBeastScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 	}
 
 	// Release the buffer allocation
-	mRenderableUniformBufferManager.Release(rendererParticles.BufferAllocation);
+	mRenderableUniformBufferManager.Release(rendererParticles.PerObjectBufferAllocationHandle);
 
 	ParticleSystem* lastSystem = mInfo.ParticleSystems.back().ParticleSystem;
 	const u32 lastRendererId = lastSystem->GetRendererId();
@@ -1122,12 +1130,16 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	SPtr<GpuParameterSet> gpuParameterSet = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	rendererDecal.BufferAllocation = mRenderableUniformBufferManager.AllocateForRenderable();
+	{
+		auto result = mRenderableUniformBufferManager.Allocate();
+		rendererDecal.PerObjectBufferAllocationHandle = result.Handle;
+		rendererDecal.PerObjectParameterSet = result.ParameterSet;
+		rendererDecal.PerObjectSuballocation = result.PerObjectSuballocation;
+	}
 
-	// Store shared parameter set and dynamic offset info for render-time binding
-	renElement.SharedPerObjectParameterSet = rendererDecal.BufferAllocation.SharedParameterSet;
-	renElement.PerObjectDynamicOffsetIndex = rendererDecal.BufferAllocation.PerObjectDynamicOffsetIndex;
-	renElement.PerObjectBufferOffset = rendererDecal.BufferAllocation.PerObjectSuballocation.GetSuballocationOffset();
+	// Store shared parameter set and buffer offset for render-time binding
+	renElement.SharedPerObjectParameterSet = rendererDecal.PerObjectParameterSet;
+	renElement.PerObjectBufferOffset = rendererDecal.PerObjectSuballocation.GetSuballocationOffset();
 
 	// Now update the per-object buffer (allocation is ready)
 	rendererDecal.UpdateDecalParamBuffer();
@@ -1170,7 +1182,7 @@ void RenderBeastScene::UnregisterDecal(Decal* decal)
 	renElement.SamplerOverrides = nullptr;
 
 	// Release the buffer allocation
-	mRenderableUniformBufferManager.Release(rendererDecal.BufferAllocation);
+	mRenderableUniformBufferManager.Release(rendererDecal.PerObjectBufferAllocationHandle);
 
 	if(rendererId != lastDecalId)
 	{
@@ -1191,7 +1203,10 @@ void RenderBeastScene::Initialize()
 	GetRenderBeast()->NotifySceneCreated(std::static_pointer_cast<RenderBeastScene>(GetShared()));
 
 	mGpuDevice = GetRenderBeast()->GetGpuDevice();
-	mRenderableUniformBufferManager.Initialize(*mGpuDevice);
+	mRenderableUniformBufferManager.Initialize(
+		*mGpuDevice,
+		GetRenderBeast()->GetRenderableParameterSetInfo().Layout,
+		GetRenderBeast()->GetDecalParameterSetInfo().Layout);
 	RendererScene::Initialize();
 }
 

@@ -35,6 +35,10 @@
 #include "RenderAPI/B3DRenderTexture.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 #include "Resources/B3DBuiltinResources.h"
+#include "B3DRendererRenderable.h"
+#include "B3DRendererDecal.h"
+#include "RenderAPI/B3DGpuProgramParameterDescription.h"
+#include "Math/B3DMath.h"
 
 using namespace std::placeholders;
 
@@ -82,6 +86,54 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 		!caps.HasCapability(RSC_TEXTURE_VIEWS))
 	{
 		mFeatureSet = RenderBeastFeatureSet::DesktopMacOS;
+	}
+
+	// Create per-object parameter set layouts
+	{
+		// PerObject uniform buffer info (shared by both layouts)
+		GpuUniformBufferInformation perObjectInfo;
+		perObjectInfo.Name = "PerObject";
+		perObjectInfo.Set = GpuPipelineSet::kPerObject;
+		perObjectInfo.Slot = 0;
+		perObjectInfo.Size = Math::CeilToMultiple(gPerObjectUniformDefinition.GetSize() / 4u, 4u);
+		perObjectInfo.Stages = GpuProgramStageBit::Vertex | GpuProgramStageBit::Fragment;
+		perObjectInfo.IsShareable = true;
+
+		// Create renderable layout (PerObject only)
+		{
+			GpuProgramParameterDescription renderableDescription;
+			renderableDescription.UniformBuffers["PerObject"] = perObjectInfo;
+			mRenderableParameterSetInfo.Layout = mDevice->CreateGpuPipelineParameterSetLayout(renderableDescription);
+
+			const u32 perObjectSlot = mRenderableParameterSetInfo.Layout->GetSlot("PerObject");
+			if(perObjectSlot != ~0u)
+				mRenderableParameterSetInfo.PerObjectDynamicOffsetIndex = mRenderableParameterSetInfo.Layout->GetDynamicOffsetIndex(perObjectSlot);
+		}
+
+		// Create decal layout (PerObject + DecalParams)
+		{
+			GpuProgramParameterDescription decalDescription;
+			decalDescription.UniformBuffers["PerObject"] = perObjectInfo;
+
+			GpuUniformBufferInformation decalInfo;
+			decalInfo.Name = "DecalParams";
+			decalInfo.Set = GpuPipelineSet::kPerObject;
+			decalInfo.Slot = 1;
+			decalInfo.Size = Math::CeilToMultiple(gDecalParamDef.GetSize() / 4u, 4u);
+			decalInfo.Stages = GpuProgramStageBit::Fragment;
+			decalInfo.IsShareable = true;
+			decalDescription.UniformBuffers["DecalParams"] = decalInfo;
+
+			mDecalParameterSetInfo.Layout = mDevice->CreateGpuPipelineParameterSetLayout(decalDescription);
+
+			const u32 perObjectSlot = mDecalParameterSetInfo.Layout->GetSlot("PerObject");
+			if(perObjectSlot != ~0u)
+				mDecalParameterSetInfo.PerObjectDynamicOffsetIndex = mDecalParameterSetInfo.Layout->GetDynamicOffsetIndex(perObjectSlot);
+
+			const u32 decalSlot = mDecalParameterSetInfo.Layout->GetSlot("DecalParams");
+			if(decalSlot != ~0u)
+				mDecalParameterSetInfo.DecalDynamicOffsetIndex = mDecalParameterSetInfo.Layout->GetDynamicOffsetIndex(decalSlot);
+		}
 	}
 
 	RendererUtility::StartUp();

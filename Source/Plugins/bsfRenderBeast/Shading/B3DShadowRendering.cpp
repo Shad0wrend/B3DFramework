@@ -3,6 +3,7 @@
 #include "B3DShadowRendering.h"
 #include "B3DRendererView.h"
 #include "B3DRenderBeastScene.h"
+#include "B3DRenderBeast.h"
 #include "Components/B3DLight.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "Material/B3DMaterialParameterAdapter.h"
@@ -504,7 +505,7 @@ namespace b3d
 						RendererRenderable* renderable = sceneInfo.Renderables[renderableIndex];
 
 						// Register per-object shadow parameter set if not already registered
-						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable->BufferAllocation.PerObjectSuballocation.GetBuffer());
+						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable->PerObjectSuballocation.GetBuffer());
 						auto found = std::find(perObjectParameterSets.begin(), perObjectParameterSets.end(), perObjectParameterSet);
 						if(found == perObjectParameterSets.end())
 						{
@@ -539,6 +540,8 @@ namespace b3d
 					commandBuffer.BeginRenderPass(passCreateInformation);
 					opt.PrepareRenderTarget(commandBuffer);
 
+					const u32 perObjectDynamicOffsetIndex = GetRenderBeast()->GetRenderableParameterSetInfo().PerObjectDynamicOffsetIndex;
+
 					for(u32 i = 0; i < (u32)RenderableAnimType::Count; i++)
 					{
 						for(auto& command : commands[i])
@@ -557,10 +560,10 @@ namespace b3d
 								opt.Bind(commandBuffer, command);
 
 								// Bind per-object shadow parameter set and dynamic offset
-								const auto& bufferAllocation = command.Renderable->BufferAllocation;
-								SPtr<GpuParameterSet> shadowParameterSet = opt.GetShadowParameterSet(bufferAllocation.PerObjectSuballocation.GetBuffer()); // TODO - Should sort objects by set if possible, to avoid switching sets
+								const GpuBufferSuballocation& perObjectSuballocation = command.Renderable->PerObjectSuballocation;
+								SPtr<GpuParameterSet> shadowParameterSet = opt.GetShadowParameterSet(perObjectSuballocation.GetBuffer()); // TODO - Should sort objects by set if possible, to avoid switching sets
 								commandBuffer.SetGpuParameterSet(shadowParameterSet);
-								commandBuffer.SetDynamicBufferOffset(GpuPipelineSet::kPerObject, bufferAllocation.PerObjectDynamicOffsetIndex, bufferAllocation.PerObjectSuballocation.GetSuballocationOffset());
+								commandBuffer.SetDynamicBufferOffset(GpuPipelineSet::kPerObject, perObjectDynamicOffsetIndex, perObjectSuballocation.GetSuballocationOffset());
 							}
 						}
 					}

@@ -4,6 +4,7 @@
 
 #include "B3DRenderBeastPrerequisites.h"
 #include "Utility/B3DRenderableUniformBufferManager.h"
+#include "RenderAPI/B3DGpuBuffer.h"
 
 namespace b3d::render
 {
@@ -14,8 +15,14 @@ namespace b3d::render
 	/** Base class for all renderable objects. */
 	struct RendererObject
 	{
-		/** Allocation for the per-object buffer from the uniform buffer manager. */
-		RenderableUniformBufferManager::RenderableAllocation BufferAllocation;
+		/** Handle for releasing the per-object uniform buffer allocation. */
+		RenderableUniformBufferManager::AllocationHandle PerObjectBufferAllocationHandle;
+
+		/** Shared parameter set for per-object data binding. */
+		SPtr<GpuParameterSet> PerObjectParameterSet;
+
+		/** Suballocation for per-object uniform buffer data. */
+		GpuBufferSuballocation PerObjectSuballocation;
 
 		/** Determines if the previous frame properties require updating. */
 		PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
