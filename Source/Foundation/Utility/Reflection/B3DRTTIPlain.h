@@ -426,7 +426,7 @@ namespace b3d
 			RTTIReadProcessor readProcessor(stream);
 			if constexpr(Version != kNoVersioning)
 			{
-				u32 version;
+				u8 version;
 				B3DRTTIRead(version, stream);
 
 				B3D_ASSERT(version <= Version);
@@ -440,13 +440,14 @@ namespace b3d
 
 		static BitLength GetSize(const SerializedObjectType& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = sizeof(uint8_t);
+			BitLength dataSize = 0;
+
+			if constexpr(Version != kNoVersioning)
+				dataSize += sizeof(u8);
 
 			RTTISizeProcessor sizeProcessor;
 			if constexpr(Version != kNoVersioning)
-			{
 				EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), sizeProcessor, Version);
-			}
 			else
 				EnumerateFieldsType::RTTIEnumerateFields(const_cast<SerializedObjectType&>(data), sizeProcessor);
 

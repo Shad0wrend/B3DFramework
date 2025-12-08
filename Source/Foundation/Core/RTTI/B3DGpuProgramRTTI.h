@@ -252,8 +252,8 @@ namespace b3d
 		static void RTTIEnumerateFields(GpuUniformBufferInformation& object, Processor& processor, u8 version)
 		{
 			processor(object.Name);
-			processor(object.Set);
 			processor(object.Slot);
+			processor(object.Set);
 			processor(object.Size);
 
 			if(version > 1)
