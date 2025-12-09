@@ -13,6 +13,7 @@
 #include "Mesh/B3DMeshUtility.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "Utility/B3DBitwise.h"
+#include "Image/B3DSpriteTexture.h"
 
 namespace b3d {
 namespace render {
@@ -154,9 +155,7 @@ void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderD
 
 	RenderElement.NumParticles = renderData->NumParticles;
 
-	gParticlesParamDef.gTexSize.Set(ParticlesParamBuffer, texSize);
-	gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, 0);
-
+	PopulateAndBindParticlesUniformBuffer(texSize, 0);
 	RenderElement.PerCameraUniformBufferParameter.Set(view.GetPerViewBuffer());
 }
 
@@ -172,21 +171,68 @@ void RendererParticles::BindGpuSimulatedInputs(const GpuParticleResources& gpuSi
 	RenderElement.ParamsGpu.CurvesTexture.Set(gpuCurves.GetTexture());
 	RenderElement.NumParticles = GpuParticleSystem->GetTileCount() * GpuParticleConstants::kParticlesPerTile;
 
+	i32 bufferOffset;
 	if(GpuParticleSystem->HasSortInfo())
 	{
 		RenderElement.IndicesBuffer.Set(sortedIndices);
-		gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, GpuParticleSystem->GetSortOffset());
+		bufferOffset = GpuParticleSystem->GetSortOffset();
 	}
 	else
 	{
 		RenderElement.IndicesBuffer.Set(GpuParticleSystem->GetParticleIndices());
-		gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, 0);
+		bufferOffset = 0;
 	}
 
-	const u32 texSize = GpuParticleConstants::kTexSize;
-	gParticlesParamDef.gTexSize.Set(ParticlesParamBuffer, texSize);
-
+	PopulateAndBindParticlesUniformBuffer(GpuParticleConstants::kTexSize, bufferOffset);
 	RenderElement.PerCameraUniformBufferParameter.Set(view.GetPerViewBuffer());
+}
+
+void RendererParticles::PopulateAndBindParticlesUniformBuffer(i32 texSize, i32 bufferOffset) const
+{
+	GpuBufferSuballocation uniformBuffer = gParticlesParamDef.AllocateTransient();
+
+	// Set axis vectors
+	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
+	Vector3 axisForward = settings.OrientationPlaneNormal;
+	Vector3 axisUp = Vector3::kUnitY;
+	if(axisForward.Dot(axisUp) > 0.9998f)
+		axisUp = Vector3::kUnitZ;
+
+	Vector3 axisRight = axisUp.Cross(axisForward);
+	Vector3::Orthonormalize(axisRight, axisUp, axisForward);
+
+	gParticlesParamDef.gAxisUp.Set(uniformBuffer, axisUp);
+	gParticlesParamDef.gAxisRight.Set(uniformBuffer, axisRight);
+
+	// Set UV parameters from sprite image if available
+	const SPtr<Shader> shader = RenderElement.Material->GetShader();
+	SpriteImage* spriteImage = nullptr;
+	if(shader->HasTextureParam("gTexture"))
+		spriteImage = RenderElement.Material->GetSpriteImage("gTexture").get();
+
+	if(!spriteImage && shader->HasTextureParam("gAlbedoTex"))
+		spriteImage = RenderElement.Material->GetSpriteImage("gAlbedoTex").get();
+
+	if(spriteImage)
+	{
+		const Area2 UVRange = spriteImage->GetDefaultAllocatedImage().GetUVRange();
+		gParticlesParamDef.gUVOffset.Set(uniformBuffer, UVRange.GetPosition());
+		gParticlesParamDef.gUVScale.Set(uniformBuffer, Vector2(UVRange.Width, UVRange.Height));
+
+		const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
+		gParticlesParamDef.gSubImageSize.Set(uniformBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
+	}
+	else
+	{
+		gParticlesParamDef.gUVOffset.Set(uniformBuffer, Vector2::kZero);
+		gParticlesParamDef.gUVScale.Set(uniformBuffer, Vector2::kOne);
+		gParticlesParamDef.gSubImageSize.Set(uniformBuffer, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+	gParticlesParamDef.gTexSize.Set(uniformBuffer, texSize);
+	gParticlesParamDef.gBufferOffset.Set(uniformBuffer, bufferOffset);
+
+	RenderElement.ParticlesUniformBufferParameter.Set(uniformBuffer);
 }
 
 ParticleTexturePool::~ParticleTexturePool()

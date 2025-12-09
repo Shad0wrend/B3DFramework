@@ -172,6 +172,9 @@ namespace b3d
 			/** Parameter for binding the per-camera uniform buffer. */
 			GpuParameterUniformBuffer PerCameraUniformBufferParameter;
 
+			/** Parameter for binding the particle params uniform buffer. */
+			GpuParameterUniformBuffer ParticlesUniformBufferParameter;
+
 			/** Binding spot for the buffer containing instance id -> particle index mapping. */
 			GpuParameterStorageBuffer IndicesBuffer;
 
@@ -223,9 +226,6 @@ namespace b3d
 			/** Element used for sorting and rendering the particle system. */
 			mutable ParticlesRenderElement RenderElement;
 
-			/** Parameters used by the particle rendering shader. */
-			SPtr<GpuBuffer> ParticlesParamBuffer;
-
 			/** Suballocation for GPU particle parameters (GPU-simulated only). */
 			GpuBufferSuballocation GpuParticlesParamSuballocation;
 
@@ -253,6 +253,15 @@ namespace b3d
 			 * @param view				View the particle system is being rendered from.
 			 */
 			void BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const;
+
+		private:
+			/**
+			 * Allocates a transient uniform buffer and populates it with particle parameters.
+			 *
+			 * @param texSize		Size of the particle data texture.
+			 * @param bufferOffset	Offset into the particle index buffer.
+			 */
+			void PopulateAndBindParticlesUniformBuffer(i32 texSize, i32 bufferOffset) const;
 		};
 
 		/** Default material used for rendering particles, when no other is available. */

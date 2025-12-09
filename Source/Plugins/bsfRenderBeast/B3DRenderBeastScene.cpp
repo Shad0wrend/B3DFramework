@@ -775,21 +775,7 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		return;
 	}
 
-	SPtr<GpuBuffer> particlesParamBuffer = gParticlesParamDef.CreateBuffer();
-	rendererParticles.ParticlesParamBuffer = particlesParamBuffer;
-
 	const ParticleSystemSettings& settings = particleSystem->GetSettings();
-	Vector3 axisForward = settings.OrientationPlaneNormal;
-
-	Vector3 axisUp = Vector3::kUnitY;
-	if(axisForward.Dot(axisUp) > 0.9998f)
-		axisUp = Vector3::kUnitZ;
-
-	Vector3 axisRight = axisUp.Cross(axisForward);
-	Vector3::Orthonormalize(axisRight, axisUp, axisForward);
-
-	gParticlesParamDef.gAxisUp.Set(particlesParamBuffer, axisUp);
-	gParticlesParamDef.gAxisRight.Set(particlesParamBuffer, axisRight);
 
 	// Initialize the variant of the particle system for GPU simulation, if needed
 	if(settings.GpuSimulation)
@@ -820,29 +806,6 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 	const SPtr<Shader> shader = renElement.Material->GetShader();
 
-	SpriteImage* spriteImage = nullptr;
-	if(shader->HasTextureParam("gTexture"))
-		spriteImage = renElement.Material->GetSpriteImage("gTexture").get();
-
-	if(!spriteImage && shader->HasTextureParam("gAlbedoTex"))
-		spriteImage = renElement.Material->GetSpriteImage("gAlbedoTex").get();
-
-	if(spriteImage)
-	{
-		const Area2 UVRange = spriteImage->GetDefaultAllocatedImage().GetUVRange();
-		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetPosition());
-		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
-
-		const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
-		gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
-	}
-	else
-	{
-		gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, Vector2::kZero);
-		gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2::kOne);
-		gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	}
-
 	const ParticleOrientation orientation = settings.Orientation;
 	const bool lockY = settings.OrientationLockY;
 	const bool gpu = settings.GpuSimulation;
@@ -864,27 +827,27 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 	const ShaderVariationParameters* variation = &GetParticleShaderVariation(orientation, lockY, gpu, is3d, forwardLightingType);
 
-	FindVariationInformation findDesc;
-	findDesc.VariationParameters = variation;
-	findDesc.Override = true;
+	FindVariationInformation findVariationInformation;
+	findVariationInformation.VariationParameters = variation;
+	findVariationInformation.Override = true;
 
-	u32 techniqueIdx = renElement.Material->FindVariation(findDesc);
+	u32 variationIndex = renElement.Material->FindVariation(findVariationInformation);
 
-	if(techniqueIdx == (u32)-1)
-		techniqueIdx = renElement.Material->GetDefaultVariation();
+	if(variationIndex == (u32)-1)
+		variationIndex = renElement.Material->GetDefaultVariation();
 
-	renElement.DefaultVariationIndex = techniqueIdx;
+	renElement.DefaultVariationIndex = variationIndex;
 
 	// Make sure the technique shaders are compiled
-	const SPtr<Variation>& technique = renElement.Material->GetVariation(techniqueIdx);
+	const SPtr<Variation>& technique = renElement.Material->GetVariation(variationIndex);
 	if(technique)
 		technique->Compile();
 
 	// Generate or assigned renderer specific data for the material
-	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(techniqueIdx);
+	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(variationIndex);
 	renElement.ParameterAdapter->Update(renElement.Material, 0.0f, true);
 
-	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
+	SPtr<GpuParameterSet> gpuParameterSet = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
 	if(gpu)
@@ -917,9 +880,9 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 	if(gpu)
 	{
-		gpuParams->GetSampledTextureParameter("gPositionTimeTex", renElement.ParamsGpu.PositionTimeTexture);
-		gpuParams->GetSampledTextureParameter("gSizeRotationTex", renElement.ParamsGpu.SizeRotationTexture);
-		gpuParams->GetSampledTextureParameter("gCurvesTex", renElement.ParamsGpu.CurvesTexture);
+		gpuParameterSet->GetSampledTextureParameter("gPositionTimeTex", renElement.ParamsGpu.PositionTimeTexture);
+		gpuParameterSet->GetSampledTextureParameter("gSizeRotationTex", renElement.ParamsGpu.SizeRotationTexture);
+		gpuParameterSet->GetSampledTextureParameter("gCurvesTex", renElement.ParamsGpu.CurvesTexture);
 
 		renElement.Is3D = false;
 	}
@@ -928,17 +891,17 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		switch(settings.RenderMode)
 		{
 		case ParticleRenderMode::Billboard:
-			gpuParams->GetSampledTextureParameter("gPositionAndRotTex", renElement.ParamsCpuBillboard.PositionAndRotTexture);
-			gpuParams->GetSampledTextureParameter("gColorTex", renElement.ParamsCpuBillboard.ColorTexture);
-			gpuParams->GetSampledTextureParameter("gSizeAndFrameIdxTex", renElement.ParamsCpuBillboard.SizeAndFrameIdxTexture);
+			gpuParameterSet->GetSampledTextureParameter("gPositionAndRotTex", renElement.ParamsCpuBillboard.PositionAndRotTexture);
+			gpuParameterSet->GetSampledTextureParameter("gColorTex", renElement.ParamsCpuBillboard.ColorTexture);
+			gpuParameterSet->GetSampledTextureParameter("gSizeAndFrameIdxTex", renElement.ParamsCpuBillboard.SizeAndFrameIdxTexture);
 
 			renElement.Is3D = false;
 			break;
 		case ParticleRenderMode::Mesh:
-			gpuParams->GetSampledTextureParameter("gPositionTex", renElement.ParamsCpuMesh.PositionTexture);
-			gpuParams->GetSampledTextureParameter("gColorTex", renElement.ParamsCpuMesh.ColorTexture);
-			gpuParams->GetSampledTextureParameter("gSizeTex", renElement.ParamsCpuMesh.SizeTexture);
-			gpuParams->GetSampledTextureParameter("gRotationTex", renElement.ParamsCpuMesh.RotationTexture);
+			gpuParameterSet->GetSampledTextureParameter("gPositionTex", renElement.ParamsCpuMesh.PositionTexture);
+			gpuParameterSet->GetSampledTextureParameter("gColorTex", renElement.ParamsCpuMesh.ColorTexture);
+			gpuParameterSet->GetSampledTextureParameter("gSizeTex", renElement.ParamsCpuMesh.SizeTexture);
+			gpuParameterSet->GetSampledTextureParameter("gRotationTex", renElement.ParamsCpuMesh.RotationTexture);
 
 			renElement.Is3D = true;
 			renElement.Mesh = settings.Mesh;
@@ -948,15 +911,20 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		}
 	}
 
-	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
-	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
-	gpuParams->SetUniformBuffer("ParticleParams", rendererParticles.ParticlesParamBuffer);
-
-	gpuParams->GetStorageBufferParameter("gIndices", renElement.IndicesBuffer);
-	gpuParams->TryGetUniformBufferParameter("PerCamera", renElement.PerCameraUniformBufferParameter);
+	gpuParameterSet->GetStorageBufferParameter("gIndices", renElement.IndicesBuffer);
+	gpuParameterSet->TryGetUniformBufferParameter("PerCamera", renElement.PerCameraUniformBufferParameter);
+	gpuParameterSet->TryGetUniformBufferParameter("ParticleParams", renElement.ParticlesUniformBufferParameter);
 
 	if(gpu)
 	{
+		// Get sprite image for animation curve generation
+		SpriteImage* spriteImage = nullptr;
+		if(shader->HasTextureParam("gTexture"))
+			spriteImage = renElement.Material->GetSpriteImage("gTexture").get();
+
+		if(!spriteImage && shader->HasTextureParam("gAlbedoTex"))
+			spriteImage = renElement.Material->GetSpriteImage("gAlbedoTex").get();
+
 		// Allocate curves
 		GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
 		curves.Free(rendererParticles.ColorCurveAlloc);
@@ -1004,33 +972,22 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 		// Update the GPU particles param buffer via staging
 		mUniformBufferPools.UpdateGpuParticlesParamBuffer(rendererParticles);
-
-		// Write sprite animation curve
-		if(spriteImage)
-		{
-			const Area2 UVRange = spriteImage->GetDefaultAllocatedImage().GetUVRange();
-			gParticlesParamDef.gUVOffset.Set(particlesParamBuffer, UVRange.GetPosition());
-			gParticlesParamDef.gUVScale.Set(particlesParamBuffer, Vector2(UVRange.Width, UVRange.Height));
-
-			const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
-			gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4((float)anim.ColumnCount, (float)anim.RowCount, 1.0f / anim.ColumnCount, 1.0f / anim.RowCount));
-		}
 	}
 
 	// Set up buffers for lighting
 	const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward);
 	if(useForwardRendering)
 	{
-		renElement.ForwardLightingParams.Populate(gpuParams, supportsClusteredForward);
-		renElement.ImageBasedParams.Initialize(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
+		renElement.ForwardLightingParams.Populate(gpuParameterSet, supportsClusteredForward);
+		renElement.ImageBasedParams.Initialize(gpuParameterSet, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
 	}
 
 	const bool isTransparent = shaderFlags.IsSet(ShaderFlag::Transparent);
 	if(isTransparent)
 	{
 		// Optional depth buffer input if requested
-		if(gpuParams->HasSampledTexture("gDepthBufferTex"))
-			gpuParams->GetSampledTextureParameter("gDepthBufferTex", renElement.DepthInputTexture);
+		if(gpuParameterSet->HasSampledTexture("gDepthBufferTex"))
+			gpuParameterSet->GetSampledTextureParameter("gDepthBufferTex", renElement.DepthInputTexture);
 	}
 }
 
