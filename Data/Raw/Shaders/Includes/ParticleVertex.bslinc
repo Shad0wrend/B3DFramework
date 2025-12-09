@@ -90,7 +90,7 @@ mixin ParticleVertex
 		SamplerState gCurvesSampler;
 		
 		[internal]
-		cbuffer GpuParticleParams
+		cbuffer GpuParticleParams : register(c1, space1)
 		{
 			float2 gColorCurveOffset;
 			float2 gColorCurveScale;

@@ -37,6 +37,7 @@
 #include "Resources/B3DBuiltinResources.h"
 #include "B3DRendererRenderable.h"
 #include "B3DRendererDecal.h"
+#include "B3DRendererParticles.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
 #include "Math/B3DMath.h"
 
@@ -134,6 +135,31 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 			if(decalSlot != ~0u)
 				mDecalParameterSetInfo.DecalDynamicOffsetIndex = mDecalParameterSetInfo.Layout->GetDynamicOffsetIndex(decalSlot);
 		}
+
+		// Create GPU particles layout (PerObject + GpuParticleParams)
+		{
+			GpuProgramParameterDescription gpuParticlesDescription;
+			gpuParticlesDescription.UniformBuffers["PerObject"] = perObjectInfo;
+
+			GpuUniformBufferInformation gpuParticlesInfo;
+			gpuParticlesInfo.Name = "GpuParticleParams";
+			gpuParticlesInfo.Set = GpuPipelineSet::kPerObject;
+			gpuParticlesInfo.Slot = 1;
+			gpuParticlesInfo.Size = Math::CeilToMultiple(gGpuParticlesParamDef.GetSize() / 4u, 4u);
+			gpuParticlesInfo.Stages = GpuProgramStageBit::Vertex | GpuProgramStageBit::Fragment;
+			gpuParticlesInfo.IsShareable = true;
+			gpuParticlesDescription.UniformBuffers["GpuParticleParams"] = gpuParticlesInfo;
+
+			mGpuParticlesParameterSetInfo.Layout = mDevice->CreateGpuPipelineParameterSetLayout(gpuParticlesDescription);
+
+			const u32 perObjectSlot = mGpuParticlesParameterSetInfo.Layout->GetSlot("PerObject");
+			if(perObjectSlot != ~0u)
+				mGpuParticlesParameterSetInfo.PerObjectDynamicOffsetIndex = mGpuParticlesParameterSetInfo.Layout->GetDynamicOffsetIndex(perObjectSlot);
+
+			const u32 gpuParticlesSlot = mGpuParticlesParameterSetInfo.Layout->GetSlot("GpuParticleParams");
+			if(gpuParticlesSlot != ~0u)
+				mGpuParticlesParameterSetInfo.GpuParticlesDynamicOffsetIndex = mGpuParticlesParameterSetInfo.Layout->GetDynamicOffsetIndex(gpuParticlesSlot);
+		}
 	}
 
 	// Build type configurations for UniformBufferPools
@@ -158,6 +184,17 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 			config.Layout = mDecalParameterSetInfo.Layout;
 			config.Buffers.Add({UniformBufferPools::PerObjectBuffer, "PerObject", gPerObjectUniformDefinition.GetSize(), GpuBufferFlag::StoreOnGPU});
 			config.Buffers.Add({UniformBufferPools::DecalBuffer, "DecalParams", gDecalParamDef.GetSize(), GpuBufferFlag::StoreOnGPU});
+			mTypeConfigurations.Add(config);
+		}
+
+		// GPU particles type - PerObject + GpuParticleParams buffers
+		{
+			PoolConfiguration config;
+			config.Type = UniformBufferPools::GpuParticlesPool;
+			config.EntriesPerBuffer = 256;
+			config.Layout = mGpuParticlesParameterSetInfo.Layout;
+			config.Buffers.Add({UniformBufferPools::PerObjectBuffer, "PerObject", gPerObjectUniformDefinition.GetSize(), GpuBufferFlag::StoreOnGPU});
+			config.Buffers.Add({UniformBufferPools::GpuParticlesBuffer, "GpuParticleParams", gGpuParticlesParamDef.GetSize(), GpuBufferFlag::StoreOnGPU});
 			mTypeConfigurations.Add(config);
 		}
 	}

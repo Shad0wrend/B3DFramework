@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DRendererParticles.h"
+#include "B3DRenderBeast.h"
 #include "Particles/B3DParticleScene.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "Mesh/B3DMeshData.h"
@@ -100,6 +101,12 @@ void ParticlesRenderElement::Draw(GpuCommandBuffer& commandBuffer) const
 {
 	if(NumParticles > 0)
 	{
+		if(IsGpuSimulated)
+		{
+			const u32 gpuParticlesDynamicOffsetIndex = GetRenderBeast()->GetGpuParticlesParameterSetInfo().GpuParticlesDynamicOffsetIndex;
+			commandBuffer.SetDynamicBufferOffset(GpuPipelineSet::kPerObject, gpuParticlesDynamicOffsetIndex, GpuParticlesParamBufferOffset);
+		}
+
 		if(Is3D)
 			GetRendererUtility().Draw(commandBuffer, Mesh, NumParticles);
 		else

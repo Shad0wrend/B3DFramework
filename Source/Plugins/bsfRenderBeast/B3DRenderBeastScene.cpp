@@ -887,8 +887,22 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	SPtr<GpuParameterSet> gpuParams = renElement.ParameterAdapter->GetGpuParameterSet();
 
 	// Allocate from the uniform buffer manager after ParameterAdapter is created
+	if(gpu)
 	{
-		auto result = mUniformBufferPools.Allocate();
+		// GPU particles use GpuParticlesPool (PerObject + GpuParticleParams)
+		UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::GpuParticlesPool);
+		rendererParticles.PerObjectBufferAllocationHandle = result.Handle;
+		rendererParticles.PerObjectParameterSet = result.ParameterSet;
+		rendererParticles.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
+		rendererParticles.GpuParticlesParamSuballocation = result.GetSuballocation(UniformBufferPools::GpuParticlesBuffer);
+
+		renElement.GpuParticlesParamBufferOffset = rendererParticles.GpuParticlesParamSuballocation.GetSuballocationOffset();
+		renElement.IsGpuSimulated = true;
+	}
+	else
+	{
+		// CPU particles use RenderablePool (PerObject only)
+		UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::RenderablePool);
 		rendererParticles.PerObjectBufferAllocationHandle = result.Handle;
 		rendererParticles.PerObjectParameterSet = result.ParameterSet;
 		rendererParticles.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
@@ -907,7 +921,6 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		gpuParams->GetSampledTextureParameter("gSizeRotationTex", renElement.ParamsGpu.SizeRotationTexture);
 		gpuParams->GetSampledTextureParameter("gCurvesTex", renElement.ParamsGpu.CurvesTexture);
 
-		rendererParticles.GpuParticlesParamBuffer = gGpuParticlesParamDef.CreateBuffer();
 		renElement.Is3D = false;
 	}
 	else
@@ -933,14 +946,11 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 		default:
 			break;
 		}
-
-		rendererParticles.GpuParticlesParamBuffer = nullptr;
 	}
 
 	// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 	// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
 	gpuParams->SetUniformBuffer("ParticleParams", rendererParticles.ParticlesParamBuffer);
-	gpuParams->SetUniformBuffer("GpuParticleParams", rendererParticles.GpuParticlesParamBuffer);
 
 	gpuParams->GetStorageBufferParameter("gIndices", renElement.IndicesBuffer);
 	gpuParams->TryGetUniformBufferParameter("PerCamera", renElement.PerCameraUniformBufferParameter);
@@ -992,19 +1002,8 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 		rendererParticles.SizeScaleFrameIdxCurveAlloc = curves.Alloc(samples, kNumCurveSamples);
 
-		const Vector2 colorUVOffset = GpuParticleCurves::GetUvOffset(rendererParticles.ColorCurveAlloc);
-		const float colorUVScale = GpuParticleCurves::GetUvScale(rendererParticles.ColorCurveAlloc);
-
-		const Vector2 sizeScaleFrameIdxUVOffset =
-			GpuParticleCurves::GetUvOffset(rendererParticles.SizeScaleFrameIdxCurveAlloc);
-		const float sizeScaleFrameIdxUVScale =
-			GpuParticleCurves::GetUvScale(rendererParticles.SizeScaleFrameIdxCurveAlloc);
-
-		const SPtr<GpuBuffer>& gpuParticlesParamBuffer = rendererParticles.GpuParticlesParamBuffer;
-		gGpuParticlesParamDef.gColorCurveOffset.Set(gpuParticlesParamBuffer, colorUVOffset);
-		gGpuParticlesParamDef.gColorCurveScale.Set(gpuParticlesParamBuffer, Vector2(colorUVScale, 0.0f));
-		gGpuParticlesParamDef.gSizeScaleFrameIdxCurveOffset.Set(gpuParticlesParamBuffer, sizeScaleFrameIdxUVOffset);
-		gGpuParticlesParamDef.gSizeScaleFrameIdxCurveScale.Set(gpuParticlesParamBuffer, Vector2(sizeScaleFrameIdxUVScale, 0.0f));
+		// Update the GPU particles param buffer via staging
+		mUniformBufferPools.UpdateGpuParticlesParamBuffer(rendererParticles);
 
 		// Write sprite animation curve
 		if(spriteImage)

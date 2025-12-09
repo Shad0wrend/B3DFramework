@@ -10,6 +10,7 @@ namespace b3d::render
 {
 	struct RendererObject;
 	struct RendererDecal;
+	struct RendererParticles;
 
 	/** @addtogroup RenderBeast
 	 *  @{
@@ -27,15 +28,17 @@ namespace b3d::render
 		/** Type of buffer pool. */
 		enum BufferType : u8
 		{
-			PerObjectBuffer, /**< Per-object transform data. */
-			DecalBuffer, /**< Decal-specific parameters. */
+			PerObjectBuffer = 0, /**< Per-object transform data. */
+			DecalBuffer = 1, /**< Decal-specific parameters. */
+			GpuParticlesBuffer = 1, /**< GPU particle simulation parameters. */
 		};
 
 		/** Type of allocation, determining which buffers are allocated. */
 		enum PoolType : u8
 		{
 			RenderablePool, /**< Just per-object buffer. */
-			DecalPool /**< Per-object buffer + decal parameter buffer. */
+			DecalPool, /**< Per-object buffer + decal parameter buffer. */
+			GpuParticlesPool /**< Per-object buffer + GPU particle parameters. */
 		};
 
 		/** Configuration for a single buffer in the pool. */
@@ -135,6 +138,14 @@ namespace b3d::render
 		void UpdateDecalParamBuffer(const RendererDecal& decal, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 		/**
+		 * Updates GPU particle parameter buffer using data from renderer particles.
+		 *
+		 * @param particles		Renderer particles whose GPU particle param buffer should be updated.
+		 * @param commandBuffer	Command buffer to queue the copy on. If null, uses the transfer command buffer.
+		 */
+		void UpdateGpuParticlesParamBuffer(const RendererParticles& particles, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+
+		/**
 		 * Advances the staging pool frame counters. Call at end of each render frame.
 		 */
 		void AdvanceFrame();
@@ -196,6 +207,7 @@ namespace b3d::render
 		struct PoolGroup
 		{
 			PoolType Type;
+			TInlineArray<BufferType, 4> PoolBufferTypes;
 			TInlineArray<GpuBufferPool, 4> Pools;        /**< Pools indexed by BufferType. */
 			TInlineArray<String, 4> UniformBufferNames;  /**< Uniform buffer names for parameter set binding. */
 			u32 EntriesPerBuffer = 0;
@@ -236,7 +248,8 @@ namespace b3d::render
 		TInlineArray<PoolGroup, 4> mPoolGroups;
 		Vector<PoolConfiguration> mPendingConfigurations;
 		TransientGpuBufferPool mPerObjectStagingPool;
-		TransientGpuBufferPool mDecalParamStagingPool;
+		TransientGpuBufferPool mDecalStagingPool;
+		TransientGpuBufferPool mGpuParticlesStagingPool;
 		GpuDevice* mDevice = nullptr;
 		bool mInitialized = false;
 	};

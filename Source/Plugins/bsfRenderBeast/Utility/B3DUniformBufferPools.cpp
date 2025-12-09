@@ -4,9 +4,11 @@
 #include "B3DRendererObject.h"
 #include "B3DRendererRenderable.h"
 #include "B3DRendererDecal.h"
+#include "B3DRendererParticles.h"
 #include "Components/B3DDecal.h"
 #include "RenderAPI/B3DGpuBackend.h"
 #include "RenderAPI/B3DGpuDevice.h"
+#include "Shading/B3DGpuParticleSimulation.h"
 
 using namespace b3d;
 using namespace b3d::render;
@@ -41,29 +43,41 @@ void UniformBufferPools::Initialize(GpuDevice& device)
 		stagingCreateInfo.Staging.Size = decalParamSize;
 		stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU;
 
-		mDecalParamStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
+		mDecalStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
+	}
+
+	// Initialize GPU particles param staging pool
+	{
+		const u32 gpuParticlesParamSize = gGpuParticlesParamDef.GetSize();
+		GpuBufferCreateInformation stagingCreateInfo;
+		stagingCreateInfo.Type = GpuBufferType::StagingWrite;
+		stagingCreateInfo.Staging.Size = gpuParticlesParamSize;
+		stagingCreateInfo.Flags = GpuBufferFlag::AllowWriteCachingOnCPU;
+
+		mGpuParticlesStagingPool.Initialize(device, stagingCreateInfo, kStagingEntriesPerBuffer, 1);
 	}
 
 	// Create pool groups from pending configurations
-	for (const PoolConfiguration& config : mPendingConfigurations)
+	for (const PoolConfiguration& poolConfiguration : mPendingConfigurations)
 	{
 		PoolGroup group;
-		group.Type = config.Type;
-		group.EntriesPerBuffer = config.EntriesPerBuffer;
-		group.ParameterSetLayout = config.Layout;
+		group.Type = poolConfiguration.Type;
+		group.EntriesPerBuffer = poolConfiguration.EntriesPerBuffer;
+		group.ParameterSetLayout = poolConfiguration.Layout;
 
 		// Create pools for each configured buffer type
-		for (const BufferConfiguration& poolConfig : config.Buffers)
+		for (const BufferConfiguration& bufferConfiguration : poolConfiguration.Buffers)
 		{
-			GpuBufferCreateInformation createInfo = GpuBufferCreateInformation::CreateUniform(poolConfig.BufferSize, poolConfig.Flags);
+			GpuBufferCreateInformation createInfo = GpuBufferCreateInformation::CreateUniform(bufferConfiguration.BufferSize, bufferConfiguration.Flags);
 			GpuBufferPool pool;
-			pool.Initialize(device, createInfo, config.EntriesPerBuffer, 1);
+			pool.Initialize(device, createInfo, poolConfiguration.EntriesPerBuffer, 1);
 
 			group.Pools.Add(std::move(pool));
-			group.UniformBufferNames.Add(poolConfig.UniformBufferParameterName);
+			group.PoolBufferTypes.Add(bufferConfiguration.Type);
+			group.UniformBufferNames.Add(bufferConfiguration.UniformBufferParameterName);
 		}
 
-		const u32 typeIndex = (u32)config.Type;
+		const u32 typeIndex = (u32)poolConfiguration.Type;
 		if (typeIndex >= mPoolGroups.Size())
 			mPoolGroups.Resize(typeIndex + 1);
 
@@ -107,7 +121,10 @@ UniformBufferPools::AllocationResult UniformBufferPools::Allocate(PoolType type)
 	// Allocate from all pools in the group
 	entry.Suballocations.Clear();
 	for (u32 poolIndex = 0; poolIndex < group.Pools.Size(); ++poolIndex)
+	{
+		B3D_ASSERT(poolIndex == (u32)group.PoolBufferTypes[poolIndex]);
 		entry.Suballocations.Add(group.Pools[poolIndex].Allocate());
+	}
 
 	// Get or create shared parameter set
 	result.ParameterSet = GetOrCreateParameterSet(group, entry);
@@ -256,7 +273,7 @@ void UniformBufferPools::UpdateDecalParamBuffer(const RendererDecal& decal, cons
 	if (gpuBackendConventions.UvYAxis == GpuBackendConventions::Axis::Up)
 		flipDerivatives = -1.0f;
 
-	GpuBufferSuballocation staging = mDecalParamStagingPool.Allocate();
+	GpuBufferSuballocation staging = mDecalStagingPool.Allocate();
 
 	gDecalParamDef.gWorldToDecal.Set(staging, worldToDecal);
 	gDecalParamDef.gDecalNormal.Set(staging, decalNormal);
@@ -272,8 +289,34 @@ void UniformBufferPools::UpdateDecalParamBuffer(const RendererDecal& decal, cons
 	actualCommandBuffer->CopyBufferToBuffer(staging.GetBuffer(), destination.GetBuffer(), staging.GetSuballocationOffset(), destination.GetSuballocationOffset(), staging.GetSize());
 }
 
+void UniformBufferPools::UpdateGpuParticlesParamBuffer(const RendererParticles& particles, const SPtr<GpuCommandBuffer>& commandBuffer)
+{
+	if (!particles.GpuParticlesParamSuballocation.IsValid())
+		return;
+
+	const Vector2 colorCurveOffset = GpuParticleCurves::GetUvOffset(particles.ColorCurveAlloc);
+	const float colorCurveScale = GpuParticleCurves::GetUvScale(particles.ColorCurveAlloc);
+	const Vector2 sizeScaleFrameIdxCurveOffset = GpuParticleCurves::GetUvOffset(particles.SizeScaleFrameIdxCurveAlloc);
+	const float sizeScaleFrameIdxCurveScale = GpuParticleCurves::GetUvScale(particles.SizeScaleFrameIdxCurveAlloc);
+
+	GpuBufferSuballocation staging = mGpuParticlesStagingPool.Allocate();
+
+	gGpuParticlesParamDef.gColorCurveOffset.Set(staging, colorCurveOffset);
+	gGpuParticlesParamDef.gColorCurveScale.Set(staging, Vector2(colorCurveScale, 0.0f));
+	gGpuParticlesParamDef.gSizeScaleFrameIdxCurveOffset.Set(staging, sizeScaleFrameIdxCurveOffset);
+	gGpuParticlesParamDef.gSizeScaleFrameIdxCurveScale.Set(staging, Vector2(sizeScaleFrameIdxCurveScale, 0.0f));
+
+	staging.GetBuffer()->FlushCache(staging.GetSuballocationIndex());
+
+	const SPtr<GpuCommandBuffer>& actualCommandBuffer = commandBuffer ? commandBuffer : mDevice->GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer();
+
+	const GpuBufferSuballocation& destination = particles.GpuParticlesParamSuballocation;
+	actualCommandBuffer->CopyBufferToBuffer(staging.GetBuffer(), destination.GetBuffer(), staging.GetSuballocationOffset(), destination.GetSuballocationOffset(), staging.GetSize());
+}
+
 void UniformBufferPools::AdvanceFrame()
 {
 	mPerObjectStagingPool.AdvanceFrame();
-	mDecalParamStagingPool.AdvanceFrame();
+	mDecalStagingPool.AdvanceFrame();
+	mGpuParticlesStagingPool.AdvanceFrame();
 }

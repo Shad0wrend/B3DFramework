@@ -49,6 +49,14 @@ namespace b3d
 			u32 DecalDynamicOffsetIndex = 0;
 		};
 
+		/** Per-object parameter set layout and dynamic offset indices for GPU-simulated particles. */
+		struct GpuParticlesParameterSetInfo
+		{
+			SPtr<GpuPipelineParameterSetLayout> Layout;
+			u32 PerObjectDynamicOffsetIndex = 0;
+			u32 GpuParticlesDynamicOffsetIndex = 0;
+		};
+
 		/**
 		 * Default framework renderer. Performs frustum culling, sorting and renders all scene objects while applying
 		 * lighting, shadowing, special effects and post-processing.
@@ -79,6 +87,9 @@ namespace b3d
 
 			/** Returns the per-object parameter set info for decals. */
 			const DecalParameterSetInfo& GetDecalParameterSetInfo() const { return mDecalParameterSetInfo; }
+
+			/** Returns the per-object parameter set info for GPU-simulated particles. */
+			const GpuParticlesParameterSetInfo& GetGpuParticlesParameterSetInfo() const { return mGpuParticlesParameterSetInfo; }
 
 			/** Returns the type configurations for the renderable uniform buffer manager. */
 			const TInlineArray<UniformBufferPools::PoolConfiguration, 4>& GetPerObjectUniformTypeConfigurations() const { return mTypeConfigurations; }
@@ -175,6 +186,7 @@ namespace b3d
 			// Per-object parameter set layouts and dynamic offset indices
 			RenderableParameterSetInfo mRenderableParameterSetInfo;
 			DecalParameterSetInfo mDecalParameterSetInfo;
+			GpuParticlesParameterSetInfo mGpuParticlesParameterSetInfo;
 			TInlineArray<UniformBufferPools::PoolConfiguration, 4> mTypeConfigurations;
 
 			// Scene data

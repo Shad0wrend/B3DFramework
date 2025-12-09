@@ -6,6 +6,7 @@
 #include "Renderer/B3DRenderElement.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "RenderAPI/B3DGpuPipelineParameterLayout.h"
+#include "RenderAPI/B3DGpuBufferPool.h"
 #include "Material/B3DShaderVariation.h"
 #include "Allocators/B3DPoolAlloc.h"
 #include "Renderer/B3DRendererMaterial.h"
@@ -195,6 +196,12 @@ namespace b3d
 			/** Number of particles to render. */
 			u32 NumParticles = 0;
 
+			/** Dynamic buffer offset for GPU particle parameters (GPU-simulated only). */
+			u32 GpuParticlesParamBufferOffset = 0;
+
+			/** True if the particle system uses GPU simulation. */
+			bool IsGpuSimulated = false;
+
 			/** True if the particle should be drawn as a 3D mesh instead of a billboard. */
 			bool Is3D = false;
 
@@ -219,8 +226,8 @@ namespace b3d
 			/** Parameters used by the particle rendering shader. */
 			SPtr<GpuBuffer> ParticlesParamBuffer;
 
-			/** Extra parameters required by the particle rendering shader if the particle system is GPU simulated. */
-			SPtr<GpuBuffer> GpuParticlesParamBuffer;
+			/** Suballocation for GPU particle parameters (GPU-simulated only). */
+			GpuBufferSuballocation GpuParticlesParamSuballocation;
 
 			/** Information about the color over lifetime curve stored in the global curve texture. */
 			TextureRowAllocation ColorCurveAlloc;
