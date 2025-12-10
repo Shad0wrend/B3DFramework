@@ -11,7 +11,7 @@ namespace b3d { namespace render {
 
 static const u32 kReflProbeBufferIncrement = 16 * sizeof(ReflectioneProbeData);
 
-ReflProbeParamsParamDef gReflProbeParamsParamDef;
+GlobalReflectionProbeUniformBufferDefinition gGlobalReflectionProbeUniformBufferDefinition;
 
 void VisibleReflectionProbeData::Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup)
 {
@@ -142,12 +142,7 @@ void ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(const SPtr<G
 		parameters->SetSampledTexture(kReflectionProbeCubemapsTextureName, cubemaps);
 }
 
-ReflectionProbeUniformBuffer::ReflectionProbeUniformBuffer()
-{
-	Buffer = gReflProbeParamsParamDef.CreateBuffer();
-}
-
-void ReflectionProbeUniformBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections)
+void RendererReflectionProbe::PopulateGlobalReflectionProbeUniformBuffer(const GpuBufferSuballocation& uniformBuffer, const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections)
 {
 	float brightness = 1.0f;
 	u32 skyReflectionsAvailable = 0;
@@ -165,17 +160,17 @@ void ReflectionProbeUniformBuffer::Populate(const Skybox* sky, u32 numProbes, co
 		brightness = sky->GetBrightness();
 	}
 
-	gReflProbeParamsParamDef.gSkyCubemapNumMips.Set(Buffer, numSkyMips);
-	gReflProbeParamsParamDef.gSkyCubemapAvailable.Set(Buffer, skyReflectionsAvailable);
-	gReflProbeParamsParamDef.gNumProbes.Set(Buffer, numProbes);
+	gGlobalReflectionProbeUniformBufferDefinition.gSkyCubemapNumMips.Set(uniformBuffer, numSkyMips);
+	gGlobalReflectionProbeUniformBufferDefinition.gSkyCubemapAvailable.Set(uniformBuffer, skyReflectionsAvailable);
+	gGlobalReflectionProbeUniformBufferDefinition.gNumProbes.Set(uniformBuffer, numProbes);
 
 	u32 numReflProbeMips = 0;
 	if(reflectionCubemaps != nullptr)
 		numReflProbeMips = reflectionCubemaps->GetProperties().MipMapCount + 1;
 
-	gReflProbeParamsParamDef.gReflCubemapNumMips.Set(Buffer, numReflProbeMips);
-	gReflProbeParamsParamDef.gUseReflectionMaps.Set(Buffer, capturingReflections ? 0 : 1);
-	gReflProbeParamsParamDef.gSkyBrightness.Set(Buffer, brightness);
+	gGlobalReflectionProbeUniformBufferDefinition.gReflCubemapNumMips.Set(uniformBuffer, numReflProbeMips);
+	gGlobalReflectionProbeUniformBufferDefinition.gUseReflectionMaps.Set(uniformBuffer, capturingReflections ? 0 : 1);
+	gGlobalReflectionProbeUniformBufferDefinition.gSkyBrightness.Set(uniformBuffer, brightness);
 }
 
 ReflProbesUniformDefinition gReflProbesUniformDefinition;

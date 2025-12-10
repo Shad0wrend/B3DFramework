@@ -63,7 +63,7 @@ namespace b3d
 			u32 mNumProbes = 0;
 		};
 
-		B3D_UNIFORM_BUFFER_BEGIN(ReflProbeParamsParamDef)
+		B3D_UNIFORM_BUFFER_BEGIN(GlobalReflectionProbeUniformBufferDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(i32, gReflCubemapNumMips)
 			B3D_UNIFORM_BUFFER_MEMBER(i32, gNumProbes)
 			B3D_UNIFORM_BUFFER_MEMBER(i32, gSkyCubemapAvailable)
@@ -72,7 +72,7 @@ namespace b3d
 			B3D_UNIFORM_BUFFER_MEMBER(float, gSkyBrightness)
 		B3D_UNIFORM_BUFFER_END
 
-		extern ReflProbeParamsParamDef gReflProbeParamsParamDef;
+		extern GlobalReflectionProbeUniformBufferDefinition gGlobalReflectionProbeUniformBufferDefinition;
 
 		/**	Renderer information specific to a single reflection probe. */
 		class RendererReflectionProbe
@@ -82,6 +82,17 @@ namespace b3d
 
 			/** Populates the structure with reflection probe parameters. */
 			void GetParameters(ReflectioneProbeData& output) const;
+
+			/**
+			 * Populates a transient uniform buffer with reflection probe parameters.
+			 *
+			 * @param uniformBuffer			Buffer suballocation to populate.
+			 * @param sky					Skybox to use for sky reflections (can be null).
+			 * @param numProbes				Number of reflection probes.
+			 * @param reflectionCubemaps	Texture array containing reflection probe cubemaps.
+			 * @param capturingReflections	True if currently capturing reflections (disables reflection map usage).
+			 */
+			static void PopulateGlobalReflectionProbeUniformBuffer(const GpuBufferSuballocation& uniformBuffer, const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections);
 
 			ReflectionProbe* Probe;
 			u32 ArrayIdx;
@@ -129,17 +140,6 @@ namespace b3d
 
 			// Only utilized when standard forward rendering is used
 			GpuParameterUniformBuffer ReflectionProbesUniformBufferParameter;
-		};
-
-		/** Parameter buffer containing information about reflection probes. */
-		struct ReflectionProbeUniformBuffer
-		{
-			ReflectionProbeUniformBuffer();
-
-			/** Updates the parameter buffer contents with required refl. probe data. */
-			void Populate(const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections);
-
-			SPtr<GpuBuffer> Buffer;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(ReflProbesUniformDefinition)

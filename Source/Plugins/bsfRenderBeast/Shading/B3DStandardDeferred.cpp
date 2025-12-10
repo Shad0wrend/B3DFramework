@@ -62,7 +62,7 @@ void DeferredIBLSetupMaterial::Initialize()
 	mIBLParams.Initialize(mGpuParameterSet, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSetupMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLSetupMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const GpuBufferSuballocation& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -88,7 +88,7 @@ DeferredIBLSetupMaterial* DeferredIBLSetupMaterial::GetVariation(bool msaa, bool
 	}
 }
 
-void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const SPtr<GpuBuffer>& globalProbeUniformBuffer)
+void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer)
 {
 	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput);
 	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, sceneInfo.ReflProbeCubemapsTex);
@@ -154,7 +154,7 @@ void DeferredIBLSkyMaterial::Initialize()
 	mIBLParams.Initialize(mGpuParameterSet, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSkyMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLSkyMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const GpuBufferSuballocation& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -188,7 +188,7 @@ void DeferredIBLFinalizeMaterial::Initialize()
 	mIBLParams.Initialize(mGpuParameterSet, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLFinalizeMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuBuffer>& reflProbeParams)
+void DeferredIBLFinalizeMaterial::Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const GpuBufferSuballocation& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -358,7 +358,7 @@ void StandardDeferred::RenderLightBatches(GpuCommandBuffer& commandBuffer, const
 	}
 }
 
-TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuBuffer>& globalReflectionProbeUniformBuffer)
+TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const GpuBufferSuballocation& globalReflectionProbeUniformBuffer)
 {
 	TArray<ReflectionProbeRenderInformation> output;
 

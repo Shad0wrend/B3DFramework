@@ -221,7 +221,7 @@ namespace b3d
 			GpuParameterStorageTexture mOutputTextureParam;
 
 			GpuParameterUniformBuffer mUniformBufferParameter;
-			ReflectionProbeUniformBuffer mReflProbeParamBuffer;
+			GpuParameterUniformBuffer mReflProbeParamsUniformBufferParameter;
 
 			static const u32 kTileSize;
 		};

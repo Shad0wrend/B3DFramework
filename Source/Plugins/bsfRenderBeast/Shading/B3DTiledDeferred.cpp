@@ -330,7 +330,7 @@ void TiledDeferredImageBasedLightingMaterial::Initialize()
 
 	mImageBasedParams.Initialize(mGpuParameterSet, GPT_COMPUTE_PROGRAM, false, false, true);
 
-	mGpuParameterSet->SetUniformBuffer("ReflProbeParams", mReflProbeParamBuffer.Buffer);
+	mGpuParameterSet->TryGetUniformBufferParameter("ReflProbeParams", mReflProbeParamsUniformBufferParameter);
 }
 
 void TiledDeferredImageBasedLightingMaterial::InitDefinesInternal(ShaderDefines& defines)
@@ -359,9 +359,9 @@ void TiledDeferredImageBasedLightingMaterial::Execute(GpuCommandBuffer& commandB
 	if(view.GetRenderSettings().EnableSkybox)
 		skybox = sceneInfo.Skybox;
 
-	mReflProbeParamBuffer.Populate(skybox, probeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
-
-	mReflProbeParamBuffer.Buffer->FlushCache();
+	GpuBufferSuballocation reflProbeParamsBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
+	RendererReflectionProbe::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+	mReflProbeParamsUniformBufferParameter.Set(reflProbeParamsBuffer);
 
 	mGBufferA.Set(inputs.Gbuffer.Albedo);
 	mGBufferB.Set(inputs.Gbuffer.Normals);

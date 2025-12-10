@@ -1309,17 +1309,17 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		}
 
 		// Prepare buffers and parameters for rendering
-		ReflectionProbeUniformBuffer reflectionProbeUniformBuffer;
-		reflectionProbeUniformBuffer.Populate(skybox, probeData.GetProbeCount(), inputs.Scene.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+		GpuBufferSuballocation reflProbeParamsBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
+		RendererReflectionProbe::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), inputs.Scene.ReflProbeCubemapsTex, viewProps.CapturingReflections);
 
 		RenderPassCreateInformation mainPassCreateInformation(iblRadianceRT, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 		{
-			setupMaterial->Prepare(gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflectionProbeUniformBuffer.Buffer);
+			setupMaterial->Prepare(gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParamsBuffer);
 			mainPassCreateInformation.Parameters.Add(setupMaterial->GetGpuParameterSet());
 
 			if(isMSAA)
 			{
-				msaaSetupMaterial->Prepare( gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflectionProbeUniformBuffer.Buffer);
+				msaaSetupMaterial->Prepare(gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParamsBuffer);
 				mainPassCreateInformation.Parameters.Add(msaaSetupMaterial->GetGpuParameterSet());
 			}
 		}
@@ -1331,19 +1331,19 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		TArray<StandardDeferred::ReflectionProbeRenderInformation> reflectionProbeRenderInformations;
 		if(!viewProps.CapturingReflections)
 		{
-			reflectionProbeRenderInformations = StandardDeferred::Instance().PrepareReflectionProbes(commandBuffer.GetGpuDevice(), probeData, inputs.View, gbuffer, inputs.Scene, reflectionProbeUniformBuffer.Buffer);
+			reflectionProbeRenderInformations = StandardDeferred::Instance().PrepareReflectionProbes(commandBuffer.GetGpuDevice(), probeData, inputs.View, gbuffer, inputs.Scene, reflProbeParamsBuffer);
 
 			for(const auto& entry : reflectionProbeRenderInformations)
 				mainPassCreateInformation.Parameters.Add(entry.GpuParameters);
 
 			if(skyFilteredRadiance)
 			{
-				skyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflectionProbeUniformBuffer.Buffer);
+				skyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflProbeParamsBuffer);
 				mainPassCreateInformation.Parameters.Add(skyMaterial->GetGpuParameterSet());
 
 				if(isMSAA)
 				{
-					msaaSkyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflectionProbeUniformBuffer.Buffer);
+					msaaSkyMaterial->Prepare(gbuffer, perViewBuffer, skybox, reflProbeParamsBuffer);
 					mainPassCreateInformation.Parameters.Add(msaaSkyMaterial->GetGpuParameterSet());
 				}
 			}
@@ -1397,7 +1397,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			RenderPassCreateInformation finalizePassCreateInformation(outputRT, RT_DEPTH_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 
 			DeferredIBLFinalizeMaterial* const finalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(isMSAA, true);
-			finalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
+			finalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParamsBuffer);
 
 			finalizePassCreateInformation.Parameters.Add(finalizeMaterial->GetGpuParameterSet());
 
@@ -1406,7 +1406,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			if(isMSAA)
 			{
 				msaaFinalizeMaterial = DeferredIBLFinalizeMaterial::GetVariation(true, false);
-				msaaFinalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflectionProbeUniformBuffer.Buffer);
+				msaaFinalizeMaterial->Prepare(gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParamsBuffer);
 
 				finalizePassCreateInformation.Parameters.Add(msaaFinalizeMaterial->GetGpuParameterSet());
 			}
@@ -1470,8 +1470,8 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		skybox = sceneInfo.Skybox;
 
 	// Prepare refl. probe param buffer
-	ReflectionProbeUniformBuffer reflProbeParamBuffer;
-	reflProbeParamBuffer.Populate(skybox, visibleReflProbeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+	GpuBufferSuballocation reflProbeParamBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
+	RendererReflectionProbe::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamBuffer, skybox, visibleReflProbeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
 
 	SPtr<Texture> skyFilteredRadiance;
 	if(skybox)
@@ -1529,7 +1529,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	const auto fnBindCommonIBLParameters = [&reflProbeParamBuffer, &skyFilteredRadiance, &sceneInfo](MaterialParameterAdapter& parameterAdapter, ImageBasedLightingParameterBinding& iblParams)
 	{
 		// Note: Ideally these should be bound once (they are the same for all renderables)
-		iblParams.ReflectionProbeUniformBufferParameter.Set(reflProbeParamBuffer.Buffer);
+		iblParams.ReflectionProbeUniformBufferParameter.Set(reflProbeParamBuffer);
 
 		iblParams.SkyReflectionsTexParam.Set(skyFilteredRadiance);
 		iblParams.AmbientOcclusionTexParam.Set(Texture::kWhite); // Note: Add SSAO here?
