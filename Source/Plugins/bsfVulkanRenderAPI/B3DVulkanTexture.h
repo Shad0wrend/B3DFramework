@@ -21,7 +21,7 @@ namespace b3d
 		struct VulkanImageCreateInformation
 		{
 			VkImage Image = VK_NULL_HANDLE; /**< Internal Vulkan image object */
-			VmaAllocation Allocation; /** Information about the memory allocated for this image. */
+			VulkanAllocationResult Allocation; /** Information about the memory allocated for this image. */
 			VkImageLayout Layout = VK_IMAGE_LAYOUT_UNDEFINED; /**< Initial layout of the image. */
 			TextureType Type = TEX_TYPE_2D; /**< Type of the image. */
 			VkFormat Format = VK_FORMAT_UNDEFINED; /**< Pixel format of the image. */
@@ -52,7 +52,7 @@ namespace b3d
 			 * @param	ownsImage				If true, this object will take care of releasing the image and its memory, otherwise it is expected they will be released externally.
 			 * @param	isShaderReadAllowed		True if the image is allowed to be read in the shader. If not, it can only be used as a framebuffer attachment.
 			 */
-			VulkanImage(VulkanResourceManager* owner, VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& textureProperties, bool ownsImage = true, bool isShaderReadAllowed = true, const StringView& name = "");
+			VulkanImage(VulkanResourceManager* owner, VkImage image, VulkanAllocationResult allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& textureProperties, bool ownsImage = true, bool isShaderReadAllowed = true, const StringView& name = "");
 
 			/**
 			 * @param	owner					Resource manager that keeps track of lifetime of this resource.
@@ -125,6 +125,9 @@ namespace b3d
 			 */
 			VulkanImageSubresource* GetSubresource(u32 face, u32 mipLevel);
 
+			/** Returns a pointer to persistently mapped memory of the image, or null pointer if the image is not mappable. */
+			void* GetMappedMemory() const { return mMappedMemory; }
+
 			/**
 			 * Returns a pointer to internal image memory for the specified sub-resource. Must be followed by Unmap(). Caller
 			 * must ensure the image was created in CPU readable memory, and that image isn't currently being written to by the
@@ -157,6 +160,12 @@ namespace b3d
 			 *									allocated in non-coherent memory and will be ignored for ones allocated in coherent memory.
 			 */
 			void Unmap(bool isFlushRequired = false);
+
+			/** Flushes any CPU writes to the buffer to make them visible to the GPU. Only relevant for non-coherent memory. */
+			void Flush(VkDeviceSize offset, VkDeviceSize size);
+
+			/** Invalidates any GPU writes to the buffer to make them visible to the CPU. Only relevant for non-coherent memory. */
+			void Invalidate(VkDeviceSize offset, VkDeviceSize size);
 
 			/**
 			 * Determines a set of access flags based on the current image and provided image layout. This method makes
@@ -208,6 +217,7 @@ namespace b3d
 			VulkanImageView mMainView;
 			VulkanImageView mFramebufferMainView;
 			i32 mUsage;
+			void* mMappedMemory = nullptr;
 			bool mOwnsImage;
 			bool mIsShaderReadAllowed = true;
 

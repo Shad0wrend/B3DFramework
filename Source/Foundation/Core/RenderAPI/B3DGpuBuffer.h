@@ -537,6 +537,7 @@ namespace b3d::render
 		String mName;
 		u32 mSuballocationSize = 0;
 		u32 mTotalSize = 0;
+		void* mMappedMemory = nullptr;
 		u8* mCache = nullptr;
 		bool mIsCacheDirty = false;
 

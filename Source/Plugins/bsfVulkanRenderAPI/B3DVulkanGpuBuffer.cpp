@@ -11,8 +11,8 @@
 using namespace b3d;
 using namespace b3d::render;
 
-VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch, u32 slicePitch, const StringView& name)
-	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation), mRowPitch(rowPitch)
+VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VulkanAllocationResult allocation, u32 rowPitch, u32 slicePitch, const StringView& name)
+	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation.Handle), mMappedMemory(allocation.MappedMemory), mRowPitch(rowPitch)
 {
 	if(rowPitch != 0)
 		mSliceHeight = slicePitch / rowPitch;
@@ -72,6 +72,18 @@ void VulkanBuffer::Unmap(bool isFlushRequired)
 
 	if(isFlushRequired)
 		device.FlushMemory(mAllocation, mMappedOffset, mMappedSize);
+}
+
+void VulkanBuffer::Flush(VkDeviceSize offset, VkDeviceSize size)
+{
+	VulkanGpuDevice& device = mOwner->GetDevice();
+	device.FlushMemory(mAllocation, offset, size);
+}
+
+void VulkanBuffer::Invalidate(VkDeviceSize offset, VkDeviceSize size)
+{
+	VulkanGpuDevice& device = mOwner->GetDevice();
+	device.InvalidateMemory(mAllocation, offset, size);
 }
 
 VkBufferView VulkanBuffer::GetOrCreateView(VkFormat format)
@@ -331,8 +343,7 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	VkResult result = vkCreateBuffer(vkDevice, &mBufferCI, gVulkanAllocator, &buffer);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VmaAllocation allocation = device.AllocateMemory(buffer, memoryUsage);
-
+	VulkanAllocationResult allocation = device.AllocateMemory(buffer, memoryUsage);
 	mBufferCI.usage = usage; // Restore original usage
 
 	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;

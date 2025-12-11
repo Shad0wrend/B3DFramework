@@ -148,7 +148,6 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 	imageDesc.FaceCount = 1;
 	imageDesc.MipLevelCount = 1;
 	imageDesc.DepthSliceCount = 1;
-	imageDesc.Allocation = VK_NULL_HANDLE;
 
 	mSurfaces.resize(imageCount);
 	for(u32 imageIndex = 0; imageIndex < imageCount; imageIndex++)

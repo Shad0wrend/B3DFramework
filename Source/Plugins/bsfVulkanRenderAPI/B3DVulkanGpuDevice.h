@@ -27,6 +27,13 @@ namespace b3d
 			VkColorSpaceKHR ColorSpace;
 		};
 
+		/** Result from the allocation functions. */
+		struct VulkanAllocationResult
+		{
+			VmaAllocation Handle = VK_NULL_HANDLE; /**< Handle that can be used for releasing the allocation. */
+			void* MappedMemory = nullptr; /**< Pointer to the mapped memory, if the allocation was created with mapping enabled and the memory type supports mapping. */
+		};
+
 		/** Represents a single GPU device usable by Vulkan. */
 		class VulkanGpuDevice : public GpuDevice
 		{
@@ -143,20 +150,20 @@ namespace b3d
 			 */
 
 			/**
-			 * Allocates memory for the provided image, and binds it to the image. Returns null if it cannot find memory
+			 * Allocates memory for the provided image, and binds it to the image. Returns null allocation handle if it cannot find memory
 			 * with the specified flags.
 			 *
 			 * Thread safe.
 			 */
-			VmaAllocation AllocateMemory(VkImage image, VmaMemoryUsage usage);
+			VulkanAllocationResult AllocateMemory(VkImage image, VmaMemoryUsage usage);
 
 			/**
-			 * Allocates memory for the provided buffer, and binds it to the buffer. Returns null if it cannot find memory
+			 * Allocates memory for the provided buffer, and binds it to the buffer. Returns null allocation handle if it cannot find memory
 			 * with the specified flags.
 			 *
 			 * Thread safe.
 			 */
-			VmaAllocation AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage);
+			VulkanAllocationResult AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage);
 
 			/**
 			 * Frees a previously allocated block of memory.

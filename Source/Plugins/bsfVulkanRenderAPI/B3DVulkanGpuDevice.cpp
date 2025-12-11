@@ -798,10 +798,11 @@ SurfaceFormat VulkanGpuDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, boo
 	return output;
 }
 
-VmaAllocation VulkanGpuDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
+VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
 {
 	VmaAllocationCreateInfo allocationCreateInformation = {};
 	allocationCreateInformation.usage = usage;
+	allocationCreateInformation.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
 	VmaAllocationInfo allocationInfo;
 	VmaAllocation allocation;
@@ -811,23 +812,32 @@ VmaAllocation VulkanGpuDevice::AllocateMemory(VkImage image, VmaMemoryUsage usag
 	result = vkBindImageMemory(mLogicalDevice, image, allocationInfo.deviceMemory, allocationInfo.offset);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	return allocation;
+	VulkanAllocationResult output;
+	output.Handle = allocation;
+	output.MappedMemory = allocationInfo.pMappedData;
+
+	return output;
 }
 
-VmaAllocation VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage)
+VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage)
 {
 	VmaAllocationCreateInfo allocationCreateInformation = {};
 	allocationCreateInformation.usage = usage;
+	allocationCreateInformation.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
 	VmaAllocationInfo allocationInfo;
-	VmaAllocation memory;
-	VkResult result = vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocationCreateInformation, &memory, &allocationInfo);
+	VmaAllocation allocation;
+	VkResult result = vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocationCreateInformation, &allocation, &allocationInfo);
 	B3D_ASSERT(result == VK_SUCCESS);
 
 	result = vkBindBufferMemory(mLogicalDevice, buffer, allocationInfo.deviceMemory, allocationInfo.offset);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	return memory;
+	VulkanAllocationResult output;
+	output.Handle = allocation;
+	output.MappedMemory = allocationInfo.pMappedData;
+
+	return output;
 }
 
 void VulkanGpuDevice::FreeMemory(VmaAllocation allocation)

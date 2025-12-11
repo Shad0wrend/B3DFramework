@@ -561,6 +561,7 @@ namespace b3d
 			String mName;
 			TextureProperties mProperties;
 			SPtr<PixelData> mInitData;
+			void* mMappedMemory = nullptr;
 		};
 
 		/** @} */

@@ -39,7 +39,7 @@ namespace b3d
 			 * @param	slicePitch	If buffer maps to an image sub-resource, size of a single 2D surface (in elements).
 			 * @param	name		Optional name of the resource, for debugging purposes.
 			 */
-			VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch = 0, u32 slicePitch = 0, const StringView& name = "");
+			VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VulkanAllocationResult allocation, u32 rowPitch = 0, u32 slicePitch = 0, const StringView& name = "");
 			~VulkanBuffer();
 
 			/** Returns the internal handle to the Vulkan object. */
@@ -60,6 +60,9 @@ namespace b3d
 			 */
 			u32 GetSliceHeight() const { return mSliceHeight; }
 
+			/** Returns a pointer to persistently mapped memory of the buffer, or null pointer if the buffer is not mappable. */
+			void* GetMappedMemory() const { return mMappedMemory; }
+
 			/**
 			 * Returns a pointer to internal buffer memory. Must be followed by Unmap(). Caller must ensure the buffer was
 			 * created in CPU readable memory, and that buffer isn't currently being written to by the GPU.
@@ -78,6 +81,12 @@ namespace b3d
 			 *									allocated in non-coherent memory and will be ignored for ones allocated in coherent memory.
 			 */
 			void Unmap(bool isFlushRequired = false);
+
+			/** Flushes any CPU writes to the buffer to make them visible to the GPU. Only relevant for non-coherent memory. */
+			void Flush(VkDeviceSize offset, VkDeviceSize size);
+
+			/** Invalidates any GPU writes to the buffer to make them visible to the CPU. Only relevant for non-coherent memory. */
+			void Invalidate(VkDeviceSize offset, VkDeviceSize size);
 
 			/**
 			 * Creates a new view of this buffer or returns an existing view if one of this format was already created. Views
@@ -149,6 +158,7 @@ namespace b3d
 			VkBuffer mBuffer;
 			TInlineArray<ViewInformation, 2> mViews;
 			VmaAllocation mAllocation;
+			void* mMappedMemory = nullptr;
 
 			u32 mRowPitch;
 			u32 mSliceHeight;

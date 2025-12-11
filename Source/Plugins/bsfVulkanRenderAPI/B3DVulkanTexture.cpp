@@ -15,7 +15,7 @@
 using namespace b3d;
 using namespace b3d::render;
 
-static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
+static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, VulkanAllocationResult allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
 {
 	VulkanImageCreateInformation desc;
 	desc.Image = image;
@@ -31,12 +31,12 @@ static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, V
 	return desc;
 }
 
-VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& textureProperties, bool ownsImage, bool isShaderReadAllowed, const StringView& name)
+VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VulkanAllocationResult allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& textureProperties, bool ownsImage, bool isShaderReadAllowed, const StringView& name)
 	: VulkanImage(owner, BuildImageCreateInformation(image, allocation, layout, actualFormat, textureProperties), ownsImage, isShaderReadAllowed, name)
 {}
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& createInformation, bool ownsImage, bool isShaderReadAllowed, const StringView& name)
-	: VulkanResource(owner, false, name), mImage(createInformation.Image), mAllocation(createInformation.Allocation), mUsage(createInformation.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(createInformation.FaceCount), mDepthSliceCount(createInformation.DepthSliceCount), mMipLevelCount(createInformation.MipLevelCount)
+	: VulkanResource(owner, false, name), mImage(createInformation.Image), mAllocation(createInformation.Allocation.Handle), mMappedMemory(createInformation.Allocation.MappedMemory), mUsage(createInformation.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(createInformation.FaceCount), mDepthSliceCount(createInformation.DepthSliceCount), mMipLevelCount(createInformation.MipLevelCount)
 {
 	mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	mImageViewCI.pNext = nullptr;
@@ -453,6 +453,18 @@ void VulkanImage::Unmap(bool isFlushRequired)
 		device.FlushMemory(mAllocation, mMappedOffset, mMappedSize);
 }
 
+void VulkanImage::Flush(VkDeviceSize offset, VkDeviceSize size)
+{
+	VulkanGpuDevice& device = mOwner->GetDevice();
+	device.FlushMemory(mAllocation, offset, size);
+}
+
+void VulkanImage::Invalidate(VkDeviceSize offset, VkDeviceSize size)
+{
+	VulkanGpuDevice& device = mOwner->GetDevice();
+	device.InvalidateMemory(mAllocation, offset, size);
+}
+
 VkAccessFlags VulkanImage::GetAccessFlags(VkImageLayout layout, bool readOnly)
 {
 	VkAccessFlags accessFlags;
@@ -833,7 +845,7 @@ VulkanImage* VulkanTexture::CreateImage(PixelFormat format)
 	VkResult result = vkCreateImage(vkDevice, &mImageCreateInformation, gVulkanAllocator, &image);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VmaAllocation allocation = mGpuDevice.AllocateMemory(image, memoryUsage);
+	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(image, memoryUsage);
 	VulkanImage *const vulkanImage = mGpuDevice.GetResourceManager().Create<VulkanImage>(image, allocation, mImageCreateInformation.initialLayout, mImageCreateInformation.format, GetProperties());
 	vulkanImage->SetName(mName);
 
@@ -861,7 +873,7 @@ VulkanBuffer* VulkanTexture::CreateStaging(const PixelData& pixelData, bool read
 	VkResult result = vkCreateBuffer(vkDevice, &bufferCI, gVulkanAllocator, &buffer);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VmaAllocation allocation = mGpuDevice.AllocateMemory(buffer, VMA_MEMORY_USAGE_CPU_ONLY);
+	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(buffer, VMA_MEMORY_USAGE_CPU_ONLY);
 
 	u32 blockSize = PixelUtility::GetBlockSize(pixelData.GetFormat());
 
