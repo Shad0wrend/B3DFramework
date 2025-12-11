@@ -113,9 +113,6 @@ namespace b3d
 				// Calculate base parameter offset within a single uniform block
 				const u32 parameterOffset = (mMemberInformation.CpuOffset + arrayIndex * mMemberInformation.ArrayElementStride) * sizeof(u32);
 
-				// If buffer has sub-allocations, add sub-allocation stride
-				const GpuBufferInformation& bufferInfo = buffer->GetInformation();
-
 				const u32 suballocationStride = buffer->GetSuballocationSize();
 				return suballocationIndex * suballocationStride + parameterOffset;
 			}

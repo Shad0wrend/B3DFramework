@@ -237,6 +237,38 @@ namespace b3d
 
 			return output;
 		}
+
+		/**
+		 * Builds a structure that can be used for creating a GpuBuffer that can be written to by the CPU and used as a source in copy operations.
+		 *
+		 * @param size		Size of the buffer.
+		 * @return			Structure that can be used for creating the buffer.
+		 */
+		static GpuBufferCreateInformation CreateStagingWrite(u32 size)
+		{
+			GpuBufferCreateInformation output;
+			output.Type = GpuBufferType::StagingWrite;
+			output.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+			output.Staging.Size = size;
+
+			return output;
+		}
+
+		/**
+		 * Builds a structure that can be used for creating a GpuBuffer that can be read by the CPU and used as a destination in copy operations.
+		 *
+		 * @param size		Size of the buffer.
+		 * @return			Structure that can be used for creating the buffer.
+		 */
+		static GpuBufferCreateInformation CreateStagingRead(u32 size)
+		{
+			GpuBufferCreateInformation output;
+			output.Type = GpuBufferType::StagingWrite;
+			output.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+			output.Staging.Size = size;
+
+			return output;
+		}
 	};
 
 	/** Defines a buffer that can be used for operations on the GPU. */
