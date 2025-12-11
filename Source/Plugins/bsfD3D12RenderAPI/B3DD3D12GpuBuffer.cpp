@@ -438,3 +438,13 @@ void D3D12GpuBuffer::CopyData(GpuBuffer& destination, u32 srcOffset, u32 dstOffs
 
 	B3D_LOG(Warning, RenderBackend, "D3D12GpuBuffer::CopyData not yet implemented");
 }
+
+void D3D12GpuBuffer::Flush(u32 offset, u32 size)
+{
+	// D3D12 uses coherent memory by default, no explicit flush needed
+}
+
+void D3D12GpuBuffer::Invalidate(u32 offset, u32 size)
+{
+	// D3D12 uses coherent memory by default, no explicit invalidate needed
+}

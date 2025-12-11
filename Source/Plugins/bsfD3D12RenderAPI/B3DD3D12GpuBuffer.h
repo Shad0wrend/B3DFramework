@@ -36,6 +36,9 @@ namespace b3d
 			/** Returns the index buffer view (only valid for index buffers). */
 			const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return mIndexBufferView; }
 
+			void Flush(u32 offset, u32 size) override;
+			void Invalidate(u32 offset, u32 size) override;
+
 		protected:
 			/** @copydoc GpuBuffer::Map */
 			void* Map(u32 offset, u32 length, GpuLockOptions options) override;

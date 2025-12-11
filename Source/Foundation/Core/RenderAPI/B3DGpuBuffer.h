@@ -355,6 +355,73 @@ namespace b3d
 
 namespace b3d::render
 {
+	/** Options for GPU buffer mapping operations. */
+	enum class GpuMapOption
+	{
+		Read = 1 << 0,      /**< Map for reading (will invalidate before mapping). */
+		Write = 1 << 1,     /**< Map for writing (will flush after unmapping). */
+		ReadWrite = Read | Write  /**< Map for both reading and writing. */
+	};
+
+	using GpuMapOptions = Flags<GpuMapOption>;
+	B3D_FLAGS_OPERATORS(GpuMapOption);
+
+	/**
+	 * RAII wrapper for GPU buffer mapping. Automatically flushes on destruction if mapped for writing.
+	 * Move-only to prevent double-flush scenarios.
+	 */
+	class B3D_EXPORT GpuMappedRegion
+	{
+	public:
+		GpuMappedRegion() = default;
+
+		GpuMappedRegion(void* mappedMemory, GpuBuffer* buffer, u32 offset, u32 size, GpuMapOptions options)
+			: mMappedMemory(mappedMemory) , mBuffer(buffer) , mOffset(offset) , mSize(size) , mOptions(options)
+		{}
+
+		GpuMappedRegion(GpuMappedRegion&& other) noexcept
+			: mMappedMemory(other.mMappedMemory), mBuffer(other.mBuffer) , mOffset(other.mOffset) , mSize(other.mSize) , mOptions(other.mOptions)
+		{
+			other.mMappedMemory = nullptr;
+			other.mBuffer = nullptr;
+		}
+
+		GpuMappedRegion& operator=(GpuMappedRegion&& other) noexcept
+		{
+			if(this != &other)
+			{
+				Unmap();
+				mMappedMemory = other.mMappedMemory;
+				mBuffer = other.mBuffer;
+				mOffset = other.mOffset;
+				mSize = other.mSize;
+				mOptions = other.mOptions;
+				other.mMappedMemory = nullptr;
+				other.mBuffer = nullptr;
+			}
+			return *this;
+		}
+
+		GpuMappedRegion(const GpuMappedRegion&) = delete;
+		GpuMappedRegion& operator=(const GpuMappedRegion&) = delete;
+
+		~GpuMappedRegion() { Unmap(); }
+
+		/** Explicitly releases the mapping. Safe to call multiple times. Flushes if write mapping. */
+		void Unmap();
+
+		void* GetMappedMemory() const { return mMappedMemory; }
+		bool IsValid() const { return mMappedMemory != nullptr; }
+		explicit operator bool() const { return IsValid(); }
+
+	private:
+		void* mMappedMemory = nullptr;
+		GpuBuffer* mBuffer = nullptr;
+		u32 mOffset = 0;
+		u32 mSize = 0;
+		GpuMapOptions mOptions;
+	};
+
 	/** Defines a buffer that can be used for operations on the GPU. */
 	class B3D_EXPORT GpuBuffer : public RenderProxy
 	{
@@ -408,6 +475,34 @@ namespace b3d::render
 
 			Unmap();
 			mIsLocked = false;
+		}
+
+		/**
+		 * Maps the buffer and returns an RAII mapped region that automatically handles flush on destruction.
+		 *
+		 * @param offset   Offset in bytes from which to map.
+		 * @param size     Size of the region to map, in bytes.
+		 * @param options  Specifies read/write intent for the mapping.
+		 * @return         RAII mapped region containing the mapped memory pointer.
+		 */
+		GpuMappedRegion Map2(u32 offset, u32 size, GpuMapOptions options)
+		{
+			if(options.IsSet(GpuMapOption::Read))
+				Invalidate(offset, size);
+
+			void* mappedMemory = static_cast<u8*>(GetMappedMemory()) + offset;
+			return GpuMappedRegion(mappedMemory, this, offset, size, options);
+		}
+
+		/**
+		 * Maps the entire buffer and returns an RAII mapped region.
+		 *
+		 * @param options  Specifies read/write intent for the mapping.
+		 * @return         RAII mapped region containing the mapped memory pointer.
+		 */
+		GpuMappedRegion Map2(GpuMapOptions options)
+		{
+			return Map2(0, mTotalSize, options);
 		}
 
 		/**
@@ -488,6 +583,27 @@ namespace b3d::render
 
 		/**	Returns whether or not this buffer is currently locked. */
 		bool IsLocked() const { return mIsLocked; }
+
+		/** Returns a pointer to persistently mapped memory, or nullptr if not mappable. */
+		void* GetMappedMemory() const { return mMappedMemory; }
+
+		/**
+		 * Flushes CPU writes to make them visible to the GPU.
+		 * Only relevant for non-coherent memory.
+		 *
+		 * @param offset  Offset from buffer start, in bytes.
+		 * @param size    Size of region to flush, in bytes.
+		 */
+		virtual void Flush(u32 offset, u32 size) {}
+
+		/**
+		 * Invalidates GPU writes to make them visible to the CPU.
+		 * Only relevant for non-coherent memory.
+		 *
+		 * @param offset  Offset from buffer start, in bytes.
+		 * @param size    Size of region to invalidate, in bytes.
+		 */
+		virtual void Invalidate(u32 offset, u32 size) {}
 
 		/** Gets the GPU device the buffer is created on. */
 		GpuDevice& GetDevice() const { return static_cast<GpuDevice&>(mDevice); }

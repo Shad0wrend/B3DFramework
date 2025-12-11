@@ -246,6 +246,19 @@ u32 GpuBuffer::CalculateTotalBufferSize(const GpuBufferInformation& information,
 
 namespace b3d::render
 {
+
+	void GpuMappedRegion::Unmap()
+	{
+		if(mMappedMemory != nullptr && mBuffer != nullptr)
+		{
+			if(mOptions.IsSet(GpuMapOption::Write))
+				mBuffer->Flush(mOffset, mSize);
+
+			mMappedMemory = nullptr;
+			mBuffer = nullptr;
+		}
+	}
+
 	GpuBuffer::GpuBuffer(GpuDevice& device, const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
 		: mInformation(createInformation), mDevice(device), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)
 	{

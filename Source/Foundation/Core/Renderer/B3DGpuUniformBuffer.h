@@ -59,7 +59,7 @@ namespace b3d
 				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 				{
 					auto transposed = TransposePolicy<T>::Transpose(value);
-
+	
 					if(isWriteCached)
 						uniformBuffer->WriteCachedType(offset, typeInformation, &transposed);
 					else
@@ -87,6 +87,40 @@ namespace b3d
 
 				// Delegate to existing method with extracted buffer and index
 				Set(suballocation.GetBuffer(), value, arrayIndex, suballocation.GetSuballocationIndex());
+			}
+
+			/**
+			 * Sets parameter value directly to mapped memory via a GpuMappedRegion.
+			 *
+			 * @param mappedRegion  Active mapping containing the mapped memory pointer of the buffer in which to set the value.
+			 * @param value         Value to set.
+			 * @param arrayIndex    Index in the array (if parameter is an array).
+			 */
+			void Set(const GpuMappedRegion& mappedRegion, const T& value, u32 arrayIndex = 0) const
+			{
+				B3D_ASSERT(mappedRegion.IsValid());
+
+#if B3D_DEBUG
+				if(!B3D_ENSURE(arrayIndex < mMemberInformation.ArraySize))
+					return;
+#endif
+
+				const u32 parameterOffset = (mMemberInformation.CpuOffset + arrayIndex * mMemberInformation.ArrayElementStride) * sizeof(u32);
+				const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameterSet::kParamSizes.Lookup[mMemberInformation.Type];
+
+				const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
+				const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;
+				const bool transposeMatrices = gpuBackendConventions.MatrixOrder == GpuBackendConventions::MatrixOrder::ColumnMajor;
+
+				u8* destination = static_cast<u8*>(mappedRegion.GetMappedMemory()) + parameterOffset;
+
+				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
+				{
+					auto transposed = TransposePolicy<T>::Transpose(value);
+					WriteTypedToMemory(destination, typeInformation, &transposed);
+				}
+				else
+					WriteTypedToMemory(destination, typeInformation, &value);
 			}
 
 			/**
@@ -130,6 +164,22 @@ namespace b3d
 
 				const u32 suballocationStride = buffer->GetSuballocationSize();
 				return suballocationIndex * suballocationStride + parameterOffset;
+			}
+
+			/** Writes typed data to memory with proper alignment/padding. */
+			static void WriteTypedToMemory(void* destination, const GpuDataParameterTypeInformation& typeInformation, const void* source)
+			{
+				const u8* value = static_cast<const u8*>(source);
+				u8* dest = static_cast<u8*>(destination);
+
+				for(u32 row = 0; row < typeInformation.NumRows; ++row)
+				{
+					const u32 rowSize = typeInformation.NumColumns * typeInformation.BaseTypeSize;
+					memcpy(dest, value, rowSize);
+
+					dest += typeInformation.Alignment;
+					value += rowSize;
+				}
 			}
 
 			GpuUniformBufferMemberInformation mMemberInformation;

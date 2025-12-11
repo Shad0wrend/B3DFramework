@@ -292,6 +292,7 @@ void VulkanGpuBuffer::Initialize()
 
 	// TODO - Should all buffer really be readable by default?
 	mBuffer = CreateBuffer(GetVulkanDevice(), mTotalSize, mInformation.Type == GpuBufferType::StagingRead || mInformation.Type == GpuBufferType::StagingWrite, mInformation.Type != GpuBufferType::StagingWrite);
+	mMappedMemory = mBuffer->GetMappedMemory();
 
 #if B3D_BUILD_TYPE_DEVELOPMENT
 	// Initialize suballocation tracking for debug builds
@@ -453,6 +454,7 @@ void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
 
 		buffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 		mBuffer = buffer;
+		mMappedMemory = buffer->GetMappedMemory();
 
 		return buffer->Map(offset, length);
 	}
@@ -481,6 +483,16 @@ GpuQueueMask VulkanGpuBuffer::GetUseMask(GpuAccessFlags accessFlags)
 	return mBuffer->GetUseInfo(accessFlags);
 }
 
+void VulkanGpuBuffer::Flush(u32 offset, u32 size)
+{
+	mBuffer->Flush(offset, size);
+}
+
+void VulkanGpuBuffer::Invalidate(u32 offset, u32 size)
+{
+	mBuffer->Invalidate(offset, size);
+}
+
 VkBufferView VulkanGpuBuffer::GetOrCreateView(GpuBufferFormat format) const
 {
 	if(mInformation.Type != GpuBufferType::SimpleStorage || mBuffer == nullptr)
@@ -497,6 +509,7 @@ void VulkanGpuBuffer::RecreateInternalBuffer()
 	VulkanBuffer* newBuffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
 	mBuffer->Destroy();
 	mBuffer = newBuffer;
+	mMappedMemory = newBuffer->GetMappedMemory();
 
 #if B3D_BUILD_TYPE_DEVELOPMENT
 	// Initialize suballocation tracking for the new buffer

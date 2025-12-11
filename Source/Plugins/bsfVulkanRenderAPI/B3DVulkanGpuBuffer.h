@@ -185,6 +185,9 @@ namespace b3d
 			u32 GetBoundCount() const override { return mBuffer->GetBoundCount(); }
 			u32 GetUseCount() const override { return mBuffer->GetUseCount(); }
 
+			void Flush(u32 offset, u32 size) override;
+			void Invalidate(u32 offset, u32 size) override;
+
 #if B3D_BUILD_TYPE_DEVELOPMENT
 			bool IsRangeBound(u32 offset, u32 size) const override { return mBuffer->IsRangeBound(offset, size); }
 			bool IsRangeInUse(u32 offset, u32 size) const override { return mBuffer->IsRangeInUse(offset, size); }
