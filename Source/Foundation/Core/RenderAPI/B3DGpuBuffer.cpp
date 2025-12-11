@@ -263,6 +263,45 @@ namespace b3d::render
 		}
 	}
 
+	void GpuBuffer::Write(u32 offset, u32 length, const void* source)
+	{
+		if(!B3D_ENSURE((offset + length) <= mTotalSize))
+			return;
+
+		void* destination = Lock(offset, length, GBL_WRITE_ONLY);
+		memcpy(destination, source, length);
+		Unlock(); // TODO - Remove Lock/Unlock once persistent mapping is added, but don't forget to flush
+	}
+
+	u32 GpuBuffer::WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
+	{
+		const u32 length = typeInformation.NumRows * typeInformation.Alignment;;
+		void* destination = Lock(offset, length, GBL_WRITE_ONLY);
+
+		const u8* value = (const u8*)source;
+		for(u32 row = 0; row < typeInformation.NumRows; ++row)
+		{
+			const u32 rowSize = typeInformation.NumColumns * typeInformation.BaseTypeSize;
+			memcpy(destination, value, rowSize);
+
+			offset += typeInformation.Alignment;
+			value += rowSize;
+		}
+
+		Unlock(); // TODO - Remove Lock/Unlock once persistent mapping is added, but don't forget to flush
+		return length;
+	}
+
+	void GpuBuffer::Read(u32 offset, u32 length, void* destination)
+	{
+		if(!B3D_ENSURE((offset + length) <= mTotalSize))
+			return;
+
+		void* source = Lock(offset, length, GBL_READ_ONLY);
+		memcpy(destination, source, length);
+		Unlock();
+	}
+
 	void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
 	{
 		if(!B3D_ENSURE(mCache != nullptr))

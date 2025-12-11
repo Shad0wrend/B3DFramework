@@ -53,15 +53,25 @@ namespace b3d
 
 				const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 				const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;
+				const bool isWriteCached = uniformBuffer->GetInformation().Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU);
 
 				const bool transposeMatrices = gpuBackendConventions.MatrixOrder == GpuBackendConventions::MatrixOrder::ColumnMajor;
 				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 				{
 					auto transposed = TransposePolicy<T>::Transpose(value);
-					uniformBuffer->WriteCachedType(offset, typeInformation, &transposed);
+
+					if(isWriteCached)
+						uniformBuffer->WriteCachedType(offset, typeInformation, &transposed);
+					else
+						uniformBuffer->WriteTyped(offset, typeInformation, &transposed);
 				}
 				else
-					uniformBuffer->WriteCachedType(offset, typeInformation, &value);
+				{
+					if(isWriteCached)
+						uniformBuffer->WriteCachedType(offset, typeInformation, &value);
+					else
+						uniformBuffer->WriteTyped(offset, typeInformation, &value);
+				}
 			}
 
 			/**
@@ -97,11 +107,16 @@ namespace b3d
 #endif
 
 				const u32 offset = CalculateSuballocationOffset(uniformBuffer, suballocationIndex, arrayIndex);
+				const bool isWriteCached = uniformBuffer->GetInformation().Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU);
 				u32 elementSizeBytes = mMemberInformation.ElementSize * sizeof(u32);
 				u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 				T value;
-				uniformBuffer->ReadCached(offset, sizeBytes, &value);
+
+				if(isWriteCached)
+					uniformBuffer->ReadCached(offset, sizeBytes, &value);
+				else
+					uniformBuffer->Read(offset, sizeBytes, &value);
 
 				return value;
 			}

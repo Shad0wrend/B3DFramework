@@ -578,12 +578,15 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 
 static SPtr<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 {
-	SPtr<GpuBuffer> inputBuffer = gGpuParticleTileVertexUniformDefinition.CreateBuffer();//GpuBufferFlag::StoreOnGPU);
+	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
+
+	const u32 size = gGpuParticleTileVertexUniformDefinition.GetSize();
+	SPtr<GpuBuffer> stagingBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateStagingWrite(size));
+	SPtr<GpuBuffer> inputBuffer = gGpuParticleTileVertexUniformDefinition.CreateBuffer(GpuBufferFlag::StoreOnGPU);
 
 	// [0, 1] -> [-1, 1] and flip Y
 	Vector4 uvToNdc(2.0f, -2.0f, -1.0f, 1.0f);
 
-	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 	const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;
 
 	// Either of these flips the Y axis, but if they're both true they cancel out
@@ -593,7 +596,10 @@ static SPtr<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 		uvToNdc.W = -uvToNdc.W;
 	}
 
-	gGpuParticleTileVertexUniformDefinition.gUVToNDC.Set(inputBuffer, uvToNdc);
+	gGpuParticleTileVertexUniformDefinition.gUVToNDC.Set(stagingBuffer, uvToNdc);
+
+	//stagingBuffer->FlushCache(); // TODO - Call regular flush here
+	gpuDevice->GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer()->CopyBufferToBuffer(stagingBuffer, inputBuffer, 0, 0, size);
 
 	return inputBuffer;
 }

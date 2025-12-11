@@ -411,6 +411,38 @@ namespace b3d::render
 		}
 
 		/**
+		 * Writes the data of the specified length into the buffer at the provided offset. @p source must contain at least @p length bytes.
+		 *
+		 * Buffer must support CPU writes. This mean it's either explicitly created with StoreOnCPUWithGPUAccess flag, or running on a GPU that supports CPU access.
+		 * The latter usually means running on an integrated GPU with shared memory.
+		 *
+		 * After all writes are finished make sure to call Flush() to make the writes visible to the GPU.
+		 */
+		void Write(u32 offset, u32 length, const void* source);
+
+		/**
+		 * Writes the data into the buffer at the provided offset. Takes care of respecting the padding/alignment requirements of the provided type. (e.g. a 3x3 matrix will be padded with 4 bytes in each row).
+		 * @p source must contain at least as many bytes as the size provided in @p typeInformation. Returns the total number of written bytes, including the padding.
+		 *
+		 * Buffer must support CPU writes. This mean it's either explicitly created with StoreOnCPUWithGPUAccess flag, or running on a GPU that supports CPU access. The latter usually means running on an
+		 * integrated GPU with shared memory.
+		 *
+		 * After all writes are finished make sure to call Flush() to make the writes visible to the GPU.
+		 */
+		u32 WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source);
+
+		/**
+		 * Reads the data from the buffer at the provided offset. 
+		 *
+		 * Buffer must support CPU reads. This mean it's either explicitly created with StoreOnCPUWithGPUAccess flag, or running on a GPU that supports CPU access. The latter usually means running on an
+		 * integrated GPU with shared memory.
+		 *
+		 * If GPU wrote to this buffer you must ensure to issue an execution barrier which ensures all GPU units finish writing to the buffer, a GPU memory barrier that makes sure it flushes it caches into memory, and then finally call
+		 * Invalidate(), which forces CPU to fetch the data from the memory rather than its caches. All of this must be done before reading the data.
+		 */
+		void Read(u32 offset, u32 length, void* destination);
+
+		/**
 		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
 		 * for the data to actually reach the underlying buffer you must call FlushCache().
 		 */

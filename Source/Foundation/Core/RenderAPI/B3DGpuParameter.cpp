@@ -30,8 +30,8 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	if(mParent == nullptr)
 		return;
 
-	GpuParamBufferType paramBlock = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
-	if(paramBlock == nullptr)
+	GpuParamBufferType uniformBuffer = mParent->GetUniformBuffer(mParameterInformation->ParentUniformBufferSlot);
+	if(uniformBuffer == nullptr)
 		return;
 
 #if B3D_DEBUG
@@ -50,10 +50,10 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 	{
 		const auto transposed = TransposePolicy<T>::Transpose(value);
-		paramBlock->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &transposed);
+		uniformBuffer->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &transposed);
 	}
 	else
-		paramBlock->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &value);
+		uniformBuffer->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &value);
 
 	mParent->MarkRenderProxyDataDirtyInternal();
 }
