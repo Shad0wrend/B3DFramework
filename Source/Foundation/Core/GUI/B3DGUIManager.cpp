@@ -1716,7 +1716,8 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		const SPtr<GpuBuffer>& clipRegionBuffer = suballocation.GetBuffer();
 		const u32 writeSize = sizeof(ClipRegionArea) * clipRegionCount;
 
-		ClipRegionArea* destination = reinterpret_cast<ClipRegionArea*>(clipRegionBuffer->Lock(0, writeSize, GBL_WRITE_ONLY));
+		GpuBufferMappedScope mapping = clipRegionBuffer->Map(GpuMapOption::Write);
+		ClipRegionArea* destination = reinterpret_cast<ClipRegionArea*>(mapping.GetMappedMemory());
 
 		for (u32 dirtyRegionIndex = 0; dirtyRegionIndex < clipRegionCount; ++dirtyRegionIndex)
 		{
@@ -1725,8 +1726,6 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 			destination[dirtyRegionIndex].TopLeft = dirtyRegion.GetPosition();
 			destination[dirtyRegionIndex].BottomRight = dirtyRegion.GetPosition() + Vector2I(dirtyRegion.GetSize().Width, dirtyRegion.GetSize().Height);
 		}
-
-		clipRegionBuffer->Unlock();
 
 		return clipRegionBuffer;
 	};

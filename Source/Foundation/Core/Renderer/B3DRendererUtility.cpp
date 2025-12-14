@@ -50,9 +50,8 @@ RendererUtility::RendererUtility()
 
 		const u32 indices[]{ 0, 1, 2, 1, 3, 2 };
 
-		void* destinationMemory = mFullScreenQuadIB->Lock(0, sizeof(indices), GBL_WRITE_ONLY);
-		memcpy(destinationMemory, indices, sizeof(indices));
-		mFullScreenQuadIB->Unlock();
+		GpuBufferMappedScope mapping = mFullScreenQuadIB->Map(GpuMapOption::Write);
+		memcpy(mapping.GetMappedMemory(), indices, sizeof(indices));
 	}
 
 	{
@@ -392,9 +391,8 @@ void RendererUtility::DrawScreenQuad(GpuCommandBuffer& commandBuffer, const Area
 	u32 bufferSize = meshData->GetStreamSize(0);
 	u8* srcVertBufferData = meshData->GetStreamData(0);
 
-	void* destinationMemory = mFullScreenQuadVB->Lock(mNextQuadVBSlot * bufferSize, bufferSize, GBL_WRITE_ONLY_NO_OVERWRITE);
-	memcpy(destinationMemory, srcVertBufferData, bufferSize);
-	mFullScreenQuadVB->Unlock();
+	GpuBufferMappedScope mapping = mFullScreenQuadVB->Map(mNextQuadVBSlot * bufferSize, bufferSize, GpuMapOption::Write | GpuMapOption::NoOverwrite);
+	memcpy(mapping.GetMappedMemory(), srcVertBufferData, bufferSize);
 
 	commandBuffer.SetVertexDescription(mFullscreenQuadVertexDescription);
 	commandBuffer.SetVertexBuffers(0, &mFullScreenQuadVB, 1);

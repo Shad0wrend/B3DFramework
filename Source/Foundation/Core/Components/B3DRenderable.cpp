@@ -450,9 +450,8 @@ static SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 boneCount)
 	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 	SPtr<GpuBuffer> buffer = gpuDevice->CreateGpuBuffer(bufferCreateInformation);
 
-	const u32 bufferSize = boneCount * 3 * sizeof(Vector4);
-	void* destinationMemory = buffer->Lock(0, bufferSize, GBL_WRITE_ONLY);
-	u8* currentWriteLocation = (u8*)destinationMemory;
+	GpuBufferMappedScope mapping = buffer->Map(GpuMapOption::Write);
+	u8* currentWriteLocation = (u8*)mapping.GetMappedMemory();
 
 	// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
 	for(u32 boneIndex = 0; boneIndex < boneCount; ++boneIndex)
@@ -460,8 +459,6 @@ static SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 boneCount)
 		memcpy(currentWriteLocation, &Matrix4::kIdentity, 12 * sizeof(float)); // Assuming row-major format
 		currentWriteLocation += 12 * sizeof(float);
 	}
-
-	buffer->Unlock();
 
 	return buffer;
 }
@@ -560,9 +557,8 @@ void Renderable::CreateAnimationBuffers()
 
 		u32 totalSize = vertexSize * vertexCount;
 
-		void* destinationMemory = vertexBuffer->Lock(0, totalSize, GBL_WRITE_ONLY);
-		memset(destinationMemory, 0, totalSize);
-		vertexBuffer->Unlock();
+		GpuBufferMappedScope mapping = vertexBuffer->Map(GpuMapOption::Write);
+		memset(mapping.GetMappedMemory(), 0, totalSize);
 
 		mMorphShapeBuffer = vertexBuffer;
 	}

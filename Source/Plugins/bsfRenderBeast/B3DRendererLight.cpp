@@ -64,7 +64,7 @@ void RendererLight::PopulateUniformBuffer(SPtr<GpuBuffer>& buffer, u32 index) co
 		break;
 	}
 
-	GpuBufferMappedScope uniforms = buffer->Map2(GpuMapOption::Write);
+	GpuBufferMappedScope uniforms = buffer->Map(GpuMapOption::Write);
 
 	gPerLightUniformDefinition.gLightPositionAndSrcRadius.Set(uniforms, Vector4(lightData.Position, lightData.SrcRadius), 0, index);
 	gPerLightUniformDefinition.gLightColorAndLuminance.Set(uniforms, Vector4(lightData.Color, lightData.Luminance), 0, index);

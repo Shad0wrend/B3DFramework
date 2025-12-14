@@ -255,7 +255,7 @@ namespace b3d::render
 	{
 		B3D_ASSERT(IsValid());
 
-		return mBuffer->Map2(mSuballocationOffset, GetSize(), options);
+		return mBuffer->Map(mSuballocationOffset, GetSize(), options);
 	}
 
 	void GpuBufferMappedScope::Unmap()
@@ -317,15 +317,15 @@ namespace b3d::render
 		if(!B3D_ENSURE((offset + length) <= mTotalSize))
 			return;
 
-		void* destination = Lock(offset, length, GBL_WRITE_ONLY);
-		memcpy(destination, source, length);
-		Unlock(); // TODO - Remove Lock/Unlock once persistent mapping is added, but don't forget to flush
+		GpuBufferMappedScope mapping = Map(offset, length, GpuMapOption::Write);
+		memcpy(mapping.GetMappedMemory(), source, length);
 	}
 
 	u32 GpuBuffer::WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
 	{
-		const u32 length = typeInformation.NumRows * typeInformation.Alignment;;
-		void* destination = Lock(offset, length, GBL_WRITE_ONLY);
+		const u32 length = typeInformation.NumRows * typeInformation.Alignment;
+		GpuBufferMappedScope mapping = Map(offset, length, GpuMapOption::Write);
+		void* destination = mapping.GetMappedMemory();
 
 		const u8* value = (const u8*)source;
 		for(u32 row = 0; row < typeInformation.NumRows; ++row)
@@ -337,7 +337,6 @@ namespace b3d::render
 			value += rowSize;
 		}
 
-		Unlock(); // TODO - Remove Lock/Unlock once persistent mapping is added, but don't forget to flush
 		return length;
 	}
 
@@ -346,9 +345,8 @@ namespace b3d::render
 		if(!B3D_ENSURE((offset + length) <= mTotalSize))
 			return;
 
-		void* source = Lock(offset, length, GBL_READ_ONLY);
-		memcpy(destination, source, length);
-		Unlock();
+		GpuBufferMappedScope mapping = Map(offset, length, GpuMapOption::Read);
+		memcpy(destination, mapping.GetMappedMemory(), length);
 	}
 
 	void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
@@ -475,6 +473,10 @@ namespace b3d::render
 		const bool isCPUAccessible = gpuBufferInformation.Type == GpuBufferType::StagingRead || gpuBufferInformation.Type == GpuBufferType::StagingWrite || gpuBufferInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess);
 		const bool supportsGPUWrites = gpuBufferInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU);
 
+		GpuMapOptions mapOptions = GpuMapOption::Write;
+		if(flags.IsSet(GpuBufferWriteFlag::NoOverwrite))
+			mapOptions |= GpuMapOption::NoOverwrite;
+
 		GpuLockOptions options = GBL_WRITE_ONLY_DISCARD_RANGE;
 		if(flags.IsSet(GpuBufferWriteFlag::NoOverwrite))
 			options = GBL_WRITE_ONLY_NO_OVERWRITE;
@@ -501,9 +503,8 @@ namespace b3d::render
 
 			if(shouldMapDirectly)
 			{
-				void* lockedData = buffer->Lock(offset, length, options);
-				memcpy(lockedData, source, length);
-				buffer->Unlock();
+				GpuBufferMappedScope mapping = buffer->Map(offset, length, mapOptions);
+				memcpy(mapping.GetMappedMemory(), source, length);
 
 				return;
 			}
@@ -517,10 +518,8 @@ namespace b3d::render
 		// Copy the source into the staging buffer
 		if(stagingBuffer != nullptr)
 		{
-			void* lockedStagingData = stagingBuffer->Lock(0, length, GBL_WRITE_ONLY);
-			memcpy(lockedStagingData, source, length);
-
-			stagingBuffer->Unlock();
+			GpuBufferMappedScope mapping = stagingBuffer->Map(0, length, GpuMapOption::Write);
+			memcpy(mapping.GetMappedMemory(), source, length);
 		}
 
 		// If the buffer is used in any way on the GPU, we need to wait for that use to finish before we issue our copy
@@ -605,9 +604,8 @@ namespace b3d::render
 				transferGpuQueue.SubmitTransferCommandBuffer(true);
 			}
 
-			void* lockedData = buffer->Lock(offset, length, GBL_READ_ONLY);
-			memcpy(destination, lockedData, length);
-			buffer->Unlock();
+			GpuBufferMappedScope mapping = buffer->Map(offset, length, GpuMapOption::Read);
+			memcpy(destination, mapping.GetMappedMemory(), length);
 
 			return;
 		}
@@ -633,10 +631,11 @@ namespace b3d::render
 		commandBuffer->AddQueueSyncMask(syncMask);
 		transferGpuQueue.SubmitTransferCommandBuffer(true);
 
-		void* lockedStagingData = stagingBuffer->Lock(0, length, GBL_READ_ONLY);
-		memcpy(destination, lockedStagingData, length);
+		{
+			GpuBufferMappedScope mapping = stagingBuffer->Map(0, length, GpuMapOption::Read);
+			memcpy(destination, mapping.GetMappedMemory(), length);
+		}
 
-		stagingBuffer->Unlock();
 		stagingBuffer->Destroy();
 	}
 

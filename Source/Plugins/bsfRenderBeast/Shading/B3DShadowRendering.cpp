@@ -1155,8 +1155,8 @@ namespace b3d
 				batchRenderingInfo.UniformBufferSuballocationSize = shadowOmniParamBuffer->GetSuballocationSize();
 				batchRenderingInfo.VertexUniformBufferSuballocationSize = shadowProjectVertBuffer->GetSuballocationSize();
 
-				GpuBufferMappedScope omnidirectionalShadowUniforms = shadowOmniParamBuffer->Map2(GpuMapOption::Write);
-				GpuBufferMappedScope shadowProjectVertexUniforms =shadowProjectVertBuffer->Map2(GpuMapOption::Write); 
+				GpuBufferMappedScope omnidirectionalShadowUniforms = shadowOmniParamBuffer->Map(GpuMapOption::Write);
+				GpuBufferMappedScope shadowProjectVertexUniforms =shadowProjectVertBuffer->Map(GpuMapOption::Write); 
 
 				for(u32 visibleShadowIndex = 0; visibleShadowIndex < (u32)shadowInfos.Size(); ++visibleShadowIndex)
 				{
@@ -1241,8 +1241,8 @@ namespace b3d
 				batchRenderingInfo.UniformBufferSuballocationSize = shadowParamBuffer->GetSuballocationSize();
 				batchRenderingInfo.VertexUniformBufferSuballocationSize = shadowProjectVertBuffer->GetSuballocationSize();
 
-				GpuBufferMappedScope shadowUniforms = shadowParamBuffer->Map2(GpuMapOption::Write);
-				GpuBufferMappedScope shadowProjectVertexUniforms =shadowProjectVertBuffer->Map2(GpuMapOption::Write); 
+				GpuBufferMappedScope shadowUniforms = shadowParamBuffer->Map(GpuMapOption::Write);
+				GpuBufferMappedScope shadowProjectVertexUniforms =shadowProjectVertBuffer->Map(GpuMapOption::Write); 
 
 				for(u32 shadowIndex = 0; shadowIndex < (u32)shadowInfos.size(); ++shadowIndex)
 				{

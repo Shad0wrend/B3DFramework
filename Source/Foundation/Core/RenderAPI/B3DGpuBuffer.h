@@ -487,46 +487,6 @@ namespace b3d::render
 		const String& GetName() const { return mName; }
 
 		/**
-		 * Locks a portion of the buffer and returns pointer to the locked area. You must call Unlock() when done. This method
-		 * is only available on buffers that are accessible by the CPU (StoreOnCPU or StoreOnCPUWithGPUAcess flags).
-		 *
-		 * @param	offset		Offset in bytes from which to lock the buffer.
-		 * @param	length		Length of the area you want to lock, in bytes.
-		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
-		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
-		 *						requested it here).
-		 */
-		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options)
-		{
-			B3D_ASSERT(!IsLocked() && "Cannot lock this buffer, it is already locked!");
-			void* ret = Map(offset, length, options);
-			mIsLocked = true;
-
-			return ret;
-		}
-
-		/**
-		 * Locks the entire buffer and returns pointer to the locked area. You must call Unlock() when done.
-		 *
-		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
-		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
-		 *						requested it here).
-		 */
-		void* Lock(GpuLockOptions options)
-		{
-			return this->Lock(0, mTotalSize, options);
-		}
-
-		/**	Releases the lock on this buffer. */
-		virtual void Unlock()
-		{
-			B3D_ASSERT(IsLocked() && "Cannot unlock this buffer, it is not locked!");
-
-			Unmap();
-			mIsLocked = false;
-		}
-
-		/**
 		 * Maps the buffer and returns an RAII mapped region that automatically handles flush on destruction.
 		 *
 		 * @param offset   Offset in bytes from which to map.
@@ -534,7 +494,7 @@ namespace b3d::render
 		 * @param options  Specifies read/write intent for the mapping.
 		 * @return         RAII mapped region containing the mapped memory pointer.
 		 */
-		GpuBufferMappedScope Map2(u32 offset, u32 size, GpuMapOptions options)
+		GpuBufferMappedScope Map(u32 offset, u32 size, GpuMapOptions options)
 		{
 #if B3D_BUILD_TYPE_DEVELOPMENT
 			ValidateMap(offset, size, options);
@@ -553,9 +513,9 @@ namespace b3d::render
 		 * @param options  Specifies read/write intent for the mapping.
 		 * @return         RAII mapped region containing the mapped memory pointer.
 		 */
-		GpuBufferMappedScope Map2(GpuMapOptions options)
+		GpuBufferMappedScope Map(GpuMapOptions options)
 		{
-			return Map2(0, mTotalSize, options);
+			return Map(0, mTotalSize, options);
 		}
 
 		/**
@@ -634,9 +594,6 @@ namespace b3d::render
 		 */
 		u32 GetSuballocationSize() const { return mSuballocationSize; }
 
-		/**	Returns whether or not this buffer is currently locked. */
-		bool IsLocked() const { return mIsLocked; }
-
 		/** Returns a pointer to persistently mapped memory, or nullptr if not mappable. */
 		void* GetMappedMemory() const { return mMappedMemory; }
 
@@ -691,12 +648,6 @@ namespace b3d::render
 
 		void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
 
-		/** @copydoc Lock */
-		virtual void* Map(u32 offset, u32 length, GpuLockOptions options) { return nullptr; }
-
-		/** @copydoc Unlock */
-		virtual void Unmap() {}
-
 		/** Recreates the underlying buffer. Note this will clear all currently written data. Old buffer will be released once its done being used. */
 		virtual void RecreateInternalBuffer() = 0;
 
@@ -714,8 +665,6 @@ namespace b3d::render
 		void* mMappedMemory = nullptr;
 		u8* mCache = nullptr;
 		bool mIsCacheDirty = false;
-
-		bool mIsLocked = false;
 	};
 
 	/** Flags used to control the GPU buffer writes. */

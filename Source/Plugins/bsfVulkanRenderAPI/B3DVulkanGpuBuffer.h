@@ -213,9 +213,6 @@ namespace b3d
 			};
 
 			void Initialize() override;
-
-			void* Map(u32 offset, u32 length, GpuLockOptions options) override;
-			void Unmap() override;
 			void RecreateInternalBuffer() override;
 
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
@@ -230,7 +227,6 @@ namespace b3d
 			VkBufferUsageFlags mUsageFlags;
 			bool mDirectlyMappable : 1;
 			bool mSupportsGPUWrites : 1;
-			bool mIsMapped : 1;
 		};
 
 		/** @} */

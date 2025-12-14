@@ -237,7 +237,7 @@ bool VulkanBuffer::IsRangeInUse(u32 offset, u32 size) const
 #endif // B3D_BUILD_TYPE_DEVELOPMENT
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 	{ }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -372,110 +372,6 @@ void VulkanGpuBuffer::SetName(const StringView& name)
 
 	if(mBuffer != nullptr)
 		mBuffer->SetName(name);
-}
-
-void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
-{
-	if((offset + length) > mTotalSize)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot map GpuBuffer memory for buffer '{0}'. Provided offset:{1} + length:{2} is larger than the buffer size:{3}.", mName, offset, length, mTotalSize);
-
-		return nullptr;
-	}
-
-	if(length == 0)
-		return nullptr;
-
-	VulkanBuffer* buffer = mBuffer;
-
-	if(buffer == nullptr)
-		return nullptr;
-
-	if(!mDirectlyMappable) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot map GpuBuffer memory for buffer '{0}'. The buffer has not been created with CPU-visible flags.", mName);
-		return nullptr;
-	}
-
-	mIsMapped = true;
-
-	const bool canDiscardBuffer =
-		(options == GBL_WRITE_ONLY_DISCARD) ||
-		(options == GBL_WRITE_ONLY_DISCARD_RANGE && offset == 0 && length == mTotalSize);
-
-	// Check is the GPU currently reading or writing from the buffer
-	GpuQueueMask useMask = buffer->GetUseInfo(GpuAccessFlag::Read | GpuAccessFlag::Write);
-
-	// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
-	// being used because the write could have completed yet still not visible, so we need to issue a pipeline
-	// barrier below.
-	const bool isUsedOnGPU = !useMask.IsEmpty() || mSupportsGPUWrites; // TODO - mSupportsGPUWrites check doesn't seem right here. 
-
-	// TODO - Not issuing barrier here
-
-	const bool isReadRequired = options == GBL_READ_ONLY || options == GBL_READ_WRITE;
-	const bool isWrite = options != GBL_READ_ONLY;
-
-	// If not used on the GPU, of the caller explicitly states he doesn't care, map the buffer
-	if(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE)
-	{
-		// Warn if we have already bound the buffer to a command buffer previously, as that could have unintended consequences since previous commands could be affected
-		if(!buffer->IsBound() || !isWrite)
-		{
-			return buffer->Map(offset, length, isReadRequired);
-		}
-		else if(canDiscardBuffer)
-		{
-			// Fall through
-		}
-		else
-		{
-			// Warn unless user claims to know what he is doing by using the no overwrite flag
-			if(options != GBL_WRITE_ONLY_NO_OVERWRITE)
-			{
-#if B3D_BUILD_TYPE_DEVELOPMENT
-				if(buffer->IsRangeBound(offset, length))
-				{
-					B3D_LOG(Warning, RenderBackend, "Writing to a buffer that is currently bound on a command buffer. Previous usages of the buffer will be affected. Buffer: {0}", mName);
-				}
-#endif
-			}
-
-			return buffer->Map(offset, length, isReadRequired);
-		}
-	}
-
-	// TODO - Once we remove discard here, validate the the buffer range is not being used
-
-	// Used on the GPU but caller doesn't care about buffer contents, so just discard the existing buffer and create a new one
-	if(canDiscardBuffer)
-	{
-		buffer->Destroy();
-
-		buffer = CreateBuffer(GetVulkanDevice(), mTotalSize, false, true);
-		mBuffer = buffer;
-		mMappedMemory = buffer->GetMappedMemory();
-
-		return buffer->Map(offset, length);
-	}
-
-	B3D_LOG(Error, RenderBackend, "Cannot map GpuBuffer memory for buffer '{0}'. The buffer is currently being used by the GPU.", mName);
-	return nullptr;
-}
-
-void VulkanGpuBuffer::Unmap()
-{
-	// Possibly Map() failed with some error
-	if(!mIsMapped)
-		return;
-
-	if(!B3D_ENSURE(mBuffer != nullptr))
-		return;
-
-	// Note: If we did any writes they need to be made visible to the GPU. However there is no need to execute
-	// a pipeline barrier because (as per spec) host writes are implicitly visible to the device.
-	mBuffer->Unmap(true);
-	mIsMapped = false;
 }
 
 GpuQueueMask VulkanGpuBuffer::GetUseMask(GpuAccessFlags accessFlags)

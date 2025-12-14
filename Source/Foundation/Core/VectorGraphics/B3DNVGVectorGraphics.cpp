@@ -363,7 +363,7 @@ namespace b3d::render
 	/** Populates the per-view uniform buffer that is shared by all path elements of a single VectorPath object. */
 	static void PopulateNVGViewUniformBuffer(const SPtr<render::GpuBuffer>& uniformBuffer, const Area2I& viewRegion)
 	{
-		GpuBufferMappedScope uniforms = uniformBuffer->Map2(GpuMapOption::Write);
+		GpuBufferMappedScope uniforms = uniformBuffer->Map(GpuMapOption::Write);
 
 		render::gVectorGraphicsViewUniforms.gViewportOffset.Set(uniforms, Vector2(-(float)viewRegion.X, -(float)viewRegion.Y));
 		render::gVectorGraphicsViewUniforms.gInverseViewportHalfSize.Set(uniforms, Vector2(1.0f / ((float)viewRegion.Width * 0.5f), 1.0f / ((float)viewRegion.Height * 0.5f)));
@@ -753,7 +753,8 @@ namespace b3d::render
 
 		const u32 uniformBlockStride = Math::CeilToMultiple(gVectorGraphicsRenderUniforms.GetSize(), gpuDevice->GetCapabilities().MinimumUniformBufferOffsetAlignment);
 
-		u8* uniformBufferData = (u8*)renderBuffers.RenderUniformBuffer->Lock(GBL_WRITE_ONLY);
+		GpuBufferMappedScope mapping = renderBuffers.RenderUniformBuffer->Map(GpuMapOption::Write);
+		u8* uniformBufferData = (u8*)mapping.GetMappedMemory();
 
 		for(const auto& command : mRawRenderData.RenderCommands)
 		{
@@ -781,8 +782,6 @@ namespace b3d::render
 				break;
 			}
 		}
-
-		renderBuffers.RenderUniformBuffer->Unlock();
 
 		renderBuffers.ViewUniformBuffer = render::gVectorGraphicsViewUniforms.CreateBuffer();
 		PopulateNVGViewUniformBuffer(renderBuffers.ViewUniformBuffer, Area2I(0, 0, Math::RoundToU32(mSettings.Size.Width), Math::RoundToU32(mSettings.Size.Height)));

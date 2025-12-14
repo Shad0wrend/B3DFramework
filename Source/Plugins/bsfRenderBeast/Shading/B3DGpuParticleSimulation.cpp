@@ -406,7 +406,8 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 		mTileUVs = gpuDevice->CreateGpuBuffer(tilesBufferCreateInformation);
 
-		void* destinationMemory = mTileUVs->Lock(0, mTileUVs->GetTotalSize(), GBL_WRITE_ONLY);
+		GpuBufferMappedScope mapping = mTileUVs->Map(GpuMapOption::Write);
+		void* destinationMemory = mapping.GetMappedMemory();
 
 		auto* tileUVs = (Vector2*)destinationMemory;
 		for(u32 i = 0; i < tileCount; i++)
@@ -414,8 +415,6 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 		for(u32 i = tileCount; i < tilesToAllocateCount; i++)
 			tileUVs[i] = Vector2(2.0f, 2.0f); // Out of range
-
-		mTileUVs->Unlock();
 	}
 
 	// Particle data offsets
@@ -431,8 +430,8 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 		mParticleIndices = gpuDevice->CreateGpuBuffer(particleUVCreateInformation);
 
-		void* destinationMemory = mParticleIndices->Lock(0, mParticleIndices->GetTotalSize(), GBL_WRITE_ONLY);
-		auto* particleIndices = (u32*)destinationMemory;
+		GpuBufferMappedScope mapping = mParticleIndices->Map(GpuMapOption::Write);
+		auto* particleIndices = (u32*)mapping.GetMappedMemory();
 
 		u32 particleIndex = 0;
 		for(u32 tileIndex = 0; tileIndex < tileCount; tileIndex++)
@@ -447,8 +446,6 @@ void GpuParticleSystem::UpdateGpuBuffers()
 				}
 			}
 		}
-
-		mParticleIndices->Unlock();
 	}
 }
 
@@ -582,7 +579,7 @@ static SPtr<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 
 	const u32 size = gGpuParticleTileVertexUniformDefinition.GetSize();
 	SPtr<GpuBuffer> stagingBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateStagingWrite(size));
-	GpuBufferMappedScope stagingMemory = stagingBuffer->Map2(GpuMapOption::Write);
+	GpuBufferMappedScope stagingMemory = stagingBuffer->Map(GpuMapOption::Write);
 
 	SPtr<GpuBuffer> inputBuffer = gGpuParticleTileVertexUniformDefinition.CreateBuffer(GpuBufferFlag::StoreOnGPU);
 

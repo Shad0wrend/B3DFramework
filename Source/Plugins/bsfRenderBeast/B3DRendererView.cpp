@@ -779,7 +779,7 @@ Matrix4 InvertProjectionMatrix(const Matrix4& mat)
 
 void RendererView::UpdatePerViewBuffer()
 {
-	GpuBufferMappedScope uniforms = mUniformBuffer->Map2(GpuMapOption::Write);
+	GpuBufferMappedScope uniforms = mUniformBuffer->Map(GpuMapOption::Write);
 
 	Matrix4 viewProj = mProperties.ProjTransform * mProperties.ViewTransform;
 	Matrix4 invProj = InvertProjectionMatrix(mProperties.ProjTransform);
