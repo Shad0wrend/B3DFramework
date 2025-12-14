@@ -54,6 +54,8 @@ namespace b3d
 
 			/** Parameter for binding the per-camera uniform buffer. */
 			GpuParameterUniformBuffer PerCameraUniformBufferParameter;
+			/** Parameter for binding the per-frame uniform buffer. */
+			GpuParameterUniformBuffer PerFrameUniformBufferParameter;
 
 			/** Collection of parameters used for direct lighting using the forward rendering path. */
 			ForwardLightingParams ForwardLightingParams;

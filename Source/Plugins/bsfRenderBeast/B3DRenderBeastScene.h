@@ -71,6 +71,8 @@ namespace b3d
 			// Buffers for various transient data that gets rebuilt every frame
 			//// Rebuilt every frame
 			mutable Vector<bool> RenderableReady;
+			// Per-frame uniform buffer suballocation (updated each frame)
+			const GpuBufferSuballocation* PerFrameSuballocation = nullptr;
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -141,6 +143,8 @@ namespace b3d
 
 			/** Updates global per frame parameter buffers with new values. To be called at the start of every frame. */
 			void SetParamFrameParams(float time);
+			/** Returns the current per-frame uniform buffer suballocation. Valid after SetParamFrameParams() is called. */
+			const GpuBufferSuballocation& GetPerFrameSuballocation() const { return mPerFrameSuballocation; }
 
 			/**
 			 * Performs necessary per-frame updates to a renderable. This must be called once every frame for every renderable.
@@ -208,7 +212,7 @@ namespace b3d
 
 			SPtr<GpuDevice> mGpuDevice;
 			SceneInfo mInfo;
-			SPtr<GpuBuffer> mPerFrameParamBuffer;
+			GpuBufferSuballocation mPerFrameSuballocation;
 			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;
 			UniformBufferPools mUniformBufferPools;
 

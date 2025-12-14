@@ -166,7 +166,6 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
 	: mOptions(options)
 {
-	mPerFrameParamBuffer = gPerFrameParamDef.CreateBuffer();
 }
 
 void RenderBeastScene::RegisterCamera(Camera* camera)
@@ -471,7 +470,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
-		gpuParameterSet->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
+		gpuParameterSet->TryGetUniformBufferParameter("PerFrame", element.PerFrameUniformBufferParameter);
 		gpuParameterSet->TryGetUniformBufferParameter("PerCamera", element.PerCameraUniformBufferParameter);
 		gpuParameterSet->TryGetStorageBufferParameter("boneMatrices", element.BoneMatrixBufferParameter);
 		gpuParameterSet->TryGetStorageBufferParameter("prevBoneMatrices", element.PreviousBoneMatrixBufferParameter);
@@ -1104,8 +1103,7 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	mUniformBufferPools.UpdatePerObjectBuffer(rendererDecal);
 	mUniformBufferPools.UpdateDecalParamBuffer(rendererDecal);
 
-	gpuParameterSet->TrySetUniformBuffer("PerFrame", mPerFrameParamBuffer);
-
+	gpuParameterSet->TryGetUniformBufferParameter("PerFrame", renElement.PerFrameUniformBufferParameter);
 	gpuParameterSet->TryGetUniformBufferParameter("PerCamera", renElement.PerCameraUniformBufferParameter);
 	gpuParameterSet->TryGetSampledTextureParameter("gDepthBufferTex", renElement.DepthInputTexture);
 	gpuParameterSet->TryGetSampledTextureParameter("gMaskTex", renElement.MaskInputTexture);
@@ -1408,7 +1406,15 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 
 void RenderBeastScene::SetParamFrameParams(float time)
 {
-	gPerFrameParamDef.gTime.Set(mPerFrameParamBuffer, time);
+	// Allocate a new transient buffer for this frame
+	mPerFrameSuballocation = gPerFrameParamDef.AllocateTransient();
+
+	// Update SceneInfo pointer for compositor access
+	mInfo.PerFrameSuballocation = &mPerFrameSuballocation;
+
+	// Map and set the time parameter
+	GpuBufferMappedScope mappedScope = mPerFrameSuballocation.Map();
+	gPerFrameParamDef.gTime.Set(mappedScope, time);
 }
 
 void RenderBeastScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)

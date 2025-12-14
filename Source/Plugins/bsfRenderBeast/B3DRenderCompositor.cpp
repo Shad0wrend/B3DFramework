@@ -411,7 +411,10 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			continue;
 
 		for(auto& element : inputs.Scene.Renderables[i]->Elements)
+		{
+			element.PerFrameUniformBufferParameter.Set(*inputs.Scene.PerFrameSuballocation);
 			element.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
+		}
 	}
 
 	//// Prepare particle systems
@@ -463,6 +466,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		const RendererDecal& rendererDecal = inputs.Scene.Decals[i];
 		DecalRenderElement& renderElement = rendererDecal.RenderElement;
 
+		renderElement.PerFrameUniformBufferParameter.Set(*inputs.Scene.PerFrameSuballocation);
 		renderElement.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
 		renderElement.DepthInputTexture.Set(sceneDepthTex->Texture);
 		renderElement.MaskInputTexture.Set(IdTex->Texture);

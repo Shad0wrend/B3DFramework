@@ -31,50 +31,6 @@ namespace b3d
 			{}
 
 			/**
-			 * Sets the parameter in the provided uniform buffer. Caller is responsible for ensuring the uniform buffer contains this parameter.
-			 *
-			 * @param uniformBuffer			Uniform buffer to set the parameter in.
-			 * @param value					Value to set.
-			 * @param arrayIndex			Index in the array to set the value for (if the parameter is an array).
-			 * @param suballocationIndex	Index of the sub-allocation in the uniform buffer to set the value for, if the buffer contains multiple sub-allocated buffers.
-			 */
-			void Set(const SPtr<GpuBuffer>& uniformBuffer, const T& value, u32 arrayIndex = 0, u32 suballocationIndex = 0) const
-			{
-#if B3D_DEBUG
-				if(!B3D_ENSURE(arrayIndex < mMemberInformation.ArraySize))
-					return;
-
-				if(!B3D_ENSURE(suballocationIndex < uniformBuffer->GetInformation().SuballocationCount))
-					return;
-#endif
-
-				const u32 parameterOffset = CalculateParameterOffset(uniformBuffer, suballocationIndex, arrayIndex);
-				const GpuDataParameterTypeInformation& typeInformation = b3d::GpuParameterSet::kParamSizes.Lookup[mMemberInformation.Type];
-
-				const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-				const GpuBackendConventions& gpuBackendConventions = gpuDevice->GetCapabilities().Conventions;
-				const bool isWriteCached = uniformBuffer->GetInformation().Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU);
-
-				const bool transposeMatrices = gpuBackendConventions.MatrixOrder == GpuBackendConventions::MatrixOrder::ColumnMajor;
-				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
-				{
-					auto transposed = TransposePolicy<T>::Transpose(value);
-	
-					if(isWriteCached)
-						uniformBuffer->WriteCachedType(parameterOffset, typeInformation, &transposed);
-					else
-						uniformBuffer->WriteTyped(parameterOffset, typeInformation, &transposed);
-				}
-				else
-				{
-					if(isWriteCached)
-						uniformBuffer->WriteCachedType(parameterOffset, typeInformation, &value);
-					else
-						uniformBuffer->WriteTyped(parameterOffset, typeInformation, &value);
-				}
-			}
-
-			/**
 			 * Sets parameter value directly to mapped memory via a GpuMappedRegion.
 			 *
 			 * @param mappedRegion			Active mapping containing the mapped memory pointer of the buffer in which to set the value.

@@ -76,6 +76,8 @@ namespace b3d
 
 			/** Parameter for binding the per-camera uniform buffer. */
 			GpuParameterUniformBuffer PerCameraUniformBufferParameter;
+			/** Parameter for binding the per-frame uniform buffer. */
+			GpuParameterUniformBuffer PerFrameUniformBufferParameter;
 
 			/** Indices for different variations of the used material. */
 			u32 TechniqueIndices[2][3];
