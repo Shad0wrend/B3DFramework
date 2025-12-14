@@ -50,10 +50,7 @@ namespace b3d
 		 * Ensures that the GPU can perform write operations in the buffer. Generally this is used for buffers used in compute operations. StoreOnGPU memory
 		 * flag must be used.
 		 */
-		AllowUnorderedAccessOnTheGPU = 1 << 2,
-
-		/** If set, a buffer will maintain a separate CPU-only buffer into which you may write via WriteCached(). Writes can then be sent to the GPU all at once via a FlushToGPU() call. */
-		AllowWriteCachingOnCPU = 1 << 3,
+		AllowUnorderedAccessOnTheGPU = 1 << 2
 	};
 
 	using GpuBufferFlags = Flags<GpuBufferFlag>;
@@ -189,7 +186,7 @@ namespace b3d
 		 *								offset functionality provided on GpuCommandBuffer.
 		 * @return						Structure that can be used for creating the buffer.
 		 */
-		static GpuBufferCreateInformation CreateUniform(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, u32 suballocationCount = 1)
+		static GpuBufferCreateInformation CreateUniform(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess, u32 suballocationCount = 1)
 		{
 			GpuBufferCreateInformation output;
 			output.Type = GpuBufferType::Uniform;
@@ -291,30 +288,23 @@ namespace b3d
 		/** Returns information describing the buffer. */
 		const GpuBufferInformation& GetInformation() const { return mInformation; }
 
-		/**
-		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Data will be synced
-		 * with the render proxy on the next sync call.
-		 */
-		void WriteCached(u32 offset, u32 length, const void* source);
+		/** Writes the data into the CPU cached buffer. Data will be synced with the render proxy on the next sync call. */
+		void Write(u32 offset, u32 length, const void* source);
 
 		/**
-		 * Same as WriteCached(), but takes care of respecting the padding/alignment requirements of the provided type. (e.g. a 3x3 matrix will be padded with 4 bytes in each row).
+		 * Same as Write(), but takes care of respecting the padding/alignment requirements of the provided type. (e.g. a 3x3 matrix will be padded with 4 bytes in each row).
 		 * @p source must contain at least as many bytes as the size provided in @p typeInformation. Returns the total number of written bytes, including the padding.
 		 */
-		u32 WriteCachedType(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source);
+		u32 WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source);
+
+		/** Clears the specified area of the cache. Data will be synced with the render proxy on the next sync call. */
+		void ZeroOut(u32 offset, u32 length);
 
 		/**
-		 * Clears the specified area of the cache. Buffer must have been created with AllowWriteCachingOnCPU flag. Data will be synced
-		 * with the render proxy on the next sync call.
+		 * Reads the data from the cached buffer. Note the cached data only includes writes done by the CPU.
+		 * It will not account for writes done explicitly on the render thread or on the GPU.
 		 */
-		void ZeroOutCached(u32 offset, u32 length);
-
-		/**
-		 * Reads the data from the cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Note the cached data
-		 * only includes writes done by WriteData() and ZeroOutData() calls. It will not account for writes done explicitly on the render
-		 * thread, or on the GPU.
-		 */
-		void ReadCached(u32 offset, u32 length, void* destination);
+		void Read(u32 offset, u32 length, void* destination);
 
 		/** Creates a new buffer. */
 		static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& createInformation);
@@ -540,6 +530,16 @@ namespace b3d::render
 		u32 WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source);
 
 		/**
+		 * Clears the specified area of the buffer.
+		 *
+		 * Buffer must support CPU writes. This mean it's either explicitly created with StoreOnCPUWithGPUAccess flag, or running on a GPU that supports CPU access.
+		 * The latter usually means running on an integrated GPU with shared memory.
+		 *
+		 * After all writes are finished make sure to call Flush() to make the writes visible to the GPU.
+		 */
+		void ZeroOut(u32 offset, u32 length);
+
+		/**
 		 * Reads the data from the buffer at the provided offset. 
 		 *
 		 * Buffer must support CPU reads. This mean it's either explicitly created with StoreOnCPUWithGPUAccess flag, or running on a GPU that supports CPU access. The latter usually means running on an
@@ -549,39 +549,6 @@ namespace b3d::render
 		 * Invalidate(), which forces CPU to fetch the data from the memory rather than its caches. All of this must be done before reading the data.
 		 */
 		void Read(u32 offset, u32 length, void* destination);
-
-		/**
-		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
-		 * for the data to actually reach the underlying buffer you must call FlushCache().
-		 */
-		virtual void WriteCached(u32 offset, u32 length, const void* source);
-
-		/**
-		 * Same as WriteCached(), but takes care of respecting the padding/alignment requirements of the provided type. (e.g. a 3x3 matrix will be padded with 4 bytes in each row).
-		 * @p source must contain at least as many bytes as the size provided in @p typeInformation. Returns the total number of written bytes, including the padding.
-		 */
-		u32 WriteCachedType(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source);
-
-		/**
-		 * Clears the specified area of the cache. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
-		 * for the data to actually reach the underlying buffer you must call FlushCache().
-		 */
-		virtual void ZeroOutCached(u32 offset, u32 length);
-
-		/**
-		 * Reads the data from the cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Note the cached data
-		 * only includes writes done by WriteToCache() and ZeroOutCache() calls. It will not account for writes done on the GPU or writes
-		 * that skip the cache.
-		 */
-		void ReadCached(u32 offset, u32 length, void* destination);
-
-		/**
-		 * Flushes the cache to the underlying buffer. Buffer must have been created with AllowWriteCachingOnCPU flag.
-		 *
-		 * @param suballocationIndex	Optional suballocation index to flush. If ~0u (default), the entire buffer is flushed.
-		 *								Otherwise only the specified suballocation is flushed.
-		 */
-		virtual void FlushCache(u32 suballocationIndex = ~0u);
 
 		/** Returns the total size of this buffer in bytes. */
 		u32 GetTotalSize() const { return mTotalSize; }
@@ -663,8 +630,6 @@ namespace b3d::render
 		u32 mSuballocationSize = 0;
 		u32 mTotalSize = 0;
 		void* mMappedMemory = nullptr;
-		u8* mCache = nullptr;
-		bool mIsCacheDirty = false;
 	};
 
 	/** Flags used to control the GPU buffer writes. */

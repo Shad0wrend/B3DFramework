@@ -158,7 +158,7 @@ namespace b3d
 			 * Allocates a new buffer that can store all the members defined in this uniform buffer. For buffers that are modified every frame
 			 * prefer using AllocateTransient() instead.
 			 */
-			SPtr<GpuBuffer> CreateBuffer(GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU) const
+			SPtr<GpuBuffer> CreateBuffer(GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess) const
 			{
 				const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 				if(gpuDevice)
@@ -172,7 +172,7 @@ namespace b3d
 			 * it may store multiple instances of the data (e.g. one for each different objects). For buffers that are modified every frame
 			 * prefer using AllocateTransient() instead.
 			 */
-			SPtr<GpuBuffer> CreateBuffer(u32 count, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU) const
+			SPtr<GpuBuffer> CreateBuffer(u32 count, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess) const
 			{
 				const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 				if(gpuDevice)
@@ -235,43 +235,43 @@ namespace b3d
  * Starts a new uniform buffer definition. These definitions allow you to create C++ structures that map directly
  * to GPU uniform buffers. Must be followed by B3D_UNIFORM_BUFFER_END.
  */
-#define B3D_UNIFORM_BUFFER_BEGIN(Name)                                                                                                                                                                        \
-	struct Name : GpuUniformBuffer                                                                                                                                                                         \
-	{                                                                                                                                                                                                      \
-		Name()                                                                                                                                                                                             \
-		{                                                                                                                                                                                                  \
-			GpuUniformBufferManager::RegisterBuffer(this);                                                                                                                                                 \
-		}                                                                                                                                                                                                  \
-                                                                                                                                                                                                           \
-	private:                                                                                                                                                                                               \
-		friend class GpuUniformBufferManager;                                                                                                                                                              \
-                                                                                                                                                                                                           \
-		void Initialize() override                                                                                                                                                                         \
-		{                                                                                                                                                                                                  \
-			mMembers = GetEntries();                                                                                                                                                                       \
-			const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();                                                                                                                      \
-			if(gpuDevice)                                                                                                                                                                                  \
-			{                                                                                                                                                                                              \
-				GpuUniformBufferInformation bufferInformation = gpuDevice->GenerateUniformBufferInformation(#Name, mMembers);                                                                              \
-				mBufferSize = bufferInformation.Size * sizeof(u32);                                                                                                                                        \
-			}                                                                                                                                                                                              \
-			else                                                                                                                                                                                           \
-			{                                                                                                                                                                                              \
-				mBufferSize = 0;                                                                                                                                                                           \
-			}                                                                                                                                                                                              \
-                                                                                                                                                                                                           \
-			mTransientAllocationPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU), 4);    \
-                                                                                                                                                                                                           \
-			InitEntries();                                                                                                                                                                                 \
-		}                                                                                                                                                                                                  \
-                                                                                                                                                                                                           \
-		struct META_FirstEntry                                                                                                                                                                             \
-		{};                                                                                                                                                                                                \
-		static void META_GetPrevEntries(TArray<GpuUniformBufferMemberInformation>& members, META_FirstEntry id)                                                                                            \
-		{}                                                                                                                                                                                                 \
-		void META_InitPrevEntry(const TArray<GpuUniformBufferMemberInformation>& members, u32 idx, META_FirstEntry id)                                                                                     \
-		{}                                                                                                                                                                                                 \
-                                                                                                                                                                                                           \
+#define B3D_UNIFORM_BUFFER_BEGIN(Name)                                                                                                                          \
+	struct Name : GpuUniformBuffer                                                                                                                              \
+	{                                                                                                                                                           \
+		Name()                                                                                                                                                  \
+		{                                                                                                                                                       \
+			GpuUniformBufferManager::RegisterBuffer(this);                                                                                                      \
+		}                                                                                                                                                       \
+                                                                                                                                                                \
+	private:                                                                                                                                                    \
+		friend class GpuUniformBufferManager;                                                                                                                   \
+                                                                                                                                                                \
+		void Initialize() override                                                                                                                              \
+		{                                                                                                                                                       \
+			mMembers = GetEntries();                                                                                                                            \
+			const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();                                                                           \
+			if(gpuDevice)                                                                                                                                       \
+			{                                                                                                                                                   \
+				GpuUniformBufferInformation bufferInformation = gpuDevice->GenerateUniformBufferInformation(#Name, mMembers);                                   \
+				mBufferSize = bufferInformation.Size * sizeof(u32);                                                                                             \
+			}                                                                                                                                                   \
+			else                                                                                                                                                \
+			{                                                                                                                                                   \
+				mBufferSize = 0;                                                                                                                                \
+			}                                                                                                                                                   \
+                                                                                                                                                                \
+			mTransientAllocationPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess), 4); \
+                                                                                                                                                                \
+			InitEntries();                                                                                                                                      \
+		}                                                                                                                                                       \
+                                                                                                                                                                \
+		struct META_FirstEntry                                                                                                                                  \
+		{};                                                                                                                                                     \
+		static void META_GetPrevEntries(TArray<GpuUniformBufferMemberInformation>& members, META_FirstEntry id)                                                 \
+		{}                                                                                                                                                      \
+		void META_InitPrevEntry(const TArray<GpuUniformBufferMemberInformation>& members, u32 idx, META_FirstEntry id)                                          \
+		{}                                                                                                                                                      \
+                                                                                                                                                                \
 		typedef META_FirstEntry
 
 /**

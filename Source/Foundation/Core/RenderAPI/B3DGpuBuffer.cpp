@@ -43,10 +43,7 @@ GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation)
 
 void GpuBuffer::Initialize()
 {
-	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
-	{
-		mCache = (u8*)B3DAllocate(mTotalSize);
-	}
+	mCache = (u8*)B3DAllocate(mTotalSize);
 }
 
 void GpuBuffer::Destroy()
@@ -57,7 +54,7 @@ void GpuBuffer::Destroy()
 	}
 }
 
-void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
+void GpuBuffer::Write(u32 offset, u32 length, const void* source)
 {
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
@@ -69,7 +66,7 @@ void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
 	MarkRenderProxyDataDirty();
 }
 
-u32 GpuBuffer::WriteCachedType(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
+u32 GpuBuffer::WriteTyped(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
 {
 	const u8* value = (const u8*)source;
 
@@ -77,7 +74,7 @@ u32 GpuBuffer::WriteCachedType(u32 offset, const GpuDataParameterTypeInformation
 	for(u32 row = 0; row < typeInformation.NumRows; ++row)
 	{
 		const u32 rowSize = typeInformation.NumColumns * typeInformation.BaseTypeSize;
-		WriteCached(offset, rowSize, value);
+		Write(offset, rowSize, value);
 
 		offset += typeInformation.Alignment;
 		value += rowSize;
@@ -86,7 +83,7 @@ u32 GpuBuffer::WriteCachedType(u32 offset, const GpuDataParameterTypeInformation
 	return offset - startOffset;
 }
 
-void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
+void GpuBuffer::ZeroOut(u32 offset, u32 length)
 {
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
@@ -98,7 +95,7 @@ void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
 	MarkRenderProxyDataDirty();
 }
 
-void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
+void GpuBuffer::Read(u32 offset, u32 length, void* destination)
 {
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
@@ -129,13 +126,10 @@ namespace b3d
 
 RenderProxySyncPacket* GpuBuffer::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
-	if(!mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
-		return nullptr;
-
 	SyncPacket* syncPacket = allocator.Construct<SyncPacket>(*this, allocator, flags);
 	syncPacket->BufferSize = mTotalSize;
 	syncPacket->BufferData = allocator.Allocate(mTotalSize);
-	ReadCached(0, mTotalSize, syncPacket->BufferData);
+	Read(0, mTotalSize, syncPacket->BufferData);
 
 	return syncPacket;
 }
@@ -271,20 +265,10 @@ namespace b3d::render
 
 	GpuBuffer::GpuBuffer(GpuDevice& device, const GpuBufferCreateInformation& createInformation, u32 suballocationSize)
 		: mInformation(createInformation), mDevice(device), mSuballocationSize(suballocationSize), mTotalSize(createInformation.SuballocationCount * mSuballocationSize)
-	{
-		if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
-		{
-			mCache = (u8*)B3DAllocate(mTotalSize);
-		}
-	}
+	{ }
 
 	GpuBuffer::~GpuBuffer()
-	{
-		if(mCache != nullptr)
-		{
-			B3DFree(mCache);
-		}
-	}
+	{ }
 
 #if B3D_BUILD_TYPE_DEVELOPMENT
 	void GpuBuffer::ValidateMap(u32 offset, u32 size, GpuMapOptions options)
@@ -340,6 +324,15 @@ namespace b3d::render
 		return length;
 	}
 
+	void GpuBuffer::ZeroOut(u32 offset, u32 length)
+	{
+		if(!B3D_ENSURE((offset + length) <= mTotalSize))
+			return;
+
+		GpuBufferMappedScope mapping = Map(offset, length, GpuMapOption::Write);
+		memset(mapping.GetMappedMemory(), 0, length);
+	}
+
 	void GpuBuffer::Read(u32 offset, u32 length, void* destination)
 	{
 		if(!B3D_ENSURE((offset + length) <= mTotalSize))
@@ -347,84 +340,6 @@ namespace b3d::render
 
 		GpuBufferMappedScope mapping = Map(offset, length, GpuMapOption::Read);
 		memcpy(destination, mapping.GetMappedMemory(), length);
-	}
-
-	void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
-	{
-		if(!B3D_ENSURE(mCache != nullptr))
-			return;
-
-		if(!B3D_ENSURE((offset + length) <= mTotalSize))
-			return;
-
-		memcpy(mCache + offset, source, length);
-		mIsCacheDirty = true;
-	}
-
-	u32 GpuBuffer::WriteCachedType(u32 offset, const GpuDataParameterTypeInformation& typeInformation, const void* source)
-	{
-		const u8* value = (const u8*)source;
-
-		const u32 startOffset = offset;
-		for(u32 row = 0; row < typeInformation.NumRows; ++row)
-		{
-			const u32 rowSize = typeInformation.NumColumns * typeInformation.BaseTypeSize;
-			WriteCached(offset, rowSize, value);
-
-			offset += typeInformation.Alignment;
-			value += rowSize;
-		}
-
-		return offset - startOffset;
-	}
-
-	void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
-	{
-		if(!B3D_ENSURE(mCache != nullptr))
-			return;
-
-		if(!B3D_ENSURE((offset + length) <= mTotalSize))
-			return;
-
-		memset(mCache + offset, 0, length);
-		mIsCacheDirty = true;
-	}
-
-	void GpuBuffer::FlushCache(u32 suballocationIndex)
-	{
-		if(!B3D_ENSURE(mCache != nullptr))
-			return;
-
-		if(!mIsCacheDirty)
-			return;
-
-		u32 offset = 0;
-		u32 length = mTotalSize;
-
-		if(suballocationIndex != ~0u)
-		{
-			if(!B3D_ENSURE(suballocationIndex < mInformation.SuballocationCount))
-				return;
-
-			offset = suballocationIndex * mSuballocationSize;
-			length = mSuballocationSize;
-		}
-
-		// TODO - This should write to CPU cached buffer directly via map/unmap. But we need a ring buffer to handle usage over multiple frames
-		GpuBufferUtility::Write(std::static_pointer_cast<GpuBuffer>(GetShared()), offset, length, mCache + offset);
-
-		mIsCacheDirty = false;
-	}
-
-	void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
-	{
-		if(!B3D_ENSURE(mCache != nullptr))
-			return;
-
-		if(!B3D_ENSURE((offset + length) <= mTotalSize))
-			return;
-
-		memcpy(destination, mCache + offset, length);
 	}
 
 	void GpuBuffer::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)

@@ -572,7 +572,6 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 	auto& viewProps = view.GetProperties();
 
 	SPtr<GpuBuffer> perCameraBuffer = view.GetPerViewBuffer();
-	perCameraBuffer->FlushCache();
 
 	// Make sure light probe data is up to date
 	if(view.GetRenderSettings().EnableIndirectLighting)
@@ -634,7 +633,6 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 {
 	GetProfilerCPU().BeginSample("Render overlay");
 
-	view.GetPerViewBuffer()->FlushCache();
 	view.BeginFrame(frameInfo);
 
 	auto& viewProps = view.GetProperties();

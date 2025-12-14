@@ -205,7 +205,7 @@ void ShaderInformationBase::SetParameterAttribute(const String& name, const Shad
 	}
 }
 
-void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic)
+void ShaderInformationBase::SetUniformBufferAttributes(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic)
 {
 	ShaderParameterBlockInformation desc;
 	desc.Name = name;

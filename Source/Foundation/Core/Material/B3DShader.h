@@ -116,7 +116,7 @@ namespace b3d
 		String Name;
 		bool Shared = false;
 		StringID RendererSemantic;
-		GpuBufferFlags Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU;
+		GpuBufferFlags Flags = GpuBufferFlag::StoreOnGPU;
 	};
 
 	/** Available attribute types that can be assigned to Shader parameters. */
@@ -266,16 +266,16 @@ namespace b3d
 		 *								the Material. You will need to create it elsewhere and then assign it manually.
 		 * @param	flags				Flags that control the behaviour of the parameter block buffer.
 		 * @param	rendererSemantic	(optional) Semantic that allows you to specify the use of this parameter block
-	 *									in the renderer. The actual value of the semantic depends on the current
-	 *									Renderer and its supported list of semantics. Elements with a renderer semantic
-	 *									will not have their parameter block automatically created (similar to "shared"
-	 *									argument), but instead a Renderer will create an assign it instead. Be aware
-	 *									that renderers have strict policies on what and how are parameters stored in the
-	 *									buffer and you will need to respect them. If you don't respect them your shader
-	 *									will be deemed incompatible and won't be used. Value of 0 signifies the parameter
-	 *									block is not used by the renderer.
+		 *								in the renderer. The actual value of the semantic depends on the current
+		 *								Renderer and its supported list of semantics. Elements with a renderer semantic
+		 *								will not have their parameter block automatically created (similar to "shared"
+		 *								argument), but instead a Renderer will create an assign it instead. Be aware
+		 *								that renderers have strict policies on what and how are parameters stored in the
+		 *								buffer and you will need to respect them. If you don't respect them your shader
+		 *								will be deemed incompatible and won't be used. Value of 0 signifies the parameter
+		 *								block is not used by the renderer.
 		 */
-		void SetParamBlockAttribs(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic = StringID::kNone);
+		void SetUniformBufferAttributes(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic = StringID::kNone);
 
 		/**
 		 * Sorting type to use when performing sort in the render queue. Default value is sort front to back which causes

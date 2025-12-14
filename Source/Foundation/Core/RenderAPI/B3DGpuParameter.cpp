@@ -50,10 +50,10 @@ void TGpuParameterPrimitive<T, IsRenderProxy>::Set(const T& value, u32 arrayIdx)
 	if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 	{
 		const auto transposed = TransposePolicy<T>::Transpose(value);
-		uniformBuffer->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &transposed);
+		uniformBuffer->WriteTyped((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &transposed);
 	}
 	else
-		uniformBuffer->WriteCachedType((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &value);
+		uniformBuffer->WriteTyped((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), typeInformation, &value);
 
 	mParent->MarkRenderProxyDataDirtyInternal();
 }
@@ -79,7 +79,7 @@ T TGpuParameterPrimitive<T, IsRenderProxy>::Get(u32 arrayIdx) const
 	u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 	T value;
-	paramBlock->ReadCached((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, &value);
+	paramBlock->Read((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, &value);
 
 	return value;
 }
@@ -123,13 +123,13 @@ void TGpuParameterStruct<IsRenderProxy>::Set(const void* value, u32 sizeBytes, u
 
 	sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-	paramBlock->WriteCached((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, value);
+	paramBlock->Write((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, value);
 
 	// Set unused bytes to 0
 	if(sizeBytes < elementSizeBytes)
 	{
 		u32 diffSize = elementSizeBytes - sizeBytes;
-		paramBlock->ZeroOutCached((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
+		paramBlock->ZeroOut((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
 	}
 
 	mParent->MarkRenderProxyDataDirtyInternal();
@@ -162,7 +162,7 @@ void TGpuParameterStruct<IsRenderProxy>::Get(void* value, u32 sizeBytes, u32 arr
 #endif
 	sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-	paramBlock->ReadCached((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, value);
+	paramBlock->Read((mParameterInformation->CpuOffset + arrayIdx * mParameterInformation->ArrayElementStride) * sizeof(u32), sizeBytes, value);
 }
 
 template <bool IsRenderProxy>
