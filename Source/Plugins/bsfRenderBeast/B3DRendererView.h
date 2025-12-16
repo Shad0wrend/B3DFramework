@@ -14,6 +14,7 @@
 #include "B3DRendererParticles.h"
 #include "B3DRendererDecal.h"
 #include "Renderer/B3DRenderer.h"
+#include "RenderAPI/B3DGpuBufferPool.h"
 
 namespace b3d
 {
@@ -75,7 +76,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
+			void Bind(GpuCommandBuffer& commandBuffer, const GpuBufferSuballocation& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -248,6 +249,7 @@ namespace b3d
 		public:
 			RendererView();
 			RendererView(const RendererViewCreateInformation& desc);
+			~RendererView();
 
 			/** Sets state reduction mode that determines how do render queues group & sort renderables. */
 			void SetStateReductionMode(StateReduction reductionMode);
@@ -402,7 +404,7 @@ namespace b3d
 			void UpdatePerViewBuffer();
 
 			/** Returns a buffer that stores per-view parameters. */
-			SPtr<GpuBuffer> GetPerViewBuffer() const { return mUniformBuffer; }
+			const GpuBufferSuballocation& GetPerViewBuffer() const { return mPerCameraBuffer; }
 
 			/**
 			 * Returns information about visible lights, in the form of a light grid, used for forward rendering. Only valid
@@ -528,7 +530,8 @@ namespace b3d
 			SPtr<RenderSettings> mRenderSettings;
 			u32 mRenderSettingsHash;
 
-			SPtr<GpuBuffer> mUniformBuffer;
+			GpuBufferPool mPerCameraBufferPool;
+			GpuBufferSuballocation mPerCameraBuffer;
 			VisibilityInfo mVisibility;
 			LightGrid mLightGrid;
 			u32 mViewIdx;

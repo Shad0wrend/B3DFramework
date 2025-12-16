@@ -1099,7 +1099,7 @@ void GaussianDOFSeparateMaterial::Prepare(const SPtr<Texture>& color, const SPtr
 	mColorTextureParameter.Set(color);
 	mDepthTextureParameter.Set(depth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1204,7 +1204,7 @@ void GaussianDOFCombineMaterial::Prepare(const SPtr<Texture>& focused, const SPt
 	mFarTextureParameter.Set(far);
 	mDepthTextureParameter.Set(depth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1262,7 +1262,7 @@ void BokehDOFPrepareMaterial::Prepare(const SPtr<Texture>& input, const SPtr<Tex
 	mInputTextureParameter.Set(input);
 	mDepthTextureParameter.Set(depth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1427,7 +1427,7 @@ void BokehDOFMaterial::Prepare(const SPtr<Texture>& input, const RendererView& v
 
 	mBokehTextureParameter.Set(bokehTexture);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1540,7 +1540,7 @@ void BokehDOFCombineMaterial::Prepare(const SPtr<Texture>& unfocused, const SPtr
 	mFocusedTextureParameter.Set(focused);
 	mDepthTextureParameter.Set(depth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1613,7 +1613,7 @@ void MotionBlurMaterial::Prepare(const SPtr<Texture>& input, const SPtr<Texture>
 	mInputTexture.Set(input);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1881,7 +1881,7 @@ void SSAOMaterial::Prepare(const RendererView& view, const SSAOTextureInputs& te
 
 	mRandomTexture.Set(textures.RandomRotations);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -1975,7 +1975,7 @@ void SSAODownsampleMaterial::Prepare(const RendererView& view, const SPtr<Textur
 	mDepthTexture.Set(depth);
 	mNormalsTexture.Set(normals);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -2044,7 +2044,7 @@ void SSAOBlurMaterial::Prepare(const RendererView& view, const SPtr<Texture>& ao
 	mAOTexture.Set(ao);
 	mDepthTexture.Set(sceneDepth);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -2087,7 +2087,7 @@ void SSRStencilMaterial::Prepare(const RendererView& view, GBufferTextures gbuff
 	gSSRStencilUniformDefinition.gRoughnessScaleBias.Set(uniforms, roughnessScaleBias);
 	mUniformBufferParameter.Set(uniforms);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -2197,7 +2197,7 @@ void SSRTraceMaterial::Prepare(const RendererView& view, GBufferTextures gbuffer
 
 	mUniformBufferParameter.Set(uniforms);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -2435,7 +2435,7 @@ void TemporalFilteringMaterial::Prepare(const RendererView& view, const SPtr<Tex
 	mUniformBufferParameter.Set(filteringUniforms);
 	mTemporalUniformBufferParameter.Set(resolveUniforms);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 
@@ -2546,7 +2546,7 @@ void MSAACoverageMaterial::Prepare(const RendererView& view, GBufferTextures gbu
 {
 	mGBufferParams.Bind(gbuffer);
 
-	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perView = view.GetPerViewBuffer();
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perView);
 }
 

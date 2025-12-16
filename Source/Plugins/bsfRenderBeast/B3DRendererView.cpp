@@ -28,7 +28,7 @@ void SkyboxMaterial::Initialize()
 	mGpuParameterSet->TryGetUniformBufferParameter("Params", mUniformBufferParameter);
 }
 
-void SkyboxMaterial::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
+void SkyboxMaterial::Bind(GpuCommandBuffer& commandBuffer, const GpuBufferSuballocation& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
 {
 	mGpuParameterSet->SetUniformBuffer("PerCamera", perCamera);
 
@@ -64,16 +64,24 @@ RendererViewProperties::RendererViewProperties(const RendererViewCreateInformati
 RendererView::RendererView()
 	: mCamera(nullptr), mRenderSettingsHash(0), mViewIdx(-1)
 {
-	mUniformBuffer = gPerCameraUniformDefinition.CreateBuffer();
+	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
+	mPerCameraBufferPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(gPerCameraUniformDefinition.GetSize()), 4);
 }
 
 RendererView::RendererView(const RendererViewCreateInformation& desc)
 	: mProperties(desc), mCamera(desc.SceneCamera), mRenderSettingsHash(0), mViewIdx(-1)
 {
-	mUniformBuffer = gPerCameraUniformDefinition.CreateBuffer();
+	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
+	mPerCameraBufferPool.Initialize(*gpuDevice, GpuBufferCreateInformation::CreateUniform(gPerCameraUniformDefinition.GetSize()), 4);
 	mProperties.PrevViewProjTransform = mProperties.ViewProjTransform;
 
 	SetStateReductionMode(desc.StateReduction);
+}
+
+RendererView::~RendererView()
+{
+	if(mPerCameraBuffer.IsValid())
+		mPerCameraBufferPool.Release(mPerCameraBuffer);
 }
 
 void RendererView::SetStateReductionMode(StateReduction reductionMode)
@@ -779,7 +787,12 @@ Matrix4 InvertProjectionMatrix(const Matrix4& mat)
 
 void RendererView::UpdatePerViewBuffer()
 {
-	GpuBufferMappedScope uniforms = mUniformBuffer->Map(GpuMapOption::Write);
+	// Release the previous buffer allocation (if any) and allocate a new one
+	if(mPerCameraBuffer.IsValid())
+		mPerCameraBufferPool.Release(mPerCameraBuffer);
+
+	mPerCameraBuffer = mPerCameraBufferPool.Allocate();
+	GpuBufferMappedScope uniforms = mPerCameraBuffer.Map();
 
 	Matrix4 viewProj = mProperties.ProjTransform * mProperties.ViewTransform;
 	Matrix4 invProj = InvertProjectionMatrix(mProperties.ProjTransform);

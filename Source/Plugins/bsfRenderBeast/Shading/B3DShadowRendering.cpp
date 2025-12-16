@@ -276,7 +276,7 @@ namespace b3d
 			 * @param perCameraBuffer        The per-camera parameter buffer.
 			 * @param shadowParameterBuffer  Optional shadow-specific parameter buffer (for projection materials).
 			 */
-			static void BindCommonParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
+			static void BindCommonParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& vertexParameterBuffer, const GpuBufferSuballocation& perCameraBuffer, const SPtr<GpuBuffer>& shadowParameterBuffer = nullptr)
 			{
 				// Set vertex parameters
 				gpuParameters->TrySetUniformBuffer("VertParams", vertexParameterBuffer);
@@ -294,7 +294,7 @@ namespace b3d
 			 *
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 */
-			static void BindStencilProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer)
+			static void BindStencilProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, const GpuBufferSuballocation& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Default light position for spot/directional lights
@@ -307,7 +307,7 @@ namespace b3d
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 * @param gpuDevice     The GPU device used to retrieve the sampler state.
 			 */
-			static void BindProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
+			static void BindProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const GpuBufferSuballocation& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Default light position for spot/directional lights
@@ -331,7 +331,7 @@ namespace b3d
 			 * @param gpuParameters The GPU parameters object to set parameters on.
 			 * @param gpuDevice     The GPU device used to retrieve the sampler state.
 			 */
-			static void BindOmnidirectionalProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const SPtr<GpuBuffer>& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
+			static void BindOmnidirectionalProjectionParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuDevice& gpuDevice, const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParameterBuffer, const GpuBufferSuballocation& perCameraBuffer, const SPtr<GpuBuffer>& vertexParameterBuffer, const GBufferTextures& gbuffer)
 			{
 				// Bind common parameters (VertParams, PerCamera, Params)
 				// Set light position and radius for omnidirectional light
@@ -1116,7 +1116,7 @@ namespace b3d
 			const u32 lightRendererId = light->GetRendererId();
 
 			const auto& viewProperties = view.GetProperties();
-			const SPtr<GpuBuffer>& perViewBuffer = view.GetPerViewBuffer();
+			const GpuBufferSuballocation& perViewBuffer = view.GetPerViewBuffer();
 
 			const GpuDeviceCapabilities& deviceCapabilities = gpuDevice.GetCapabilities();
 			// TODO - Calculate and set a scissor rectangle for the light

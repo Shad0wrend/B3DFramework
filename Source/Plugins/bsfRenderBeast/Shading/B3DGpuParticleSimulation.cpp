@@ -642,7 +642,7 @@ void GpuParticleSimulation::RemoveSystem(GpuParticleSystem* system)
 	m->Systems.erase(system);
 }
 
-void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt)
+void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt)
 {
 	m->Resources.Swap();
 	m->Resources.GetCurveTexture().ApplyChanges(commandBuffer);

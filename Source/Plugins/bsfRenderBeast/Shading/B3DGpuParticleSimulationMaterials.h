@@ -126,7 +126,7 @@ namespace b3d { namespace render
 		 * @param	supportsDepthCollisions		True if this material variation supports depth collisions
 		 */
 		static void PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
-			const SPtr<GpuBuffer>& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
+			const GpuBufferSuballocation& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
 			const GpuBufferSuballocation& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions);
 
 		/** Returns the material variation matching the provided parameters. */

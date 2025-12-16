@@ -571,7 +571,7 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 	const SceneInfo& sceneInfo = scene.GetSceneInfo();
 	auto& viewProps = view.GetProperties();
 
-	SPtr<GpuBuffer> perCameraBuffer = view.GetPerViewBuffer();
+	const GpuBufferSuballocation& perCameraBuffer = view.GetPerViewBuffer();
 
 	// Make sure light probe data is up to date
 	if(view.GetRenderSettings().EnableIndirectLighting)

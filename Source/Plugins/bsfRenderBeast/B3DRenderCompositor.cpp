@@ -1291,7 +1291,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		renderTextureCreateInformation.ColorSurfaces[0].Texture = iblRadianceTex->Texture;
 		renderTextureCreateInformation.DepthStencilSurface.Texture = sceneDepthNode->DepthTex->Texture;
 
-		SPtr<GpuBuffer> perViewBuffer = inputs.View.GetPerViewBuffer();
+		const GpuBufferSuballocation& perViewBuffer = inputs.View.GetPerViewBuffer();
 
 		SPtr<RenderTexture> iblRadianceRT = RenderTexture::Create(renderTextureCreateInformation);
 

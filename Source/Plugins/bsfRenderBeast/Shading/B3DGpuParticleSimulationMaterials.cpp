@@ -39,7 +39,7 @@ void GpuParticleSimulateMaterial::InitDefinesInternal(ShaderDefines& defines)
 }
 
 void GpuParticleSimulateMaterial::PopulateParameters(const SPtr<GpuParameterSet>& gpuParameters, GpuParticleResources& resources, const SPtr<GpuBuffer>& particleVertexInputBuffer,
-	const SPtr<GpuBuffer>& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
+	const GpuBufferSuballocation& viewParams, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<GpuBuffer>& tileUVs,
 	const GpuBufferSuballocation& perObjectParams, const SPtr<Texture>& vectorFieldTexture, bool supportsDepthCollisions)
 {
 	GpuParticleStateTextures& prevState = resources.GetPreviousState();

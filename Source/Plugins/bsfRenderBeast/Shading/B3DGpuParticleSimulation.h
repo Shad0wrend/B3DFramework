@@ -195,7 +195,7 @@ namespace b3d
 			 * @param	gbuffer		Populated GBuffer with depths and normals.
 			 * @param	dt			Time step to advance the simulation by.
 			 */
-			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
+			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt);
 
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only

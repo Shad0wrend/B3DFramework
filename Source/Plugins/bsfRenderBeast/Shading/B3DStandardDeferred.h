@@ -125,7 +125,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
-			void Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const GpuBufferSuballocation& reflProbeParams);
+			void Prepare(const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const GpuBufferSuballocation& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -168,7 +168,7 @@ namespace b3d
 			DeferredIBLProbeMaterial() = default;
 
 			/** Populates the provided GPU parameters with the provided parameters. */
-			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer);
+			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer);
 
 			/** Creates a new transient uniform buffer containing provided per-probe data. */
 			static GpuBufferSuballocation CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData);
@@ -211,7 +211,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
-			void Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const GpuBufferSuballocation& reflProbeParams);
+			void Prepare(const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const Skybox* skybox, const GpuBufferSuballocation& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -254,7 +254,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Prepares material parameters for rendering. */
-			void Prepare(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const GpuBufferSuballocation& reflProbeParams);
+			void Prepare(const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const GpuBufferSuballocation& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
