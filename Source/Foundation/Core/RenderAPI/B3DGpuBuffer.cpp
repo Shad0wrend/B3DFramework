@@ -259,7 +259,7 @@ namespace b3d::render
 		if(options.IsSet(GpuMapOption::Write))
 		{
 			// We currently don't track exact bound ranges for buffers that aren't suballocated, so we cannot warn in that case
-			const bool ignoreWarning = mInformation.SuballocationCount <= 1 && offset != 0 && size != mTotalSize;
+			const bool ignoreWarning = mInformation.SuballocationCount <= 1 && (offset != 0 || size != mTotalSize);
 
 			if(!ignoreWarning)
 			{
@@ -375,17 +375,12 @@ namespace b3d::render
 		if(flags.IsSet(GpuBufferWriteFlag::NoOverwrite))
 			mapOptions |= GpuMapOption::NoOverwrite;
 
-		GpuLockOptions options = GBL_WRITE_ONLY_DISCARD_RANGE;
-		if(flags.IsSet(GpuBufferWriteFlag::NoOverwrite))
-			options = GBL_WRITE_ONLY_NO_OVERWRITE;
-		else if(flags.IsSet(GpuBufferWriteFlag::Discard))
-			options = GBL_WRITE_ONLY_DISCARD;
-
-		const bool canDiscardBuffer = flags.IsSet(GpuBufferWriteFlag::Discard) ||
-			(offset == 0 && length == buffer->GetTotalSize());
+		const bool canDiscardBuffer = flags.IsSet(GpuBufferWriteFlag::Discard) || (offset == 0 && length == buffer->GetTotalSize());
 
 		// Check is the GPU currently reading or writing from the buffer
 		const GpuQueueMask useMask = buffer->GetUseMask(GpuAccessFlag::Read | GpuAccessFlag::Write);
+		const u32 useCount = buffer->GetUseCount();
+		const u32 boundCount = buffer->GetBoundCount();
 
 		if(isCPUAccessible) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
 		{
@@ -394,13 +389,23 @@ namespace b3d::render
 			// barrier below.
 			const bool isUsedOnGPU = !useMask.IsEmpty() || supportsGPUWrites;
 
+			// Recreate the internal buffer if it is bound to a command buffer, to avoid overwriting the old data. But only if the user
+			// allows discard via a flag. In case the user provided an explicit command buffer, perfer a staging buffer over discard
+			// (it still costs us creation of a new buffer, and the original buffer bindings remain valid). Finally, if no-overwrite is
+			// specified, we never recreate the buffer as the user guarantees he won't touch the previously bound region.
+			const bool recreateInternalBuffer = boundCount > 0 && commandBuffer == nullptr && canDiscardBuffer && !flags.IsSet(GpuBufferWriteFlag::NoOverwrite);
+
 			// Even if the buffer is directly mappable we might wish to avoid mapping it directly in these situations:
 			const bool shouldMapDirectly =
-				(!isUsedOnGPU || flags.IsSet(GpuBufferWriteFlag::NoOverwrite)) && // GPU is currently using the buffer and we cannot map it safely (unless user specifically requested the no-overwrite flag)
-				(buffer->GetBoundCount() == 0 || (commandBuffer == nullptr && canDiscardBuffer) || flags.IsSet(GpuBufferWriteFlag::NoOverwrite)); // Buffer is bound to a command buffer already. If user provided a command buffer queue a write operation there instead of mapping directly. If not, discard the original buffer and lock a new copy of the buffer.
+				(!isUsedOnGPU // GPU is currently using the buffer
+				&& (boundCount == 0 || recreateInternalBuffer)) // Buffer is bound to a command buffer already, and we are not creating a new one. Cannot map without affecting the previous binding.
+				|| flags.IsSet(GpuBufferWriteFlag::NoOverwrite); // If no-overwrite flag is set, user guarantees he won't touch the memory the GPU is using
 
 			if(shouldMapDirectly)
 			{
+				if(recreateInternalBuffer)
+					buffer->RecreateInternalBuffer();
+
 				GpuBufferMappedScope mapping = buffer->Map(offset, length, mapOptions);
 				memcpy(mapping.GetMappedMemory(), source, length);
 
@@ -422,15 +427,13 @@ namespace b3d::render
 
 		// If the buffer is used in any way on the GPU, we need to wait for that use to finish before we issue our copy
 		GpuQueueMask syncMask;
-		if(!useMask.IsEmpty() && options != GBL_WRITE_ONLY_NO_OVERWRITE) // Buffer is currently used on the GPU
+		if(!useMask.IsEmpty() && mapOptions.IsSet(GpuMapOption::NoOverwrite)) // Buffer is currently used on the GPU
 			syncMask = useMask;
 
-		// Check if the buffer will still be bound somewhere after the CBs using it finish
-		const u32 useCount = buffer->GetUseCount();
-		const u32 boundCount = buffer->GetBoundCount();
-
+		// Check if the buffer will still be bound somewhere after the command buffers using it finish. If it is, we have to recreate the internal buffer otherwise the copy
+		// operation might just get overwritten by those command buffers when the execute. This is because the transfer command buffers are always submitted before regular
+		// command buffers. If user provided an explicit command buffer, then it's up to him to ensure the correct ordering.
 		const bool isBoundWithoutUse = boundCount > useCount;
-
 		if(isBoundWithoutUse && commandBuffer == nullptr)
 		{
 			if(!canDiscardBuffer)
@@ -438,7 +441,7 @@ namespace b3d::render
 #if B3D_BUILD_TYPE_DEVELOPMENT
 				if(buffer->IsRangeBound(offset, length))
 				{
-					B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", buffer->GetName());
+					B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means  writes will overwrite it each other if not careful.", buffer->GetName());
 				}
 #endif
 			}
