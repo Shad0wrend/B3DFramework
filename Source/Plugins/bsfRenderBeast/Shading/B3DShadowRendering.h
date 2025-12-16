@@ -566,7 +566,7 @@ namespace b3d
 			void SetShadowMapSize(u32 size);
 
 			/** Gets or creates a shadow parameter set for the given per-object buffer. */
-			SPtr<GpuParameterSet> GetOrCreateShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer);
+			SPtr<GpuParameterSet> GetOrCreateCubemapShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer);
 
 		private:
 			/** Renders cascaded shadow maps for the provided directional light viewed from the provided view. */
@@ -708,15 +708,15 @@ namespace b3d
 			Vector<ShadowMapOptions> mRadialLightShadowOptions; // Transient
 
 			// Shadow-specific per-object parameter set management (V+F+G stages for geometry shader support)
-			SPtr<GpuPipelineParameterSetLayout> mShadowPerObjectLayout;
+			SPtr<GpuPipelineParameterSetLayout> mCubemapShadowPerObjectLayout;
 
-			struct ShadowParameterSetEntry
+			struct CubemapShadowParameterSetEntry
 			{
 				SPtr<GpuParameterSet> ParameterSet;
 				u32 RefCount = 0;
 			};
 
-			UnorderedMap<GpuBuffer*, ShadowParameterSetEntry> mShadowParameterSets;
+			UnorderedMap<GpuBuffer*, CubemapShadowParameterSetEntry> mCubemapShadowParameterSets;
 		};
 
 		/* @} */

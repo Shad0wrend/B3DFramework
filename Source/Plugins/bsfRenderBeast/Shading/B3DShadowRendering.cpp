@@ -468,7 +468,7 @@ namespace b3d
 					RendererRenderable* Renderable;
 				};
 
-				SPtr<GpuParameterSet> GpuParameterSets;
+				SPtr<GpuParameterSet> GpuParameterSet;
 
 				bool IsElement : 1;
 			};
@@ -505,7 +505,7 @@ namespace b3d
 						RendererRenderable* renderable = sceneInfo.Renderables[renderableIndex];
 
 						// Register per-object shadow parameter set if not already registered
-						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable->PerObjectSuballocation.GetBuffer());
+						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable);
 						auto found = std::find(perObjectParameterSets.begin(), perObjectParameterSets.end(), perObjectParameterSet);
 						if(found == perObjectParameterSets.end())
 						{
@@ -527,7 +527,7 @@ namespace b3d
 							if(!renderableBound[animationTypeIndex])
 							{
 								opt.Prepare(renderableCommand, bounds, *kVariationLookup[animationTypeIndex]);
-								passCreateInformation.Parameters.Add(renderableCommand.GpuParameterSets);
+								passCreateInformation.Parameters.Add(renderableCommand.GpuParameterSet);
 
 								commands[animationTypeIndex].push_back(renderableCommand);
 								renderableBound[animationTypeIndex] = true;
@@ -561,7 +561,7 @@ namespace b3d
 
 								// Bind per-object shadow parameter set and dynamic offset
 								const GpuBufferSuballocation& perObjectSuballocation = command.Renderable->PerObjectSuballocation;
-								SPtr<GpuParameterSet> shadowParameterSet = opt.GetShadowParameterSet(perObjectSuballocation.GetBuffer()); // TODO - Should sort objects by set if possible, to avoid switching sets
+								SPtr<GpuParameterSet> shadowParameterSet = opt.GetShadowParameterSet(command.Renderable); // TODO - Should sort objects by set if possible, to avoid switching sets
 								commandBuffer.SetGpuParameterSet(shadowParameterSet);
 								commandBuffer.SetDynamicBufferOffset(GpuPipelineSet::kPerObject, perObjectDynamicOffsetIndex, perObjectSuballocation.GetSuballocationOffset());
 							}
@@ -600,23 +600,24 @@ namespace b3d
 			{
 				Material = ShadowDepthCubeMaterial::Get(variation);
 
-				command.GpuParameterSets = Material->CreateGpuParameterSet();
+				command.GpuParameterSet = Material->CreateGpuParameterSet();
 				GpuBufferMappedScope shadowCubeMatricesUniforms = gShadowCubeMasksUniformDefinition.AllocateTransient().Map();
 
 				for(u32 j = 0; j < 6; j++)
 					gShadowCubeMasksUniformDefinition.gFaceMasks.Set(shadowCubeMatricesUniforms, (Frustums[j].Intersects(bounds) ? 1 : 0), j);
 
-				ShadowDepthCubeMaterial::PopulateParameters(command.GpuParameterSets, ShadowUniformBuffer, ShadowCubeMatricesBuffer, shadowCubeMatricesUniforms);
+				ShadowDepthCubeMaterial::PopulateParameters(command.GpuParameterSet, ShadowUniformBuffer, ShadowCubeMatricesBuffer, shadowCubeMatricesUniforms);
 			}
 
 			void Bind(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 			{
-				Material->Bind(commandBuffer, command.GpuParameterSets);
+				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
 			{
-				return ShadowRenderer.GetOrCreateShadowParameterSet(perObjectBuffer);
+				// Need to create a new parameter set since we also use geometry shaders, and the default parameter set doesn't support it
+				return ShadowRenderer.GetOrCreateCubemapShadowParameterSet(renderable->PerObjectSuballocation.GetBuffer());
 			}
 
 			ShadowRendering& ShadowRenderer;
@@ -652,18 +653,18 @@ namespace b3d
 			{
 				Material = ShadowDepthNormalNoPSMaterial::Get(variation);
 
-				command.GpuParameterSets = Material->CreateGpuParameterSet();
-				ShadowDepthNormalNoPSMaterial::PopulateParameters(command.GpuParameterSets, ShadowUniformBuffer);
+				command.GpuParameterSet = Material->CreateGpuParameterSet();
+				ShadowDepthNormalNoPSMaterial::PopulateParameters(command.GpuParameterSet, ShadowUniformBuffer);
 			}
 
 			void Bind(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 			{
-				Material->Bind(commandBuffer, command.GpuParameterSets);
+				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
 			{
-				return ShadowRenderer.GetOrCreateShadowParameterSet(perObjectBuffer);
+				return renderable->PerObjectParameterSet;
 			}
 
 			ShadowRendering& ShadowRenderer;
@@ -699,18 +700,18 @@ namespace b3d
 			{
 				Material = ShadowDepthNormalMaterial::Get(variation);
 
-				command.GpuParameterSets = Material->CreateGpuParameterSet();
-				ShadowDepthNormalMaterial::PopulateParameters(command.GpuParameterSets, ShadowUniformBuffer);
+				command.GpuParameterSet = Material->CreateGpuParameterSet();
+				ShadowDepthNormalMaterial::PopulateParameters(command.GpuParameterSet, ShadowUniformBuffer);
 			}
 
 			void Bind(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 			{
-				Material->Bind(commandBuffer, command.GpuParameterSets);
+				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
 			{
-				return ShadowRenderer.GetOrCreateShadowParameterSet(perObjectBuffer);
+				return renderable->PerObjectParameterSet;
 			}
 
 			ShadowRendering& ShadowRenderer;
@@ -745,18 +746,18 @@ namespace b3d
 			{
 				Material = ShadowDepthDirectionalMaterial::Get(variation);
 
-				command.GpuParameterSets = Material->CreateGpuParameterSet();
-				ShadowDepthDirectionalMaterial::PopulateParameters(command.GpuParameterSets, ShadowUniformBuffer);
+				command.GpuParameterSet = Material->CreateGpuParameterSet();
+				ShadowDepthDirectionalMaterial::PopulateParameters(command.GpuParameterSet, ShadowUniformBuffer);
 			}
 
 			void Bind(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 			{
-				Material->Bind(commandBuffer, command.GpuParameterSets);
+				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
 			{
-				return ShadowRenderer.GetOrCreateShadowParameterSet(perObjectBuffer);
+				return renderable->PerObjectParameterSet;
 			}
 
 			ShadowRendering& ShadowRenderer;
@@ -832,19 +833,19 @@ namespace b3d
 				GpuBufferUtility::Write(mFrustumIB, 0, sizeof(AABox::kCubeIndices), AABox::kCubeIndices);
 			}
 
-			// Create shadow per-object layout with geometry stage (for point light cubemap shadows)
+			// Create shadow per-object layout with vertex+geometry stage (for point light cubemap shadows)
 			{
 				GpuUniformBufferInformation perObjectInfo;
 				perObjectInfo.Name = "PerObject";
 				perObjectInfo.Set = GpuPipelineSet::kPerObject;
 				perObjectInfo.Slot = 0;
 				perObjectInfo.Size = Math::CeilToMultiple(gPerObjectUniformDefinition.GetSize() / 4u, 4u);
-				perObjectInfo.Stages = GpuProgramStageBit::Vertex | GpuProgramStageBit::Fragment | GpuProgramStageBit::Geometry;
+				perObjectInfo.Stages = GpuProgramStageBit::Vertex | GpuProgramStageBit::Geometry;
 				perObjectInfo.IsShareable = true;
 
 				GpuProgramParameterDescription description;
 				description.UniformBuffers["PerObject"] = perObjectInfo;
-				mShadowPerObjectLayout = gpuDevice->CreateGpuPipelineParameterSetLayout(description);
+				mCubemapShadowPerObjectLayout = gpuDevice->CreateGpuPipelineParameterSetLayout(description);
 			}
 		}
 
@@ -860,23 +861,23 @@ namespace b3d
 			mShadowMapSize = size;
 		}
 
-		SPtr<GpuParameterSet> ShadowRendering::GetOrCreateShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer)
+		SPtr<GpuParameterSet> ShadowRendering::GetOrCreateCubemapShadowParameterSet(const SPtr<GpuBuffer>& perObjectBuffer)
 		{
 			GpuBuffer* key = perObjectBuffer.get();
 
-			auto iter = mShadowParameterSets.find(key);
-			if(iter != mShadowParameterSets.end())
+			auto iter = mCubemapShadowParameterSets.find(key);
+			if(iter != mCubemapShadowParameterSets.end())
 				return iter->second.ParameterSet;
 
 			const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-			SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(mShadowPerObjectLayout, GpuPipelineSet::kPerObject);
+			SPtr<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(mCubemapShadowPerObjectLayout, GpuPipelineSet::kPerObject);
 			parameterSet->SetUniformBuffer("PerObject", perObjectBuffer, 0);
 
-			ShadowParameterSetEntry entry;
+			CubemapShadowParameterSetEntry entry;
 			entry.ParameterSet = parameterSet;
 			entry.RefCount = 1;
 
-			mShadowParameterSets[key] = entry;
+			mCubemapShadowParameterSets[key] = entry;
 			return parameterSet;
 		}
 
@@ -895,7 +896,7 @@ namespace b3d
 
 			// Clear all transient data from last frame
 			mShadowInfos.clear();
-			mShadowParameterSets.clear();
+			mCubemapShadowParameterSets.clear();
 
 			mSpotLightShadows.resize(sceneInfo.SpotLights.size());
 			mRadialLightShadows.resize(sceneInfo.RadialLights.size());
