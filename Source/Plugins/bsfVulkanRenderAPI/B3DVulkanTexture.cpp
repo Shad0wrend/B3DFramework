@@ -402,13 +402,13 @@ ImageSubresourcePitch VulkanImage::ConvertSubresourceLayoutToBlocks(const VkSubr
 	return ImageSubresourcePitch(rowPitchInPixels, rowPitchInPixels != 0 ? depthPitch / rowPitchInPixels : 0);
 }
 
-void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output, bool isInvalidateRequired) const
+void VulkanImage::Map(u32 mipLevel, u32 arrayLayer, PixelData& output, bool isInvalidateRequired) const
 {
 	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	VkImageSubresource range;
 	range.mipLevel = mipLevel;
-	range.arrayLayer = face;
+	range.arrayLayer = arrayLayer;
 
 	if(mImageViewCI.subresourceRange.aspectMask == VK_IMAGE_ASPECT_COLOR_BIT)
 		range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -706,7 +706,7 @@ VulkanImageSubresource::VulkanImageSubresource(VulkanResourceManager* owner, VkI
 {}
 
 VulkanTexture::VulkanTexture(VulkanGpuDevice& gpuDevice, const TextureCreateInformation& createInformation)
-	: Texture(createInformation), mGpuDevice(gpuDevice), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
+	: Texture(createInformation), mGpuDevice(gpuDevice), mDirectlyMappable(false), mSupportsGPUWrites(false)
 {
 }
 
@@ -833,21 +833,21 @@ void VulkanTexture::SetName(const StringView& name)
 		mImage->SetName(name);
 }
 
-void VulkanTexture::Flush(u32 face, u32 mipLevel)
+void VulkanTexture::Flush(u32 mipLevel, u32 arrayLayer)
 {
 	if(mImage == nullptr || !mDirectlyMappable)
 		return;
 
-	VkSubresourceLayout layout = mImage->GetSubresourceLayout(face, mipLevel);
+	VkSubresourceLayout layout = mImage->GetSubresourceLayout(arrayLayer, mipLevel);
 	mImage->Flush(layout.offset, layout.size);
 }
 
-void VulkanTexture::Invalidate(u32 face, u32 mipLevel)
+void VulkanTexture::Invalidate(u32 mipLevel, u32 arrayLayer)
 {
 	if(mImage == nullptr || !mDirectlyMappable)
 		return;
 
-	VkSubresourceLayout layout = mImage->GetSubresourceLayout(face, mipLevel);
+	VkSubresourceLayout layout = mImage->GetSubresourceLayout(arrayLayer, mipLevel);
 	mImage->Invalidate(layout.offset, layout.size);
 }
 
@@ -1240,46 +1240,42 @@ void VulkanTexture::BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Tex
 	vulkanCommandBuffer.Blit(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &imageBlit);
 }
 
-PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face)
+render::GpuTextureMappedScope VulkanTexture::Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options)
 {
+	ASSERT_IF_NOT_RENDER_THREAD;
+
+	if(mipLevel > mProperties.MipMapCount)
+	{
+		B3D_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.MipMapCount);
+		return GpuTextureMappedScope();
+	}
+
+	if(arrayLayer >= mProperties.GetFaceCount())
+	{
+		B3D_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", mipLevel, mProperties.GetFaceCount());
+		return GpuTextureMappedScope();
+	}
+
+	if(mImage == nullptr || !mDirectlyMappable)
+		return GpuTextureMappedScope();
+
 	const TextureProperties& props = GetProperties();
 
 	if(props.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
-		return PixelData();
+		return GpuTextureMappedScope();
 	}
 
 #if B3D_PROFILING_ENABLED
-	if(options == GBL_READ_ONLY || options == GBL_READ_WRITE)
-	{
+	if(options.IsSet(GpuMapOption::Read))
 		B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);
-	}
 
-	if(options == GBL_READ_WRITE || options == GBL_WRITE_ONLY || options == GBL_WRITE_ONLY_DISCARD || options == GBL_WRITE_ONLY_NO_OVERWRITE)
-	{
+	if(options.IsSet(GpuMapOption::Write))
 		B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResWrite, RenderStatObject_Texture);
-	}
 #endif
 
-	u32 mipWidth = std::max(1u, props.Width >> mipLevel);
-	u32 mipHeight = std::max(1u, props.Height >> mipLevel);
-	u32 mipDepth = std::max(1u, props.Depth >> mipLevel);
-
-	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormat);
-
-	if(mImage == nullptr)
-		return PixelData();
-
-	if(!mDirectlyMappable)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot map Texture memory for texture '{0}'. The texture has not been created with CPU-visible flags.", mName);
-		return PixelData();
-	}
-
-	mIsMapped = true;
-
-	VulkanImageSubresource* const subresource = mImage->GetSubresource(face, mipLevel);
+	VulkanImageSubresource* const subresource = mImage->GetSubresource(arrayLayer, mipLevel);
 
 	// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
 	// use in shader. No further transitions are allowed for directly mappable textures.
@@ -1289,71 +1285,33 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 	// for direct mapping, and we don't support using it with either storage textures or render targets.
 	B3D_ASSERT(!mSupportsGPUWrites);
 
-	// Check is the GPU currently reading from the image
-	const GpuQueueMask useMask = subresource->GetUseInfo(GpuAccessFlag::Read | GpuAccessFlag::Write);
-	bool isUsedOnGPU = !useMask.IsEmpty();
-	const bool isReadRequired = options == GBL_READ_ONLY || options == GBL_READ_WRITE;
-	const bool isWrite = options != GBL_READ_ONLY;
-	const bool canDiscardImage = (options == GBL_WRITE_ONLY_DISCARD) || (options == GBL_WRITE_ONLY_DISCARD_RANGE);
+	const bool isReadRequired = options.IsSet(GpuMapOption::Read);
+	const bool isWriteRequired = options.IsSet(GpuMapOption::Write);
 
-	// We're safe to map directly since GPU isn't using the subresource
-	if(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE)
+	// Check GPU usage unless NoOverwrite is set
+	if(!options.IsSet(GpuMapOption::NoOverwrite))
 	{
-		// If some CB has an operation queued that will be using the current contents of the image, create a new
-		// image so we don't modify the previous use of the image
-		if(subresource->IsBound())
-		{
-			// Warn if we have already bound the texture to a command buffer previously, as that could have unintended consequences since previous commands could be affected
-			if(!subresource->IsBound() || !isWrite)
-			{
-				mImage->Map(face, mipLevel, lockedArea, isReadRequired);
-				return lockedArea;
-			}
-			else if(canDiscardImage)
-			{
-				// Fall through
-			}
-			else
-			{
-				B3D_LOG(Warning, RenderBackend, "Writing to a texture that is currently bound on a command buffer. Previous usages of the texture will be affected. Texture: {0}", mName);
+		const GpuAccessFlags accessFlags = (isReadRequired ? GpuAccessFlag::Read : GpuAccessFlags()) |
+		                                   (isWriteRequired ? GpuAccessFlag::Write : GpuAccessFlags());
+		const GpuQueueMask useMask = subresource->GetUseInfo(accessFlags);
 
-				mImage->Map(face, mipLevel, lockedArea, isReadRequired);
-				return lockedArea;
-			}
+		if(!useMask.IsEmpty())
+		{
+			B3D_LOG(Error, RenderBackend, "Cannot map texture '{0}': subresource is currently being used by the GPU.", mName);
+			return GpuTextureMappedScope();
 		}
 	}
 
-	// Caller doesn't care about image contents, so just discard the existing image and create a new one
-	if(canDiscardImage)
-	{
-		// We need to discard the entire image, even though we're only writing to a single sub-resource
-		mImage->Destroy();
+	// Calculate mip dimensions
+	const u32 mipWidth = std::max(1u, props.Width >> mipLevel);
+	const u32 mipHeight = std::max(1u, props.Height >> mipLevel);
+	const u32 mipDepth = std::max(1u, props.Depth >> mipLevel);
 
-		mImage = CreateImage(mInternalFormat);
-		mMappedMemory = mImage->GetMappedMemory();
-		mImage->Map(face, mipLevel, lockedArea);
+	// Create PixelData and set up external buffer via VulkanImage::Map
+	PixelData pixelData(mipWidth, mipHeight, mipDepth, mInternalFormat);
+	mImage->Map(mipLevel, arrayLayer, pixelData, isReadRequired);
 
-		return lockedArea;
-	}
-
-	B3D_LOG(Error, RenderBackend, "Cannot map Texture memory for texture '{0}'. The texture is currently being used by the GPU.", mName);
-	return PixelData();
-}
-
-void VulkanTexture::UnlockInternal()
-{
-	// Possibly map() failed with some error
-	if(!mIsMapped)
-		return;
-
-	if(!B3D_ENSURE(mImage != nullptr))
-		return;
-
-	// Note: If we did any writes they need to be made visible to the GPU. However there is no need to execute
-	// a pipeline barrier because (as per spec) host writes are implicitly visible to the device.
-
-	mImage->Unmap(true);
-	mIsMapped = false;
+	return GpuTextureMappedScope(pixelData, std::static_pointer_cast<Texture>(GetShared()), GpuTextureSubresource(mipLevel, arrayLayer), options);
 }
 
 TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel, u32 face)
@@ -1455,9 +1413,9 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 			transferGpuQueue.SubmitTransferCommandBuffer(true);
 		}
 
-		PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face);
-		PixelUtility::BulkPixelConversion(myData, destination);
-		Unlock();
+		GpuTextureMappedScope mappedScope = Map(mipLevel, face, GpuMapOption::Read);
+		if(mappedScope.IsValid())
+			PixelUtility::BulkPixelConversion(mappedScope.GetPixelData(), destination);
 
 		return;
 	}
@@ -1526,17 +1484,22 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	const u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
 	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormat);
 
-	const GpuLockOptions options = discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY; // TODO - Add NO_OVERWRITE option
-	const bool canDiscardSubresource = (options == GBL_WRITE_ONLY_DISCARD) || (options == GBL_WRITE_ONLY_DISCARD_RANGE);
-
 	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(0);
 	VulkanImageSubresource* subresource = mImage->GetSubresource(face, mipLevel);
 
+	const bool noOverwrite = false; // Note: Potentially add a no-overwrite flag later. Using this as a placeholder.
+
+	GpuMapOptions mapOptions = GpuMapOption::Write;
+	if(noOverwrite)
+		mapOptions |= GpuMapOption::NoOverwrite;
+
 	// Check is the GPU currently reading or writing from the image
 	const GpuQueueMask useMask = subresource->GetUseInfo(GpuAccessFlag::Read | GpuAccessFlag::Write);
+	const u32 useCount = subresource->GetUseCount();
+	const u32 boundCount = subresource->GetBoundCount();
 
 	// If memory is host visible try mapping it directly
-	if(mDirectlyMappable)
+	if(mDirectlyMappable) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
 	{
 		// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
 		// use in shader. No further transitions are allowed for directly mappable textures.
@@ -1548,16 +1511,30 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 
 		const bool isUsedOnGPU = !useMask.IsEmpty();
 
+		// Recreate the internal image if it is bound to a command buffer, to avoid overwriting the old data. But only if the user
+		// allows discard via a flag. In case the user provided an explicit command buffer, perfer a staging buffer over discard
+		// (it still costs us creation of a new buffer, and the original buffer bindings remain valid). Finally, if no-overwrite is
+		// specified, we never recreate the buffer as the user guarantees he won't touch the previously bound region.
+		const bool recreateImage = boundCount > 0 && commandBuffer == nullptr && discardWholeBuffer && !noOverwrite;
+
 		// Even if the texture is directly mappable we might wish to avoid mapping it directly in these situations:
 		const bool shouldMapDirectly =
-			(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE) && // GPU is currently using the texture and we cannot map it safely (unless user specifically requested the no-overwrite flag)
-			(!mImage->IsBound() || (commandBuffer == nullptr && canDiscardSubresource)); // Image is bound to a command buffer already. If user provided a command buffer queue a write operation there instead of mapping directly. If not, discard the original texture and lock a new copy of the texture.
+			(!isUsedOnGPU // GPU is currently using the texture
+			&& (!mImage->IsBound() || recreateImage)) // Image is bound to a command buffer already, and we're not creating a new one. Cannot map without affecting the previous binding
+			|| noOverwrite; // If no-overwrite flag is set, user guarantees he won't touch the memory the GPU is using
 
 		if(shouldMapDirectly)
 		{
-			PixelData myData = Lock(options, mipLevel, face);
-			PixelUtility::BulkPixelConversion(source, myData);
-			Unlock();
+			if(recreateImage)
+			{
+				VulkanImage* const newImage = CreateImage(mInternalFormat);
+				mImage->Destroy();
+				mImage = newImage;
+				mMappedMemory = mImage->GetMappedMemory();
+			}
+
+			GpuTextureMappedScope mapping = Map(mipLevel, face, mapOptions);
+			PixelUtility::BulkPixelConversion(source, mapping.GetPixelData());
 
 			return;
 		}
@@ -1579,16 +1556,13 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	const TextureProperties& props = GetProperties();
 
 	// Check if the subresource will still be bound somewhere after the CBs using it finish
-	const u32 useCount = subresource->GetUseCount();
-	const u32 boundCount = subresource->GetBoundCount();
-
 	const bool isBoundWithoutUse = boundCount > useCount;
 
 	// If image is queued for some operation on a CB, then we need to make a copy of the subresource to
 	// avoid modifying its use in the previous operation
 	if(isBoundWithoutUse && commandBuffer == nullptr)
 	{
-		if(!canDiscardSubresource)
+		if(!discardWholeBuffer)
 		{
 			B3D_LOG(Warning, RenderBackend, "Writing to a image '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", mName);
 		}

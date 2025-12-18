@@ -408,32 +408,6 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(GpuCommandBuffer& commandBuffer
 	return output;
 }
 
-PixelData Texture::Lock(GpuLockOptions options, u32 mipLevel, u32 face)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	if(mipLevel > mProperties.MipMapCount)
-	{
-		B3D_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.MipMapCount);
-		return PixelData(0, 0, 0, PF_UNKNOWN);
-	}
-
-	if(face >= mProperties.GetFaceCount())
-	{
-		B3D_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", face, mProperties.GetFaceCount());
-		return PixelData(0, 0, 0, PF_UNKNOWN);
-	}
-
-	return LockInternal(options, mipLevel, face);
-}
-
-void Texture::Unlock()
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	UnlockInternal();
-}
-
 void Texture::Copy(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation)
 {
 	ASSERT_IF_NOT_RENDER_THREAD;

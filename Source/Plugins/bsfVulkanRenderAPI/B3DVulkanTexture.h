@@ -133,13 +133,13 @@ namespace b3d
 			 * must ensure the image was created in CPU readable memory, and that image isn't currently being written to by the
 			 * GPU.
 			 *
-			 * @param	face					Index of the face to map.
 			 * @param	mipLevel				Index of the mip level to map.
+			 * @param	arrayLayer					Index of the array layer to map.
 			 * @param	output					Output object containing the pointer to the sub-resource data.
 			 * @param	isInvalidateRequired	Ensures any GPU writes are made visible to the CPU before mapping. This is required for image
 			 *									allocated in non-coherent memory and will be ignored for ones allocated in coherent memory.
 			 */
-			void Map(u32 face, u32 mipLevel, PixelData& output, bool isInvalidateRequired = false) const;
+			void Map(u32 mipLevel, u32 arrayLayer, PixelData& output, bool isInvalidateRequired = false) const;
 
 			/**
 			 * Returns a pointer to internal image memory for the entire resource. Must be followed by Unmap(). Caller
@@ -283,8 +283,9 @@ namespace b3d
 			PixelFormat GetInternalFormat() const { return mInternalFormat; }
 
 			void SetName(const StringView& name) override;
-			void Flush(u32 face, u32 mipLevel) override;
-			void Invalidate(u32 face, u32 mipLevel) override;
+			GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) override;
+			void Flush(u32 mipLevel, u32 arrayLayer) override;
+			void Invalidate(u32 mipLevel, u32 arrayLayer) override;
 
 		protected:
 			friend class VulkanGpuDevice;
@@ -292,8 +293,6 @@ namespace b3d
 			VulkanTexture(VulkanGpuDevice& gpuDevice, const TextureCreateInformation& createInformation);
 
 			void Initialize() override;
-			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) override;
-			void UnlockInternal() override;
 			void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) override;
 			void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) override;
 			TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0) override;
@@ -336,7 +335,6 @@ namespace b3d
 			VkImageCreateInfo mImageCreateInformation;
 			bool mDirectlyMappable : 1;
 			bool mSupportsGPUWrites : 1;
-			bool mIsMapped : 1;
 		};
 
 		/** @} */

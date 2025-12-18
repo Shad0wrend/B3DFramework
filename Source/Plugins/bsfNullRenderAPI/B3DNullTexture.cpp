@@ -23,7 +23,7 @@ namespace b3d
 			}
 		}
 
-		PixelData NullTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face)
+		GpuTextureMappedScope NullTexture::Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options)
 		{
 			if (mMappedBuffer)
 			{
@@ -31,8 +31,19 @@ namespace b3d
 				mMappedBuffer = nullptr;
 			}
 
-			mMappedBuffer = B3DNew<PixelData>(mProperties.Width, mProperties.Height, mProperties.Depth, mProperties.Format);
-			return *mMappedBuffer;
+			const u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+			const u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+			const u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
+
+			mMappedBuffer = B3DNew<PixelData>(mipWidth, mipHeight, mipDepth, mProperties.Format);
+			mMappedBuffer->AllocateInternalBuffer();
+
+			return GpuTextureMappedScope(
+				*mMappedBuffer,
+				std::static_pointer_cast<Texture>(GetShared()),
+				GpuTextureSubresource(mipLevel, arrayLayer),
+				options
+			);
 		}
 
 		TAsyncOp<SPtr<PixelData>> NullTexture::ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel, u32 face)

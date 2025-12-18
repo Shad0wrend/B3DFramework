@@ -33,8 +33,7 @@ namespace b3d
 			friend class NullGpuDevice;
 
 			void Initialize() override {}
-			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) override;
-			void UnlockInternal() override {}
+			GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) override;
 			void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) override {}
 			void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) override {}
 			TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0) override;

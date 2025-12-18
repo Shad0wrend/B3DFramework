@@ -241,6 +241,105 @@ namespace b3d
 		GpuTextureAspectFlags AspectMask = GpuTextureAspectFlag::Color;
 	};
 
+	/** Identifies a single texture subresource (face and mip level). */
+	struct GpuTextureSubresource
+	{
+		u32 MipLevel = 0;
+		u32 ArrayLayer = 0;
+
+		GpuTextureSubresource(u32 mipLevel = 0, u32 arrayLayer = 0)
+			: MipLevel(mipLevel), ArrayLayer(arrayLayer)
+		{ }
+
+		bool operator==(const GpuTextureSubresource& other) const
+		{
+			return ArrayLayer == other.ArrayLayer && MipLevel == other.MipLevel;
+		}
+	};
+
+	/**
+	 * RAII wrapper returned by Texture::Map operation. Contains PixelData with mapped memory buffer.
+	 * Automatically flushes on destruction for write operations. Move-only semantics.
+	 * Templated to support both main thread and render thread variants.
+	 */
+	template <bool IsRenderProxy>
+	class TGpuTextureMappedScope
+	{
+	public:
+		using TextureType = CoreVariantType<render::Texture, IsRenderProxy>;
+
+		TGpuTextureMappedScope() = default;
+
+		TGpuTextureMappedScope(PixelData pixelData, SPtr<TextureType> texture, GpuTextureSubresource subresource, GpuMapOptions options)
+			: mPixelData(std::move(pixelData)), mTexture(std::move(texture)), mSubresource(subresource), mOptions(options)
+		{}
+
+		TGpuTextureMappedScope(TGpuTextureMappedScope&& other) noexcept
+			: mPixelData(std::move(other.mPixelData)), mTexture(std::move(other.mTexture)), mSubresource(other.mSubresource), mOptions(other.mOptions)
+		{
+			other.mTexture = nullptr;
+		}
+
+		TGpuTextureMappedScope& operator=(TGpuTextureMappedScope&& other) noexcept
+		{
+			if(this != &other)
+			{
+				Unmap();
+				mPixelData = std::move(other.mPixelData);
+				mTexture = std::move(other.mTexture);
+				mSubresource = other.mSubresource;
+				mOptions = other.mOptions;
+				other.mTexture = nullptr;
+			}
+			return *this;
+		}
+
+		TGpuTextureMappedScope(const TGpuTextureMappedScope&) = delete;
+		TGpuTextureMappedScope& operator=(const TGpuTextureMappedScope&) = delete;
+
+		~TGpuTextureMappedScope() { Unmap(); }
+
+		/** Explicitly releases the mapping. Safe to call multiple times. Flushes if write mapping. */
+		void Unmap()
+		{
+			if(mTexture != nullptr && mPixelData.GetData() != nullptr)
+			{
+				if(mOptions.IsSet(GpuMapOption::Write))
+				{
+					if constexpr(IsRenderProxy)
+						mTexture->Flush(mSubresource.MipLevel, mSubresource.ArrayLayer);
+					else
+						mTexture->MarkRenderProxyDataDirty();
+				}
+
+				mTexture = nullptr;
+				mPixelData.SetExternalBuffer(nullptr);
+			}
+		}
+
+		/** Returns the PixelData containing the mapped memory buffer. */
+		PixelData& GetPixelData() { return mPixelData; }
+		const PixelData& GetPixelData() const { return mPixelData; }
+
+		/** Returns the texture being mapped. */
+		const SPtr<TextureType>& GetTexture() const { return mTexture; }
+
+		/** Returns the subresource being mapped. */
+		const GpuTextureSubresource& GetSubresource() const { return mSubresource; }
+
+		/** Returns true if the mapping is valid. */
+		bool IsValid() const { return mTexture != nullptr && mPixelData.GetData() != nullptr; }
+		explicit operator bool() const { return IsValid(); }
+
+	private:
+		PixelData mPixelData;
+		SPtr<TextureType> mTexture;
+		GpuTextureSubresource mSubresource;
+		GpuMapOptions mOptions;
+	};
+
+	using GpuTextureMappedScope = TGpuTextureMappedScope<false>;
+
 	/**
 	 * Abstract class representing a texture. Specific render systems have their own Texture implementations. Internally
 	 * represented as one or more surfaces with pixels in a certain number of dimensions, backed by a hardware buffer.
@@ -382,6 +481,8 @@ namespace b3d
 		 *  @{
 		 */
 
+		using GpuTextureMappedScope = TGpuTextureMappedScope<true>;
+
 		/**
 		 * Render thread counterpart of a b3d::Texture.
 		 *
@@ -399,24 +500,17 @@ namespace b3d
 			virtual void SetName(const StringView& name) { mName = name; }
 
 			/**
-			 * Locks the buffer for reading or writing.
+			 * Maps a texture subresource for CPU access.
 			 *
-			 * @param	options		Options for controlling what you may do with the locked data.
-			 * @param	mipLevel	(optional) Mipmap level to lock.
-			 * @param	face		(optional) Texture face to lock.
+			 * @param mipLevel		Mipmap level to map.
+			 * @param arrayLayer	Texture face to map.
+			 * @param options		Specifies read/write intent for the mapping.
+			 * @return				RAII scope containing PixelData with mapped memory.
 			 *
-			 * @note
-			 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
-			 * in certain situations.
+			 * @note Only works for directly mappable textures (TU_DYNAMIC with LINEAR tiling).
+			 * @note Returns invalid scope if texture is not directly mappable.
 			 */
-			PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0);
-
-			/**
-			 * Unlocks a previously locked buffer. After the buffer is unlocked, any data returned by lock becomes invalid.
-			 *
-			 * @see	Lock()
-			 */
-			void Unlock();
+			virtual GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) = 0;
 
 			/**
 			 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
@@ -499,19 +593,19 @@ namespace b3d
 			 * Flushes CPU writes to the specified subresource to make them visible to the GPU.
 			 * Only relevant for directly mappable textures with non-coherent memory.
 			 *
-			 * @param face      Texture face to flush.
-			 * @param mipLevel  Mipmap level to flush.
+			 * @param mipLevel		Mipmap level to flush.
+			 * @param arrayLayer	Array layer to flush.
 			 */
-			virtual void Flush(u32 face, u32 mipLevel) {}
+			virtual void Flush(u32 mipLevel, u32 arrayLayer) {}
 
 			/**
 			 * Invalidates GPU writes to the specified subresource to make them visible to the CPU.
 			 * Only relevant for directly mappable textures with non-coherent memory.
 			 *
-			 * @param face      Texture face to invalidate.
-			 * @param mipLevel  Mipmap level to invalidate.
+			 * @param mipLevel		Mipmap level to invalidate.
+			 * @param arrayLayer	Array layer to invalidate.
 			 */
-			virtual void Invalidate(u32 face, u32 mipLevel) {}
+			virtual void Invalidate(u32 mipLevel, u32 arrayLayer) {}
 
 			/** Returns a pointer to persistently mapped memory, or nullptr if not mappable. */
 			void* GetMappedMemory() const { return mMappedMemory; }
@@ -547,12 +641,6 @@ namespace b3d
 			static SPtr<Texture> kNormal;
 
 		protected:
-			/** @copydoc Lock */
-			virtual PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) = 0;
-
-			/** @copydoc Unlock */
-			virtual void UnlockInternal() = 0;
-
 			/** @copydoc Copy */
 			virtual void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) = 0;
 
