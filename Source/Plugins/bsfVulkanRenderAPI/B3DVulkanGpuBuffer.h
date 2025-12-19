@@ -35,11 +35,9 @@ namespace b3d
 			 * @param	flags		Flags that specify how is the buffer intended to be used.
 			 * @param	buffer		Actual low-level Vulkan buffer handle.
 			 * @param	allocation	Information about memory mapped to the buffer.
-			 * @param	rowPitch	If buffer maps to an image sub-resource, length of a single row (in elements).
-			 * @param	slicePitch	If buffer maps to an image sub-resource, size of a single 2D surface (in elements).
 			 * @param	name		Optional name of the resource, for debugging purposes.
 			 */
-			VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VulkanAllocationResult allocation, u32 rowPitch = 0, u32 slicePitch = 0, const StringView& name = "");
+			VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VulkanAllocationResult allocation, const StringView& name = "");
 			~VulkanBuffer();
 
 			/** Returns the internal handle to the Vulkan object. */
@@ -47,18 +45,6 @@ namespace b3d
 
 			/** Assigns an name to the buffer, primarily used for easier debugging. */
 			void SetName(const StringView& name);
-
-			/**
-			 * If buffer represents an image sub-resource, this is the number of elements that separate one row of the
-			 * sub-resource from another (if no padding, it is equal to image width).
-			 */
-			u32 GetRowPitch() const { return mRowPitch; }
-
-			/**
-			 * If buffer represents an image sub-resource, this is the number of elements that separate one column of the
-			 * sub-resource from another (if no padding, it is equal to image height). Only relevant for 3D images.
-			 */
-			u32 GetSliceHeight() const { return mSliceHeight; }
 
 			/** Returns a pointer to persistently mapped memory of the buffer, or null pointer if the buffer is not mappable. */
 			void* GetMappedMemory() const { return mMappedMemory; }
@@ -159,9 +145,6 @@ namespace b3d
 			TInlineArray<ViewInformation, 2> mViews;
 			VmaAllocation mAllocation;
 			void* mMappedMemory = nullptr;
-
-			u32 mRowPitch;
-			u32 mSliceHeight;
 
 			mutable VkDeviceSize mMappedOffset = 0;
 			mutable VkDeviceSize mMappedSize = 0;

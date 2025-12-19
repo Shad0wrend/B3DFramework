@@ -17,6 +17,7 @@
 #include "B3DVulkanRenderWindowSurface.h"
 #include "Managers/B3DVulkanQueries.h"
 #include "Profiling/B3DRenderStats.h"
+#include "Image/B3DPixelUtility.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
 #include "Utility/B3DVulkanBarrierHelper.h"
 
@@ -929,6 +930,78 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(const SPtr<GpuBuffer>& source, c
 	CopyBufferToBuffer(sourceBuffer, destinationBuffer, sourceOffset, destinationOffset, length);
 }
 
+void VulkanGpuCommandBuffer::CopyBufferToTexture(const SPtr<GpuBuffer>& source, const SPtr<Texture>& destination, u32 bufferOffset, u32 mipLevel, u32 arrayLayer)
+{
+	B3D_ASSERT(bufferOffset == 0 && "Buffer offset not yet supported for texture copies");
+	EnsureValidThread();
+
+	auto* vulkanSource = static_cast<VulkanGpuBuffer*>(source.get());
+	auto* vulkanDestination = static_cast<VulkanTexture*>(destination.get());
+
+	VulkanBuffer* sourceBuffer = vulkanSource->GetVulkanResource();
+	VulkanImage* destinationImage = vulkanDestination->GetVulkanResource();
+
+	if(sourceBuffer == nullptr || destinationImage == nullptr)
+		return;
+
+	const TextureProperties& textureProperties = vulkanDestination->GetProperties();
+
+	VkExtent3D extent;
+	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, extent.width, extent.height, extent.depth);
+
+	const ImageSubresourcePitch pitch = vulkanDestination->GetPitchForSubresource(destinationImage, arrayLayer, mipLevel);
+
+	VkImageSubresourceRange range;
+	range.aspectMask = destinationImage->GetAspectFlags();
+	range.baseArrayLayer = arrayLayer;
+	range.layerCount = 1;
+	range.baseMipLevel = mipLevel;
+	range.levelCount = 1;
+
+	VkImageLayout transferLayout;
+	if(vulkanDestination->IsDirectlyMappable())
+		transferLayout = VK_IMAGE_LAYOUT_GENERAL;
+	else
+		transferLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+	CopyBufferToImage(sourceBuffer, destinationImage, extent, range, transferLayout, pitch.RowPitch, pitch.SliceHeight);
+}
+
+void VulkanGpuCommandBuffer::CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset)
+{
+	B3D_ASSERT(bufferOffset == 0 && "Buffer offset not yet supported for texture copies");
+	EnsureValidThread();
+
+	auto* vulkanSource = static_cast<VulkanTexture*>(source.get());
+	auto* vulkanDestination = static_cast<VulkanGpuBuffer*>(destination.get());
+
+	VulkanImage* sourceImage = vulkanSource->GetVulkanResource();
+	VulkanBuffer* destinationBuffer = vulkanDestination->GetVulkanResource();
+
+	if(sourceImage == nullptr || destinationBuffer == nullptr)
+		return;
+
+	const TextureProperties& textureProperties = vulkanSource->GetProperties();
+
+	VkExtent3D extent;
+	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, extent.width, extent.height, extent.depth);
+
+	const ImageSubresourcePitch pitch = vulkanSource->GetPitchForSubresource(sourceImage, arrayLayer, mipLevel);
+
+	VkImageSubresourceRange range;
+	if((textureProperties.Usage & TU_DEPTHSTENCIL) != 0)
+		range.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	else
+		range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	range.baseArrayLayer = arrayLayer;
+	range.layerCount = 1;
+	range.baseMipLevel = mipLevel;
+	range.levelCount = 1;
+
+	const VkImageLayout transferLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	CopyImageToBuffer(sourceImage, destinationBuffer, extent, range, transferLayout, pitch.RowPitch, pitch.SliceHeight);
+}
+
 void VulkanGpuCommandBuffer::BeginLabel(const StringView& name)
 {
 	EnsureValidThread();
@@ -1744,7 +1817,7 @@ void VulkanGpuCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuff
 	vkCmdCopyBuffer(GetVulkanHandle(), source->GetVulkanHandle(), destination->GetVulkanHandle(), 1, &region);
 }
 
-void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout)
+void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout, u32 rowPitch, u32 sliceHeight)
 {
 	B3D_ENSURE(!IsInRenderPass());
 
@@ -1755,8 +1828,8 @@ void VulkanGpuCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage
 	rangeLayers.mipLevel = subresourceRange.baseMipLevel;
 
 	VkBufferImageCopy copyRegion;
-	copyRegion.bufferRowLength = source->GetRowPitch();
-	copyRegion.bufferImageHeight = source->GetSliceHeight();
+	copyRegion.bufferRowLength = rowPitch;
+	copyRegion.bufferImageHeight = sliceHeight;
 	copyRegion.bufferOffset = 0;
 	copyRegion.imageOffset.x = 0;
 	copyRegion.imageOffset.y = 0;

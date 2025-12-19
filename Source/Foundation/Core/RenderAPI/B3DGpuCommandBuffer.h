@@ -650,6 +650,30 @@ namespace b3d
 			virtual void CopyBufferToBuffer(const SPtr<GpuBuffer>& source, const SPtr<GpuBuffer>& destination, u32 sourceOffset, u32 destinationOffset, u32 length) = 0;
 
 			/**
+			 * Copies data from a buffer to a texture subresource. The buffer must contain pixel data in the same format as the texture, accounting for the required
+			 * row and depth pitch. Command buffer must not currently be in a render pass.
+			 *
+			 * @param	source			Source buffer containing pixel data.
+			 * @param	destination		Destination texture to copy into.
+			 * @param	bufferOffset	Offset into the source buffer, in bytes.
+			 * @param	mipLevel		Destination mipmap level.
+			 * @param	arrayLayer		Destination texture face (array slice or cubemap face).
+			 */
+			virtual void CopyBufferToTexture(const SPtr<GpuBuffer>& source, const SPtr<Texture>& destination, u32 bufferOffset, u32 mipLevel, u32 arrayLayer) = 0;
+
+			/**
+			 * Copies data from a texture subresource to a buffer. The buffer must have enough space to receive all pixel data in the same format as the texture,
+			 * accounting for the row and depth pitch. Command buffer must not currently be in a render pass.
+			 *
+			 * @param	source			Source texture to copy from.
+			 * @param	destination		Destination buffer to receive pixel data.
+			 * @param	mipLevel		Source mipmap level.
+			 * @param	arrayLayer		Source texture face (array slice or cubemap face).
+			 * @param	bufferOffset	Offset into the destination buffer, in bytes.
+			 */
+			virtual void CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset) = 0;
+
+			/**
 			 * Schedules the timestamp to be recorded in the command buffer. The timestamp will record the
 			 * time at which the command has been executed by the GPU. The timestamp will be written to the associated
 			 * query pool, which should only be accessed when the query pool has resolved the query.

@@ -888,22 +888,7 @@ VulkanBuffer* VulkanTexture::CreateStaging(const PixelData& pixelData, bool read
 
 	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(buffer, VMA_MEMORY_USAGE_CPU_ONLY);
 
-	u32 blockSize = PixelUtility::GetBlockSize(pixelData.GetFormat());
-
-	B3D_ASSERT(pixelData.GetRowPitch() % blockSize == 0);
-	B3D_ASSERT(pixelData.GetSlicePitch() % blockSize == 0);
-
-	u32 rowPitchInPixels = pixelData.GetRowPitch() / blockSize;
-	u32 slicePitchInPixels = pixelData.GetSlicePitch() / blockSize;
-
-	if(PixelUtility::IsCompressed(pixelData.GetFormat()))
-	{
-		Vector2I blockDim = PixelUtility::GetBlockDimensions(pixelData.GetFormat());
-		rowPitchInPixels *= blockDim.X;
-		slicePitchInPixels *= blockDim.X * blockDim.Y;
-	}
-
-	VulkanBuffer *const vulkanBuffer = mGpuDevice.GetResourceManager().Create<VulkanBuffer>(readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite, (GpuBufferFlags)0, buffer, allocation, rowPitchInPixels, slicePitchInPixels);
+	VulkanBuffer *const vulkanBuffer = mGpuDevice.GetResourceManager().Create<VulkanBuffer>(readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite, (GpuBufferFlags)0, buffer, allocation);
 	vulkanBuffer->SetName(StringUtil::Format("Staging buffer ({0})", mName));
 
 	return vulkanBuffer;
@@ -987,7 +972,7 @@ ImageSubresourcePitch VulkanTexture::GetPitchForSubresource(VulkanImage* image, 
 	return VulkanImage::ConvertSubresourceLayoutToBlocks(subresourceLayout, mProperties.Format);
 }
 
-void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer, bool isBufferReadOnly)
+void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer)
 {
 	VkExtent3D extent;
 	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, sourceMipLevel, extent.width, extent.height, extent.depth);
@@ -1006,9 +991,6 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& command
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	commandBuffer.CopyImageToBuffer(sourceImage, destinationBuffer, extent, subresourceRange, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, pitch.RowPitch, pitch.SliceHeight);
-
-	const VkAccessFlags stagingAccessFlags = VK_ACCESS_HOST_READ_BIT | (isBufferReadOnly ? 0 : VK_ACCESS_HOST_WRITE_BIT);
-	commandBuffer.MemoryBarrier(destinationBuffer->GetVulkanHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, stagingAccessFlags, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT);
 }
 
 void VulkanTexture::CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation)
@@ -1335,7 +1317,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(GpuCommandBuffer& command
 	const SPtr<PixelData> pixelData = B3DMakeShared<PixelData>(mipWidth, mipHeight, mipDepth, mInternalFormat);
 
 	VulkanBuffer* const buffer = CreateStaging( *pixelData, true);
-	CopyImageSubresourceToBuffer(vulkanCommandBuffer, image, face, mipLevel, buffer, true); // TODO - No need for staging if directly mappable
+	CopyImageSubresourceToBuffer(vulkanCommandBuffer, image, face, mipLevel, buffer); // TODO - No need for staging if directly mappable
 
 	TAsyncOp<SPtr<PixelData>> op;
 	auto fnOnCommandBufferCompleted = [buffer, op, pixelData]() mutable
@@ -1442,7 +1424,7 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 		vulkanCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(transferGpuQueue.GetOrCreateTransferCommandBuffer());
 
 	// Queue copy command
-	CopyImageSubresourceToBuffer(*vulkanCommandBuffer, mImage, face, mipLevel, stagingBuffer, true);
+	CopyImageSubresourceToBuffer(*vulkanCommandBuffer, mImage, face, mipLevel, stagingBuffer);
 
 	// Submit the command buffer and wait until it finishes
 	vulkanCommandBuffer->AddQueueSyncMask(syncMask);
@@ -1591,6 +1573,8 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	VkExtent3D extent;
 	PixelUtility::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mipLevel, extent.width, extent.height, extent.depth);
 
+	const ImageSubresourcePitch pitch = GetPitchForSubresource(mImage, face, mipLevel);
+
 	VkImageLayout transferLayout;
 	if(mDirectlyMappable)
 		transferLayout = VK_IMAGE_LAYOUT_GENERAL;
@@ -1598,7 +1582,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 		transferLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
 	// Queue copy command
-	vulkanCommandBuffer->CopyBufferToImage(stagingBuffer, mImage, extent, range, transferLayout);
+	vulkanCommandBuffer->CopyBufferToImage(stagingBuffer, mImage, extent, range, transferLayout, pitch.RowPitch, pitch.SliceHeight);
 	vulkanCommandBuffer->AddQueueSyncMask(useMask);
 
 	stagingBuffer->Destroy();

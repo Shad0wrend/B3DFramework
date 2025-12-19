@@ -285,6 +285,12 @@ namespace b3d
 			/** Returns the internal format of the texture when used on the specified device. This may differ from the requested format if the device doesn't support it. */
 			PixelFormat GetInternalFormat() const { return mInternalFormat; }
 
+			/** Returns pitch information for a particular image subresource. */
+			ImageSubresourcePitch GetPitchForSubresource(VulkanImage* image, u32 face, u32 mipLevel) const;
+
+			/** Returns true if the buffer can be mapped by directly by the CPU. */
+			bool IsDirectlyMappable() const { return mDirectlyMappable; }
+
 			void SetName(const StringView& name) override;
 			GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) override;
 			void Flush(u32 mipLevel, u32 arrayLayer) override;
@@ -324,12 +330,9 @@ namespace b3d
 
 			/**
 			 * Copies a single subresource from the source image into the destination buffer. Caller must ensure the destination buffer provides adequate
-			 * space for the texture data. Set @p isBufferReadOnly to true if the CPU only needs to read from the destination buffer, or false if it also needs to write to it.
+			 * space for the texture data.
 			 */
-			void CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer, bool isBufferReadOnly);
-
-			/** Returns pitch information for a particular image subresource. */
-			ImageSubresourcePitch GetPitchForSubresource(VulkanImage* image, u32 face, u32 mipLevel) const;
+			void CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer);
 
 			VulkanGpuDevice& mGpuDevice;
 			VulkanImage* mImage = nullptr;

@@ -138,6 +138,8 @@ namespace b3d
 			void DisableScissorTest() override;
 			void SetStencilReferenceValue(u32 value) override;
 			void CopyBufferToBuffer(const SPtr<GpuBuffer>& source, const SPtr<GpuBuffer>& destination, u32 sourceOffset, u32 destinationOffset, u32 length) override;
+			void CopyBufferToTexture(const SPtr<GpuBuffer>& source, const SPtr<Texture>& destination, u32 bufferOffset, u32 mipLevel, u32 arrayLayer) override;
+			void CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset) override;
 			void WriteTimestamp(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool) override;
 			void BeginQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool, GpuQueryFlags flags) override;
 			void EndQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool) override;
@@ -248,7 +250,6 @@ namespace b3d
 			 * @param	data			Data to copy into.
 			 * @param	offset			Offset in the destination buffer to copy to, in bytes. Must be a multiple of 4.
 			 * @param	length			Size of the data to copy, in bytes. Must be a multiple of 4 and less or equal than 65536.
-			 * @param	isNewBuffer		If buffer is new, issuing memory barrier before the transfer can be skipped.
 			 */
 			void UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length);
 
@@ -273,8 +274,10 @@ namespace b3d
 			 * @param	region				Region of the image to copy to.
 			 * @param	subresourceRange	Subresource(s) of the image to copy to.
 			 * @param	layout				Current layout of the image subresources in the provided range.
+			 * @param	rowPitch			Determines how many pixels to advance when moving to a new row in the source buffer.
+			 * @param	sliceHeight			Determines how many pixels to advance when moving to a new slice in the source buffer.
 			 */
-			void CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout);
+			void CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout, u32 rowPitch, u32 sliceHeight);
 
 			/**
 			 * Copies the contents of the image subresource into the destination buffer. Caller must ensure the provided
