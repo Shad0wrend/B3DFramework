@@ -73,13 +73,16 @@ for(u32 y = 0; y < 128; y++)
 pixelData->SetColors(colors);
 ~~~~~~~~~~~~~
 
-Finally you can write the data the the texture.
+Finally you can write the data to the texture. Note that this is an asynchronous operation - the function returns immediately but the actual transfer happens later on the GPU.
 
 ~~~~~~~~~~~~~{.cpp}
 HTexture texture = ...;
 SPtr<PixelData> pixelData = ...;
 
-texture->WriteData(pixelData);
+TAsyncOp<void> asyncOp = texture->WriteData(pixelData);
+
+// Optionally wait for completion
+asyncOp.BlockUntilComplete();
 ~~~~~~~~~~~~~
 
 ## Writing to sub-resources
@@ -239,19 +242,42 @@ Note that cached data reads will not contain any data written by the GPU (e.g. i
 ## Reading GPU data
 In case cached CPU reads are not enough, you can perform GPU reads, which always read the most recent data which includes both the data written by the CPU and the GPU. Unlike CPU caching this also does not require additional memory to be used to store texture data. Note that texture must be created with the **TextureUsage::TU_CPUREADABLE** usage flag in order for such reads to be available.
 
-To perform GPU reads call @b3d::Texture::ReadData which has the same interface as **Texture::ReadCachedData()**.
+To perform GPU reads call @b3d::Texture::ReadData. It accepts a shared pointer to a **PixelData** object.
 
 ~~~~~~~~~~~~~{.cpp}
 HTexture texture = ...;
 const TextureProperties& textureProperties = texture->GetProperties();
 
 SPtr<PixelData> pixelData = textureProperties.AllocBuffer(0, 0);
-texture->ReadData(*pixelData);
+texture->ReadData(pixelData);
 ~~~~~~~~~~~~~
 
 Note that performing GPU reads will almost certainly cause a GPU pipeline stall, requiring all GPU operations to finish before the read completes. Such stalls can severely impact performance and should generally be avoided.
 
-Also note that this operation is asynchronous. This means the function will return immediately, but the actual contents of the provided **PixelData** object will not be populated until the async operation finishes. Read the [mini-manual](api:async_method.html) for async operations for more information.
+This operation is asynchronous. The function returns a @b3d::TAsyncOp object that you can use to track completion. The contents of the provided **PixelData** object will not be populated until the async operation finishes.
+
+~~~~~~~~~~~~~{.cpp}
+TAsyncOp<void> asyncOp = texture->ReadData(pixelData);
+
+// Later, check if complete
+if (asyncOp.HasCompleted())
+{
+	// Now pixelData contains the texture contents
+	Color color = pixelData->GetColorAt(50, 50);
+}
+~~~~~~~~~~~~~
+
+Alternatively, you can call @b3d::Texture::ReadData without a PixelData parameter to have the system allocate one for you:
+
+~~~~~~~~~~~~~{.cpp}
+TAsyncOp<SPtr<PixelData>> asyncOp = texture->ReadData(0, 0); // face 0, mip 0
+
+if (asyncOp.HasCompleted())
+{
+	SPtr<PixelData> pixelData = asyncOp.GetResult();
+	Color color = pixelData->GetColorAt(50, 50);
+}
+~~~~~~~~~~~~~
 
 # Other
 Take a look at @b3d::PixelUtility class for a variety of helper methods for manipulating pixel data and colors.

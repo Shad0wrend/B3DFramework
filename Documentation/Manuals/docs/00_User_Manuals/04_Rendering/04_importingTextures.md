@@ -214,7 +214,7 @@ if (pixelData->GetFormat() == PF_RGBA8)
 ~~~~~~~~~~~~~
 
 # Writing texture data
-You can write new data to textures:
+You can write new data to textures. This is an asynchronous operation - the function returns immediately but the actual transfer happens on the GPU.
 
 ~~~~~~~~~~~~~{.cpp}
 // Create pixel data with new content
@@ -222,36 +222,28 @@ SPtr<PixelData> pixelData = PixelData::Create(512, 512, 1, PF_RGBA8);
 
 // Fill with a solid color
 for (u32 y = 0; y < 512; y++)
-{
-    for (u32 x = 0; x < 512; x++)
-    {
-        pixelData->SetColorAt(x, y, Color::Blue);
-    }
-}
+	for (u32 x = 0; x < 512; x++)
+		pixelData->SetColorAt(x, y, Color::Blue);
 
 // Write to texture (async operation)
-texture->WriteData(pixelData);
+TAsyncOp<void> asyncOp = texture->WriteData(pixelData);
+
+// Optionally wait for completion
+asyncOp.BlockUntilComplete();
 ~~~~~~~~~~~~~
 
-## Updating texture regions
-You can update specific regions of a texture:
+## Writing to specific mip levels and faces
+
+For textures with multiple mip levels or array slices, you can specify which subresource to write to:
 
 ~~~~~~~~~~~~~{.cpp}
-// Create a small update region
-SPtr<PixelData> updateData = PixelData::Create(64, 64, 1, PF_RGBA8);
+SPtr<PixelData> pixelData = ...;
 
-// Fill with content
-for (u32 y = 0; y < 64; y++)
-    for (u32 x = 0; x < 64; x++)
-        updateData->SetColorAt(x, y, Color::Red);
+// Write to face 0, mip level 2
+texture->WriteData(pixelData, 0, 2);
 
-// Write to texture at specific position
-TextureUpdateInformation updateInfo;
-updateInfo.Data = updateData;
-updateInfo.DestinationMip = 0;
-updateInfo.DestinationFace = 0;
-
-texture->WriteData(updateInfo);
+// Write to face 3, mip level 0, discarding previous contents for better performance
+texture->WriteData(pixelData, 3, 0, true);
 ~~~~~~~~~~~~~
 
 # Using builtin textures
