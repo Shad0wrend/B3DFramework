@@ -358,8 +358,7 @@ namespace b3d::render
 
 	void GpuBufferUtility::Write(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags flags, SPtr<GpuCommandBuffer> commandBuffer)
 	{
-		if(!B3D_ENSURE(buffer != nullptr))
-			return;
+		B3D_ASSERT(buffer != nullptr);
 
 		if((offset + length) > buffer->GetTotalSize())
 			return;
@@ -460,10 +459,9 @@ namespace b3d::render
 		// done automatically before next "normal" command buffer submission.
 	}
 
-	void GpuBufferUtility::Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, SPtr<GpuCommandBuffer> commandBuffer)
+	void GpuBufferUtility::Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const SPtr<GpuQueue>& gpuQueue)
 	{
-		if(!B3D_ENSURE(buffer != nullptr))
-			return;
+		B3D_ASSERT(buffer != nullptr);
 
 		if((offset + length) > buffer->GetTotalSize())
 			return;
@@ -472,15 +470,16 @@ namespace b3d::render
 			return;
 
 		const GpuBufferInformation& gpuBufferInformation = buffer->GetInformation();
-		const bool isCPUAccessible = gpuBufferInformation.Type == GpuBufferType::StagingRead || gpuBufferInformation.Type == GpuBufferType::StagingWrite || gpuBufferInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess);
 		const bool supportsGPUWrites = gpuBufferInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU);
 
-		GpuQueue& transferGpuQueue = *buffer->GetDevice().GetQueue(GQT_GRAPHICS, 0);
+		GpuQueue& transferGpuQueue = gpuQueue != nullptr ? *gpuQueue : *buffer->GetDevice().GetQueue(GQT_GRAPHICS, 0);
 
 		// Check is the GPU currently writing to the buffer
 		const GpuQueueMask writeUseMask = buffer->GetUseMask(GpuAccessFlag::Write);
 
-		if(isCPUAccessible) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
+	// If memory is host visible try mapping it directly
+		void* mappedMemory = buffer->GetMappedMemory();
+		if(mappedMemory != nullptr)
 		{
 			// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
 			// being used because the write could have completed yet still not visible, so we need to wait for any
@@ -490,8 +489,7 @@ namespace b3d::render
 			// If used on the GPU, we need to wait until all write operations complete before mapping it
 			if(isUsedOnGPU)
 			{
-				if(commandBuffer == nullptr)
-					commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
+				SPtr<GpuCommandBuffer> commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
 
 				// Make any writes visible before mapping
 				if(supportsGPUWrites)
@@ -522,8 +520,7 @@ namespace b3d::render
 			syncMask = writeUseMask;
 		}
 
-		if(commandBuffer == nullptr)
-			commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
+		SPtr<GpuCommandBuffer> commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
 
 		// Queue copy command
 		commandBuffer->CopyBufferToBuffer(buffer, stagingBuffer, offset, 0, length);

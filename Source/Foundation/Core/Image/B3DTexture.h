@@ -515,12 +515,15 @@ namespace b3d
 
 			/** Returns the name of the image. Primarily used for debugging purposes. */
 			const String& GetName() const { return mName; }
+			
+			/** Returns the pixel format this texture is using. This may be different from the requested format in case the device doesn't support it. */
+			virtual PixelFormat GetSupportedFormat() const { return mProperties.Format; }
 
 			/**
 			 * Maps a texture subresource for CPU access.
 			 *
 			 * @param mipLevel		Mipmap level to map.
-			 * @param arrayLayer	Texture face to map.
+			 * @param arrayLayer	Texture array layer (or cubemap face, or depth slice) to map.
 			 * @param options		Specifies read/write intent for the mapping.
 			 * @return				RAII scope containing PixelData with mapped memory.
 			 *
@@ -530,7 +533,7 @@ namespace b3d
 			virtual GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) = 0;
 
 			/** Returns the GPU device this texture belongs to. */
-			virtual GpuDevice& GetGpuDevice() const = 0;
+			virtual GpuDevice& GetDevice() const = 0;
 
 			/**
 			 * Reads data from the texture buffer into the provided buffer.
@@ -563,7 +566,7 @@ namespace b3d
 			 * Only relevant for directly mappable textures with non-coherent memory.
 			 *
 			 * @param mipLevel		Mipmap level to flush.
-			 * @param arrayLayer	Array layer to flush.
+			 * @param arrayLayer	Array layer (or cubemap face, or depth slice) to flush.
 			 */
 			virtual void Flush(u32 mipLevel, u32 arrayLayer) {}
 
@@ -572,7 +575,7 @@ namespace b3d
 			 * Only relevant for directly mappable textures with non-coherent memory.
 			 *
 			 * @param mipLevel		Mipmap level to invalidate.
-			 * @param arrayLayer	Array layer to invalidate.
+			 * @param arrayLayer	Array layer (or cubemap face, or depth slice) to invalidate.
 			 */
 			virtual void Invalidate(u32 mipLevel, u32 arrayLayer) {}
 
@@ -594,7 +597,7 @@ namespace b3d
 			/**
 			 * Returns which GPU queues are currently using the specified subresource.
 			 * @param mipLevel		Mipmap level.
-			 * @param arrayLayer	Texture arrayLayer (or cubemap face).
+			 * @param arrayLayer	Texture array layer (or cubemap face, or depth slice).
 			 * @param accessFlags	Filter by read/write access type.
 			 */
 			virtual GpuQueueMask GetUseMask(u32 mipLevel, u32 arrayLayer, GpuAccessFlags accessFlags = GpuAccessFlag::Read | GpuAccessFlag::Write) const = 0;
@@ -719,7 +722,7 @@ namespace b3d
 			 * @param texture		Texture to write data to.
 			 * @param source		Pixel data to write. Must be compatible with texture format and dimensions.
 			 * @param mipLevel		Destination mipmap level.
-			 * @param arrayLayer	Destination texture face (array layer or cubemap face).
+			 * @param arrayLayer	Destination array layer (or cubemap face or depth slice).
 			 * @param flags			Optional flags controlling write behavior.
 			 * @param commandBuffer	Command buffer for staging operations. If null, uses internal transfer buffer.
 			 *
@@ -728,12 +731,28 @@ namespace b3d
 			static void Write(const SPtr<Texture>& texture, const PixelData& source, u32 mipLevel = 0, u32 arrayLayer = 0, TextureWriteFlags flags = TextureWriteFlag::Normal, SPtr<GpuCommandBuffer> commandBuffer = nullptr);
 
 			/**
+			 * Reads data from the texture subresource into the provided buffer.
+			 *
+			 * This method automatically chooses the optimal path:
+			 *  - For directly mappable textures: Uses Map() + BulkPixelConversion
+			 *  - For non-mappable textures: Uses staging buffer + CopyTextureToBuffer
+			 *  - If the texture is currently being used by the GPU, this method will block until the GPU is done executing.
+			 *
+			 * @param	texture			Texture to read the data from.
+			 * @param	destination		Previously allocated buffer to read data into.
+			 * @param	mipLevel		Mipmap level to read from.
+			 * @param	arrayLayer		Array layer (or cubemap face or depth slice) to read from.
+			 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default transfer queue will be used.
+			 */
+			static void Read(const SPtr<Texture>& texture, PixelData& destination, u32 mipLevel = 0, u32 arrayLayer = 0, const SPtr<GpuQueue>& gpuQueue = nullptr);
+
+			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
 			 *
 			 * @param	texture			Texture to write data to.
 			 * @param	value			Color to clear the pixels to.
 			 * @param	mipLevel		Mip level to clear.
-			 * @param	arrayLayer		Array layer (or cubemap face) to clear.
+			 * @param	arrayLayer		Array layer (or cubemap face or depth slice) to clear.
 			 * @param	commandBuffer	Command buffer on which to encode the staging texture copy, in case the texture is not directly writeable.
 			 *							If not provided the operation will be queued on an internal command buffer that will be submitted before
 			 *							any regular command buffer submission.

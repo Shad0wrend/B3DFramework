@@ -85,7 +85,7 @@ void VulkanRenderTexture::Initialize()
 		renderPassInformation.ColorAttachments[renderTargetIndex].IsShaderReadAllowed = image->IsShaderReadAllowed();
 
 		const TextureProperties& textureProperties = texture->GetProperties();
-		const PixelFormat internalFormat = texture->GetInternalFormat();
+		const PixelFormat internalFormat = texture->GetSupportedFormat();
 
 		renderPassInformation.ColorAttachments[renderTargetIndex].Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.UseHardwareSRGB);
 	}
@@ -132,7 +132,7 @@ void VulkanRenderTexture::Initialize()
 			renderPassInformation.DepthAttachment.IsShaderReadAllowed = image->IsShaderReadAllowed();
 
 			const TextureProperties& textureProperties = texture->GetProperties();
-			const PixelFormat internalFormat = texture->GetInternalFormat();
+			const PixelFormat internalFormat = texture->GetSupportedFormat();
 
 			renderPassInformation.DepthAttachment.Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.UseHardwareSRGB);
 		}

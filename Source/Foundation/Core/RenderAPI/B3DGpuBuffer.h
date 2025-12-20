@@ -781,11 +781,9 @@ namespace b3d::render
 		 * @param	offset			Offset in bytes from which to copy the data.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start of the buffer (@p offset is only applied to the source).
-		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
-		 *							the operation will be queued on a transfer command buffer that will be submitted immediately (note this will also flush
-		 *							any other transfer buffer operations).
+		 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default transfer queue will be used.
 		 */
-		static void Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, SPtr<GpuCommandBuffer> commandBuffer = nullptr);
+		static void Read(const SPtr<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const SPtr<GpuQueue>& gpuQueue = nullptr);
 
 		/**
 		 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point

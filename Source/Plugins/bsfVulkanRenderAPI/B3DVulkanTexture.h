@@ -282,15 +282,13 @@ namespace b3d
 			/** Gets the resource wrapping the Vulkan image object. */
 			VulkanImage* GetVulkanResource() const { return mImage; }
 
-			/** Returns the internal format of the texture when used on the specified device. This may differ from the requested format if the device doesn't support it. */
-			PixelFormat GetInternalFormat() const { return mInternalFormat; }
-
 			/** Returns true if the buffer can be mapped by directly by the CPU. */
 			bool IsDirectlyMappable() const { return mDirectlyMappable; }
 
 			void SetName(const StringView& name) override;
+			PixelFormat GetSupportedFormat() const override { return mInternalFormat; }
 			GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) override;
-			GpuDevice& GetGpuDevice() const override { return mGpuDevice; }
+			GpuDevice& GetDevice() const override { return mGpuDevice; }
 			GpuQueueMask GetUseMask(u32 mipLevel, u32 arrayLayer, GpuAccessFlags accessFlags) const override;
 			u32 GetBoundCount(u32 mipLevel, u32 arrayLayer) const override;
 			u32 GetUseCount(u32 mipLevel, u32 arrayLayer) const override;

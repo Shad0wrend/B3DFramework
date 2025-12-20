@@ -444,7 +444,7 @@ SPtr<GpuBuffer> TextureUtility::CreateStagingBuffer(const SPtr<Texture>& texture
 	createInformation.Type = readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite;
 	createInformation.Staging.Size = pixelData.GetSize();
 
-	return texture->GetGpuDevice().CreateGpuBuffer(createInformation);
+	return texture->GetDevice().CreateGpuBuffer(createInformation);
 }
 
 void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source, u32 mipLevel, u32 arrayLayer, TextureWriteFlags flags, SPtr<GpuCommandBuffer> commandBuffer)
@@ -473,6 +473,7 @@ void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source
 
 	const bool canDiscardContents = flags.IsSet(TextureWriteFlag::Discard);
 	const bool noOverwrite = flags.IsSet(TextureWriteFlag::NoOverwrite);
+	const bool supportsGPUWrites = (textureProperties.Usage & TU_LOADSTORE) != 0;
 
 	GpuMapOptions mapOptions = GpuMapOption::Write;
 	if(noOverwrite)
@@ -487,7 +488,10 @@ void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source
 	void* mappedMemory = texture->GetMappedMemory();
 	if(mappedMemory != nullptr)
 	{
-		const bool isUsedOnGPU = !subresourceUseMask.IsEmpty();
+		// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
+		// being used because the write could have completed yet still not visible, so we need to issue a pipeline
+		// barrier below.
+		const bool isUsedOnGPU = !subresourceUseMask.IsEmpty() || supportsGPUWrites;
 		const bool isBound = subresourceBoundCount > 0;
 
 		// Recreate the internal image if it is bound to a command buffer, to avoid overwriting the old data. But only if the user
@@ -515,7 +519,7 @@ void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source
 	}
 
 	// Fall back to staging buffer approach
-	GpuDevice& device = texture->GetGpuDevice();
+	GpuDevice& device = texture->GetDevice();
 
 	// Create staging buffer
 	const u32 mipWidth = Math::Max(1u, textureProperties.Width >> mipLevel);
@@ -564,6 +568,98 @@ void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source
 	// Issue copy command
 	commandBuffer->CopyBufferToTexture(stagingBuffer, texture, 0, mipLevel, arrayLayer);
 	commandBuffer->AddQueueSyncMask(syncMask);
+}
+
+void TextureUtility::Read(const SPtr<Texture>& texture, PixelData& destination, u32 mipLevel, u32 arrayLayer, const SPtr<GpuQueue>& gpuQueue)
+{
+	B3D_ASSERT(texture != nullptr);
+
+	const TextureProperties& textureProperties = texture->GetProperties();
+
+	u32 mipWidth, mipHeight, mipDepth;
+	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+
+	if(destination.GetWidth() != mipWidth || destination.GetHeight() != mipHeight ||
+	   destination.GetDepth() != mipDepth || destination.GetFormat() != textureProperties.Format)
+	{
+		B3D_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
+		return;
+	}
+
+	if(textureProperties.SampleCount > 1)
+	{
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		return;
+	}
+
+	const bool supportsGPUWrites = (textureProperties.Usage & TU_LOADSTORE) != 0;
+
+	GpuQueue& transferGpuQueue = gpuQueue != nullptr ? *gpuQueue : *texture->GetDevice().GetQueue(GQT_GRAPHICS, 0);
+
+	// Check is the GPU currently writing to the texture
+	const GpuQueueMask subresourceWriteUseMask = texture->GetUseMask(mipLevel, arrayLayer, GpuAccessFlag::Write);
+
+	// If memory is host visible try mapping it directly
+	void* mappedMemory = texture->GetMappedMemory();
+	if(mappedMemory != nullptr)
+	{
+		// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
+		// being used because the write could have completed yet still not visible, so we need to wait for any
+		// GPU operations to complete.
+		const bool isUsedOnGPU = !subresourceWriteUseMask.IsEmpty() || supportsGPUWrites;
+
+		// If used on the GPU, we need to wait until all write operations complete before mapping it
+		if(isUsedOnGPU)
+		{
+			SPtr<GpuCommandBuffer> commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
+
+			// Make any writes visible before mapping
+			if(supportsGPUWrites)
+			{
+				// Issue a barrier so the device makes the written memory available for read (read-after-write hazard)
+				commandBuffer->IssueBarriers({{ GpuTextureBarrier(texture, GpuResourceUseFlag::Host, GpuAccessFlag::Read)}});
+			}
+
+			// Submit the command buffer and wait until it finishes
+			commandBuffer->AddQueueSyncMask(subresourceWriteUseMask);
+			transferGpuQueue.SubmitTransferCommandBuffer(true);
+		}
+
+		GpuTextureMappedScope mappedScope = texture->Map(mipLevel, arrayLayer, GpuMapOption::Read);
+		PixelUtility::BulkPixelConversion(mappedScope.GetPixelData(), destination);
+
+		return;
+	}
+
+	// Can't use direct mapping, so use a staging buffer
+
+	// Allocate a staging buffer
+	PixelData lockedArea(mipWidth, mipHeight, mipDepth, texture->GetSupportedFormat());
+	SPtr<GpuBuffer> stagingBuffer = CreateStagingBuffer(texture, lockedArea, true);
+
+	// Similar to above, if image supports GPU writes or is currently being written to, we need to wait on any
+	// potential writes to complete
+	GpuQueueMask syncMask;
+	if(supportsGPUWrites || !subresourceWriteUseMask.IsEmpty())
+	{
+		// Ensure flush will wait for all queues currently writing to the image (if any) to finish
+		syncMask = subresourceWriteUseMask;
+	}
+
+	SPtr<GpuCommandBuffer> commandBuffer = transferGpuQueue.GetOrCreateTransferCommandBuffer();
+
+	// Queue copy command
+	commandBuffer->CopyTextureToBuffer(texture, stagingBuffer, mipLevel, arrayLayer, 0);
+
+	// Submit the command buffer and wait until it finishes
+	commandBuffer->AddQueueSyncMask(syncMask);
+	transferGpuQueue.SubmitTransferCommandBuffer(true);
+
+	{
+		GpuBufferMappedScope mapping = stagingBuffer->Map(GpuMapOption::Read);
+		lockedArea.SetExternalBuffer((u8*)mapping.GetMappedMemory());
+		PixelUtility::BulkPixelConversion(lockedArea, destination);
+	}
 }
 
 void TextureUtility::Clear(const SPtr<Texture>& texture, const Color& value, u32 mipLevel, u32 arrayLayer, const SPtr<GpuCommandBuffer>& commandBuffer)

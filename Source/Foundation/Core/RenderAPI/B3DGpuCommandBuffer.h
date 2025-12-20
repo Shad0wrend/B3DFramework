@@ -671,7 +671,7 @@ namespace b3d
 			 * @param	arrayLayer		Source texture face (array slice or cubemap face).
 			 * @param	bufferOffset	Offset into the destination buffer, in bytes.
 			 */
-			virtual void CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset) = 0;
+			virtual void CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset = 0) = 0;
 
 			/**
 			 * Copies data between texture subresources without format conversion or scaling. Both textures must have matching formats.
