@@ -612,7 +612,7 @@ void LightProbeVolume::GetProbeCoefficients(Vector<LightProbeCoefficientInfo>& o
 	LightProbeSHCoefficients* coefficients = B3DStackAllocate<LightProbeSHCoefficients>(activeProbeCount);
 
 	SPtr<PixelData> coeffData = mCoefficients->GetProperties().AllocBuffer(0, 0);
-	mCoefficients->ReadData(*coeffData);
+	TextureUtility::Read(mCoefficients, *coeffData);
 
 	u32 probesPerRow = coeffData->GetWidth() / 9;
 	u32 probeIndex = 0;

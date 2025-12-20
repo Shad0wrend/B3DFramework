@@ -536,21 +536,6 @@ namespace b3d
 			virtual GpuDevice& GetDevice() const = 0;
 
 			/**
-			 * Reads data from the texture buffer into the provided buffer.
-			 *
-			 * @note	If the texture cannot be directly mapped by the CPU this will internally create a staging buffer, on which the
-			 *			contents will be copied before being read by the CPU, using an internal command buffer.
-			 * @note	If the texture is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
-			 *			method in very rare circumstances.
-			 *
-			 * @param	destination		Previously allocated buffer to read data into.
-			 * @param	mipLevel		(optional) Mipmap level to read from.
-			 * @param	face			(optional) Texture face to read from.
-			 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default queue will be used.
-			 */
-			void ReadData(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr);
-
-			/**
 			 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
 			 * and the asynchronous operation will be signaled with the return value.
 			 *
@@ -639,9 +624,6 @@ namespace b3d
 			static SPtr<Texture> kNormal;
 
 		protected:
-			/** @copydoc ReadData */
-			virtual void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr) = 0;
-
 			/************************************************************************/
 			/* 								TEXTURE VIEW                      		*/
 			/************************************************************************/

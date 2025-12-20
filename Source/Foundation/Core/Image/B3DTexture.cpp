@@ -146,17 +146,14 @@ TAsyncOp<void> Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipL
 {
 	data->LockInternal();
 
-	std::function<void(const SPtr<render::Texture>&, u32, u32, const SPtr<PixelData>&, TAsyncOp<void>&)> fnReadData =
-		[&](const SPtr<render::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
-			TAsyncOp<void>& asyncOp)
+	auto fnReadData = [](const SPtr<render::Texture>& texture, u32 face, u32 mipLevel, const SPtr<PixelData>& pixelData, TAsyncOp<void>& asyncOp)
 	{
-		// TODO - Transfer buffers should be handled by the Renderer
 		const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 		if(gpuDevice != nullptr)
 			gpuDevice->SubmitTransferCommandBuffers();
 
-		texture->ReadData(*_pixData, _mipLevel, _face);
-		_pixData->UnlockInternal();
+		render::TextureUtility::Read(texture, *pixelData, mipLevel, face);
+		pixelData->UnlockInternal();
 		asyncOp.CompleteOperation();
 	};
 
@@ -172,13 +169,12 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 
 	auto fnReadDataAsync = [texture = B3DGetRenderProxy(this), face, mipLevel, op]() mutable
 	{
-		// TODO - Transfer buffers should be handled by the Renderer
 		const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 		if(gpuDevice != nullptr)
 			gpuDevice->SubmitTransferCommandBuffers();
 
 		SPtr<PixelData> output = texture->GetProperties().AllocBuffer(face, mipLevel);
-		texture->ReadData(*output, mipLevel, face);
+		render::TextureUtility::Read(texture, *output, mipLevel, face);
 
 		op.CompleteOperation(output);
 	};
@@ -360,31 +356,12 @@ void Texture::Initialize()
 	RenderProxy::Initialize();
 }
 
-void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face, const SPtr<GpuQueue>& gpuQueue)
-{
-	ASSERT_IF_NOT_RENDER_THREAD;
-
-	PixelData& pixelData = static_cast<PixelData&>(destination);
-
-	u32 mipWidth, mipHeight, mipDepth;
-	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
-
-	if(pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
-	   pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.Format)
-	{
-		B3D_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
-		return;
-	}
-
-	ReadDataInternal(pixelData, mipLevel, face, gpuQueue);
-}
-
 TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel, u32 face)
 {
 	SPtr<PixelData> pixelData = GetProperties().AllocBuffer(face, mipLevel);
 
 	// We fall-back to sync read if the backend doesn't implement an async method
-	ReadData(*pixelData, mipLevel, face);
+	TextureUtility::Read(std::static_pointer_cast<Texture>(GetShared()), *pixelData, mipLevel, face);
 
 	TAsyncOp<SPtr<PixelData>> output;
 	output.CompleteOperation(pixelData);
