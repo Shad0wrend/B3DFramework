@@ -292,14 +292,14 @@ namespace b3d
 		using GpuBufferType = CoreVariantType<b3d::GpuBuffer, IsRenderProxy>;
 
 		TGpuBufferSuballocation() = default;
-		explicit TGpuBufferSuballocation(const SPtr<GpuBufferType>& buffer, u32 suballocationIndex = 0, u32 suballocationOffset = 0)
-			: mBuffer(buffer), mSuballocationIndex(suballocationIndex), mSuballocationOffset(suballocationOffset) {}
+		explicit TGpuBufferSuballocation(const SPtr<GpuBufferType>& buffer, u32 suballocationOffset = 0)
+			: mBuffer(buffer), mSuballocationOffset(suballocationOffset) {}
 
 		/** Gets the underlying GPU buffer. */
 		const SPtr<GpuBufferType>& GetBuffer() const { return mBuffer; }
 
-		/** Gets the zero-based suballocation index within the buffer. */
-		u32 GetSuballocationIndex() const { return mSuballocationIndex; }
+		/** Gets the zero-based suballocation index within the buffer. Computed lazily from offset. */
+		u32 GetSuballocationIndex() const { return mBuffer ? (mSuballocationOffset / mBuffer->GetSuballocationSize()) : 0; }
 
 		/** Gets the byte offset from the start of the buffer for this suballocation. */
 		u32 GetSuballocationOffset() const { return mSuballocationOffset; }
@@ -326,7 +326,6 @@ namespace b3d
 
 	private:
 		SPtr<GpuBufferType> mBuffer;
-		u32 mSuballocationIndex = 0; // TODO - Remove this, it can be deduced from the offset. It's also not currently set within GpuMappedRegion
 		u32 mSuballocationOffset = 0;
 	};
 
@@ -445,7 +444,7 @@ namespace b3d
 		GpuBufferMappedScope Map(u32 offset, u32 size, GpuMapOptions options)
 		{
 			void* mappedMemory = mCache + offset;
-			return GpuBufferMappedScope(mappedMemory, GpuBufferSuballocation(std::static_pointer_cast<GpuBuffer>(GetShared()), 0, offset), size, options);
+			return GpuBufferMappedScope(mappedMemory, GpuBufferSuballocation(std::static_pointer_cast<GpuBuffer>(GetShared()), offset), size, options);
 		}
 
 		/**
@@ -566,7 +565,7 @@ namespace b3d::render
 				Invalidate(offset, size);
 
 			void* mappedMemory = static_cast<u8*>(GetMappedMemory()) + offset;
-			return GpuBufferMappedScope(mappedMemory, GpuBufferSuballocation(std::static_pointer_cast<GpuBuffer>(GetShared()), 0, offset), size, options);
+			return GpuBufferMappedScope(mappedMemory, GpuBufferSuballocation(std::static_pointer_cast<GpuBuffer>(GetShared()), offset), size, options);
 		}
 
 		/**

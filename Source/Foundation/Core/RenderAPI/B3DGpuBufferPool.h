@@ -113,7 +113,6 @@ namespace b3d::render
 		struct SuballocationEntry
 		{
 			SPtr<GpuBuffer> Buffer;
-			u32 SuballocationIndex;
 			u32 SuballocationOffset;
 			u64 LastUsedFrameNumber;
 			u32 NextFreeIndex;

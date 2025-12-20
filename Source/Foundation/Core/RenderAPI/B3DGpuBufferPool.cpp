@@ -73,7 +73,7 @@ GpuBufferSuballocation TransientGpuBufferPool::Allocate()
 
 		entry.LastUsedFrameNumber = mCurrentFrameNumber;
 
-		return GpuBufferSuballocation(entry.Buffer, entry.SuballocationIndex, entry.SuballocationOffset);
+		return GpuBufferSuballocation(entry.Buffer, entry.SuballocationOffset);
 	}
 
 	AddNewBufferToPool();
@@ -120,7 +120,6 @@ void TransientGpuBufferPool::AddNewBufferToPool()
 	{
 		SuballocationEntry entry;
 		entry.Buffer = newBuffer;
-		entry.SuballocationIndex = subIndex;
 		entry.SuballocationOffset = subIndex * stride;
 		entry.LastUsedFrameNumber = 0;
 
@@ -171,7 +170,7 @@ GpuBufferSuballocation GpuBufferPool::Allocate()
 			const u32 baseGlobalSuballocationIndex = bufferIndex * mSuballocationsPerBuffer;
 			const u32 suballocationIndex = globalSuballocationIndex - baseGlobalSuballocationIndex;
 			const u32 suballocationOffset = suballocationIndex * mSuballocationSize;
-			return GpuBufferSuballocation(bufferEntry.Buffer, suballocationIndex, suballocationOffset);
+			return GpuBufferSuballocation(bufferEntry.Buffer, suballocationOffset);
 		}
 	}
 
@@ -209,8 +208,9 @@ void GpuBufferPool::Release(const GpuBufferSuballocation& allocation)
 	// Calculate entry index directly from base + offset
 	BufferEntry& bufferEntry = mBuffers[foundBufferIndex];
 
+	const u32 suballocationIndex = allocation.GetSuballocationOffset() / mSuballocationSize;
 	const u32 baseGlobalSuballocationIndex = foundBufferIndex * mSuballocationsPerBuffer;
-	const u32 globalSuballocationIndex = baseGlobalSuballocationIndex + allocation.GetSuballocationIndex();
+	const u32 globalSuballocationIndex = baseGlobalSuballocationIndex + suballocationIndex;
 
 	SuballocationEntry& suballocationEntry = mSuballocations[globalSuballocationIndex];
 	B3D_ASSERT(bufferEntry.AllocatedCount > 0 && "Buffer allocation count underflow");
