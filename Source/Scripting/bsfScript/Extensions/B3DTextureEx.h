@@ -18,7 +18,7 @@ namespace b3d
 	{
 	public:
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Texture), Visibility(Private))
-		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
+		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsageFlags usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 
 		/** @copydoc TextureProperties::GetFormat */
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(PixelFormat), Property(Getter))
@@ -26,7 +26,7 @@ namespace b3d
 
 		/** @copydoc TextureProperties::GetUsage */
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Usage), Property(Getter))
-		static TextureUsage GetUsage(const HTexture& thisPtr);
+		static TextureUsageFlags GetUsage(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetTextureType */
 		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Type), Property(Getter))

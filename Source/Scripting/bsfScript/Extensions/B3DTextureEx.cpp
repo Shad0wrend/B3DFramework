@@ -7,7 +7,7 @@
 using namespace std::placeholders;
 
 using namespace b3d;
-HTexture TextureEx::Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection)
+HTexture TextureEx::Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsageFlags usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection)
 {
 	int numMips = 0;
 	if(hasMipmaps)
@@ -38,9 +38,9 @@ PixelFormat TextureEx::GetPixelFormat(const HTexture& thisPtr)
 	return thisPtr->GetProperties().Format;
 }
 
-TextureUsage TextureEx::GetUsage(const HTexture& thisPtr)
+TextureUsageFlags TextureEx::GetUsage(const HTexture& thisPtr)
 {
-	return (TextureUsage)thisPtr->GetProperties().Usage;
+	return thisPtr->GetProperties().Usage;
 }
 
 TextureType TextureEx::GetType(const HTexture& thisPtr)
