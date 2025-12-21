@@ -149,7 +149,11 @@ void VulkanGpuCommandBufferPool::Reset()
 	VkDevice logicalDevice = static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical();
 
 	for(const auto& entry : mCommandBuffers)
+	{
+		B3D_ASSERT(entry.second->GetState() == CommandBufferState::Ready || entry.second->GetState() == CommandBufferState::Done);
+
 		entry.second->Cleanup();
+	}
 
 	const VkResult result = vkResetCommandPool(logicalDevice, mVulkanPool, VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
 	B3D_ASSERT(result == VK_SUCCESS);

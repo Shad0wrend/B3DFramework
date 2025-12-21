@@ -29,12 +29,12 @@ void Renderer::Initialize(const SPtr<GpuDevice>& gpuDevice)
 
 void Renderer::InitializeOnRenderThread()
 {
-	mCommandBufferPool = mDevice->CreateGpuCommandBufferPool(GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS));
+	mCommandBufferPoolRing.Initialize(*mDevice, GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS));
 }
 
 void Renderer::DestroyOnRenderThread()
 {
-	mCommandBufferPool = nullptr;
+	mCommandBufferPoolRing.Destroy();
 }
 
 SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType)
@@ -76,9 +76,6 @@ void Renderer::AddTask(const SPtr<RendererTask>& task)
 
 void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 {
-	if (!B3D_ENSURE(mCommandBufferPool != nullptr))
-		return;
-
 	// Move all tasks to the render thread queue
 	{
 		Lock lock(mTaskMutex);
@@ -108,7 +105,7 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 			const bool complete = [this, &entry]()
 			{
-				return entry->mTaskWorker(*mCommandBufferPool);
+				return entry->mTaskWorker(mCommandBufferPoolRing.GetCurrentPool());
 			}();
 
 			if(!complete)
@@ -125,9 +122,6 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 {
-	if (!B3D_ENSURE(mCommandBufferPool != nullptr))
-		return;
-
 	// Move task to the render thread queue
 	{
 		Lock lock(mTaskMutex);
@@ -151,7 +145,7 @@ void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 
 		GetProfilerCPU().BeginThread("RenderTask");
 		{
-			complete = task.mTaskWorker(*mCommandBufferPool);
+			complete = task.mTaskWorker(mCommandBufferPoolRing.GetCurrentPool());
 		}
 		GetProfilerCPU().EndThread();
 

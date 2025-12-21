@@ -337,12 +337,12 @@ void RenderBeast::RenderAll(PerFrameData perFrameData)
 	timings.TimeDelta = GetTime().GetFrameDelta();
 	timings.FrameIndex = GetTime().GetCurrentFrameIndex();
 
-	GetRenderThread().PostCommand([this, timings, perFrameData]() { RenderAllScenes(timings, perFrameData); }, "RenderBeast::RenderAll");
+	GetRenderThread().PostCommand([this, timings, perFrameData]() { RenderAllOnRenderThread(timings, perFrameData); }, "RenderBeast::RenderAll");
 }
 
-void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameData)
+void RenderBeast::RenderAllOnRenderThread(FrameTimings timings, PerFrameData perFrameData)
 {
-	ASSERT_IF_NOT_RENDER_THREAD;
+	ASSERT_IF_NOT_RENDER_THREAD
 
 	GetProfilerCPU().BeginSample("Render");
 
@@ -385,12 +385,13 @@ void RenderBeast::RenderAllScenes(FrameTimings timings, PerFrameData perFrameDat
 	}
 
 	GpuUniformBufferManager::Instance().AdvanceFrame();
+	mCommandBufferPoolRing.AdvanceFrame();
 	mRendererExtensionsDirty = false;
 }
 
 bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
-	SPtr<GpuCommandBuffer> commandBuffer = mCommandBufferPool->Create(GpuCommandBufferCreateInformation::Create("Main"));
+	SPtr<GpuCommandBuffer> commandBuffer = mCommandBufferPoolRing.GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
 #if B3D_PROFILING_ENABLED
 	commandBuffer->BeginProfiling("RenderScene");
 #endif
@@ -468,7 +469,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 #endif
 			mDevice->SubmitCommandBuffer(commandBuffer);
 
-			commandBuffer = mCommandBufferPool->Create(GpuCommandBufferCreateInformation::Create("Main"));
+			commandBuffer = mCommandBufferPoolRing.GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
 
 #if B3D_PROFILING_ENABLED
 			commandBuffer->BeginProfiling("RenderScene");

@@ -193,11 +193,8 @@ SPtr<render::Texture> GenerateDefaultIndirect()
 	if (!gpuDevice)
 		return nullptr;
 
-	const SPtr<GpuCommandBufferPool>& commandBufferPool = GetRenderBeast()->GetCommandBufferPool();
-	if (!B3D_ENSURE(commandBufferPool))
-		return nullptr;
-
-	SPtr<GpuCommandBuffer> commandBuffer = commandBufferPool->Create(GpuCommandBufferCreateInformation::Create("GenerateDefaultIndirect"));
+	GpuCommandBufferPool& commandBufferPool = GetRenderBeast()->GetCurrentCommandBufferPool();
+	SPtr<GpuCommandBuffer> commandBuffer = commandBufferPool.Create(GpuCommandBufferCreateInformation::Create("GenerateDefaultIndirect"));
 
 	TextureCreateInformation dummySkyDesc;
 	dummySkyDesc.Name = "Dummy Sky";

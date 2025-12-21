@@ -219,8 +219,8 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 	const SPtr<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 
 	// Create a command buffer
-	const SPtr<render::GpuCommandBufferPool>& commandBufferPool = RendererManager::Instance().GetActive()->GetCommandBufferPool();
-	SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(render::GpuCommandBufferCreateInformation::Create("GUIVectorSpriteAtlas"));
+	render::GpuCommandBufferPool& commandBufferPool = RendererManager::Instance().GetActive()->GetCurrentCommandBufferPool();
+	SPtr<render::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(render::GpuCommandBufferCreateInformation::Create("GUIVectorSpriteAtlas"));
 
 	FrameAllocatorScope frameScope;
 	FrameUnorderedMap<render::Texture*, SPtr<render::RenderTexture>> atlasRenderTextures;

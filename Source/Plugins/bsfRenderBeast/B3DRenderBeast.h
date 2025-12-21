@@ -119,7 +119,7 @@ namespace b3d
 			 *
 			 * @note	Render thread only.
 			 */
-			void RenderAllScenes(FrameTimings timings, PerFrameData perFrameData);
+			void RenderAllOnRenderThread(FrameTimings timings, PerFrameData perFrameData);
 
 			/**
 			 * Renders all views in the provided scene. Returns true if anything has been draw to any of the views.

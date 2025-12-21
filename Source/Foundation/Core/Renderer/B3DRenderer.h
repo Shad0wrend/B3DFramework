@@ -8,6 +8,7 @@
 #include "Renderer/B3DRendererMeshData.h"
 #include "Material/B3DShaderVariation.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "RenderAPI/B3DGpuCommandBufferPoolRing.h"
 
 namespace b3d
 {
@@ -150,8 +151,8 @@ namespace b3d
 			Renderer();
 			virtual ~Renderer() = default;
 
-			/** Returns the command buffer pool usable for rendering on the render thread. */
-			const SPtr<GpuCommandBufferPool>& GetCommandBufferPool() const { return mCommandBufferPool; } // TODO - Refactor this so there is one pool per frame, whose CBs we reset all at once
+			/** Returns the command buffer pool for the current frame. */
+			GpuCommandBufferPool& GetCurrentCommandBufferPool() { return mCommandBufferPoolRing.GetCurrentPool(); }
 
 			/** Initializes the renderer with the provided GPU device. Must be called before using the renderer. */
 			virtual void Initialize(const SPtr<GpuDevice>& gpuDevice);
@@ -274,7 +275,7 @@ namespace b3d
 			void ProcessTask(RendererTask& task, bool forceAll);
 
 			SPtr<GpuDevice> mDevice;
-			SPtr<GpuCommandBufferPool> mCommandBufferPool;
+			GpuCommandBufferPoolRing mCommandBufferPoolRing;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			bool mRendererExtensionsDirty = true;
