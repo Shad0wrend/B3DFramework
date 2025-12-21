@@ -73,8 +73,8 @@ void TetrahedraRenderMaterial::GetOutputDesc(const RendererView& view, PooledRen
 	u32 height = viewProps.Target.ViewRect.Height;
 	u32 numSamples = viewProps.Target.NumSamples;
 
-	colorDesc = PooledRenderTextureCreateInformation::Create2D(PF_R16U, width, height, TU_RENDERTARGET, numSamples);
-	depthDesc = PooledRenderTextureCreateInformation::Create2D(PF_D32, width, height, TU_DEPTHSTENCIL, numSamples);
+	colorDesc = PooledRenderTextureCreateInformation::Create2D(PF_R16U, width, height, TextureUsageFlag::RenderTarget, numSamples);
+	depthDesc = PooledRenderTextureCreateInformation::Create2D(PF_D32, width, height, TextureUsageFlag::DepthStencil, numSamples);
 }
 
 TetrahedraRenderMaterial* TetrahedraRenderMaterial::GetVariation(bool msaa, bool singleSampleMSAA)
@@ -807,7 +807,7 @@ void LightProbes::ResizeCoefficientTexture(GpuCommandBuffer& commandBuffer, u32 
 	TextureCreateInformation desc;
 	desc.Width = 4096;
 	desc.Height = numRows;
-	desc.Usage = TU_LOADSTORE | TU_RENDERTARGET;
+	desc.Usage = TextureUsageFlag::AllowUnorderedAccessOnTheGPU | TextureUsageFlag::RenderTarget;
 	desc.Format = PF_RGBA32F;
 
 	SPtr<Texture> newTexture = gpuDevice->CreateTexture(desc);

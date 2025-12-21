@@ -912,7 +912,7 @@ void VulkanGpuParameterSet::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer
 
 				// Keep dynamic textures in general layout, so they can be easily mapped by CPU
 				const TextureProperties& props = element->GetProperties();
-				if(props.Usage & TU_DYNAMIC)
+				if(props.Usage.IsSet(TextureUsageFlag::StoreOnCPUWithGPUAccess))
 					layout = VK_IMAGE_LAYOUT_GENERAL;
 				else
 					layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

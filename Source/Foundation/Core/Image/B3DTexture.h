@@ -15,29 +15,6 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**	Flags that describe how is a texture used. */
-	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureUsage
-	{
-		/** A regular texture that is not often or ever updated from the CPU. */
-		TU_STATIC B3D_SCRIPT_EXPORT(ExportName(Default)) = 1 << 0,
-		/** A regular texture that is often updated by the CPU. */
-		TU_DYNAMIC B3D_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
-		/** Texture that can be rendered to by the GPU. */
-		TU_RENDERTARGET B3D_SCRIPT_EXPORT(ExportName(Render)) = 0x200,
-		/** Texture used as a depth/stencil buffer by the GPU. */
-		TU_DEPTHSTENCIL B3D_SCRIPT_EXPORT(ExportName(DepthStencil)) = 0x400,
-		/** Texture that allows load/store operations from the GPU program. */
-		TU_LOADSTORE B3D_SCRIPT_EXPORT(ExportName(LoadStore)) = 0x800,
-		/** All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. */
-		TU_CPUCACHED B3D_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
-		/** Allows the CPU to directly read the texture data buffers from the GPU. */
-		TU_CPUREADABLE B3D_SCRIPT_EXPORT(ExportName(CPUReadable)) = 0x2000,
-		/** Allows you to retrieve views of the texture using a format different from one specified on creation. */
-		TU_MUTABLEFORMAT B3D_SCRIPT_EXPORT(ExportName(MutableFormat)) = 0x4000,
-		/** Default (most common) texture usage. */
-		TU_DEFAULT B3D_SCRIPT_EXPORT(Exclude(true)) = TU_STATIC
-	};
-
 	/**	Texture mipmap options. */
 	enum TextureMipmap
 	{
@@ -69,7 +46,7 @@ namespace b3d
 		u32 MipMapCount = 0;
 
 		/** Describes how the caller plans on using the texture in the pipeline. */
-		i32 Usage = TU_DEFAULT;
+		TextureUsageFlags Usage = TextureUsageFlag::Default;
 
 		/** If true the texture data is assumed to be in SRGB space and will be converted back to linear space when sampled on GPU. */
 		bool UseHardwareSRGB = false;
@@ -419,7 +396,7 @@ namespace b3d
 		 * The data read is the cached texture data. Any data written to the texture from the GPU or render thread will not
 		 * be reflected in this data. Use ReadData() if you require those changes.
 		 * @note
-		 * The texture must have been created with TU_CPUCACHED usage otherwise this method will not return any data.
+		 * The texture must have been created with TextureUsageFlag::CPUCached usage otherwise this method will not return any data.
 		 */
 		void ReadCachedData(PixelData& data, u32 face = 0, u32 mipLevel = 0);
 
@@ -527,7 +504,7 @@ namespace b3d
 			 * @param options		Specifies read/write intent for the mapping.
 			 * @return				RAII scope containing PixelData with mapped memory.
 			 *
-			 * @note Only works for directly mappable textures (TU_DYNAMIC with LINEAR tiling).
+			 * @note Only works for directly mappable textures (StoreOnCPUWithGPUAccess with LINEAR tiling).
 			 * @note Returns invalid scope if texture is not directly mappable.
 			 */
 			virtual GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) = 0;

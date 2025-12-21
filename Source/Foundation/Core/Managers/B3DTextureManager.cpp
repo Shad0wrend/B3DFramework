@@ -12,7 +12,7 @@ using namespace b3d;
 SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TextureCreateInformation& colorDesc, bool createDepth, PixelFormat depthStencilFormat)
 {
 	TextureCreateInformation textureDesc = colorDesc;
-	textureDesc.Usage = TU_RENDERTARGET;
+	textureDesc.Usage = TextureUsageFlag::RenderTarget;
 	textureDesc.MipMapCount = 0;
 
 	HTexture texture = Texture::Create(textureDesc);
@@ -22,7 +22,7 @@ SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TextureCreateInfor
 	{
 		textureDesc.Format = depthStencilFormat;
 		textureDesc.UseHardwareSRGB = false;
-		textureDesc.Usage = TU_DEPTHSTENCIL;
+		textureDesc.Usage = TextureUsageFlag::DepthStencil;
 
 		depthStencil = Texture::Create(textureDesc);
 	}
@@ -61,7 +61,7 @@ void TextureManager::OnStartUp()
 	createInformation.Width = 2;
 	createInformation.Height = 2;
 	createInformation.Format = PF_RGBA8;
-	createInformation.Usage = TU_STATIC;
+	createInformation.Usage = TextureUsageFlag::Default;
 
 	// White built-in texture
 	createInformation.Name = "Builtin White";

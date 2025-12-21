@@ -5,6 +5,7 @@
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
 #include "Reflection/B3DRTTIPlain.h"
+#include "RTTI/B3DFlagsRTTI.h"
 #include "Image/B3DTexture.h"
 #include "Math/B3DMath.h"
 #include "CoreObject/B3DRenderThread.h"
@@ -37,25 +38,26 @@ namespace b3d
 		B3D_RTTI_END_MEMBERS
 
 
-		UPtrRTTIIterator<i32, false> GetUsageIterator(Texture& object, FrameAllocator& frameAllocator)
+		UPtrRTTIIterator<TextureUsageFlags, false> GetUsageIterator(Texture& object, FrameAllocator& frameAllocator)
 		{
-			return CreateRTTIIterator<i32, false>(frameAllocator, object.mProperties.Usage);
+			return CreateRTTIIterator<TextureUsageFlags, false>(frameAllocator, object.mProperties.Usage);
 		}
 
-		const i32& GetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<i32, false>& iterator)
+		const TextureUsageFlags& GetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<TextureUsageFlags, false>& iterator)
 		{
 			return *iterator;
 		}
 
-		void SetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<i32, false>& iterator, const i32& value)
+		void SetUsage(Texture& object, FrameAllocator& frameAllocator, TRTTIIterator<TextureUsageFlags, false>& iterator, const TextureUsageFlags& value)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
-			i32 finalValue = value;
-			if((value & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
-				{
-				finalValue &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
-				finalValue |= TU_STATIC;
+			TextureUsageFlags finalValue(value);
+			if(finalValue.IsSetAny(TextureUsageFlag::DepthStencil | TextureUsageFlag::RenderTarget))
+			{
+				finalValue.Unset(TextureUsageFlag::DepthStencil);
+				finalValue.Unset(TextureUsageFlag::RenderTarget);
+				finalValue.Set(TextureUsageFlag::StoreOnGPU);
 			}
 
 			iterator = finalValue;

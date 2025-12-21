@@ -26,13 +26,12 @@ You may also set these optional properties:
  - @b3d::TextureInformation::Usage - Flags that control how is the texture allowed to be used, represented by the @b3d::TextureUsage enum
 
 Supported textures usages are:
- - @b3d::TU_STATIC - Specify for normal textures that are created once (or updated very rarely) and used for normal rendering.
- - @b3d::TU_DYNAMIC - Specify for textures that are updated often (e.g. every frame) and used for normal rendering.
- - @b3d::TU_RENDERTARGET - Specify for textures that will be used as color attachments for a render target.
- - @b3d::TU_DEPTHSTENCIL - Specify for textures that will be used as a depth/stencil attachment for render target. Texture's pixel format must be one of the depth-stencil formats.
- - @b3d::TU_LOADSTORE - Specify that the texture can be used for random read/write by shaders (e.g. for use in a compute shader).
- - @b3d::TU_CPUCACHED - Specify that any data written to the texture (from the CPU) will be cached internally, allowing it to be accessed through **Texture::ReadCachedData()**. Uses extra memory as data needs to be stored in both normal and GPU memory.
- - @b3d::TU_CPUREADABLE - Specify that the CPU should be allowed to read texture data that was written by the GPU (e.g. resulting from rendering or a compute shader writes).
+ - @b3d::TextureUsageFlag::StoreOnGPU - Specify for normal textures that are created once (or updated very rarely) and used for normal rendering.
+ - @b3d::TextureUsageFlag::StoreOnCPUWithGPUAccess - Specify for textures that are updated often (e.g. every frame) and used for normal rendering.
+ - @b3d::TextureUsageFlag::RenderTarget - Specify for textures that will be used as color attachments for a render target.
+ - @b3d::TextureUsageFlag::DepthStencil - Specify for textures that will be used as a depth/stencil attachment for render target. Texture's pixel format must be one of the depth-stencil formats.
+ - @b3d::TextureUsageFlag::AllowUnorderedAccessOnTheGPU - Specify that the texture can be used for random read/write by shaders (e.g. for use in a compute shader).
+ - @b3d::TextureUsageFlag::CPUCached - Specify that any data written to the texture (from the CPU) will be cached internally, allowing it to be accessed through **Texture::ReadCachedData()**. Uses extra memory as data needs to be stored in both normal and GPU memory.
 
 Most of these options are only useful when using the low-level rendering API and your own shaders, in which case you might require advanced texture types and options. In majority of cases however you will be using 2D textures with mip-maps, potentially with gamma-corrected data, used for normal rendering (e.g. assigning them to materials).
 
@@ -212,7 +211,7 @@ Reading data from a texture is done similarly to writing, using **PixelData** ob
  - Reading GPU data
 
 ## Reading cached CPU data
-Reading cached CPU data allows you to read-back any data you have written to the texture by calling **Texture::WriteData()**. It is particularily useful when importing textures from external files and wish to access their pixels. Note that texture must be created with the **TextureUsage::TU_CPUCACHED** usage flag in order for CPU cached data to be available. When importing textures this flag will automatically be set if the relevant property is enabled in **TextureImportOptions**.
+Reading cached CPU data allows you to read-back any data you have written to the texture by calling **Texture::WriteData()**. It is particularily useful when importing textures from external files and wish to access their pixels. Note that texture must be created with the **TextureUsageFlag::CPUCached** usage flag in order for CPU cached data to be available. When importing textures this flag will automatically be set if the relevant property is enabled in **TextureImportOptions**.
 
 Cached CPU data can be read by calling @b3d::Texture::ReadCachedData. It accepts a **PixelData** parameter to which to output the pixel colors, as well as indices to the face & mip-level to read.
 
@@ -240,7 +239,7 @@ Vector<Color> allColors = pixelData->GetColors();
 Note that cached data reads will not contain any data written by the GPU (e.g. in case the texture is used as a render target or written to by GPU in some other way).
 
 ## Reading GPU data
-In case cached CPU reads are not enough, you can perform GPU reads, which always read the most recent data which includes both the data written by the CPU and the GPU. Unlike CPU caching this also does not require additional memory to be used to store texture data. Note that texture must be created with the **TextureUsage::TU_CPUREADABLE** usage flag in order for such reads to be available.
+In case cached CPU reads are not enough, you can perform GPU reads, which always read the most recent data which includes both the data written by the CPU and the GPU. Unlike CPU caching this also does not require additional memory to be used to store texture data.
 
 To perform GPU reads call @b3d::Texture::ReadData. It accepts a shared pointer to a **PixelData** object.
 

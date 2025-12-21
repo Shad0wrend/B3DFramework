@@ -28,7 +28,7 @@ namespace b3d
 			static D3D12_RESOURCE_FLAGS GetBufferResourceFlags(GpuBufferUsage usage);
 
 			/** Converts engine texture usage flags to D3D12 resource flags. */
-			static D3D12_RESOURCE_FLAGS GetTextureResourceFlags(TextureUsage usage);
+			static D3D12_RESOURCE_FLAGS GetTextureResourceFlags(TextureUsageFlags usage);
 
 			/** Converts engine GPU resource usage to D3D12 heap type. */
 			static D3D12_HEAP_TYPE GetHeapType(GpuResourceUsage usage);

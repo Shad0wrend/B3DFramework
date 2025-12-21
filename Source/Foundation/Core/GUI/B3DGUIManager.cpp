@@ -1682,7 +1682,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		cachedColorTextureCreateInformation.Width = renderTargetWidth;
 		cachedColorTextureCreateInformation.Height = renderTargetHeight;
 		cachedColorTextureCreateInformation.Format = PF_RGBA8;
-		cachedColorTextureCreateInformation.Usage = TU_RENDERTARGET;
+		cachedColorTextureCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 
 		const SPtr<Texture> cachedColorTexture = gpuDevice->CreateTexture(cachedColorTextureCreateInformation);
 

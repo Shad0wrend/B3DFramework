@@ -253,7 +253,7 @@ SPtr<render::Texture> GenerateDefaultIndirect()
 	irradianceCubemapDesc.Width = IBLUtility::kIrradianceCubemapSize;
 	irradianceCubemapDesc.Height = IBLUtility::kIrradianceCubemapSize;
 	irradianceCubemapDesc.MipMapCount = 0;
-	irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+	irradianceCubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 	SPtr<render::Texture> irradiance = gpuDevice->CreateTexture(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);

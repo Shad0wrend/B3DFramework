@@ -96,7 +96,7 @@ Texture::Texture(const TextureCreateInformation& createInformation)
 void Texture::Initialize()
 {
 	// Allocate CPU buffers if needed
-	if((mProperties.Usage & TU_CPUCACHED) != 0)
+	if(mProperties.Usage.IsSetAny(TextureUsageFlag::CPUCached))
 	{
 		CreateCpuBuffers();
 
@@ -190,7 +190,7 @@ u32 Texture::CalculateSize() const
 
 void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
 {
-	if((mProperties.Usage & TU_CPUCACHED) == 0)
+	if(!mProperties.Usage.IsSetAny(TextureUsageFlag::CPUCached))
 		return;
 
 	if(subresourceIdx >= (u32)mCPUSubresourceData.size())
@@ -224,7 +224,7 @@ void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
 
 void Texture::ReadCachedData(PixelData& dest, u32 face, u32 mipLevel)
 {
-	if((mProperties.Usage & TU_CPUCACHED) == 0)
+	if(!mProperties.Usage.IsSetAny(TextureUsageFlag::CPUCached))
 	{
 		B3D_LOG(Error, Texture, "Attempting to read CPU data from a texture that is created without CPU caching.");
 		return;
@@ -437,7 +437,7 @@ void TextureUtility::Write(const SPtr<Texture>& texture, const PixelData& source
 
 	const bool canDiscardContents = flags.IsSet(TextureWriteFlag::Discard);
 	const bool noOverwrite = flags.IsSet(TextureWriteFlag::NoOverwrite);
-	const bool supportsGPUWrites = (textureProperties.Usage & TU_LOADSTORE) != 0;
+	const bool supportsGPUWrites = textureProperties.Usage.IsSetAny(TextureUsageFlag::AllowUnorderedAccessOnTheGPU);
 
 	GpuMapOptions mapOptions = GpuMapOption::Write;
 	if(noOverwrite)
@@ -556,7 +556,7 @@ void TextureUtility::Read(const SPtr<Texture>& texture, PixelData& destination, 
 		return;
 	}
 
-	const bool supportsGPUWrites = (textureProperties.Usage & TU_LOADSTORE) != 0;
+	const bool supportsGPUWrites = textureProperties.Usage.IsSetAny(TextureUsageFlag::AllowUnorderedAccessOnTheGPU);
 
 	GpuQueue& transferGpuQueue = gpuQueue != nullptr ? *gpuQueue : *texture->GetDevice().GetQueue(GQT_GRAPHICS, 0);
 

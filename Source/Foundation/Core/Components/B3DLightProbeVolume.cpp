@@ -464,7 +464,7 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 			cubemapDesc.Format = PF_RGBA16F;
 			cubemapDesc.Width = 256; // Note: Test different sizes and their effect on quality
 			cubemapDesc.Height = 256;
-			cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+			cubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 			SPtr<Texture> cubemap = gpuDevice->CreateTexture(cubemapDesc);
 
@@ -654,7 +654,7 @@ void LightProbeVolume::ResizeCoefficientTexture(u32 count)
 	desc.Name = "LightProbeVolume coefficients";
 	desc.Width = (u32)texSize.X;
 	desc.Height = (u32)texSize.Y;
-	desc.Usage = TU_LOADSTORE | TU_RENDERTARGET;
+	desc.Usage = TextureUsageFlag::AllowUnorderedAccessOnTheGPU | TextureUsageFlag::RenderTarget;
 	desc.Format = PF_RGBA32F;
 
 	mCoefficients = gpuDevice->CreateTexture(desc);

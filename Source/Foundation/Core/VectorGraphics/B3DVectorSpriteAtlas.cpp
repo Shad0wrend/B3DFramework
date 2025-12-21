@@ -231,7 +231,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		colorTextureCreateInformation.Width = entry.Size.Width;
 		colorTextureCreateInformation.Height = entry.Size.Height;
 		colorTextureCreateInformation.Format = PF_RGBA8;
-		colorTextureCreateInformation.Usage = TU_RENDERTARGET;
+		colorTextureCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 
 		const SPtr<render::Texture> colorTexture = gpuDevice->CreateTexture(colorTextureCreateInformation);
 
@@ -239,7 +239,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		stencilTextureCreateInformation.Width = entry.Size.Width;
 		stencilTextureCreateInformation.Height = entry.Size.Height;
 		stencilTextureCreateInformation.Format = PF_D32_S8X24;
-		stencilTextureCreateInformation.Usage = TU_DEPTHSTENCIL;
+		stencilTextureCreateInformation.Usage = TextureUsageFlag::DepthStencil;
 
 		const SPtr<render::Texture> stencilTexture = gpuDevice->CreateTexture(stencilTextureCreateInformation);
 
@@ -303,7 +303,7 @@ HTexture GUIVectorSpriteAtlas::CreateOrFindTexture(Size2UI size) const
 		textureCreateInformation.Width = size.Width;
 		textureCreateInformation.Height = size.Height;
 		textureCreateInformation.Format = PF_RGBA8;
-		textureCreateInformation.Usage = TU_RENDERTARGET;
+		textureCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 		textureCreateInformation.Name = "VectorPathAtlas";
 
 		HTexture texture = Texture::Create(textureCreateInformation);

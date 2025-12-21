@@ -28,7 +28,7 @@ namespace b3d
 			u32 FaceCount = 1; /**< Number of faces (array slices, or cube-map faces). */
 			u32 DepthSliceCount = 1; /**< Number of depth slices (only relevant for 3D textures). */
 			u32 MipLevelCount = 1; /**< Number of mipmap levels per face. */
-			u32 Usage = 0; /** Determines how will the image be used. */
+			TextureUsageFlags Usage; /** Determines how will the image be used. */
 		};
 
 		/** Wrapper around VkImageView. */
@@ -219,7 +219,7 @@ namespace b3d
 			VmaAllocation mAllocation;
 			VulkanImageView mMainView;
 			VulkanImageView mFramebufferMainView;
-			i32 mUsage;
+			TextureUsageFlags mUsage;
 			void* mMappedMemory = nullptr;
 			bool mOwnsImage;
 			bool mIsShaderReadAllowed = true;

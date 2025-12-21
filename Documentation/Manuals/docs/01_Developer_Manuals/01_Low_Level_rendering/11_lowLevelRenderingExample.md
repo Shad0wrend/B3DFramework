@@ -150,7 +150,7 @@ TextureCreateInformation colorAttachmentInformation;
 colorAttachmentInformation.Width = 1280;
 colorAttachmentInformation.Height = 720;
 colorAttachmentInformation.Format = PF_RGBA8;
-colorAttachmentInformation.Usage = TU_RENDERTARGET;
+colorAttachmentInformation.Usage = TextureUsageFlag::RenderTarget;
 
 SPtr<Texture> colorAttachment = gpuDevice->CreateTexture(colorAttachmentInformation);
 
@@ -158,7 +158,7 @@ TextureCreateInformation depthAttachmentInformation;
 depthAttachmentInformation.Width = 1280;
 depthAttachmentInformation.Height = 720;
 depthAttachmentInformation.Format = PF_D32;
-depthAttachmentInformation.Usage = TU_DEPTHSTENCIL;
+depthAttachmentInformation.Usage = TextureUsageFlag::DepthStencil;
 
 SPtr<Texture> depthAttachment = gpuDevice->CreateTexture(depthAttachmentInformation);
 

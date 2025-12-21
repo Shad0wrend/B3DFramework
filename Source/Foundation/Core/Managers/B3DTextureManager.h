@@ -46,7 +46,7 @@ namespace b3d
 		 *
 		 * @note	Thread safe.
 		 */
-		virtual PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) = 0;
+		virtual PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, TextureUsageFlags usage, bool hwGamma) = 0;
 
 	protected:
 		/**

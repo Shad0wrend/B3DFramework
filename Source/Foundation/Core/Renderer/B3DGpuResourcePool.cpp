@@ -53,11 +53,11 @@ SPtr<PooledRenderTexture> GpuResourcePool::Get(const PooledRenderTextureCreateIn
 
 	newTexture->Texture = mDevice->CreateTexture(textureCreateInformation);
 
-	if((desc.flag & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0)
+	if(desc.flag.IsSetAny(TextureUsageFlag::RenderTarget | TextureUsageFlag::DepthStencil))
 	{
 		RenderTextureCreateInformation rtDesc;
 
-		if((desc.flag & TU_RENDERTARGET) != 0)
+		if(desc.flag.IsSet(TextureUsageFlag::RenderTarget))
 		{
 			rtDesc.ColorSurfaces[0].Texture = newTexture->Texture;
 			rtDesc.ColorSurfaces[0].Face = 0;
@@ -65,7 +65,7 @@ SPtr<PooledRenderTexture> GpuResourcePool::Get(const PooledRenderTextureCreateIn
 			rtDesc.ColorSurfaces[0].MipLevel = 0;
 		}
 
-		if((desc.flag & TU_DEPTHSTENCIL) != 0)
+		if(desc.flag.IsSet(TextureUsageFlag::DepthStencil))
 		{
 			rtDesc.DepthStencilSurface.Texture = newTexture->Texture;
 			rtDesc.DepthStencilSurface.Face = 0;
@@ -213,7 +213,7 @@ bool GpuResourcePool::Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAG
 	return match;
 }
 
-PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create2D(PixelFormat format, u32 width, u32 height, i32 usage, u32 samples, bool hwGamma, u32 arraySize, u32 mipCount)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create2D(PixelFormat format, u32 width, u32 height, TextureUsageFlags usage, u32 samples, bool hwGamma, u32 arraySize, u32 mipCount)
 {
 	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
@@ -221,7 +221,7 @@ PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Creat
 	desc.depth = 1;
 	desc.format = format;
 	desc.numSamples = samples;
-	desc.flag = (TextureUsage)usage;
+	desc.flag = usage;
 	desc.hwGamma = hwGamma;
 	desc.type = TEX_TYPE_2D;
 	desc.arraySize = arraySize;
@@ -230,7 +230,7 @@ PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Creat
 	return desc;
 }
 
-PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Create3D(PixelFormat format, u32 width, u32 height, u32 depth, TextureUsageFlags usage)
 {
 	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
@@ -238,7 +238,7 @@ PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Creat
 	desc.depth = depth;
 	desc.format = format;
 	desc.numSamples = 1;
-	desc.flag = (TextureUsage)usage;
+	desc.flag = usage;
 	desc.hwGamma = false;
 	desc.type = TEX_TYPE_3D;
 	desc.arraySize = 1;
@@ -247,7 +247,7 @@ PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Creat
 	return desc;
 }
 
-PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::CreateCube(PixelFormat format, u32 width, u32 height, i32 usage, u32 arraySize)
+PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::CreateCube(PixelFormat format, u32 width, u32 height, TextureUsageFlags usage, u32 arraySize)
 {
 	PooledRenderTextureCreateInformation desc;
 	desc.width = width;
@@ -255,7 +255,7 @@ PooledRenderTextureCreateInformation PooledRenderTextureCreateInformation::Creat
 	desc.depth = 1;
 	desc.format = format;
 	desc.numSamples = 1;
-	desc.flag = (TextureUsage)usage;
+	desc.flag = usage;
 	desc.hwGamma = false;
 	desc.type = TEX_TYPE_CUBE_MAP;
 	desc.arraySize = arraySize;

@@ -989,7 +989,7 @@ void VulkanGpuCommandBuffer::CopyTextureToBuffer(const SPtr<Texture>& source, co
 	const ImageSubresourcePitch pitch = vulkanSource->GetPitchForSubresource(arrayLayer, mipLevel);
 
 	VkImageSubresourceRange range;
-	if((textureProperties.Usage & TU_DEPTHSTENCIL) != 0)
+	if(textureProperties.Usage.IsSet(TextureUsageFlag::DepthStencil))
 		range.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	else
 		range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;

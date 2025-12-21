@@ -38,7 +38,7 @@ SPtr<RenderTexture> VulkanTextureManager::CreateRenderTextureImpl(const RenderTe
 	return B3DMakeSharedFromExisting<VulkanRenderTexture>(tex);
 }
 
-PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma)
+PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, TextureUsageFlags usage, bool hwGamma)
 {
 	PixelUtility::CheckFormat(format, ttype, usage);
 
@@ -47,7 +47,6 @@ PixelFormat VulkanTextureManager::GetNativeFormat(TextureType ttype, PixelFormat
 
 	return format;
 }
-
 
 namespace b3d {
 namespace render {
@@ -72,14 +71,14 @@ void VulkanTextureManager::OnStartUp()
 		createInformation.Depth = entry.Depth;
 		createInformation.ArraySliceCount = entry.ArraySize;
 		createInformation.Format = PF_RGBA8;
-		createInformation.Usage = TU_STATIC | TU_MUTABLEFORMAT;
+		createInformation.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::MutableFormat;
 
 		createInformation.Name = "VulkanDummyRead";
 		mDummyReadTextures[idx] = std::static_pointer_cast<VulkanTexture>(mGpuDevice.CreateTexture(createInformation));
 		TextureUtility::Write(mDummyReadTextures[idx], *pixelData);
 
 		createInformation.Name = "VulkanDummyStorage";
-		createInformation.Usage = TU_LOADSTORE | TU_MUTABLEFORMAT;
+		createInformation.Usage = TextureUsageFlag::AllowUnorderedAccessOnTheGPU | TextureUsageFlag::MutableFormat;
 		mDummyStorageTextures[idx] = std::static_pointer_cast<VulkanTexture>(mGpuDevice.CreateTexture(createInformation));
 
 		idx++;

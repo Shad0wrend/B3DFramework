@@ -10,20 +10,20 @@
 using namespace b3d;
 using namespace b3d::render;
 
-PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
+PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, TextureUsageFlags usage, bool optimalTiling, bool hwGamma)
 {
 	// Check for any obvious issues first
 	PixelUtility::CheckFormat(format, texType, usage);
 
 	// Check actual device for format support
 	VkFormatFeatureFlags wantedFeatureFlags = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
-	if((usage & TU_RENDERTARGET) != 0)
+	if(usage.IsSet(TextureUsageFlag::RenderTarget))
 		wantedFeatureFlags |= VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
 
-	if((usage & TU_DEPTHSTENCIL) != 0)
+	if(usage.IsSet(TextureUsageFlag::DepthStencil))
 		wantedFeatureFlags |= VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-	if((usage & TU_LOADSTORE) != 0)
+	if(usage.IsSet(TextureUsageFlag::AllowUnorderedAccessOnTheGPU))
 		wantedFeatureFlags |= VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT;
 
 	VkFormatProperties props;
@@ -40,7 +40,7 @@ PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice&
 	{
 		const PixelFormat originalFormat = format;
 
-		if((usage & TU_DEPTHSTENCIL) != 0)
+		if(usage.IsSet(TextureUsageFlag::DepthStencil))
 		{
 			bool hasStencil = format == PF_D24S8 || format == PF_D32_S8X24;
 

@@ -189,7 +189,7 @@ void RenderTexture::Initialize()
 		{
 			SPtr<Texture> texture = mInformation.ColorSurfaces[i].Texture;
 
-			if((texture->GetProperties().Usage & TU_RENDERTARGET) == 0)
+			if(!texture->GetProperties().Usage.IsSet(TextureUsageFlag::RenderTarget))
 				B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
 
 			const TextureSurface textureSurface(mInformation.ColorSurfaces[i].MipLevel, 1, mInformation.ColorSurfaces[i].Face, mInformation.ColorSurfaces[i].FaceCount);
@@ -201,7 +201,7 @@ void RenderTexture::Initialize()
 	{
 		SPtr<Texture> texture = mInformation.DepthStencilSurface.Texture;
 
-		if((texture->GetProperties().Usage & TU_DEPTHSTENCIL) == 0)
+		if(!texture->GetProperties().Usage.IsSet(TextureUsageFlag::DepthStencil))
 			B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
 
 		const TextureSurface textureSurface(mInformation.DepthStencilSurface.MipLevel, 1, mInformation.DepthStencilSurface.Face, mInformation.DepthStencilSurface.FaceCount);

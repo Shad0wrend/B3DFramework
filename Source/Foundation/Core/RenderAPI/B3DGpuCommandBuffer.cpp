@@ -175,7 +175,7 @@ bool GpuCommandBuffer::CopyTexture(const SPtr<Texture>& source, const SPtr<Textu
 	const bool sourceHasMultipleSamples = sourceProperties.SampleCount > 1;
 	const bool destinationHasMultipleSamples = destinationProperties.SampleCount > 1;
 
-	if((sourceProperties.Usage & TU_DEPTHSTENCIL) != 0 || (destinationProperties.Usage & TU_DEPTHSTENCIL) != 0)
+	if(sourceProperties.Usage.IsSet(TextureUsageFlag::DepthStencil) || destinationProperties.Usage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		B3D_LOG(Error, RenderBackend, "Texture copy/resolve isn't supported for depth-stencil textures.");
 		return false;
@@ -238,7 +238,7 @@ bool GpuCommandBuffer::BlitTexture(const SPtr<Texture>& source, const SPtr<Textu
 		return false;
 	}
 
-	if((sourceProperties.Usage & TU_DEPTHSTENCIL) != 0 || (destinationProperties.Usage & TU_DEPTHSTENCIL) != 0)
+	if(sourceProperties.Usage.IsSet(TextureUsageFlag::DepthStencil) || destinationProperties.Usage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		B3D_LOG(Error, RenderBackend, "Texture blit isn't supported for depth-stencil textures.");
 		return false;

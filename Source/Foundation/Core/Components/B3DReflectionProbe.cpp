@@ -127,7 +127,7 @@ void ReflectionProbe::CaptureAndFilter()
 	cubemapDesc.Width = render::IBLUtility::kReflectionCubemapSize;
 	cubemapDesc.Height = render::IBLUtility::kReflectionCubemapSize;
 	cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
-	cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+	cubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 	mFilteredTexture = Texture::CreateShared(cubemapDesc);
 

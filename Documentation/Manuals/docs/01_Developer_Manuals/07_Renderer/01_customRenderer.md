@@ -445,7 +445,7 @@ Once you are done using the texture or buffer, call @b3d::render::GpuResourcePoo
 
 ~~~~~~~~~~~~~{.cpp}
 // An example creating a pooled render texture
-POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::create2D(PF_R8G8B8A8, 1024, 1024, TU_RENDERTARGET);
+POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::create2D(PF_R8G8B8A8, 1024, 1024, TextureUsageFlag::RenderTarget);
 SPtr<PooledRenderTexture> pooledRT = GpuResourcePool::instance().get(desc);
 
 RenderAPI::instance().setRenderTarget(pooledRT->renderTexture);

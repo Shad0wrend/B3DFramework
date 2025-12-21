@@ -363,7 +363,7 @@ namespace b3d
 			: mLayout(0, 0, size, size, true), mLastUsedCounter(0)
 		{
 			mAtlas = GpuResourcePool::Instance().Get(
-				PooledRenderTextureCreateInformation::Create2D(kShadowMapFormat, size, size, TU_DEPTHSTENCIL));
+				PooledRenderTextureCreateInformation::Create2D(kShadowMapFormat, size, size, TextureUsageFlag::DepthStencil));
 		}
 
 		bool ShadowMapAtlas::AddMap(u32 size, Area2I& area, u32 border)
@@ -416,7 +416,7 @@ namespace b3d
 			: ShadowMapBase(size)
 		{
 			mShadowMap = GpuResourcePool::Instance().Get(
-				PooledRenderTextureCreateInformation::CreateCube(kShadowMapFormat, size, size, TU_DEPTHSTENCIL));
+				PooledRenderTextureCreateInformation::CreateCube(kShadowMapFormat, size, size, TextureUsageFlag::DepthStencil));
 		}
 
 		SPtr<RenderTexture> ShadowCubemap::GetTarget() const
@@ -427,7 +427,7 @@ namespace b3d
 		ShadowCascadedMap::ShadowCascadedMap(u32 size, u32 numCascades)
 			: ShadowMapBase(size), mNumCascades(numCascades), mTargets(numCascades), mShadowInfos(numCascades)
 		{
-			mShadowMap = GpuResourcePool::Instance().Get(PooledRenderTextureCreateInformation::Create2D(kShadowMapFormat, size, size, TU_DEPTHSTENCIL, 0, false, numCascades));
+			mShadowMap = GpuResourcePool::Instance().Get(PooledRenderTextureCreateInformation::Create2D(kShadowMapFormat, size, size, TextureUsageFlag::DepthStencil, 0, false, numCascades));
 
 			RenderTextureCreateInformation rtDesc;
 			rtDesc.DepthStencilSurface.Texture = mShadowMap->Texture;

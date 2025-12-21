@@ -2051,12 +2051,12 @@ bool PixelUtility::IsDepth(PixelFormat format)
 	return (PixelUtility::GetFlags(format) & PFF_DEPTH) > 0;
 }
 
-bool PixelUtility::CheckFormat(PixelFormat& format, TextureType textureType, int usage)
+bool PixelUtility::CheckFormat(PixelFormat& format, TextureType textureType, TextureUsageFlags usage)
 {
 	// First check just the usage since it's the most limiting factor
 
 	//// Depth-stencil only supports depth formats
-	if((usage & TU_DEPTHSTENCIL) != 0)
+	if(usage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		if(IsDepth(format))
 			return true;
@@ -2066,7 +2066,7 @@ bool PixelUtility::CheckFormat(PixelFormat& format, TextureType textureType, int
 	}
 
 	//// Render targets support everything but compressed & depth-stencil formats
-	if((usage & TU_RENDERTARGET) != 0)
+	if(usage.IsSet(TextureUsageFlag::RenderTarget))
 	{
 		if(!IsDepth(format) && !IsCompressed(format))
 			return true;
@@ -2076,7 +2076,7 @@ bool PixelUtility::CheckFormat(PixelFormat& format, TextureType textureType, int
 	}
 
 	//// Load-store textures support everything but compressed & depth-stencil formats
-	if((usage & TU_LOADSTORE) != 0)
+	if(usage.IsSet(TextureUsageFlag::AllowUnorderedAccessOnTheGPU))
 	{
 		if(!IsDepth(format) && !IsCompressed(format))
 			return true;

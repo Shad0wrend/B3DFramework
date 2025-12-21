@@ -165,9 +165,9 @@ SPtr<Resource> FreeImgImporter::Import(const Path& filePath, SPtr<const ImportOp
 			numMips = std::min(maxPossibleMip, textureImportOptions->MaxMip);
 	}
 
-	int usage = TU_DEFAULT;
+	TextureUsageFlags usage = TextureUsageFlag::Default;
 	if(textureImportOptions->CpuCached)
-		usage |= TU_CPUCACHED;
+		usage |= TextureUsageFlag::CPUCached;
 
 	const bool sRGB = textureImportOptions->SRgb;
 	const String fileName = filePath.GetFilename(false);

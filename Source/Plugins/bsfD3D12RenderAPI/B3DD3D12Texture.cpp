@@ -115,7 +115,7 @@ void D3D12Texture::CreateTexture()
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
 	// Set resource flags based on usage
-	if ((props.Usage & TU_RENDER_TARGET) != 0)
+	if (props.Usage.IsSet(TextureUsageFlag::RenderTarget))
 	{
 		if (PixelUtility::IsDepth(props.Format))
 			resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -123,14 +123,14 @@ void D3D12Texture::CreateTexture()
 			resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	}
 
-	if ((props.Usage & TU_STORAGE) != 0)
+	if (props.Usage.IsSet(TextureUsageFlag::AllowUnorderedAccessOnTheGPU))
 	{
 		resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
 	// Determine initial state
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON;
-	if ((props.Usage & TU_RENDER_TARGET) != 0)
+	if (props.Usage.IsSet(TextureUsageFlag::RenderTarget))
 	{
 		if (PixelUtility::IsDepth(props.Format))
 			initialState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
@@ -150,7 +150,7 @@ void D3D12Texture::CreateTexture()
 	D3D12_CLEAR_VALUE clearValue = {};
 	D3D12_CLEAR_VALUE* pClearValue = nullptr;
 
-	if ((props.Usage & TU_RENDER_TARGET) != 0)
+	if (props.Usage.IsSet(TextureUsageFlag::RenderTarget))
 	{
 		clearValue.Format = mDXGIFormat;
 		if (PixelUtility::IsDepth(props.Format))

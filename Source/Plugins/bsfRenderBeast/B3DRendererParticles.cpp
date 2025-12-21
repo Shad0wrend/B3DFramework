@@ -329,7 +329,7 @@ ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(u32 s
 	textureCreateInformation.Type = TEX_TYPE_2D;
 	textureCreateInformation.Width = size;
 	textureCreateInformation.Height = size;
-	textureCreateInformation.Usage = TU_DYNAMIC;
+	textureCreateInformation.Usage = TextureUsageFlag::StoreOnCPUWithGPUAccess;
 
 	textureCreateInformation.Format = PF_RGBA32F;
 	output->PositionAndRotation = gpuDevice->CreateTexture(textureCreateInformation);
@@ -362,7 +362,7 @@ ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(u32 size)
 	texDesc.Type = TEX_TYPE_2D;
 	texDesc.Width = size;
 	texDesc.Height = size;
-	texDesc.Usage = TU_DYNAMIC;
+	texDesc.Usage = TextureUsageFlag::StoreOnCPUWithGPUAccess;
 
 	texDesc.Format = PF_RGBA32F;
 	texDesc.Name = "Particle Mesh Position";

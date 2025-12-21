@@ -298,13 +298,13 @@ textureCreateInformation.Height = 1024;
 textureCreateInformation.Format = PF_RGBA8;
 
 // Set usage flags
-textureCreateInformation.Usage = TU_STATIC; // Default, not often updated
+textureCreateInformation.Usage = TextureUsageFlag::StoreOnGPU; // Default, not often updated
 // or
-textureCreateInformation.Usage = TU_DYNAMIC; // Frequently updated from CPU
+textureCreateInformation.Usage = TextureUsageFlag::StoreOnCPUWithGPUAccess; // Frequently updated from CPU
 // or
-textureCreateInformation.Usage = TU_RENDERTARGET; // Can be rendered to by GPU
+textureCreateInformation.Usage = TextureUsageFlag::RenderTarget; // Can be rendered to by GPU
 // or
-textureCreateInformation.Usage = TU_CPUCACHED; // Keep copy in system memory
+textureCreateInformation.Usage = TextureUsageFlag::CPUCached; // Keep copy in system memory
 
 HTexture texture = Texture::Create(textureCreateInformation);
 ~~~~~~~~~~~~~

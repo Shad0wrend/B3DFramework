@@ -26,7 +26,7 @@ static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, V
 	desc.DepthSliceCount = props.Depth;
 	desc.MipLevelCount = props.MipMapCount + 1;
 	desc.Layout = layout;
-	desc.Usage = (u32)props.Usage;
+	desc.Usage = props.Usage;
 
 	return desc;
 }
@@ -70,7 +70,7 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateIn
 	TextureSurface completeSurface(0, 0, 0, 0);
 
 	// For depth stencil attachments we need a special view for shader reads and for framebuffer attachment, so we create two main views
-	if((mUsage & TU_DEPTHSTENCIL) != 0)
+	if(mUsage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		mFramebufferMainView = CreateView(completeSurface, createInformation.Format, GetAspectFlags(), true);
 		mMainView = CreateView(completeSurface, createInformation.Format, VK_IMAGE_ASPECT_DEPTH_BIT, false);
@@ -78,7 +78,7 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateIn
 	else
 	{
 		// For 3D render attachments we also require a special view for framebuffer attachments
-		if(mDepthSliceCount > 1 && (mUsage & TU_RENDERTARGET) != 0)
+		if(mDepthSliceCount > 1 && mUsage.IsSet(TextureUsageFlag::RenderTarget))
 			mFramebufferMainView = CreateView(completeSurface, createInformation.Format, VK_IMAGE_ASPECT_COLOR_BIT, true);
 
 		// For all other cases (non-framebuffer attachment, or a non-3D non-depth-stencil attachment) regular view will suffice.
@@ -123,7 +123,7 @@ VulkanImage::~VulkanImage()
 
 void VulkanImage::Destroy()
 {
-	const bool isUsedAsRenderTarget = (mUsage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0;
+	const bool isUsedAsRenderTarget = mUsage.IsSetAny(TextureUsageFlag::RenderTarget | TextureUsageFlag::DepthStencil);
 	if(isUsedAsRenderTarget && VulkanFramebufferCache::IsStarted())
 	{
 		VulkanFramebufferCache::Instance().NotifyImageDestroyed(*this);
@@ -153,10 +153,10 @@ VulkanImageView VulkanImage::GetView(bool isPartOfFramebuffer) const
 {
 	if(isPartOfFramebuffer)
 	{
-		if((mUsage & TU_DEPTHSTENCIL) != 0)
+		if(mUsage.IsSetAny(TextureUsageFlag::DepthStencil))
 			return mFramebufferMainView;
 
-		if(mDepthSliceCount > 1 && (mUsage & TU_RENDERTARGET) != 0)
+		if(mDepthSliceCount > 1 && mUsage.IsSet(TextureUsageFlag::RenderTarget))
 			return mFramebufferMainView;
 	}
 
@@ -186,14 +186,14 @@ VulkanImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surf
 		// cases we're free to use the regular view.
 		const bool isFramebufferFieldMatching =
 			isPartOfFrameBuffer == entry.IsPartOfFramebuffer ||
-			((mUsage & TU_DEPTHSTENCIL) == 0 && ((mUsage & TU_RENDERTARGET) == 0 || mDepthSliceCount <= 1));
+			(!mUsage.IsSet(TextureUsageFlag::DepthStencil) && (!mUsage.IsSet(TextureUsageFlag::RenderTarget) || mDepthSliceCount <= 1));
 
 		if(explicitSurface == entry.Surface && format == entry.Format && isFramebufferFieldMatching)
 			return entry.View;
 	}
 
 	VulkanImageView view;
-	if((mUsage & TU_DEPTHSTENCIL) != 0)
+	if(mUsage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		if(isPartOfFrameBuffer)
 			view = CreateView(explicitSurface, format, GetAspectFlags(), isPartOfFrameBuffer);
@@ -317,7 +317,7 @@ const TextureSurface& VulkanImage::CalculateExplicitSurface(TextureSurface& surf
 
 VkImageAspectFlags VulkanImage::GetAspectFlags() const
 {
-	if((mUsage & TU_DEPTHSTENCIL) != 0)
+	if(mUsage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		bool hasStencil = mImageViewCI.format == VK_FORMAT_D16_UNORM_S8_UINT ||
 			mImageViewCI.format == VK_FORMAT_D24_UNORM_S8_UINT ||
@@ -467,20 +467,20 @@ VkAccessFlags VulkanImage::GetAccessFlags(VkImageLayout layout, bool readOnly)
 	case VK_IMAGE_LAYOUT_GENERAL:
 		{
 			accessFlags = VK_ACCESS_SHADER_READ_BIT;
-			if((mUsage & TU_LOADSTORE) != 0)
+			if(mUsage.IsSet(TextureUsageFlag::AllowUnorderedAccessOnTheGPU))
 			{
 				if(!readOnly)
 					accessFlags |= VK_ACCESS_SHADER_WRITE_BIT;
 			}
 
-			if((mUsage & TU_RENDERTARGET) != 0)
+			if(mUsage.IsSet(TextureUsageFlag::RenderTarget))
 			{
 				accessFlags |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
 
 				if(!readOnly)
 					accessFlags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 			}
-			else if((mUsage & TU_DEPTHSTENCIL) != 0)
+			else if(mUsage.IsSet(TextureUsageFlag::DepthStencil))
 			{
 				accessFlags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
 
@@ -733,7 +733,7 @@ void VulkanTexture::Initialize()
 	case TEX_TYPE_3D:
 		mImageCreateInformation.imageType = VK_IMAGE_TYPE_3D;
 
-		if((mProperties.Usage & TU_RENDERTARGET) != 0)
+		if(mProperties.Usage.IsSet(TextureUsageFlag::RenderTarget))
 			mImageCreateInformation.flags |= VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 
 		break;
@@ -748,19 +748,19 @@ void VulkanTexture::Initialize()
 
 	mImageCreateInformation.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
-	int usage = props.Usage;
-	if((usage & TU_RENDERTARGET) != 0)
+	TextureUsageFlags usage = props.Usage;
+	if(usage.IsSet(TextureUsageFlag::RenderTarget))
 	{
 		mImageCreateInformation.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		mSupportsGPUWrites = true;
 	}
-	else if((usage & TU_DEPTHSTENCIL) != 0)
+	else if(usage.IsSet(TextureUsageFlag::DepthStencil))
 	{
 		mImageCreateInformation.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 		mSupportsGPUWrites = true;
 	}
 
-	if((usage & TU_LOADSTORE) != 0)
+	if(usage.IsSet(TextureUsageFlag::AllowUnorderedAccessOnTheGPU))
 	{
 		mImageCreateInformation.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
 		mSupportsGPUWrites = true;
@@ -768,7 +768,7 @@ void VulkanTexture::Initialize()
 
 	VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL;
 	VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
-	if((usage & TU_DYNAMIC) != 0) // Attempt to use linear tiling for dynamic textures, so we can directly map and modify them
+	if(usage.IsSet(TextureUsageFlag::StoreOnCPUWithGPUAccess)) // Attempt to use linear tiling for dynamic textures, so we can directly map and modify them
 	{
 		// Only support 2D textures, with one sample and one mip level, only used for shader reads
 		// (Optionally check vkGetPhysicalDeviceFormatProperties & vkGetPhysicalDeviceImageFormatProperties for
@@ -786,7 +786,7 @@ void VulkanTexture::Initialize()
 		}
 	}
 
-	if((usage & TU_MUTABLEFORMAT) != 0)
+	if(usage.IsSet(TextureUsageFlag::MutableFormat))
 		mImageCreateInformation.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 
 	u32 width = mProperties.Width;
@@ -1011,7 +1011,7 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& command
 	subresourceRange.baseMipLevel = sourceMipLevel;
 	subresourceRange.levelCount = 1;
 
-	if((mProperties.Usage & TU_DEPTHSTENCIL) != 0)
+	if(mProperties.Usage.IsSet(TextureUsageFlag::DepthStencil))
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	else
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;

@@ -24,7 +24,7 @@ namespace b3d
 		{
 		public:
 			/**	Finds the closest pixel format that a specific Vulkan device supports. */
-			static PixelFormat GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma);
+			static PixelFormat GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, TextureUsageFlags usage, bool optimalTiling, bool hwGamma);
 
 			/** Converts between framework's and Vulkan pixel format. */
 			static VkFormat GetPixelFormat(PixelFormat format, bool sRGB = false);

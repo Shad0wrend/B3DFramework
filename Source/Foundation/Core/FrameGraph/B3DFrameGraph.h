@@ -85,7 +85,7 @@ namespace b3d::render
 	 * bloomCreateInfo.Width = 1920;
 	 * bloomCreateInfo.Height = 1080;
 	 * bloomCreateInfo.Format = PF_RGBA16F;
-	 * bloomCreateInfo.Usage = TU_RENDERTARGET;
+	 * bloomCreateInfo.Usage = TextureUsageFlag::RenderTarget;
 	 *
 	 * auto bloomTexture = graph.DeclareTransientTexture("Bloom", bloomCreateInfo);
 	 *
@@ -260,7 +260,7 @@ namespace b3d::render
 	 * bloomInfo.Width = 1920;
 	 * bloomInfo.Height = 1080;
 	 * bloomInfo.Format = PF_RGBA16F;
-	 * bloomInfo.Usage = TU_RENDERTARGET;
+	 * bloomInfo.Usage = TextureUsageFlag::RenderTarget;
 	 * auto bloomTexture = graph.DeclareTransientTexture("Bloom", bloomInfo);
 	 *
 	 * // 3. Declare passes (can be in any order - will be sorted automatically)

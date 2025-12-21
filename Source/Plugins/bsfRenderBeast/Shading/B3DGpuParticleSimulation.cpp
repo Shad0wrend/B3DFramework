@@ -43,14 +43,14 @@ GpuParticleResources::GpuParticleResources()
 	positionAndTimeDesc.Format = PF_RGBA32F;
 	positionAndTimeDesc.Width = GpuParticleConstants::kTexSize;
 	positionAndTimeDesc.Height = GpuParticleConstants::kTexSize;
-	positionAndTimeDesc.Usage = TU_RENDERTARGET;
+	positionAndTimeDesc.Usage = TextureUsageFlag::RenderTarget;
 
 	TextureCreateInformation velocityDesc;
 	velocityDesc.Name = "GPU Particles Velocity";
 	velocityDesc.Format = PF_RGBA16F;
 	velocityDesc.Width = GpuParticleConstants::kTexSize;
 	velocityDesc.Height = GpuParticleConstants::kTexSize;
-	velocityDesc.Usage = TU_RENDERTARGET;
+	velocityDesc.Usage = TextureUsageFlag::RenderTarget;
 
 	for(u32 i = 0; i < 2; i++)
 	{
@@ -63,7 +63,7 @@ GpuParticleResources::GpuParticleResources()
 	sizeAndRotationDesc.Format = PF_RGBA16F;
 	sizeAndRotationDesc.Width = GpuParticleConstants::kTexSize;
 	sizeAndRotationDesc.Height = GpuParticleConstants::kTexSize;
-	sizeAndRotationDesc.Usage = TU_RENDERTARGET;
+	sizeAndRotationDesc.Usage = TextureUsageFlag::RenderTarget;
 
 	mStaticTextures.SizeAndRotationTex = gpuDevice->CreateTexture(sizeAndRotationDesc);
 
@@ -1043,7 +1043,7 @@ GpuParticleCurves::GpuParticleCurves()
 	textureCreateInformation.Format = PF_RGBA16F;
 	textureCreateInformation.Width = kTexSize;
 	textureCreateInformation.Height = kTexSize;
-	textureCreateInformation.Usage = TU_RENDERTARGET;
+	textureCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 
 	mCurveTexture = gpuDevice->CreateTexture(textureCreateInformation);
 

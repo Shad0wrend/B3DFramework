@@ -89,7 +89,7 @@ PooledRenderTextureCreateInformation DownsampleMaterial::GetOutputDesc(const SPt
 	u32 width = std::max(1, Math::CeilToInt(rtProps.Width * 0.5f));
 	u32 height = std::max(1, Math::CeilToInt(rtProps.Height * 0.5f));
 
-	return PooledRenderTextureCreateInformation::Create2D(rtProps.Format, width, height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(rtProps.Format, width, height, TextureUsageFlag::RenderTarget);
 }
 
 DownsampleMaterial* DownsampleMaterial::GetVariation(u32 quality, bool msaa)
@@ -160,7 +160,7 @@ PooledRenderTextureCreateInformation EyeAdaptHistogramMaterial::GetOutputDesc(co
 	Vector2I threadGroupCount = GetThreadGroupCount(target);
 	u32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, kHistogramNumTexels, numHistograms, TU_LOADSTORE);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, kHistogramNumTexels, numHistograms, TextureUsageFlag::AllowUnorderedAccessOnTheGPU);
 }
 
 Vector2I EyeAdaptHistogramMaterial::GetThreadGroupCount(const SPtr<Texture>& target)
@@ -234,7 +234,7 @@ void EyeAdaptHistogramReduceMaterial::Execute(GpuCommandBuffer& commandBuffer, c
 
 PooledRenderTextureCreateInformation EyeAdaptHistogramReduceMaterial::GetOutputDesc()
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, EyeAdaptHistogramMaterial::kHistogramNumTexels, 2, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, EyeAdaptHistogramMaterial::kHistogramNumTexels, 2, TextureUsageFlag::RenderTarget);
 }
 
 EyeAdaptationUniformDefinition gEyeAdaptationUniformDefinition;
@@ -276,7 +276,7 @@ void EyeAdaptationMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<
 
 PooledRenderTextureCreateInformation EyeAdaptationMaterial::GetOutputDesc()
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_R32F, 1, 1, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_R32F, 1, 1, TextureUsageFlag::RenderTarget);
 }
 
 void EyeAdaptationMaterial::PopulateUniformBuffer(const GpuBufferMappedScope& uniforms, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
@@ -349,7 +349,7 @@ void EyeAdaptationBasicSetupMaterial::Execute(GpuCommandBuffer& commandBuffer, c
 PooledRenderTextureCreateInformation EyeAdaptationBasicSetupMaterial::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, props.Width, props.Height, TextureUsageFlag::RenderTarget);
 }
 
 EyeAdaptationBasicUniformDefinition gEyeAdaptationBasicUniformDefinition;
@@ -399,7 +399,7 @@ void EyeAdaptationBasicMaterial::Execute(GpuCommandBuffer& commandBuffer, const 
 
 PooledRenderTextureCreateInformation EyeAdaptationBasicMaterial::GetOutputDesc()
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_R32F, 1, 1, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_R32F, 1, 1, TextureUsageFlag::RenderTarget);
 }
 
 CreateTonemapLUTUniformDefinition gCreateTonemapLUTUniformDefinition;
@@ -480,7 +480,7 @@ void CreateTonemap2DLUTMaterial::PopulateWhiteBalanceUniformBuffer(const RenderS
 
 PooledRenderTextureCreateInformation CreateTonemap2DLUTMaterial::GetOutputDesc() const
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA8, kLutSize * kLutSize, kLutSize, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA8, kLutSize * kLutSize, kLutSize, TextureUsageFlag::RenderTarget);
 }
 
 void CreateTonemap3DLUTMaterial::Initialize()
@@ -517,7 +517,7 @@ void CreateTonemap3DLUTMaterial::Execute(GpuCommandBuffer& commandBuffer, const 
 
 PooledRenderTextureCreateInformation CreateTonemap3DLUTMaterial::GetOutputDesc() const
 {
-	return PooledRenderTextureCreateInformation::Create3D(PF_RGBA8, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, TU_LOADSTORE);
+	return PooledRenderTextureCreateInformation::Create3D(PF_RGBA8, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, CreateTonemap2DLUTMaterial::kLutSize, TextureUsageFlag::AllowUnorderedAccessOnTheGPU);
 }
 
 TonemappingUniformDefinition gTonemappingUniformDefinition;
@@ -909,7 +909,7 @@ void GaussianBlurMaterial::Execute(GpuCommandBuffer& commandBuffer, const SPtr<T
 	const TextureProperties& srcProps = source->GetProperties();
 	const RenderTargetProperties& dstProps = destination->GetProperties();
 
-	PooledRenderTextureCreateInformation tempTextureDesc = PooledRenderTextureCreateInformation::Create2D(srcProps.Format, dstProps.Width, dstProps.Height, TU_RENDERTARGET);
+	PooledRenderTextureCreateInformation tempTextureDesc = PooledRenderTextureCreateInformation::Create2D(srcProps.Format, dstProps.Width, dstProps.Height, TextureUsageFlag::RenderTarget);
 	SPtr<PooledRenderTexture> tempTexture = GetGpuResourcePool().Get(tempTextureDesc);
 
 	// Horizontal pass
@@ -1112,7 +1112,7 @@ void GaussianDOFSeparateMaterial::Execute(GpuCommandBuffer& commandBuffer, const
 	u32 outputWidth = std::max(1U, srcProps.Width / 2);
 	u32 outputHeight = std::max(1U, srcProps.Height / 2);
 
-	PooledRenderTextureCreateInformation outputTexDesc = PooledRenderTextureCreateInformation::Create2D(srcProps.Format, outputWidth, outputHeight, TU_RENDERTARGET);
+	PooledRenderTextureCreateInformation outputTexDesc = PooledRenderTextureCreateInformation::Create2D(srcProps.Format, outputWidth, outputHeight, TextureUsageFlag::RenderTarget);
 	mOutput0 = GetGpuResourcePool().Get(outputTexDesc);
 
 	bool near = mVariationParameters.GetBool("NEAR");
@@ -1294,7 +1294,7 @@ PooledRenderTextureCreateInformation BokehDOFPrepareMaterial::GetOutputDesc(cons
 	u32 width = std::max(1U, Math::DivideAndRoundUp(rtProps.Width, 2U));
 	u32 height = std::max(1U, Math::DivideAndRoundUp(rtProps.Height, 2U));
 
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TextureUsageFlag::RenderTarget);
 }
 
 BokehDOFPrepareMaterial* BokehDOFPrepareMaterial::GetVariation(bool msaa)
@@ -1467,7 +1467,7 @@ PooledRenderTextureCreateInformation BokehDOFMaterial::GetOutputDesc(const SPtr<
 	u32 width = rtProps.Width;
 	u32 height = rtProps.Height * 2 + kNearFarPadding;
 
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA16F, width, height, TextureUsageFlag::RenderTarget);
 }
 
 void BokehDOFMaterial::PopulateDofCommonParams(const GpuBufferMappedScope& uniforms, const DepthOfFieldSettings& settings, const RendererView& view)

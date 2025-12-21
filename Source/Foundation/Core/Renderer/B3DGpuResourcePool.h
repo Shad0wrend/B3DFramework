@@ -156,7 +156,7 @@ namespace b3d
 			 * @param[in]	mipCount	Number of mip levels, excluding the root mip level.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static PooledRenderTextureCreateInformation Create2D(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 samples = 0, bool hwGamma = false, u32 arraySize = 1, u32 mipCount = 0);
+			static PooledRenderTextureCreateInformation Create2D(PixelFormat format, u32 width, u32 height, TextureUsageFlags usage = TextureUsageFlag::Default, u32 samples = 0, bool hwGamma = false, u32 arraySize = 1, u32 mipCount = 0);
 
 			/**
 			 * Creates a descriptor for a three dimensional render texture.
@@ -168,7 +168,7 @@ namespace b3d
 			 * @param[in]	usage		Usage flags that control in which way is the texture going to be used.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static PooledRenderTextureCreateInformation Create3D(PixelFormat format, u32 width, u32 height, u32 depth, i32 usage = TU_STATIC);
+			static PooledRenderTextureCreateInformation Create3D(PixelFormat format, u32 width, u32 height, u32 depth, TextureUsageFlags usage = TextureUsageFlag::Default);
 
 			/**
 			 * Creates a descriptor for a cube render texture.
@@ -180,7 +180,7 @@ namespace b3d
 			 * @param[in]	arraySize	Number of textures in a texture array. Specify 1 for no array.
 			 * @return					Descriptor that is accepted by RenderTexturePool.
 			 */
-			static PooledRenderTextureCreateInformation CreateCube(PixelFormat format, u32 width, u32 height, i32 usage = TU_STATIC, u32 arraySize = 1);
+			static PooledRenderTextureCreateInformation CreateCube(PixelFormat format, u32 width, u32 height, TextureUsageFlags usage = TextureUsageFlag::Default, u32 arraySize = 1);
 
 		private:
 			friend class GpuResourcePool;
@@ -190,7 +190,7 @@ namespace b3d
 			u32 depth;
 			u32 numSamples;
 			PixelFormat format;
-			TextureUsage flag;
+			TextureUsageFlags flag;
 			TextureType type;
 			bool hwGamma;
 			u32 arraySize;

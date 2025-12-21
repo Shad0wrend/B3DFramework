@@ -15,7 +15,7 @@ namespace b3d
 	class VulkanTextureManager : public TextureManager
 	{
 	public:
-		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, TextureUsageFlags usage, bool hwGamma) override;
 
 	protected:
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RenderTextureCreateInformation& desc) override;

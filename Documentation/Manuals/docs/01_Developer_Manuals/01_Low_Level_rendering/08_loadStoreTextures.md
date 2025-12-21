@@ -10,7 +10,7 @@ We discussed textures in detail previously, but we haven't yet mentioned load-st
 
 They are also known as unordered-access textures, storage textures or random write textures. In HLSL these textures have a *RW* prefix, e.g. *RWTexture2D*, and in GLSL they have an *image* prefix, e.g. *image2D*.
 
-Creation of a load-store texture is essentially the same as for normal textures, except for the addition of the @b3d::TU_LOADSTORE usage flag.
+Creation of a load-store texture is essentially the same as for normal textures, except for the addition of the @b3d::TextureUsageFlag::AllowUnorderedAccessOnTheGPU usage flag.
 
 ~~~~~~~~~~~~~{.cpp}
 // Creates a 2D load-store texture, 128x128 with a 4-component 32-bit floating point format
@@ -19,7 +19,7 @@ createInformation.Type = TEX_TYPE_2D;
 createInformation.Width = 128;
 createInformation.Height = 128;
 createInformation.Format = PF_RGBA32F;
-createInformation.Usage = TU_LOADSTORE;
+createInformation.Usage = TextureUsageFlag::AllowUnorderedAccessOnTheGPU;
 
 SPtr<GpuDevice> gpuDevice = ...;
 SPtr<Texture> texture = gpuDevice->CreateTexture(createInformation);
@@ -72,7 +72,7 @@ render::TextureUtility::Write(texture, pixelData, 0, 0, TextureWriteFlag::Normal
 ~~~~~~~~~~~~~
 
 **TextureUtility::Write()** automatically chooses the optimal path:
-- For directly mappable textures (TU_DYNAMIC with LINEAR tiling): Uses **Map()** + **BulkPixelConversion**
+- For directly mappable textures (StoreOnCPUWithGPUAccess with LINEAR tiling): Uses **Map()** + **BulkPixelConversion**
 - For non-mappable textures: Uses staging buffer + **CopyBufferToTexture**
 
 ## Reading data
@@ -111,10 +111,10 @@ if (asyncOp.HasCompleted())
 
 ## Direct memory mapping
 
-For textures that support direct mapping (TU_DYNAMIC textures with LINEAR tiling), you can use @b3d::render::Texture::Map for direct CPU access:
+For textures that support direct mapping (StoreOnCPUWithGPUAccess textures with LINEAR tiling), you can use @b3d::render::Texture::Map for direct CPU access:
 
 ~~~~~~~~~~~~~{.cpp}
-SPtr<render::Texture> texture = ...; // Must be TU_DYNAMIC
+SPtr<render::Texture> texture = ...; // Must be StoreOnCPUWithGPUAccess
 
 // Map returns RAII scope that auto-flushes on destruction
 {

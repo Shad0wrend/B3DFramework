@@ -713,7 +713,7 @@ SurfaceFormat VulkanGpuDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, boo
 	output.ColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
 	output.ColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
-	PixelFormat depthFormat = VulkanUtility::GetClosestSupportedPixelFormat(*this, PF_D24S8, TEX_TYPE_2D, TU_DEPTHSTENCIL, true, false);
+	PixelFormat depthFormat = VulkanUtility::GetClosestSupportedPixelFormat(*this, PF_D24S8, TEX_TYPE_2D, TextureUsageFlag::DepthStencil, true, false);
 
 	output.DepthFormat = VulkanUtility::GetPixelFormat(depthFormat);
 

@@ -143,7 +143,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 	VulkanImageCreateInformation imageDesc;
 	imageDesc.Format = colorFormat;
 	imageDesc.Type = TEX_TYPE_2D;
-	imageDesc.Usage = TU_RENDERTARGET;
+	imageDesc.Usage = TextureUsageFlag::RenderTarget;
 	imageDesc.Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageDesc.FaceCount = 1;
 	imageDesc.MipLevelCount = 1;
@@ -197,7 +197,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 		B3D_ASSERT(result == VK_SUCCESS);
 
 		imageDesc.Image = depthStencilImage;
-		imageDesc.Usage = TU_DEPTHSTENCIL;
+		imageDesc.Usage = TextureUsageFlag::DepthStencil;
 		imageDesc.Format = depthFormat;
 		imageDesc.Allocation = device.AllocateMemory(depthStencilImage, VMA_MEMORY_USAGE_GPU_ONLY);
 

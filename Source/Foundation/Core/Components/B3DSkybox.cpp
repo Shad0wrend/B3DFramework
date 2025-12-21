@@ -110,7 +110,7 @@ void Skybox::FilterTexture()
 		cubemapDesc.Width = render::IBLUtility::kReflectionCubemapSize;
 		cubemapDesc.Height = render::IBLUtility::kReflectionCubemapSize;
 		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
-		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+		cubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 		mFilteredRadiance = Texture::CreateShared(cubemapDesc);
 	}
@@ -123,7 +123,7 @@ void Skybox::FilterTexture()
 		irradianceCubemapDesc.Width = render::IBLUtility::kIrradianceCubemapSize;
 		irradianceCubemapDesc.Height = render::IBLUtility::kIrradianceCubemapSize;
 		irradianceCubemapDesc.MipMapCount = 0;
-		irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+		irradianceCubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 		mIrradiance = Texture::CreateShared(irradianceCubemapDesc);
 	}

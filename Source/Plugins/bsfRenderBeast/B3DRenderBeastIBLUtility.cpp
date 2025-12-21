@@ -206,7 +206,7 @@ void IrradianceComputeSHFragMaterial::Execute(GpuCommandBuffer& commandBuffer, c
 PooledRenderTextureCreateInformation IrradianceComputeSHFragMaterial::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
-	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA16F, props.Width, props.Height, TextureUsageFlag::RenderTarget);
 }
 
 IrradianceAccumulateSHUniformDefinition gIrradianceAccumulateSHUniformDefinition;
@@ -248,7 +248,7 @@ PooledRenderTextureCreateInformation IrradianceAccumulateSHMaterial::GetOutputDe
 	// Assuming it's a cubemap
 	u32 size = std::max(1U, (u32)(props.Width * 0.5f));
 
-	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA32F, size, size, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::CreateCube(PF_RGBA32F, size, size, TextureUsageFlag::RenderTarget);
 }
 
 void IrradianceAccumulateCubeSHMaterial::Initialize()
@@ -297,7 +297,7 @@ void IrradianceAccumulateCubeSHMaterial::Execute(GpuCommandBuffer& commandBuffer
 
 PooledRenderTextureCreateInformation IrradianceAccumulateCubeSHMaterial::GetOutputDesc()
 {
-	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA32F, 9, 1, TU_RENDERTARGET);
+	return PooledRenderTextureCreateInformation::Create2D(PF_RGBA32F, 9, 1, TextureUsageFlag::RenderTarget);
 }
 
 IrradianceReduceSHUniformDefinition gIrradianceReduceSHUniformDefinition;
@@ -339,7 +339,7 @@ SPtr<Texture> IrradianceReduceSHMaterial::CreateOutputTexture(u32 numCoeffSets)
 	textureDesc.Width = (u32)size.X;
 	textureDesc.Height = (u32)size.Y;
 	textureDesc.Format = PF_RGBA32F;
-	textureDesc.Usage = TU_STATIC | TU_LOADSTORE;
+	textureDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::AllowUnorderedAccessOnTheGPU;
 
 	return mGpuDevice->CreateTexture(textureDesc);
 }
@@ -394,7 +394,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBu
 		cubemapDesc.Width = props.Width;
 		cubemapDesc.Height = props.Height;
 		cubemapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
-		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+		cubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 		scratchCubemap = gpuDevice->CreateTexture(cubemapDesc);
 	}
@@ -540,7 +540,7 @@ void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const 
 		cubemapDesc.Width = mipSize;
 		cubemapDesc.Height = mipSize;
 		cubemapDesc.MipMapCount = numDownsamples - 1;
-		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
+		cubemapDesc.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::RenderTarget;
 
 		scratchTex = gpuDevice->CreateTexture(cubemapDesc);
 

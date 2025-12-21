@@ -7,7 +7,7 @@ When we talked about how to set up a **Camera** component we have shown that we 
 We call rendering to a texture offscreen rendering. By rendering offscreen you can achieve advanced graphical effects by manipulating the contents of the rendered-to texture before presenting them to the user.
 
 # Creation
-Render texture must contain at least one color surface, and may optionally also contain a depth-stencil surface. Both of those surfaces are **Texture** objects, created with either **TU_RENDERTARGET** or **TU_DEPTHSTENCIL** usage flags, respectively, which we mentioned earlier.
+Render texture must contain at least one color surface, and may optionally also contain a depth-stencil surface. Both of those surfaces are **Texture** objects, created with either **TextureUsageFlag::RenderTarget** or **TextureUsageFlag::DepthStencil** usage flags, respectively, which we mentioned earlier.
 
 To create a render texture call @b3d::RenderTexture::Create(const RenderTextureCreateInformation&) with a populated @b3d::RenderTextureCreateInformation structure. This structure expects a reference to one or more color surface textures, and an optional depth-stencil surface texture. For each of those you must also specify the face and mip level onto which to render, in case your texture has multiple.
 
@@ -18,7 +18,7 @@ colorCreateInformation.Type = TEX_TYPE_2D;
 colorCreateInformation.Width = 1920;
 colorCreateInformation.Height = 1080;
 colorCreateInformation.Format = PF_R8G8B8A8;
-colorCreateInformation.Usage = TU_RENDERTARGET;
+colorCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 
 HTexture colorTexture = Texture::Create(colorCreateInformation);
 
@@ -28,7 +28,7 @@ depthStencilCreateInformation.Type = TEX_TYPE_2D;
 depthStencilCreateInformation.Width = 1920;
 depthStencilCreateInformation.Height = 1080;
 depthStencilCreateInformation.Format = PF_D32;
-depthStencilCreateInformation.Usage = TU_DEPTHSTENCIL;
+depthStencilCreateInformation.Usage = TextureUsageFlag::DepthStencil;
 
 HTexture depthStencilTexture = Texture::Create(depthStencilCreateInformation);
 

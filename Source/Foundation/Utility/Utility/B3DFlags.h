@@ -15,19 +15,19 @@ namespace b3d
 	public:
 		using InternalType = Storage;
 
-		Flags() = default;
+		constexpr Flags() = default;
 
-		Flags(Enum value)
+		constexpr Flags(Enum value)
 		{
 			mBits = static_cast<Storage>(value);
 		}
 
-		Flags(const Flags<Enum, Storage>& value)
+		constexpr Flags(const Flags<Enum, Storage>& value)
 		{
 			mBits = value.mBits;
 		}
 
-		explicit Flags(Storage bits)
+		constexpr explicit Flags(Storage bits)
 		{
 			mBits = bits;
 		}
