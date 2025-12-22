@@ -126,7 +126,7 @@ namespace b3d
 		/** Object describing a GpuCommandBufferPool. */
 		struct GpuCommandBufferPoolInformation
 		{
-			GpuQueueType Usage = GQT_GRAPHICS; /**< Determines which commands may be executed on the command buffer. Queue on which the command buffer is submitted must match this usage. */
+			GpuQueueType Type = GQT_GRAPHICS; /**< Determines which commands may be executed on the command buffer. Queue on which the command buffer is submitted must match this usage. */
 			ThreadId Thread; /**< Thread on which the command buffer pool is allowed to be used on. Any created command buffers are also bound to this thread. */
 			bool UsePoolReset = false; /**< When true, command buffers are reset as a group via pool-level reset instead of individually. */
 		};
@@ -144,7 +144,7 @@ namespace b3d
 			{
 				GpuCommandBufferPoolCreateInformation createInformation;
 				createInformation.Thread = B3D_CURRENT_THREAD_ID;
-				createInformation.Usage = usage;
+				createInformation.Type = usage;
 
 				return createInformation;
 			}

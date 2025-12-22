@@ -21,10 +21,10 @@ FrameGraph::FrameGraph(GpuDevice& device)
 
 	mGraphicsCommandPool = mDevice.CreateGpuCommandBufferPool(poolCreateInfo);
 
-	poolCreateInfo.Usage = GQT_COMPUTE;
+	poolCreateInfo.Type = GQT_COMPUTE;
 	mComputeCommandPool = mDevice.CreateGpuCommandBufferPool(poolCreateInfo);
 
-	poolCreateInfo.Usage = GQT_TRANSFER;
+	poolCreateInfo.Type = GQT_TRANSFER;
 	mTransferCommandPool = mDevice.CreateGpuCommandBufferPool(poolCreateInfo);
 }
 

@@ -686,7 +686,7 @@ void FontAtlasRenderer::OnStartUp()
 	{
 		render::GpuCommandBufferPoolCreateInformation poolCreateInformation;
 		poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
-		poolCreateInformation.Usage = GQT_GRAPHICS;
+		poolCreateInformation.Type = GQT_GRAPHICS;
 
 		mCommandBufferPool = gpuDevice->CreateGpuCommandBufferPool(poolCreateInformation);
 	};

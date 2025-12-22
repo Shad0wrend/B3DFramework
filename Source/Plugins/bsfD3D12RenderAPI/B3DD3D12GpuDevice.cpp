@@ -100,10 +100,15 @@ D3D12GpuDevice::D3D12GpuDevice(IDXGIAdapter4* adapter)
 #else
 	static_assert(false, "mVideoModeInfo needs to be created.");
 #endif
+
+	mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this);
 }
 
 D3D12GpuDevice::~D3D12GpuDevice()
 {
+	// Destroy transfer buffer helper before other cleanup
+	mTransferBufferHelper.reset();
+
 	// Clear cached sampler states
 	mCachedSamplerStates.clear();
 
@@ -287,6 +292,9 @@ void D3D12GpuDevice::BeginFrame()
 void D3D12GpuDevice::EndFrame()
 {
 	SubmitTransferCommandBuffers();
+
+	// Advance transfer buffer helper pools to next frame
+	mTransferBufferHelper->EndFrame();
 
 	// TODO: Implement frame end logic
 }

@@ -26,7 +26,7 @@ void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBu
 		return;
 
 	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(*commandBuffer);
-	if (!B3D_ENSURE(vulkanCommandBuffer.GetUsage() == mUsage))
+	if (!B3D_ENSURE(vulkanCommandBuffer.GetUsage() == mType))
 		return;
 
 	if (vulkanCommandBuffer.GetState() == CommandBufferState::Executing)
@@ -191,7 +191,7 @@ void VulkanGpuQueue::ExecuteSubmitOnSubmitThread(const GpuCommandBufferSubmitInf
 	VulkanGpuDevice& device = static_cast<VulkanGpuDevice&>(mGpuDevice);
 
 	// No need to explicitly sync with any entries on the same queue
-	const GpuQueueMask queueMask = device.GetQueueMask(mUsage, mIndex);
+	const GpuQueueMask queueMask = device.GetQueueMask(mType, mIndex);
 	syncMask &= ~queueMask;
 
 	B3D_ASSERT(B3DSize(submitInformation.SourceQueueTransitionCommandBuffer) == GQT_COUNT);

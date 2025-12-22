@@ -5,6 +5,7 @@
 #include "B3DGpuQueries.h"
 #include "B3DPrerequisites.h"
 #include "B3DSamplerState.h"
+#include "B3DGpuTransferBufferHelper.h"
 
 namespace b3d::render
 {
@@ -208,13 +209,13 @@ namespace b3d
 		virtual ~GpuQueue();
 
 		/** Determines which type of command buffer commands can be used on the command buffers submitted on the queue. */
-		GpuQueueType GetUsage() const { return mUsage; }
+		GpuQueueType GetType() const { return mType; }
 
 		/** Returns the unique index of the queue, for its type. */
 		u32 GetIndex() const { return mIndex; }
 
 		/** Returns a unique identifier for this queue. */
-		GpuQueueId GetId() const { return GpuQueueId(mUsage, mIndex); }
+		GpuQueueId GetId() const { return GpuQueueId(mType, mIndex); }
 
 		/**
 		 * Submits the command buffer for execution on the specified queue.
@@ -269,7 +270,7 @@ namespace b3d
 		virtual void SubmitCommandBuffer(const SPtr<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, bool flushTransferCommandBuffer) = 0;
 
 		GpuDevice& mGpuDevice;
-		GpuQueueType mUsage;
+		GpuQueueType mType;
 		u32 mIndex;
 
 		mutable Mutex mMutex;
@@ -341,6 +342,9 @@ namespace b3d
 
 		/** Notifies the device the rendering for the current frame has ended. See BeginFrame(). */
 		virtual void EndFrame() = 0;
+
+		/** Returns the transfer buffer helper for this device. */
+		GpuTransferBufferHelper& GetTransferBufferHelper() { return *mTransferBufferHelper; }
 
 		/**
 		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
@@ -469,6 +473,8 @@ namespace b3d
 		 */
 		virtual float ConvertTimestampToMilliseconds(u64 timestamp) = 0;
 	protected:
+		UPtr<GpuTransferBufferHelper> mTransferBufferHelper;
+
 		mutable UnorderedMap<SamplerStateCreateInformation, SPtr<SamplerState>> mCachedSamplerStates;
 		mutable Mutex mSamplerStateMutex;
 	};

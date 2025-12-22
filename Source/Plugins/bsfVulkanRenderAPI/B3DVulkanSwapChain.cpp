@@ -398,7 +398,7 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanGpuQueue& queue, GpuQueueMas
 
 	if(imageLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 	{
-		VulkanGpuCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(queue.GetUsage());
+		VulkanGpuCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(queue.GetType());
 
 		const SPtr<VulkanGpuCommandBuffer> commandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(commandBufferPool.Create(GpuCommandBufferCreateInformation::Create("SwapChainImageLayoutTransition")));
 		commandBuffer->SetName("Swap chain image layout transition");
@@ -433,7 +433,7 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanGpuQueue& queue, GpuQueueMas
 	}
 
 	VulkanGpuDevice& presentDevice = queue.GetDevice();
-	const GpuQueueMask queueMask = presentDevice.GetQueueMask(queue.GetUsage(), queue.GetIndex());
+	const GpuQueueMask queueMask = presentDevice.GetQueueMask(queue.GetType(), queue.GetIndex());
 
 	// Ignore myself as we handle this in VulkanGpuQueue::Present() already
 	syncMask &= ~queueMask;

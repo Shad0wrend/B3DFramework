@@ -385,13 +385,13 @@ void RenderBeast::RenderAllOnRenderThread(FrameTimings timings, PerFrameData per
 	}
 
 	GpuUniformBufferManager::Instance().AdvanceFrame();
-	mCommandBufferPoolRing.AdvanceFrame();
+	mCommandBufferPoolRing->AdvanceFrame();
 	mRendererExtensionsDirty = false;
 }
 
 bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInfo)
 {
-	SPtr<GpuCommandBuffer> commandBuffer = mCommandBufferPoolRing.GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
+	SPtr<GpuCommandBuffer> commandBuffer = mCommandBufferPoolRing->GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
 #if B3D_PROFILING_ENABLED
 	commandBuffer->BeginProfiling("RenderScene");
 #endif
@@ -469,7 +469,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 #endif
 			mDevice->SubmitCommandBuffer(commandBuffer);
 
-			commandBuffer = mCommandBufferPoolRing.GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
+			commandBuffer = mCommandBufferPoolRing->GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
 
 #if B3D_PROFILING_ENABLED
 			commandBuffer->BeginProfiling("RenderScene");

@@ -8,6 +8,7 @@
 #include "B3DVulkanSubmitThread.h"
 #include "Managers/B3DVulkanDescriptorManager.h"
 #include "Managers/B3DVulkanQueries.h"
+#include "RenderAPI/B3DGpuTransferBufferHelper.h"
 
 #if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32VideoModeInfo.h"
@@ -222,10 +223,15 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 #else
 	static_assert(false, "mVideoModeInfo needs to be created.");
 #endif
+
+	mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this);
 }
 
 VulkanGpuDevice::~VulkanGpuDevice()
 {
+	// Destroy transfer buffer helper before other cleanup
+	mTransferBufferHelper.reset();
+
 	mCachedSamplerStates.clear();
 	mBuiltinResources.Cleanup();
 
@@ -588,6 +594,9 @@ void VulkanGpuDevice::EndFrame()
 	{
 		queue.EndFrame();
 	});
+
+	// Advance transfer buffer helper pools to next frame
+	mTransferBufferHelper->EndFrame();
 
 	GetVulkanSubmitThread().QueueRefreshCommandBufferCompletionStates(this);
 }

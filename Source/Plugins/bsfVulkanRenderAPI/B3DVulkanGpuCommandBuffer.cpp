@@ -44,7 +44,7 @@ VulkanSemaphore::~VulkanSemaphore()
 VulkanGpuCommandBufferPool::VulkanGpuCommandBufferPool(VulkanGpuDevice& device, const GpuCommandBufferPoolCreateInformation& createInformation)
 	:  GpuCommandBufferPool(device, createInformation)
 {
-	const u32 queueFamily = device.GetQueueFamily(createInformation.Usage);
+	const u32 queueFamily = device.GetQueueFamily(createInformation.Type);
 
 	if (!B3D_ENSURE(queueFamily != ~0u))
 		return;
@@ -125,7 +125,7 @@ SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBuffer
 	VkResult result = vkAllocateCommandBuffers(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), &cmdBufferAllocInfo, &commandBufferHandle);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	SPtr<VulkanGpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), *this, mNextCommandBufferId++, commandBufferHandle, mInformation.Thread, mInformation.Usage, createInformation),
+	SPtr<VulkanGpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), *this, mNextCommandBufferId++, commandBufferHandle, mInformation.Thread, mInformation.Type, createInformation),
 		[this](VulkanGpuCommandBuffer* commandBuffer)
 		{
 			VkCommandBuffer commandBufferHandle = commandBuffer->GetVulkanHandle();

@@ -152,7 +152,7 @@ namespace b3d
 			virtual ~Renderer() = default;
 
 			/** Returns the command buffer pool for the current frame. */
-			GpuCommandBufferPool& GetCurrentCommandBufferPool() { return mCommandBufferPoolRing.GetCurrentPool(); }
+			GpuCommandBufferPool& GetCurrentCommandBufferPool() { return mCommandBufferPoolRing->GetCurrentPool(); }
 
 			/** Initializes the renderer with the provided GPU device. Must be called before using the renderer. */
 			virtual void Initialize(const SPtr<GpuDevice>& gpuDevice);
@@ -275,7 +275,7 @@ namespace b3d
 			void ProcessTask(RendererTask& task, bool forceAll);
 
 			SPtr<GpuDevice> mDevice;
-			GpuCommandBufferPoolRing mCommandBufferPoolRing;
+			UPtr<GpuCommandBufferPoolRing> mCommandBufferPoolRing;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			bool mRendererExtensionsDirty = true;

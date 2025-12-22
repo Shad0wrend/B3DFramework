@@ -32,12 +32,13 @@ void Renderer::InitializeOnRenderThread()
 	GpuCommandBufferPoolCreateInformation createInformation = GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS);
 	createInformation.UsePoolReset = true;
 
-	mCommandBufferPoolRing.Initialize(*mDevice, createInformation);
+	mCommandBufferPoolRing = B3DMakeUnique<GpuCommandBufferPoolRing>(*mDevice, createInformation);
 }
 
 void Renderer::DestroyOnRenderThread()
 {
-	mCommandBufferPoolRing.Destroy();
+	mCommandBufferPoolRing->Destroy();
+	mCommandBufferPoolRing = nullptr;
 }
 
 SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType)
@@ -108,7 +109,7 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 			const bool complete = [this, &entry]()
 			{
-				return entry->mTaskWorker(mCommandBufferPoolRing.GetCurrentPool());
+				return entry->mTaskWorker(mCommandBufferPoolRing->GetCurrentPool());
 			}();
 
 			if(!complete)
@@ -148,7 +149,7 @@ void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 
 		GetProfilerCPU().BeginThread("RenderTask");
 		{
-			complete = task.mTaskWorker(mCommandBufferPoolRing.GetCurrentPool());
+			complete = task.mTaskWorker(mCommandBufferPoolRing->GetCurrentPool());
 		}
 		GetProfilerCPU().EndThread();
 

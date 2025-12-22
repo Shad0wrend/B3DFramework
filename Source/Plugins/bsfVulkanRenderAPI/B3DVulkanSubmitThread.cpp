@@ -40,7 +40,7 @@ VulkanSubmitThread::VulkanSubmitThread(VulkanGpuDevice& gpuDevice)
 
 			GpuCommandBufferPoolCreateInformation poolCreateInformation;
 			poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
-			poolCreateInformation.Usage = queueUsage;
+			poolCreateInformation.Type = queueUsage;
 
 			mCommandBufferPools[gpuQueueUsageIndex] = std::static_pointer_cast<VulkanGpuCommandBufferPool>(mGpuDevice.CreateGpuCommandBufferPool(poolCreateInformation));
 		}
@@ -68,7 +68,7 @@ void VulkanSubmitThread::QueueSubmit(const SPtr<VulkanGpuCommandBuffer>& command
 {
 	auto fnCommand = [commandBuffer, &queue, syncMask]() mutable
 	{
-		GpuCommandBufferSubmitInformation submitInformation = commandBuffer->PrepareForSubmitOnSubmitThread(queue.GetUsage(), queue.GetIndex());
+		GpuCommandBufferSubmitInformation submitInformation = commandBuffer->PrepareForSubmitOnSubmitThread(queue.GetType(), queue.GetIndex());
 
 		syncMask |= commandBuffer->GetQueueSyncMask();
 		queue.ExecuteSubmitOnSubmitThread(submitInformation, syncMask);

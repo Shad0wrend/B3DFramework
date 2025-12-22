@@ -12,7 +12,7 @@ const GpuQueueMask GpuQueueMask::kNone = GpuQueueMask(0);
 const GpuQueueMask GpuQueueMask::kAll = GpuQueueMask(~0u);
 
 GpuQueue::GpuQueue(GpuDevice& gpuDevice, GpuQueueType usage, u32 index)
-	:mGpuDevice(gpuDevice), mUsage(usage), mIndex(index)
+	:mGpuDevice(gpuDevice), mType(usage), mIndex(index)
 {
 	
 }
@@ -55,11 +55,10 @@ SPtr<render::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 	{
 		render::GpuCommandBufferPoolCreateInformation poolCreateInformation;
 		poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
-		poolCreateInformation.Usage = mUsage;
+		poolCreateInformation.Type = mType;
 		poolCreateInformation.UsePoolReset = true;
 
-		transferCommandBufferInformation.PoolRing = B3DMakeUnique<render::GpuCommandBufferPoolRing>();
-		transferCommandBufferInformation.PoolRing->Initialize(mGpuDevice, poolCreateInformation);
+		transferCommandBufferInformation.PoolRing = B3DMakeUnique<render::GpuCommandBufferPoolRing>(mGpuDevice, poolCreateInformation);
 	}
 
 	if(transferCommandBufferInformation.CurrentTransferCommandBuffer == nullptr)
