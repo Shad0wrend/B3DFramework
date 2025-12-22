@@ -52,7 +52,7 @@ VulkanGpuCommandBufferPool::VulkanGpuCommandBufferPool(VulkanGpuDevice& device, 
 	VkCommandPoolCreateInfo vulkanPoolCreateInformation;
 	vulkanPoolCreateInformation.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	vulkanPoolCreateInformation.pNext = nullptr;
-	vulkanPoolCreateInformation.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	vulkanPoolCreateInformation.flags = createInformation.UsePoolReset ? 0 : VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	vulkanPoolCreateInformation.queueFamilyIndex = queueFamily;
 
 	mQueueFamily = queueFamily;
@@ -1611,7 +1611,8 @@ void VulkanGpuCommandBuffer::Reset()
 {
 	Cleanup();
 
-	vkResetCommandBuffer(mCommandBufferHandle, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT); // Note: Maybe better not to release resources?
+	if(!mPool.GetUsePoolReset())
+		vkResetCommandBuffer(mCommandBufferHandle, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 }
 
 Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1> VulkanGpuCommandBuffer::BuildClearValues(RenderSurfaceMask clearMask, const Color& color, float depth, u16 stencil)

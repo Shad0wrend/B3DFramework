@@ -29,7 +29,10 @@ void Renderer::Initialize(const SPtr<GpuDevice>& gpuDevice)
 
 void Renderer::InitializeOnRenderThread()
 {
-	mCommandBufferPoolRing.Initialize(*mDevice, GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS));
+	GpuCommandBufferPoolCreateInformation createInformation = GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS);
+	createInformation.UsePoolReset = true;
+
+	mCommandBufferPoolRing.Initialize(*mDevice, createInformation);
 }
 
 void Renderer::DestroyOnRenderThread()

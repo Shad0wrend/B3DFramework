@@ -128,6 +128,7 @@ namespace b3d
 		{
 			GpuQueueUsage Usage = GQT_GRAPHICS; /**< Determines which commands may be executed on the command buffer. Queue on which the command buffer is submitted must match this usage. */
 			ThreadId Thread; /**< Thread on which the command buffer pool is allowed to be used on. Any created command buffers are also bound to this thread. */
+			bool UsePoolReset = false; /**< When true, command buffers are reset as a group via pool-level reset instead of individually. */
 		};
 
 		/** Descriptor structure used for initialization of a GpuCommandBufferPool. */
@@ -186,6 +187,9 @@ namespace b3d
 
 			/** Returns queue that may be used for posting messages to the command buffer pool (e.g. command buffer completion notifies). */
 			SingleConsumerQueue& GetMessageQueue() { return mMessageQueue; }
+
+			/** Returns true if the pool uses pool-level reset instead of individual command buffer reset. */
+			bool GetUsePoolReset() const { return mInformation.UsePoolReset; }
 
 			/** Creates a new command buffer. */
 			virtual SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) = 0;
