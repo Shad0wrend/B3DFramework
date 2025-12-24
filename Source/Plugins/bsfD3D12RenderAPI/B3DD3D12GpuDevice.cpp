@@ -269,6 +269,13 @@ SPtr<GpuPipelineParameterSetLayout> D3D12GpuDevice::CreateGpuPipelineParameterSe
 	return B3DMakeShared<GpuPipelineParameterSetLayout>(parameterDescription);
 }
 
+UPtr<GpuDescriptorPool> D3D12GpuDevice::CreateDescriptorPool(const GpuDescriptorPoolCreateInformation& createInformation)
+{
+	// TODO: Implement D3D12-specific descriptor heap pool when needed
+	// For now, return nullptr - D3D12 uses descriptor heaps differently than Vulkan
+	return nullptr;
+}
+
 void D3D12GpuDevice::WaitUntilIdle()
 {
 	// Wait for all queues to finish

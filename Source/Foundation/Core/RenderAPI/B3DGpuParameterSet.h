@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
+#include "RenderAPI/B3DGpuDescriptorPool.h"
 #include "RenderAPI/B3DGpuParameter.h"
 #include "RenderAPI/B3DGpuBufferPool.h"
 #include "CoreObject/B3DCoreObject.h"
@@ -593,6 +594,9 @@ namespace b3d
 			using TGpuParameterSet::SetUniformBuffer;
 			using TGpuParameterSet::TrySetUniformBuffer;
 
+			/** Returns the descriptor pool this parameter set was allocated from. */
+			GpuDescriptorPool* GetOwnerPool() const { return mOwnerPool; }
+
 			/**
 			 * Sets uniform buffer using a pool suballocation at the specified slot.
 			 *
@@ -639,11 +643,14 @@ namespace b3d
 
 		protected:
 			friend class b3d::GpuParameterSet;
+			friend class GpuDescriptorPool;
 
 			GpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterLayout, u32 setIndex);
 
 			SPtr<GpuParameterSet> GetSelf() const override;
 			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
+
+			GpuDescriptorPool* mOwnerPool = nullptr;
 		};
 
 		/** @} */

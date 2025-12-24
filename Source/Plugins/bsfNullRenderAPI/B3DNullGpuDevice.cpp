@@ -208,6 +208,11 @@ namespace b3d
 			return B3DMakeShared<GpuPipelineParameterSetLayout>(parameterDescription);
 		}
 
+		UPtr<GpuDescriptorPool> NullGpuDevice::CreateDescriptorPool(const GpuDescriptorPoolCreateInformation& createInformation)
+		{
+			return nullptr;
+		}
+
 		void NullGpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& output)
 		{
 			output = input;

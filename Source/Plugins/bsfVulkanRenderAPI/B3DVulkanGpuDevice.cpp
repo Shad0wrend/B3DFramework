@@ -25,6 +25,7 @@ static_assert(false, "Other platform includes go here.");
 #include "B3DVulkanEventQuery.h"
 #include "B3DVulkanGLSLToSPIRV.h"
 #include "B3DVulkanGpuBuffer.h"
+#include "B3DVulkanGpuDescriptorPool.h"
 #include "B3DVulkanGpuParameterSet.h"
 #include "B3DVulkanGpuPipelineParameterLayout.h"
 #include "B3DVulkanGpuProgram.h"
@@ -575,6 +576,11 @@ SPtr<GpuPipelineParameterLayout> VulkanGpuDevice::CreateGpuPipelineParameterLayo
 SPtr<GpuPipelineParameterSetLayout> VulkanGpuDevice::CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
 {
 	return B3DMakeShared<VulkanGpuPipelineParameterSetLayout>(*this, parameterDescription);
+}
+
+UPtr<GpuDescriptorPool> VulkanGpuDevice::CreateDescriptorPool(const GpuDescriptorPoolCreateInformation& createInformation)
+{
+	return B3DMakeUnique<VulkanGpuDescriptorPool>(*this, createInformation);
 }
 
 void VulkanGpuDevice::WaitUntilIdle()

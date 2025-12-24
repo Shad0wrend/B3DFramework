@@ -2,6 +2,8 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "B3DPrerequisites.h"
+#include "B3DGpuDescriptorPool.h"
 #include "B3DGpuQueries.h"
 #include "B3DPrerequisites.h"
 #include "B3DSamplerState.h"
@@ -437,6 +439,14 @@ namespace b3d
 		 * @return							The created set layout.
 		 */
 		virtual SPtr<GpuPipelineParameterSetLayout> CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription) = 0;
+
+		/**
+		 * Creates a descriptor pool for parameter set allocation.
+		 *
+		 * @param	createInformation	Pool configuration including mode and capacity limits.
+		 * @return						Created descriptor pool.
+		 */
+		virtual UPtr<GpuDescriptorPool> CreateDescriptorPool(const GpuDescriptorPoolCreateInformation& createInformation) = 0;
 
 		/************************************************************************/
 		/* 								UTILITY METHODS                    		*/
