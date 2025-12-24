@@ -9,6 +9,7 @@
 #include "B3DNullGpuProgram.h"
 #include "B3DNullGpuPipelineState.h"
 #include "B3DNullGpuParameterSet.h"
+#include "B3DNullGpuParameterSetPool.h"
 #include "B3DNullGpuPipelineParameterLayout.h"
 #include "B3DNullSamplerState.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
@@ -210,7 +211,7 @@ namespace b3d
 
 		UPtr<GpuParameterSetPool> NullGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)
 		{
-			return nullptr;
+			return B3DMakeUnique<NullGpuParameterSetPool>(*this, createInformation);
 		}
 
 		void NullGpuDevice::ConvertProjectionMatrix(const Matrix4& input, Matrix4& output)

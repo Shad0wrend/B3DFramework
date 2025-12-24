@@ -1,0 +1,37 @@
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#include "B3DNullGpuParameterSetPool.h"
+#include "B3DNullGpuDevice.h"
+#include "B3DNullGpuParameterSet.h"
+
+namespace b3d::render
+{
+	NullGpuParameterSetPool::NullGpuParameterSetPool(NullGpuDevice& device, const GpuParameterSetPoolCreateInformation& createInformation)
+		: GpuParameterSetPool(createInformation)
+		, mDevice(device)
+	{
+	}
+
+	SPtr<GpuParameterSet> NullGpuParameterSetPool::Allocate(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex)
+	{
+		if (mAllocatedSetCount >= mInformation.MaxSets)
+			return nullptr;
+
+		auto paramSet = B3DMakeShared<NullGpuParameters>(mDevice, layout);
+		paramSet->Initialize();
+
+		mAllocatedSetCount++;
+		return paramSet;
+	}
+
+	void NullGpuParameterSetPool::Free(const SPtr<GpuParameterSet>& parameterSet)
+	{
+		if (mAllocatedSetCount > 0)
+			mAllocatedSetCount--;
+	}
+
+	void NullGpuParameterSetPool::Reset()
+	{
+		mAllocatedSetCount = 0;
+	}
+} // namespace b3d::render
