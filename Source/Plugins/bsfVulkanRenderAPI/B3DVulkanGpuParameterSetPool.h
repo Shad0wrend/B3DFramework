@@ -17,6 +17,7 @@ namespace b3d
 		class VulkanGpuParameterSetPool final : public GpuParameterSetPool
 		{
 			friend class VulkanGpuParameterSet;
+			friend class VulkanDescriptorSet;
 
 		public:
 			VulkanGpuParameterSetPool(VulkanGpuDevice& device, const GpuParameterSetPoolCreateInformation& createInformation);
@@ -47,6 +48,16 @@ namespace b3d
 
 			VulkanGpuDevice& mDevice;
 			VkDescriptorPool mPool = VK_NULL_HANDLE;
+
+#if B3D_BUILD_TYPE_DEVELOPMENT
+			/** Registers a descriptor set as live (development builds only). */
+			void RegisterDescriptorSet(VulkanDescriptorSet* set);
+
+			/** Unregisters a descriptor set when destroyed (development builds only). */
+			void UnregisterDescriptorSet(VulkanDescriptorSet* set);
+
+			UnorderedSet<VulkanDescriptorSet*> mLiveDescriptorSets;
+#endif
 		};
 
 		/** @} */

@@ -91,6 +91,15 @@ namespace b3d::render
 			return;
 		}
 
+#if B3D_BUILD_TYPE_DEVELOPMENT
+		if (!mLiveDescriptorSets.empty())
+		{
+			B3D_LOG(Warning, RenderBackend, "Resetting parameter set pool with {0} live descriptor sets. "
+				"These sets will become invalid.", mLiveDescriptorSets.size());
+		}
+		mLiveDescriptorSets.clear();
+#endif
+
 		VkResult result = vkResetDescriptorPool(mDevice.GetLogical(), mPool, 0);
 		B3D_ASSERT(result == VK_SUCCESS);
 
@@ -137,7 +146,7 @@ namespace b3d::render
 		}
 
 		const bool freeOnDestroy = mInformation.Mode == GpuParameterSetPoolMode::Persistent;
-		VulkanDescriptorSet* wrapper = mDevice.GetResourceManager().Create<VulkanDescriptorSet>(set, mPool, freeOnDestroy);
+		VulkanDescriptorSet* wrapper = mDevice.GetResourceManager().Create<VulkanDescriptorSet>(set, mPool, freeOnDestroy, this);
 
 		mAllocatedSetCount++;
 		return wrapper;
@@ -156,4 +165,22 @@ namespace b3d::render
 		if (mAllocatedSetCount > 0)
 			mAllocatedSetCount--;
 	}
+
+#if B3D_BUILD_TYPE_DEVELOPMENT
+	void VulkanGpuParameterSetPool::RegisterDescriptorSet(VulkanDescriptorSet* set)
+	{
+		if(mInformation.Mode == GpuParameterSetPoolMode::Persistent)
+			return;
+
+		mLiveDescriptorSets.insert(set);
+	}
+
+	void VulkanGpuParameterSetPool::UnregisterDescriptorSet(VulkanDescriptorSet* set)
+	{
+		if(mInformation.Mode == GpuParameterSetPoolMode::Persistent)
+			return;
+
+		mLiveDescriptorSets.erase(set);
+	}
+#endif
 } // namespace b3d::render
