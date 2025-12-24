@@ -558,7 +558,9 @@ bool VulkanGpuParameterSet::SetStorageBuffer(u32 slot, const SPtr<GpuBuffer>& bu
 
 	const VkBuffer vkBuffer = bufferResource->GetVulkanHandle();
 
-	const bool isBufferViewChanged = (useView && mSetInformation.BufferViews[usedResourceSequentialIndex] != vkBufferView) || mStorageBufferData->View.Offset != bufferOffset || mStorageBufferData->View.Range != bufferSize;
+	const u32 oldBufferRange = mStorageBufferData->View.Range == 0 ? (mStorageBufferData->Buffer != nullptr ? mStorageBufferData->Buffer->GetSuballocationSize() : 0) : mStorageBufferData->View.Range;
+
+	const bool isBufferViewChanged = (useView && mSetInformation.BufferViews[usedResourceSequentialIndex] != vkBufferView) || mStorageBufferData->View.Offset != bufferOffset || oldBufferRange != bufferSize;
 	if(mBuffers[sequentialResourceIndex] != vkBuffer || isBufferViewChanged)
 	{
 		if(useView)
