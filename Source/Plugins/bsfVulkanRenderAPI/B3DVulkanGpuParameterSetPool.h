@@ -23,7 +23,7 @@ namespace b3d
 			VulkanGpuParameterSetPool(VulkanGpuDevice& device, const GpuParameterSetPoolCreateInformation& createInformation);
 			~VulkanGpuParameterSetPool() override;
 
-			SPtr<GpuParameterSet> Allocate(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex) override;
+			SPtr<GpuParameterSet> Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize = false) override;
 			void Free(const SPtr<GpuParameterSet>& parameterSet) override;
 			void Reset() override;
 

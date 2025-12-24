@@ -6,6 +6,7 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "Material/B3DMaterial.h"
 #include "Renderer/B3DRendererMaterialManager.h"
+#include "Renderer/B3DRenderer.h"
 #include "Material/B3DShaderVariation.h"
 #include "Material/B3DShader.h"
 #include "Material/B3DPass.h"
@@ -545,10 +546,12 @@ namespace b3d
 		template <class T>
 		SPtr<GpuParameterSet> RendererMaterial<T>::CreateGpuParameterSet(u32 set) const
 		{
+			GpuParameterSetPool& pool = GetRenderer()->GetParameterSetPool();
+
 			if(mGraphicsPipeline != nullptr)
-				return mGpuDevice->CreateGpuParameterSet(mGraphicsPipeline->GetParameterLayout()->GetSet(set), set);
+				return pool.Create(mGraphicsPipeline->GetParameterLayout()->GetSet(set), set);
 			else if(mComputePipeline != nullptr)
-				return mGpuDevice->CreateGpuParameterSet(mComputePipeline->GetParameterLayout()->GetSet(set), set);
+				return pool.Create(mComputePipeline->GetParameterLayout()->GetSet(set), set);
 
 			return nullptr;
 		}

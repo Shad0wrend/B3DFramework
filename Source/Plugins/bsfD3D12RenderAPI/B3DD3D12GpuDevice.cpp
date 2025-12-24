@@ -225,17 +225,6 @@ SPtr<GpuProgram> D3D12GpuDevice::CreateGpuProgram(const GpuProgramCreateInformat
 	return output;
 }
 
-SPtr<render::GpuParameterSet> D3D12GpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex, bool deferredInitialize)
-{
-	SPtr<GpuParameterSet> output = B3DMakeSharedFromExisting(new (B3DAllocate<D3D12GpuParameters>()) D3D12GpuParameters(parameterSetLayout, *this, setIndex));
-	output->SetShared(output);
-
-	if (!deferredInitialize)
-		output->Initialize();
-
-	return output;
-}
-
 SPtr<GpuGraphicsPipelineState> D3D12GpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<D3D12GpuGraphicsPipelineState> output = B3DMakeSharedFromExisting<D3D12GpuGraphicsPipelineState>(

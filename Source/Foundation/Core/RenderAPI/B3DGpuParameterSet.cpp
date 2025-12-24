@@ -8,6 +8,8 @@
 #include "RenderAPI/B3DGpuBuffer.h"
 #include "RenderAPI/B3DGpuPipelineParameterLayout.h"
 #include "RenderAPI/B3DGpuPipelineState.h"
+#include "RenderAPI/B3DGpuParameterSetPool.h"
+#include "Renderer/B3DRenderer.h"
 #include "Math/B3DVector2.h"
 #include "Image/B3DTexture.h"
 #include "RenderAPI/B3DSamplerState.h"
@@ -552,11 +554,8 @@ SPtr<GpuParameterSet> GpuParameterSet::GetSelf() const
 
 SPtr<render::RenderProxy> GpuParameterSet::CreateRenderProxy() const
 {
-	const SPtr<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-	if(!gpuDevice)
-		return nullptr;
-
-	return gpuDevice->CreateGpuParameterSet(mParameterSetLayout, mSet, true);
+	GpuParameterSetPool& pool = render::GetRenderer()->GetParameterSetPool();
+	return pool.Create(mParameterSetLayout, mSet, true);
 }
 
 void GpuParameterSet::MarkRenderProxyDataDirtyInternal()

@@ -17,6 +17,8 @@
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DGpuDevice.h"
 #include "RenderAPI/B3DGpuDeviceCapabilities.h"
+#include "RenderAPI/B3DGpuParameterSetPool.h"
+#include "Renderer/B3DRenderer.h"
 
 using namespace b3d;
 
@@ -474,8 +476,8 @@ SPtr<GpuParameterSet> CreateGpuParameterSet<false>(const SPtr<GpuPipelineParamet
 template <>
 SPtr<render::GpuParameterSet> CreateGpuParameterSet<true>(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex)
 {
-	const SPtr<GpuDevice>& device = GetApplication().GetPrimaryGpuDevice();
-	return device->CreateGpuParameterSet(parameterSetLayout, setIndex);
+	GpuParameterSetPool& pool = render::GetRenderer()->GetParameterSetPool();
+	return pool.Create(parameterSetLayout, setIndex);
 }
 
 template <bool IsRenderProxy>

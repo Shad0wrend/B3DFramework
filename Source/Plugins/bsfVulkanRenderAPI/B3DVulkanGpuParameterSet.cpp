@@ -62,15 +62,11 @@ static bool EnsureImageViewValidForShader(const VulkanImageView& view, const Gpu
 	return isViewValid;
 }
 
-VulkanGpuParameterSet::VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 set)
-	: GpuParameterSet(parameterSetLayout, set), mGpuDevice(gpuDevice)
-{
-}
-
 VulkanGpuParameterSet::VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout,
 	u32 set, VulkanGpuParameterSetPool& pool)
-	: GpuParameterSet(parameterSetLayout, set), mGpuDevice(gpuDevice), mVulkanOwnerPool(&pool)
+	: GpuParameterSet(parameterSetLayout, set), mGpuDevice(gpuDevice)
 {
+	mOwnerPool = &pool;
 }
 
 VulkanGpuParameterSet::~VulkanGpuParameterSet()
@@ -130,10 +126,11 @@ void VulkanGpuParameterSet::Initialize()
 	mSetInformation.ElementCount = bindingCount;
 	mSetInformation.LastFreeSetIndex = 0;
 
-	if (mVulkanOwnerPool != nullptr)
+	if (mOwnerPool != nullptr)
 	{
 		// Pool-allocated path: allocate from the pool's VkDescriptorPool
-		mSetInformation.LastUsedSet = mVulkanOwnerPool->AllocateDescriptorSet(layout->GetVulkanHandle());
+		VulkanGpuParameterSetPool* vulkanPool = static_cast<VulkanGpuParameterSetPool*>(mOwnerPool);
+		mSetInformation.LastUsedSet = vulkanPool->AllocateDescriptorSet(layout->GetVulkanHandle());
 		if (mSetInformation.LastUsedSet == nullptr)
 		{
 			B3D_LOG(Error, RenderBackend, "Failed to allocate descriptor set from pool.");
@@ -1037,7 +1034,7 @@ void VulkanGpuParameterSet::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer
 			// Cannot find an empty set
 			if(mSetInformation.LastUsedSet == nullptr)
 			{
-				if (mVulkanOwnerPool != nullptr)
+				if (mOwnerPool != nullptr)
 				{
 					// Pool-allocated sets: do not dynamically allocate new sets
 					// Fall back to the first cached set with a warning

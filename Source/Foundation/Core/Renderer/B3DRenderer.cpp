@@ -33,10 +33,16 @@ void Renderer::InitializeOnRenderThread()
 	createInformation.UsePoolReset = true;
 
 	mCommandBufferPoolRing = B3DMakeUnique<GpuCommandBufferPoolRing>(*mDevice, createInformation);
+
+	// Create parameter set pool for render thread allocations
+	GpuParameterSetPoolCreateInformation parameterSetPoolCreateInformation;
+	parameterSetPoolCreateInformation.Mode = GpuParameterSetPoolMode::Persistent;
+	mParameterSetPool = mDevice->CreateParameterSetPool(parameterSetPoolCreateInformation);
 }
 
 void Renderer::DestroyOnRenderThread()
 {
+	mParameterSetPool = nullptr;
 	mCommandBufferPoolRing->Destroy();
 	mCommandBufferPoolRing = nullptr;
 }

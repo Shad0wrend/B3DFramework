@@ -22,7 +22,7 @@ namespace b3d
 			NullGpuParameterSetPool(NullGpuDevice& device, const GpuParameterSetPoolCreateInformation& createInformation);
 			~NullGpuParameterSetPool() override = default;
 
-			SPtr<GpuParameterSet> Allocate(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex) override;
+			SPtr<GpuParameterSet> Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize = false) override;
 			void Free(const SPtr<GpuParameterSet>& parameterSet) override;
 			void Reset() override;
 

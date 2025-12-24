@@ -8,6 +8,7 @@
 #include "Components/B3DDecal.h"
 #include "RenderAPI/B3DGpuBackend.h"
 #include "RenderAPI/B3DGpuDevice.h"
+#include "Renderer/B3DRenderer.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 
 using namespace b3d;
@@ -195,7 +196,8 @@ SPtr<render::GpuParameterSet> UniformBufferPools::GetOrCreateParameterSet(PoolGr
 		return iter->second.ParameterSet;
 	}
 
-	SPtr<GpuParameterSet> parameterSet = mDevice->CreateGpuParameterSet(group.ParameterSetLayout, GpuPipelineSet::kPerObject);
+	GpuParameterSetPool& pool = GetRenderer()->GetParameterSetPool();
+	SPtr<GpuParameterSet> parameterSet = pool.Create(group.ParameterSetLayout, GpuPipelineSet::kPerObject);
 
 	// Bind all buffers by their uniform buffer names
 	for (u32 poolIndex = 0; poolIndex < entry.Suballocations.Size(); ++poolIndex)

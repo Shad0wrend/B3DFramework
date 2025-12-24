@@ -9,6 +9,7 @@
 #include "Material/B3DShaderVariation.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DGpuCommandBufferPoolRing.h"
+#include "RenderAPI/B3DGpuParameterSetPool.h"
 
 namespace b3d
 {
@@ -154,6 +155,13 @@ namespace b3d
 			/** Returns the command buffer pool for the current frame. */
 			GpuCommandBufferPool& GetCurrentCommandBufferPool() { return mCommandBufferPoolRing->GetCurrentPool(); }
 
+			/**
+			 * Returns the parameter set pool used for allocating GPU parameter sets.
+			 *
+			 * @note	Render thread only. Do not use from the main thread.
+			 */
+			GpuParameterSetPool& GetParameterSetPool() { return *mParameterSetPool; }
+
 			/** Initializes the renderer with the provided GPU device. Must be called before using the renderer. */
 			virtual void Initialize(const SPtr<GpuDevice>& gpuDevice);
 
@@ -276,6 +284,7 @@ namespace b3d
 
 			SPtr<GpuDevice> mDevice;
 			UPtr<GpuCommandBufferPoolRing> mCommandBufferPoolRing;
+			UPtr<GpuParameterSetPool> mParameterSetPool;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			bool mRendererExtensionsDirty = true;

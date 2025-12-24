@@ -643,7 +643,7 @@ namespace b3d
 
 		protected:
 			friend class b3d::GpuParameterSet;
-			friend class GpuParameterSetPool;
+			friend class b3d::GpuParameterSetPool;
 
 			GpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterLayout, u32 setIndex);
 

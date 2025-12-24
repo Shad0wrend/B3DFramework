@@ -537,17 +537,6 @@ SPtr<GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInforma
 	return output;
 }
 
-SPtr<render::GpuParameterSet> VulkanGpuDevice::CreateGpuParameterSet(const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex, bool deferredInitialize)
-{
-	SPtr<GpuParameterSet> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuParameterSet>()) VulkanGpuParameterSet(*this, parameterSetLayout, setIndex));
-	output->SetShared(output);
-
-	if(!deferredInitialize)
-		output->Initialize();
-
-	return output;
-}
-
 SPtr<GpuGraphicsPipelineState> VulkanGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<VulkanGpuGraphicsPipelineState> output = B3DMakeSharedFromExisting<VulkanGpuGraphicsPipelineState>(new(B3DAllocate<VulkanGpuGraphicsPipelineState>()) VulkanGpuGraphicsPipelineState(*this, createInformation));

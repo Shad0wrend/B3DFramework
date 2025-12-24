@@ -67,8 +67,7 @@ namespace b3d::render
 			vkDestroyDescriptorPool(mDevice.GetLogical(), mPool, gVulkanAllocator);
 	}
 
-	SPtr<GpuParameterSet> VulkanGpuParameterSetPool::Allocate(
-		const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex)
+	SPtr<GpuParameterSet> VulkanGpuParameterSetPool::Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize)
 	{
 		if (mAllocatedSetCount >= mInformation.MaxSets)
 		{
@@ -77,8 +76,9 @@ namespace b3d::render
 		}
 
 		auto paramSet = B3DMakeShared<VulkanGpuParameterSet>(mDevice, layout, setIndex, *this);
-		paramSet->Initialize();
-		paramSet->mOwnerPool = this;
+
+		if (!deferredInitialize)
+			paramSet->Initialize();
 
 		return paramSet;
 	}

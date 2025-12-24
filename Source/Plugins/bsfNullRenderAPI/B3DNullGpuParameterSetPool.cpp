@@ -12,13 +12,15 @@ namespace b3d::render
 	{
 	}
 
-	SPtr<GpuParameterSet> NullGpuParameterSetPool::Allocate(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex)
+	SPtr<GpuParameterSet> NullGpuParameterSetPool::Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize)
 	{
 		if (mAllocatedSetCount >= mInformation.MaxSets)
 			return nullptr;
 
 		auto paramSet = B3DMakeShared<NullGpuParameters>(mDevice, layout);
-		paramSet->Initialize();
+
+		if (!deferredInitialize)
+			paramSet->Initialize();
 
 		mAllocatedSetCount++;
 		return paramSet;

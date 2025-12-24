@@ -66,13 +66,15 @@ namespace b3d
 		virtual ~GpuParameterSetPool() = default;
 
 		/**
-		 * Allocates a new parameter set from this pool.
+		 * Creates a new parameter set from this pool.
 		 *
-		 * @param layout	Layout that describes the GPU parameters for the set.
-		 * @param setIndex	Index of the parameter set that the object will be used for binding parameters for.
-		 * @return			The allocated parameter set, or nullptr if allocation failed (e.g., pool exhausted).
+		 * @param layout				Layout that describes the GPU parameters for the set.
+		 * @param setIndex				Index of the parameter set that the object will be used for binding parameters for.
+		 * @param deferredInitialize	If true, Initialize() will not be called on the returned object, and the caller
+		 *								is expected to call it themselves before first using the object.
+		 * @return						The created parameter set, or nullptr if allocation failed (e.g., pool exhausted).
 		 */
-		virtual SPtr<render::GpuParameterSet> Allocate(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex) = 0;
+		virtual SPtr<render::GpuParameterSet> Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize = false) = 0;
 
 		/** Frees a single parameter set previously allocated from this pool. Only valid for persistent mode pools. */
 		virtual void Free(const SPtr<render::GpuParameterSet>& parameterSet) = 0;

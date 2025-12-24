@@ -26,9 +26,7 @@ namespace b3d
 			friend class VulkanGpuParameterSetPool;
 
 		public:
-			VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 set);
-			VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout,
-				u32 set, VulkanGpuParameterSetPool& pool);
+			VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 set, VulkanGpuParameterSetPool& pool);
 			~VulkanGpuParameterSet() override;
 
 			bool SetUniformBuffer(u32 slot, const SPtr<GpuBuffer>& uniformBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
@@ -73,7 +71,6 @@ namespace b3d
 			void Initialize() override;
 
 			VulkanGpuDevice& mGpuDevice;
-			VulkanGpuParameterSetPool* mVulkanOwnerPool = nullptr;
 
 			SetInformation mSetInformation;
 			bool mSetDirty = false;
