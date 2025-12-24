@@ -83,6 +83,9 @@ namespace b3d
 		 */
 		virtual void Reset() = 0;
 
+		/** Returns the mode this pool operates in. */
+		GpuParameterSetPoolMode GetMode() const { return mInformation.Mode; }
+
 	protected:
 		GpuParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation);
 

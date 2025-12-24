@@ -6,12 +6,16 @@
 using namespace b3d;
 using namespace b3d::render;
 
-VulkanDescriptorSet::VulkanDescriptorSet(VulkanResourceManager* owner, VkDescriptorSet set, VkDescriptorPool pool, const StringView& name)
-	: VulkanResource(owner, true, name), mSet(set), mPool(pool)
+VulkanDescriptorSet::VulkanDescriptorSet(VulkanResourceManager* owner, VkDescriptorSet set, VkDescriptorPool pool,
+	bool freeOnDestroy, const StringView& name)
+	: VulkanResource(owner, true, name), mSet(set), mPool(pool), mFreeOnDestroy(freeOnDestroy)
 {}
 
 VulkanDescriptorSet::~VulkanDescriptorSet()
 {
+	if (mFreeOnDestroy)
+		return;
+
 	VkResult result = vkFreeDescriptorSets(mOwner->GetDevice().GetLogical(), mPool, 1, &mSet);
 	B3D_ASSERT(result == VK_SUCCESS);
 }

@@ -16,6 +16,8 @@ namespace b3d
 		/** Vulkan implementation of GpuParameterSetPool. */
 		class VulkanGpuParameterSetPool final : public GpuParameterSetPool
 		{
+			friend class VulkanGpuParameterSet;
+
 		public:
 			VulkanGpuParameterSetPool(VulkanGpuDevice& device, const GpuParameterSetPoolCreateInformation& createInformation);
 			~VulkanGpuParameterSetPool() override;
@@ -29,12 +31,12 @@ namespace b3d
 
 		private:
 			/**
-			 * Allocates a native Vulkan descriptor set from the pool.
+			 * Allocates a descriptor set from the pool, including the VulkanDescriptorSet wrapper.
 			 *
 			 * @param layout	The descriptor set layout.
-			 * @return			The allocated VkDescriptorSet, or VK_NULL_HANDLE on failure.
+			 * @return			The allocated VulkanDescriptorSet, or nullptr on failure.
 			 */
-			VkDescriptorSet AllocateVkSet(VkDescriptorSetLayout layout);
+			VulkanDescriptorSet* AllocateDescriptorSet(VkDescriptorSetLayout layout);
 
 			/**
 			 * Frees a native Vulkan descriptor set.

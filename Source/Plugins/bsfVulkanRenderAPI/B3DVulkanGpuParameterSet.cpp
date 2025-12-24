@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DVulkanGpuParameterSet.h"
+#include "B3DVulkanGpuParameterSetPool.h"
 #include "B3DVulkanUtility.h"
 #include "B3DVulkanGpuDevice.h"
 #include "B3DVulkanTexture.h"
@@ -66,6 +67,12 @@ VulkanGpuParameterSet::VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const S
 {
 }
 
+VulkanGpuParameterSet::VulkanGpuParameterSet(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterSetLayout>& parameterSetLayout,
+	u32 set, VulkanGpuParameterSetPool& pool)
+	: GpuParameterSet(parameterSetLayout, set), mGpuDevice(gpuDevice), mVulkanOwnerPool(&pool)
+{
+}
+
 VulkanGpuParameterSet::~VulkanGpuParameterSet()
 {
 	Lock lock(mMutex);
@@ -122,7 +129,22 @@ void VulkanGpuParameterSet::Initialize()
 	VulkanDescriptorLayout* layout = vulkanGpuPipelineParameterSetLayout.GetLayout();
 	mSetInformation.ElementCount = bindingCount;
 	mSetInformation.LastFreeSetIndex = 0;
-	mSetInformation.LastUsedSet = descManager.CreateSet(layout);
+
+	if (mVulkanOwnerPool != nullptr)
+	{
+		// Pool-allocated path: allocate from the pool's VkDescriptorPool
+		mSetInformation.LastUsedSet = mVulkanOwnerPool->AllocateDescriptorSet(layout->GetVulkanHandle());
+		if (mSetInformation.LastUsedSet == nullptr)
+		{
+			B3D_LOG(Error, RenderBackend, "Failed to allocate descriptor set from pool.");
+			return;
+		}
+	}
+	else
+	{
+		// Legacy path: allocate from VulkanDescriptorManager
+		mSetInformation.LastUsedSet = descManager.CreateSet(layout);
+	}
 	mSetInformation.SetCache.Add(mSetInformation.LastUsedSet);
 
 	const TArrayView<const VkDescriptorSetLayoutBinding> perSetBindings = vulkanGpuPipelineParameterSetLayout.GetBindings();
@@ -994,7 +1016,7 @@ void VulkanGpuParameterSet::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer
 	{
 		// Set is dirty, we need to update
 		//// Use latest unless already used, otherwise try to find an unused one
-		if(mSetInformation.LastUsedSet->IsBound()) // Checking this is okay, because it's only modified below when we call registerResource, which is under the same lock as this
+		if(mSetInformation.LastUsedSet->IsBound())
 		{
 			mSetInformation.LastUsedSet = nullptr;
 
@@ -1010,12 +1032,24 @@ void VulkanGpuParameterSet::PrepareForBind(VulkanGpuCommandBuffer& commandBuffer
 				}
 			}
 
-			// Cannot find an empty set, allocate a new one
+			// Cannot find an empty set
 			if(mSetInformation.LastUsedSet == nullptr)
 			{
-				VulkanDescriptorLayout* const layout = pipelineParameterInformationSet.GetLayout();
-				mSetInformation.LastUsedSet = descManager.CreateSet(layout);
-				mSetInformation.SetCache.Add(mSetInformation.LastUsedSet);
+				if (mVulkanOwnerPool != nullptr)
+				{
+					// Pool-allocated sets: do not dynamically allocate new sets
+					// Fall back to the first cached set with a warning
+					B3D_LOG(Warning, RenderBackend, "Pool-allocated parameter set has no free descriptor sets. "
+						"Reusing bound set - this may cause rendering artifacts.");
+					mSetInformation.LastUsedSet = mSetInformation.SetCache[0];
+				}
+				else
+				{
+					// Legacy path: allocate a new one from descriptor manager
+					VulkanDescriptorLayout* const layout = pipelineParameterInformationSet.GetLayout();
+					mSetInformation.LastUsedSet = descManager.CreateSet(layout);
+					mSetInformation.SetCache.Add(mSetInformation.LastUsedSet);
+				}
 			}
 		}
 

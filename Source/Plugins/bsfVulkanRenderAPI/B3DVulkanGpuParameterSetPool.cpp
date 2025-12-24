@@ -3,6 +3,7 @@
 #include "B3DVulkanGpuParameterSetPool.h"
 #include "B3DVulkanGpuDevice.h"
 #include "B3DVulkanGpuParameterSet.h"
+#include "B3DVulkanDescriptorSet.h"
 #include "B3DVulkanGpuPipelineParameterLayout.h"
 
 namespace b3d::render
@@ -75,14 +76,10 @@ namespace b3d::render
 			return nullptr;
 		}
 
-		// Create the parameter set using the standard constructor
-		// The parameter set will allocate from the VulkanDescriptorManager's pool for now.
-		// TODO: In a future iteration, VulkanGpuParameterSet should accept a pool parameter
-		// and allocate directly from this pool instead of the manager's pool.
-		auto paramSet = B3DMakeShared<VulkanGpuParameterSet>(mDevice, layout, setIndex);
+		auto paramSet = B3DMakeShared<VulkanGpuParameterSet>(mDevice, layout, setIndex, *this);
 		paramSet->Initialize();
+		paramSet->mOwnerPool = this;
 
-		mAllocatedSetCount++;
 		return paramSet;
 	}
 
@@ -109,20 +106,19 @@ namespace b3d::render
 		}
 
 		B3D_ASSERT(parameterSet != nullptr);
+		B3D_ASSERT(parameterSet->GetOwnerPool() == this);
 
-		// TODO: The parameter set needs to track which pool it came from and free its
-		// descriptor set accordingly. For now, this is a placeholder.
-		// In a full implementation, VulkanGpuParameterSet would have a reference to the
-		// owning pool and call FreeVkSet() with its VkDescriptorSet.
-
+		// The VulkanDescriptorSet destructor will handle calling vkFreeDescriptorSets when the
+		// GpuParameterSet is destroyed (since we're in Persistent mode, freeOnDestroy is true).
+		// We just decrement our count here.
 		if (mAllocatedSetCount > 0)
 			mAllocatedSetCount--;
 	}
 
-	VkDescriptorSet VulkanGpuParameterSetPool::AllocateVkSet(VkDescriptorSetLayout layout)
+	VulkanDescriptorSet* VulkanGpuParameterSetPool::AllocateDescriptorSet(VkDescriptorSetLayout layout)
 	{
 		if (mAllocatedSetCount >= mInformation.MaxSets)
-			return VK_NULL_HANDLE;
+			return nullptr;
 
 		VkDescriptorSetAllocateInfo allocInfo;
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -137,11 +133,14 @@ namespace b3d::render
 		if (result != VK_SUCCESS)
 		{
 			B3D_LOG(Error, RenderBackend, "Failed to allocate descriptor set from pool.");
-			return VK_NULL_HANDLE;
+			return nullptr;
 		}
 
+		const bool freeOnDestroy = mInformation.Mode == GpuParameterSetPoolMode::Persistent;
+		VulkanDescriptorSet* wrapper = mDevice.GetResourceManager().Create<VulkanDescriptorSet>(set, mPool, freeOnDestroy);
+
 		mAllocatedSetCount++;
-		return set;
+		return wrapper;
 	}
 
 	void VulkanGpuParameterSetPool::FreeVkSet(VkDescriptorSet set)
