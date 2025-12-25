@@ -229,6 +229,9 @@ namespace b3d
 			 */
 			void Reset();
 
+			/** Notifies the command buffer that the pool it was allocated from has been reset. */
+			void NotifyParentPoolReset();
+
 			/** @copydoc GpuCommandBuffer::Cleanup */
 			void Cleanup() override;
 

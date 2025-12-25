@@ -150,9 +150,12 @@ void VulkanGpuCommandBufferPool::Reset()
 
 	for(const auto& entry : mCommandBuffers)
 	{
-		B3D_ASSERT(entry.second->GetState() == CommandBufferState::Ready || entry.second->GetState() == CommandBufferState::Done);
+		// Already reset and was not used since
+		if(entry.second->GetState() == CommandBufferState::Ready)
+			continue;
 
-		entry.second->Cleanup();
+		B3D_ASSERT(entry.second->GetState() == CommandBufferState::Done);
+		entry.second->NotifyParentPoolReset();
 	}
 
 	const VkResult result = vkResetCommandPool(logicalDevice, mVulkanPool, VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
@@ -1586,7 +1589,6 @@ bool VulkanGpuCommandBuffer::UpdateExecutionStatus(bool block)
 void VulkanGpuCommandBuffer::Cleanup()
 {
 	const bool wasSubmitted = mState == State::Submitted || mState == State::Done;
-	mState = State::Ready;
 
 	if(wasSubmitted)
 		mResourceTracker.NotifyDone(mSubmittedQueueId);
@@ -1612,7 +1614,16 @@ void VulkanGpuCommandBuffer::Reset()
 	Cleanup();
 
 	if(!mPool.GetUsePoolReset())
+	{
 		vkResetCommandBuffer(mCommandBufferHandle, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+		mState = State::Ready;
+	}
+}
+
+void VulkanGpuCommandBuffer::NotifyParentPoolReset()
+{
+	Cleanup();
+	mState = State::Ready;
 }
 
 Array<VkClearValue, B3D_MAXIMUM_RENDER_TARGET_COUNT + 1> VulkanGpuCommandBuffer::BuildClearValues(RenderSurfaceMask clearMask, const Color& color, float depth, u16 stencil)
