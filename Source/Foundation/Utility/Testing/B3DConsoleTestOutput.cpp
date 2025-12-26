@@ -34,7 +34,7 @@ ConsoleTestOutput::~ConsoleTestOutput()
 	ResetConsoleColor();
 }
 
-void ConsoleTestOutput::OutputFail(const String& description, const String& function, const String& file, long line)
+void ConsoleTestOutput::DoOnOutputFail(const String& description, const String& function, const String& file, long line)
 {
 	// Store failure for summary
 	FailureInfo failure;
@@ -50,12 +50,12 @@ void ConsoleTestOutput::OutputFail(const String& description, const String& func
 	std::cout << file << ":" << line << ": failure: " << description << "\n";
 }
 
-void ConsoleTestOutput::OutputSuccess(const String& testName)
+void ConsoleTestOutput::DoOnOutputSuccess(const String& testName)
 {
 	// Success reporting is handled in OnTestEnd
 }
 
-void ConsoleTestOutput::OnSuiteStart(const String& suiteName)
+void ConsoleTestOutput::DoOnSuiteStart(const String& suiteName)
 {
 	PrintSeparator();
 	PrintColored("Running Test Suite: " + suiteName, ConsoleColor::Yellow);
@@ -64,7 +64,7 @@ void ConsoleTestOutput::OnSuiteStart(const String& suiteName)
 	mCurrentTestIndex = 0;
 }
 
-void ConsoleTestOutput::OnSuiteEnd(const String& suiteName, u32 totalTests, u32 passedTests, u32 failedTests, u64 durationUs)
+void ConsoleTestOutput::DoOnSuiteEnd(const String& suiteName, u32 totalTestCount, u32 passedTestCount, u32 failedTestCount, u64 durationUs)
 {
 	std::cout << "\n";
 	PrintSeparator();
@@ -72,15 +72,15 @@ void ConsoleTestOutput::OnSuiteEnd(const String& suiteName, u32 totalTests, u32 
 	PrintSeparator();
 
 	// Statistics
-	std::cout << "Total: " << ToString((u64)totalTests) << " tests\n";
+	std::cout << "Total: " << ToString((u64)totalTestCount) << " tests\n";
 
-	float passedPercent = (float)passedTests * 100.0f / (float)totalTests;
-	PrintColored("Passed: " + ToString((u64)passedTests) + " (" + ToString(passedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Green);
+	float passedPercent = (float)passedTestCount * 100.0f / (float)totalTestCount;
+	PrintColored("Passed: " + ToString((u64)passedTestCount) + " (" + ToString(passedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Green);
 
-	if(failedTests > 0)
+	if(failedTestCount > 0)
 	{
-		float failedPercent = (float)failedTests * 100.0f / (float)totalTests;
-		PrintColored("Failed: " + ToString((u64)failedTests) + " (" + ToString(failedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Red);
+		float failedPercent = (float)failedTestCount * 100.0f / (float)totalTestCount;
+		PrintColored("Failed: " + ToString((u64)failedTestCount) + " (" + ToString(failedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Red);
 	}
 	else
 		std::cout << "Failed: 0 (0.0%)\n";
@@ -109,7 +109,7 @@ void ConsoleTestOutput::OnSuiteEnd(const String& suiteName, u32 totalTests, u32 
 	mFailures.clear();
 }
 
-void ConsoleTestOutput::OnTestStart(const String& testName)
+void ConsoleTestOutput::DoOnTestStart(const String& testName)
 {
 	mCurrentTest = testName;
 	mCurrentTestIndex++;
@@ -118,7 +118,7 @@ void ConsoleTestOutput::OnTestStart(const String& testName)
 	std::cout << "Running test " << ToString((u64)mCurrentTestIndex) << ": " << testName << "... " << std::flush;
 }
 
-void ConsoleTestOutput::OnTestEnd(const String& testName, bool passed, u64 durationUs)
+void ConsoleTestOutput::DoOnTestEnd(const String& testName, bool passed, u64 durationUs)
 {
 	// Print result on same line
 	if(passed)

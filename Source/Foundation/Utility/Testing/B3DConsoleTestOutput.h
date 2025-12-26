@@ -18,13 +18,13 @@ namespace b3d
 		ConsoleTestOutput();
 		~ConsoleTestOutput() override;
 
-		void OutputFail(const String& description, const String& function, const String& file, long line) override;
-		void OutputSuccess(const String& testName) override;
+		void DoOnOutputFail(const String& description, const String& function, const String& file, long line) override;
+		void DoOnOutputSuccess(const String& testName) override;
 
-		void OnSuiteStart(const String& suiteName) override;
-		void OnSuiteEnd(const String& suiteName, u32 totalTests, u32 passedTests, u32 failedTests, u64 durationUs) override;
-		void OnTestStart(const String& testName) override;
-		void OnTestEnd(const String& testName, bool passed, u64 durationUs) override;
+		void DoOnSuiteStart(const String& suiteName) override;
+		void DoOnSuiteEnd(const String& suiteName, u32 totalTestCount, u32 passedTestCount, u32 failedTestCount, u64 durationUs) override;
+		void DoOnTestStart(const String& testName) override;
+		void DoOnTestEnd(const String& testName, bool passed, u64 durationUs) override;
 
 		/** Returns 0 if all tests passed, 1 if any failed. */
 		int GetExitCode() const { return mHadFailures ? 1 : 0; }

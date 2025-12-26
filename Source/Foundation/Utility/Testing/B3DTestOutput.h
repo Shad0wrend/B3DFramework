@@ -24,33 +24,39 @@ namespace b3d
 		 * @param	file		File the unit test failed in.
 		 * @param	line		Line of code the unit test failed on.
 		 */
-		virtual void OutputFail(const String& description, const String& function, const String& file, long line) = 0;
+		virtual void DoOnOutputFail(const String& description, const String& function, const String& file, long line) = 0;
+
+		/**
+		 * Triggered when a unit test succeeds (optional to implement).
+		 *
+		 * @param	testName	Name of the test that succeeded.
+		 */
+		virtual void DoOnOutputSuccess(const String& testName) {}
 
 		/**
 		 * Triggered when a test suite starts executing.
 		 *
 		 * @param	suiteName	Name of the test suite being executed.
 		 */
-		virtual void OnSuiteStart(const String& suiteName) {}
+		virtual void DoOnSuiteStart(const String& suiteName) {}
 
 		/**
 		 * Triggered when a test suite finishes executing.
 		 *
-		 * @param	suiteName		Name of the test suite that finished.
-		 * @param	totalTests		Total number of tests in the suite.
-		 * @param	passedTests		Number of tests that passed.
-		 * @param	failedTests		Number of tests that failed.
-		 * @param	durationUs		Total execution time in microseconds.
+		 * @param	suiteName			Name of the test suite that finished.
+		 * @param	totalTestCount		Total number of tests in the suite.
+		 * @param	passedTestCount		Number of tests that passed.
+		 * @param	failedTestCount		Number of tests that failed.
+		 * @param	durationUs			Total execution time in microseconds.
 		 */
-		virtual void OnSuiteEnd(const String& suiteName, u32 totalTests, u32 passedTests,
-		                        u32 failedTests, u64 durationUs) {}
+		virtual void DoOnSuiteEnd(const String& suiteName, u32 totalTestCount, u32 passedTestCount, u32 failedTestCount, u64 durationUs) {}
 
 		/**
 		 * Triggered when an individual test starts executing.
 		 *
 		 * @param	testName	Name of the test being executed.
 		 */
-		virtual void OnTestStart(const String& testName) {}
+		virtual void DoOnTestStart(const String& testName) {}
 
 		/**
 		 * Triggered when an individual test finishes executing.
@@ -59,21 +65,14 @@ namespace b3d
 		 * @param	passed		True if the test passed, false if it failed.
 		 * @param	durationUs	Execution time in microseconds.
 		 */
-		virtual void OnTestEnd(const String& testName, bool passed, u64 durationUs) {}
-
-		/**
-		 * Triggered when a unit test succeeds (optional to implement).
-		 *
-		 * @param	testName	Name of the test that succeeded.
-		 */
-		virtual void OutputSuccess(const String& testName) {}
+		virtual void DoOnTestEnd(const String& testName, bool passed, u64 durationUs) {}
 	};
 
 	/** Outputs unit test results so that failures are reported as exceptions. Success is not reported. */
 	class B3D_EXPORT ExceptionTestOutput : public TestOutput
 	{
 	public:
-		void OutputFail(const String& desc, const String& function, const String& file, long line) final;
+		void DoOnOutputFail(const String& desc, const String& function, const String& file, long line) final;
 	};
 
 	/** @} */

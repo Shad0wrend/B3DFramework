@@ -5,7 +5,7 @@
 
 using namespace b3d;
 
-void ExceptionTestOutput::OutputFail(const String& desc, const String& function, const String& file, long line)
+void ExceptionTestOutput::DoOnOutputFail(const String& desc, const String& function, const String& file, long line)
 {
 	B3D_EXCEPT(UnitTestException, desc);
 }

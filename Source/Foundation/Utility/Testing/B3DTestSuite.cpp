@@ -29,7 +29,7 @@ void TestSuite::Run(TestOutput& output)
 	}
 
 	// Notify suite start
-	output.OnSuiteStart(mSuiteName);
+	output.DoOnSuiteStart(mSuiteName);
 
 	// Start timing
 	Timer suiteTimer;
@@ -45,7 +45,7 @@ void TestSuite::Run(TestOutput& output)
 		mActiveTestName = testEntry.Name;
 
 		// Notify test start
-		output.OnTestStart(testEntry.Name);
+		output.DoOnTestStart(testEntry.Name);
 
 		// Clear per-test state
 		mCapturedLogs.clear();
@@ -75,13 +75,13 @@ void TestSuite::Run(TestOutput& output)
 		if(passed)
 		{
 			passedTests++;
-			output.OutputSuccess(testEntry.Name);
+			output.DoOnOutputSuccess(testEntry.Name);
 		}
 		else
 			failedTests++;
 
 		// Notify test end
-		output.OnTestEnd(testEntry.Name, passed, testDurationUs);
+		output.DoOnTestEnd(testEntry.Name, passed, testDurationUs);
 	}
 
 	ShutDown();
@@ -97,7 +97,7 @@ void TestSuite::Run(TestOutput& output)
 	u64 suiteDurationUs = suiteTimer.GetMicroseconds();
 
 	// Notify suite end
-	output.OnSuiteEnd(mSuiteName, totalTests, passedTests, failedTests, suiteDurationUs);
+	output.DoOnSuiteEnd(mSuiteName, totalTests, passedTests, failedTests, suiteDurationUs);
 
 	// Run child suites recursively
 	for(auto& suite : mSuites)
@@ -119,7 +119,7 @@ void TestSuite::Assertment(bool success, const String& description, const String
 	if(!success)
 	{
 		mFailureCount++;
-		mOutput->OutputFail(description, mActiveTestName, file, line);
+		mOutput->DoOnOutputFail(description, mActiveTestName, file, line);
 	}
 }
 
@@ -174,7 +174,7 @@ void TestSuite::VerifyLogs()
 		if(!expected.WasFound)
 		{
 			mFailureCount++;
-			mOutput->OutputFail(
+			mOutput->DoOnOutputFail(
 				"Expected log not found: " + expected.Pattern,
 				mActiveTestName,
 				__FILE__,
@@ -220,7 +220,7 @@ void TestSuite::VerifyLogs()
 			if(log.Verbosity == LogVerbosity::Warning)
 			{
 				mFailureCount++;
-				mOutput->OutputFail(
+				mOutput->DoOnOutputFail(
 					"Unexpected warning: " + log.Message,
 					mActiveTestName,
 					__FILE__,
@@ -230,7 +230,7 @@ void TestSuite::VerifyLogs()
 			else if(log.Verbosity <= LogVerbosity::Error)
 			{
 				mFailureCount++;
-				mOutput->OutputFail(
+				mOutput->DoOnOutputFail(
 					"Unexpected error: " + log.Message,
 					mActiveTestName,
 					__FILE__,
