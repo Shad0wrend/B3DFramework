@@ -124,6 +124,9 @@ else()
 	set(B3D_BUILD_TYPE_ID B3D_BUILD_TYPE_DEVELOPMENT_ID)
 endif()
 
+## Testing configuration
+set(B3D_ENABLE_TESTS ${B3D_BUILD_TESTS})
+
 ## Generate config files
 configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DEngineConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Core/B3DEngineConfig.h")
 configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DFrameworkConfig.h.in" "${PROJECT_BINARY_DIR}/Generated/Utility/B3DFrameworkConfig.h")

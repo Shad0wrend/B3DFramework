@@ -218,6 +218,13 @@ void Application::OnStartUp()
 
 	mExitAfterNFrames = (u32)CommandLine::GetParameterValueAsInt("ExitAfterNFrames", 0);
 
+#if B3D_ENABLE_TESTS
+	const SnapshotTestConfiguration snapshotTestConfiguration = SnapshotTestConfiguration::ParseFromCommandLine();
+
+	if(snapshotTestConfiguration.Enabled)
+		mSnapshotTestRunner = B3DMakeUnique<SnapshotTestRunner>(snapshotTestConfiguration);
+#endif
+
 	DynamicLibraryManager::StartUp();
 	CoreObjectManager::StartUp();
 	GameObjectManager::StartUp();
@@ -361,6 +368,12 @@ void Application::BeginMainLoop()
 
 void Application::EndMainLoop()
 {
+#if B3D_ENABLE_TESTS
+	// Finalize test runner before waiting for frame completion
+	if(mSnapshotTestRunner != nullptr)
+		mSnapshotTestRunner->Finalize();
+#endif
+
 	WaitUntilFrameFinished();
 }
 
@@ -498,6 +511,11 @@ void Application::PostUpdate()
 
 	PROFILE_CALL(GUIManager::Instance().Update(), "GUI");
 	DebugDraw::Instance().UpdateInternal();
+
+#if B3D_ENABLE_TESTS
+	if(mSnapshotTestRunner != nullptr)
+		mSnapshotTestRunner->Update();
+#endif
 }
 
 void Application::ShowProfilerOverlay(ProfilerOverlayType type, const HCamera& camera)

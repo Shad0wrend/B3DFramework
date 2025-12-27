@@ -7,6 +7,10 @@
 #include "Utility/B3DEvent.h"
 #include "Utility/B3DModule.h"
 
+#if B3D_ENABLE_TESTS
+#include "Testing/B3DSnapshotTestRunner.h"
+#endif
+
 namespace b3d
 {
 	class PersistentCache;
@@ -225,6 +229,10 @@ namespace b3d
 		ThreadId mSimThreadId;
 
 		volatile bool mRunMainLoop;
+
+#if B3D_ENABLE_TESTS
+		UPtr<SnapshotTestRunner> mSnapshotTestRunner;
+#endif
 	};
 
 	/** Easy way to access Application. */
