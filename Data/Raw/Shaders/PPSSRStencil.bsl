@@ -30,11 +30,11 @@ shader PPSSRStencil
 			float2 gRoughnessScaleBias;
 		}
 		
-		float fsmain(VStoFS input
+		void fsmain(VStoFS input
 		#if MSAA_COUNT > 1 && !MSAA_RESOLVE_0TH
 			, uint sampleIdx : SV_SampleIndex
 		#endif
-		) : SV_Target0
+		)
 		{
 			#if MSAA_COUNT > 1 
 				#if MSAA_RESOLVE_0TH
@@ -58,7 +58,7 @@ shader PPSSRStencil
 			if(fadeValue > 0.0f)
 				discard;
 			
-			return 0.0f;
+			return;
 		}	
 	};
 };
