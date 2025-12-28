@@ -209,7 +209,7 @@ VulkanGpuCommandBuffer::~VulkanGpuCommandBuffer()
 
 	VkDevice device = GetVulkanGpuDevice().GetLogical();
 
-	if(mState == State::Submitted || mState == State::Done)
+	if(mState == State::Submitted)
 	{
 		// Wait 1s
 		u64 waitTime = 1000 * 1000 * 1000;
