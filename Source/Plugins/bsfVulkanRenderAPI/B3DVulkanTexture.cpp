@@ -883,35 +883,6 @@ VulkanImage* VulkanTexture::CreateImage(PixelFormat format)
 	return vulkanImage;
 }
 
-VulkanBuffer* VulkanTexture::CreateStaging(const PixelData& pixelData, bool readable) // TODO - Replace usages with TextureUtility::CreateStagingBuffer
-{
-	VkBufferCreateInfo bufferCI;
-	bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferCI.pNext = nullptr;
-	bufferCI.flags = 0;
-	bufferCI.size = pixelData.GetSize();
-	bufferCI.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	bufferCI.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-	bufferCI.queueFamilyIndexCount = 0;
-	bufferCI.pQueueFamilyIndices = nullptr;
-
-	if(readable)
-		bufferCI.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-
-	VkDevice vkDevice = mGpuDevice.GetLogical();
-
-	VkBuffer buffer;
-	VkResult result = vkCreateBuffer(vkDevice, &bufferCI, gVulkanAllocator, &buffer);
-	B3D_ASSERT(result == VK_SUCCESS);
-
-	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(buffer, VMA_MEMORY_USAGE_CPU_ONLY);
-
-	VulkanBuffer *const vulkanBuffer = mGpuDevice.GetResourceManager().Create<VulkanBuffer>(readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite, (GpuBufferFlags)0, buffer, allocation);
-	vulkanBuffer->SetName(StringUtil::Format("Staging buffer ({0})", mName));
-
-	return vulkanBuffer;
-}
-
 void VulkanTexture::CopyImageToImage(VulkanGpuCommandBuffer& commandBuffer, VulkanImage* sourceImage, VulkanImage* destinationImage)
 {
 	const u32 faceCount = mProperties.GetFaceCount();

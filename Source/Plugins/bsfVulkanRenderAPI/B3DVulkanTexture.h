@@ -309,15 +309,6 @@ namespace b3d
 			VulkanImage* CreateImage(PixelFormat format);
 
 			/**
-			 * Creates a staging buffer that can be used for texture transfer operations.
-			 *
-			 * @param	pixelData	Object that describes the image sub-resource that will be in the buffer.
-			 * @param	needsRead	True if we will be copying data from the buffer, false if just reading. True if both.
-			 * @return					Newly allocated buffer.
-			 */
-			VulkanBuffer* CreateStaging(const PixelData& pixelData, bool needsRead);
-
-			/**
 			 * Copies all sub-resources from the source image to the destination image. Caller must ensure the images
 			 * are of the same size. The operation will be queued on the provided command buffer. The system assumes the
 			 * provided image matches the current texture properties (i.e. num faces, mips, size).
