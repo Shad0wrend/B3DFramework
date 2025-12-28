@@ -37,12 +37,17 @@ GpuTransferBufferHelper::~GpuTransferBufferHelper()
 		const SPtr<SchedulerThread> ownerSchedulerThread = firstPool.GetMessageQueue().GetSchedulerThread();
 		if(B3D_ENSURE(ownerSchedulerThread))
 		{
-			ownerSchedulerThread->Post(SchedulerTask([&waitGroup, poolRing = threadData->PoolRing.get()]
+			ownerSchedulerThread->Post(SchedulerTask([&waitGroup, poolRing = threadData->PoolRing.get(), currentCommandBuffer = threadData->CurrentCommandBuffer]() mutable
 			{
+				currentCommandBuffer->End();
+				currentCommandBuffer = nullptr;
+
 				poolRing->Destroy();
 				waitGroup.NotifyDone();
 			}, "Destroy GpuCommandBufferPoolRing"));
 		}
+
+		threadData->CurrentCommandBuffer = nullptr;
 	}
 
 	lock.unlock();
