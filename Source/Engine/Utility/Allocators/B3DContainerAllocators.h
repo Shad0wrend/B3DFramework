@@ -146,11 +146,16 @@ namespace b3d
 							std::move(other.GetElements(), other.GetElements() + mySize, stackElements);
 
 						// Construct new elements
-						std::uninitialized_move(
-							other.GetElements() + mySize,
-							other.GetElements() + otherSize,
-							stackElements + mySize);
+						std::uninitialized_move(other.GetElements() + mySize, other.GetElements() + otherSize, stackElements + mySize);
 					}
+
+					// Destruct source elements after moving them. This is needed because:
+					// a. If elements don't support move, they will be copied, so we need to destruct originals
+					// b. Even if elements support move, they still need to be destructed
+					// c. Owning source array size is generally set to 0 during the move, so the elements won't be destructed when array goes out of scope
+					ElementType* otherElements = other.GetElements();
+					for(u64 index = 0; index < otherSize; ++index)
+						otherElements[index].~ElementType();
 
 					mElements = (ElementType*)mStackStorage;
 				}
