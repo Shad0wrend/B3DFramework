@@ -1176,6 +1176,8 @@ void RenderBeastScene::Destroy()
 
 	B3D_ASSERT(mSamplerOverrides.empty());
 
+	mUniformBufferPools.Destroy();
+
 	GetRenderBeast()->NotifySceneDestroyed(this);
 	RendererScene::Destroy();
 }

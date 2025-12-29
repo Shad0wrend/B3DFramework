@@ -150,6 +150,13 @@ namespace b3d::render
 		 */
 		void AdvanceFrame();
 
+		/**
+		 * Releases all GPU resources held by this object.
+		 *
+		 * All allocations must be released before calling this method. Call before destroying the GPU device.
+		 */
+		void Destroy();
+
 	private:
 		static constexpr u32 kStagingEntriesPerBuffer = 256;
 

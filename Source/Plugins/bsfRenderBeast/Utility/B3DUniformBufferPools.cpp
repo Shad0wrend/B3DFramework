@@ -325,3 +325,36 @@ void UniformBufferPools::AdvanceFrame()
 	mDecalStagingPool.AdvanceFrame();
 	mGpuParticlesStagingPool.AdvanceFrame();
 }
+
+void UniformBufferPools::Destroy()
+{
+#if B3D_BUILD_TYPE_DEVELOPMENT
+	// Verify all allocations have been released
+	for (const PoolGroup& group : mPoolGroups)
+	{
+		for (const AllocationEntry& entry : group.Entries)
+			B3D_ASSERT(!entry.IsAllocated && "Cannot destroy UniformBufferPools with outstanding allocations");
+	}
+#endif
+
+	// Destroy staging pools
+	mPerObjectStagingPool.Destroy();
+	mDecalStagingPool.Destroy();
+	mGpuParticlesStagingPool.Destroy();
+
+	// Destroy pool groups
+	for (PoolGroup& group : mPoolGroups)
+	{
+		group.ParameterSetsByBuffer.clear();
+		group.Entries.clear();
+
+		for (GpuBufferPool& pool : group.Pools)
+			pool.Destroy();
+
+		group.Pools.Clear();
+	}
+
+	mPoolGroups.Clear();
+	mDevice = nullptr;
+	mInitialized = false;
+}

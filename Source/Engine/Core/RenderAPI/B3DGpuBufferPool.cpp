@@ -131,6 +131,15 @@ void TransientGpuBufferPool::AddNewBufferToPool()
 	}
 }
 
+void TransientGpuBufferPool::Destroy()
+{
+	mSuballocations.Clear();
+	mBuffers.Clear();
+	mFreeListHead = ~0u;
+	mCurrentFrameNumber = 0;
+	mDevice = nullptr;
+}
+
 void GpuBufferPool::Initialize(GpuDevice& device, const GpuBufferCreateInformation& createInfo, u32 suballocationsPerBuffer, u32 initialBufferCount)
 {
 	mDevice = &device;
@@ -280,4 +289,21 @@ void GpuBufferPool::AddNewBufferToPool()
 
 	// Initialize the new buffer entry
 	fnInitializeBufferEntry((u32)(mBuffers.Size() - 1));
+}
+
+void GpuBufferPool::Destroy()
+{
+#if B3D_BUILD_TYPE_DEVELOPMENT
+	// Verify all allocations have been released
+	for (u32 bufferIndex = 0; bufferIndex < mBuffers.size(); bufferIndex++)
+	{
+		const BufferEntry& bufferEntry = mBuffers[bufferIndex];
+		if (bufferEntry.Buffer != nullptr)
+			B3D_ASSERT(bufferEntry.AllocatedCount == 0 && "Cannot destroy GpuBufferPool with outstanding allocations");
+	}
+#endif
+
+	mSuballocations.Clear();
+	mBuffers.Clear();
+	mDevice = nullptr;
 }

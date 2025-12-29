@@ -108,6 +108,14 @@ namespace b3d::render
 		 */
 		u32 GetTotalSuballocationCount() const { return (u32)mSuballocations.size(); }
 
+		/**
+		 * Releases all GPU resources held by this pool.
+		 *
+		 * All allocations must be released before calling this method. Call before destroying the GPU device.
+		 * After this call, the pool is empty and cannot be used until Initialize() is called again.
+		 */
+		void Destroy();
+
 	private:
 		/** Entry in the suballocation pool with intrusive free-list link. */
 		struct SuballocationEntry
@@ -209,6 +217,14 @@ namespace b3d::render
 
 		/** Gets the total number of suballocations (used + free). */
 		u32 GetTotalSuballocationCount() const { return (u32)mSuballocations.size(); }
+
+		/**
+		 * Releases all GPU resources held by this pool.
+		 *
+		 * All allocations must be released before calling this method. Call before destroying the GPU device.
+		 * After this call, the pool is empty and cannot be used until Initialize() is called again.
+		 */
+		void Destroy();
 
 	private:
 		/** Entry in the suballocation pool with intrusive free-list link, tracking free suballocations. */
