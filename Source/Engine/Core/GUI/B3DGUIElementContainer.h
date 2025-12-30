@@ -24,7 +24,7 @@ namespace b3d
 
 	protected:
 		GUIElementContainer(const GUISizeConstraints& dimensions, const char* style, GUIElementOptions options = GUIElementOptions(0));
-		GUIElementContainer(const GUISizeConstraints& dimensions, const String& style = StringUtil::kBlank, GUIElementOptions options = GUIElementOptions(0));
+		GUIElementContainer(const GUISizeConstraints& dimensions, const String& style = StringUtility::kBlank, GUIElementOptions options = GUIElementOptions(0));
 
 		GUILogicalSize CalculateUnconstrainedOptimalSize() const override;
 		bool DoOnCommandEvent(const GUICommandEvent& ev) override;

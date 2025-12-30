@@ -303,7 +303,7 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 
 			if(auto found = addedTextures.find(page.Texture); found == addedTextures.end())
 			{
-				const String& texturePageName = StringUtil::Format("{0}FontPage{1}", fontName, pair.second.Page);
+				const String& texturePageName = StringUtility::Format("{0}FontPage{1}", fontName, pair.second.Page);
 				package->AddResource(texturePageName, page.Texture);
 				addedTextures.insert(page.Texture);
 			}

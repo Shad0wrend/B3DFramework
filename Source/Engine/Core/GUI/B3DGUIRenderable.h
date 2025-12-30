@@ -61,7 +61,7 @@ namespace b3d
 		virtual const String& GetStyleSheetClass() const { return mStyleClass; }
 
 		/** Returns an user-specific ID will be used for style lookup in the style sheet. */
-		virtual const String& GetStyleSheetId() const { return StringUtil::kBlank; }
+		virtual const String& GetStyleSheetId() const { return StringUtility::kBlank; }
 
 		/**	Sets new style class to be used by the element. */
 		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(StyleSheetClass))
@@ -92,7 +92,7 @@ namespace b3d
 		template <class T>
 		static const String& GetStyleClass(const String& overrideStyle)
 		{
-			if(overrideStyle == StringUtil::kBlank)
+			if(overrideStyle == StringUtility::kBlank)
 				return T::GetGuiTypeName();
 
 			return overrideStyle;

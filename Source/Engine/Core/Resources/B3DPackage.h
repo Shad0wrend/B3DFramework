@@ -428,7 +428,7 @@ namespace b3d
 		bool Save(const SPtr<DataStream>& stream, const SavePackageOptions& options);
 
 		/** Creates a new empty package. */
-		static SPtr<Package> Create(const String& name = StringUtil::kBlank, const UUID& id = UUID::kEmpty);
+		static SPtr<Package> Create(const String& name = StringUtility::kBlank, const UUID& id = UUID::kEmpty);
 
 		/** Loads the package from the provided path. */
 		static SPtr<Package> Load(const Path& path);

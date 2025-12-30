@@ -408,19 +408,19 @@ namespace b3d
 	 */
 
 	/** Utility class for manipulating Strings. */
-	class B3D_EXPORT StringUtil
+	class B3D_EXPORT StringUtility
 	{
 	public:
 		/** Removes any whitespace characters from beginning or end of the string. */
 		static String Trim(const String& str, bool left = true, bool right = true);
 
-		/** @copydoc StringUtil::Trim(String&, bool, bool) */
+		/** @copydoc StringUtility::Trim(String&, bool, bool) */
 		static WString Trim(const WString& str, bool left = true, bool right = true);
 
 		/**	Removes specified characters from beginning or end of the string. */
 		static String Trim(const String& str, const String& delims, bool left = true, bool right = true);
 
-		/** @copydoc StringUtil::Trim(String&, const String&, bool, bool) */
+		/** @copydoc StringUtility::Trim(String&, const String&, bool, bool) */
 		static WString Trim(const WString& str, const WString& delims, bool left = true, bool right = true);
 
 		/**
@@ -434,7 +434,7 @@ namespace b3d
 		 */
 		static Vector<String> Split(const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0);
 
-		/** @copydoc StringUtil::Split(const String&, const String&, unsigned int) */
+		/** @copydoc StringUtility::Split(const String&, const String&, unsigned int) */
 		static Vector<WString> Split(const WString& str, const WString& delims = L"\t\n ", unsigned int maxSplits = 0);
 
 		/**
@@ -452,7 +452,7 @@ namespace b3d
 		 */
 		static Vector<String> Tokenise(const String& str, const String& delims = "\t\n ", const String& doubleDelims = "\"", unsigned int maxSplits = 0);
 
-		/** @copydoc StringUtil::Tokenise(const String&, const String&, const String&, unsigned int) */
+		/** @copydoc StringUtility::Tokenise(const String&, const String&, const String&, unsigned int) */
 		static Vector<WString> Tokenise(const WString& str, const WString& delims = L"\t\n ", const WString& doubleDelims = L"\"", unsigned int maxSplits = 0);
 
 		/** Converts one or multiple 32-bit numbers into a literal hexidecimal representation. Each entry is separated with a desh. */
@@ -731,7 +731,7 @@ namespace b3d
 
 			BasicString<T> startOfThis = str.substr(0, patternLen);
 			if(lowerCase)
-				StringUtil::ToLowerCase(startOfThis);
+				StringUtility::ToLowerCase(startOfThis);
 
 			return (startOfThis == pattern);
 		}
@@ -746,7 +746,7 @@ namespace b3d
 
 			BasicString<T> endOfThis = str.substr(thisLen - patternLen, patternLen);
 			if(lowerCase)
-				StringUtil::ToLowerCase(endOfThis);
+				StringUtility::ToLowerCase(endOfThis);
 
 			return (endOfThis == pattern);
 		}
@@ -758,8 +758,8 @@ namespace b3d
 			BasicString<T> tmpPattern = pattern;
 			if(!caseSensitive)
 			{
-				StringUtil::ToLowerCase(tmpStr);
-				StringUtil::ToLowerCase(tmpPattern);
+				StringUtility::ToLowerCase(tmpStr);
+				StringUtility::ToLowerCase(tmpPattern);
 			}
 
 			typename BasicString<T>::const_iterator strIt = tmpStr.begin();

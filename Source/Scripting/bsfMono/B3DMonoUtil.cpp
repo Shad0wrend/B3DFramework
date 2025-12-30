@@ -25,7 +25,7 @@ static b3d::MonoProperty* sGenericParamsProp = nullptr;
 WString MonoUtil::MonoToWString(MonoString* str)
 {
 	if(str == nullptr)
-		return StringUtil::kWblank;
+		return StringUtility::kWblank;
 
 	int len = mono_string_length(str);
 	mono_unichar2* monoChars = mono_string_chars(str);

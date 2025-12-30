@@ -48,7 +48,7 @@ namespace b3d
 		static GUIDropDownDataEntry Separator();
 
 		/** Creates a new button entry with the specified callback that is triggered when button is selected. */
-		static GUIDropDownDataEntry Button(const String& label, std::function<void()> callback, const String& shortcutTag = StringUtil::kBlank);
+		static GUIDropDownDataEntry Button(const String& label, std::function<void()> callback, const String& shortcutTag = StringUtility::kBlank);
 
 		/** Creates a new sub-menu entry that will open the provided drop down data sub-menu when activated. */
 		static GUIDropDownDataEntry SubMenu(const String& label, const GUIDropDownData& data);

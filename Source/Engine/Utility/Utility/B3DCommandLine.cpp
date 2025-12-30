@@ -127,13 +127,13 @@ namespace b3d
 		if (index < sArguments.size())
 			return sArguments[index];
 
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	}
 
 	bool CommandLine::HasParameter(const String& name)
 	{
 		String normalizedParam = name;
-		StringUtil::ToLowerCase(normalizedParam);
+		StringUtility::ToLowerCase(normalizedParam);
 
 		return sParameters.find(normalizedParam) != sParameters.end();
 	}
@@ -141,7 +141,7 @@ namespace b3d
 	String CommandLine::GetParameterValue(const String& name, const String& defaultValue)
 	{
 		String normalizedParam = name;
-		StringUtil::ToLowerCase(normalizedParam);
+		StringUtility::ToLowerCase(normalizedParam);
 
 		auto iterator = sParameters.find(normalizedParam);
 		if (iterator != sParameters.end())
@@ -181,7 +181,7 @@ namespace b3d
 
 		// Convert to lowercase for case-insensitive comparison
 		String valueLower = value;
-		StringUtil::ToLowerCase(valueLower);
+		StringUtility::ToLowerCase(valueLower);
 
 		if (valueLower == "true" || valueLower == "1" || valueLower == "yes" || valueLower == "on")
 			return true;
@@ -269,7 +269,7 @@ namespace b3d
 				}
 
 				// Normalize parameter name
-				StringUtil::ToLowerCase(parameterName);
+				StringUtility::ToLowerCase(parameterName);
 				sParameters[parameterName] = parameterValue;
 			}
 		}

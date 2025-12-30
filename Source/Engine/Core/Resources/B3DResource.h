@@ -17,7 +17,7 @@ namespace b3d
 	class B3D_EXPORT Resource : public IReflectable, public IScriptExportable, public CoreObject
 	{
 	public:
-		Resource(bool createRenderProxy = true, const String& name = StringUtil::kBlank);
+		Resource(bool createRenderProxy = true, const String& name = StringUtility::kBlank);
 		virtual ~Resource() = default;
 
 		/**	Returns the name of the resource. */

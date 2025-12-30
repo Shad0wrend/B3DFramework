@@ -160,7 +160,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 
 		if(mSurfaces[imageIndex].Image != nullptr)
 		{
-			mSurfaces[imageIndex].Image->SetName(StringUtil::Format("Color attachment #{0}", imageIndex));
+			mSurfaces[imageIndex].Image->SetName(StringUtility::Format("Color attachment #{0}", imageIndex));
 		}
 	}
 

@@ -24,7 +24,7 @@ FontImporter::FontImporter()
 bool FontImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 }

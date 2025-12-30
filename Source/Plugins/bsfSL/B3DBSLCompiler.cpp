@@ -300,7 +300,7 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			}
 
 			GpuProgramCreateInformation gpuProgramCreateInformation;
-			gpuProgramCreateInformation.Name = StringUtil::Format("{0} ({1} Program)", name, typeString);
+			gpuProgramCreateInformation.Name = StringUtility::Format("{0} ({1} Program)", name, typeString);
 			gpuProgramCreateInformation.Language = language;
 			gpuProgramCreateInformation.EntryPoint = entry;
 			gpuProgramCreateInformation.Source = code;

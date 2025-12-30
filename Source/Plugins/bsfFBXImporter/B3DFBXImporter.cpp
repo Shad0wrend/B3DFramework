@@ -81,7 +81,7 @@ FBXImporter::FBXImporter()
 bool FBXImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 }
@@ -1461,8 +1461,8 @@ void FBXImporter::ImportBlendShapes(FBXImportScene& scene, const FBXImportOption
 				blendShape.Frames.resize(frameCount);
 
 				// Get name without invalid characters
-				blendShape.Name = StringUtil::ReplaceAll(blendShape.Name, ".", "_");
-				blendShape.Name = StringUtil::ReplaceAll(blendShape.Name, "/", "_");
+				blendShape.Name = StringUtility::ReplaceAll(blendShape.Name, ".", "_");
+				blendShape.Name = StringUtility::ReplaceAll(blendShape.Name, "/", "_");
 
 				for(u32 k = 0; k < frameCount; k++)
 				{
@@ -1473,8 +1473,8 @@ void FBXImporter::ImportBlendShapes(FBXImportScene& scene, const FBXImportOption
 					frame.Weight = (float)(weights[k] / 100.0);
 
 					// Get name without invalid characters
-					frame.Name = StringUtil::ReplaceAll(frame.Name, ".", "_");
-					frame.Name = StringUtil::ReplaceAll(frame.Name, "/", "_");
+					frame.Name = StringUtility::ReplaceAll(frame.Name, ".", "_");
+					frame.Name = StringUtility::ReplaceAll(frame.Name, "/", "_");
 
 					ImportBlendShapeFrame(fbxShape, *mesh, options, frame);
 				}
@@ -1887,8 +1887,8 @@ void FBXImporter::ImportAnimations(FbxAnimLayer* layer, FbxNode* node, FBXImport
 						blendShapeAnim.BlendShape = channel->GetName();
 
 						// Get name without invalid characters
-						blendShapeAnim.BlendShape = StringUtil::ReplaceAll(blendShapeAnim.BlendShape, ".", "_");
-						blendShapeAnim.BlendShape = StringUtil::ReplaceAll(blendShapeAnim.BlendShape, "/", "_");
+						blendShapeAnim.BlendShape = StringUtility::ReplaceAll(blendShapeAnim.BlendShape, ".", "_");
+						blendShapeAnim.BlendShape = StringUtility::ReplaceAll(blendShapeAnim.BlendShape, "/", "_");
 
 						FbxAnimCurve* curves[1] = { curve };
 						float defaultValues[1] = { 0.0f };

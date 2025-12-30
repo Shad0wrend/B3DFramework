@@ -10,7 +10,7 @@ using namespace b3d;
 bool ShaderIncludeImporter::IsExtensionSupported(const String& extension) const
 {
 	String lowerCaseExtension = extension;
-	StringUtil::ToLowerCase(lowerCaseExtension);
+	StringUtility::ToLowerCase(lowerCaseExtension);
 
 	return lowerCaseExtension == u8"bslinc";
 }

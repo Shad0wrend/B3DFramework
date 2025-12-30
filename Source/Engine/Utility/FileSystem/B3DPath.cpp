@@ -393,7 +393,7 @@ const String& Path::GetTail() const
 	else if(mDirectories.size() > 0)
 		return mDirectories.back();
 	else
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 }
 
 String Path::PopTail()
@@ -401,7 +401,7 @@ String Path::PopTail()
 	if(IsFile())
 	{
 		String filename = mFilename;
-		mFilename = StringUtil::kBlank;
+		mFilename = StringUtility::kBlank;
 		return filename;
 	}
 	else if(!mDirectories.empty())
@@ -411,7 +411,7 @@ String Path::PopTail()
 		return directory;
 	}
 	else
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 }
 
 Path Path::GetSubPath(u32 directoryCount) const

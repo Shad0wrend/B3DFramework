@@ -458,7 +458,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 						const bool isExistingValueDefault = foundTextureParameter->second.DefaultValueIndex == ~0u;
 						if (hasDefaultValue != isExistingValueDefault)
 						{
-							outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Texture parameter '{0}' has a different default value across variations.", entry.ident.c_str());
+							outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Texture parameter '{0}' has a different default value across variations.", entry.ident.c_str());
 							return false;
 						}
 
@@ -467,7 +467,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 							const ShaderDefaultTextureType existingTexture = outShaderCreateInformation.TextureDefaultValues[foundTextureParameter->second.DefaultValueIndex];
 							if (existingTexture != defaultValue)
 							{
-								outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Texture parameter '{0}' has a different default value across variations.", entry.ident.c_str());
+								outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Texture parameter '{0}' has a different default value across variations.", entry.ident.c_str());
 								return false;
 							}
 						}
@@ -509,7 +509,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 						const bool isExistingValueNonDefault = foundSamplerParameter->second.DefaultValueIndex != ~0u;
 						if (foundSamplerReflectionData->second.isNonDefault != isExistingValueNonDefault)
 						{
-							outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Sampler parameter '{0}' has a different default value across variations.", entry.ident.c_str());
+							outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Sampler parameter '{0}' has a different default value across variations.", entry.ident.c_str());
 							return false;
 						}
 
@@ -518,7 +518,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 							const SamplerStateInformation& existingSamplerState = outShaderCreateInformation.SamplerDefaultValues[foundSamplerParameter->second.DefaultValueIndex];
 							if (existingSamplerState != defaultSamplerStateCreateInformation)
 							{
-								outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Sampler parameter '{0}' has a different default value across variations.", entry.ident.c_str());
+								outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Sampler parameter '{0}' has a different default value across variations.", entry.ident.c_str());
 								return false;
 							}
 						}
@@ -742,7 +742,7 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 			StringStream logOutput;
 			log.GetMessages(logOutput);
 
-			outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
+			outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 			return "";
 		}
 	}
@@ -780,7 +780,7 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 			StringStream logOutput;
 			log.GetMessages(logOutput);
 
-			outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
+			outCompileResult.ErrorMessage = StringUtility::Format("Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 			return "";
 		}
 	}

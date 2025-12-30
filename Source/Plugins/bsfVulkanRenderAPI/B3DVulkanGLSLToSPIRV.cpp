@@ -495,7 +495,7 @@ static TOptional<GpuUniformBufferMemberInformation> ParseSPIRVCrossStructMember(
 
 	if(memberInformation.Type == GPDT_UNKNOWN)
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", memberInformation.Name);
+		outLog << StringUtility::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", memberInformation.Name);
 		return {};
 	}
 
@@ -507,13 +507,13 @@ static TOptional<GpuUniformBufferInformation> ParseSPIRVCrossUniformBuffer(spirv
 {
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationBinding))
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform {0}. Uniform has no slot binding assigned. Each uniform must have a slot binding otherwise it cannot be assigned.", resource.name.c_str());
+		outLog << StringUtility::Format("Warning: Failed parsing uniform {0}. Uniform has no slot binding assigned. Each uniform must have a slot binding otherwise it cannot be assigned.", resource.name.c_str());
 		return {};
 	}
 
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationDescriptorSet))
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform {0}. Uniform has no set binding assigned. Each uniform must have a set binding otherwise it cannot be assigned.", resource.name.c_str());
+		outLog << StringUtility::Format("Warning: Failed parsing uniform {0}. Uniform has no set binding assigned. Each uniform must have a set binding otherwise it cannot be assigned.", resource.name.c_str());
 		return {};
 	}
 
@@ -538,19 +538,19 @@ static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossObjectCommon(spir
 {
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationBinding))
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform {0}. Uniform has no slot binding assigned. Each uniform must have a slot binding otherwise it cannot be assigned.", resource.name.c_str());
+		outLog << StringUtility::Format("Warning: Failed parsing uniform {0}. Uniform has no slot binding assigned. Each uniform must have a slot binding otherwise it cannot be assigned.", resource.name.c_str());
 		return {};
 	}
 
 	if(!compiler.get_decoration_bitset(resource.id).get(spv::DecorationDescriptorSet))
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform {0}. Uniform has no set binding assigned. Each uniform must have a set binding otherwise it cannot be assigned.", resource.name.c_str());
+		outLog << StringUtility::Format("Warning: Failed parsing uniform {0}. Uniform has no set binding assigned. Each uniform must have a set binding otherwise it cannot be assigned.", resource.name.c_str());
 		return {};
 	}
 
 	if(type.array.size() > 1)
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform {0}. Multi-dimension arrays are not supported.", resource.name.c_str());
+		outLog << StringUtility::Format("Warning: Failed parsing uniform {0}. Multi-dimension arrays are not supported.", resource.name.c_str());
 		return {};
 	}
 
@@ -600,7 +600,7 @@ static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossSampledTexture(sp
 
 	if(objectInformation->Type == GPOT_UNKNOWN)
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", objectInformation->Type);
+		outLog << StringUtility::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", objectInformation->Type);
 		return {};
 	}
 
@@ -664,7 +664,7 @@ static TOptional<GpuObjectParameterInformation> ParseSPIRVCrossStorageTexture(sp
 
 	if(objectInformation->Type == GPOT_UNKNOWN)
 	{
-		outLog << StringUtil::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", objectInformation->Type);
+		outLog << StringUtility::Format("Warning: Failed parsing uniform. Cannot determine type for uniform: {0}.\n", objectInformation->Type);
 		return {};
 	}
 
@@ -827,7 +827,7 @@ struct GLSLAttribute
 	 */
 	i32 MatchesName(const String& name) const
 	{
-		if(!StringUtil::StartsWith(name, mName, false))
+		if(!StringUtility::StartsWith(name, mName, false))
 			return -1;
 
 		u32 length = (u32)mName.size();

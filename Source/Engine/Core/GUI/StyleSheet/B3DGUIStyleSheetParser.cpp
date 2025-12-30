@@ -634,7 +634,7 @@ bool GUIStyleSheetParser::TryParseVariable(VariableContext& inOutVariableContext
 	{
 		if(found->second.Type != value.Type)
 		{
-			Error(StringUtil::Format("Variable '{0}' previously defined as '{1}', but now defined as '{2}'.", identifier, ValueTypeToString(found->second.Type), ValueTypeToString(value.Type)));
+			Error(StringUtility::Format("Variable '{0}' previously defined as '{1}', but now defined as '{2}'.", identifier, ValueTypeToString(found->second.Type), ValueTypeToString(value.Type)));
 			return false;
 		}
 	}
@@ -883,7 +883,7 @@ bool GUIStyleSheetParser::TryParseColor(Color& outValue)
 		return true;
 	}
 	default:
-		Error(StringUtil::Format("Unexpected token '{0}', expected a color.", Token::TypeToString(currentTokenType)));
+		Error(StringUtility::Format("Unexpected token '{0}', expected a color.", Token::TypeToString(currentTokenType)));
 		return false;
 	}
 }
@@ -960,7 +960,7 @@ bool GUIStyleSheetParser::TryParseImage(HSpriteImage& outValue)
 		outValue = GetResources().Load<SpriteImage>(urlOrIconName, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", urlOrIconName));
+			Warning(StringUtility::Format("Unable to load image at path \"{0}\".", urlOrIconName));
 	}
 	else
 	{
@@ -970,7 +970,7 @@ bool GUIStyleSheetParser::TryParseImage(HSpriteImage& outValue)
 		outValue = StockIcons::Instance().GetIcon(icon, iconSize);
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to find icon \"{0}\".", urlOrIconName));
+			Warning(StringUtility::Format("Unable to find icon \"{0}\".", urlOrIconName));
 	}
 
 	return true;
@@ -993,7 +993,7 @@ bool GUIStyleSheetParser::TryParseFont(HFont& outValue)
 		outValue = GetBuiltinResources().GetFont(fontFamily);
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load font family \"{0}\".", fontFamily));
+			Warning(StringUtility::Format("Unable to load font family \"{0}\".", fontFamily));
 	}
 	else
 	{
@@ -1006,7 +1006,7 @@ bool GUIStyleSheetParser::TryParseFont(HFont& outValue)
 		outValue = GetResources().Load<Font>(url, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load font at path \"{0}\".", url));
+			Warning(StringUtility::Format("Unable to load font at path \"{0}\".", url));
 	}
 
 	return true;
@@ -1352,7 +1352,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		outValue = GetResources().Load<SpriteImage>(filePath, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load image at path \"{0}\".", filePath));
+			Warning(StringUtility::Format("Unable to load image at path \"{0}\".", filePath));
 	}
 	else if(value.Type == ValueType::Icon)
 	{
@@ -1364,7 +1364,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		outValue = StockIcons::Instance().GetIcon(icon, iconValue.IconSize);
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to find icon \"{0}\".", iconName));
+			Warning(StringUtility::Format("Unable to find icon \"{0}\".", iconName));
 	}
 	else
 	{
@@ -1390,7 +1390,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		outValue = GetResources().Load<Font>(filePath, ResourceLoadOptions(false));
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load font at path \"{0}\".", filePath));
+			Warning(StringUtility::Format("Unable to load font at path \"{0}\".", filePath));
 	}
 	else if(value.Type == ValueType::String)
 	{
@@ -1401,7 +1401,7 @@ bool GUIStyleSheetParser::TryParseAndLookupVariableValue(ValueType expectedType,
 		outValue = GetBuiltinResources().GetFont(fontFamily); // TODO - Add improved lookup of fonts by name
 
 		if(!outValue.IsLoaded(false))
-			Warning(StringUtil::Format("Unable to load font family \"{0}\".", fontFamily));
+			Warning(StringUtility::Format("Unable to load font family \"{0}\".", fontFamily));
 	}
 	else
 	{
@@ -1518,30 +1518,30 @@ void GUIStyleSheetParser::SkipToken(TokenType type)
 
 void GUIStyleSheetParser::Warning(const String& message)
 {
-	mWarnings << StringUtil::Format("Parser warning ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message) << '\n';
+	mWarnings << StringUtility::Format("Parser warning ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message) << '\n';
 }
 
 TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::Error(const String& message)
 {
-	mErrors = StringUtil::Format("Parser error ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message);
+	mErrors = StringUtility::Format("Parser error ({0}): {1}", mCurrentToken->GetSourceCodePosition().ToString(), message);
 	return {};
 }
 
 TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected()
 {
-	mErrors = StringUtil::Format("Parser error ({0}): Unexpected token '{1}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()));
+	mErrors = StringUtility::Format("Parser error ({0}): Unexpected token '{1}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()));
 	return {};
 }
 
 TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(TokenType expectedTokenType)
 {
-	mErrors = StringUtil::Format("Parser error ({0}): Unexpected token '{1}', expected '{2}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), Token::TypeToString(expectedTokenType));
+	mErrors = StringUtility::Format("Parser error ({0}): Unexpected token '{1}', expected '{2}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), Token::TypeToString(expectedTokenType));
 	return {};
 }
 
 TOptional<GUIStyleSheetParser::Token> GUIStyleSheetParser::ErrorUnexpected(const String& expectedTokenSpelling)
 {
-	mErrors = StringUtil::Format("Parser error ({0}): Unexpected spelling for token '{1}' ({2}), expected '{3}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), mCurrentToken->GetSpelling(), expectedTokenSpelling);
+	mErrors = StringUtility::Format("Parser error ({0}): Unexpected spelling for token '{1}' ({2}), expected '{3}'", mCurrentToken->GetSourceCodePosition().ToString(), Token::TypeToString(mCurrentToken->GetType()), mCurrentToken->GetSpelling(), expectedTokenSpelling);
 	return {};
 }
 

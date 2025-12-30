@@ -351,7 +351,7 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	if(vulkanBuffer != nullptr)
 	{
 		if(staging)
-			vulkanBuffer->SetName(StringUtil::Format("Staging buffer ({0})", mName));
+			vulkanBuffer->SetName(StringUtility::Format("Staging buffer ({0})", mName));
 		else
 			vulkanBuffer->SetName(mName);
 	}

@@ -131,7 +131,7 @@ VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& tex
 bool FGAImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return lowerCaseExt == u8"fga";
 }

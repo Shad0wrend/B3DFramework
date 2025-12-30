@@ -108,7 +108,7 @@ namespace b3d
 		template <class T>
 		static const String& GetStyleName(bool resizeable, const String& overrideStyle)
 		{
-			if(overrideStyle == StringUtil::kBlank)
+			if(overrideStyle == StringUtility::kBlank)
 				return T::GetGuiTypeName(resizeable);
 
 			return overrideStyle;

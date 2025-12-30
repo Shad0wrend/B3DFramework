@@ -539,7 +539,7 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RenderBeastScene&
 		const SPtr<GpuCommandBufferProfiler>& commandBufferProfiler = commandBuffer.GetProfiler();
 		if(commandBufferProfiler != nullptr)
 		{
-			const String title = StringUtil::Format("View ({0} x {1})", viewTarget.TargetWidth, viewTarget.TargetHeight);
+			const String title = StringUtility::Format("View ({0} x {1})", viewTarget.TargetWidth, viewTarget.TargetHeight);
 			commandBufferProfiler->BeginSample(commandBuffer, ProfilerString(title.data(), title.size()));
 		}
 #endif

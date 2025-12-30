@@ -53,7 +53,7 @@ FreeImgImporter::FreeImgImporter()
 		strExt << exts;
 
 		// Pull off individual formats (separated by comma by FI)
-		Vector<String> extsVector = StringUtil::Split(exts, u8",");
+		Vector<String> extsVector = StringUtility::Split(exts, u8",");
 		for(auto v = extsVector.begin(); v != extsVector.end(); ++v)
 		{
 			auto findIter = std::find(mExtensions.begin(), mExtensions.end(), *v);
@@ -61,7 +61,7 @@ FreeImgImporter::FreeImgImporter()
 			if(findIter == mExtensions.end())
 			{
 				String ext = *v;
-				StringUtil::ToLowerCase(ext);
+				StringUtility::ToLowerCase(ext);
 
 				mExtensionToFID.insert(std::make_pair(ext, i));
 				mExtensions.push_back(ext);
@@ -81,7 +81,7 @@ FreeImgImporter::~FreeImgImporter()
 bool FreeImgImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 }
@@ -107,12 +107,12 @@ String FreeImgImporter::MagicNumToExtension(const u8* magic, u32 maxBytes) const
 	if(fif != FIF_UNKNOWN)
 	{
 		String ext = String(FreeImage_GetFormatFromFIF(fif));
-		StringUtil::ToLowerCase(ext);
+		StringUtility::ToLowerCase(ext);
 		return ext;
 	}
 	else
 	{
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	}
 }
 

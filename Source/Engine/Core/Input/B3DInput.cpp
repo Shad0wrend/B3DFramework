@@ -573,19 +573,19 @@ String Input::GetDeviceName(InputDevice type, u32 deviceIndex)
 		if(mKeyboard != nullptr && deviceIndex == 0)
 			return mKeyboard->GetName();
 
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	case InputDevice::Mouse:
 		if(mMouse != nullptr && deviceIndex == 0)
 			return mMouse->GetName();
 
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	case InputDevice::Gamepad:
 		if(deviceIndex < (u32)mGamepads.size())
 			return mGamepads[deviceIndex]->GetName();
 
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	default:
-		return StringUtil::kBlank;
+		return StringUtility::kBlank;
 	}
 }
 

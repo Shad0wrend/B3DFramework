@@ -24,7 +24,7 @@ namespace b3d
 		/** Command queue for execution. */
 		struct QueuedCommand
 		{
-			QueuedCommand(Function<void()>&& callback = nullptr, const char* debugName = nullptr, const String& debugExtraInformation = StringUtil::kBlank)
+			QueuedCommand(Function<void()>&& callback = nullptr, const char* debugName = nullptr, const String& debugExtraInformation = StringUtility::kBlank)
 				: Callback(std::move(callback))
 #if !B3D_BUILD_TYPE_SHIPPING && !B3D_BUILD_TYPE_PROFILING
 				, DebugName(debugName)
@@ -50,7 +50,7 @@ namespace b3d
 		const SPtr<SchedulerThread>& GetSchedulerThread() const { return mSchedulerThread; }
 
 		/** Posts a command for execution on the queue. Optionally blocks the calling fiber/thread until the command completes. Thread safe. */
-		void PostCommand(Function<void()>&& callback, const char* debugName = nullptr, bool waitUntilComplete = false, const String& extraInformation = StringUtil::kBlank);
+		void PostCommand(Function<void()>&& callback, const char* debugName = nullptr, bool waitUntilComplete = false, const String& extraInformation = StringUtility::kBlank);
 
 		/** Posts a special command that requests shutdown. Optionally blocks the calling fiber/thread until the command completes. Thread safe. */
 		void PostRequestShutdownCommand(bool waitUntilComplete);

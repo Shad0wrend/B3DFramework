@@ -280,7 +280,7 @@ TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanIdentifier(bool isS
 		spelling += GetCurrentCharacterAndAdvance();
 
 	String lowerCaseSpelling = spelling;
-	StringUtil::ToLowerCase(lowerCaseSpelling);
+	StringUtility::ToLowerCase(lowerCaseSpelling);
 
 	if(!isStartingWithDot)
 	{
@@ -437,18 +437,18 @@ TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ScanNumber(bool isStart
 TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::Error(const String& message)
 {
 	GetCurrentCharacterAndAdvance();
-	mErrors = StringUtil::Format("Lexer error ({0}): {1}", mCurrentPosition.ToString(), message);
+	mErrors = StringUtility::Format("Lexer error ({0}): {1}", mCurrentPosition.ToString(), message);
 	return {};
 }
 
 TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected()
 {
-	mErrors = StringUtil::Format("Lexer error ({0}): Unexpected character '{1}'", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance());
+	mErrors = StringUtility::Format("Lexer error ({0}): Unexpected character '{1}'", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance());
 	return {};
 }
 
 TOptional<GUIStyleSheetLexer::Token> GUIStyleSheetLexer::ErrorUnexpected(char expectedCharacter)
 {
-	mErrors = StringUtil::Format("Lexer error ({0}): Unexpected character '{1}', expected '{2}", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance(), expectedCharacter);
+	mErrors = StringUtility::Format("Lexer error ({0}): Unexpected character '{1}', expected '{2}", mCurrentPosition.ToString(), GetCurrentCharacterAndAdvance(), expectedCharacter);
 	return {};
 }

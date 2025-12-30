@@ -31,7 +31,7 @@ namespace b3d
 		 *
 		 * @note Render target used by the GUIWidget and Camera must be the same.
 		 */
-		static GUIViewport* Create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtil::kBlank);
+		static GUIViewport* Create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtility::kBlank);
 
 		/**
 		 * Creates a new GUI viewport element.
@@ -47,7 +47,7 @@ namespace b3d
 		 *
 		 * @note Render target used by the GUIWidget and Camera must be the same.
 		 */
-		static GUIViewport* Create(const GUIOptions& options, const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtil::kBlank);
+		static GUIViewport* Create(const GUIOptions& options, const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtility::kBlank);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

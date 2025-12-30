@@ -37,7 +37,7 @@ TVariation<IsRenderProxy>::TVariation(const WeakSPtr<ShaderType>& owner, const S
 
 template <bool IsRenderProxy>
 TVariation<IsRenderProxy>::TVariation()
-	: VariationBase(StringUtil::kBlank, ShaderVariationParameters())
+	: VariationBase(StringUtility::kBlank, ShaderVariationParameters())
 {}
 
 template <bool IsRenderProxy>
@@ -116,7 +116,7 @@ TAsyncOp<bool> TVariation<IsRenderProxy>::Compile()
 			hashStringStream << shaderCompilerMetaData->Source;
 
 			for(const auto& includeHashPair : shaderCompilerMetaData->IncludeHashes)
-				hashStringStream << includeHashPair.first << " = " << StringUtil::HexToLiteral(includeHashPair.second.data(), (u32)includeHashPair.second.size()) << "\n";
+				hashStringStream << includeHashPair.first << " = " << StringUtility::HexToLiteral(includeHashPair.second.data(), (u32)includeHashPair.second.size()) << "\n";
 		}
 
 		const String& hashString = hashStringStream.str();
@@ -127,7 +127,7 @@ TAsyncOp<bool> TVariation<IsRenderProxy>::Compile()
 
 		if(shaderCompilerMetaData != nullptr && !shaderCompilerMetaData->NameInCache.empty())
 		{
-			cacheName = Path(shaderCompilerMetaData->NameInCache)+ mLanguage + StringUtil::HexToLiteral(variationHash.data(), (u32)variationHash.size());
+			cacheName = Path(shaderCompilerMetaData->NameInCache)+ mLanguage + StringUtility::HexToLiteral(variationHash.data(), (u32)variationHash.size());
 
 			const SPtr<VariationType> cachedTechnique = cache.TryGetEntry<VariationType>(cacheName);
 			if(cachedTechnique != nullptr)
@@ -271,7 +271,7 @@ RTTIType* Variation::GetRtti() const
 namespace b3d { namespace render
 {
 Variation::Variation()
-	: TVariation(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
+	: TVariation(WeakSPtr<Shader>(), StringUtility::kBlank, ShaderVariationParameters(), {})
 { }
 
 Variation::Variation(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const TOptional<PrecompiledVariationData>& precompiledData)

@@ -18,10 +18,10 @@ Result GpuProgramParameterDescription::TryCombine(const GpuProgramParameterDescr
 		if(auto found = UniformBuffers.find(uniformBuffer.Name); found != UniformBuffers.end())
 		{
 			if(found->second.Slot != uniformBuffer.Slot)
-				return Result::Fail("Uniform buffer slot mismatch.", ResultStatus::Failed, StringUtil::Format("Uniform buffer '{0}' has slot {1}, but expected {2}.", uniformBuffer.Name, uniformBuffer.Slot, found->second.Slot));
+				return Result::Fail("Uniform buffer slot mismatch.", ResultStatus::Failed, StringUtility::Format("Uniform buffer '{0}' has slot {1}, but expected {2}.", uniformBuffer.Name, uniformBuffer.Slot, found->second.Slot));
 
 			if(found->second.Size != uniformBuffer.Size)
-				return Result::Fail("Uniform buffer size mismatch.", ResultStatus::Failed, StringUtil::Format("Uniform buffer '{0}' has size {1}, but expected {2}.", uniformBuffer.Name, uniformBuffer.Size, found->second.Size));
+				return Result::Fail("Uniform buffer size mismatch.", ResultStatus::Failed, StringUtility::Format("Uniform buffer '{0}' has size {1}, but expected {2}.", uniformBuffer.Name, uniformBuffer.Size, found->second.Size));
 
 			found->second.Stages |= stage;
 		}
@@ -43,13 +43,13 @@ Result GpuProgramParameterDescription::TryCombine(const GpuProgramParameterDescr
 			if(auto found = targetMap.find(objectParameter.Name); found != targetMap.end())
 			{
 				if(found->second.Type != objectParameter.Type)
-					return Result::Fail("Object parameter type mismatch.", ResultStatus::Failed, StringUtil::Format("Object parameter '{0}' has type {1}, but expected {2}.", objectParameter.Name, (u32)objectParameter.Type, (u32)found->second.Type));
+					return Result::Fail("Object parameter type mismatch.", ResultStatus::Failed, StringUtility::Format("Object parameter '{0}' has type {1}, but expected {2}.", objectParameter.Name, (u32)objectParameter.Type, (u32)found->second.Type));
 
 				if(found->second.Slot != objectParameter.Slot)
-					return Result::Fail("Object parameter slot mismatch.", ResultStatus::Failed, StringUtil::Format("Object parameter '{0}' has slot {1}, but expected {2}.", objectParameter.Name, objectParameter.Slot, found->second.Slot));
+					return Result::Fail("Object parameter slot mismatch.", ResultStatus::Failed, StringUtility::Format("Object parameter '{0}' has slot {1}, but expected {2}.", objectParameter.Name, objectParameter.Slot, found->second.Slot));
 
 				if(found->second.ArraySize != objectParameter.ArraySize)
-					return Result::Fail("Object parameter array size mismatch.", ResultStatus::Failed, StringUtil::Format("Object parameter '{0}' has array size {1}, but expected {2}.", objectParameter.Name, objectParameter.ArraySize, found->second.ArraySize));
+					return Result::Fail("Object parameter array size mismatch.", ResultStatus::Failed, StringUtility::Format("Object parameter '{0}' has array size {1}, but expected {2}.", objectParameter.Name, objectParameter.ArraySize, found->second.ArraySize));
 
 				found->second.Stages |= stage;
 			}
@@ -88,7 +88,7 @@ Result GpuProgramParameterDescription::TryCombine(const GpuProgramParameterDescr
 		if(auto found = UniformBufferMembers.find(uniformBufferMember.Name); found != UniformBufferMembers.end())
 		{
 			if(found->second != uniformBufferMember)
-				return Result::Fail("Uniform buffer member mismatch.", ResultStatus::Failed, StringUtil::Format("Uniform buffer member '{0}' has different type information.", uniformBufferMember.Name));
+				return Result::Fail("Uniform buffer member mismatch.", ResultStatus::Failed, StringUtility::Format("Uniform buffer member '{0}' has different type information.", uniformBufferMember.Name));
 		}
 		else
 			UniformBufferMembers[uniformBufferMember.Name] = uniformBufferMember;

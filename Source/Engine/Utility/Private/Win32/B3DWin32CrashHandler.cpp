@@ -118,7 +118,7 @@ String Win32GetStackTrace(CONTEXT context, u32 skip = 0)
 		// Output function name
 		DWORD64 dummy;
 		if(SymGetSymFromAddr64(hProcess, funcAddress, &dummy, symbol))
-			outputStream << StringUtil::Format("{0}() - ", symbol->Name);
+			outputStream << StringUtility::Format("{0}() - ", symbol->Name);
 
 		// Output file name and line
 		IMAGEHLP_LINE64 lineData;
@@ -131,11 +131,11 @@ String Win32GetStackTrace(CONTEXT context, u32 skip = 0)
 		{
 			Path filePath = lineData.FileName;
 
-			outputStream << StringUtil::Format("0x{0} File[{1}:{2} ({3})]", addressString, filePath.GetFilename(), (u32)lineData.LineNumber, (u32)column);
+			outputStream << StringUtility::Format("0x{0} File[{1}:{2} ({3})]", addressString, filePath.GetFilename(), (u32)lineData.LineNumber, (u32)column);
 		}
 		else
 		{
-			outputStream << StringUtil::Format("0x{0}", addressString);
+			outputStream << StringUtility::Format("0x{0}", addressString);
 		}
 
 		// Output module name
@@ -146,7 +146,7 @@ String Win32GetStackTrace(CONTEXT context, u32 skip = 0)
 		{
 			Path filePath = moduleData.ImageName;
 
-			outputStream << StringUtil::Format(" Module[{0}]", filePath.GetFilename());
+			outputStream << StringUtility::Format(" Module[{0}]", filePath.GetFilename());
 		}
 	}
 
@@ -300,7 +300,7 @@ String Win32GetExceptionMessage(EXCEPTION_RECORD* record)
 				format = "Unhandled exception at 0x{0}. Access violation.";
 
 			String violatedAddressStr = ToString((u64)violatedAddress, 0, ' ', std::ios::hex);
-			return StringUtil::Format(format, exceptionAddress, violatedAddressStr);
+			return StringUtility::Format(format, exceptionAddress, violatedAddressStr);
 		}
 	case EXCEPTION_IN_PAGE_ERROR:
 		{
@@ -323,79 +323,79 @@ String Win32GetExceptionMessage(EXCEPTION_RECORD* record)
 
 			String violatedAddressStr = ToString((u64)violatedAddress, 0, ' ', std::ios::hex);
 			String codeStr = ToString((u64)code, 0, ' ', std::ios::hex);
-			return StringUtil::Format(format, exceptionAddress, violatedAddressStr, codeStr);
+			return StringUtility::Format(format, exceptionAddress, violatedAddressStr, codeStr);
 		}
 	case STATUS_ARRAY_BOUNDS_EXCEEDED:
 		{
 			format = "Unhandled exception at 0x{0}. Attempting to access an out of range array element.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_DATATYPE_MISALIGNMENT:
 		{
 			format = "Unhandled exception at 0x{0}. Attempting to access missaligned data.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_DENORMAL_OPERAND:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point operand too small.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point operation attempted to divide by zero.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_INVALID_OPERATION:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point invalid operation.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_OVERFLOW:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point overflow.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_UNDERFLOW:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point underflow.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_FLT_STACK_CHECK:
 		{
 			format = "Unhandled exception at 0x{0}. Floating point stack overflow/underflow.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_ILLEGAL_INSTRUCTION:
 		{
 			format = "Unhandled exception at 0x{0}. Attempting to execute an illegal instruction.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_PRIV_INSTRUCTION:
 		{
 			format = "Unhandled exception at 0x{0}. Attempting to execute a private instruction.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_INT_DIVIDE_BY_ZERO:
 		{
 			format = "Unhandled exception at 0x{0}. Integer operation attempted to divide by zero.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_INT_OVERFLOW:
 		{
 			format = "Unhandled exception at 0x{0}. Integer operation result has overflown.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	case EXCEPTION_STACK_OVERFLOW:
 		{
 			format = "Unhandled exception at 0x{0}. Stack overflow.";
-			return StringUtil::Format(format, exceptionAddress);
+			return StringUtility::Format(format, exceptionAddress);
 		}
 	default:
 		{
 			format = "Unhandled exception at 0x{0}. Code 0x{1}.";
 
 			String exceptionCode = ToString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
-			return StringUtil::Format(format, exceptionAddress, exceptionCode);
+			return StringUtility::Format(format, exceptionAddress, exceptionCode);
 		}
 	}
 }
@@ -532,7 +532,7 @@ String CrashHandler::GetCrashTimestamp()
 	String strDay = ToString(systemTime.wDay, 2, '0');
 	String strHour = ToString(systemTime.wHour, 2, '0');
 	String strMinute = ToString(systemTime.wMinute, 2, '0');
-	return StringUtil::Format(timeStamp, strYear, strMonth, strDay, strHour, strMinute);
+	return StringUtility::Format(timeStamp, strYear, strMonth, strDay, strHour, strMinute);
 }
 
 String CrashHandler::GetStackTrace()

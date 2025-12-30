@@ -20,7 +20,7 @@ OAImporter::OAImporter()
 bool OAImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return lowerCaseExt == "wav" || lowerCaseExt == "flac" || lowerCaseExt == "ogg";
 }
@@ -47,7 +47,7 @@ SPtr<Resource> OAImporter::Import(const Path& filePath, SPtr<const ImportOptions
 		SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
 
 		String extension = filePath.GetExtension();
-		StringUtil::ToLowerCase(extension);
+		StringUtility::ToLowerCase(extension);
 
 		UPtr<AudioDecoder> reader;
 		if(extension == ".wav")

@@ -45,7 +45,7 @@ GUIRenderable::GUIRenderable(String styleClass, const GUISizeConstraints& sizeCo
 }
 
 GUIRenderable::GUIRenderable(const char* styleClass, const GUISizeConstraints& sizeConstraints)
-	: GUIElement(sizeConstraints), mStyleClass(styleClass ? styleClass : StringUtil::kBlank)
+	: GUIElement(sizeConstraints), mStyleClass(styleClass ? styleClass : StringUtility::kBlank)
 {
 	// Style is set to default here, and the proper one is assigned once GUI element
 	// is assigned to a parent (that's when the active GUI skin becomes known)

@@ -68,7 +68,7 @@ namespace b3d
 		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage.
 		 * @return							Newly created TResult object.
 		 */
-		static TResult Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, const String& additionalErrorMessage = StringUtil::kBlank);
+		static TResult Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, const String& additionalErrorMessage = StringUtility::kBlank);
 
 		/**
 		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
@@ -81,7 +81,7 @@ namespace b3d
 		 * @return							Newly created TResult object.
 		 */
 		template<typename OtherType>
-		static TResult Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+		static TResult Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtility::kBlank);
 
 		/**
 		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
@@ -93,7 +93,7 @@ namespace b3d
 		 *									error message will be appended to this error message.
 		 * @return							Newly created TResult object.
 		 */
-		static TResult Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+		static TResult Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtility::kBlank);
 
 		ResultStatus Status = ResultStatus::Failed;
 		const char* ErrorMessage = nullptr;
@@ -102,7 +102,7 @@ namespace b3d
 
 	private:
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		TResult(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtil::kBlank);
+		TResult(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtility::kBlank);
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
 		TResult(ResultStatus status, const T& output);
@@ -144,7 +144,7 @@ namespace b3d
 		 * @param	additionalErrorMessage	Additional error message for information that cannot easily be stored in @p errorMessage.
 		 * @return							Newly created TResult object.
 		 */
-		static Result Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, String additionalErrorMessage = StringUtil::kBlank);
+		static Result Fail(const char* errorMessage, ResultStatus status = ResultStatus::Failed, String additionalErrorMessage = StringUtility::kBlank);
 
 		/**
 		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
@@ -157,7 +157,7 @@ namespace b3d
 		 * @return							Newly created TResult object.
 		 */
 		template<typename OtherType>
-		static Result Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+		static Result Fail(const char* errorMessage, TResult<OtherType>&& childResult, const String& additionalErrorMessage = StringUtility::kBlank);
 
 		/**
 		 * Creates the fail result object by inheriting the status from another result object. Other result object error message is appended
@@ -169,7 +169,7 @@ namespace b3d
 		 *									error message will be appended to this error message.
 		 * @return							Newly created TResult object.
 		 */
-		static Result Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtil::kBlank);
+		static Result Fail(const char* errorMessage, Result&& childResult, const String& additionalErrorMessage = StringUtility::kBlank);
 
 		ResultStatus Status = ResultStatus::Failed;
 		const char* ErrorMessage = nullptr;
@@ -179,7 +179,7 @@ namespace b3d
 		template <typename T> friend struct TResult;
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		Result(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtil::kBlank);
+		Result(ResultStatus status, const char* errorMessage, String additionalErrorMessage = StringUtility::kBlank);
 
 		B3D_SCRIPT_EXPORT(Exclude(true))
 		Result(ResultStatus status);

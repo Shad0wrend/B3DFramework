@@ -39,7 +39,7 @@ namespace b3d
 		 *
 		 * @note	Thread safe.
 		 */
-		void PostCommand(std::function<void()>&& commandCallback, const char* debugName = "Render thread command", bool waitUntilComplete = false, const String& extraDebugInformation = StringUtil::kBlank);
+		void PostCommand(std::function<void()>&& commandCallback, const char* debugName = "Render thread command", bool waitUntilComplete = false, const String& extraDebugInformation = StringUtility::kBlank);
 
 		/**
 		 * @name Internal

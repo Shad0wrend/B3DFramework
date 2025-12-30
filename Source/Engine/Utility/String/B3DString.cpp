@@ -17,22 +17,22 @@
 
 using namespace b3d;
 
-const String StringUtil::kBlank;
-const WString StringUtil::kWblank;
+const String StringUtility::kBlank;
+const WString StringUtility::kWblank;
 
-String StringUtil::Trim(const String& str, bool left, bool right)
+String StringUtility::Trim(const String& str, bool left, bool right)
 {
 	static const String kDelims = " \t\r";
 	return Trim(str, kDelims, left, right);
 }
 
-WString StringUtil::Trim(const WString& str, bool left, bool right)
+WString StringUtility::Trim(const WString& str, bool left, bool right)
 {
 	static const WString kDelims = L" \t\r";
 	return Trim(str, kDelims, left, right);
 }
 
-String StringUtil::Trim(const String& str, const String& delims, bool left, bool right)
+String StringUtility::Trim(const String& str, const String& delims, bool left, bool right)
 {
 	String output = str;
 
@@ -44,7 +44,7 @@ String StringUtil::Trim(const String& str, const String& delims, bool left, bool
 	return output;
 }
 
-WString StringUtil::Trim(const WString& str, const WString& delims, bool left, bool right)
+WString StringUtility::Trim(const WString& str, const WString& delims, bool left, bool right)
 {
 	WString output = str;
 
@@ -56,27 +56,27 @@ WString StringUtil::Trim(const WString& str, const WString& delims, bool left, b
 	return output;
 }
 
-Vector<String> StringUtil::Split(const String& str, const String& delims, unsigned int maxSplits)
+Vector<String> StringUtility::Split(const String& str, const String& delims, unsigned int maxSplits)
 {
 	return SplitInternal<char>(str, delims, maxSplits);
 }
 
-Vector<WString> StringUtil::Split(const WString& str, const WString& delims, unsigned int maxSplits)
+Vector<WString> StringUtility::Split(const WString& str, const WString& delims, unsigned int maxSplits)
 {
 	return SplitInternal<wchar_t>(str, delims, maxSplits);
 }
 
-Vector<String> StringUtil::Tokenise(const String& str, const String& singleDelims, const String& doubleDelims, unsigned int maxSplits)
+Vector<String> StringUtility::Tokenise(const String& str, const String& singleDelims, const String& doubleDelims, unsigned int maxSplits)
 {
 	return TokeniseInternal<char>(str, singleDelims, doubleDelims, maxSplits);
 }
 
-Vector<WString> StringUtil::Tokenise(const WString& str, const WString& singleDelims, const WString& doubleDelims, unsigned int maxSplits)
+Vector<WString> StringUtility::Tokenise(const WString& str, const WString& singleDelims, const WString& doubleDelims, unsigned int maxSplits)
 {
 	return TokeniseInternal<wchar_t>(str, singleDelims, doubleDelims, maxSplits);
 }
 
-String StringUtil::HexToLiteral(const u32* input, u32 count)
+String StringUtility::HexToLiteral(const u32* input, u32 count)
 {
 	if(input == nullptr || count == 0)
 		return kBlank;
@@ -101,7 +101,7 @@ String StringUtil::HexToLiteral(const u32* input, u32 count)
 	return output;
 }
 
-String StringUtil::HexToLiteral(const u64* input, u32 count)
+String StringUtility::HexToLiteral(const u64* input, u32 count)
 {
 	if(input == nullptr || count == 0)
 		return kBlank;
@@ -126,67 +126,67 @@ String StringUtil::HexToLiteral(const u64* input, u32 count)
 	return output;
 }
 
-void StringUtil::ToLowerCase(String& str)
+void StringUtility::ToLowerCase(String& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), tolower);
 }
 
-void StringUtil::ToLowerCase(WString& str)
+void StringUtility::ToLowerCase(WString& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), tolower);
 }
 
-void StringUtil::ToUpperCase(String& str)
+void StringUtility::ToUpperCase(String& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), toupper);
 }
 
-void StringUtil::ToUpperCase(WString& str)
+void StringUtility::ToUpperCase(WString& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), toupper);
 }
 
-bool StringUtil::StartsWith(const String& str, const String& pattern, bool lowerCase)
+bool StringUtility::StartsWith(const String& str, const String& pattern, bool lowerCase)
 {
 	return StartsWithInternal<char>(str, pattern, lowerCase);
 }
 
-bool StringUtil::StartsWith(const WString& str, const WString& pattern, bool lowerCase)
+bool StringUtility::StartsWith(const WString& str, const WString& pattern, bool lowerCase)
 {
 	return StartsWithInternal<wchar_t>(str, pattern, lowerCase);
 }
 
-bool StringUtil::EndsWith(const String& str, const String& pattern, bool lowerCase)
+bool StringUtility::EndsWith(const String& str, const String& pattern, bool lowerCase)
 {
 	return EndsWithInternal<char>(str, pattern, lowerCase);
 }
 
-bool StringUtil::EndsWith(const WString& str, const WString& pattern, bool lowerCase)
+bool StringUtility::EndsWith(const WString& str, const WString& pattern, bool lowerCase)
 {
 	return EndsWithInternal<wchar_t>(str, pattern, lowerCase);
 }
 
-bool StringUtil::Match(const String& str, const String& pattern, bool caseSensitive)
+bool StringUtility::Match(const String& str, const String& pattern, bool caseSensitive)
 {
 	return MatchInternal<char>(str, pattern, caseSensitive);
 }
 
-bool StringUtil::Match(const WString& str, const WString& pattern, bool caseSensitive)
+bool StringUtility::Match(const WString& str, const WString& pattern, bool caseSensitive)
 {
 	return MatchInternal<wchar_t>(str, pattern, caseSensitive);
 }
 
-const String StringUtil::ReplaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat)
+const String StringUtility::ReplaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat)
 {
 	return ReplaceAllInternal<char>(source, replaceWhat, replaceWithWhat);
 }
 
-const WString StringUtil::ReplaceAll(const WString& source, const WString& replaceWhat, const WString& replaceWithWhat)
+const WString StringUtility::ReplaceAll(const WString& source, const WString& replaceWhat, const WString& replaceWithWhat)
 {
 	return ReplaceAllInternal<wchar_t>(source, replaceWhat, replaceWithWhat);
 }
 
-String StringUtil::StripExtension(const String& input)
+String StringUtility::StripExtension(const String& input)
 {
 	String::size_type position = input.rfind('.');
 	if(position != String::npos)
@@ -771,9 +771,9 @@ u64 ParseU64(const String& val, u64 defaultValue)
 
 bool ParseBool(const String& val, bool defaultValue)
 {
-	if((StringUtil::StartsWith(val, "true") || StringUtil::StartsWith(val, "yes") || StringUtil::StartsWith(val, "1")))
+	if((StringUtility::StartsWith(val, "true") || StringUtility::StartsWith(val, "yes") || StringUtility::StartsWith(val, "1")))
 		return true;
-	else if((StringUtil::StartsWith(val, "false") || StringUtil::StartsWith(val, "no") || StringUtil::StartsWith(val, "0")))
+	else if((StringUtility::StartsWith(val, "false") || StringUtility::StartsWith(val, "no") || StringUtility::StartsWith(val, "0")))
 		return false;
 	else
 		return defaultValue;
@@ -839,9 +839,9 @@ u64 ParseU64(const WString& val, u64 defaultValue)
 
 bool ParseBool(const WString& val, bool defaultValue)
 {
-	if((StringUtil::StartsWith(val, L"true") || StringUtil::StartsWith(val, L"yes") || StringUtil::StartsWith(val, L"1")))
+	if((StringUtility::StartsWith(val, L"true") || StringUtility::StartsWith(val, L"yes") || StringUtility::StartsWith(val, L"1")))
 		return true;
-	else if((StringUtil::StartsWith(val, L"false") || StringUtil::StartsWith(val, L"no") || StringUtil::StartsWith(val, L"0")))
+	else if((StringUtility::StartsWith(val, L"false") || StringUtility::StartsWith(val, L"no") || StringUtility::StartsWith(val, L"0")))
 		return false;
 	else
 		return defaultValue;

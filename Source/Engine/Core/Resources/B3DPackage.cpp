@@ -216,7 +216,7 @@ bool Package::BreakCombinedPackagePath(const Path& combinedPath, Path& outPathTo
 	{
 		const String& directory = combinedPath.GetDirectory(directoryIndex);
 
-		if(StringUtil::EndsWith(directory, kPackageExtension))
+		if(StringUtility::EndsWith(directory, kPackageExtension))
 		{
 			outPathToPackage = combinedPath.GetSubPath(directoryIndex);
 			outPathToPackage.SetFilename(directory);

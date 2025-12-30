@@ -102,7 +102,7 @@ namespace b3d
 		/** Parses a string in the major.minor.release.build format and stores the version numbers. */
 		void FromString(const String& versionString)
 		{
-			Vector<b3d::String> tokens = StringUtil::Split(versionString, ".");
+			Vector<b3d::String> tokens = StringUtility::Split(versionString, ".");
 			if(!tokens.empty())
 			{
 				Major = ParseI32(tokens[0]);

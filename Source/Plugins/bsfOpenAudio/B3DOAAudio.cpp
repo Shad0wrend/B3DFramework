@@ -34,7 +34,7 @@ OAAudio::OAAudio()
 
 				// Clean up the name to get the actual hardware name
 				String fixedName(deviceName.data(), deviceName.size());
-				fixedName = StringUtil::ReplaceAll(fixedName, u8"OpenAL Soft on ", u8"");
+				fixedName = StringUtility::ReplaceAll(fixedName, u8"OpenAL Soft on ", u8"");
 
 				mAllDevices.push_back({ fixedName });
 				deviceName.clear();

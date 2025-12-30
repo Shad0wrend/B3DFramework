@@ -92,7 +92,7 @@ GUIMenuItem* GUIMenu::AddSeparator(const String& path, i32 priority)
 
 GUIMenuItem* GUIMenu::AddMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator, i32 priority, const ShortcutKey& key)
 {
-	Vector<String> pathElements = StringUtil::Split(path, "/");
+	Vector<String> pathElements = StringUtility::Split(path, "/");
 
 	GUIMenuItem* curSubMenu = &mRootElement;
 	for(u32 elementIndex = 0; elementIndex < (u32)pathElements.size(); elementIndex++)
@@ -134,7 +134,7 @@ GUIMenuItem* GUIMenu::AddMenuItemInternal(const String& path, std::function<void
 
 GUIMenuItem* GUIMenu::GetMenuItem(const String& path)
 {
-	Vector<String> pathElements = StringUtil::Split(path, "/");
+	Vector<String> pathElements = StringUtility::Split(path, "/");
 
 	GUIMenuItem* curSubMenu = &mRootElement;
 	for(u32 elementIndex = 0; elementIndex < (u32)pathElements.size(); elementIndex++)

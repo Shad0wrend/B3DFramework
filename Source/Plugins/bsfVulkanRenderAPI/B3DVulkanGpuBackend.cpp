@@ -135,7 +135,7 @@ static VkBool32 DebugReportMessageCallback(VkDebugReportFlagsEXT flags, VkDebugR
 	else if(flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
 		severity = "DEBUG";
 
-	const String message = StringUtil::Format("[{0}] Vulkan backend reported the following message (Code:{1} Layer:\"{2}\"):\n\t{3}", severity, msgCode, pLayerPrefix, pMsg);
+	const String message = StringUtility::Format("[{0}] Vulkan backend reported the following message (Code:{1} Layer:\"{2}\"):\n\t{3}", severity, msgCode, pLayerPrefix, pMsg);
 
 	if(flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
 		B3D_LOG(Error, LogRenderBackend, "{0}", message);
@@ -170,25 +170,25 @@ VkBool32 DebugUtilsMessageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messag
 		type = "GENERAL";
 
 	StringStream message;
-	message << StringUtil::Format("[{0}, {1}] Vulkan backend reported the following message (Name:\"{2}\" ID:{3}):\n\t{4}", severity, type, callbackData->pMessageIdName, callbackData->messageIdNumber, callbackData->pMessage);
+	message << StringUtility::Format("[{0}, {1}] Vulkan backend reported the following message (Name:\"{2}\" ID:{3}):\n\t{4}", severity, type, callbackData->pMessageIdName, callbackData->messageIdNumber, callbackData->pMessage);
 
 	if(callbackData->objectCount > 0)
 	{
-		message << StringUtil::Format("\n\n\tAssociated objects (Count:{0}):", callbackData->objectCount);
+		message << StringUtility::Format("\n\n\tAssociated objects (Count:{0}):", callbackData->objectCount);
 		for(uint32_t objectIndex = 0; objectIndex < callbackData->objectCount; ++objectIndex)
 		{
 			const VkDebugUtilsObjectNameInfoEXT& objectInformation = callbackData->pObjects[objectIndex];
-			message << StringUtil::Format("\n\t\t#{0}: Type:{1} Name:\"{2}\" Handle:\"{3}\"", objectIndex, objectInformation.pObjectName, GetVulkanObjectTypeName(objectInformation.objectType), (u32)objectInformation.objectHandle);
+			message << StringUtility::Format("\n\t\t#{0}: Type:{1} Name:\"{2}\" Handle:\"{3}\"", objectIndex, objectInformation.pObjectName, GetVulkanObjectTypeName(objectInformation.objectType), (u32)objectInformation.objectHandle);
 		}
 	}
 
 	if(callbackData->cmdBufLabelCount > 0)
 	{
-		message << StringUtil::Format("\n\n\tAssociated command buffer labels (Count:{0}):", callbackData->cmdBufLabelCount);
+		message << StringUtility::Format("\n\n\tAssociated command buffer labels (Count:{0}):", callbackData->cmdBufLabelCount);
 		for(uint32_t labelIndex = 0; labelIndex < callbackData->cmdBufLabelCount; ++labelIndex)
 		{
 			const VkDebugUtilsLabelEXT& commandBufferLabel = callbackData->pCmdBufLabels[labelIndex];
-			message << StringUtil::Format("\n\t\t#{0}: Name:\"{1}\"", labelIndex, commandBufferLabel.pLabelName);
+			message << StringUtility::Format("\n\t\t#{0}: Name:\"{1}\"", labelIndex, commandBufferLabel.pLabelName);
 		}
 	}
 

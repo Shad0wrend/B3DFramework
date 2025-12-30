@@ -80,7 +80,7 @@ String ShortcutKey::GetName() const
 	else
 	{
 		charStr = Platform::KeyCodeToUnicode((u32)Button);
-		StringUtil::ToUpperCase(charStr);
+		StringUtility::ToUpperCase(charStr);
 	}
 
 	return kModifierToName[(u32)Modifier] + charStr;

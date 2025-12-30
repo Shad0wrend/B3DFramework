@@ -422,7 +422,7 @@ String Platform::KeyCodeToUnicode(u32 keyCode)
 	if(count > 0)
 		return UTF8::FromWide(WString(output, count));
 
-	return StringUtil::kBlank;
+	return StringUtility::kBlank;
 }
 
 void Platform::OpenFolder(const Path& path)

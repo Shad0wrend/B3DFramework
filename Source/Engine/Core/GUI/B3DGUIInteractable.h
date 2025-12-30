@@ -158,7 +158,7 @@ namespace b3d
 		virtual SPtr<GUIContextMenu> GetContextMenu() const;
 
 		/**	Returns text to display when hovering over the element. Returns empty string if no tooltip. */
-		virtual String GetTooltip() const { return StringUtil::kBlank; }
+		virtual String GetTooltip() const { return StringUtility::kBlank; }
 
 		/** @} */
 

@@ -100,7 +100,7 @@ WString Win32GetCurrentDirectory()
 		B3DFree(buffer);
 	}
 
-	return StringUtil::kWblank;
+	return StringUtility::kWblank;
 }
 
 WString Win32GetTempDirectory()
@@ -124,7 +124,7 @@ WString Win32GetTempDirectory()
 		B3DFree(buffer);
 	}
 
-	return StringUtil::kWblank;
+	return StringUtility::kWblank;
 }
 
 bool Win32PathExists(const WString& path)
@@ -158,7 +158,7 @@ bool Win32IsDirectory(const WString& path)
 bool Win32IsDevice(const WString& path)
 {
 	WString ucPath = path;
-	StringUtil::ToUpperCase(ucPath);
+	StringUtility::ToUpperCase(ucPath);
 
 	return ucPath.compare(0, 4, L"\\\\.\\") == 0 ||
 		ucPath.compare(L"CON") == 0 ||

@@ -78,7 +78,7 @@ namespace b3d
 		 * @param	file		Optional name of the source code file in which the code that crashed the program exists.
 		 * @param	line		Optional source code line at which the crash was triggered at.
 		 */
-		void ReportCrash(const String& type, const String& description, const String& function = StringUtil::kBlank, const String& file = StringUtil::kBlank, u32 line = 0) const;
+		void ReportCrash(const String& type, const String& description, const String& function = StringUtility::kBlank, const String& file = StringUtility::kBlank, u32 line = 0) const;
 
 #if B3D_PLATFORM_WIN32
 		/**

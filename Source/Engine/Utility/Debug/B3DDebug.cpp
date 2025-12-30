@@ -355,7 +355,7 @@ table td
 
 		stream << R"(			<td>)" << entry.CategoryName << "</td>" << std::endl;
 
-		String parsedMessage = StringUtil::ReplaceAll(entry.Message, "\n", "<br>\n");
+		String parsedMessage = StringUtility::ReplaceAll(entry.Message, "\n", "<br>\n");
 
 		stream << R"(			<td>)" << parsedMessage << "</td>" << std::endl;
 		stream << R"(		</tr>)" << std::endl;
@@ -468,7 +468,7 @@ void Debug::SaveTextLog(const Path& path) const
 
 		String tmpSpaces = GetSpacesIndentationInternal(builtMsg.length());
 
-		String parsedMessage = StringUtil::ReplaceAll(entry.Message, "\n\t\t", "\n" + tmpSpaces);
+		String parsedMessage = StringUtility::ReplaceAll(entry.Message, "\n\t\t", "\n" + tmpSpaces);
 		builtMsg.append(parsedMessage);
 
 		stream << builtMsg << "\n";

@@ -159,7 +159,7 @@ namespace b3d
 		using namespace ::b3d;                                                                                                                                                                                                \
 		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
 		{                                                                                                                                                                                                                    \
-			GetDebug().Log(StringUtil::Format(Message "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
+			GetDebug().Log(StringUtility::Format(Message "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
 		}                                                                                                                                                                                                                    \
 	}                                                                                                                                                                                                                        \
 	while(0)
@@ -171,7 +171,7 @@ namespace b3d
 		using namespace ::b3d;                                                                                                                                                                                                \
 		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
 		{                                                                                                                                                                                                                    \
-			GetDebug().Log(StringUtil::Format(Message + "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
+			GetDebug().Log(StringUtility::Format(Message + "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
 		}                                                                                                                                                                                                                    \
 	}                                                                                                                                                                                                                        \
 	while(0)

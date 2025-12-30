@@ -11,7 +11,7 @@ using namespace b3d;
 bool SLImporter::IsExtensionSupported(const String& ext) const
 {
 	String lowerCaseExt = ext;
-	StringUtil::ToLowerCase(lowerCaseExt);
+	StringUtility::ToLowerCase(lowerCaseExt);
 
 	return lowerCaseExt == kShaderExtensionWithoutLeadingDot;
 }

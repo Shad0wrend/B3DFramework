@@ -47,7 +47,7 @@ namespace b3d
 		 * @param description	Additional information about the operation.
 		 * @param category		Category that may be used for grouping similar operations together.
 		 */
-		LongOperationTracker(String name, LongOperationFlags flags = LongOperationFlag::None, String description = StringUtil::kBlank, String category = StringUtil::kBlank);
+		LongOperationTracker(String name, LongOperationFlags flags = LongOperationFlag::None, String description = StringUtility::kBlank, String category = StringUtility::kBlank);
 		virtual ~LongOperationTracker();
 
 		/** Name of the operation, to be used in UI and debugging. */
@@ -120,7 +120,7 @@ namespace b3d
 	{
 	public:
 		/** @copydoc LongOperationTracker::LongOperationTracker */
-		ScopedLongOperationTracker(String name, LongOperationFlags flags = LongOperationFlag::None, String description = StringUtil::kBlank, String category = StringUtil::kBlank);
+		ScopedLongOperationTracker(String name, LongOperationFlags flags = LongOperationFlag::None, String description = StringUtility::kBlank, String category = StringUtility::kBlank);
 		~ScopedLongOperationTracker();
 		
 	};

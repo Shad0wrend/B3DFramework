@@ -375,7 +375,7 @@ bool Font::RenderGlyphs(float sizeInPoints, const TArrayView<u32>& characterIds,
 			newPage.Type = bake ? FontBitmapPageType::Baked : FontBitmapPageType::Runtime;
 
 			TextureCreateInformation pageTextureCreateInformation;
-			pageTextureCreateInformation.Name = StringUtil::Format("Font Page: {0} #{1}", GetName(), targetPageIndex);
+			pageTextureCreateInformation.Name = StringUtility::Format("Font Page: {0} #{1}", GetName(), targetPageIndex);
 			pageTextureCreateInformation.Width = kFontPageSize;
 			pageTextureCreateInformation.Height = kFontPageSize;
 			pageTextureCreateInformation.Format = PF_R8;

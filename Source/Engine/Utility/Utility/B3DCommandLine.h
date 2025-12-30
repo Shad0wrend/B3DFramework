@@ -71,7 +71,7 @@ namespace b3d
 		 * @param	defaultValue	The default value if parameter doesn't exist.
 		 * @return					The parameter value, or default value if not found.
 		 */
-		static String GetParameterValue(const String& name, const String& defaultValue = StringUtil::kBlank);
+		static String GetParameterValue(const String& name, const String& defaultValue = StringUtility::kBlank);
 
 		/**
 		 * Get parameter value as integer.
