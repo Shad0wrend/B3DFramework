@@ -522,11 +522,11 @@ SPtr<GpuQueryPool> VulkanGpuDevice::CreateQueryPool(const GpuQueryPoolCreateInfo
 	return B3DMakeShared<VulkanGpuQueryPool>(GetResourceManager(), createInformation);
 }
 
-SPtr<SamplerState> VulkanGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<SamplerState> VulkanGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<SamplerState> output = B3DMakeSharedFromExisting(new (B3DAllocate<VulkanSamplerState>()) VulkanSamplerState(*this, createInformation));
 
-	if(!deferredInitialize)
+	if(!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
@@ -537,31 +537,31 @@ SPtr<EventQuery> VulkanGpuDevice::CreateEventQuery()
 	return B3DMakeSharedFromExisting(new (B3DAllocate<VulkanEventQuery>()) VulkanEventQuery(*this));
 }
 
-SPtr<GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<GpuProgram> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuProgram>()) VulkanGpuProgram(*this, createInformation));
 
-	if(!deferredInitialize)
+	if(!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
 }
 
-SPtr<GpuGraphicsPipelineState> VulkanGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuGraphicsPipelineState> VulkanGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<VulkanGpuGraphicsPipelineState> output = B3DMakeSharedFromExisting<VulkanGpuGraphicsPipelineState>(new(B3DAllocate<VulkanGpuGraphicsPipelineState>()) VulkanGpuGraphicsPipelineState(*this, createInformation));
 
-	if(!deferredInitialize)
+	if(!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
 }
 
-SPtr<GpuComputePipelineState> VulkanGpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuComputePipelineState> VulkanGpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<VulkanGpuComputePipelineState> output = B3DMakeSharedFromExisting<VulkanGpuComputePipelineState>(new(B3DAllocate<VulkanGpuComputePipelineState>()) VulkanGpuComputePipelineState(*this, createInformation));
 
-	if(!deferredInitialize)
+	if(!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;

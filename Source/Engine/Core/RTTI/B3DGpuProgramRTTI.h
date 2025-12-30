@@ -117,7 +117,7 @@ namespace b3d
 			if(!gpuDevice)
 				return nullptr;
 
-			return gpuDevice->CreateGpuProgram(GpuProgramCreateInformation(), true);
+			return gpuDevice->CreateGpuProgram(GpuProgramCreateInformation(), GpuObjectCreateFlag::DeferredInitialize);
 		}
 	};
 

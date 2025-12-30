@@ -204,11 +204,11 @@ SPtr<GpuQueryPool> D3D12GpuDevice::CreateQueryPool(const GpuQueryPoolCreateInfor
 	return B3DMakeShared<D3D12GpuQueryPool>(*this, createInformation);
 }
 
-SPtr<SamplerState> D3D12GpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<SamplerState> D3D12GpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<SamplerState> output = B3DMakeSharedFromExisting(new (B3DAllocate<D3D12SamplerState>()) D3D12SamplerState(createInformation, *this));
 
-	if (!deferredInitialize)
+	if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
@@ -229,33 +229,33 @@ SPtr<OcclusionQuery> D3D12GpuDevice::CreateOcclusionQuery(bool isBinary)
 	return B3DMakeSharedFromExisting(new (B3DAllocate<D3D12OcclusionQuery>()) D3D12OcclusionQuery(isBinary, *this));
 }
 
-SPtr<GpuProgram> D3D12GpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuProgram> D3D12GpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<GpuProgram> output = B3DMakeSharedFromExisting(new (B3DAllocate<D3D12GpuProgram>()) D3D12GpuProgram(createInformation, *this));
 
-	if (!deferredInitialize)
+	if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
 }
 
-SPtr<GpuGraphicsPipelineState> D3D12GpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuGraphicsPipelineState> D3D12GpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<D3D12GpuGraphicsPipelineState> output = B3DMakeSharedFromExisting<D3D12GpuGraphicsPipelineState>(
 		new (B3DAllocate<D3D12GpuGraphicsPipelineState>()) D3D12GpuGraphicsPipelineState(createInformation, *this));
 
-	if (!deferredInitialize)
+	if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;
 }
 
-SPtr<GpuComputePipelineState> D3D12GpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuComputePipelineState> D3D12GpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
 	SPtr<D3D12GpuComputePipelineState> output = B3DMakeSharedFromExisting<D3D12GpuComputePipelineState>(
 		new (B3DAllocate<D3D12GpuComputePipelineState>()) D3D12GpuComputePipelineState(createInformation, *this));
 
-	if (!deferredInitialize)
+	if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 		output->Initialize();
 
 	return output;

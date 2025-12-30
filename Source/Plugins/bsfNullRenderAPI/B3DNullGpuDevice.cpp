@@ -175,31 +175,31 @@ namespace b3d
 			return B3DMakeShared<NullEventQuery>(*this);
 		}
 
-		SPtr<GpuProgram> NullGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
+		SPtr<GpuProgram> NullGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, GpuObjectCreateFlags flags)
 		{
 			SPtr<NullGpuProgram> program = B3DMakeShared<NullGpuProgram>(*this, createInformation);
 
-			if (!deferredInitialize)
+			if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 				program->Initialize();
 
 			return program;
 		}
 
-		SPtr<GpuGraphicsPipelineState> NullGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
+		SPtr<GpuGraphicsPipelineState> NullGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 		{
 			SPtr<NullGpuGraphicsPipelineState> pipelineState = B3DMakeShared<NullGpuGraphicsPipelineState>(*this, createInformation);
 
-			if (!deferredInitialize)
+			if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 				pipelineState->Initialize();
 
 			return pipelineState;
 		}
 
-		SPtr<GpuComputePipelineState> NullGpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize)
+		SPtr<GpuComputePipelineState> NullGpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 		{
 			SPtr<NullGpuComputePipelineState> pipelineState = B3DMakeShared<NullGpuComputePipelineState>(*this, createInformation);
 
-			if (!deferredInitialize)
+			if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 				pipelineState->Initialize();
 
 			return pipelineState;
@@ -242,11 +242,11 @@ namespace b3d
 			return bufferInfo;
 		}
 
-		SPtr<SamplerState> NullGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize)
+		SPtr<SamplerState> NullGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags)
 		{
 			SPtr<NullSamplerState> samplerState = B3DMakeShared<NullSamplerState>(*this, createInformation);
 
-			if (!deferredInitialize)
+			if (!flags.IsSet(GpuObjectCreateFlag::DeferredInitialize))
 				samplerState->Initialize();
 
 			return samplerState;

@@ -48,7 +48,7 @@ namespace b3d
 			if(!gpuDevice)
 				return nullptr;
 
-			return gpuDevice->CreateSamplerState(SamplerStateCreateInformation(), true);
+			return gpuDevice->CreateSamplerState(SamplerStateCreateInformation(), GpuObjectCreateFlag::DeferredInitialize);
 		}
 	};
 

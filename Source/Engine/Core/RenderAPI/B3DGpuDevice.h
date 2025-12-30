@@ -388,9 +388,9 @@ namespace b3d
 		 *  Creates a sampler state.
 		 *
 		 * @param	createInformation		Object describing the sampler state to create.
-		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * @param	flags					Creation flags. @see GpuObjectCreateFlag
 		 */
-		virtual SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
 
 		/**
 		 * Creates a new query pool.
@@ -407,25 +407,25 @@ namespace b3d
 		 * GpuProgram::IsCompiled() will return false, and you will be able to retrieve the error message via GpuProgram::GetCompileErrorMessage().
 		 *
 		 * @param	createInformation		Object describing the program to create.
-		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * @param	flags					Creation flags. @see GpuObjectCreateFlag
 		 */
-		virtual SPtr<GpuProgram> CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<GpuProgram> CreateGpuProgram(const GpuProgramCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
 
 		/**
 		 * Creates a graphics pipeline.
 		 *
 		 * @param	createInformation		Object describing the pipeline to create.
-		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * @param	flags					Creation flags. @see GpuObjectCreateFlag
 		 */
-		virtual SPtr<GpuGraphicsPipelineState> CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<GpuGraphicsPipelineState> CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
 
 		/**
 		 * Creates a compute pipeline.
 		 *
 		 * @param	createInformation		Object describing the pipeline to create.
-		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * @param	flags					Creation flags. @see GpuObjectCreateFlag
 		 */
-		virtual SPtr<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+		virtual SPtr<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
 
 		/**
 		 * Creates a pipeline layout from a set of GPU program parameter descriptions.
