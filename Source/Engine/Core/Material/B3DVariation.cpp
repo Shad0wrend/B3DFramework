@@ -129,9 +129,9 @@ TAsyncOp<bool> TVariation<IsRenderProxy>::Compile()
 		{
 			cacheName = Path(shaderCompilerMetaData->NameInCache)+ mLanguage + StringUtility::HexToLiteral(variationHash.data(), (u32)variationHash.size());
 
-			const SPtr<VariationType> cachedTechnique = cache.TryGetEntry<VariationType>(cacheName);
-			if(cachedTechnique != nullptr)
-				GetSelf()->SetCompiledPassData(cachedTechnique->mPasses);
+			const SPtr<VariationType> cachedVariations = cache.TryGetEntry<VariationType>(cacheName);
+			if(cachedVariations != nullptr)
+				GetSelf()->SetCompiledPassData(cachedVariations->mPasses);
 		}
 
 		if(!mHasPassData)

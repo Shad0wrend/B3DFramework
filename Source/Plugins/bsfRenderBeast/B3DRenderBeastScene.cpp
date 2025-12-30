@@ -26,7 +26,7 @@ namespace b3d { namespace render {
 
 PerFrameUniformDefinition gPerFrameUniformDefinition;
 
-static const ShaderVariationParameters* DECAL_VAR_LOOKUP[2][3] = {
+static const ShaderVariationParameters* kDecalVariationParameterLookup[2][3] = {
 	{ &GetDecalShaderVariation<false, MSAAMode::None>(),
 	  &GetDecalShaderVariation<false, MSAAMode::Single>(),
 	  &GetDecalShaderVariation<false, MSAAMode::Full>() },
@@ -100,8 +100,8 @@ static const ShaderVariationParameters* GetBasePassVariation(bool useForwardRend
 	}
 }
 
-/** Initializes a specific base pass technique on the provided material and returns the technique index. */
-static u32 InitAndRetrieveBasePassTechnique(Material& material, bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, bool writeVelocity, RenderableAnimType animType)
+/** Initializes a specific base pass variation on the provided material and returns the variation index. */
+static u32 InitAndRetrieveBasePassVariation(Material& material, bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, bool writeVelocity, RenderableAnimType animType)
 {
 	const ShaderVariationParameters* const variationParameters = writeVelocity ? GetBasePassVariation<true>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType) : GetBasePassVariation<false>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType);
 
@@ -122,13 +122,13 @@ static u32 InitAndRetrieveBasePassTechnique(Material& material, bool useForwardR
 	return variationIndex;
 }
 
-static void ValidateBasePassMaterial(Material& material, RenderableAnimType animType, u32 techniqueIdx, VertexDescription& vertexBufferDescription)
+static void ValidateBasePassMaterial(Material& material, RenderableAnimType animType, u32 variationIndex, VertexDescription& vertexBufferDescription)
 {
 	// Validate mesh <-> shader vertex bindings
-	u32 numPasses = material.GetPassCount(techniqueIdx);
-	for(u32 j = 0; j < numPasses; j++)
+	u32 passCount = material.GetPassCount(variationIndex);
+	for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 	{
-		SPtr<Pass> pass = material.GetPass(j, techniqueIdx);
+		SPtr<Pass> pass = material.GetPass(passIndex, variationIndex);
 		SPtr<GpuGraphicsPipelineState> graphicsPipeline = pass->GetGraphicsPipelineState();
 
 		SPtr<VertexDescription> shaderVertexDescription = graphicsPipeline->GetVertexProgram()->GetVertexInputDescription();
@@ -395,7 +395,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 			if(renElement.Material == nullptr)
 				renElement.Material = Material::Create(DefaultMaterial::Get()->GetShader());
 
-			// Determine which technique to use
+			// Determine which variation to use
 			static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
 			const SPtr<Shader>& shader = renElement.Material->GetShader();
@@ -411,7 +411,7 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 			RenderableAnimType animType = renderable->GetAnimType();
 
-			renElement.DefaultVariationIndex = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
+			renElement.DefaultVariationIndex = InitAndRetrieveBasePassVariation(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
 
 
 
@@ -425,13 +425,13 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 
 			if(writeVelocity)
 			{
-				renElement.WriteVelocityVariationIndex = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
+				renElement.WriteVelocityVariationIndex = InitAndRetrieveBasePassVariation(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
 
 #if B3D_DEBUG
 				ValidateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityVariationIndex, *vertexDescription);
 #endif
 
-				// Note: Using the same params as the non-velocity technique. There are assumed to be no differences
+				// Note: Using the same params as the non-velocity variation. There are assumed to be no differences
 			}
 			else
 				renElement.WriteVelocityVariationIndex = (u32)-1;
@@ -824,10 +824,10 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 	else
 		forwardLightingType = ParticleForwardLightingType::None;
 
-	const ShaderVariationParameters* variation = &GetParticleShaderVariation(orientation, lockY, gpu, is3d, forwardLightingType);
+	const ShaderVariationParameters* variationParameters = &GetParticleShaderVariationParameters(orientation, lockY, gpu, is3d, forwardLightingType);
 
 	FindVariationInformation findVariationInformation;
-	findVariationInformation.VariationParameters = variation;
+	findVariationInformation.VariationParameters = variationParameters;
 	findVariationInformation.Override = true;
 
 	u32 variationIndex = renElement.Material->FindVariation(findVariationInformation);
@@ -837,10 +837,10 @@ void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool
 
 	renElement.DefaultVariationIndex = variationIndex;
 
-	// Make sure the technique shaders are compiled
-	const SPtr<Variation>& technique = renElement.Material->GetVariation(variationIndex);
-	if(technique)
-		technique->Compile();
+	// Make sure the variation is compiled
+	const SPtr<Variation>& variation = renElement.Material->GetVariation(variationIndex);
+	if(variation)
+		variation->Compile();
 
 	// Generate or assigned renderer specific data for the material
 	renElement.ParameterAdapter = renElement.Material->CreateParameterAdapter(variationIndex);
@@ -1055,23 +1055,23 @@ void RenderBeastScene::RegisterDecal(Decal* decal)
 	{
 		for(u32 j = 0; j < 3; j++)
 		{
-			FindVariationInformation findDesc;
-			findDesc.VariationParameters = DECAL_VAR_LOOKUP[i][j];
-			findDesc.Override = true;
+			FindVariationInformation findVariationINformation;
+			findVariationINformation.VariationParameters = kDecalVariationParameterLookup[i][j];
+			findVariationINformation.Override = true;
 
-			u32 techniqueIdx = renElement.Material->FindVariation(findDesc);
-			if(techniqueIdx == (u32)-1)
-				techniqueIdx = 0;
+			u32 variationIndex = renElement.Material->FindVariation(findVariationINformation);
+			if(variationIndex == ~0u)
+				variationIndex = 0;
 
-			const SPtr<Variation>& technique = renElement.Material->GetVariation(techniqueIdx);
-			if(technique)
-				technique->Compile();
+			const SPtr<Variation>& variation = renElement.Material->GetVariation(variationIndex);
+			if(variation)
+				variation->Compile();
 
-			renElement.TechniqueIndices[i][j] = techniqueIdx;
+			renElement.VariationIndices[i][j] = variationIndex;
 		}
 	}
 
-	renElement.DefaultVariationIndex = renElement.TechniqueIndices[0][0];
+	renElement.DefaultVariationIndex = renElement.VariationIndices[0][0];
 
 	// Generate or assigned renderer specific data for the material
 	// Note: This makes the assumption that all variations of the material share the same parameter set

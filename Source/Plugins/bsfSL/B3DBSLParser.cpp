@@ -1181,10 +1181,10 @@ ShaderCompilerResult BSLParser::ParseVariation(const String& name, const String&
 		{
 		case OT_Shader:
 			{
-				// We initially parse only meta-data, so we can handle out-of-order technique definitions
+				// We initially parse only meta-data, so we can handle out-of-order variation definitions
 				BSLParsedShaderMetaData variationMetaData = ParseShaderMetaData(option->Value.NodePtr);
 
-				// Skip all techniques except the one we're parsing
+				// Skip all variations except the one we're parsing
 				if(variationMetaData.Name != name && !variationMetaData.IsMixin)
 					continue;
 

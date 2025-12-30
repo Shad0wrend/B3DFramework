@@ -222,7 +222,7 @@ namespace b3d
 		 * If multiple parameters are given with the same name but different types behavior is undefined. You are allowed
 		 * to call this method multiple times in order to map multiple GPU variable names to a single parameter, but the
 		 * default value (if any) will only be recognized on the first call. Mapping multiple GPU variables to a single
-		 * parameter is useful when you are defining a shader that supports techniques across different render systems
+		 * parameter is useful when you are defining a shader that supports variations across different render systems
 		 * where GPU variable names for the same parameters might differ.
 		 */
 		void AddParameter(ShaderObjectParameterInformation parameterInformation);
@@ -310,7 +310,7 @@ namespace b3d
 
 		/**
 		 * Information about all variation parameters and their possible values. Each permutation of variation parameters
-		 * represents a separate shader technique.
+		 * represents a separate shader variation.
 		 */
 		Vector<ShaderVariationParameterInformation> VariationParameters;
 
@@ -353,7 +353,7 @@ namespace b3d
 	{
 		ShaderInformation() = default;
 
-		/** Techniques to initialize the shader with. */
+		/** Variations to initialize the shader with. */
 		Vector<SPtr<Variation>> Variations;
 
 		/************************************************************************/
@@ -382,7 +382,7 @@ namespace b3d
 		/** Converts object to the render thread variant. */
 		static render::ShaderInformation ConvertToRenderProxy(const ShaderInformation& other);
 
-		/** Techniques to initialize the shader with. */
+		/** Variations to initialize the shader with. */
 		Vector<SPtr<Variation>> Variations;
 
 		/************************************************************************/
@@ -614,7 +614,7 @@ namespace b3d
 		 */
 		static u32 GetDataParameterSize(GpuDataParameterType type);
 
-		/**	Creates a new shader resource using the provided descriptor and techniques. */
+		/**	Creates a new shader resource using the provided descriptor and variations. */
 		static HShader Create(const String& name, const ShaderCreateInformation& createInformation);
 
 		/**	Returns a shader object but doesn't initialize it. */
@@ -637,7 +637,7 @@ namespace b3d
 		 */
 
 		/**
-		 * Creates a new shader object using the provided descriptor and techniques.
+		 * Creates a new shader object using the provided descriptor and variations.
 		 *
 		 * @note	Internal method. Use Create() for normal use.
 		 */

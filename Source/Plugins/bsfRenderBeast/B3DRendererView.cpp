@@ -577,25 +577,25 @@ void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 		bool needsVelocity = RequiresVelocityWrites();
 		for(auto& renderElem : sceneInfo.Renderables[i]->Elements)
 		{
-			u32 techniqueIdx;
+			u32 variationIndex;
 			if(needsVelocity)
 			{
-				techniqueIdx = renderElem.WriteVelocityVariationIndex != (u32)-1
+				variationIndex = renderElem.WriteVelocityVariationIndex != (u32)-1
 					? renderElem.WriteVelocityVariationIndex
 					: renderElem.DefaultVariationIndex;
 			}
 			else
-				techniqueIdx = renderElem.DefaultVariationIndex;
+				variationIndex = renderElem.DefaultVariationIndex;
 
 			ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
 			// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
 			if(shaderFlags.IsSet(ShaderFlag::Transparent))
-				mTransparentQueue->Add(&renderElem, distanceToCamera, techniqueIdx);
+				mTransparentQueue->Add(&renderElem, distanceToCamera, variationIndex);
 			else if(shaderFlags.IsSet(ShaderFlag::Forward))
-				mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, techniqueIdx);
+				mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, variationIndex);
 			else
-				mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, techniqueIdx);
+				mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, variationIndex);
 		}
 	}
 
@@ -647,14 +647,14 @@ void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 		// the decal bounds. We need to be conservative since the material for rendering outside will not properly
 		// render the inside of the decal volume.
 		const bool isInside = boundingBox.Contains(mProperties.ViewOrigin, mProperties.NearPlane * 3.0f);
-		const u32* techniqueIndices = renderElem.TechniqueIndices[(i32)isInside];
+		const u32* variationIndices = renderElem.VariationIndices[(i32)isInside];
 
 		// No MSAA evaluation, or same value for all samples (no divergence between samples)
-		mDecalQueue->Add(&renderElem, distanceToCamera, techniqueIndices[(i32)(isMSAA ? MSAAMode::Single : MSAAMode::None)]);
+		mDecalQueue->Add(&renderElem, distanceToCamera, variationIndices[(i32)(isMSAA ? MSAAMode::Single : MSAAMode::None)]);
 
 		// Evaluates all MSAA samples for pixels that are marked as divergent
 		if(isMSAA)
-			mDecalQueue->Add(&renderElem, distanceToCamera, techniqueIndices[(i32)MSAAMode::Full]);
+			mDecalQueue->Add(&renderElem, distanceToCamera, variationIndices[(i32)MSAAMode::Full]);
 	}
 
 	mForwardOpaqueQueue->Sort();

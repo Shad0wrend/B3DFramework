@@ -501,8 +501,8 @@ namespace b3d
 				object.Initialize();
 
 				// Note: Important to call Initialize before the call below, because it will trigger a sync to render thread, and shaders render thread representation only gets created once Initialize() is called.
-				for(const auto& technique : object.mInformation.Variations)
-					technique->SetOwner(std::static_pointer_cast<Shader>(object.GetShared()));
+				for(const auto& variation : object.mInformation.Variations)
+					variation->SetOwner(std::static_pointer_cast<Shader>(object.GetShared()));
 			}
 		}
 
@@ -537,8 +537,8 @@ namespace b3d
 		{
 			if(operationType.IsSet(RTTIOperationType::WriteBit) && !operationType.IsSet(RTTIOperationType::PreExistingObjectBit))
 			{
-				for(const auto& technique : object.mInformation.Variations)
-					technique->SetOwner(std::static_pointer_cast<render::Shader>(object.GetShared()));
+				for(const auto& variation : object.mInformation.Variations)
+					variation->SetOwner(std::static_pointer_cast<render::Shader>(object.GetShared()));
 
 				object.Initialize();
 			}

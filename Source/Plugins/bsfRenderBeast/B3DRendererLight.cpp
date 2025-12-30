@@ -73,8 +73,8 @@ void RendererLight::PopulateUniformBuffer(SPtr<GpuBuffer>& buffer, u32 index) co
 	gPerLightUniformDefinition.gShiftedLightPositionAndType.Set(uniforms, Vector4(lightData.ShiftedLightPosition, type), 0, index);
 
 	Vector4 lightGeometry;
-	lightGeometry.X = Internal->GetType() == LightType::Spot ? (float)Light::kLightConeNumSides : 0;
-	lightGeometry.Y = (float)Light::kLightConeNumSlices;
+	lightGeometry.X = Internal->GetType() == LightType::Spot ? (float)Light::kLightConeSideCount : 0;
+	lightGeometry.Y = (float)Light::kLightConeSliceCount;
 	lightGeometry.Z = Internal->GetBounds().Radius;
 
 	float extraRadius = lightData.SrcRadius / Math::Tan(lightData.SpotAngles.X * 0.5f);

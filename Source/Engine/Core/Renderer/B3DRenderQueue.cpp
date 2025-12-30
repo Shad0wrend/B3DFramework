@@ -27,7 +27,7 @@ void RenderQueue::Clear()
 	mSortedRenderElements.clear();
 }
 
-void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 techniqueIdx)
+void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 variationIndex)
 {
 	SPtr<Material> material = element->Material;
 	SPtr<Shader> shader = material->GetShader();
@@ -49,11 +49,11 @@ void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 te
 		break;
 	}
 
-	u32 numPasses = material->GetPassCount(techniqueIdx);
+	u32 passCount = material->GetPassCount(variationIndex);
 	if(!separablePasses)
-		numPasses = std::min(1U, numPasses);
+		passCount = std::min(1U, passCount);
 
-	for(u32 i = 0; i < numPasses; i++)
+	for(u32 i = 0; i < passCount; i++)
 	{
 		u32 idx = (u32)mSortableElementIdx.size();
 		mSortableElementIdx.push_back(idx);
@@ -64,8 +64,8 @@ void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 te
 		sortableElem.SeqIdx = idx;
 		sortableElem.Priority = queuePriority;
 		sortableElem.ShaderId = shaderId;
-		sortableElem.TechniqueIdx = techniqueIdx;
-		sortableElem.PassIdx = i;
+		sortableElem.VariationIndex = variationIndex;
+		sortableElem.PassIndex = i;
 		sortableElem.DistFromCamera = distFromCamera;
 
 		mElements.push_back(element);
@@ -92,9 +92,9 @@ void RenderQueue::Sort()
 	// Sort only indices since we generate an entirely new data set anyway, it doesn't make sense to move sortable elements
 	std::sort(mSortableElementIdx.begin(), mSortableElementIdx.end(), std::bind(sortMethod, _1, _2, mSortableElements));
 
-	u32 prevShaderId = (u32)-1;
-	u32 prevTechniqueIdx = (u32)-1;
-	u32 prevPassIdx = (u32)-1;
+	u32 previousShaderId = ~0u;
+	u32 previousVariationIndex = ~0u;
+	u32 previousPassIndex = ~0u;
 	for(u32 i = 0; i < (u32)mSortableElementIdx.size(); i++)
 	{
 		const u32 idx = mSortableElementIdx[i];
@@ -109,37 +109,37 @@ void RenderQueue::Sort()
 
 			RenderQueueElement& sortedElem = mSortedRenderElements.back();
 			sortedElem.RenderElem = renderElem;
-			sortedElem.TechniqueIdx = elem.TechniqueIdx;
-			sortedElem.PassIdx = elem.PassIdx;
+			sortedElem.VariationIndex = elem.VariationIndex;
+			sortedElem.PassIndex = elem.PassIndex;
 
-			if(prevShaderId != elem.ShaderId || prevTechniqueIdx != elem.TechniqueIdx || prevPassIdx != elem.PassIdx)
+			if(previousShaderId != elem.ShaderId || previousVariationIndex != elem.VariationIndex || previousPassIndex != elem.PassIndex)
 			{
 				sortedElem.ApplyPass = true;
-				prevShaderId = elem.ShaderId;
-				prevTechniqueIdx = elem.TechniqueIdx;
-				prevPassIdx = elem.PassIdx;
+				previousShaderId = elem.ShaderId;
+				previousVariationIndex = elem.VariationIndex;
+				previousPassIndex = elem.PassIndex;
 			}
 			else
 				sortedElem.ApplyPass = false;
 		}
 		else
 		{
-			const u32 numPasses = renderElem->Material->GetPassCount(elem.TechniqueIdx);
+			const u32 numPasses = renderElem->Material->GetPassCount(elem.VariationIndex);
 			for(u32 j = 0; j < numPasses; j++)
 			{
 				mSortedRenderElements.push_back(RenderQueueElement());
 
 				RenderQueueElement& sortedElem = mSortedRenderElements.back();
 				sortedElem.RenderElem = renderElem;
-				sortedElem.TechniqueIdx = elem.TechniqueIdx;
-				sortedElem.PassIdx = j;
+				sortedElem.VariationIndex = elem.VariationIndex;
+				sortedElem.PassIndex = j;
 
-				if(prevShaderId != elem.ShaderId || prevTechniqueIdx != elem.TechniqueIdx || prevPassIdx != j)
+				if(previousShaderId != elem.ShaderId || previousVariationIndex != elem.VariationIndex || previousPassIndex != j)
 				{
 					sortedElem.ApplyPass = true;
-					prevShaderId = elem.ShaderId;
-					prevTechniqueIdx = elem.TechniqueIdx;
-					prevPassIdx = j;
+					previousShaderId = elem.ShaderId;
+					previousVariationIndex = elem.VariationIndex;
+					previousPassIndex = j;
 				}
 				else
 					sortedElem.ApplyPass = false;
@@ -171,15 +171,15 @@ bool RenderQueue::ElementSorterPreferGroup(u32 aIdx, u32 bIdx, const Vector<Sort
 
 	u8 isHigher = (a.Priority > b.Priority) << 5 |
 		(a.ShaderId < b.ShaderId) << 4 |
-		(a.TechniqueIdx < b.TechniqueIdx) << 3 |
-		(a.PassIdx < b.PassIdx) << 2 |
+		(a.VariationIndex < b.VariationIndex) << 3 |
+		(a.PassIndex < b.PassIndex) << 2 |
 		(a.DistFromCamera < b.DistFromCamera) << 1 |
 		(a.SeqIdx < b.SeqIdx);
 
 	u8 isLower = (a.Priority < b.Priority) << 5 |
 		(a.ShaderId > b.ShaderId) << 4 |
-		(a.TechniqueIdx > b.TechniqueIdx) << 3 |
-		(a.PassIdx > b.PassIdx) << 2 |
+		(a.VariationIndex > b.VariationIndex) << 3 |
+		(a.PassIndex > b.PassIndex) << 2 |
 		(a.DistFromCamera > b.DistFromCamera) << 1 |
 		(a.SeqIdx > b.SeqIdx);
 
@@ -194,15 +194,15 @@ bool RenderQueue::ElementSorterPreferDistance(u32 aIdx, u32 bIdx, const Vector<S
 	u8 isHigher = (a.Priority > b.Priority) << 5 |
 		(a.DistFromCamera < b.DistFromCamera) << 4 |
 		(a.ShaderId < b.ShaderId) << 3 |
-		(a.TechniqueIdx < b.TechniqueIdx) << 2 |
-		(a.PassIdx < b.PassIdx) << 1 |
+		(a.VariationIndex < b.VariationIndex) << 2 |
+		(a.PassIndex < b.PassIndex) << 1 |
 		(a.SeqIdx < b.SeqIdx);
 
 	u8 isLower = (a.Priority < b.Priority) << 5 |
 		(a.DistFromCamera > b.DistFromCamera) << 4 |
 		(a.ShaderId > b.ShaderId) << 3 |
-		(a.TechniqueIdx > b.TechniqueIdx) << 2 |
-		(a.PassIdx > b.PassIdx) << 1 |
+		(a.VariationIndex > b.VariationIndex) << 2 |
+		(a.PassIndex > b.PassIndex) << 1 |
 		(a.SeqIdx > b.SeqIdx);
 
 	return isHigher > isLower;

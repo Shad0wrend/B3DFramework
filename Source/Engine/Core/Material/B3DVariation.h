@@ -24,7 +24,7 @@ namespace b3d
 	using ShaderVariationDirtyFlags = Flags<ShaderVariationDirtyFlag, u32>;
 	B3D_FLAGS_OPERATORS(ShaderVariationDirtyFlags)
 
-	/** Data that may be passed to Technique on creation to initialize it with precompiled set of passes (rather than requiring on-demand compilation). */
+	/** Data that may be passed to Variation on creation to initialize it with precompiled set of passes (rather than requiring on-demand compilation). */
 	template<bool IsRenderProxy>
 	struct TPrecompiledVariationData
 	{

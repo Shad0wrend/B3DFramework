@@ -303,8 +303,8 @@ RTTIType* Light::GetRtti() const
 
 namespace b3d { namespace render
 {
-const u32 Light::kLightConeNumSides = 20;
-const u32 Light::kLightConeNumSlices = 10;
+const u32 Light::kLightConeSideCount = 20;
+const u32 Light::kLightConeSliceCount = 10;
 
 Light::Light(const SPtr<SceneInstance>& scene, LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
 	: TLight(type, color, intensity, attRadius, srcRadius, castsShadows, spotAngle, spotFalloffAngle), mRendererId(0), mSceneInstance(scene)

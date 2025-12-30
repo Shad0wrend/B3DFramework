@@ -156,7 +156,7 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const CoreVariantType<Shader
 	if(compilerMetaData == nullptr)
 	{
 		ShaderCompilerResult returnStatus;
-		returnStatus.ErrorMessage = "Cannot compile technique as parent shader does not contain compilation meta-data.";
+		returnStatus.ErrorMessage = "Cannot compile variation as parent shader does not contain compilation meta-data.";
 
 		return returnStatus;
 	}

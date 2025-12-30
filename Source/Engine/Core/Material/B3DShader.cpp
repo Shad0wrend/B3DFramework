@@ -484,10 +484,10 @@ template <bool IsRenderProxy>
 Vector<SPtr<typename TShader<IsRenderProxy>::VariationType>> TShader<IsRenderProxy>::GetCompatibleVariations() const
 {
 	Vector<SPtr<VariationType>> output;
-	for(auto& technique : mInformation.Variations)
+	for(auto& variation : mInformation.Variations)
 	{
-		if(technique->IsSupported())
-			output.push_back(technique);
+		if(variation->IsSupported())
+			output.push_back(variation);
 	}
 
 	return output;
@@ -498,10 +498,10 @@ Vector<SPtr<typename TShader<IsRenderProxy>::VariationType>> TShader<IsRenderPro
 	const ShaderVariationParameters& variationParameters, bool exact) const
 {
 	Vector<SPtr<VariationType>> output;
-	for(auto& technique : mInformation.Variations)
+	for(auto& variation : mInformation.Variations)
 	{
-		if(technique->IsSupported() && technique->GetVariationParameters().Matches(variationParameters, exact))
-			output.push_back(technique);
+		if(variation->IsSupported() && variation->GetVariationParameters().Matches(variationParameters, exact))
+			output.push_back(variation);
 	}
 
 	return output;

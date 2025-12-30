@@ -39,7 +39,7 @@ void PrepareRenderQueuePass(RenderPassCreateInformation& passInfo, const Vector<
 
 	for(const auto& element : elements)
 	{
-		SPtr<GpuParameterSet> parameterSet0 = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIdx);
+		SPtr<GpuParameterSet> parameterSet0 = element.RenderElem->ParameterAdapter->GetGpuParameterSet(element.PassIndex);
 		if(parameterSet0 != nullptr)
 			passInfo.Parameters.Add(parameterSet0);
 
@@ -65,7 +65,7 @@ void RenderQueueElements(GpuCommandBuffer& commandBuffer, const Vector<RenderQue
 	for(auto& entry : elements)
 	{
 		if(entry.ApplyPass)
-			GetRendererUtility().SetPass(commandBuffer, entry.RenderElem->Material, entry.PassIdx, entry.TechniqueIdx);
+			GetRendererUtility().SetPass(commandBuffer, entry.RenderElem->Material, entry.PassIndex, entry.VariationIndex);
 
 		// Bind shared per-object parameter set if changed (using SetGpuParameterSet directly, not SetPassParams)
 		if(entry.RenderElem->SharedPerObjectParameterSet != lastBoundPerObjectSet)
@@ -80,7 +80,7 @@ void RenderQueueElements(GpuCommandBuffer& commandBuffer, const Vector<RenderQue
 		// Set the dynamic buffer offset for this element's per-object data
 		commandBuffer.SetDynamicBufferOffset(GpuPipelineSet::kPerObject, perObjectDynamicOffsetIndex, entry.RenderElem->PerObjectBufferOffset);
 
-		GetRendererUtility().SetPassParams(commandBuffer, entry.RenderElem->ParameterAdapter, entry.PassIdx);
+		GetRendererUtility().SetPassParams(commandBuffer, entry.RenderElem->ParameterAdapter, entry.PassIndex);
 
 		entry.RenderElem->Draw(commandBuffer);
 	}

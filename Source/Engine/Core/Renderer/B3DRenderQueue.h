@@ -28,8 +28,8 @@ namespace b3d
 		struct RenderQueueElement
 		{
 			const RenderElement* RenderElem = nullptr;
-			u32 PassIdx = 0;
-			u32 TechniqueIdx = 0;
+			u32 PassIndex = 0;
+			u32 VariationIndex = 0;
 			bool ApplyPass = true;
 		};
 
@@ -47,8 +47,8 @@ namespace b3d
 				i32 Priority;
 				float DistFromCamera;
 				u32 ShaderId;
-				u32 TechniqueIdx;
-				u32 PassIdx;
+				u32 VariationIndex;
+				u32 PassIndex;
 			};
 
 		public:
@@ -60,10 +60,10 @@ namespace b3d
 			 *
 			 * @param[in]	element			Renderable element to add to the queue.
 			 * @param[in]	distFromCamera	Distance of this object from the camera. Used for distance sorting.
-			 * @param[in]	techniqueIdx	Index of the technique within @p element's material that's to be used to render the
+			 * @param[in]	variationIndex	Index of the technique within @p element's material that's to be used to render the
 			 *								element with.
 			 */
-			void Add(const RenderElement* element, float distFromCamera, u32 techniqueIdx);
+			void Add(const RenderElement* element, float distFromCamera, u32 variationIndex);
 
 			/**	Clears all render operations from the queue. */
 			void Clear();

@@ -80,7 +80,7 @@ namespace b3d
 			GpuParameterUniformBuffer PerFrameUniformBufferParameter;
 
 			/** Indices for different variations of the used material. */
-			u32 TechniqueIndices[2][3];
+			u32 VariationIndices[2][3];
 
 			/** Time to used for evaluating material animation. */
 			float MaterialAnimationTime = 0.0f;

@@ -26,10 +26,10 @@ namespace b3d
 			/**	Material to render the mesh with. */
 			SPtr<Material> Material;
 
-			/** Index of the technique in the material to render the element with. */
+			/** Index of the variation in the material to render the element with. */
 			u32 DefaultVariationIndex = 0;
 
-			/** Index of the technique in the material to render the element with when velocity writes are supported. */
+			/** Index of the variation in the material to render the element with when velocity writes are supported. */
 			u32 WriteVelocityVariationIndex = ~0u;
 
 			/** All GPU parameters from the material used by the renderable. */

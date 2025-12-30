@@ -172,7 +172,7 @@ namespace b3d
 			/**	Cleans up the renderer. Must be called before the renderer is deleted. */
 			virtual void Destroy() {}
 
-			/** Name of the renderer. Used by materials to find an appropriate technique for this renderer. */
+			/** Name of the renderer. Used by materials to find an appropriate variation for this renderer. */
 			virtual const StringID& GetName() const = 0;
 
 			/** Called in order to render all currently active cameras. */

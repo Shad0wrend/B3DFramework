@@ -119,9 +119,9 @@ namespace b3d
 		 *									CPU simulation.
 		 * @param[in]	is3d				If true, the particle shader will render meshes instead of billboards.
 		 * @param[in]	forwardLighting		Form of forward lighting the shader should support.
-		 * @return							Object that can be used for looking up the variation technique in the material.
+		 * @return							Object that can be used for looking up the variations in the material.
 		 */
-		const ShaderVariationParameters& GetParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3d, ParticleForwardLightingType forwardLighting);
+		const ShaderVariationParameters& GetParticleShaderVariationParameters(ParticleOrientation orient, bool lockY, bool gpu, bool is3d, ParticleForwardLightingType forwardLighting);
 
 		/** Contains information required for rendering a single particle system. */
 		class ParticlesRenderElement : public RenderElement

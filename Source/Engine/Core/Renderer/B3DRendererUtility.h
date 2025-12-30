@@ -324,45 +324,45 @@ namespace b3d
 			 *
 			 * @param	commandBuffer	Command buffer to bind the material pass to.
 			 * @param	material		Material containing the pass.
-			 * @param	passIdx			Index of the pass in the material.
-			 * @param	techniqueIdx	Index of the technique the pass belongs to, if the material has multiple techniques.
+			 * @param	passIndex		Index of the pass in the material.
+			 * @param	variationIndex	Index of the variation the pass belongs to, if the material has multiple variations.
 			 *
 			 * @note	Render thread.
 			 */
-			void SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0, u32 techniqueIdx = 0);
+			void SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIndex = 0, u32 variationIndex = 0);
 
 			/**
 			 * Activates the specified material pass for compute. Any further dispatch calls will be executed using this pass.
 			 *
 			 * @param	commandBuffer	Command buffer to bind the pass to.
 			 * @param	material		Material containing the pass.
-			 * @param	passIdx			Index of the pass in the material.
+			 * @param	passIndex		Index of the pass in the material.
 			 *
 			 * @note	Render thread.
 			 */
-			void SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0);
+			void SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIndex = 0);
 
 			/**
 			 * Sets parameters (textures, samplers, buffers) for the currently active pass.
 			 *
 			 * @param	commandBuffer	Command buffer to bind the pass parameters to.
 			 * @param	adapter			Object containing the parameters.
-			 * @param	passIdx			Pass for which to set the parameters.
+			 * @param	passIndex		Pass for which to set the parameters.
 			 *
 			 * @note	Render thread.
 			 */
-			void SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& adapter, u32 passIdx = 0);
+			void SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& adapter, u32 passIndex = 0);
 
 			/**
 			 * Draws the specified mesh.
 			 *
 			 * @param	commandBuffer	Command buffer to encode the draw command on.
 			 * @param	mesh			Mesh to draw.
-			 * @param	numInstances	Number of times to draw the mesh using instanced rendering.
+			 * @param	instanceCount	Number of times to draw the mesh using instanced rendering.
 			 *
 			 * @note	Render thread.
 			 */
-			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances = 1);
+			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 instanceCount = 1);
 
 			/**
 			 * Draws the specified mesh.
@@ -370,11 +370,11 @@ namespace b3d
 			 * @param	commandBuffer	Command buffer to encode the draw command on.
 			 * @param	mesh			Mesh to draw.
 			 * @param	subMesh			Portion of the mesh to draw.
-			 * @param	numInstances	Number of times to draw the mesh using instanced rendering.
+			 * @param	instanceCount	Number of times to draw the mesh using instanced rendering.
 			 *
 			 * @note	Render thread.
 			 */
-			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
+			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 instanceCount = 1);
 
 			/**
 			 * Draws the specified mesh with an additional vertex buffer containing morph shape vertices.

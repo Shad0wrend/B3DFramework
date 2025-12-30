@@ -100,7 +100,7 @@ namespace b3d
 		 */
 		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Variation& inOutVariation) = 0;
 
-		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, ShadingLanguageFlag, ShaderCompilerMetaData, Technique&) */
+		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, ShadingLanguageFlag, ShaderCompilerMetaData, Variation&) */
 		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Variation& inOutVariation) = 0;
 	};
 

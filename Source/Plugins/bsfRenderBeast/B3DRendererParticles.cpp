@@ -61,7 +61,7 @@ const ShaderVariationParameters& GetParticleShaderVariationInternal(ParticleOrie
 	return GetParticleShaderVariationInternal<false, FWD>(orient, lockY, gpu);
 }
 
-const ShaderVariationParameters& GetParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3D, ParticleForwardLightingType forwardLighting)
+const ShaderVariationParameters& GetParticleShaderVariationParameters(ParticleOrientation orient, bool lockY, bool gpu, bool is3D, ParticleForwardLightingType forwardLighting)
 {
 	switch(forwardLighting)
 	{

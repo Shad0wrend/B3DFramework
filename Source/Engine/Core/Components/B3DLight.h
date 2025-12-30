@@ -291,8 +291,8 @@ namespace b3d
 			/** Returns the world space transform for the decal. */
 			const Transform& GetWorldTransform() const { return mTransform; }
 
-			static const u32 kLightConeNumSides;
-			static const u32 kLightConeNumSlices;
+			static const u32 kLightConeSideCount;
+			static const u32 kLightConeSliceCount;
 
 		protected:
 			friend class b3d::Light;

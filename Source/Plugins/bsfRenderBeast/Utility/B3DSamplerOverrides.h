@@ -43,13 +43,13 @@ namespace b3d
 		/** Key used for uniquely identifying a sampler override entry. */
 		struct SamplerOverrideKey
 		{
-			SamplerOverrideKey(const SPtr<Material>& material, u32 techniqueIdx)
-				: Material(material), TechniqueIdx(techniqueIdx)
+			SamplerOverrideKey(const SPtr<Material>& material, u32 variationIndex)
+				: Material(material), VariationIndex(variationIndex)
 			{}
 
 			bool operator==(const SamplerOverrideKey& rhs) const
 			{
-				return Material == rhs.Material && TechniqueIdx == rhs.TechniqueIdx;
+				return Material == rhs.Material && VariationIndex == rhs.VariationIndex;
 			}
 
 			bool operator!=(const SamplerOverrideKey& rhs) const
@@ -58,7 +58,7 @@ namespace b3d
 			}
 
 			SPtr<Material> Material;
-			u32 TechniqueIdx;
+			u32 VariationIndex;
 		};
 
 		/**	Helper class for generating sampler overrides. */
@@ -103,7 +103,7 @@ namespace std
 		{
 			size_t hash = 0;
 			b3d::B3DCombineHash(hash, key.Material);
-			b3d::B3DCombineHash(hash, key.TechniqueIdx);
+			b3d::B3DCombineHash(hash, key.VariationIndex);
 
 			return hash;
 		}

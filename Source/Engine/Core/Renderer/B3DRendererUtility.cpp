@@ -60,11 +60,11 @@ RendererUtility::RendererUtility()
 
 		SPtr<VertexDescription> vertexDesc = B3DMakeShared<VertexDescription>(vertexElements);
 
-		u32 numVertices = 0;
-		u32 numIndices = 0;
+		u32 vertexCount = 0;
+		u32 indexCount = 0;
 
-		ShapeMeshes3D::GetNumElementsSphere(3, numVertices, numIndices);
-		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(numVertices, numIndices, vertexDesc);
+		ShapeMeshes3D::GetNumElementsSphere(3, vertexCount, indexCount);
+		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(vertexCount, indexCount, vertexDesc);
 
 		u32* indexData = meshData->GetIndices32();
 		u8* positionData = meshData->GetElementData(VES_POSITION);
@@ -81,11 +81,11 @@ RendererUtility::RendererUtility()
 
 		SPtr<VertexDescription> vertexDescription = B3DMakeShared<VertexDescription>(vertexElements);
 
-		u32 numVertices = 0;
-		u32 numIndices = 0;
+		u32 vertexCount = 0;
+		u32 indexCount = 0;
 
-		ShapeMeshes3D::GetNumElementsAaBox(numVertices, numIndices);
-		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(numVertices, numIndices, vertexDescription);
+		ShapeMeshes3D::GetNumElementsAaBox(vertexCount, indexCount);
+		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(vertexCount, indexCount, vertexDescription);
 
 		u32* indexData = meshData->GetIndices32();
 		u8* positionData = meshData->GetElementData(VES_POSITION);
@@ -97,25 +97,25 @@ RendererUtility::RendererUtility()
 	}
 
 	{
-		u32 numSides = Light::kLightConeNumSides;
-		u32 numSlices = Light::kLightConeNumSlices;
+		u32 sideCount = Light::kLightConeSideCount;
+		u32 sliceCount = Light::kLightConeSliceCount;
 
 		TInlineArray<VertexElement, 8> vertexElements;
 		vertexElements.Add(VertexElement(VET_FLOAT3, VES_POSITION));
 
 		SPtr<VertexDescription> vertexDescription = B3DMakeShared<VertexDescription>(vertexElements);
 
-		u32 numVertices = numSides * numSlices * 2;
-		u32 numIndices = ((numSides * 2) * (numSlices - 1) * 2) * 3;
+		u32 vertexCount = sideCount * sliceCount * 2;
+		u32 indexCount = ((sideCount * 2) * (sliceCount - 1) * 2) * 3;
 
-		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(numVertices, numIndices, vertexDescription);
+		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(vertexCount, indexCount, vertexDescription);
 
 		u32* indexData = meshData->GetIndices32();
 		u8* positionData = meshData->GetElementData(VES_POSITION);
 		u32 stride = vertexDescription->GetVertexStride();
 
 		// Dummy vertex positions, actual ones generated in shader
-		for(u32 i = 0; i < numVertices; i++)
+		for(u32 i = 0; i < vertexCount; i++)
 		{
 			memcpy(positionData, &Vector3::kZero, sizeof(Vector3));
 			positionData += stride;
@@ -123,33 +123,33 @@ RendererUtility::RendererUtility()
 
 		// Cone indices
 		u32 curIdx = 0;
-		for(u32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
+		for(u32 sliceIdx = 0; sliceIdx < (sliceCount - 1); sliceIdx++)
 		{
-			for(u32 sideIdx = 0; sideIdx < numSides; sideIdx++)
+			for(u32 sideIdx = 0; sideIdx < sideCount; sideIdx++)
 			{
-				indexData[curIdx++] = sliceIdx * numSides + sideIdx;
-				indexData[curIdx++] = sliceIdx * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = (sliceIdx + 1) * numSides + sideIdx;
+				indexData[curIdx++] = sliceIdx * sideCount + sideIdx;
+				indexData[curIdx++] = sliceIdx * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = (sliceIdx + 1) * sideCount + sideIdx;
 
-				indexData[curIdx++] = sliceIdx * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = (sliceIdx + 1) * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = (sliceIdx + 1) * numSides + sideIdx;
+				indexData[curIdx++] = sliceIdx * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = (sliceIdx + 1) * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = (sliceIdx + 1) * sideCount + sideIdx;
 			}
 		}
 
 		// Sphere cap indices
-		u32 coneOffset = numSides * numSlices;
-		for(u32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
+		u32 coneOffset = sideCount * sliceCount;
+		for(u32 sliceIdx = 0; sliceIdx < (sliceCount - 1); sliceIdx++)
 		{
-			for(u32 sideIdx = 0; sideIdx < numSides; sideIdx++)
+			for(u32 sideIdx = 0; sideIdx < sideCount; sideIdx++)
 			{
-				indexData[curIdx++] = coneOffset + sliceIdx * numSides + sideIdx;
-				indexData[curIdx++] = coneOffset + sliceIdx * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * numSides + sideIdx;
+				indexData[curIdx++] = coneOffset + sliceIdx * sideCount + sideIdx;
+				indexData[curIdx++] = coneOffset + sliceIdx * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * sideCount + sideIdx;
 
-				indexData[curIdx++] = coneOffset + sliceIdx * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * numSides + (sideIdx + 1) % numSides;
-				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * numSides + sideIdx;
+				indexData[curIdx++] = coneOffset + sliceIdx * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * sideCount + (sideIdx + 1) % sideCount;
+				indexData[curIdx++] = coneOffset + (sliceIdx + 1) * sideCount + sideIdx;
 			}
 		}
 
@@ -162,11 +162,11 @@ RendererUtility::RendererUtility()
 
 		SPtr<VertexDescription> vertexDescription = B3DMakeShared<VertexDescription>(vertexElements);
 
-		u32 numVertices = 0;
-		u32 numIndices = 0;
+		u32 vertexCount = 0;
+		u32 indexCount = 0;
 
-		ShapeMeshes3D::GetNumElementsAaBox(numVertices, numIndices);
-		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(numVertices, numIndices, vertexDescription);
+		ShapeMeshes3D::GetNumElementsAaBox(vertexCount, indexCount);
+		SPtr<MeshData> meshData = B3DMakeShared<MeshData>(vertexCount, indexCount, vertexDescription);
 
 		u32* indexData = meshData->GetIndices32();
 		u8* positionData = meshData->GetElementData(VES_POSITION);
@@ -178,34 +178,34 @@ RendererUtility::RendererUtility()
 	}
 }
 
-void RendererUtility::SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx, u32 techniqueIdx)
+void RendererUtility::SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIndex, u32 variationIndex)
 {
-	const SPtr<Pass>& pass = material->GetPass(passIdx, techniqueIdx);
+	const SPtr<Pass>& pass = material->GetPass(passIndex, variationIndex);
 	commandBuffer.SetGpuGraphicsPipelineState(pass->GetGraphicsPipelineState());
 	commandBuffer.SetStencilReferenceValue(pass->GetStencilRefValue());
 }
 
-void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx)
+void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIndex)
 {
-	const SPtr<Pass>& pass = material->GetPass(passIdx);
+	const SPtr<Pass>& pass = material->GetPass(passIndex);
 	commandBuffer.SetGpuComputePipelineState(pass->GetComputePipelineState());
 }
 
-void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& params, u32 passIdx)
+void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<MaterialParameterAdapter>& parameterAdapter, u32 passIndex)
 {
-	const SPtr<GpuParameterSet>& gpuParams = params->GetGpuParameterSet(passIdx);
+	const SPtr<GpuParameterSet>& gpuParams = parameterAdapter->GetGpuParameterSet(passIndex);
 	if(gpuParams == nullptr)
 		return;
 
 	commandBuffer.SetGpuParameterSet(gpuParams);
 }
 
-void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances)
+void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 instanceCount)
 {
-	Draw(commandBuffer, mesh, mesh->GetProperties().SubMeshes[0], numInstances);
+	Draw(commandBuffer, mesh, mesh->GetProperties().SubMeshes[0], instanceCount);
 }
 
-void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
+void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 instanceCount)
 {
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
 
@@ -241,7 +241,7 @@ void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>
 	commandBuffer.SetDrawOperation(subMesh.DrawOp);
 
 	u32 indexCount = subMesh.IndexCount;
-	commandBuffer.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, numInstances);
+	commandBuffer.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, instanceCount);
 
 	mesh->NotifyUsedOnGPU();
 }
