@@ -92,18 +92,6 @@ struct DebugQuadtreeOptions
 
 typedef TQuadTree<u32, DebugQuadtreeOptions> DebugQuadtree;
 
-void UtilityTestSuite::StartUp()
-{
-	SPtr<TestSuite> fileSystemTests = Create<FileSystemTestSuite>();
-	SPtr<TestSuite> ecsTests = Create<ECSTestSuite>();
-	Add(fileSystemTests);
-	Add(ecsTests);
-}
-
-void UtilityTestSuite::ShutDown()
-{
-}
-
 UtilityTestSuite::UtilityTestSuite()
 	: TestSuite("UtilityTestSuite")
 {

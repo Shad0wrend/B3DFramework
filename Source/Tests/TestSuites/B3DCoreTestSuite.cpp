@@ -1,28 +1,13 @@
-//************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
+//************************************ B3D Framework - Copyright 2025 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "Testing/B3DConsoleTestOutput.h"
-#include "Testing/B3DJSONTestOutput.h"
-#include "Testing/B3DTestSuite.h"
+#include "B3DCoreTestSuite.h"
 #include "Animation/B3DAnimationCurve.h"
 #include "Particles/B3DParticleDistribution.h"
 #include "Serialization/B3DBinarySerializer.h"
 #include "FileSystem/B3DDataStream.h"
-#include "Scene/B3DComponent.h"
-#include "Scene/B3DGameObjectManager.h"
-#include "Scene/B3DGameObjectCollection.h"
-#include "Scene/B3DPrefab.h"
-#include "Scene/B3DSceneManager.h"
-#include "Scene/B3DSceneObject.h"
-#include "B3DApplication.h"
-#include "Utility/B3DUtility.h"
-#include "B3DUnitTestScenes.h"
+#include "B3DUnitTestSerializableObjects.h"
 #include "B3DUnitTestSerializationHelper.h"
-#include "B3DUnitTestPrefabUpdateHelper.h"
-#include "Resources/B3DResources.h"
-#include "Scene/B3DPrefabUtility.h"
-#include "Scene/B3DSceneInstance.h"
-#include "Utility/B3DCommandLine.h"
-#include "B3DPrefabTestSuite.h"
+#include "Utility/B3DUtility.h"
 
 using namespace b3d;
 
@@ -36,22 +21,6 @@ static float EvaluateVelocity(float acceleration, float time)
 	return acceleration * time;
 }
 
-class CoreTestSuite : public TestSuite
-{
-public:
-	CoreTestSuite();
-
-	void StartUp() override;
-
-private:
-	void TestAnimCurveIntegration();
-	void TestLookupTable();
-	void TestBinarySerialization();
-	void TestSerializedObject();
-	void TestBinaryDelta();
-
-};
-
 CoreTestSuite::CoreTestSuite()
 	: TestSuite("CoreTestSuite")
 {
@@ -62,11 +31,6 @@ CoreTestSuite::CoreTestSuite()
 	B3D_ADD_TEST(CoreTestSuite::TestBinaryDelta)
 
 	// TODO - Add unit test for binary cloner test that restores external references
-}
-
-void CoreTestSuite::StartUp()
-{
-	Add(Create<PrefabTestSuite>());
 }
 
 void CoreTestSuite::TestAnimCurveIntegration()
@@ -175,7 +139,7 @@ void CoreTestSuite::TestLookupTable()
 void CoreTestSuite::TestBinarySerialization()
 {
 	const SPtr<UnitTestSerializationObjectA> object = UnitTestSerializationObjectA::CreateVariantB();
-	
+
 	SPtr<MemoryDataStream> stream = B3DMakeShared<MemoryDataStream>();
 	BinarySerializer serializer;
 	serializer.Encode(object.get(), stream, BinarySerializerFlag::None);
@@ -213,40 +177,4 @@ void CoreTestSuite::TestBinaryDelta()
 	deltaHandler.ApplyDelta(objectA, delta, applyDeltaRTTIOperationContext);
 
 	UnitTestSerializationHelpers::TestAssertObjectsMatch(*this, objectA, objectB, true);
-}
-
-using namespace b3d;
-
-int main(int argc, char* argv[])
-{
-	CrashHandler::StartUp();
-	CommandLine::Initialize(argc, argv);
-
-	String outputFormat = CommandLine::GetParameterValue("test-output-format", "console");
-	String outputPath = CommandLine::GetParameterValue("test-output-path", "");
-
-	VideoMode videoMode(1280, 720);
-	Application::StartUp(videoMode, "UnitTests", false);
-
-	SPtr<TestSuite> tests = CoreTestSuite::Create<CoreTestSuite>();
-
-	i32 exitCode;
-	if(outputFormat == "json")
-	{
-		Path jsonPath = outputPath.empty() ? Path("test_results.json") : Path(outputPath);
-		JSONTestOutput testOutput(jsonPath);
-		tests->Run(testOutput);
-		exitCode = testOutput.GetExitCode();
-	}
-	else
-	{
-		ConsoleTestOutput testOutput;
-		tests->Run(testOutput);
-		exitCode = testOutput.GetExitCode();
-	}
-
-	Application::ShutDown();
-	CrashHandler::ShutDown();
-
-	return exitCode;
 }

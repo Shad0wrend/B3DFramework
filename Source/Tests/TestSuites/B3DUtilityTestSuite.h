@@ -10,8 +10,6 @@ namespace b3d
 	{
 	public:
 		UtilityTestSuite();
-		void StartUp() override;
-		void ShutDown() override;
 
 	private:
 		void TestBitfield();

@@ -1,79 +1,46 @@
-# Utility Test (kept as explicit file list per user request)
-add_executable(UtilityTest
-	B3DUtilityTest.cpp
-	B3DUtilityTestSuite.cpp
-	B3DFileSystemTestSuite.cpp
-	B3DECSTestSuite.cpp)
+# Unified Test Runner - combines all test layers
+set(UNIT_TEST_RUNNER_FOLDERS_TO_IGNORE "")
 
-# Common flags
-B3DSetDefaultLinkAndCompileFlags(UtilityTest)
-
-# Working directory
-set_target_properties(UtilityTest PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
-
-# Includes
-target_include_directories(UtilityTest PRIVATE
-	"${B3D_FRAMEWORK_SOURCE_FOLDER}/Engine/Utility"
-	"${B3D_FRAMEWORK_SOURCE_FOLDER}/Engine/Utility/ThirdParty"
-	"${CMAKE_CURRENT_SOURCE_DIR}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/RTTI")
-
-# Libraries
-target_link_libraries(UtilityTest bsf)
-
-# IDE specific
-set_property(TARGET UtilityTest PROPERTY FOLDER Tests)
-
-# Register test
-add_test(NAME UtilityTests COMMAND $<TARGET_FILE:UtilityTest>)
-
-# Core Test - using glob pattern for source files
-set(CORE_TEST_FOLDERS_TO_IGNORE "")
-
-# Files that belong to other test executables
-set(CORE_TEST_FILES_TO_EXCLUDE
-	"B3DUtilityTest.cpp"
-	"B3DUtilityTestSuite.cpp"
-	"B3DUtilityTestSuite.h"
-	"B3DFileSystemTestSuite.cpp"
-	"B3DFileSystemTestSuite.h"
-	"B3DECSTestSuite.cpp"
-	"B3DECSTestSuite.h"
+# Files to exclude from the test runner
+set(UNIT_TEST_RUNNER_FILES_TO_EXCLUDE
 	"B3DNetworkTest.cpp"
 )
 
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "${CORE_TEST_FOLDERS_TO_IGNORE}" CORE_TEST_SRC)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "${UNIT_TEST_RUNNER_FOLDERS_TO_IGNORE}" UNIT_TEST_RUNNER_SRC)
 
-# Filter out files that belong to other test targets
-foreach(excludeFile ${CORE_TEST_FILES_TO_EXCLUDE})
-	list(FILTER CORE_TEST_SRC EXCLUDE REGEX "${excludeFile}$")
+# Filter out excluded files
+foreach(excludeFile ${UNIT_TEST_RUNNER_FILES_TO_EXCLUDE})
+	list(FILTER UNIT_TEST_RUNNER_SRC EXCLUDE REGEX "${excludeFile}$")
 endforeach()
 
 # Target
-add_executable(CoreTest ${CORE_TEST_SRC})
+add_executable(UnitTestRunner ${UNIT_TEST_RUNNER_SRC})
 
 # Common flags
-B3DSetDefaultLinkAndCompileFlags(CoreTest)
+B3DSetDefaultLinkAndCompileFlags(UnitTestRunner)
 
 # Working directory
-set_target_properties(CoreTest PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+set_target_properties(UnitTestRunner PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 
 # Includes
-target_include_directories(CoreTest PRIVATE
+target_include_directories(UnitTestRunner PRIVATE
 	"${B3D_FRAMEWORK_SOURCE_FOLDER}/Engine/Utility"
 	"${B3D_FRAMEWORK_SOURCE_FOLDER}/Engine/Utility/ThirdParty"
 	"${CMAKE_CURRENT_SOURCE_DIR}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/TestSuites"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Factories"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Utility"
 	"${CMAKE_CURRENT_SOURCE_DIR}/RTTI")
 
 # Libraries
-target_link_libraries(CoreTest bsf)
+target_link_libraries(UnitTestRunner bsf)
 
-# Plugin dependencies
-B3DAddRuntimeDependencies(CoreTest)
-add_dependencies(CoreTest bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
+# Plugin dependencies (needed for Core layer tests)
+B3DAddRuntimeDependencies(UnitTestRunner)
+add_dependencies(UnitTestRunner bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
 
 # IDE specific
-set_property(TARGET CoreTest PROPERTY FOLDER Tests)
+set_property(TARGET UnitTestRunner PROPERTY FOLDER Tests)
 
-# Register test
-add_test(NAME CoreTests COMMAND $<TARGET_FILE:CoreTest>)
+# Register test (runs all layers by default)
+add_test(NAME UnitTests COMMAND $<TARGET_FILE:UnitTestRunner>)
