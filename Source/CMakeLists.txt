@@ -203,47 +203,7 @@ add_subdirectory(Plugins/bsfSL)
 ## Tests
 if(B3D_BUILD_TESTS)
 	enable_testing()
-
-	add_executable(UtilityTest
-		Tests/B3DUtilityTest.cpp
-		Tests/B3DUtilityTestSuite.cpp
-		Tests/B3DFileSystemTestSuite.cpp
-		Tests/B3DECSTestSuite.cpp)
-		
-	target_link_libraries(UtilityTest bsf)
-	target_include_directories(UtilityTest PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests/RTTI")
-
-	add_executable(CoreTest
-		Tests/B3DCoreTest.cpp
-		Tests/B3DUnitTestComponents.h
-		Tests/B3DUnitTestComponents.cpp
-		Tests/B3DUnitTestSerializableObjects.h
-		Tests/B3DUnitTestSerializableObjects.cpp
-		Tests/B3DUnitTestSerializationHelper.h
-		Tests/B3DUnitTestSerializationHelper.cpp
-		Tests/B3DUnitTestPrefabUpdateHelper.h
-		Tests/B3DUnitTestPrefabUpdateHelper.cpp
-		Tests/B3DUnitTestScenes.h
-		Tests/B3DUnitTestScenes.cpp
-		Tests/RTTI/B3DUnitTestComponentsRTTI.h
-		Tests/RTTI/B3DUnitTestSerializableObjectsRTTI.h)
-		
-	target_link_libraries(CoreTest bsf)
-	target_include_directories(CoreTest PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Utility/Tests/RTTI")
-
-	set_property(TARGET UtilityTest PROPERTY FOLDER Tests)
-	set_property(TARGET CoreTest PROPERTY FOLDER Tests)	
-	
-	add_test(NAME UtilityTests COMMAND $<TARGET_FILE:UtilityTest>)
-	add_test(NAME CoreTests COMMAND $<TARGET_FILE:UtilityTest>)
+	add_subdirectory(Tests)
 endif()
 
 ## Builtin resource preprocessing
