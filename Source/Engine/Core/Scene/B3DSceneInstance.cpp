@@ -394,18 +394,8 @@ SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const
 
 SceneInstance::~SceneInstance()
 {
-	if(!mRoot.IsDestroyed())
-		mRoot->Destroy();
-
-	// Check if there are any objects still alive besides the root (count > 1 means children exist)
 	if(mGameObjectCollection != nullptr)
-	{
-		mGameObjectCollection->DestroyQueuedObjects();
-
-		const u32 aliveCount = mGameObjectCollection->GetObjectCount();
-		//B3D_ENSURE_LOG(aliveCount == 0, "SceneInstance destructor: {0} game objects are still alive when scene is being destroyed", aliveCount);
-		B3D_ENSURE(aliveCount == 0);
-	}
+		B3D_ASSERT(mGameObjectCollection->GetObjectCount() == 0);
 
 	GetSceneManager().NotifySceneInstanceDestroyed(this);
 }
@@ -415,6 +405,17 @@ void SceneInstance::Initialize()
 	CoreObject::Initialize();
 	
 	mAnimationScene->SetOwner(std::static_pointer_cast<SceneInstance>(GetShared()));
+}
+
+void SceneInstance::Destroy()
+{
+	if(!mRoot.IsDestroyed())
+		mRoot->Destroy();
+
+	if(mGameObjectCollection != nullptr)
+		mGameObjectCollection->DestroyQueuedObjects();
+
+	CoreObject::Destroy();
 }
 
 void SceneInstance::FixedUpdate()

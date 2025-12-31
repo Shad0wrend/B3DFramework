@@ -190,6 +190,9 @@ namespace b3d
 		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const UUID& associatedResourceId);
 		~SceneInstance();
 
+		void Initialize() override;
+		void Destroy() override;
+
 		/** Name of the scene. */
 		B3D_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
 		const String& GetName() const { return mName; }
@@ -322,7 +325,6 @@ namespace b3d
 	private:
 		friend class SceneManager;
 
-		void Initialize() override;
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 		/**	Callback that is triggered when the main render target size is changed. */

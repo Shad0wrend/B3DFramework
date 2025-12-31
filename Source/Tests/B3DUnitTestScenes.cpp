@@ -10,6 +10,7 @@
 using namespace b3d;
 
 UnitTestSceneA::UnitTestSceneA(const SPtr<SceneInstance>& sceneInstance)
+	: Scene(sceneInstance), mOwnsSceneInstance(true)
 {
 	SceneObject_0 = sceneInstance->CreateSceneObject("SceneA_SceneObject_0");
 	SceneObject_0_0 = sceneInstance->CreateSceneObject("SceneA_SceneObject_0_0");
@@ -33,7 +34,8 @@ UnitTestSceneA::UnitTestSceneA(const SPtr<SceneInstance>& sceneInstance)
 	Component_0_1_0 = SceneObject_0_1_0->AddComponent<UnitTestComponentA>();
 }
 
-UnitTestSceneA::UnitTestSceneA(const HSceneObject& root)
+UnitTestSceneA::UnitTestSceneA(const HSceneObject& root, bool ownsSceneInstance)
+	: Scene( root->GetScene()), mOwnsSceneInstance(ownsSceneInstance)
 {
 	SceneObject_0 = root->FindChild("SceneA_SceneObject_0", false);
 	SceneObject_0_0 = SceneObject_0->FindChild("SceneA_SceneObject_0_0", false);
@@ -48,60 +50,111 @@ UnitTestSceneA::UnitTestSceneA(const HSceneObject& root)
 	Component_0_1_0 = SceneObject_0_1_0->GetComponent<UnitTestComponentA>();
 }
 
+UnitTestSceneA::~UnitTestSceneA()
+{
+	if(Scene != nullptr && mOwnsSceneInstance)
+		Scene->Destroy();
+}
+
+UnitTestSceneA UnitTestSceneA::CreateInNewSceneInstance(const char* name)
+{
+	SPtr<SceneInstance> sceneInstance = SceneInstance::Create(name);
+	return UnitTestSceneA(sceneInstance);
+}
+
+UnitTestSceneA UnitTestSceneA::InstantateFromPrefab(const SPtr<Prefab>& prefab)
+{
+	SPtr<SceneInstance> instancedScene = prefab->InstantiateAsScene();
+	return UnitTestSceneA(instancedScene->GetRoot(), true);
+}
+
+UnitTestSceneA UnitTestSceneA::FromExistingHierarchy(const HSceneObject& root)
+{
+	return UnitTestSceneA(root, false);
+}
+
 /** Populates the scene objects and components by looking them up in the provided hierarchy. */
-UnitTestSceneB::UnitTestSceneB(const HSceneObject& root)
-	: SceneInstance(root->GetScene()), Root(root)
-{
-	RefreshHierarchy(root);
+UnitTestSceneB::UnitTestSceneB(const HSceneObject& root, bool ownsSceneInstance)
+	: Scene(root->GetScene()), Root(root), mOwnsSceneInstance(ownsSceneInstance)
+{ }
 
-	// Record IDs
-	PerformSceneObjectUnaryOperation([this](const HSceneObject& sceneObject) {
-		ObjectInformation[sceneObject.GetId()] = PrefabLinkInformation(sceneObject->GetPrefabObjectId(), sceneObject->GetPrefabResourceId());
-		for(const auto& component : sceneObject->GetComponents())
-			ObjectInformation[component.GetId()] = PrefabLinkInformation(component->GetPrefabObjectId(), sceneObject->GetPrefabResourceId());
-	 });
+UnitTestSceneB::~UnitTestSceneB()
+{
+	if(Scene != nullptr && mOwnsSceneInstance)
+		Scene->Destroy();
 }
 
-NewSceneInstanceResult UnitTestSceneB::PopulateNewSceneInstance(const char* name)
+UnitTestSceneB UnitTestSceneB::CreateInNewSceneInstance(const char* name)
 {
-	SPtr<class SceneInstance> sceneInstance = SceneInstance::Create(name);
-	UnitTestSceneB wrapper = PopulateParent(sceneInstance->GetRoot());
+	SPtr<SceneInstance> sceneInstance = SceneInstance::Create(name);
+	UnitTestSceneB output(sceneInstance->GetRoot(), true);
+	output.PopulateHierarchy();
 
-	return { sceneInstance, sceneInstance->GetRoot() };
+	return output;
 }
 
-UnitTestSceneB UnitTestSceneB::PopulateParent(const HSceneObject& parent)
+UnitTestSceneB UnitTestSceneB::InstantateFromPrefab(const HPrefab& prefab)
 {
-	UnitTestSceneB scene;
+	SPtr<SceneInstance> instancedScene = prefab->InstantiateAsScene();
+	UnitTestSceneB output = UnitTestSceneB(instancedScene->GetRoot(), true);
+	output.AddNewObjectIds();
+	output.RefreshHierarchy(output.Root);
 
-	scene.SceneInstance = parent->GetScene();
-	scene.Root = parent;
+	return output;
+}
 
-	scene.SceneObject_0 = scene.SceneInstance->CreateSceneObject("SceneB_SceneObject_0");
-	scene.SceneObject_0->SetParent(parent);
+UnitTestSceneB UnitTestSceneB::FromExistingHierarchy(const HSceneObject& root)
+{
+	UnitTestSceneB output = UnitTestSceneB(root, false);
+	output.AddNewObjectIds();
+	output.RefreshHierarchy(output.Root);
 
-	scene.SceneObject_1 = scene.SceneInstance->CreateSceneObject("SceneB_SceneObject_1");
-	scene.SceneObject_1->SetParent(parent);
+	return output;
+}
 
-	scene.SceneObject_1_0 = scene.SceneInstance->CreateSceneObject("SceneB_SceneObject_1_0");
-	scene.SceneObject_1_0->SetParent(scene.SceneObject_1);
-	scene.SceneObject_1_0_Id = scene.SceneObject_1_0.GetId();
+SPtr<UnitTestSceneB> UnitTestSceneB::FromExistingHierarchyAsShared(const HSceneObject& root)
+{
+	UnitTestSceneB* output = new(B3DAllocate<UnitTestSceneB>()) UnitTestSceneB(root, false);
+	SPtr<UnitTestSceneB> outputShared = B3DMakeSharedFromExisting(output);
+	outputShared->AddNewObjectIds();
+	outputShared->RefreshHierarchy(outputShared->Root);
 
-	scene.SceneObject_0->SetPosition(Vector3(50.0f, 50.0f, 50.0f));
-	scene.Component_1_0 = scene.SceneObject_1_0->AddComponent<UnitTestComponentA>();
-	scene.Component_1_0->SetName("SceneB_Component_1_0");
-	scene.Component_1_0_Id = scene.Component_1_0.GetId();
+	return outputShared;
+}
 
-	scene.AddOrUpdateIds(scene.Root, true, true, true);
+UnitTestSceneB UnitTestSceneB::CreateAsChild(const HSceneObject& parent)
+{
+	UnitTestSceneB scene(parent, false);
+	scene.PopulateHierarchy();
 
 	return scene;
+}
+
+void UnitTestSceneB::PopulateHierarchy()
+{
+	SceneObject_0 = Scene->CreateSceneObject("SceneB_SceneObject_0");
+	SceneObject_0->SetParent(Root);
+
+	SceneObject_1 = Scene->CreateSceneObject("SceneB_SceneObject_1");
+	SceneObject_1->SetParent(Root);
+
+	SceneObject_1_0 = Scene->CreateSceneObject("SceneB_SceneObject_1_0");
+	SceneObject_1_0->SetParent(SceneObject_1);
+	SceneObject_1_0_Id = SceneObject_1_0.GetId();
+
+	SceneObject_0->SetPosition(Vector3(50.0f, 50.0f, 50.0f));
+	Component_1_0 = SceneObject_1_0->AddComponent<UnitTestComponentA>();
+	Component_1_0->SetName("SceneB_Component_1_0");
+	Component_1_0_Id = Component_1_0.GetId();
+
+	AddOrUpdateIds(Root, true, true, true);
 }
 
 HSceneObject UnitTestSceneB::SetUnitTestSceneAChildPrefab_0_0(const Prefab& prefab)
 {
 	B3D_ASSERT(!OptionalSceneObject_0_0_PrefabInstance.IsValid());
 
-	OptionalSceneObject_0_0_PrefabInstance = prefab.Instantiate(SceneInstance);
+	OptionalSceneObject_0_0_PrefabInstance = prefab.Instantiate(Scene);
 	OptionalSceneObject_0_0_PrefabInstance->SetParent(SceneObject_0);
 	OptionalSceneObject_0_0_PrefabInstance->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 
@@ -112,11 +165,11 @@ HSceneObject UnitTestSceneB::SetUnitTestSceneBChildPrefab_0_0(const Prefab& pref
 {
 	B3D_ASSERT(!OptionalSceneObject_0_0_PrefabInstance.IsValid());
 
-	OptionalSceneObject_0_0_PrefabInstance = prefab.Instantiate(SceneInstance);
+	OptionalSceneObject_0_0_PrefabInstance = prefab.Instantiate(Scene);
 	OptionalSceneObject_0_0_PrefabInstance->SetParent(SceneObject_0);
 	OptionalSceneObject_0_0_PrefabInstance->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 
-	OptionalPrefabInstance_0_0 = B3DMakeShared<UnitTestSceneB>(OptionalSceneObject_0_0_PrefabInstance);
+	OptionalPrefabInstance_0_0 = FromExistingHierarchyAsShared(OptionalSceneObject_0_0_PrefabInstance);
 	return OptionalSceneObject_0_0_PrefabInstance;
 }
 
@@ -124,17 +177,17 @@ HSceneObject UnitTestSceneB::SetUnitTestSceneBChildPrefab_1_1(const Prefab& pref
 {
 	B3D_ASSERT(!OptionalSceneObject_1_1_PrefabInstance.IsValid());
 
-	OptionalSceneObject_1_1_PrefabInstance = prefab.Instantiate(SceneInstance);
+	OptionalSceneObject_1_1_PrefabInstance = prefab.Instantiate(Scene);
 	OptionalSceneObject_1_1_PrefabInstance->SetParent(SceneObject_1);
 	OptionalSceneObject_1_1_PrefabInstance->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 
-	OptionalPrefabInstance_1_1 = B3DMakeShared<UnitTestSceneB>(OptionalSceneObject_1_1_PrefabInstance);
+	OptionalPrefabInstance_1_1 = FromExistingHierarchyAsShared(OptionalSceneObject_1_1_PrefabInstance);
 	return OptionalSceneObject_1_1_PrefabInstance;
 }
 
 void UnitTestSceneB::CreateOptionalSceneObject_2()
 {
-	OptionalSceneObject_2 = SceneInstance->CreateSceneObject("SceneB_SceneObject_2");
+	OptionalSceneObject_2 = Scene->CreateSceneObject("SceneB_SceneObject_2");
 	OptionalSceneObject_2->SetParent(Root);
 
 	OptionalComponent_2 = OptionalSceneObject_2->AddComponent<UnitTestComponentA>();
@@ -181,7 +234,7 @@ void UnitTestSceneB::RefreshHierarchy(const HSceneObject& root)
 
 				// Prefab may be added after initial construction
 				if(OptionalPrefabInstance_1_1 == nullptr)
-					OptionalPrefabInstance_1_1 = B3DMakeShared<UnitTestSceneB>(OptionalSceneObject_1_1_PrefabInstance);
+					OptionalPrefabInstance_1_1 = FromExistingHierarchyAsShared(OptionalSceneObject_1_1_PrefabInstance);
 				else
 					OptionalPrefabInstance_1_1->RefreshHierarchy(OptionalSceneObject_1_1_PrefabInstance);
 
@@ -196,7 +249,7 @@ void UnitTestSceneB::RefreshHierarchy(const HSceneObject& root)
 
 		// Prefab may be added after initial construction
 		if(OptionalPrefabInstance_0_0 == nullptr)
-			OptionalPrefabInstance_0_0 = B3DMakeShared<UnitTestSceneB>(OptionalSceneObject_0_0_PrefabInstance);
+			OptionalPrefabInstance_0_0 = FromExistingHierarchyAsShared(OptionalSceneObject_0_0_PrefabInstance);
 		else
 			OptionalPrefabInstance_0_0->RefreshHierarchy(OptionalSceneObject_0_0_PrefabInstance);
 	}
@@ -251,11 +304,20 @@ void UnitTestSceneB::Reset()
 	SceneObject_1_0_Id = UUID::kEmpty;
 	Component_1_0_Id = UUID::kEmpty;
 
-	SceneInstance = nullptr;
+	Scene = nullptr;
 	OptionalPrefabInstance_0_0 = nullptr;
 	OptionalPrefabInstance_1_1 = nullptr;
 
 	ObjectInformation.clear();
+}
+
+void UnitTestSceneB::Destroy()
+{
+	if(Root != nullptr)
+		Root->Destroy();
+
+	Scene = nullptr;
+	Reset();
 }
 
 void UnitTestSceneB::AddOrUpdateIds(HSceneObject object, bool updatePrefabObjectId, bool updatePrefabResourceId, bool allowAddNew)

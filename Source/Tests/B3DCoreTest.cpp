@@ -246,8 +246,7 @@ void CoreTestSuite::TestPrefabSaveLoad()
 	// Create & serialize scene 0
 	SPtr<MemoryDataStream> serializedScene0Stream = B3DMakeShared<MemoryDataStream>();
 	{
-		SPtr<SceneInstance> scene0Instance = SceneInstance::Create("UnitTestScene0Instance");
-		UnitTestSceneA scene0Wrapper(scene0Instance);
+		UnitTestSceneA scene0Wrapper = UnitTestSceneA::CreateInNewSceneInstance("UnitTestScene0Instance");
 
 		scene0Wrapper.Component_0->SceneObjectReference = scene0Wrapper.SceneObject_0_1_0;
 		scene0Wrapper.Component_0->ComponentReference = scene0Wrapper.Component_1;
@@ -258,7 +257,7 @@ void CoreTestSuite::TestPrefabSaveLoad()
 		scene0Wrapper.Component_0_1_0->SceneObjectReference = scene0Wrapper.SceneObject_0;
 		scene0Wrapper.Component_0_1_0->ComponentReference = scene0Wrapper.Component_0;
 
-		HPrefab scene0prefab = Prefab::Create(scene0Instance->GetRoot());
+		HPrefab scene0prefab = Prefab::Create(scene0Wrapper.GetRoot());
 
 		BinarySerializer serializer;
 		serializer.Encode(scene0prefab.Get(), serializedScene0Stream, BinarySerializerFlag::None);
@@ -273,7 +272,7 @@ void CoreTestSuite::TestPrefabSaveLoad()
 		RTTIOperationEngineContext rttiOperationContext;
 		scene0Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene0Stream, (u32)serializedScene0Stream->Size(), rttiOperationContext));
 
-		UnitTestSceneA scene0Wrapper(scene0Prefab->GetRoot());
+		UnitTestSceneA scene0Wrapper = UnitTestSceneA::FromExistingHierarchy(scene0Prefab->GetRoot());
 
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0_1_0->StringValue == "testValue")
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0->SceneObjectReference == scene0Wrapper.SceneObject_0_1_0)
@@ -288,11 +287,8 @@ void CoreTestSuite::TestPrefabSaveLoad()
 
 	// Instantiate the scene and ensure prefab links are valid
 	{
-		SPtr<SceneInstance> instancedScene = scene0Prefab->InstantiateAsScene();
-		HSceneObject instancedSceneRoot = instancedScene->GetRoot();
-		UnitTestSceneA instancedScene0Wrapper(instancedSceneRoot);
-
-		UnitTestSceneA prefabScene0Wrapper(scene0Prefab->GetRoot());
+		UnitTestSceneA instancedScene0Wrapper = UnitTestSceneA::InstantateFromPrefab(scene0Prefab);
+		UnitTestSceneA prefabScene0Wrapper = UnitTestSceneA::FromExistingHierarchy(scene0Prefab->GetRoot());
 
 		instancedScene0Wrapper.PerformSceneObjectBinaryOperation(prefabScene0Wrapper,
 			[this, scene0PrefabId = scene0Prefab->GetId()] (const HSceneObject& instanceSceneObject, const HSceneObject& prefabSceneObject) {
@@ -322,13 +318,11 @@ void CoreTestSuite::TestPrefabSaveLoad()
 	// Create and serialize scene 1 that contains an instance of the above prefab, and they reference eachother objects
 	SPtr<MemoryDataStream> serializedScene1Stream = B3DMakeShared<MemoryDataStream>();
 	{
-		SPtr<SceneInstance> scene1Instance = SceneInstance::Create("UnitTestScene1Instance");
-
-		UnitTestSceneB scene1Wrapper = UnitTestSceneB::PopulateParent(scene1Instance->GetRoot());
+		UnitTestSceneB scene1Wrapper = UnitTestSceneB::CreateInNewSceneInstance("UnitTestScene1Instance");
 		scene1Wrapper.SetUnitTestSceneAChildPrefab_0_0(*scene0Prefab);
 
-		UnitTestSceneA scene0Wrapper(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);
-		HPrefab scene1prefab = Prefab::Create(scene1Instance->GetRoot());
+		UnitTestSceneA scene0Wrapper = UnitTestSceneA::FromExistingHierarchy(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);
+		HPrefab scene1prefab = Prefab::Create(scene1Wrapper.GetRoot());
 
 		scene0Wrapper.Component_0_1_0->SceneObjectReference = scene1Wrapper.SceneObject_1_0;
 		scene0Wrapper.Component_0_1_0->ComponentReference = scene1Wrapper.Component_1_0;
@@ -349,8 +343,8 @@ void CoreTestSuite::TestPrefabSaveLoad()
 		RTTIOperationEngineContext rttiOperationContext;
 		scene1Prefab = B3DRTTICast<Prefab>(serializer.Decode(serializedScene1Stream, (u32)serializedScene1Stream->Size(), rttiOperationContext));
 
-		UnitTestSceneB scene1Wrapper(scene1Prefab->GetRoot());
-		UnitTestSceneA scene0Wrapper(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);
+		UnitTestSceneB scene1Wrapper = UnitTestSceneB::FromExistingHierarchy(scene1Prefab->GetRoot());
+		UnitTestSceneA scene0Wrapper = UnitTestSceneA::FromExistingHierarchy(scene1Wrapper.OptionalSceneObject_0_0_PrefabInstance);
 
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0_1_0->SceneObjectReference = scene1Wrapper.SceneObject_1_0)
 		B3D_TEST_ASSERT(scene0Wrapper.Component_0_1_0->ComponentReference = scene1Wrapper.Component_1_0)
@@ -736,9 +730,7 @@ void CoreTestSuite::TestAssertPrefabScenario()
 		UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, mScene, nullptr, UUID::kEmpty, prefabSceneLookup);
 
 		{
-			SPtr<SceneInstance> instantiatedSceneInstance = prefab->InstantiateAsScene();
-			HSceneObject instantiatedInstanceRoot = instantiatedSceneInstance->GetRoot();
-			UnitTestSceneB instantiatedScene(instantiatedInstanceRoot);
+			UnitTestSceneB instantiatedScene = UnitTestSceneB::InstantateFromPrefab(prefab);
 			UnitTestPrefabUpdateHelper::TestAssertPrefabLinksMatchPrefabInternals_UnitTestSceneB(*this, instantiatedScene, nullptr, UUID::kEmpty, prefabSceneLookup);
 		}
 
@@ -777,11 +769,11 @@ void CoreTestSuite::TestPrefabScenario1()
 	HSceneObject sceneRoot = mSceneHierarchy->CreateSceneObject("Prefab #1 Instance Root");
 
 	// Create hierarchy for Prefab 1 in the scene hierarchy
-	mScene = UnitTestSceneB::PopulateParent(sceneRoot);
+	mScene = UnitTestSceneB::CreateAsChild(sceneRoot);
 
 	// Construct the prefab from Prefab #1 Instance Root in the scene hierarchy
 	mPrefabTestInformation[0].Prefab = Prefab::Create(mScene.Root);
-	mPrefabTestInformation[0].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[0].Prefab->GetRoot());
+	mPrefabTestInformation[0].PrefabInternalsScene = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[0].Prefab->GetRoot());
 
 	// Update scene information used for checks
 	mScene.UpdatePrefabLinkIds();
@@ -853,10 +845,10 @@ void CoreTestSuite::TestPrefabScenario3()
 	//   PFB1 Instance #1 [Game Object ID = OBI1, Prefab Object ID = OB11, Prefab Resource ID = PFB1]
 
 	// Create prefab 2
-	NewSceneInstanceResult prefab2NewScene = UnitTestSceneB::PopulateNewSceneInstance("Prefab #2 Scene Instance");
+	UnitTestSceneB prefab2NewScene = UnitTestSceneB::CreateInNewSceneInstance("Prefab #2 Scene Instance");
 	mPrefabTestInformation[1].Prefab = Prefab::Create(prefab2NewScene.Root);
-	mPrefabTestInformation[1].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[1].Prefab->GetRoot());
-	prefab2NewScene.Root->Destroy();
+	mPrefabTestInformation[1].PrefabInternalsScene = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[1].Prefab->GetRoot());
+	prefab2NewScene.Destroy();
 
 	// Add Prefab #2 Instance Root #1 in the scene, as child of Prefab 1 Instance Root/SceneObject_0
 	HSceneObject prefab2Instance1 = mScene.SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[1].Prefab);
@@ -1067,10 +1059,10 @@ void CoreTestSuite::TestPrefabScenario7()
 	// PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
 
 	// Create prefab 3
-	NewSceneInstanceResult prefab3NewScene = UnitTestSceneB::PopulateNewSceneInstance("Prefab #3 Scene Instance");
+	UnitTestSceneB prefab3NewScene = UnitTestSceneB::CreateInNewSceneInstance("Prefab #3 Scene Instance");
 	mPrefabTestInformation[2].Prefab = Prefab::Create(prefab3NewScene.Root);
-	mPrefabTestInformation[2].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[2].Prefab->GetRoot());
-	prefab3NewScene.Root->Destroy();
+	mPrefabTestInformation[2].PrefabInternalsScene = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[2].Prefab->GetRoot());
+	prefab3NewScene.Destroy();
 
 	// Add Prefab #3 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_0
 	HSceneObject prefab3Instance = mScene.OptionalPrefabInstance_0_0->SetUnitTestSceneBChildPrefab_0_0(*mPrefabTestInformation[2].Prefab);
@@ -1132,10 +1124,10 @@ void CoreTestSuite::TestPrefabScenario8()
 	// PFB2 Instance [Game Object ID = OB21, Prefab Object ID = OB21, Prefab Resource ID = PFB2]
 
 	// Create prefab 4
-	NewSceneInstanceResult prefab4NewScene = UnitTestSceneB::PopulateNewSceneInstance("Prefab #4 Scene Instance");
+	UnitTestSceneB prefab4NewScene = UnitTestSceneB::CreateInNewSceneInstance("Prefab #4 Scene Instance");
 	mPrefabTestInformation[3].Prefab = Prefab::Create(prefab4NewScene.Root);
-	mPrefabTestInformation[3].PrefabInternalsScene = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[3].Prefab->GetRoot());
-	prefab4NewScene.Root->Destroy();
+	mPrefabTestInformation[3].PrefabInternalsScene = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[3].Prefab->GetRoot());
+	prefab4NewScene.Destroy();
 
 	// Add Prefab #4 Instance Root in the scene, as child of Prefab 2 Instance Root/SceneObject_1
 	HSceneObject prefab4Instance = mScene.OptionalPrefabInstance_0_0->SetUnitTestSceneBChildPrefab_1_1(*mPrefabTestInformation[3].Prefab);
@@ -1212,14 +1204,14 @@ void CoreTestSuite::TestPrefabScenario9()
 	mPrefabTestInformation[0].PrefabInternalsScene->RefreshHierarchy(mPrefabTestInformation[0].Prefab->GetRoot());
 	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->UpdatePrefabLinkIds();
 	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->SetFlagOnObject(mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_0_0->OptionalPrefabInstance_0_0->Root, UnitTestSceneObjectFlag::None);
-	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalPrefabInstance_0_0 = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalSceneObject_0_0_PrefabInstance);
-	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalPrefabInstance_1_1 = B3DMakeShared<UnitTestSceneB>(mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalSceneObject_1_1_PrefabInstance);
+	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalPrefabInstance_0_0 = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalSceneObject_0_0_PrefabInstance);
+	mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalPrefabInstance_1_1 = UnitTestSceneB::FromExistingHierarchyAsShared(mPrefabTestInformation[0].PrefabInternalsScene->OptionalPrefabInstance_1_1->OptionalSceneObject_1_1_PrefabInstance);
 
 	B3D_TEST_ASSERT(mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_0_0 == nullptr)
 	B3D_TEST_ASSERT(mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_1_1 == nullptr)
 	mScene.OptionalPrefabInstance_1_1->RefreshHierarchy(mScene.OptionalPrefabInstance_1_1->Root);
-	mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_0_0 = B3DMakeShared<UnitTestSceneB>(mScene.OptionalPrefabInstance_1_1->OptionalSceneObject_0_0_PrefabInstance);
-	mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_1_1 = B3DMakeShared<UnitTestSceneB>(mScene.OptionalPrefabInstance_1_1->OptionalSceneObject_1_1_PrefabInstance);
+	mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_0_0 = UnitTestSceneB::FromExistingHierarchyAsShared(mScene.OptionalPrefabInstance_1_1->OptionalSceneObject_0_0_PrefabInstance);
+	mScene.OptionalPrefabInstance_1_1->OptionalPrefabInstance_1_1 = UnitTestSceneB::FromExistingHierarchyAsShared(mScene.OptionalPrefabInstance_1_1->OptionalSceneObject_1_1_PrefabInstance);
 	mScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_1_1->SetFlagOnObject(mScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_1_1->Root, UnitTestSceneObjectFlag::None);
 	mScene.OptionalPrefabInstance_0_0->OptionalPrefabInstance_1_1->UpdatePrefabLinkIds();
 

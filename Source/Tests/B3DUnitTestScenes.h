@@ -6,17 +6,38 @@
 #include "Scene/B3DSceneObject.h"
 #include "B3DUnitTestComponents.h"
 #include "Scene/B3DPrefabUtility.h"
+#include "Scene/B3DSceneInstance.h"
 
 namespace b3d
 {
 	/** Wrapper for easier scene creation and object access. */
 	struct UnitTestSceneA
 	{
-		/** Populates the provided scene instance with the scene. */
-		UnitTestSceneA(const SPtr<SceneInstance>& sceneInstance);
+		// Disallow copy, allow move
+		UnitTestSceneA(const UnitTestSceneA&) = delete;
+		UnitTestSceneA& operator=(const UnitTestSceneA&) = delete;
 
-		/** Populates the scene objects and components by looking them up in the provided hierarchy. */
-		UnitTestSceneA(const HSceneObject& root);
+		UnitTestSceneA(UnitTestSceneA&&) = default;
+		UnitTestSceneA& operator=(UnitTestSceneA&&) = default;
+
+		~UnitTestSceneA();
+
+		/** Creates a new scene instance and populates the hierarchy with Test Scene A hierarchy. Releases scene instance when object goes out of scope. */
+		static UnitTestSceneA CreateInNewSceneInstance(const char* name);
+
+		/** Instantiates the provided prefab as a new scene instance and looks up the Test Scene A hierarchy in the instantiated objects. Releases instantiated scene instance when object goes out of scope. */
+		static UnitTestSceneA InstantateFromPrefab(const SPtr<Prefab>& prefab);
+
+		/** Populates the scene objects and components by looking them up in the provided hierarchy. Does not take ownership of the scene instance. */
+		static UnitTestSceneA FromExistingHierarchy(const HSceneObject& root);
+
+		HSceneObject GetRoot() const
+		{
+			if(Scene != nullptr)
+				return Scene->GetRoot();
+
+			return nullptr;
+		}
 
 		template <class T>
 		void PerformSceneObjectUnaryOperation(T&& predicate)
@@ -58,6 +79,8 @@ namespace b3d
 			predicate(Component_0_1_0, other.Component_0_1_0);
 		}
 
+		SPtr<SceneInstance> Scene;
+
 		HSceneObject SceneObject_0;
 		HSceneObject SceneObject_0_0;
 		HSceneObject SceneObject_0_1;
@@ -69,6 +92,15 @@ namespace b3d
 		HUnitTestComponentB Component_1;
 		HUnitTestComponentA Component_0_1;
 		HUnitTestComponentA Component_0_1_0;
+
+	private:
+		/** Populates the provided scene instance with the scene. */
+		UnitTestSceneA(const SPtr<SceneInstance>& sceneInstance);
+
+		/** Populates the scene objects and components by looking them up in the provided hierarchy. */
+		UnitTestSceneA(const HSceneObject& root, bool ownsSceneInstance);
+
+		bool mOwnsSceneInstance = false;
 	};
 
 	/** Flags that control the checks we perform on objects. */
@@ -93,13 +125,6 @@ namespace b3d
 		UnitTestSceneObjectFlags Flags;
 	};
 
-	/** Result of creating a new scene instance with PopulateNewSceneInstance. */
-	struct NewSceneInstanceResult
-	{
-		SPtr<class SceneInstance> SceneInstance;
-		HSceneObject Root;
-	};
-
 	/**
 	 * Allows you to easily set up the following scene object hierarchy:
 	 * Root
@@ -114,13 +139,37 @@ namespace b3d
 	{
 		UnitTestSceneB() = default;
 
-		/** Populates the scene objects and components by looking them up in the provided hierarchy. */
-		UnitTestSceneB(const HSceneObject& root);
+		// Disallow copy, allow move
+		UnitTestSceneB(const UnitTestSceneB&) = delete;
+		UnitTestSceneB& operator=(const UnitTestSceneB&) = delete;
 
-		virtual ~UnitTestSceneB() = default;
+		UnitTestSceneB(UnitTestSceneB&&) = default;
+		UnitTestSceneB& operator=(UnitTestSceneB&&) = default;
 
-		static NewSceneInstanceResult PopulateNewSceneInstance(const char* name);
-		static UnitTestSceneB PopulateParent(const HSceneObject& parent);
+		~UnitTestSceneB();
+
+		/** Creates a new scene instance and populates the hierarchy with Test Scene B hierarchy. Releases scene instance when object goes out of scope. */
+		static UnitTestSceneB CreateInNewSceneInstance(const char* name);
+
+		/** Instantiates the provided prefab as a new scene instance and looks up the Test Scene B hierarchy in the instantiated objects. Releases instantiated scene instance when object goes out of scope. */
+		static UnitTestSceneB InstantateFromPrefab(const HPrefab& prefab);
+
+		/** Populates the scene objects and components by looking them up in the provided hierarchy. Does not take ownership of the scene instance. */
+		static UnitTestSceneB FromExistingHierarchy(const HSceneObject& root);
+
+		/** Populates the scene objects and components by looking them up in the provided hierarchy. Does not take ownership of the scene instance. */
+		static SPtr<UnitTestSceneB> FromExistingHierarchyAsShared(const HSceneObject& root);
+
+		/** Creates the Test Scene B hierarchy as child of the provided object. Does not take ownership of the scene instance. */
+		static UnitTestSceneB CreateAsChild(const HSceneObject& parent);
+
+		HSceneObject GetRoot() const
+		{
+			if(Scene != nullptr)
+				return Scene->GetRoot();
+
+			return nullptr;
+		}
 
 		HSceneObject SetUnitTestSceneAChildPrefab_0_0(const Prefab& prefab);
 		HSceneObject SetUnitTestSceneBChildPrefab_0_0(const Prefab& prefab);
@@ -137,6 +186,9 @@ namespace b3d
 
 		/** Resets all the values to default. */
 		void Reset();
+
+		/** Destroys the scene object hierarchy and resets the object. */
+		void Destroy();
 
 		/** Performs an operation over scene objects in the scene. If an object has been destroyed, the predicate won't be called on it. */
 		template <class T>
@@ -196,7 +248,7 @@ namespace b3d
 		// TODO - Do
 		void TestAssertHierarchyMatchesPrefabLinks(TestSuite& testSuite, const UnorderedMap<UUID, SPtr<UnitTestSceneB>>& prefabSceneLookup, u32 nestingLevel = 0, const UUID& parentPrefabId = UUID::kEmpty, const SPtr<UnitTestSceneB>& parentPrefabScene = nullptr);
 
-		SPtr<SceneInstance> SceneInstance;
+		SPtr<SceneInstance> Scene;
 		HSceneObject Root;
 
 		HSceneObject SceneObject_0;
@@ -217,5 +269,13 @@ namespace b3d
 		// These objects may be created after initial construction
 		HSceneObject OptionalSceneObject_2;
 		HComponent OptionalComponent_2;
+
+	private:
+		UnitTestSceneB(const HSceneObject& root, bool ownsSceneInstance);
+
+		/** Creates the test scene hierarchy as a child of the root object. Initializes the member variables to the created hierarchy. */
+		void PopulateHierarchy();
+
+		bool mOwnsSceneInstance = false;
 	};
 } // namespace b3d
