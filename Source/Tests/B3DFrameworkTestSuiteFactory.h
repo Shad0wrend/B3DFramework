@@ -4,21 +4,32 @@
 
 #include "Testing/B3DTestSuiteFactory.h"
 
+#if B3D_PLATFORM == B3D_PLATFORM_WIN32
+#	if B3D_COMPILER == B3D_COMPILER_MSVC
+#		if defined(B3D_FRAMEWORK_TESTS_EXPORTS)
+#			define B3D_FRAMEWORK_TESTS_EXPORT __declspec(dllexport)
+#		else
+#			define B3D_FRAMEWORK_TESTS_EXPORT __declspec(dllimport)
+#		endif
+#	else
+#		if defined(B3D_FRAMEWORK_TESTS_EXPORTS)
+#			define B3D_FRAMEWORK_TESTS_EXPORT __attribute__((dllexport))
+#		else
+#			define B3D_FRAMEWORK_TESTS_EXPORT __attribute__((dllimport))
+#		endif
+#	endif
+#else
+#	define B3D_FRAMEWORK_TESTS_EXPORT __attribute__((visibility("default")))
+#endif
+
 namespace b3d
 {
-	/**
-	 * Factory for running Framework tests (Utility + Core layers).
-	 * Handles Application lifecycle for Core tests.
-	 */
-	class FrameworkTestSuiteFactory : public ITestSuiteFactory
+	/** Factory for running framework unit tests. */
+	class B3D_FRAMEWORK_TESTS_EXPORT FrameworkTestSuiteFactory : public ITestSuiteFactory
 	{
 	public:
 		i32 Run(TestLayers layers, TestOutputFormat outputFormat, const Path& outputPath) override;
-
-		TestLayers GetSupportedLayers() const override
-		{
-			return TestLayer::Utility | TestLayer::Core;
-		}
+		TestLayers GetSupportedLayers() const override { return TestLayer::Utility | TestLayer::Core; }
 
 	protected:
 		/** Starts up the relevant Application class. */

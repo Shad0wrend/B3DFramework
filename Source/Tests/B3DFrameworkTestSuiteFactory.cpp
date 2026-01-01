@@ -101,3 +101,14 @@ namespace b3d
 		return exitCode;
 	}
 } // namespace b3d
+
+// Plugin exports
+extern "C" B3D_PLUGIN_EXPORT b3d::ITestSuiteFactory* CreateFrameworkTestSuiteFactory()
+{
+	return b3d::B3DNew<b3d::FrameworkTestSuiteFactory>();
+}
+
+extern "C" B3D_PLUGIN_EXPORT void DestroyTestSuiteFactory(b3d::ITestSuiteFactory* factory)
+{
+	b3d::B3DDelete(factory);
+}

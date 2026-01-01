@@ -5,7 +5,6 @@
 #include "Utility/B3DCommandLine.h"
 #include "Utility/B3DDynamicLibrary.h"
 #include "String/B3DString.h"
-#include "B3DFrameworkTestSuiteFactory.h"
 
 #include <iostream>
 
@@ -66,59 +65,75 @@ int main(int argc, char* argv[])
 
 	TestSuiteRegistry::StartUp();
 
+	DynamicLibrary* testLibrary = nullptr;
+	ITestSuiteFactory* testFactory = nullptr;
+	FnDestroyFactory fnDestroyFactory = nullptr;
 	i32 exitCode = 0;
 
-	// Run utility+core tests using FrameworkTestSuiteFactory
-	TestLayers frameworkLayers = layers & (TestLayer::Utility | TestLayer::Core);
-	if (frameworkLayers)
-	{
-		FrameworkTestSuiteFactory frameworkFactory;
-		exitCode = frameworkFactory.Run(frameworkLayers, outputFormat, outputPath);
-	}
-
-	// Run editor tests using EditorTestSuiteFactory (if available)
+	// Try to load EditorTests.dll first (if editor tests requested or running all)
+	// EditorTestSuiteFactory can run all tests (utility, core, editor)
 	if (layers.IsSet(TestLayer::Editor))
 	{
-		DynamicLibrary* editorLibrary = nullptr;
-		ITestSuiteFactory* editorFactory = nullptr;
-		FnDestroyFactory fnDestroyFactory = nullptr;
-
 		try
 		{
-			editorLibrary = B3DNew<DynamicLibrary>("EditorCore");
-			editorLibrary->Load();
+			testLibrary = B3DNew<DynamicLibrary>("EditorTests");
+			testLibrary->Load();
 
-			auto fnCreateFactory = reinterpret_cast<FnCreateFactory>(
-				editorLibrary->GetSymbol("CreateEditorTestSuiteFactory"));
-			fnDestroyFactory = reinterpret_cast<FnDestroyFactory>(
-				editorLibrary->GetSymbol("DestroyTestSuiteFactory"));
+			auto fnCreateFactory = reinterpret_cast<FnCreateFactory>(testLibrary->GetSymbol("CreateEditorTestSuiteFactory"));
+			fnDestroyFactory = reinterpret_cast<FnDestroyFactory>(testLibrary->GetSymbol("DestroyTestSuiteFactory"));
 
 			if (fnCreateFactory && fnDestroyFactory)
-				editorFactory = fnCreateFactory();
+				testFactory = fnCreateFactory();
 		}
 		catch (...)
 		{
-			// EditorCore not available
+			// EditorTests not available
+			if (testLibrary)
+			{
+				B3DDelete(testLibrary);
+				testLibrary = nullptr;
+			}
 		}
 
-		if (editorFactory)
+		if (!testFactory)
 		{
-			i32 editorExitCode = editorFactory->Run(TestLayer::Editor, outputFormat, outputPath);
-			if (editorExitCode != 0)
-				exitCode = editorExitCode;
+			std::cerr << "Warning: EditorTests not available, skipping editor tests." << std::endl;
+			layers = layers & ~TestLayer::Editor;
+		}
+	}
 
-			fnDestroyFactory(editorFactory);
-		}
-		else
+	// Fall back to FrameworkTests.dll for utility+core tests
+	if (!testFactory && layers)
+	{
+		try
 		{
-			std::cerr << "Warning: EditorCore not available, skipping editor tests." << std::endl;
-		}
+			testLibrary = B3DNew<DynamicLibrary>("FrameworkTests");
+			testLibrary->Load();
 
-		if (editorLibrary)
-		{
-			editorLibrary->Unload();
-			B3DDelete(editorLibrary);
+			auto fnCreateFactory = reinterpret_cast<FnCreateFactory>(testLibrary->GetSymbol("CreateFrameworkTestSuiteFactory"));
+			fnDestroyFactory = reinterpret_cast<FnDestroyFactory>(testLibrary->GetSymbol("DestroyTestSuiteFactory"));
+
+			if (fnCreateFactory && fnDestroyFactory)
+				testFactory = fnCreateFactory();
 		}
+		catch (...)
+		{
+			std::cerr << "Error: Failed to load FrameworkTests library." << std::endl;
+		}
+	}
+
+	// Run tests
+	if (testFactory && layers)
+	{
+		exitCode = testFactory->Run(layers, outputFormat, outputPath);
+		fnDestroyFactory(testFactory);
+	}
+
+	// Cleanup
+	if (testLibrary)
+	{
+		testLibrary->Unload();
+		B3DDelete(testLibrary);
 	}
 
 	TestSuiteRegistry::ShutDown();
