@@ -15,6 +15,9 @@ namespace b3d
 	using TypeId = u64;
 	using TypeHash = u64;
 
+	template<typename T>
+	inline char gRuntimeTypeIdStorage = 0;
+
 	/**
 	 * Returns a unique type identifier for the provided type. Note the identifiers may not remain constant across application runs.
 	 *
@@ -34,8 +37,8 @@ namespace b3d
 		{
 			// Note: This will generate different IDs for the same type if called from dynamic libraries. In that case you must make
 			// sure to export the specialization, so that each plugin doesn't try to create their own.
-			static char const kTypeId = 0;
-			return (u64)&kTypeId;
+			// Note: The variable has to be templated to prevent identical COMDAT folding optimization from merging all instances of this function into one.
+			return (u64)&gRuntimeTypeIdStorage<T>;
 		}
 	}
 
