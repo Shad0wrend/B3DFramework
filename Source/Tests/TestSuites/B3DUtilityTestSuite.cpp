@@ -7,6 +7,7 @@
 #include "Utility/B3DBitfield.h"
 #include "Utility/B3DTArray.h"
 #include "Math/B3DComplex.h"
+#include "Math/B3DMath.h"
 #include "Reflection/B3DRTTIIterator.h"
 #include "String/B3DHashedString.h"
 #include "Threading/B3DSignal.h"
@@ -474,6 +475,9 @@ void UtilityTestSuite::TestArray()
 
 void UtilityTestSuite::TestComplex()
 {
+	// Use a tolerance for floating point comparisons to handle precision differences across build configurations
+	constexpr float kTolerance = 0.01f;
+
 	Complex<float> c(10.0, 4.0);
 	B3D_TEST_ASSERT(c.Real() == 10.0);
 	B3D_TEST_ASSERT(c.Imag() == 4.0);
@@ -495,11 +499,11 @@ void UtilityTestSuite::TestComplex()
 	B3D_TEST_ASSERT(c5.Imag() == 110.0);
 
 	Complex<float> c6 = c / c2;
-	B3D_TEST_ASSERT(c6.Real() == 0.680000007f);
-	B3D_TEST_ASSERT(c6.Imag() == 0.0399999991f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c6.Real(), 0.68f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c6.Imag(), 0.04f, kTolerance));
 
-	B3D_TEST_ASSERT(Complex<float>::Abs(c) == 10.7703295f);
-	B3D_TEST_ASSERT(Complex<float>::Arg(c) == 0.380506366f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(Complex<float>::Abs(c), 10.7703295f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(Complex<float>::Arg(c), 0.380506366f, kTolerance));
 	B3D_TEST_ASSERT(Complex<float>::Norm(c) == 116);
 
 	Complex<float> c7 = Complex<float>::Conj(c);
@@ -508,48 +512,48 @@ void UtilityTestSuite::TestComplex()
 	c7 = 0;
 
 	c7 = Complex<float>::Polar(2.0, 0.5);
-	B3D_TEST_ASSERT(c7.Real() == 1.75516510f);
-	B3D_TEST_ASSERT(c7.Imag() == 0.958851099f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), 1.75516510f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), 0.958851099f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Cos(c);
-	B3D_TEST_ASSERT(c7.Real() == -22.9135609f);
-	B3D_TEST_ASSERT(c7.Imag() == 14.8462915f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), -22.9135609f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), 14.8462915f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Cosh(c);
-	B3D_TEST_ASSERT(c7.Real() == -7198.72949f);
-	B3D_TEST_ASSERT(c7.Imag() == -8334.84180f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), -7198.72949f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), -8334.84180f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Exp(c);
-	B3D_TEST_ASSERT(c7.Real() == -14397.4580f);
-	B3D_TEST_ASSERT(c7.Imag() == -16669.6836f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), -14397.4580f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), -16669.6836f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Log(c);
-	B3D_TEST_ASSERT(c7.Real() == 2.37679505f);
-	B3D_TEST_ASSERT(c7.Imag() == 0.380506366f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), 2.37679505f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), 0.380506366f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Pow(c, 2.0);
-	B3D_TEST_ASSERT(c7.Real() == 84.0000000f);
-	B3D_TEST_ASSERT(c7.Imag() == 79.9999924f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), 84.0000000f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), 80.0f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Sin(c);
-	B3D_TEST_ASSERT(c7.Real() == -14.8562555f);
-	B3D_TEST_ASSERT(c7.Imag() == -22.8981915f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), -14.8562555f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), -22.8981915f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Sinh(c);
-	B3D_TEST_ASSERT(c7.Real() == -7198.72900f);
-	B3D_TEST_ASSERT(c7.Imag() == -8334.84277f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), -7198.72900f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), -8334.84277f, kTolerance));
 	c7 = 0;
 
 	c7 = Complex<float>::Sqrt(c);
-	B3D_TEST_ASSERT(c7.Real() == 3.22260213f);
-	B3D_TEST_ASSERT(c7.Imag() == 0.620616496f);
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Real(), 3.22260213f, kTolerance));
+	B3D_TEST_ASSERT(Math::ApproxEquals(c7.Imag(), 0.620616496f, kTolerance));
 	c7 = 0;
 }
 
