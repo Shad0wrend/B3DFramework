@@ -29,6 +29,19 @@ TextureCreateInformation::TextureCreateInformation(const SPtr<PixelData>& initia
 	}
 }
 
+TextureCreateInformation TextureCreateInformation::CreateFromPixelData(const SPtr<PixelData>& pixelData)
+{
+	TextureCreateInformation createInformation;
+	createInformation.Type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
+	createInformation.Width = pixelData->GetWidth();
+	createInformation.Height = pixelData->GetHeight();
+	createInformation.Depth = pixelData->GetDepth();
+	createInformation.Format = pixelData->GetFormat();
+	createInformation.InitialData = pixelData;
+
+	return createInformation;
+}
+
 const TextureCopyInformation TextureCopyInformation::kDefault = TextureCopyInformation();
 const TextureBlitInformation TextureBlitInformation::kDefault = TextureBlitInformation();
 

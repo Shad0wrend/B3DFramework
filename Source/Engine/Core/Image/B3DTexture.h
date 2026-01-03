@@ -68,6 +68,9 @@ namespace b3d
 
 		TextureCreateInformation(const SPtr<PixelData>& initialData);
 
+		/** Initializes the structure so that is creates a texture that can fit the provided pixel data. */
+		static TextureCreateInformation CreateFromPixelData(const SPtr<PixelData>& pixelData);
+
 		SPtr<PixelData> InitialData;
 	};
 
