@@ -202,8 +202,11 @@ void FileSystemTestSuite::TestMoveNoOverwriteExisting()
 	CreateFile(destination, "move-data-destination-3");
 	B3D_TEST_ASSERT(FileSystem::Exists(source));
 	B3D_TEST_ASSERT(FileSystem::Exists(destination));
-	ExpectWarning("Move operation failed");
+
+	LoggingScope logScope(*this);
+	logScope.ExpectWarning("Move operation failed");
 	FileSystem::Move(source, destination, false);
+
 	B3D_TEST_ASSERT(FileSystem::Exists(source));
 	B3D_TEST_ASSERT(FileSystem::Exists(destination));
 	B3D_TEST_ASSERT(ReadFile(destination) == "move-data-destination-3");
@@ -246,8 +249,11 @@ void FileSystemTestSuite::TestCopyNoOverwriteExisting()
 	CreateFile(destination, "copy-data-destination-3");
 	B3D_TEST_ASSERT(FileSystem::Exists(source));
 	B3D_TEST_ASSERT(FileSystem::Exists(destination));
-	ExpectWarning("Copy operation failed");
+
+	LoggingScope logScope(*this);
+	logScope.ExpectWarning("Copy operation failed");
 	FileSystem::Copy(source, destination, false);
+
 	B3D_TEST_ASSERT(FileSystem::Exists(source));
 	B3D_TEST_ASSERT(FileSystem::Exists(destination));
 	B3D_TEST_ASSERT(ReadFile(source) == "copy-data-source-3");

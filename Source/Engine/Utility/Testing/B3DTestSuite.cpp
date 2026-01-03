@@ -49,8 +49,7 @@ void TestSuite::Run(TestOutput& output)
 
 		// Clear per-test state
 		mCapturedLogs.clear();
-		mIgnoredLogs.clear();
-		mExpectedLogs.clear();
+		mActiveLogScopes.clear();
 
 		// Track failures before test
 		u32 failureCountBefore = mFailureCount;
@@ -61,9 +60,17 @@ void TestSuite::Run(TestOutput& output)
 		// Execute test
 		(this->*(testEntry.Test))();
 
-		// Verify logs after test (if in Strict mode)
+		// Verify any remaining unhandled logs (if in Strict mode)
 		if(logMode == LogMode::Strict)
-			VerifyLogs();
+			VerifyUnhandledLogs();
+
+		// Assert that all scopes were properly cleaned up
+		if(!mActiveLogScopes.empty())
+		{
+			mFailureCount++;
+			mOutput->DoOnOutputFail("Test ended with active log scopes - ensure all LoggingScope objects go out of scope", testEntry.Name, __FILE__, __LINE__);
+			mActiveLogScopes.clear();
+		}
 
 		// Calculate test duration
 		u64 testDurationUs = testTimer.GetMicroseconds();
@@ -125,154 +132,138 @@ void TestSuite::Assertment(bool success, const String& description, const String
 
 bool TestSuite::OnLogEntry(const String& message, LogVerbosity verbosity, const char* categoryName)
 {
-	// Capture the log
-	LogEntry entry;
-	entry.Verbosity = verbosity;
-	entry.Message = message;
-	entry.CategoryName = categoryName;
-	mCapturedLogs.push_back(entry);
-
 	bool shouldSuppress = false;
 
-	// Check if this log is EXPECTED (must occur)
-	for(auto& expected : mExpectedLogs)
+	// Check all active scopes (most recent first) for expected/ignored patterns
+	for(auto* scope : mActiveLogScopes)
 	{
-		if(expected.Verbosity == verbosity && message.find(expected.Pattern) != String::npos)
+		// Check expected logs
+		for(auto& expected : scope->mExpected)
 		{
-			expected.WasFound = true;
-			shouldSuppress = true;
-			break;
-		}
-	}
-
-	// Check if this log is IGNORED (optional)
-	if(!shouldSuppress)
-	{
-		for(auto& ignored : mIgnoredLogs)
-		{
-			if(ignored.Verbosity == verbosity && message.find(ignored.Pattern) != String::npos)
+			if(expected.Verbosity == verbosity && message.find(expected.Pattern) != String::npos)
 			{
-				ignored.WasMatched = true;
+				expected.WasFound = true;
 				shouldSuppress = true;
 				break;
 			}
 		}
+
+		if(shouldSuppress)
+			break;
+
+		// Check ignored logs
+		for(const auto& ignored : scope->mIgnored)
+		{
+			if(ignored.Verbosity == verbosity && message.find(ignored.Pattern) != String::npos)
+			{
+				shouldSuppress = true;
+				break;
+			}
+		}
+
+		if(shouldSuppress)
+			break;
+	}
+
+	// Only capture logs that weren't handled by any scope
+	if(!shouldSuppress)
+	{
+		LogEntry entry;
+		entry.Verbosity = verbosity;
+		entry.Message = message;
+		entry.CategoryName = categoryName;
+		mCapturedLogs.push_back(entry);
 	}
 
 	return shouldSuppress;
 }
 
-void TestSuite::VerifyLogs()
+void TestSuite::VerifyUnhandledLogs()
 {
-	LogMode mode = GetLogMode();
-	if(mode != LogMode::Strict)
-		return;
+	// Check for any unhandled warnings/errors in mCapturedLogs
+	// (logs that weren't matched by any active scope)
+	for(const auto& log : mCapturedLogs)
+	{
+		if(log.Verbosity == LogVerbosity::Warning)
+		{
+			mFailureCount++;
+			mOutput->DoOnOutputFail("Unexpected warning: " + log.Message, mActiveTestName, __FILE__, __LINE__);
+		}
+		else if(log.Verbosity <= LogVerbosity::Error)
+		{
+			mFailureCount++;
+			mOutput->DoOnOutputFail("Unexpected error: " + log.Message, mActiveTestName, __FILE__, __LINE__);
+		}
+	}
+}
 
-	// 1. Check that all EXPECTED logs were found
-	for(const auto& expected : mExpectedLogs)
+void TestSuite::RegisterLogScope(LoggingScope* scope)
+{
+	mActiveLogScopes.insert(mActiveLogScopes.begin(), scope);
+}
+
+void TestSuite::UnregisterLogScope(LoggingScope* scope)
+{
+	auto iterator = std::find(mActiveLogScopes.begin(), mActiveLogScopes.end(), scope);
+	if(iterator != mActiveLogScopes.end())
+		mActiveLogScopes.erase(iterator);
+}
+
+// LoggingScope implementation
+
+TestSuite::LoggingScope::LoggingScope(TestSuite& suite)
+	: mSuite(suite)
+{
+	mSuite.RegisterLogScope(this);
+}
+
+TestSuite::LoggingScope::~LoggingScope()
+{
+	// Verify all expected logs were found
+	for(const auto& expected : mExpected)
 	{
 		if(!expected.WasFound)
 		{
-			mFailureCount++;
-			mOutput->DoOnOutputFail(
-				"Expected log not found: " + expected.Pattern,
-				mActiveTestName,
-				__FILE__,
-				__LINE__
-			);
+			mSuite.mFailureCount++;
+			mSuite.mOutput->DoOnOutputFail("Expected log not found: " + expected.Pattern, mSuite.mActiveTestName, __FILE__, __LINE__);
 		}
 	}
 
-	// 2. Check for UNEXPECTED warnings/errors
-	for(const auto& log : mCapturedLogs)
-	{
-		// Check if this log was expected or ignored
-		bool wasHandled = false;
-
-		// Check expected list
-		for(const auto& expected : mExpectedLogs)
-		{
-			if(expected.Verbosity == log.Verbosity &&
-			   log.Message.find(expected.Pattern) != String::npos)
-			{
-				wasHandled = true;
-				break;
-			}
-		}
-
-		// Check ignored list
-		if(!wasHandled)
-		{
-			for(const auto& ignored : mIgnoredLogs)
-			{
-				if(ignored.Verbosity == log.Verbosity &&
-				   log.Message.find(ignored.Pattern) != String::npos)
-				{
-					wasHandled = true;
-					break;
-				}
-			}
-		}
-
-		// If not handled, it's unexpected
-		if(!wasHandled)
-		{
-			if(log.Verbosity == LogVerbosity::Warning)
-			{
-				mFailureCount++;
-				mOutput->DoOnOutputFail(
-					"Unexpected warning: " + log.Message,
-					mActiveTestName,
-					__FILE__,
-					__LINE__
-				);
-			}
-			else if(log.Verbosity <= LogVerbosity::Error)
-			{
-				mFailureCount++;
-				mOutput->DoOnOutputFail(
-					"Unexpected error: " + log.Message,
-					mActiveTestName,
-					__FILE__,
-					__LINE__
-				);
-			}
-		}
-	}
+	mSuite.UnregisterLogScope(this);
 }
 
-void TestSuite::IgnoreLog(LogVerbosity verbosity, const String& pattern)
+void TestSuite::LoggingScope::ExpectLog(LogVerbosity verbosity, const String& pattern)
 {
-	IgnoredLogEntry entry;
+	ExpectedEntry entry;
 	entry.Verbosity = verbosity;
 	entry.Pattern = pattern;
-	mIgnoredLogs.push_back(entry);
+	mExpected.push_back(entry);
 }
 
-void TestSuite::IgnoreWarning(const String& pattern)
-{
-	IgnoreLog(LogVerbosity::Warning, pattern);
-}
-
-void TestSuite::IgnoreError(const String& pattern)
-{
-	IgnoreLog(LogVerbosity::Error, pattern);
-}
-
-void TestSuite::ExpectLog(LogVerbosity verbosity, const String& pattern)
-{
-	ExpectedLogEntry entry;
-	entry.Verbosity = verbosity;
-	entry.Pattern = pattern;
-	mExpectedLogs.push_back(entry);
-}
-
-void TestSuite::ExpectWarning(const String& pattern)
+void TestSuite::LoggingScope::ExpectWarning(const String& pattern)
 {
 	ExpectLog(LogVerbosity::Warning, pattern);
 }
 
-void TestSuite::ExpectError(const String& pattern)
+void TestSuite::LoggingScope::ExpectError(const String& pattern)
 {
 	ExpectLog(LogVerbosity::Error, pattern);
+}
+
+void TestSuite::LoggingScope::IgnoreLog(LogVerbosity verbosity, const String& pattern)
+{
+	IgnoredEntry entry;
+	entry.Verbosity = verbosity;
+	entry.Pattern = pattern;
+	mIgnored.push_back(entry);
+}
+
+void TestSuite::LoggingScope::IgnoreWarning(const String& pattern)
+{
+	IgnoreLog(LogVerbosity::Warning, pattern);
+}
+
+void TestSuite::LoggingScope::IgnoreError(const String& pattern)
+{
+	IgnoreLog(LogVerbosity::Error, pattern);
 }

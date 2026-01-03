@@ -42,6 +42,66 @@ namespace b3d
 			Disabled
 		};
 
+	public:
+		/**
+		 * RAII scope for managing expected/ignored logs during a test section.
+		 * When the scope exits, expected logs are verified and all registrations are cleaned up.
+		 */
+		class B3D_EXPORT LoggingScope
+		{
+		public:
+			LoggingScope(TestSuite& suite);
+			~LoggingScope();
+
+			// Non-copyable, non-movable
+			LoggingScope(const LoggingScope&) = delete;
+			LoggingScope& operator=(const LoggingScope&) = delete;
+
+			/**
+			 * Declare that a log with given verbosity and pattern MUST occur.
+			 * Test fails if the expected log is not found when scope exits.
+			 */
+			void ExpectLog(LogVerbosity verbosity, const String& pattern);
+
+			/** Convenience for expecting warnings, see ExpectLog. */
+			void ExpectWarning(const String& pattern);
+
+			/** Convenience for expecting errors, see ExpectLog. */
+			void ExpectError(const String& pattern);
+
+			/**
+			 * Declare that a log with given verbosity and pattern MAY occur.
+			 * Test passes whether or not the log actually occurs.
+			 */
+			void IgnoreLog(LogVerbosity verbosity, const String& pattern);
+
+			/** Convenience for ignoring warnings, see IgnoreLog. */
+			void IgnoreWarning(const String& pattern);
+
+			/** Convenience for ignoring errors, see IgnoreLog. */
+			void IgnoreError(const String& pattern);
+
+		private:
+			friend class TestSuite;
+
+			struct ExpectedEntry
+			{
+				LogVerbosity Verbosity;
+				String Pattern;
+				bool WasFound = false;
+			};
+
+			struct IgnoredEntry
+			{
+				LogVerbosity Verbosity;
+				String Pattern;
+			};
+
+			TestSuite& mSuite;
+			Vector<ExpectedEntry> mExpected;
+			Vector<IgnoredEntry> mIgnored;
+		};
+
 	private:
 		/** Contains data about a single unit test. */
 		struct TestEntry
@@ -52,27 +112,17 @@ namespace b3d
 			String Name;
 		};
 
-		/** Information about an ignored log entry (may or may not occur). */
-		struct IgnoredLogEntry
-		{
-			LogVerbosity Verbosity;
-			String Pattern;
-			bool WasMatched = false;
-		};
-
-		/** Information about an expected log entry (MUST occur). */
-		struct ExpectedLogEntry
-		{
-			LogVerbosity Verbosity;
-			String Pattern;
-			bool WasFound = false;
-		};
-
 		/** Log callback handler. */
 		bool OnLogEntry(const String& message, LogVerbosity verbosity, const char* categoryName);
 
-		/** Verify logs at end of test. */
-		void VerifyLogs();
+		/** Verify any unhandled warnings/errors at end of test. */
+		void VerifyUnhandledLogs();
+
+		/** Register/unregister log scopes (called by LoggingScope). */
+		void RegisterLogScope(LoggingScope* scope);
+		void UnregisterLogScope(LoggingScope* scope);
+
+		friend class LoggingScope;
 
 	public:
 		virtual ~TestSuite() = default;
@@ -126,36 +176,6 @@ namespace b3d
 		virtual LogMode GetLogMode() const { return LogMode::Strict; }
 
 		/**
-		 * Declare that a specific warning/error may occur and should not fail the test.
-		 * Test passes whether or not the log actually occurs.
-		 *
-		 * @param	verbosity	Log level to ignore (Warning, Error, etc.)
-		 * @param	pattern		Substring to match in the log message.
-		 */
-		void IgnoreLog(LogVerbosity verbosity, const String& pattern);
-
-		/** Convenience for ignoring warnings. */
-		void IgnoreWarning(const String& pattern);
-
-		/** Convenience for ignoring errors. */
-		void IgnoreError(const String& pattern);
-
-		/**
-		 * Declare that a warning/error is expected and MUST occur.
-		 * Test fails if the expected log is not found.
-		 *
-		 * @param	verbosity	Log level that must occur (Warning, Error, etc.)
-		 * @param	pattern		Substring to match in the log message.
-		 */
-		void ExpectLog(LogVerbosity verbosity, const String& pattern);
-
-		/** Convenience for expecting warnings. */
-		void ExpectWarning(const String& pattern);
-
-		/** Convenience for expecting errors. */
-		void ExpectError(const String& pattern);
-
-		/**
 		 * Register a new unit test.
 		 *
 		 * @param	test	Function to call in order to execute the test.
@@ -174,8 +194,7 @@ namespace b3d
 		u32 mFailureCount = 0;
 
 		Vector<LogEntry> mCapturedLogs; /**< Logs captured during current test. */
-		Vector<IgnoredLogEntry> mIgnoredLogs; /**< Logs that may occur and should be ignored. */
-		Vector<ExpectedLogEntry> mExpectedLogs; /**< Logs that MUST occur for test to pass. */
+		Vector<LoggingScope*> mActiveLogScopes; /**< Active log scopes (stack - most recent first). */
 
 		bool mLogCaptureActive = false; /**< True if log capture is currently active. */
 	};
