@@ -39,10 +39,10 @@ namespace b3d
 	 * Application startup/shutdown if required. Implementations should be provided for different
 	 * application types (Framework vs Editor).
 	 */
-	class ITestSuiteFactory
+	class B3D_EXPORT ITestSuiteFactory
 	{
 	public:
-		virtual ~ITestSuiteFactory() = default;
+		virtual ~ITestSuiteFactory();
 
 		/**
 		 * Runs tests for the specified layers. Handles all Application lifecycle internally.
