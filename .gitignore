@@ -7,7 +7,9 @@ bin
 obj
 lib
 Intermediate
-Dependencies
+Dependencies/**
+!Dependencies/**/
+!Dependencies/**/.reqversion
 Builds
 Data/.version
 Data/*

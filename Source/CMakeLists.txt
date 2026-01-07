@@ -58,24 +58,6 @@ set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 ## Check prebuilt dependencies that are downloaded in a .zip
 B3DCheckAndUpdatePrebuiltDependencies(bsfDependencies ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/ Dependencies ${B3D_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
 
-## Check dependencies built from source
-if(WIN32)
-	set(sourceDependencyBuildFolder ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/Build)
-	set(sourceDependencyBuildVersionFile ${sourceDependencyBuildFolder}/.version)
-	if(EXISTS ${sourceDependencyBuildVersionFile})
-		file (STRINGS ${sourceDependencyBuildVersionFile} currentSourceDependencyVersion)
-		if(${B3D_FRAMEWORK_SOURCE_DEPENDENCIES_VERSION} GREATER ${currentSourceDependencyVersion})
-			message(STATUS "Built dependencies are out of date, forcing recompile.")
-			execute_process(COMMAND "${CMAKE_COMMAND}"
-				-E remove_directory "${sourceDependencyBuildFolder}")
-		endif()
-	else()
-		message(STATUS "Built dependencies are out of date, forcing recompile.")
-		execute_process(COMMAND "${CMAKE_COMMAND}"
-			-E remove_directory "${sourceDependencyBuildFolder}")
-	endif()
-endif()
-
 ## Check data dependencies
 B3DUpdateBuiltinAssetsIfNeeded(bsf ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Data/Raw Raw ${B3D_FRAMEWORK_BUILTIN_ASSETS_VERSION})
 
