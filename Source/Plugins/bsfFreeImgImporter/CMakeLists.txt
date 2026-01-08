@@ -2,6 +2,10 @@
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_FREEIMGIMPORTER_SRC)
 
 # Packages
+if(B3D_USE_BUNDLED_LIBRARIES)
+    B3DCheckAndUpdatePrebuiltDependency(freeimg)
+endif()
+
 find_package(freeimg REQUIRED)
 	
 # Target

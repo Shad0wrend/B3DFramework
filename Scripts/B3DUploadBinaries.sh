@@ -65,6 +65,44 @@ show_usage() {
 }
 
 # -----------------------------------------------
+# Check if package is outdated
+# Returns 0 if outdated, 1 if up-to-date
+# -----------------------------------------------
+is_package_outdated() {
+	local packageDir="$1"
+	local versionFile="$packageDir/.version"
+
+	# No .version file means outdated
+	if [ ! -f "$versionFile" ]; then
+		return 0
+	fi
+
+	# Get .version file timestamp (seconds since epoch)
+	local versionTime
+	versionTime=$(stat -c %Y "$versionFile" 2>/dev/null || stat -f %m "$versionFile" 2>/dev/null)
+
+	# Check if any file is newer than .version by more than 60 seconds
+	while IFS= read -r -d '' file; do
+		# Skip hidden files and the version file itself
+		local basename
+		basename=$(basename "$file")
+		if [[ "$basename" == .* ]]; then
+			continue
+		fi
+
+		local fileTime
+		fileTime=$(stat -c %Y "$file" 2>/dev/null || stat -f %m "$file" 2>/dev/null)
+
+		# If file is more than 60 seconds newer than .version
+		if [ $((fileTime - versionTime)) -gt 60 ]; then
+			return 0
+		fi
+	done < <(find "$packageDir" -type f -print0)
+
+	return 1
+}
+
+# -----------------------------------------------
 # List Available Packages
 # -----------------------------------------------
 list_packages() {
@@ -74,12 +112,28 @@ list_packages() {
 
 	# List all directories in Dependencies folder
 	if [ -d "$FrameworkDir/Dependencies" ]; then
+		# First pass: find longest name for alignment
+		local maxLen=0
+		for dir in "$FrameworkDir/Dependencies"/*/; do
+			if [ -d "$dir" ]; then
+				name=$(basename "$dir")
+				if [[ "$name" != .* ]] && [ ${#name} -gt $maxLen ]; then
+					maxLen=${#name}
+				fi
+			fi
+		done
+
+		# Second pass: print with alignment
 		for dir in "$FrameworkDir/Dependencies"/*/; do
 			if [ -d "$dir" ]; then
 				name=$(basename "$dir")
 				# Skip hidden directories
 				if [[ "$name" != .* ]]; then
-					echo "  $name"
+					if is_package_outdated "$dir"; then
+						printf "  %-${maxLen}s  [OUTDATED]\n" "$name"
+					else
+						echo "  $name"
+					fi
 				fi
 			fi
 		done
@@ -89,9 +143,24 @@ list_packages() {
 
 	echo ""
 	echo "=== Data Packages (platform-independent) ==="
-	echo "  FrameworkData   -> Framework/Data/"
-	echo "  EditorData      -> Data/"
-	echo "  Documentation   -> Framework/Documentation/"
+	# Check data packages for outdated status
+	local fwDataStatus=""
+	local edDataStatus=""
+	local docStatus=""
+
+	if is_package_outdated "$FrameworkDir/Data"; then
+		fwDataStatus="[OUTDATED]"
+	fi
+	if is_package_outdated "$RootDir/Data"; then
+		edDataStatus="[OUTDATED]"
+	fi
+	if is_package_outdated "$FrameworkDir/Documentation"; then
+		docStatus="[OUTDATED]"
+	fi
+
+	printf "  %-14s -> %-30s %s\n" "FrameworkData" "Framework/Data/" "$fwDataStatus"
+	printf "  %-14s -> %-30s %s\n" "EditorData" "Data/" "$edDataStatus"
+	printf "  %-14s -> %-30s %s\n" "Documentation" "Framework/Documentation/" "$docStatus"
 }
 
 # -----------------------------------------------
@@ -153,7 +222,7 @@ fi
 # Platform Detection
 # -----------------------------------------------
 if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-	PlatformSuffix="VS2022"
+	PlatformSuffix="Win32"
 elif [[ "$Platform" == "darwin"* ]]; then
 	PlatformSuffix="macOS"
 elif [[ "$Platform" == "linux-gnu"* ]]; then

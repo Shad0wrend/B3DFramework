@@ -15,11 +15,21 @@ if(MSVC)
 endif()
 
 # Packages
+if(B3D_USE_BUNDLED_LIBRARIES)
+	B3DCheckAndUpdatePrebuiltDependency(snappy)
+	B3DCheckAndUpdatePrebuiltDependency(nvtt)
+	B3DCheckAndUpdatePrebuiltDependency(freetype)
+endif()
+
 find_package(snappy REQUIRED)
 find_package(nvtt REQUIRED)
 find_package(freetype REQUIRED)
 
 if(B3D_ENABLE_NETWORKING)
+	if(B3D_USE_BUNDLED_LIBRARIES)
+		B3DCheckAndUpdatePrebuiltDependency(GameNetworkingSockets)
+	endif()
+
 	find_package(GameNetworkingSockets REQUIRED)
 endif()
 

@@ -1,20 +1,19 @@
-# Ensure pre-built binary dependencies are up to date
-if(APPLE) # MacOS
-	if(B3D_USE_BUNDLED_LIBRARIES)
-		set(BS_SPVC_PREBUILT_DEPENDENCY_VERSION 1) # Tick this when you change the binaries
-		B3DCheckAndUpdatePrebuiltDependencies(bsfDep_SPIRVCross ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/SPIRVCross SPIRVCross ${BS_SPVC_PREBUILT_DEPENDENCY_VERSION})
-
-		set(BS_MVK_PREBUILT_DEPENDENCY_VERSION 3) # Tick this when you change the binaries
-		B3DCheckAndUpdatePrebuiltDependencies(bsfDep_MoltenVK ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/MoltenVK MoltenVK ${BS_MVK_PREBUILT_DEPENDENCY_VERSION})
-	endif()
-endif()
-
 # Source files and their filters
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_VULKANRENDERAPI_SRC)
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "../Shared/" "" BS_VULKANRENDERAPI_SRC)
 
 # Packages
 if(B3D_RENDER_BACKEND MATCHES "Vulkan" OR B3D_INCLUDE_ALL_IN_WORKFLOW OR B3D_BUILD_ALL_RENDER_BACKENDS)
+	# Ensure pre-built binary dependencies are up to date
+	if(B3D_USE_BUNDLED_LIBRARIES)
+		B3DCheckAndUpdatePrebuiltDependency(glslang)
+		B3DCheckAndUpdatePrebuiltDependency(SPIRVCross)
+
+		if(WIN32)
+			B3DCheckAndUpdatePrebuiltDependency(RenderDoc)
+		endif()
+	endif()
+
 	find_package(glslang)
 	find_package(SPIRVCross)
 

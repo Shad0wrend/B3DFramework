@@ -21,14 +21,13 @@ if(B3D_BUILD_BSL_PARSER)
 	file(RENAME "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.c" "${B3D_FRAMEWORK_SOURCE_FOLDER}/Plugins/bsfSL/B3DParserFX.c")
 endif()
 
-# Ensure pre-built binary dependencies are up to date
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(BS_XSC_PREBUILT_DEPENDENCY_VERSION 7) # Tick this when you change the binaries
-	B3DCheckAndUpdatePrebuiltDependencies(bsfDep_XShaderCompiler ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/XShaderCompiler XShaderCompiler ${BS_XSC_PREBUILT_DEPENDENCY_VERSION})
-endif()
-
 # Source files and their filters
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_SL_SRC)
+
+# Ensure pre-built binary dependencies are up to date
+if(B3D_USE_BUNDLED_LIBRARIES)
+	B3DCheckAndUpdatePrebuiltDependency(XShaderCompiler)
+endif()
 
 # Find package
 find_package(XShaderCompiler)

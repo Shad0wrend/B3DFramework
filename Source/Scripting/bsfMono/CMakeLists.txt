@@ -2,9 +2,12 @@
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_MONO_SRC)
 
 # Ensure pre-built binary dependencies are up to date
-if(B3D_USE_BUNDLED_LIBRARIES AND NOT B3D_USE_DOTNETCORE)
-	set(BS_MONO_PREBUILT_DEPENDENCY_VERSION 2) # Tick this when you change the binaries
-	B3DCheckAndUpdatePrebuiltDependencies(bsfDep_mono ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/mono mono ${BS_MONO_PREBUILT_DEPENDENCY_VERSION})
+if(B3D_USE_BUNDLED_LIBRARIES)
+	if(B3D_USE_DOTNETCORE)
+		B3DCheckAndUpdatePrebuiltDependency(DotNETCoreMono)
+	else()
+		B3DCheckAndUpdatePrebuiltDependency(Mono)
+	endif()
 endif()
 
 # Find packages

@@ -2,76 +2,103 @@
 ######################## Pre-built dependency download ################################
 #######################################################################################
 
-set(B3D_PREBUILT_DEPENDENCIES_URL "https://aigaion.feralhosting.com/bearishsun/banshee" CACHE STRING "The location that binary dependencies will be pulled from.")
+set(B3D_PREBUILT_DEPENDENCIES_URL "http://bearishsun.brontes.feralhosting.com/Banshee/PrebuiltDependencies/" CACHE STRING "The location that binary dependencies will be pulled from.")
 mark_as_advanced(B3D_PREBUILT_DEPENDENCIES_URL)
 
-# Downloads prebuilt binary dependencies and copies them into the dependencies folder.
+# Downloads a single prebuilt dependency and extracts it into the dependencies folder.
 #
-# @param	dependencyPrefix 	Prefix identifying the dependency pack we're downloading (e.g. 'Framework', 'Editor', etc.)
-# @param	dependencyFolder	Folder in which to unpack the dependencies, e.g. '${PROJECT_SOURCE_DIR}/Dependencies'.
-# @param	folderName			Name of the folder in the downloaded package in which data is stored. Usually the same
-#								as the last folder in @p dependencyFolder (e.g. 'Dependencies').
-# @param	dependencyVersion	Version of the dependencies to download.
-function(B3DUpdatePrebuiltDependencies dependencyPrefix dependencyFolder folderName dependencyVersion)
+# @param	dependencyName		Name of the dependency (e.g. 'XShaderCompiler', 'Mono', etc.)
+# @param	dependencyVersion	Version of the dependency to download.
+function(B3DUpdatePrebuiltDependency dependencyName dependencyVersion)
+	set(dependencyFolder ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/${dependencyName})
+	set(tempFolder ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Temp)
+
 	# Clean and create a temporary folder
-	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PROJECT_SOURCE_DIR}/Temp)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/Temp)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${tempFolder})
+	execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${tempFolder})
 
 	if(WIN32)
-		set(dependencyType VS2015)
+		set(platformSuffix Win32)
 	elseif(LINUX)
-		set(dependencyType Linux)
+		set(platformSuffix Linux)
 	elseif(APPLE)
-		set(dependencyType macOS)
+		set(platformSuffix macOS)
 	endif()
 
-	set(binaryDependenciesURL ${B3D_PREBUILT_DEPENDENCIES_URL}/${dependencyPrefix}_${dependencyType}_Master_${dependencyVersion}.zip)
-	file(DOWNLOAD ${binaryDependenciesURL} ${PROJECT_SOURCE_DIR}/Temp/Dependencies.zip
+	set(archiveName ${dependencyName}_${platformSuffix}_${dependencyVersion}.tar.gz)
+	set(binaryDependencyURL ${B3D_PREBUILT_DEPENDENCIES_URL}/${archiveName})
+
+	message(STATUS "Downloading ${archiveName}...")
+	file(DOWNLOAD ${binaryDependencyURL} ${tempFolder}/${archiveName}
 			SHOW_PROGRESS
 			STATUS DOWNLOAD_STATUS)
 
 	list(GET DOWNLOAD_STATUS 0 statusCode)
 	if(NOT statusCode EQUAL 0)
-		message(FATAL_ERROR "Binary dependencies failed to download from URL: ${binaryDependenciesURL}")
+		message(FATAL_ERROR "Dependency '${dependencyName}' failed to download from URL: ${binaryDependencyURL}")
 	endif()
 
-	message(STATUS "Extracting files. Please wait...")
+	message(STATUS "Extracting ${archiveName}...")
 	execute_process(
-			COMMAND ${CMAKE_COMMAND} -E tar xzf ${PROJECT_SOURCE_DIR}/Temp/Dependencies.zip
-			WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Temp
+			COMMAND ${CMAKE_COMMAND} -E tar xzf ${tempFolder}/${archiveName}
+			WORKING_DIRECTORY ${tempFolder}
 	)
 
-	# Copy executables and dynamic libraries
-	if(EXISTS ${PROJECT_SOURCE_DIR}/Temp/bin)
-		execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/Temp/bin ${dependencyFolder}/../bin)
-	endif()
+	# Remove old dependency contents (preserve .reqversion which is in Git)
+	file(GLOB dependencyContents "${dependencyFolder}/*")
+	foreach(item ${dependencyContents})
+		get_filename_component(itemName ${item} NAME)
+		if(NOT itemName STREQUAL ".reqversion")
+			if(IS_DIRECTORY ${item})
+				execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${item})
+			else()
+				execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${item})
+			endif()
+		endif()
+	endforeach()
 
-	# Copy static libraries, headers and tools
-	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${dependencyFolder})
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/Temp/${folderName} ${dependencyFolder})
+	# Copy new dependency contents
+	file(GLOB extractedContents "${tempFolder}/${dependencyName}/*")
+	foreach(item ${extractedContents})
+		get_filename_component(itemName ${item} NAME)
+		if(IS_DIRECTORY ${item})
+			execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${item} ${dependencyFolder}/${itemName})
+		else()
+			execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${item} ${dependencyFolder}/${itemName})
+		endif()
+	endforeach()
 
 	# Clean up
-	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PROJECT_SOURCE_DIR}/Temp)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${tempFolder})
 endfunction()
 
-# Checks if dependencies are out of date and if so, downloads prebuilt binary dependencies and copies them into the
-# dependencies folder.
+# Checks if a single dependency is out of date and if so, downloads it.
+# Version is read from .reqversion file in the dependency folder.
 #
-# @param	dependencyPrefix 	Prefix identifying the dependency pack we're downloading (e.g. 'Framework', 'Editor', etc.)
-# @param	dependencyFolder	Folder in which to unpack the dependencies, e.g. '${PROJECT_SOURCE_DIR}/Dependencies'.
-# @param	folderName			Name of the folder in the downloaded package in which data is stored. Usually the same
-#								as the last folder in @p dependencyFolder (e.g. 'Dependencies').
-# @param	dependencyVersion	Version of the dependencies to download.
-function(B3DCheckAndUpdatePrebuiltDependencies dependencyPrefix dependencyFolder folderName dependencyVersion)
-	set(builtinDependencyVersionFile ${dependencyFolder}/.version)
-	if(NOT EXISTS ${builtinDependencyVersionFile})
-		message(STATUS "Binary dependencies for '${dependencyPrefix}' are missing. Downloading package...")
-		B3DUpdatePrebuiltDependencies(${dependencyPrefix} ${dependencyFolder} ${folderName} ${dependencyVersion})
+# @param	dependencyName		Name of the dependency (e.g. 'XShaderCompiler', 'Mono', etc.)
+function(B3DCheckAndUpdatePrebuiltDependency dependencyName)
+	set(dependencyFolder ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/${dependencyName})
+	set(versionFile ${dependencyFolder}/.version)
+	set(reqVersionFile ${dependencyFolder}/.reqversion)
+
+	# Check if .reqversion file exists
+	if(NOT EXISTS ${reqVersionFile})
+		message(WARNING "No .reqversion file found for dependency '${dependencyName}'. Skipping update check.")
+		return()
+	endif()
+
+	# Read required version
+	file(STRINGS ${reqVersionFile} requiredVersion)
+
+	# Check if dependency needs to be downloaded
+	if(NOT EXISTS ${versionFile})
+		message(STATUS "Dependency '${dependencyName}' is missing. Downloading version ${requiredVersion}...")
+		B3DUpdatePrebuiltDependency(${dependencyName} ${requiredVersion})
 	else()
-		file (STRINGS ${builtinDependencyVersionFile} currentDependencyVersion)
-		if(${dependencyVersion} GREATER ${currentDependencyVersion})
-			message(STATUS "Your precomiled dependencies package for '${dependencyPrefix}' is out of date. Downloading latest package...")
-			B3DUpdatePrebuiltDependencies(${dependencyPrefix} ${dependencyFolder} ${folderName} ${dependencyVersion})
+		file(STRINGS ${versionFile} currentVersion)
+		if(${requiredVersion} GREATER ${currentVersion})
+			message(STATUS "Dependency '${dependencyName}' is out of date (have v${currentVersion}, need v${requiredVersion}). Downloading...")
+			B3DUpdatePrebuiltDependency(${dependencyName} ${requiredVersion})
 		endif()
 	endif()
 endfunction()

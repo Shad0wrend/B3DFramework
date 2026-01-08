@@ -3,6 +3,11 @@ B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_PHYSX_SRC)
 
 # Packages
 if(B3D_PHYSICS_BACKEND MATCHES "PhysX" OR B3D_INCLUDE_ALL_IN_WORKFLOW)
+	# Ensure pre-built binary dependencies are up to date
+	if(B3D_USE_BUNDLED_LIBRARIES)
+		B3DCheckAndUpdatePrebuiltDependency(PhysX)
+	endif()
+
 	find_package(PhysX REQUIRED)
 endif()
 	

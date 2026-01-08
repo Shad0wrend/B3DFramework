@@ -4,8 +4,6 @@ set (B3D_FRAMEWORK_VERSION_MINOR 0)
 set (B3D_FRAMEWORK_VERSION_PATCH 0)
 set (B3D_FRAMEWORK_CURRENT_RELEASE_YEAR 2025)
 
-set (B3D_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION 12)
-set (B3D_FRAMEWORK_SOURCE_DEPENDENCIES_VERSION 1)
 set (B3D_FRAMEWORK_BUILTIN_ASSETS_VERSION 7)
 
 # Options
@@ -55,9 +53,6 @@ set(B3D_ENABLE_NETWORKING OFF CACHE BOOL "If true, enable networking support.")
 set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 
 # Ensure dependencies are up to date
-## Check prebuilt dependencies that are downloaded in a .zip
-B3DCheckAndUpdatePrebuiltDependencies(bsfDependencies ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/ Dependencies ${B3D_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION})
-
 ## Check data dependencies
 B3DUpdateBuiltinAssetsIfNeeded(bsf ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Data/Raw Raw ${B3D_FRAMEWORK_BUILTIN_ASSETS_VERSION})
 
