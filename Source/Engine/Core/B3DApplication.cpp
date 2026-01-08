@@ -90,12 +90,16 @@ namespace b3d
 using namespace b3d;
 
 Application::Application(const ApplicationCreateInformation& createInformation)
-	: mPrimaryWindow(nullptr), mStartUpDesc(createInformation), mFrameRenderingFinishedSignal(SignalEvent::Mode::AutomaticallyReset, true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false), mMainThreadScheduler(SchedulerCreateInformation())
+	: mPrimaryWindow(nullptr), mInformation(createInformation), mFrameRenderingFinishedSignal(SignalEvent::Mode::AutomaticallyReset, true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false), mMainThreadScheduler(SchedulerCreateInformation())
 {
 	// Ensure all errors are reported properly
 	CrashHandler::StartUp(createInformation.CrashHandling);
 	if(createInformation.LogCallback)
 		GetDebug().SetLogCallback(createInformation.LogCallback);
+
+	const bool isHeadless = CommandLine::HasParameter("headless");
+	if(isHeadless)
+		mInformation.PrimaryWindow.Headless = true;
 }
 
 Application::Application(VideoMode videoMode, const String& title, bool fullscreen)
@@ -153,7 +157,7 @@ Application::~Application()
 	// Destroy profiler after render thread is shut down, because we rely on it to clear the profiler resources
 	GpuProfiler::ShutDown();
 
-	UnloadPlugin(mStartUpDesc.Renderer);
+	UnloadPlugin(mInformation.Renderer);
 
 	mPrimaryGpu = nullptr;
 	GpuBackendManager::ShutDown();
@@ -233,32 +237,32 @@ void Application::OnStartUp()
 	ResourceListenerManager::StartUp();
 
 	GpuBackendManager::StartUp();
-	GpuBackendManager::Instance().Initialize(mStartUpDesc.RenderApi);
+	GpuBackendManager::Instance().Initialize(mInformation.RenderApi);
 
 	mPrimaryGpu = GpuBackend::Instance().GetDevice(0);
 	mPrimaryGpu->Initialize();
 
-	mPrimaryWindow = RenderWindow::Create(mStartUpDesc.PrimaryWindow, nullptr);
+	mPrimaryWindow = RenderWindow::Create(mInformation.PrimaryWindow, nullptr);
 
 	FontAtlasRenderer::StartUp();
 	Input::StartUp();
 	RendererManager::StartUp();
 
-	LoadPlugin(mStartUpDesc.Renderer);
+	LoadPlugin(mInformation.Renderer);
 
 	// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
-	PhysicsManager::StartUp(mStartUpDesc.Physics, mStartUpDesc.PhysicsCooking);
+	PhysicsManager::StartUp(mInformation.Physics, mInformation.PhysicsCooking);
 	PrefabManager::StartUp();
-	RendererManager::Instance().SetActive(mStartUpDesc.Renderer);
+	RendererManager::Instance().SetActive(mInformation.Renderer);
 	StartUpRenderer();
 
 	GpuProfiler::StartUp();
 	MeshManager::StartUp();
 	Importer::StartUp();
-	AudioManager::StartUp(mStartUpDesc.Audio);
+	AudioManager::StartUp(mInformation.Audio);
 	FolderMonitorManager::StartUp();
 
-	for(auto& importerName : mStartUpDesc.Importers)
+	for(auto& importerName : mInformation.Importers)
 		LoadPlugin(importerName);
 
 	// Built-in importers
@@ -448,7 +452,7 @@ void Application::RunMainLoopFrame()
 			// animation we sent on the previous frame, and we want the scene information to match to what is displayed.
 
 			PerSceneFrameData perSceneFrameData;
-			perSceneFrameData.Animation = scene->GetAnimationScene()->Update(mStartUpDesc.AsyncAnimation);
+			perSceneFrameData.Animation = scene->GetAnimationScene()->Update(mInformation.AsyncAnimation);
 			perSceneFrameData.Particles = scene->GetParticleScene()->Update(*perSceneFrameData.Animation);
 
 			perFrameData.PerSceneData[rendererSceneProxy] = std::move(perSceneFrameData);

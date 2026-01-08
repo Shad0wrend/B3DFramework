@@ -91,6 +91,21 @@ void ApplyClipping(Platform::Private* data)
 		ClipCursor(nullptr);
 }
 
+static BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlType)
+{
+	switch(ctrlType)
+	{
+	case CTRL_C_EVENT:
+	case CTRL_BREAK_EVENT:
+	case CTRL_CLOSE_EVENT:
+	case CTRL_LOGOFF_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
+		GetApplication().NotifyQuitRequested();
+		return TRUE; // Signal handled
+	}
+	return FALSE;
+}
+
 Platform::~Platform()
 {
 	B3DDelete(mData);
@@ -459,6 +474,29 @@ void Platform::MessagePumpInternal()
 
 void Platform::StartUpInternal()
 {
+	const bool isHeadless = CommandLine::HasParameter("headless");
+	if(isHeadless)
+	{
+		if(!AttachConsole(ATTACH_PARENT_PROCESS))
+			AllocConsole();
+
+		SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+
+		// Redirect stdout/stderr for printf to work
+		freopen("CONOUT$", "w", stdout);
+		freopen("CONOUT$", "w", stderr);
+
+		// Update Win32 standard handles so GetStdHandle returns the correct console handles.
+		// This is needed because freopen only updates C runtime FILE* pointers, not Win32 handles.
+		// Without this, console color output breaks.
+		HANDLE consoleOut = CreateFileW(L"CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
+		if(consoleOut != INVALID_HANDLE_VALUE)
+		{
+			SetStdHandle(STD_OUTPUT_HANDLE, consoleOut);
+			SetStdHandle(STD_ERROR_HANDLE, consoleOut);
+		}
+	}
+
 	Lock lock(mData->Sync);
 
 	if(timeBeginPeriod(1) == TIMERR_NOCANDO)
@@ -524,6 +562,10 @@ void Platform::UpdateInternal()
 
 void Platform::ShutDownInternal()
 {
+	const bool isHeadless = CommandLine::HasParameter("headless");
+	if(isHeadless)
+		FreeConsole();
+
 	Lock lock(mData->Sync);
 
 	timeEndPeriod(1);

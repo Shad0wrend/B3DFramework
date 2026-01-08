@@ -213,7 +213,7 @@ namespace b3d
 		SPtr<GpuDevice> mPrimaryGpu;
 		Scheduler mMainThreadScheduler;
 		SPtr<Scheduler> mTaskScheduler;
-		ApplicationCreateInformation mStartUpDesc;
+		ApplicationCreateInformation mInformation;
 
 		// Frame limiting
 		u64 mFrameStep = 16666; // 60 times a second in microseconds
