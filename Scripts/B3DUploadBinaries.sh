@@ -145,22 +145,32 @@ list_packages() {
 	echo "=== Data Packages (platform-independent) ==="
 	# Check data packages for outdated status
 	local fwDataStatus=""
+	local fwDataRawStatus=""
 	local edDataStatus=""
+	local edDataRawStatus=""
 	local docStatus=""
 
 	if is_package_outdated "$FrameworkDir/Data"; then
 		fwDataStatus="[OUTDATED]"
 	fi
+	if is_package_outdated "$FrameworkDir/Data/Raw"; then
+		fwDataRawStatus="[OUTDATED]"
+	fi
 	if is_package_outdated "$RootDir/Data"; then
 		edDataStatus="[OUTDATED]"
+	fi
+	if is_package_outdated "$RootDir/Data/Raw"; then
+		edDataRawStatus="[OUTDATED]"
 	fi
 	if is_package_outdated "$FrameworkDir/Documentation"; then
 		docStatus="[OUTDATED]"
 	fi
 
-	printf "  %-14s -> %-30s %s\n" "FrameworkData" "Framework/Data/" "$fwDataStatus"
-	printf "  %-14s -> %-30s %s\n" "EditorData" "Data/" "$edDataStatus"
-	printf "  %-14s -> %-30s %s\n" "Documentation" "Framework/Documentation/" "$docStatus"
+	printf "  %-18s -> %-30s %s\n" "FrameworkData" "Framework/Data/" "$fwDataStatus"
+	printf "  %-18s -> %-30s %s\n" "FrameworkDataRaw" "Framework/Data/Raw/" "$fwDataRawStatus"
+	printf "  %-18s -> %-30s %s\n" "EditorData" "Data/" "$edDataStatus"
+	printf "  %-18s -> %-30s %s\n" "EditorDataRaw" "Data/Raw/" "$edDataRawStatus"
+	printf "  %-18s -> %-30s %s\n" "Documentation" "Framework/Documentation/" "$docStatus"
 }
 
 # -----------------------------------------------
@@ -245,9 +255,19 @@ case "$PackageName" in
 		ArchivePrefix="FrameworkData"
 		IsPlatformSpecific=false
 		;;
+	FrameworkDataRaw)
+		PackageFolder="$FrameworkDir/Data/Raw"
+		ArchivePrefix="FrameworkDataRaw"
+		IsPlatformSpecific=false
+		;;
 	EditorData)
 		PackageFolder="$RootDir/Data"
 		ArchivePrefix="EditorData"
+		IsPlatformSpecific=false
+		;;
+	EditorDataRaw)
+		PackageFolder="$RootDir/Data/Raw"
+		ArchivePrefix="EditorDataRaw"
 		IsPlatformSpecific=false
 		;;
 	Documentation)
@@ -303,19 +323,19 @@ PackageBaseName=$(basename "$PackageFolder")
 
 if [ -f "$ManifestFile" ]; then
 	echo "Using manifest file: $ManifestFile"
-	# Read manifest and prefix with package folder name
+	# Read manifest (strip Windows line endings) and add to file list
 	while IFS= read -r line || [ -n "$line" ]; do
 		# Skip empty lines and comments
 		if [ -n "$line" ] && [[ "$line" != \#* ]]; then
 			echo "$line" >> "$FileListPath"
 		fi
-	done < "$ManifestFile"
+	done < <(tr -d '\r' < "$ManifestFile")
 else
 	echo "No manifest file found, packaging all files..."
 	# Generate file list excluding dotfiles (except .version)
-	cd "$PackageFolder/.."
-	find "$PackageBaseName" -type f ! -name ".*" ! -name "DataPackageManifest.txt" >> "$FileListPath"
-	find "$PackageBaseName" -type f -name ".version" >> "$FileListPath"
+	cd "$PackageFolder"
+	find . -type f ! -name ".*" ! -name "DataPackageManifest.txt" | sed 's|^\./||' >> "$FileListPath"
+	find . -type f -name ".version" | sed 's|^\./||' >> "$FileListPath"
 fi
 
 if [ "$DryRun" = true ]; then
@@ -339,7 +359,7 @@ ArchivePath="$TempDir/$ArchiveName"
 echo "Creating archive: $ArchiveName"
 
 if [ "$DryRun" = false ]; then
-	cd "$PackageFolder/.."
+	cd "$PackageFolder"
 	tar -czf "$ArchivePath" -T "$FileListPath"
 
 	if [ $? -ne 0 ]; then
