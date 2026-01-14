@@ -176,13 +176,12 @@ namespace b3d
 		/**	Returns absolute path to the builtin icons folder. */
 		static Path GetIconFolder();
 
-#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
+#if B3D_WITH_EDITOR
 		/**	Returns absolute path to the editor builtin shader include folder. */
 		static Path GetEditorShaderIncludeFolder();
 
 		/**	Returns absolute path to the editor builtin raw shader include folder. */
 		static Path GetEditorRawShaderIncludeFolder();
-
 #endif
 
 		/** Virtual path prefix that may be used for accessing all builtin resources managed by this class. */

@@ -49,19 +49,6 @@ Path EngineShaderIncludeHandler::DetermineFullPath(const String& name) const
 
 		return fullPath;
 	}
-#ifdef BS_IS_ASSET_TOOL
-	else if(name.size() >= 8 && name.substr(0, 8) == "$EDITOR$")
-	{
-		Path fullPath = BuiltinResources::GetEditorRawShaderIncludeFolder();
-		if(name.size() > 8)
-		{
-			Path includePath = name.substr(9, name.size() - 9);
-			fullPath.append(includePath);
-		}
-
-		return fullPath;
-	}
-#endif
 	else
 	{
 		Path fullPath = name;

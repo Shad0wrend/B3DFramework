@@ -1,8 +1,11 @@
+set(RunAssetImport_EXECUTABLE ${CMAKE_ARGV4})
+
 function(run_import_tool _PREFIX _INPUT_FOLDER _OUTPUT_FOLDER _ARGS)
 	message(STATUS "Checking built-in assets for modifications for '${_PREFIX}'...")
-	
+	message(STATUS "Running: ${RunAssetImport_EXECUTABLE} ${_INPUT_FOLDER}/ ${_OUTPUT_FOLDER}/ ${_ARGS}")
+
 	execute_process(
-		COMMAND @RunAssetImport_EXECUTABLE@ ${_INPUT_FOLDER}/ ${_OUTPUT_FOLDER}/ ${_ARGS}
+		COMMAND ${RunAssetImport_EXECUTABLE} ${_INPUT_FOLDER}/ ${_OUTPUT_FOLDER}/ ${_ARGS}
 		COMMENT "...importing files, please wait."
 		WORKING_DIRECTORY ""
 		RESULT_VARIABLE IMPORT_STATUS_CODE

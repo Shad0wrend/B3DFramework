@@ -8,15 +8,9 @@ namespace b3d
 	 *  @{
 	 */
 
-#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
-#	define BS_INCLUDE_B3D_PATHS 1
-#else
-#	define BS_INCLUDE_B3D_PATHS 0
-#endif
-
 	constexpr const char* kGameResourcesVirtualPathPrefix = "/Game/";
 
-#if BS_INCLUDE_B3D_PATHS
+#if B3D_IS_ENGINE
 	constexpr const char* kGameResourcesFolderName = "Resources/";
 	constexpr const char* kGameResourcePackageName = "GameResources";
 	constexpr const char* kGameSettingsName = "GameSettings.asset";
@@ -32,10 +26,12 @@ namespace b3d
 		/** Returns the absolute path where the engine binaries are located in. */
 		static const Path& GetBinariesPath();
 
-#if BS_INCLUDE_B3D_PATHS
+#if B3D_WITH_EDITOR
 		/**	Returns the absolute path where the builtin editor-specific assets are located. */
 		static const Path& GetEditorDataPath();
+#endif
 
+#if B3D_IS_ENGINE
 		/**	Returns the absolute path to the game settings file used by editor-built executables. */
 		static const Path& GetGameSettingsPath();
 
@@ -62,7 +58,7 @@ namespace b3d
 		/** Path where the debug configuration managed assemblies are located at, relative to the working directory. */
 		static const Path kDebugAssemblyPath;
 
-#if BS_INCLUDE_B3D_PATHS
+#if B3D_WITH_EDITOR 
 		/** Path to the root editor data directory. Relative to working directory, or RAW_APP_ROOT. */
 		static const Path kEditorDataPath;
 #endif

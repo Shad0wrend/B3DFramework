@@ -7,7 +7,6 @@ using namespace b3d;
 
 SpriteManager::SpriteManager()
 {
-#ifndef BS_IS_ASSET_TOOL
 	SpriteMaterial* imageOpaqueMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, false);
 	SpriteMaterial* imageAlphaMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, false);
 	SpriteMaterial* imagePremultipliedMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, false);
@@ -25,7 +24,6 @@ SpriteManager::SpriteManager()
 	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
 	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
 	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
-#endif
 }
 
 SpriteManager::~SpriteManager()

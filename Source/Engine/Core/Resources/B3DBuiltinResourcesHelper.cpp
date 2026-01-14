@@ -79,17 +79,6 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 
 				texImportOptions->GenerateMips = mipmap;
 			}
-			else if(B3DRTTIIsOfType<ShaderImportOptions>(importOptions))
-			{
-				ShaderDefines defines = RendererMaterialManager::GetDefinesInternal(relativePath);
-
-				SPtr<ShaderImportOptions> shaderImportOptions =
-					std::static_pointer_cast<ShaderImportOptions>(importOptions);
-
-				UnorderedMap<String, String> allDefines = defines.GetAll();
-				for(auto& define : allDefines)
-					shaderImportOptions->SetDefine(define.first, define.second);
-			}
 		}
 
 		TAsyncOp<HResource> op = GetImporter().ImportAsync(filePath, importOptions, UUID);
@@ -269,14 +258,13 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 	}
 }
 
-void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder, const Vector<float>& fontSizes, bool antialiasing, const UUID& UUID)
+void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder, bool antialiasing, const UUID& UUID)
 {
 	SPtr<ImportOptions> fontImportOptions = Importer::Instance().CreateImportOptions(inputFile);
 	if(B3DRTTIIsOfType<FontImportOptions>(fontImportOptions))
 	{
 		FontImportOptions* importOptions = static_cast<FontImportOptions*>(fontImportOptions.get());
 
-		importOptions->FontSizes = { fontSizes };
 		importOptions->RenderMode = antialiasing ? FontRenderMode::HintedSmooth : FontRenderMode::HintedRaster;
 	}
 	else
@@ -284,31 +272,8 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 
 	HFont font = Importer::Instance().Import<Font>(inputFile, fontImportOptions, UUID);
 
-	String fontName = outputName;
-
 	const SPtr<Package> package = Package::Create(outputName);
 	package->AddResource(outputName, font);
-
-	// Save font texture pages as well
-	for(auto& size : fontSizes)
-	{
-		SPtr<const FontBitmapInformation> fontData = font->GetBitmap(size);
-
-		UnorderedSet<HTexture> addedTextures;
-		for(const auto& pair : fontData->Characters)
-		{
-			const FontBitmapPage& page = font->GetPage(pair.second.Page);
-			if(page.Type == FontBitmapPageType::Runtime)
-				continue;
-
-			if(auto found = addedTextures.find(page.Texture); found == addedTextures.end())
-			{
-				const String& texturePageName = StringUtility::Format("{0}FontPage{1}", fontName, pair.second.Page);
-				package->AddResource(texturePageName, page.Texture);
-				addedTextures.insert(page.Texture);
-			}
-		}
-	}
 
 	const String& packageFilename = outputName + Package::kPackageExtension;
 	const Path packagePath = Path::Combine(outputFolder, packageFilename);

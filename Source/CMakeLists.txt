@@ -179,21 +179,23 @@ if(B3D_BUILD_TESTS)
 endif()
 
 ## Builtin resource preprocessing
-add_executable(bsfImportTool
+add_executable(BansheeImportTool
 	Engine/Core/Resources/B3DBuiltinResourcesImporter.cpp)
-B3DSetDefaultLinkAndCompileFlags(bsfImportTool)
-target_compile_definitions(bsfImportTool PUBLIC -DBS_IS_ASSET_TOOL)
+B3DSetDefaultLinkAndCompileFlags(BansheeImportTool)
 
-target_link_libraries(bsfImportTool bsf)
-	
-B3DAddRuntimeDependencies(bsfImportTool)
-add_dependencies(bsfImportTool bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
+target_link_libraries(BansheeImportTool bsf)
 
-set_property(TARGET bsfImportTool PROPERTY FOLDER Tools)
+B3DAddRuntimeDependencies(BansheeImportTool)
+add_dependencies(BansheeImportTool bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
+
+set_property(TARGET BansheeImportTool PROPERTY FOLDER Tools)
 
 if(NOT B3D_IS_ENGINE)
-	install(TARGETS bsfImportTool RUNTIME DESTINATION bin)	
+	install(TARGETS BansheeImportTool RUNTIME DESTINATION bin)
 endif()
+
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BuiltinAssetUtility.cmake)
+B3DAddRunAssetImportTarget(FrameworkBuiltinAssets ${B3D_FRAMEWORK_ROOT_FOLDER}/Data/Raw ${B3D_FRAMEWORK_ROOT_FOLDER}/Data "")
 
 if(NOT B3D_IS_ENGINE)
 	set(B3D_ASSETS_INSTALL_FOLDER bin)

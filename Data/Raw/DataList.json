@@ -47,9 +47,6 @@
             "Antialiasing": true,
             "Name": "arial.ttf",
             "Path": "arial.ttf",
-            "Sizes": [
-                8
-            ],
             "UUID": "c9f08cab-f9c9-47c4-96e0-1066a8d4455b"
         },
         {
@@ -65,10 +62,6 @@
             "UUID": "1ae45a0b-482f-01ff-2d8d-482f3c7fe807"
         }
     ],
-    "GUISkin": {
-        "Path": "GUISkin.json",
-        "UUID": "c1bf9a9d-4355-4841-a538-25e67730ec4b"
-    },
     "Icons": [
         {
             "Path": "bsfIcon.png",

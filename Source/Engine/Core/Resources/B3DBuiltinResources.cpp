@@ -257,7 +257,6 @@ HFont BuiltinResources::GetFont(const String& font) const
 
 HShader BuiltinResources::GetOrCompileShader(const Path& path) const
 {
-#ifndef BS_IS_ASSET_TOOL
 	auto found = mCompiledShaders.find(path);
 	if(found != mCompiledShaders.end())
 		return found->second;
@@ -276,7 +275,6 @@ HShader BuiltinResources::GetOrCompileShader(const Path& path) const
 
 	mCompiledShaders[path] = shader;
 	return shader;
-#endif
 
 	return HShader();
 }
@@ -379,7 +377,7 @@ Path BuiltinResources::GetIconFolder()
 	return Paths::GetDataPath() + kIconFolder;
 }
 
-#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
+#if B3D_WITH_EDITOR
 Path BuiltinResources::GetEditorShaderIncludeFolder()
 {
 	return Paths::GetEditorDataPath() + kShaderIncludeFolder;

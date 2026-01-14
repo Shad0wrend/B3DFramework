@@ -16,22 +16,18 @@
 #include "Importer/B3DImporter.h"
 #include "Importer/B3DTextureImportOptions.h"
 
-
-#define B3DIMPORTTOOL_WAIT_FOR_DEBUGGER 0
-#if B3DIMPORTTOOL_WAIT_FOR_DEBUGGER
+#define B3D_IMPORT_TOOL_WAIT_FOR_DEBUGGER 0
+#if B3D_IMPORT_TOOL_WAIT_FOR_DEBUGGER
 #include <windows.h>
 #endif
 
 using namespace b3d;
 
 static constexpr const char* kTimestampName = u8"Timestamp.asset";
-static constexpr const char* kManifestName = u8"ResourceManifest.asset";
-static constexpr const char* kDependenciesJsonName = u8"ShaderDependencies.json";
 static constexpr const char* kDataListJson = u8"DataList.json";
 
 static Path sInputFolder;
 static Path sOutputFolder;
-static Path sManifestPath;
 
 void ProcessAssets(bool, bool, time_t);
 
@@ -39,7 +35,9 @@ int main(int argc, char* argv[])
 {
 	using namespace b3d;
 
-#if B3DIMPORTTOOL_WAIT_FOR_DEBUGGER
+	CommandLine::Initialize(argc, argv);
+
+#if B3D_IMPORT_TOOL_WAIT_FOR_DEBUGGER
 	while (!::IsDebuggerPresent())
 	{
 		::Sleep(100);
@@ -50,52 +48,24 @@ int main(int argc, char* argv[])
 	if(argc < 3)
 		return 2;
 
-	ApplicationCreateInformation desc;
-	desc.RenderApi = B3D_RENDER_BACKEND;
-	desc.Renderer = B3D_RENDERER;
-	desc.Audio = B3D_AUDIO_BACKEND;
-	desc.Physics = B3D_PHYSICS_BACKEND;
+	ApplicationCreateInformation createInformation = Application::BuildCreateInformation(VideoMode(64, 64), "Banshee Import Tool", false);
+	createInformation.PrimaryWindow.Headless = true;
 
-	desc.Importers.push_back("bsfFreeImgImporter");
-	desc.Importers.push_back("bsfFBXImporter");
-	desc.Importers.push_back("bsfFontImporter");
-	desc.Importers.push_back("bsfSL");
-
-	desc.PrimaryWindow.VideoMode = VideoMode(64, 64);
-	desc.PrimaryWindow.Fullscreen = false;
-	desc.PrimaryWindow.Title = "bsf importer";
-	desc.PrimaryWindow.Hidden = true;
-
-	Application::StartUp(desc);
+	Application::StartUp(createInformation);
 
 	sInputFolder = argv[1];
 	sOutputFolder = argv[2];
-	sManifestPath = sOutputFolder + kManifestName;
 
-	bool generateGenerated = true;
-	bool forceImport = false;
-	for(int i = 3; i < argc; i++)
-	{
-		if(strcmp(argv[i], "--editor") == 0)
-			generateGenerated = false;
-		else if(strcmp(argv[i], "--force") == 0)
-			forceImport = true;
-	}
+	const bool generateGenerated = !CommandLine::HasParameter("editor");
+	const bool forceImport = CommandLine::HasParameter("force");
 
 	if(FileSystem::Exists(sInputFolder))
 	{
 		time_t lastUpdateTime;
-		u32 modifications = BuiltinResourcesHelper::CheckForModifications(
-			sInputFolder,
-			sOutputFolder + kTimestampName,
-			lastUpdateTime);
+		u32 modifications = BuiltinResourcesHelper::CheckForModifications(sInputFolder, sOutputFolder + kTimestampName, lastUpdateTime);
 
 		if(forceImport)
 			modifications = 2;
-
-		// Check if manifest needs to be rebuilt
-		if(modifications == 0 && !FileSystem::Exists(sManifestPath))
-			modifications = 1;
 
 		if(modifications > 0)
 		{
@@ -285,7 +255,6 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	json iconsJSON = dataListJSON["Icons"];
 	json spriteIconsJSON = dataListJSON["SpriteIcons"];
 	json spriteIcons3DJSON = dataListJSON["SpriteIcons3D"];
-	json includesJSON = dataListJSON["Includes"];
 	json fontsJSON = dataListJSON["Fonts"];
 	json splashScreenJSON = dataListJSON["SplashScreen"];
 	json texturesJSON = dataListJSON["Textures"];
@@ -295,7 +264,6 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	const Path rawCursorFolder = sInputFolder + BuiltinResources::kCursorFolder;
 	const Path rawIconFolder = sInputFolder + BuiltinResources::kIconFolder;
 	const Path rawIcon3DFolder = sInputFolder + BuiltinResources::kIcoN3DFolder;
-	const Path rawShaderIncludeFolder = sInputFolder + BuiltinResources::kShaderIncludeFolder;
 	const Path rawTexturesFolder = sInputFolder + BuiltinResources::kTextureFolder;
 	const Path rawFontsFolder = sInputFolder + BuiltinResources::kFontsFolder;
 
@@ -332,14 +300,6 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 			rawIcon3DFolder,
 			BuiltinResourcesHelper::AssetType::Sprite,
 			spriteIcons3DJSON);
-	}
-
-	if(!includesJSON.is_null())
-	{
-		updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
-			rawShaderIncludeFolder,
-			BuiltinResourcesHelper::AssetType::Normal,
-			includesJSON);
 	}
 
 	if(!skinJSON.is_null())
@@ -390,9 +350,6 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 		if(!spriteIcons3DJSON.is_null())
 			dataListJSON["SpriteIcons3D"] = spriteIcons3DJSON;
 
-		if(!includesJSON.is_null())
-			dataListJSON["Includes"] = includesJSON;
-
 		if(!fontsJSON.is_null())
 			dataListJSON["Fonts"] = fontsJSON;
 
@@ -415,7 +372,6 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 	const Path icon3DFolder = sOutputFolder + BuiltinResources::kIcoN3DFolder;
 	const Path texturesFolder = sOutputFolder + BuiltinResources::kTextureFolder;
 	const Path fontsFolder = sOutputFolder + BuiltinResources::kFontsFolder;
-	const Path shaderDependenciesFile = sInputFolder + kDependenciesJsonName;
 
 	// If forcing import, clear all data folders since everything will be recreated anyway
 	if(forceImport)
@@ -437,129 +393,55 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 
 		if(FileSystem::Exists(fontsFolder))
 			FileSystem::Remove(fontsFolder);
-
-		FileSystem::Remove(shaderDependenciesFile);
 	}
 
 	// Import cursors
 	if(!cursorsJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			cursorsJSON,
-			rawCursorFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			cursorsJSON,
-			importFlags,
-			rawCursorFolder,
-			cursorFolder,
-			BuiltinResourcesHelper::AssetType::Normal);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(cursorsJSON, rawCursorFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(cursorsJSON, importFlags, rawCursorFolder, cursorFolder, BuiltinResourcesHelper::AssetType::Normal);
 	}
 
 	// Import icons
 	if(!iconsJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			iconsJSON,
-			rawIconFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			iconsJSON,
-			importFlags,
-			rawIconFolder,
-			iconFolder,
-			BuiltinResourcesHelper::AssetType::Normal);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(iconsJSON, rawIconFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(iconsJSON, importFlags, rawIconFolder, iconFolder, BuiltinResourcesHelper::AssetType::Normal);
 	}
 
 	// Import sprite icons
 	if(!spriteIconsJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			spriteIconsJSON,
-			rawIconFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			spriteIconsJSON,
-			importFlags,
-			rawIconFolder,
-			iconFolder,
-			BuiltinResourcesHelper::AssetType::Sprite);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(spriteIconsJSON, rawIconFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(spriteIconsJSON, importFlags, rawIconFolder, iconFolder, BuiltinResourcesHelper::AssetType::Sprite);
 	}
 
 	// Import 3D sprite icons
 	if(!spriteIcons3DJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			spriteIcons3DJSON,
-			rawIcon3DFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			spriteIcons3DJSON,
-			importFlags,
-			rawIcon3DFolder,
-			icon3DFolder,
-			BuiltinResourcesHelper::AssetType::Sprite,
-			false, true);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(spriteIcons3DJSON, rawIcon3DFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(spriteIcons3DJSON, importFlags, rawIcon3DFolder, icon3DFolder, BuiltinResourcesHelper::AssetType::Sprite, false, true);
 	}
 
 	// Import GUI sprites
 	if(!skinJSON.is_null())
 	{
-		Vector<bool> skinImportFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			skinJSON,
-			rawSkinFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			skinJSON,
-			skinImportFlags,
-			rawSkinFolder,
-			skinFolder,
-			BuiltinResourcesHelper::AssetType::Sprite);
+		Vector<bool> skinImportFlags = BuiltinResourcesHelper::GenerateImportFlags(skinJSON, rawSkinFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(skinJSON, skinImportFlags, rawSkinFolder, skinFolder, BuiltinResourcesHelper::AssetType::Sprite);
 	}
 
 	// Import animated sprites
 	if(!animatedSpritesJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			animatedSpritesJSON,
-			rawAnimatedSpritesFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			animatedSpritesJSON,
-			importFlags,
-			rawAnimatedSpritesFolder,
-			animatedSpriteFolder,
-			BuiltinResourcesHelper::AssetType::Sprite);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(animatedSpritesJSON, rawAnimatedSpritesFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(animatedSpritesJSON, importFlags, rawAnimatedSpritesFolder, animatedSpriteFolder, BuiltinResourcesHelper::AssetType::Sprite);
 	}
 
 	// Import textures
 	if(!texturesJSON.is_null())
 	{
-		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
-			texturesJSON,
-			rawTexturesFolder,
-			lastUpdateTime,
-			forceImport);
-
-		BuiltinResourcesHelper::ImportAssets(
-			texturesJSON,
-			importFlags,
-			rawTexturesFolder,
-			texturesFolder,
-			BuiltinResourcesHelper::AssetType::Normal,
-			false, true);
+		Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(texturesJSON, rawTexturesFolder, lastUpdateTime, forceImport);
+		BuiltinResourcesHelper::ImportAssets(texturesJSON, importFlags, rawTexturesFolder, texturesFolder, BuiltinResourcesHelper::AssetType::Normal, false, true);
 	}
 
 	// Import fonts
@@ -576,23 +458,14 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 				std::string path = entry["Path"];
 				std::string uuidStr = entry["UUID"];
 
-				const bool antialiasing = entry.count("Antialiasing") > 0 ? entry["Antialiasing"] : true;
-
-				json fontSizesJSON = entry["Sizes"];
-				Vector<float> fontSizes;
-
-				if(fontSizesJSON.is_array())
-				{
-					for(auto& sizeEntry : fontSizesJSON)
-						fontSizes.push_back(sizeEntry);
-				}
+				const bool antialiasing = entry.count("Antialiasing") > 0 ? (bool)entry["Antialiasing"] : true;
 
 				String inputName(path.data(), path.size());
 				b3d::UUID UUID(String(uuidStr.data(), uuidStr.size()));
 
 				const Path fontSourcePath = rawFontsFolder + inputName;
 
-				BuiltinResourcesHelper::ImportFont(fontSourcePath, fontSourcePath.GetFilename(), fontsFolder, fontSizes, antialiasing, UUID);
+				BuiltinResourcesHelper::ImportFont(fontSourcePath, fontSourcePath.GetFilename(), fontsFolder, antialiasing, UUID);
 			}
 		}
 	}

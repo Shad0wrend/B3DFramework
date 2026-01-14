@@ -47,7 +47,7 @@ namespace b3d
 		 * Imports a font from the specified file. Imported font assets are saved in the output folder. All saved resources
 		 * are registered in the provided resource manifest.
 		 */
-		static void ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder, const Vector<float>& fontSizes, bool antialiasing, const UUID& UUID);
+		static void ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder, bool antialiasing, const UUID& UUID);
 
 		/**
 		 * Iterates over all the provided entries and generates a list of flags that determine should the asset be imported

@@ -12,7 +12,7 @@ const Path Paths::kDebugAssemblyPath = "bin/Assemblies/Debug/";
 
 const Path Paths::kFrameworkDataPath = "Data/";
 
-#if BS_INCLUDE_B3D_PATHS
+#if B3D_WITH_EDITOR
 const Path Paths::kEditorDataPath = "EditorData/";
 #endif
 
@@ -64,7 +64,7 @@ const Path& Paths::GetBinariesPath()
 	return path;
 }
 
-#if BS_INCLUDE_B3D_PATHS
+#if B3D_WITH_EDITOR 
 const Path& Paths::GetEditorDataPath()
 {
 	static bool initialized = false;
@@ -72,17 +72,9 @@ const Path& Paths::GetEditorDataPath()
 
 	if(!initialized)
 	{
-#	ifdef BS_IS_ASSET_TOOL
-		// Asset tool always runs relative to the 'bsf' directory
-		Path editorDataPath = Path("../../") + FRAMEWORK_DATA_PATH;
-
-		if(FileSystem::Exists(editorDataPath))
-			path = FileSystem::GetWorkingFolderPath() + editorDataPath;
-#	else
-		// Otherwise, look for the folder in the direct descendant of the working directory
+		// Look for the folder in the direct descendant of the working directory
 		if(FileSystem::Exists(kEditorDataPath))
 			path = FileSystem::GetWorkingFolderPath() + kEditorDataPath;
-#	endif
 		// Then check the source distribution itself, in case we're running directly from the build directory
 		else
 		{
@@ -97,7 +89,9 @@ const Path& Paths::GetEditorDataPath()
 
 	return path;
 }
+#endif
 
+#if B3D_IS_ENGINE
 const Path& Paths::GetGameSettingsPath()
 {
 	static Path path = FindPath(kGameSettingsName);
