@@ -8,7 +8,7 @@ if(NOT B3D_BUILD_TESTS)
 endif()
 
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Utility/" "" B3D_UTILITY_SOURCE_FILES)
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Core/" coreSourceFoldersToIgnore B3D_CORE_SOURCE_FILES)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Core/" "${coreSourceFoldersToIgnore}" B3D_CORE_SOURCE_FILES)
 
 if(MSVC)
 	list(APPEND B3D_CORE_SOURCE_FILES "Core/VSVisualizations.natvis")
