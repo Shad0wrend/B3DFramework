@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/RenderAPI/B3DRenderTarget.h"
+#include "../../../Engine/Core/RenderAPI/B3DRenderTarget.h"
 
 namespace b3d { class RenderTarget; }
 namespace b3d { class RenderTargetEx; }

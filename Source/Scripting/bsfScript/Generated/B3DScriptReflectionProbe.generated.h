@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Components/B3DReflectionProbe.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DReflectionProbe.h"
 
 namespace b3d { class ReflectionProbe; }
 namespace b3d

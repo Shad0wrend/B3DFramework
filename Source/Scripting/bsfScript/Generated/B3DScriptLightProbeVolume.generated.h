@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Utility/Math/B3DVector3I.h"
-#include "../../../Foundation/Core/Components/B3DLightProbeVolume.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Utility/Math/B3DVector3I.h"
+#include "../../../Engine/Core/Components/B3DLightProbeVolume.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
 
 namespace b3d { class LightProbeVolume; }
 namespace b3d { struct __LightProbeInfoInterop; }

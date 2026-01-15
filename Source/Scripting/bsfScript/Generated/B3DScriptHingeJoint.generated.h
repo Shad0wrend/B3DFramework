@@ -6,9 +6,9 @@
 #include "Wrappers/B3DScriptComponent.h"
 #include "B3DScriptJoint.generated.h"
 #include "Math/B3DRadian.h"
-#include "../../../Foundation/Core/Components/B3DJoint.h"
-#include "../../../Foundation/Core/Components/B3DHingeJoint.h"
-#include "../../../Foundation/Core/Components/B3DHingeJoint.h"
+#include "../../../Engine/Core/Components/B3DJoint.h"
+#include "../../../Engine/Core/Components/B3DHingeJoint.h"
+#include "../../../Engine/Core/Components/B3DHingeJoint.h"
 
 namespace b3d { class HingeJoint; }
 namespace b3d { struct __LimitAngularRangeInterop; }

@@ -4,11 +4,11 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DCollider.h"
+#include "../../../Engine/Core/Components/B3DCollider.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "B3DScriptCollisionData.generated.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsMaterial.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsMaterial.h"
 
 namespace b3d
 {

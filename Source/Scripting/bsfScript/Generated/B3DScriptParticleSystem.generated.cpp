@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
 #include "Reflection/B3DRTTIType.h"
 #include "B3DScriptParticleSystemSettings.generated.h"
 #include "B3DScriptParticleGpuSimulationSettings.generated.h"

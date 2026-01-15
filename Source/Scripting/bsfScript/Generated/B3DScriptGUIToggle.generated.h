@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIToggleable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIToggle.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
-#include "../../../Foundation/Core/GUI/B3DGUIToggleable.h"
+#include "../../../Engine/Core/GUI/B3DGUIToggle.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUIToggleable.h"
 
 namespace b3d { class GUIToggle; }
 namespace b3d { struct __GUIOptionInterop; }

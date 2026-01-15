@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DVectorField.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Core/Particles/B3DVectorField.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
 #include "B3DScriptTAABox.generated.h"
 
 namespace b3d

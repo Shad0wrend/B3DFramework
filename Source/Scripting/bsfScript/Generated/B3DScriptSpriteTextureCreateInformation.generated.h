@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Image/B3DSpriteTexture.h"
-#include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteTexture.h"
+#include "../../../Engine/Utility/Math/B3DArea2.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 
 namespace b3d
 {

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUISpace.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUISpace.h"
 
 namespace b3d { class GUIFixedSpace; }
 namespace b3d

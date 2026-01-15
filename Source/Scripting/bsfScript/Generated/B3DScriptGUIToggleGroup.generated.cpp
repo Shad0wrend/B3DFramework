@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIToggleGroup.h"
+#include "../../../Engine/Core/GUI/B3DGUIToggleGroup.h"
 #include "B3DScriptGUIToggleGroup.generated.h"
 
 namespace b3d

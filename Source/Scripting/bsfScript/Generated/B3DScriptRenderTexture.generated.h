@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptRenderTarget.generated.h"
-#include "../../../Foundation/Core/RenderAPI/B3DRenderTexture.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/RenderAPI/B3DRenderTexture.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
 
 namespace b3d { class RenderTexture; }
 namespace b3d { class RenderTextureEx; }

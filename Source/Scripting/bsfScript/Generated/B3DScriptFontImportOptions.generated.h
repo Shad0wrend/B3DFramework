@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptImportOptions.generated.h"
-#include "../../../Foundation/Core/Text/B3DFontImportOptions.h"
-#include "../../../Foundation/Core/Text/B3DFontImportOptions.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFontImportOptions.h"
+#include "../../../Engine/Core/Text/B3DFontImportOptions.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 
 namespace b3d { class FontImportOptions; }
 namespace b3d

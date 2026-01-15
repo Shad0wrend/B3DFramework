@@ -4,11 +4,11 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/RenderAPI/B3DViewport.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Core/RenderAPI/B3DViewport.h"
+#include "../../../Engine/Core/RenderAPI/B3DViewport.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Utility/Math/B3DArea2.h"
+#include "../../../Engine/Utility/Math/B3DArea2.h"
+#include "../../../Engine/Core/RenderAPI/B3DViewport.h"
 
 namespace b3d { class Viewport; }
 namespace b3d

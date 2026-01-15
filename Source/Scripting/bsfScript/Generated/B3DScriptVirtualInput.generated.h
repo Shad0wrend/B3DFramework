@@ -3,10 +3,10 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Input/B3DVirtualInput.h"
+#include "../../../Engine/Core/Input/B3DVirtualInput.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Input/B3DInputConfiguration.h"
-#include "../../../Foundation/Core/Input/B3DInputConfiguration.h"
+#include "../../../Engine/Core/Input/B3DInputConfiguration.h"
+#include "../../../Engine/Core/Input/B3DInputConfiguration.h"
 
 namespace b3d
 {

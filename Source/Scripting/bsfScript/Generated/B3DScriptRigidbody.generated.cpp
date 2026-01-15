@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DRigidbody.h"
+#include "../../../Engine/Core/Components/B3DRigidbody.h"
 #include "B3DScriptCollisionData.generated.h"
 #include "B3DScriptTVector3.generated.h"
 #include "B3DScriptTQuaternion.generated.h"

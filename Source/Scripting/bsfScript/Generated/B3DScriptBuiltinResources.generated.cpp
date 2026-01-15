@@ -4,13 +4,13 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
+#include "../../../Engine/Core/Resources/B3DBuiltinResources.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "B3DScriptSpriteTexture.generated.h"
 #include "B3DScriptFont.generated.h"
 #include "B3DScriptShader.generated.h"
-#include "../../../Foundation/Core/Image/B3DTexture.h"
+#include "../../../Engine/Core/Image/B3DTexture.h"
 #include "B3DScriptMesh.generated.h"
 
 namespace b3d

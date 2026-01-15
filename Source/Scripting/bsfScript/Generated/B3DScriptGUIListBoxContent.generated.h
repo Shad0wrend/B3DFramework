@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUIListBox.h"
-#include "../../../Foundation/Core/Localization/B3DHString.h"
+#include "../../../Engine/Core/GUI/B3DGUIListBox.h"
+#include "../../../Engine/Core/Localization/B3DHString.h"
 
 namespace b3d
 {

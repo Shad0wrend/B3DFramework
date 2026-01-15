@@ -4,11 +4,11 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUITexture.h"
+#include "../../../Engine/Core/GUI/B3DGUITexture.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "B3DScriptGUIOption.generated.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 #include "B3DScriptGUITexture.generated.h"
 #include "B3DScriptGUITextureContents.generated.h"
 

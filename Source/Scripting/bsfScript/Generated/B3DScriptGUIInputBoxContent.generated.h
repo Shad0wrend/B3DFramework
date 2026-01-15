@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUIInputBox.h"
+#include "../../../Engine/Core/GUI/B3DGUIInputBox.h"
 
 namespace b3d
 {

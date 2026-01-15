@@ -4,16 +4,16 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
 
 namespace b3d { struct __BoxColliderShapeInformationInterop; }
 namespace b3d { class ColliderShape; }

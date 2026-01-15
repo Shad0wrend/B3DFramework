@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Renderer/B3DRendererManager.h"
+#include "../../../Engine/Core/Renderer/B3DRendererManager.h"
 
 namespace b3d
 {

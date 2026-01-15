@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Material/B3DShader.h"
-#include "../../../Foundation/Core/Material/B3DShader.h"
+#include "../../../Engine/Core/Material/B3DShader.h"
+#include "../../../Engine/Core/Material/B3DShader.h"
 #include "B3DScriptShaderVariationParameterValue.generated.h"
 
 namespace b3d

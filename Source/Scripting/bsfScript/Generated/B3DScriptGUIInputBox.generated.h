@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIInteractable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIInputBox.h"
-#include "../../../Foundation/Core/GUI/B3DGUIInputBox.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUIInputBox.h"
+#include "../../../Engine/Core/GUI/B3DGUIInputBox.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
 
 namespace b3d { class GUIInputBox; }
 namespace b3d { struct __GUIOptionInterop; }

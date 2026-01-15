@@ -4,12 +4,12 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d { struct ParticleGpuSimulationSettings; }
 namespace b3d

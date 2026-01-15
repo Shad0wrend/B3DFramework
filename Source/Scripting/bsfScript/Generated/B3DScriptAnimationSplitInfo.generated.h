@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
 
 namespace b3d { struct AnimationSplitInfo; }
 namespace b3d

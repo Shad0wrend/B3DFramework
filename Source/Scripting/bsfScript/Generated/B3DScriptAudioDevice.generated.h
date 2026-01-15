@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Audio/B3DAudio.h"
+#include "../../../Engine/Core/Audio/B3DAudio.h"
 
 namespace b3d
 {

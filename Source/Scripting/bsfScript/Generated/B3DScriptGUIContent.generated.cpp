@@ -4,9 +4,9 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Localization/B3DHString.h"
+#include "../../../Engine/Core/Localization/B3DHString.h"
 #include "B3DScriptHString.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIContent.h"
+#include "../../../Engine/Core/GUI/B3DGUIContent.h"
 #include "B3DScriptGUIContentImages.generated.h"
 
 namespace b3d

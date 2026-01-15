@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
 #include "B3DScriptCollider.generated.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d { class SphereCollider; }
 namespace b3d

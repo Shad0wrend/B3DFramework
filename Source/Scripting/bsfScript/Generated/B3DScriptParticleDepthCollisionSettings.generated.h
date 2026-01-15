@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
 
 namespace b3d { struct ParticleDepthCollisionSettings; }
 namespace b3d

@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Localization/B3DStringTable.h"
+#include "../../../Engine/Core/Localization/B3DStringTable.h"
 
 namespace b3d { class StringTable; }
 namespace b3d

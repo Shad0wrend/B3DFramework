@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Material/B3DShader.h"
+#include "../../../Engine/Core/Material/B3DShader.h"
 #include "B3DScriptShaderVariationParameterInformation.generated.h"
 #include "B3DScriptShaderParameter.generated.h"
 #include "../Extensions/B3DShaderEx.h"
@@ -25,7 +25,7 @@ namespace b3d
 	void ScriptShader::SetupScriptBindings()
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptShader::InternalGetRef);
-		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetVariationParameters", (void*)&ScriptShader::InternalGetVariationParameters);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetParameters", (void*)&ScriptShader::InternalGetParameters);
 
 	}
@@ -45,7 +45,7 @@ namespace b3d
 		return self->GetOrCreateResourceReference();
 	}
 
-	MonoArray* ScriptShader::InternalGetVariationParams(ScriptShader* self)
+	MonoArray* ScriptShader::InternalGetVariationParameters(ScriptShader* self)
 	{
 		Vector<ShaderVariationParameterInformation> nativeArray__output;
 		if(!self->IsNativeObjectValid())

@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIScrollBar.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIVerticalScrollBar.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUIVerticalScrollBar.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
 
 namespace b3d { class GUIResizableVerticalScrollBar; }
 namespace b3d { struct __GUIOptionInterop; }

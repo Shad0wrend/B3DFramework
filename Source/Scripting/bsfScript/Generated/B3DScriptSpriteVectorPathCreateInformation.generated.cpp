@@ -6,11 +6,11 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/VectorGraphics/B3DVectorGraphics.h"
+#include "../../../Engine/Core/VectorGraphics/B3DVectorGraphics.h"
 #include "B3DScriptVectorPath.generated.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 #include "B3DScriptSpriteSheetGridAnimation.generated.h"
-#include "../../../Foundation/Utility/Math/B3DSize2.h"
+#include "../../../Engine/Utility/Math/B3DSize2.h"
 #include "B3DScriptTSize2.generated.h"
 
 namespace b3d

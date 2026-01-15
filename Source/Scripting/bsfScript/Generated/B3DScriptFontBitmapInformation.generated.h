@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 
 namespace b3d { struct FontBitmapInformation; }
 namespace b3d { struct __CharacterInformationInterop; }

@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Resources/B3DPackage.h"
+#include "../../../Engine/Core/Resources/B3DPackage.h"
 #include "Utility/B3DUUID.h"
-#include "../../../Foundation/Utility/Utility/B3DCompression.h"
-#include "../../../Foundation/Core/Resources/B3DPackage.h"
+#include "../../../Engine/Utility/Utility/B3DCompression.h"
+#include "../../../Engine/Core/Resources/B3DPackage.h"
 
 namespace b3d { class PackageResourceMetaDataExtension; }
 namespace b3d { class PackageResourceMetaData; }

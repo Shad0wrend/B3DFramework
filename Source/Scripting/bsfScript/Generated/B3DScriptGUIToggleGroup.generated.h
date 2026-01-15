@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/GUI/B3DGUIToggleGroup.h"
+#include "../../../Engine/Core/GUI/B3DGUIToggleGroup.h"
 #include "B3DScriptNonReflectableWrapper.h"
 
 namespace b3d

@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
 
 namespace b3d { class PhysicsMesh; }
 namespace b3d { class PhysicsMeshEx; }

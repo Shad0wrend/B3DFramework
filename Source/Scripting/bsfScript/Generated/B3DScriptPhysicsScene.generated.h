@@ -3,15 +3,15 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Physics/B3DPhysics.h"
+#include "../../../Engine/Core/Physics/B3DPhysics.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DRay.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Utility/Math/B3DRay.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
 #include "Math/B3DCapsule.h"
-#include "../../../Foundation/Utility/Math/B3DSphere.h"
+#include "../../../Engine/Utility/Math/B3DSphere.h"
 
 namespace b3d { struct __TAABox_float_Interop; }
 namespace b3d { struct __TRay_float_Interop; }

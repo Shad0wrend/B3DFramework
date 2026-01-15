@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
 #include "B3DScriptJoint.generated.h"
-#include "../../../Foundation/Core/Components/B3DJoint.h"
-#include "../../../Foundation/Core/Components/B3DDistanceJoint.h"
+#include "../../../Engine/Core/Components/B3DJoint.h"
+#include "../../../Engine/Core/Components/B3DDistanceJoint.h"
 
 namespace b3d { class DistanceJoint; }
 namespace b3d

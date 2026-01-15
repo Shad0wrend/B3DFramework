@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
 #include "B3DScriptSpriteImage.generated.h"
-#include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Core/Image/B3DSpriteTexture.h"
+#include "../../../Engine/Utility/Math/B3DArea2.h"
+#include "../../../Engine/Core/Image/B3DSpriteTexture.h"
 
 namespace b3d { class SpriteTexture; }
 namespace b3d { struct __SpriteTextureCreateInformationInterop; }

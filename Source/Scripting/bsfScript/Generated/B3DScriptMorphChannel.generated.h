@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DMorphShapes.h"
+#include "../../../Engine/Core/Animation/B3DMorphShapes.h"
 
 namespace b3d { class MorphChannel; }
 namespace b3d

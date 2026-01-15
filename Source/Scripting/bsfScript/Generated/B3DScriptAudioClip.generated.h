@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClip.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClip.h"
+#include "../../../Engine/Core/Audio/B3DAudioClip.h"
+#include "../../../Engine/Core/Audio/B3DAudioClip.h"
 
 namespace b3d { class AudioClip; }
 namespace b3d

@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/RenderAPI/B3DVideoModeInfo.h"
+#include "../../../Engine/Core/RenderAPI/B3DVideoModeInfo.h"
 #include "B3DScriptVideoMode.generated.h"
 
 namespace b3d
@@ -51,6 +51,7 @@ namespace b3d
 		output.Modal = value.Modal;
 		output.HideUntilSwap = value.HideUntilSwap;
 		output.CreateRenderSurface = value.CreateRenderSurface;
+		output.Headless = value.Headless;
 
 		return output;
 	}
@@ -83,6 +84,7 @@ namespace b3d
 		output.Modal = value.Modal;
 		output.HideUntilSwap = value.HideUntilSwap;
 		output.CreateRenderSurface = value.CreateRenderSurface;
+		output.Headless = value.Headless;
 
 		return output;
 	}

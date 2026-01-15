@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUISpace.h"
+#include "../../../Engine/Core/GUI/B3DGUISpace.h"
 
 namespace b3d { class GUIFlexibleSpace; }
 namespace b3d

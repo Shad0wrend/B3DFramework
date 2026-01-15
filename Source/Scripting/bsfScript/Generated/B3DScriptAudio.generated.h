@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Audio/B3DAudio.h"
+#include "../../../Engine/Core/Audio/B3DAudio.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Audio/B3DAudio.h"
+#include "../../../Engine/Core/Audio/B3DAudio.h"
 
 namespace b3d { struct __AudioDeviceInterop; }
 namespace b3d

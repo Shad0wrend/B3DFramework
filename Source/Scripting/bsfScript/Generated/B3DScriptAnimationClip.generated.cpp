@@ -4,13 +4,13 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "B3DScriptAnimationCurves.generated.h"
 #include "B3DScriptRootMotion.generated.h"
 #include "B3DScriptAnimationEvent.generated.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 
 namespace b3d
 {

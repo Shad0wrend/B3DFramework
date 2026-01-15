@@ -6,7 +6,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 #include "B3DScriptAnimationClip.generated.h"
 
 namespace b3d

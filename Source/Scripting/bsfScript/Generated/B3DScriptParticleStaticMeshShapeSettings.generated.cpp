@@ -6,7 +6,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Mesh/B3DMesh.h"
+#include "../../../Engine/Core/Mesh/B3DMesh.h"
 #include "B3DScriptMesh.generated.h"
 
 namespace b3d

@@ -3,11 +3,11 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
+#include "../../../Engine/Core/Resources/B3DBuiltinResources.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
-#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
-#include "../../../Foundation/Core/Resources/B3DBuiltinResources.h"
+#include "../../../Engine/Core/Resources/B3DBuiltinResources.h"
+#include "../../../Engine/Core/Resources/B3DBuiltinResources.h"
+#include "../../../Engine/Core/Resources/B3DBuiltinResources.h"
 
 namespace b3d
 {

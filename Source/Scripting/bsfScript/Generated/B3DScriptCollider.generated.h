@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
 
 namespace b3d { class Collider; }
 namespace b3d { struct __CollisionDataInterop; }

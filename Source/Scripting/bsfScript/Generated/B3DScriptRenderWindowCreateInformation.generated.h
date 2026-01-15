@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/RenderAPI/B3DRenderWindow.h"
-#include "../../../Foundation/Core/RenderAPI/B3DVideoModeInfo.h"
+#include "../../../Engine/Core/RenderAPI/B3DRenderWindow.h"
+#include "../../../Engine/Core/RenderAPI/B3DVideoModeInfo.h"
 #include "B3DScriptVideoMode.generated.h"
 
 namespace b3d
@@ -32,6 +32,7 @@ namespace b3d
 		bool Modal;
 		bool HideUntilSwap;
 		bool CreateRenderSurface;
+		bool Headless;
 	};
 
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderWindowCreateInformation : public TScriptTypeDefinition<ScriptRenderWindowCreateInformation>

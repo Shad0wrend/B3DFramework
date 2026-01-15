@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Renderer/B3DRenderSettings.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Renderer/B3DRenderSettings.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d { struct ColorGradingSettings; }
 namespace b3d

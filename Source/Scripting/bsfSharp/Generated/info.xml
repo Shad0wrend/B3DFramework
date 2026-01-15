@@ -1652,7 +1652,7 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 			</param>
 			<param name="texType" type="TextureType">
 			</param>
-			<param name="usage" type="int">
+			<param name="usage" type="TextureUsageFlag">
 			</param>
 			<param name="numSamples" type="int">
 			</param>
@@ -1699,7 +1699,7 @@ Be aware that this value will be ignored if GUI element is part of a layout sinc
 		</method>
 		<property name="PixelFormat" type="PixelFormat" getter="GetPixelFormat" setter="" static="false">
 		</property>
-		<property name="Usage" type="int" getter="GetUsage" setter="" static="false">
+		<property name="Usage" type="TextureUsageFlag" getter="GetUsage" setter="" static="false">
 		</property>
 		<property name="Type" type="TextureType" getter="GetType" setter="" static="false">
 		</property>
@@ -3830,6 +3830,9 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<field name="CreateRenderSurface" type="bool">
 			<doc>If true the window render surface will be created, which internally provides a swap chain and allows the GPU to render to the window.</doc>
 		</field>
+		<field name="Headless" type="bool">
+			<doc>When true, no OS window is created. Instead, the window renders to internal GPU textures that mimic a swap chain. All window-handle-dependent operations (focus, input capture, cursor, etc.) become no-ops. Use this for headless rendering in automated testing or offscreen rendering scenarios.</doc>
+		</field>
 	</struct>
 	<struct native="ParticleHemisphereShapeSettings" script="ParticleHemisphereShapeSettings">
 		<doc>Information describing a ParticleEmitterHemisphereShape.</doc>
@@ -4846,6 +4849,12 @@ This object is intended to remain static in the world. You /can/ move it, but it
 	</enum>
 	<class native="Camera" script="Camera">
 		<doc>Camera determines how is world geometry projected onto a 2D surface. You may position and orient it in space, set options like aspect ratio and field or view and it outputs view and projection matrices required for rendering.</doc>
+		<method native="RequestCapture" script="RequestCapture" static="false">
+			<doc>Requests an asynchronous capture of the next rendered frame from this camera.</doc>
+			<returns type="AsyncOp&lt;PixelData&gt;">
+				<doc>Async operation with captured pixel data, or nullptr if camera is inactive.</doc>
+			</returns>
+		</method>
 		<method native="NotifyNeedsRedraw" script="NotifyNeedsRedraw" static="false">
 			<doc>Notifies a on-demand camera that it should re-draw its contents on the next frame. Ignored for a camera that isn&apos;t on-demand.</doc>
 		</method>
@@ -5319,21 +5328,6 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 		<field name="FocusedOn" type="SpriteImage">
 		</field>
 	</struct>
-	<enum native="SpriteAnimationPlayback" script="SpriteAnimationPlayback">
-		<doc>Type of playback to use for an animation of a SpriteTexture.</doc>
-		<enumentry native="PingPong" script="PingPong">
-			<doc>Loop the animation but reverse playback when the end is reached.</doc>
-		</enumentry>
-		<enumentry native="Loop" script="Loop">
-			<doc>Animate to the end of the animation then loop around.</doc>
-		</enumentry>
-		<enumentry native="None" script="None">
-			<doc>Do not animate.</doc>
-		</enumentry>
-		<enumentry native="Normal" script="Normal">
-			<doc>Animate once until the end of the animation is reached.</doc>
-		</enumentry>
-	</enum>
 	<class native="RendererMeshData" script="RendererMeshData">
 		<doc>Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh.</doc>
 		<ctor>
@@ -5380,6 +5374,21 @@ Sprite images also allow you to specify sprite sheet animation by varying which 
 			<doc>Returns the number of indices contained in the mesh.</doc>
 		</property>
 	</class>
+	<enum native="SpriteAnimationPlayback" script="SpriteAnimationPlayback">
+		<doc>Type of playback to use for an animation of a SpriteTexture.</doc>
+		<enumentry native="PingPong" script="PingPong">
+			<doc>Loop the animation but reverse playback when the end is reached.</doc>
+		</enumentry>
+		<enumentry native="Loop" script="Loop">
+			<doc>Animate to the end of the animation then loop around.</doc>
+		</enumentry>
+		<enumentry native="None" script="None">
+			<doc>Do not animate.</doc>
+		</enumentry>
+		<enumentry native="Normal" script="Normal">
+			<doc>Animate once until the end of the animation is reached.</doc>
+		</enumentry>
+	</enum>
 	<struct native="ControllerControllerCollision" script="ControllerControllerCollision">
 		<doc>Contains data about a collision between two character controllers.</doc>
 		<field name="Controller" type="CharacterController">
@@ -6322,7 +6331,7 @@ The shape and mass of a rigidbody is governed by its colliders. At least one col
 	</class>
 	<class native="Shader" script="Shader">
 		<doc>Contains definitions of GPU programs used for rendering, as well as a set of global parameters to control those programs.</doc>
-		<property name="VariationParams" type="ShaderVariationParameterInformation" getter="GetVariationParams" setter="" static="false">
+		<property name="VariationParams" type="ShaderVariationParameterInformation" getter="GetVariationParameters" setter="" static="false">
 			<doc>Returns the list of all variation parameters supported by this shader, possible values of each parameter and other meta-data.</doc>
 		</property>
 		<property name="Parameters" type="ShaderParameter" getter="GetParameters" setter="" static="false">
@@ -7719,6 +7728,45 @@ Optionally if the parameter is an array you may provide an array index you which
 			<doc>Set of parameters that determine which subset of variations in the assigned shader should be used. Only the variations that have the provided parameters with the provided values will match. This will control which variation is considered the default variation and which subset of variations are searched during a call to FindVariation().</doc>
 		</property>
 	</class>
+	<enum native="VertexLayout" script="VertexLayout">
+		<doc>Available vertex layouts that specify what data is provided per-vertex in a mesh. Combinations other than those provided are allowed.</doc>
+		<enumentry native="Tangent" script="Tangent">
+		</enumentry>
+		<enumentry native="PNU" script="PNU">
+		</enumentry>
+		<enumentry native="Normal" script="Normal">
+		</enumentry>
+		<enumentry native="Position" script="Position">
+		</enumentry>
+		<enumentry native="BoneWeights" script="BoneWeights">
+		</enumentry>
+		<enumentry native="Color" script="Color">
+		</enumentry>
+		<enumentry native="UV0" script="UV0">
+		</enumentry>
+		<enumentry native="UV1" script="UV1">
+		</enumentry>
+		<enumentry native="PC" script="PC">
+		</enumentry>
+		<enumentry native="PU" script="PU">
+		</enumentry>
+		<enumentry native="PCU" script="PCU">
+		</enumentry>
+		<enumentry native="PCN" script="PCN">
+		</enumentry>
+		<enumentry native="PCNU" script="PCNU">
+		</enumentry>
+		<enumentry native="PCNT" script="PCNT">
+		</enumentry>
+		<enumentry native="PCNTU" script="PCNTU">
+		</enumentry>
+		<enumentry native="PN" script="PN">
+		</enumentry>
+		<enumentry native="PNT" script="PNT">
+		</enumentry>
+		<enumentry native="PNTU" script="PNTU">
+		</enumentry>
+	</enum>
 	<class native="ResourceMetaData" script="ResourceMetaData">
 		<doc>Class containing meta-information describing a resource.</doc>
 	</class>
@@ -11648,45 +11696,6 @@ In range [-1.0f, 1.0f].</doc>
 			<doc>Determines the number of samples used for percentage closer shadow map filtering. Higher values yield higher quality shadows, at the cost of performance. Valid range is [1, 4].</doc>
 		</property>
 	</class>
-	<enum native="VertexLayout" script="VertexLayout">
-		<doc>Available vertex layouts that specify what data is provided per-vertex in a mesh. Combinations other than those provided are allowed.</doc>
-		<enumentry native="Tangent" script="Tangent">
-		</enumentry>
-		<enumentry native="PNU" script="PNU">
-		</enumentry>
-		<enumentry native="Normal" script="Normal">
-		</enumentry>
-		<enumentry native="Position" script="Position">
-		</enumentry>
-		<enumentry native="BoneWeights" script="BoneWeights">
-		</enumentry>
-		<enumentry native="Color" script="Color">
-		</enumentry>
-		<enumentry native="UV0" script="UV0">
-		</enumentry>
-		<enumentry native="UV1" script="UV1">
-		</enumentry>
-		<enumentry native="PC" script="PC">
-		</enumentry>
-		<enumentry native="PU" script="PU">
-		</enumentry>
-		<enumentry native="PCU" script="PCU">
-		</enumentry>
-		<enumentry native="PCN" script="PCN">
-		</enumentry>
-		<enumentry native="PCNU" script="PCNU">
-		</enumentry>
-		<enumentry native="PCNT" script="PCNT">
-		</enumentry>
-		<enumentry native="PCNTU" script="PCNTU">
-		</enumentry>
-		<enumentry native="PN" script="PN">
-		</enumentry>
-		<enumentry native="PNT" script="PNT">
-		</enumentry>
-		<enumentry native="PNTU" script="PNTU">
-		</enumentry>
-	</enum>
 	<class native="PackageResourceMetaData" script="PackageResourceMetaData">
 		<doc>Contains meta-data for a resource stored in a Package.</doc>
 		<property name="ResourceName" type="string" getter="GetResourceName" setter="" static="false">

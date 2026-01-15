@@ -33,7 +33,7 @@ namespace b3d
 		[NativeWrapper]
 		public ShaderVariationParameterInformation[] VariationParams
 		{
-			get { return Internal_GetVariationParams(mCachedPtr); }
+			get { return Internal_GetVariationParameters(mCachedPtr); }
 		}
 
 		/// <summary>Returns information about all parameters available in the shader.</summary>
@@ -55,7 +55,7 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Shader> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShaderVariationParameterInformation[] Internal_GetVariationParams(IntPtr thisPtr);
+		private static extern ShaderVariationParameterInformation[] Internal_GetVariationParameters(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern ShaderParameter[] Internal_GetParameters(IntPtr thisPtr);
 	}

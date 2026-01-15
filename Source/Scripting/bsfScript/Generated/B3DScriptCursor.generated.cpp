@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Platform/B3DCursor.h"
+#include "../../../Engine/Core/Platform/B3DCursor.h"
 #include "B3DScriptTArea2.generated.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptPixelData.generated.h"

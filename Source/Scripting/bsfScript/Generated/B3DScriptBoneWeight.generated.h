@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Mesh/B3DMeshData.h"
+#include "../../../Engine/Core/Mesh/B3DMeshData.h"
 
 namespace b3d
 {

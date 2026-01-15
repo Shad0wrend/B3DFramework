@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Utility/Debug/B3DDebug.h"
+#include "../../../Engine/Utility/Debug/B3DDebug.h"
 #include "B3DScriptLogEntry.generated.h"
 
 namespace b3d

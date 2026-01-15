@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 #include "B3DScriptKerningPair.generated.h"
 
 namespace b3d

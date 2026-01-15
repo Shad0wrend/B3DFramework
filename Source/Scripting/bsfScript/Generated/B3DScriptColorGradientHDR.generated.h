@@ -3,10 +3,10 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Utility/Image/B3DColorGradient.h"
+#include "../../../Engine/Utility/Image/B3DColorGradient.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Utility/Image/B3DColorGradient.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Utility/Image/B3DColorGradient.h"
 
 namespace b3d { class ColorGradientHDREx; }
 namespace b3d { struct __ColorGradientKeyInterop; }

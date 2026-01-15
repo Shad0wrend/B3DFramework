@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
 
 namespace b3d
 {

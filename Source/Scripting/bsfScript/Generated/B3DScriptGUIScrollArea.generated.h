@@ -5,13 +5,13 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIInteractable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUILayout.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIScrollArea.h"
-#include "../../../Foundation/Core/GUI/B3DGUIScrollArea.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUILayout.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIScrollArea.h"
+#include "../../../Engine/Core/GUI/B3DGUIScrollArea.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
 
 namespace b3d { class GUIScrollArea; }
 namespace b3d { struct __TArea2_TUnitValue_int32_t__PhysicalPixel___TUnitValue_int32_t__PhysicalPixel__Interop; }

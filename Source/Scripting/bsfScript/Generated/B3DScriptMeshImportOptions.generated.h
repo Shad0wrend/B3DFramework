@@ -5,10 +5,10 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptImportOptions.generated.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
 
 namespace b3d { class MeshImportOptions; }
 namespace b3d

@@ -4,18 +4,18 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
 
 namespace b3d
 {

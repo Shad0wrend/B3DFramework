@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 #include "B3DScriptSpriteSheetGridAnimation.generated.h"
 
 namespace b3d

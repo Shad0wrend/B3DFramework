@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEvolver.h"
+#include "../../../Engine/Core/Particles/B3DParticleEvolver.h"
 
 namespace b3d { class ParticleEvolver; }
 namespace b3d

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Renderer/B3DRenderSettings.h"
-#include "../../../Foundation/Core/Renderer/B3DRenderSettings.h"
+#include "../../../Engine/Core/Renderer/B3DRenderSettings.h"
+#include "../../../Engine/Core/Renderer/B3DRenderSettings.h"
 
 namespace b3d { struct ChromaticAberrationSettings; }
 namespace b3d

@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Resources/B3DResourceMetaData.h"
+#include "../../../Engine/Core/Resources/B3DResourceMetaData.h"
 
 namespace b3d { class ResourceMetaData; }
 namespace b3d

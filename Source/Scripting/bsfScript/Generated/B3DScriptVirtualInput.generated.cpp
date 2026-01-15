@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Input/B3DVirtualInput.h"
+#include "../../../Engine/Core/Input/B3DVirtualInput.h"
 #include "B3DScriptInputConfiguration.generated.h"
 #include "B3DScriptVirtualButton.generated.h"
 #include "B3DScriptVirtualAxis.generated.h"

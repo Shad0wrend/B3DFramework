@@ -6,9 +6,9 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 #include "B3DScriptFont.generated.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 #include "B3DScriptSpriteSheetGridAnimation.generated.h"
 
 namespace b3d

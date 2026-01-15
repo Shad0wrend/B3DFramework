@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Input/B3DInputConfiguration.h"
+#include "../../../Engine/Core/Input/B3DInputConfiguration.h"
 #include "B3DScriptVirtualAxisCreateInformation.generated.h"
 
 namespace b3d

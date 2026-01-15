@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUIElement.h"
+#include "../../../Engine/Core/GUI/B3DGUIElement.h"
 
 namespace b3d { class GUILayout; }
 namespace b3d

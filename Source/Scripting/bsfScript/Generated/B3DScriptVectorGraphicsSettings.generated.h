@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/VectorGraphics/B3DVectorGraphics.h"
+#include "../../../Engine/Core/VectorGraphics/B3DVectorGraphics.h"
 #include "B3DScriptNonReflectableWrapper.h"
 
 namespace b3d

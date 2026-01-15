@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
 
 namespace b3d { class GUIRenderable; }
 namespace b3d

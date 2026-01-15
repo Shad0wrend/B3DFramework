@@ -4,10 +4,10 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsMesh.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsMesh.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsMesh.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsMesh.h"
 #include "B3DScriptRendererMeshData.generated.h"
 #include "../Extensions/B3DPhysicsMeshEx.h"
 

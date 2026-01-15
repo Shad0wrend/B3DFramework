@@ -3,14 +3,14 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Input/B3DInput.h"
+#include "../../../Engine/Core/Input/B3DInput.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
-#include "../../../Foundation/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
+#include "../../../Engine/Core/Input/B3DInputFwd.h"
 
 namespace b3d { struct __PointerEventInterop; }
 namespace b3d

@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Image/B3DPixelVolume.h"
+#include "../../../Engine/Core/Image/B3DPixelVolume.h"
 
 namespace b3d
 {

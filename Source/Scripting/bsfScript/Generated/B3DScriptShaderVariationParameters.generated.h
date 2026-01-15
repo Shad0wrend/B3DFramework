@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Material/B3DShaderVariation.h"
+#include "../../../Engine/Core/Material/B3DShaderVariation.h"
 
 namespace b3d { class ShaderVariationParameters; }
 namespace b3d

@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIInteractable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIContent.h"
+#include "../../../Engine/Core/GUI/B3DGUIContent.h"
 
 namespace b3d { struct __GUIContentInterop; }
 namespace b3d { class GUIClickable; }

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Importer/B3DMeshImportOptions.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Importer/B3DMeshImportOptions.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 
 namespace b3d { struct __AnimationEventInterop; }
 namespace b3d { struct ImportedAnimationEvents; }

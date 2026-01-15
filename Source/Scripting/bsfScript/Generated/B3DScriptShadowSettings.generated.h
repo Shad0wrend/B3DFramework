@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Renderer/B3DRenderSettings.h"
+#include "../../../Engine/Core/Renderer/B3DRenderSettings.h"
 
 namespace b3d { struct ShadowSettings; }
 namespace b3d

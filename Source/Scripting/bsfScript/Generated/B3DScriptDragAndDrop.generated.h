@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/GUI/B3DDragAndDrop.h"
+#include "../../../Engine/Core/GUI/B3DDragAndDrop.h"
 #include "B3DScriptTypeDefinition.h"
 
 namespace b3d

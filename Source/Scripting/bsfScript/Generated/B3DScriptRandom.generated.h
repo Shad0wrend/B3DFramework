@@ -3,10 +3,10 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Utility/Math/B3DRandom.h"
+#include "../../../Engine/Utility/Math/B3DRandom.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
 #include "Math/B3DDegree.h"
 
 namespace b3d

@@ -4,13 +4,13 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIElement.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIElement.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
 
 namespace b3d { struct __TArea2_TUnitValue_int32_t__LogicalPixel___TUnitValue_int32_t__LogicalPixel__Interop; }
 namespace b3d { class GUIElement; }

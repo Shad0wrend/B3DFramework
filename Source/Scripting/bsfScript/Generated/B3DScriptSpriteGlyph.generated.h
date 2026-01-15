@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
 #include "B3DScriptSpriteImage.generated.h"
-#include "../../../Foundation/Core/Image/B3DSpriteGlyph.h"
+#include "../../../Engine/Core/Image/B3DSpriteGlyph.h"
 
 namespace b3d { class SpriteGlyph; }
 namespace b3d { struct __SpriteGlyphCreateInformationInterop; }

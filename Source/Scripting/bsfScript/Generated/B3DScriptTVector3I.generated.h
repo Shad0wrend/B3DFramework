@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DVector3I.h"
+#include "../../../Engine/Utility/Math/B3DVector3I.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DVector3I.h"
+#include "../../../Engine/Utility/Math/B3DVector3I.h"
 
 namespace b3d
 {

@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 #include "B3DScriptSubResource.generated.h"
 
 namespace b3d

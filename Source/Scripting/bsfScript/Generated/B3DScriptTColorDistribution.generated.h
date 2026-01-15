@@ -3,16 +3,16 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Utility/Image/B3DColorGradient.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Utility/Image/B3DColorGradient.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Utility/Image/B3DColorGradient.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Utility/Image/B3DColorGradient.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 
 namespace b3d
 {

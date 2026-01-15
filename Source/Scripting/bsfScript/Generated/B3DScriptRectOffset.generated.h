@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Utility/B3DRectOffset.h"
+#include "../../../Engine/Core/Utility/B3DRectOffset.h"
 
 namespace b3d
 {

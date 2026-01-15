@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
 #include "B3DScriptSpriteImage.generated.h"
-#include "../../../Foundation/Utility/Math/B3DSize2.h"
-#include "../../../Foundation/Core/Image/B3DSpriteVectorPath.h"
+#include "../../../Engine/Utility/Math/B3DSize2.h"
+#include "../../../Engine/Core/Image/B3DSpriteVectorPath.h"
 
 namespace b3d { class SpriteVectorPath; }
 namespace b3d { struct __SpriteVectorPathCreateInformationInterop; }

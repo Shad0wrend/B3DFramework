@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
-#include "../../../Foundation/Core/Image/B3DPixelVolume.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/Image/B3DPixelVolume.h"
 
 namespace b3d { class PixelData; }
 namespace b3d { class PixelDataEx; }

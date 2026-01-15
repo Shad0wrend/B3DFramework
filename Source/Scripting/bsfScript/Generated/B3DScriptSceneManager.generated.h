@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Scene/B3DSceneManager.h"
+#include "../../../Engine/Core/Scene/B3DSceneManager.h"
 #include "B3DScriptTypeDefinition.h"
 
 namespace b3d

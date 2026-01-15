@@ -3,15 +3,15 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Renderer/B3DRendererMeshData.h"
+#include "../../../Engine/Core/Renderer/B3DRendererMeshData.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DVector4.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Renderer/B3DRendererMeshData.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Core/Mesh/B3DMeshData.h"
+#include "../../../Engine/Utility/Math/B3DVector4.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Renderer/B3DRendererMeshData.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Core/Mesh/B3DMeshData.h"
 
 namespace b3d { class MeshDataEx; }
 namespace b3d

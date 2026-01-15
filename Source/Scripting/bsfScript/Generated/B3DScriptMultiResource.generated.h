@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 
 namespace b3d { struct __SubResourceInterop; }
 namespace b3d

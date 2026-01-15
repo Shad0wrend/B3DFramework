@@ -4,9 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/Image/B3DPixelUtility.h"
 
 namespace b3d { class Texture; }
 namespace b3d { class TextureEx; }
@@ -28,9 +29,9 @@ namespace b3d
 		static MonoObject* InternalGetRef(ScriptTexture* self);
 
 		static MonoObject* InternalReadData(ScriptTexture* self, uint32_t face, uint32_t mipLevel);
-		static void InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, int32_t usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection);
+		static void InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsageFlag usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection);
 		static PixelFormat InternalGetPixelFormat(ScriptTexture* self);
-		static int32_t InternalGetUsage(ScriptTexture* self);
+		static TextureUsageFlag InternalGetUsage(ScriptTexture* self);
 		static TextureType InternalGetType(ScriptTexture* self);
 		static uint32_t InternalGetWidth(ScriptTexture* self);
 		static uint32_t InternalGetHeight(ScriptTexture* self);

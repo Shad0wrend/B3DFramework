@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIInputBox.h"
+#include "../../../Engine/Core/GUI/B3DGUIInputBox.h"
 #include "B3DScriptGUIInputBox.generated.h"
 #include "B3DScriptGUIInputBoxContent.generated.h"
 #include "B3DScriptGUIOption.generated.h"

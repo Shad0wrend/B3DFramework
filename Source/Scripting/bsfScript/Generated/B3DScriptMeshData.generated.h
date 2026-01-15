@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Mesh/B3DMeshData.h"
+#include "../../../Engine/Core/Mesh/B3DMeshData.h"
 
 namespace b3d { class MeshData; }
 namespace b3d

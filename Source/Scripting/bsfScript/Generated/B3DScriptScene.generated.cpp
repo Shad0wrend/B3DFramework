@@ -4,12 +4,12 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Scene/B3DScene.h"
+#include "../../../Engine/Core/Scene/B3DScene.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "Wrappers/B3DScriptSceneObject.h"
 #include "B3DScriptSceneInstance.generated.h"
-#include "../../../Foundation/Core/Scene/B3DScene.h"
+#include "../../../Engine/Core/Scene/B3DScene.h"
 
 namespace b3d
 {

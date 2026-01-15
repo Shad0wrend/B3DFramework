@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Resources/B3DResources.h"
+#include "../../../Engine/Core/Resources/B3DResources.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Resources/B3DResources.h"
+#include "../../../Engine/Core/Resources/B3DResources.h"
 #include "Utility/B3DUUID.h"
 
 namespace b3d

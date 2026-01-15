@@ -4,12 +4,12 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Image/B3DTexture.h"
+#include "../../../Engine/Core/Image/B3DTexture.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
 #include "Wrappers/B3DScriptAsyncOp.h"
 #include "B3DScriptPixelData.generated.h"
-#include "../../../Foundation/Core/Image/B3DTexture.h"
+#include "../../../Engine/Core/Image/B3DTexture.h"
 #include "B3DScriptColor.generated.h"
 #include "../Extensions/B3DTextureEx.h"
 
@@ -83,7 +83,7 @@ namespace b3d
 		return __output;
 	}
 
-	void ScriptTexture::InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, int32_t usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection)
+	void ScriptTexture::InternalCreate(MonoObject* scriptObject, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsageFlag usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection)
 	{
 		TResourceHandle<Texture> nativeObject = TextureEx::Create(format, width, height, depth, texType, usage, numSamples, hasMipmaps, gammaCorrection);
 		ScriptObjectWrapper::Create<ScriptTexture>(nativeObject, scriptObject);
@@ -103,16 +103,16 @@ namespace b3d
 		return __output;
 	}
 
-	int32_t ScriptTexture::InternalGetUsage(ScriptTexture* self)
+	TextureUsageFlag ScriptTexture::InternalGetUsage(ScriptTexture* self)
 	{
-		int32_t tmp__output;
+		Flags<TextureUsageFlag> tmp__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
 		tmp__output = TextureEx::GetUsage(B3DStaticResourceCast<Texture>(self->GetBaseNativeObjectAsHandle()));
 
-		int32_t __output;
-		__output = tmp__output;
+		TextureUsageFlag __output;
+		__output = (TextureUsageFlag)(uint32_t)tmp__output;
 
 		return __output;
 	}

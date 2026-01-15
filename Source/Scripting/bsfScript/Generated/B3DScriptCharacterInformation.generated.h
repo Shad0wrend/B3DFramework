@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 
 namespace b3d
 {

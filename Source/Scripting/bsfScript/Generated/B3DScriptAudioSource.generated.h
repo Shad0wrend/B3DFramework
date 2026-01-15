@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Components/B3DAudioSource.h"
+#include "../../../Engine/Core/Components/B3DAudioSource.h"
 
 namespace b3d { class AudioSource; }
 namespace b3d

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Debug/B3DLog.h"
-#include "../../../Foundation/Utility/Debug/B3DLog.h"
+#include "../../../Engine/Utility/Debug/B3DLog.h"
+#include "../../../Engine/Utility/Debug/B3DLog.h"
 
 namespace b3d
 {

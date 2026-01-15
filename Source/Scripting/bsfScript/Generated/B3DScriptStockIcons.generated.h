@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Text/B3DStockIcons.h"
+#include "../../../Engine/Core/Text/B3DStockIcons.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Text/B3DStockIcons.h"
+#include "../../../Engine/Core/Text/B3DStockIcons.h"
 
 namespace b3d
 {

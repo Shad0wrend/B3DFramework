@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptImportOptions.generated.h"
-#include "../../../Foundation/Core/Importer/B3DTextureImportOptions.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Core/Importer/B3DTextureImportOptions.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
 
 namespace b3d { class TextureImportOptions; }
 namespace b3d

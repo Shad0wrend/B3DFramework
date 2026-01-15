@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUILayout.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUILayoutY.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUILayoutY.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
 
 namespace b3d { class GUILayoutY; }
 namespace b3d { struct __GUIOptionInterop; }

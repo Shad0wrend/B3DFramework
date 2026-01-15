@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Components/B3DLight.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
+#include "../../../Engine/Core/Components/B3DLight.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
 #include "Math/B3DDegree.h"
-#include "../../../Foundation/Utility/Math/B3DSphere.h"
+#include "../../../Engine/Utility/Math/B3DSphere.h"
 
 namespace b3d { class Light; }
 namespace b3d { struct __TSphere_float_Interop; }

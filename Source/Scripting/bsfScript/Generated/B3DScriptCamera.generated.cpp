@@ -4,11 +4,13 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DCamera.h"
+#include "../../../Engine/Core/Components/B3DCamera.h"
+#include "Wrappers/B3DScriptAsyncOp.h"
+#include "B3DScriptTVector3.generated.h"
+#include "B3DScriptPixelData.generated.h"
 #include "B3DScriptRenderSettings.generated.h"
 #include "B3DScriptViewport.generated.h"
 #include "B3DScriptTVector2.generated.h"
-#include "B3DScriptTVector3.generated.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptTRay.generated.h"
 
@@ -29,6 +31,7 @@ namespace b3d
 	{
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetMain", (void*)&ScriptCamera::InternalSetMain);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_IsMain", (void*)&ScriptCamera::InternalIsMain);
+		sInteropMetaData.ScriptClass->AddInternalCall("Internal_RequestCapture", (void*)&ScriptCamera::InternalRequestCapture);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptCamera::InternalSetFlags);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_GetFlags", (void*)&ScriptCamera::InternalGetFlags);
 		sInteropMetaData.ScriptClass->AddInternalCall("Internal_SetHorizontalFOV", (void*)&ScriptCamera::InternalSetHorizontalFOV);
@@ -103,6 +106,28 @@ namespace b3d
 
 		bool __output;
 		__output = tmp__output;
+
+		return __output;
+	}
+
+	MonoObject* ScriptCamera::InternalRequestCapture(ScriptCamera* self)
+	{
+		TAsyncOp<SPtr<PixelData>> tmp__output;
+		if(!self->IsNativeObjectValid())
+			return {};
+
+		tmp__output = static_cast<Camera*>(self->GetNativeObject())->RequestCapture();
+
+		MonoObject* __output;
+		auto fnConvertCallback = [](const Any& returnValue)
+		{
+			SPtr<PixelData> nativeObject = AnyCast<SPtr<PixelData>>(returnValue);
+			MonoObject* scriptObject;
+			scriptObject = ScriptPixelData::GetOrCreateScriptObject(nativeObject);
+			return scriptObject;
+		};
+
+;		__output = ScriptAsyncOpBase::Create(tmp__output, fnConvertCallback, ScriptPixelData::GetMetaData()->ScriptClass);
 
 		return __output;
 	}

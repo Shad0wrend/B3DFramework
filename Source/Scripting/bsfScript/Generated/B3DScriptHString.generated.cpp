@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Localization/B3DHString.h"
+#include "../../../Engine/Core/Localization/B3DHString.h"
 
 namespace b3d
 {

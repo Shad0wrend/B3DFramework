@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DDistanceJoint.h"
+#include "../../../Engine/Core/Components/B3DDistanceJoint.h"
 #include "B3DScriptSpring.generated.h"
 
 namespace b3d

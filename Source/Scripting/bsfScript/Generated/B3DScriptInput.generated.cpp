@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Input/B3DInput.h"
+#include "../../../Engine/Core/Input/B3DInput.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptPointerEvent.generated.h"
 #include "B3DScriptTextInputEvent.generated.h"

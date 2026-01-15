@@ -4,12 +4,12 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
 
 namespace b3d { class Animation; }
 namespace b3d { struct __Blend1DInfoInterop; }

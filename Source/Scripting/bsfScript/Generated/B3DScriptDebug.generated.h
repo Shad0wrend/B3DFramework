@@ -3,10 +3,10 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Utility/Debug/B3DDebug.h"
+#include "../../../Engine/Utility/Debug/B3DDebug.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Utility/Debug/B3DLog.h"
-#include "../../../Foundation/Utility/Debug/B3DLog.h"
+#include "../../../Engine/Utility/Debug/B3DLog.h"
+#include "../../../Engine/Utility/Debug/B3DLog.h"
 
 namespace b3d { struct __LogEntryInterop; }
 namespace b3d

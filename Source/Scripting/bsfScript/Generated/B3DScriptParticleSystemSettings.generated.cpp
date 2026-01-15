@@ -6,8 +6,8 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Material/B3DMaterial.h"
-#include "../../../Foundation/Core/Mesh/B3DMesh.h"
+#include "../../../Engine/Core/Material/B3DMaterial.h"
+#include "../../../Engine/Core/Mesh/B3DMesh.h"
 #include "B3DScriptTAABox.generated.h"
 #include "B3DScriptTVector3.generated.h"
 

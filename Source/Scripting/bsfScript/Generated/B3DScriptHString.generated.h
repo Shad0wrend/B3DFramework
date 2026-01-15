@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Localization/B3DHString.h"
+#include "../../../Engine/Core/Localization/B3DHString.h"
 #include "B3DScriptNonReflectableWrapper.h"
 
 namespace b3d

@@ -4,11 +4,11 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DRenderable.h"
+#include "../../../Engine/Core/Components/B3DRenderable.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Mesh/B3DMesh.h"
-#include "../../../Foundation/Core/Material/B3DMaterial.h"
+#include "../../../Engine/Core/Mesh/B3DMesh.h"
+#include "../../../Engine/Core/Material/B3DMaterial.h"
 
 namespace b3d
 {

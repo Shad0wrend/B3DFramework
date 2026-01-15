@@ -4,13 +4,13 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Mesh/B3DMeshBase.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
-#include "../../../Foundation/Core/Renderer/B3DRendererMeshData.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
-#include "../../../Foundation/Core/RenderAPI/B3DSubMesh.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
-#include "../../../Foundation/Utility/Math/B3DSphere.h"
+#include "../../../Engine/Core/Mesh/B3DMeshBase.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Core/Renderer/B3DRendererMeshData.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Core/RenderAPI/B3DSubMesh.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Utility/Math/B3DSphere.h"
 
 namespace b3d { class Mesh; }
 namespace b3d { class MeshEx; }

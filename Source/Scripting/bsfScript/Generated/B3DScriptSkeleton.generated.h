@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DSkeleton.h"
+#include "../../../Engine/Core/Animation/B3DSkeleton.h"
 #include "../Extensions/B3DSkeletonEx.h"
 
 namespace b3d { struct __SkeletonBoneInfoExInterop; }

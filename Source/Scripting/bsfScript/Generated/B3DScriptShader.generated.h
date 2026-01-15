@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Material/B3DShader.h"
+#include "../../../Engine/Core/Material/B3DShader.h"
 #include "../Extensions/B3DShaderEx.h"
 
 namespace b3d { class Shader; }
@@ -28,7 +28,7 @@ namespace b3d
 	private:
 		static MonoObject* InternalGetRef(ScriptShader* self);
 
-		static MonoArray* InternalGetVariationParams(ScriptShader* self);
+		static MonoArray* InternalGetVariationParameters(ScriptShader* self);
 		static MonoArray* InternalGetParameters(ScriptShader* self);
 	};
 }

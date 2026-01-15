@@ -6,7 +6,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsMaterial.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsMaterial.h"
 #include "B3DScriptTVector3.generated.h"
 #include "B3DScriptSphereColliderShapeInformation.generated.h"
 #include "B3DScriptTQuaternion.generated.h"

@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Scene/B3DSceneInstance.h"
+#include "../../../Engine/Core/Scene/B3DSceneInstance.h"
 
 namespace b3d { class IEditorSceneInstance; }
 namespace b3d

@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIRenderable.h"
+#include "../../../Engine/Core/GUI/B3DGUIRenderable.h"
 #include "B3DScriptColor.generated.h"
 
 namespace b3d

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
-#include "../../../Foundation/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
+#include "../../../Engine/Core/Physics/B3DPhysicsCommon.h"
 #include "B3DScriptContactPoint.generated.h"
 
 namespace b3d

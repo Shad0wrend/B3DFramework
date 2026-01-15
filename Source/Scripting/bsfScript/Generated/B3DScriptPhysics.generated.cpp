@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Physics/B3DPhysics.h"
+#include "../../../Engine/Core/Physics/B3DPhysics.h"
 
 namespace b3d
 {

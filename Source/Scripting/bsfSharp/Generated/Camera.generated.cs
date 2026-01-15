@@ -210,6 +210,13 @@ namespace b3d
 			set { Internal_SetRenderSettings(mCachedPtr, value); }
 		}
 
+		/// <summary>Requests an asynchronous capture of the next rendered frame from this camera.</summary>
+		/// <returns>Async operation with captured pixel data, or nullptr if camera is inactive.</returns>
+		public AsyncOp<PixelData> RequestCapture()
+		{
+			return Internal_RequestCapture(mCachedPtr);
+		}
+
 		/// <summary>
 		/// Notifies a on-demand camera that it should re-draw its contents on the next frame. Ignored for a camera that 
 		/// isn&apos;t on-demand.
@@ -404,6 +411,8 @@ namespace b3d
 		private static extern void Internal_SetMain(IntPtr thisPtr, bool main);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_IsMain(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern AsyncOp<PixelData> Internal_RequestCapture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetFlags(IntPtr thisPtr, CameraFlag flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]

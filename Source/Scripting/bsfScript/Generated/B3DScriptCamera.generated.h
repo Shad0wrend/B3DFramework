@@ -4,14 +4,14 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Utility/B3DCommonTypes.h"
-#include "../../../Foundation/Core/Components/B3DCamera.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Utility/B3DCommonTypes.h"
+#include "../../../Engine/Core/Components/B3DCamera.h"
 #include "Math/B3DMatrix4.h"
 #include "Math/B3DRadian.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
-#include "../../../Foundation/Utility/Math/B3DRay.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Utility/Math/B3DRay.h"
 
 namespace b3d { class Camera; }
 namespace b3d { struct __TRay_float_Interop; }
@@ -32,6 +32,7 @@ namespace b3d
 	private:
 		static void InternalSetMain(ScriptCamera* self, bool main);
 		static bool InternalIsMain(ScriptCamera* self);
+		static MonoObject* InternalRequestCapture(ScriptCamera* self);
 		static void InternalSetFlags(ScriptCamera* self, CameraFlag flags);
 		static CameraFlag InternalGetFlags(ScriptCamera* self);
 		static void InternalSetHorizontalFOV(ScriptCamera* self, TRadian<float>* fovy);

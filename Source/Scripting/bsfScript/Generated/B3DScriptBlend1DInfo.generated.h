@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
 #include "B3DScriptBlendClipInfo.generated.h"
 
 namespace b3d

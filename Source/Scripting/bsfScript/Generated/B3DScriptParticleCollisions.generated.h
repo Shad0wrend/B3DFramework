@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptParticleEvolver.generated.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEvolver.h"
-#include "../../../Foundation/Utility/Math/B3DPlane.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEvolver.h"
+#include "../../../Engine/Core/Particles/B3DParticleEvolver.h"
+#include "../../../Engine/Utility/Math/B3DPlane.h"
+#include "../../../Engine/Core/Particles/B3DParticleEvolver.h"
 
 namespace b3d { class ParticleCollisions; }
 namespace b3d { struct __TPlane_float_Interop; }

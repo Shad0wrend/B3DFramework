@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptParticleEvolver.generated.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEvolver.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEvolver.h"
+#include "../../../Engine/Core/Particles/B3DParticleEvolver.h"
+#include "../../../Engine/Core/Particles/B3DParticleEvolver.h"
 
 namespace b3d { class ParticleGravity; }
 namespace b3d

@@ -4,11 +4,11 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DPlane.h"
+#include "../../../Engine/Utility/Math/B3DPlane.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DPlane.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DPlane.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d
 {

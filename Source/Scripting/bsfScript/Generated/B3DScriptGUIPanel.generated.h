@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUILayout.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIPanel.h"
-#include "../../../Foundation/Core/GUI/B3DGUIPanel.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUIPanel.h"
+#include "../../../Engine/Core/GUI/B3DGUIPanel.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
 
 namespace b3d { class GUIPanel; }
 namespace b3d { struct __GUIOptionInterop; }

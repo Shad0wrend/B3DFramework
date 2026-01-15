@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIScrollArea.h"
+#include "../../../Engine/Core/GUI/B3DGUIScrollArea.h"
 #include "B3DScriptTUnitValue.generated.h"
 #include "B3DScriptGUILayout.generated.h"
 #include "B3DScriptTArea2.generated.h"

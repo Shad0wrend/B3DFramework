@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Scene/B3DSceneManager.h"
+#include "../../../Engine/Core/Scene/B3DSceneManager.h"
 #include "B3DScriptSceneInstance.generated.h"
 
 namespace b3d

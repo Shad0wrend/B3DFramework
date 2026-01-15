@@ -4,10 +4,10 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DReflectionProbe.h"
+#include "../../../Engine/Core/Components/B3DReflectionProbe.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Image/B3DTexture.h"
+#include "../../../Engine/Core/Image/B3DTexture.h"
 #include "B3DScriptTVector3.generated.h"
 
 namespace b3d

@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DSliderJoint.h"
+#include "../../../Engine/Core/Components/B3DSliderJoint.h"
 #include "B3DScriptLimitLinearRange.generated.h"
 
 namespace b3d

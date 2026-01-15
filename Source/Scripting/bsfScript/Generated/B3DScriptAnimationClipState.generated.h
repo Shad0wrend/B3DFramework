@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
 
 namespace b3d
 {

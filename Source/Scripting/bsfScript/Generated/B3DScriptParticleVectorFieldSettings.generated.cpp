@@ -6,7 +6,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Particles/B3DVectorField.h"
+#include "../../../Engine/Core/Particles/B3DVectorField.h"
 #include "B3DScriptTVector3.generated.h"
 #include "B3DScriptTQuaternion.generated.h"
 #include "B3DScriptTDistribution.generated.h"

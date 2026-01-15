@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Components/B3DJoint.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DJoint.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
 
 namespace b3d { class Joint; }
 namespace b3d

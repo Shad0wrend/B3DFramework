@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
 
 namespace b3d { class ParticleSystem; }
 namespace b3d

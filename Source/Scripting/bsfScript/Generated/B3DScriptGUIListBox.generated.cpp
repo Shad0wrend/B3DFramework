@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIListBox.h"
+#include "../../../Engine/Core/GUI/B3DGUIListBox.h"
 #include "B3DScriptHString.generated.h"
 #include "B3DScriptGUIOption.generated.h"
 #include "B3DScriptGUIListBox.generated.h"

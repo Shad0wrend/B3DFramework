@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 
 namespace b3d
 {

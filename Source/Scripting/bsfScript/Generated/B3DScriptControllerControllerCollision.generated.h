@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d
 {

@@ -4,11 +4,11 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 
 namespace b3d { class ParticleEmitter; }
 namespace b3d { struct __ParticleBurstInterop; }

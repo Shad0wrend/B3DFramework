@@ -4,13 +4,13 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d { struct ParticleSystemSettings; }
 namespace b3d { struct __TAABox_float_Interop; }

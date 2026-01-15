@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUtility.h"
+#include "../../../Engine/Core/GUI/B3DGUIUtility.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Utility/Math/B3DSize2.h"
+#include "../../../Engine/Utility/Math/B3DSize2.h"
 
 namespace b3d
 {

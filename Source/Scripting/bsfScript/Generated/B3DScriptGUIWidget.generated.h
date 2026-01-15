@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/GUI/B3DGUIPanel.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIPanel.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
 
 namespace b3d { class GUIWidget; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop; }

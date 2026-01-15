@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationUtility.h"
+#include "../../../Engine/Core/Animation/B3DAnimationUtility.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Utility/Prerequisites/B3DFwdDeclUtil.h"
+#include "../../../Engine/Utility/Prerequisites/B3DFwdDeclUtil.h"
 
 namespace b3d
 {

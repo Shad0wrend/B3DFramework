@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
 #include "Math/B3DDegree.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
 
 namespace b3d
 {

@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DVectorField.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Particles/B3DVectorField.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
 
 namespace b3d { struct __VECTOR_FIELD_DESCInterop; }
 namespace b3d { class VectorField; }

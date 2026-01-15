@@ -3,13 +3,13 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Platform/B3DCursor.h"
+#include "../../../Engine/Core/Platform/B3DCursor.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Utility/Math/B3DArea2.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/Image/B3DPixelData.h"
-#include "../../../Foundation/Core/Utility/B3DEnums.h"
-#include "../../../Foundation/Utility/Math/B3DVector2.h"
+#include "../../../Engine/Utility/Math/B3DArea2.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/Image/B3DPixelData.h"
+#include "../../../Engine/Core/Utility/B3DEnums.h"
+#include "../../../Engine/Utility/Math/B3DVector2.h"
 
 namespace b3d { struct __TVector2_TUnitValue_int32_t__PhysicalPixel__Interop; }
 namespace b3d

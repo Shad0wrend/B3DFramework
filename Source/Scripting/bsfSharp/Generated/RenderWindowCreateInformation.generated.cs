@@ -38,6 +38,7 @@ namespace b3d
 			value.Modal = false;
 			value.HideUntilSwap = false;
 			value.CreateRenderSurface = true;
+			value.Headless = false;
 
 			return value;
 		}
@@ -88,6 +89,12 @@ namespace b3d
 		/// render to the window.
 		/// </summary>
 		public bool CreateRenderSurface;
+		/// <summary>
+		/// When true, no OS window is created. Instead, the window renders to internal GPU textures that mimic a swap chain. All 
+		/// window-handle-dependent operations (focus, input capture, cursor, etc.) become no-ops. Use this for headless 
+		/// rendering in automated testing or offscreen rendering scenarios.
+		/// </summary>
+		public bool Headless;
 	}
 
 	/** @} */

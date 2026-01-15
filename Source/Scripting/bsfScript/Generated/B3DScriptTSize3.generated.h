@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Utility/B3DUtil.h"
+#include "../../../Engine/Utility/Utility/B3DUtil.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Utility/B3DUtil.h"
+#include "../../../Engine/Utility/Utility/B3DUtil.h"
 
 namespace b3d
 {

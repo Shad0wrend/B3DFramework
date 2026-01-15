@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptDragAndDropData.generated.h"
-#include "../../../Foundation/Core/GUI/B3DDragAndDrop.h"
+#include "../../../Engine/Core/GUI/B3DDragAndDrop.h"
 
 namespace b3d { class ResourceDragAndDropData; }
 namespace b3d

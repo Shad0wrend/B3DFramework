@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/RenderAPI/B3DVideoModeInfo.h"
+#include "../../../Engine/Core/RenderAPI/B3DVideoModeInfo.h"
 
 namespace b3d
 {

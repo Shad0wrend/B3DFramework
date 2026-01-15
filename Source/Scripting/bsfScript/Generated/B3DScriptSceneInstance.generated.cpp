@@ -4,14 +4,14 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Scene/B3DSceneInstance.h"
+#include "../../../Engine/Core/Scene/B3DSceneInstance.h"
 #include "Reflection/B3DRTTIType.h"
 #include "B3DScriptSceneInstance.generated.h"
 #include "B3DScriptIEditorSceneInstance.generated.h"
 #include "Wrappers/B3DScriptSceneObject.h"
 #include "B3DScriptResourceWrapper.h"
 #include "B3DScriptPhysicsScene.generated.h"
-#include "../../../Foundation/Core/Components/B3DCamera.h"
+#include "../../../Engine/Core/Components/B3DCamera.h"
 #include "B3DScriptCamera.generated.h"
 
 namespace b3d

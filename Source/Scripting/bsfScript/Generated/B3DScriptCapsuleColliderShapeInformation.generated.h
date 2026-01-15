@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Physics/B3DColliderShape.h"
+#include "../../../Engine/Core/Physics/B3DColliderShape.h"
 
 namespace b3d
 {

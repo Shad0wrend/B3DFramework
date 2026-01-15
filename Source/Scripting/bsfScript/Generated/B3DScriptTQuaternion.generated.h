@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
 
 namespace b3d
 {

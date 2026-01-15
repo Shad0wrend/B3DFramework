@@ -4,10 +4,10 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Particles/B3DVectorField.h"
+#include "../../../Engine/Core/Particles/B3DVectorField.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Particles/B3DVectorField.h"
+#include "../../../Engine/Core/Particles/B3DVectorField.h"
 #include "B3DScriptVECTOR_FIELD_DESC.generated.h"
 #include "B3DScriptTVector3.generated.h"
 

@@ -4,9 +4,9 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 #include "B3DScriptTDistribution.generated.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 #include "B3DScriptTDistribution.generated.h"
 
 namespace b3d

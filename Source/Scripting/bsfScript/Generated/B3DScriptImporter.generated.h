@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 #include "B3DScriptTypeDefinition.h"
 #include "Utility/B3DUUID.h"
 

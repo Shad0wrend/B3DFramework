@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Importer/B3DImportOptions.h"
+#include "../../../Engine/Core/Importer/B3DImportOptions.h"
 
 namespace b3d { class ImportOptions; }
 namespace b3d

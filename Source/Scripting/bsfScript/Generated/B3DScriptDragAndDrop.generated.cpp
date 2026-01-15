@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DDragAndDrop.h"
+#include "../../../Engine/Core/GUI/B3DDragAndDrop.h"
 #include "Reflection/B3DRTTIType.h"
 #include "B3DScriptDragAndDropData.generated.h"
 

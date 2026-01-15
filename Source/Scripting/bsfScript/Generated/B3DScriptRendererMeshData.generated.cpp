@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Renderer/B3DRendererMeshData.h"
+#include "../../../Engine/Core/Renderer/B3DRendererMeshData.h"
 #include "B3DScriptTVector4.generated.h"
 #include "B3DScriptMeshData.generated.h"
 #include "B3DScriptTVector3.generated.h"

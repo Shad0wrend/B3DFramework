@@ -4,9 +4,9 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
-#include "../../../Foundation/Utility/Math/B3DSize2.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
-#include "../../../Foundation/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Utility/Math/B3DSize2.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
+#include "../../../Engine/Core/Image/B3DSpriteImage.h"
 
 namespace b3d { class SpriteImage; }
 namespace b3d

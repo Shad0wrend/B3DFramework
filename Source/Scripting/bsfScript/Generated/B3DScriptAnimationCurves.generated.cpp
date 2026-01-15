@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 #include "../Extensions/B3DAnimationEx.h"
 #include "B3DScriptTAnimationCurve.generated.h"
 #include "B3DScriptTAnimationCurve.generated.h"

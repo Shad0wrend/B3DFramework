@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Utility/Math/B3DAABox.h"
+#include "../../../Engine/Utility/Math/B3DAABox.h"
 #include "B3DScriptTAABox.generated.h"
 
 namespace b3d

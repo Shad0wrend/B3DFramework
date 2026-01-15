@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptImportOptions.generated.h"
-#include "../../../Foundation/Core/Importer/B3DShaderImportOptions.h"
-#include "../../../Foundation/Core/Material/B3DShaderCompiler.h"
+#include "../../../Engine/Core/Importer/B3DShaderImportOptions.h"
+#include "../../../Engine/Core/Material/B3DShaderCompiler.h"
 
 namespace b3d { class ShaderImportOptions; }
 namespace b3d

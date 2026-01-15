@@ -3,14 +3,14 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 #include "B3DScriptNonReflectableWrapper.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
-#include "../../../Foundation/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
+#include "../../../Engine/Core/Animation/B3DAnimationCurve.h"
 
 namespace b3d { class AnimationCurvesEx; }
 namespace b3d { struct __TNamedAnimationCurve_float_Interop; }

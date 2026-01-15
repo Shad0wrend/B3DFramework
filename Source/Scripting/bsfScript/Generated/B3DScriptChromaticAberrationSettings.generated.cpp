@@ -6,7 +6,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Image/B3DTexture.h"
+#include "../../../Engine/Core/Image/B3DTexture.h"
 
 namespace b3d
 {

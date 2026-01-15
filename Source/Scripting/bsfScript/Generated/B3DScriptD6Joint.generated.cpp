@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DD6Joint.h"
+#include "../../../Engine/Core/Components/B3DD6Joint.h"
 #include "B3DScriptD6JointDrive.generated.h"
 #include "B3DScriptLimitLinear.generated.h"
 #include "B3DScriptLimitAngularRange.generated.h"

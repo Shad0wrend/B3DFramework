@@ -5,12 +5,12 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIInteractable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Utility/Image/B3DColor.h"
-#include "../../../Foundation/Core/GUI/B3DGUIOptions.h"
-#include "../../../Foundation/Core/GUI/B3DGUICanvas.h"
-#include "../../../Foundation/Core/GUI/B3DGUIUnits.h"
-#include "../../../Foundation/Core/Utility/B3DEnums.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Utility/Image/B3DColor.h"
+#include "../../../Engine/Core/GUI/B3DGUIOptions.h"
+#include "../../../Engine/Core/GUI/B3DGUICanvas.h"
+#include "../../../Engine/Core/GUI/B3DGUIUnits.h"
+#include "../../../Engine/Core/Utility/B3DEnums.h"
 
 namespace b3d { class GUICanvas; }
 namespace b3d { struct __TVector2_TUnitValue_int32_t__LogicalPixel__Interop; }

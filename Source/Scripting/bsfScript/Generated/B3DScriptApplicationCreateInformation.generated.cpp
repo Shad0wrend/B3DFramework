@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/RenderAPI/B3DRenderWindow.h"
+#include "../../../Engine/Core/RenderAPI/B3DRenderWindow.h"
 #include "B3DScriptRenderWindowCreateInformation.generated.h"
 
 namespace b3d

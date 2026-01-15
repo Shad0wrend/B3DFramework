@@ -5,8 +5,8 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptParticleEmitterShape.generated.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
 
 namespace b3d { class ParticleEmitterHemisphereShape; }
 namespace b3d

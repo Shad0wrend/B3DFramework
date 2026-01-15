@@ -4,10 +4,10 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Components/B3DParticleSystem.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Utility/Math/B3DQuaternion.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Components/B3DParticleSystem.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Utility/Math/B3DQuaternion.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 
 namespace b3d { struct ParticleVectorFieldSettings; }
 namespace b3d

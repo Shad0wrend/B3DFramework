@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Importer/B3DImporter.h"
+#include "../../../Engine/Core/Importer/B3DImporter.h"
 #include "Wrappers/B3DScriptAsyncOp.h"
 #include "Reflection/B3DRTTIType.h"
 #include "B3DScriptResourceWrapper.h"

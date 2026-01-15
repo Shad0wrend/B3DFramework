@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Components/B3DAnimation.h"
+#include "../../../Engine/Core/Components/B3DAnimation.h"
 #include "B3DScriptBlendClipInfo.generated.h"
 
 namespace b3d

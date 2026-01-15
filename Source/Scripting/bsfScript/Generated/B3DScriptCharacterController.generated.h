@@ -4,13 +4,13 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "Wrappers/B3DScriptComponent.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
-#include "../../../Foundation/Utility/Math/B3DVector3.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Utility/Math/B3DVector3.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
 #include "Math/B3DRadian.h"
-#include "../../../Foundation/Core/Components/B3DCharacterController.h"
+#include "../../../Engine/Core/Components/B3DCharacterController.h"
 
 namespace b3d { class CharacterController; }
 namespace b3d { struct __ControllerColliderCollisionInterop; }

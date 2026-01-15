@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClip.h"
+#include "../../../Engine/Core/Audio/B3DAudioClip.h"
 
 namespace b3d
 {

@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Text/B3DStockIcons.h"
+#include "../../../Engine/Core/Text/B3DStockIcons.h"
 #include "B3DScriptSpriteImage.generated.h"
 #include "B3DScriptFont.generated.h"
 

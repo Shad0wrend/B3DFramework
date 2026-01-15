@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptGUIElementWrapper.h"
 #include "B3DScriptGUIRenderable.generated.h"
-#include "../../../Foundation/Core/GUI/B3DGUIInteractable.h"
+#include "../../../Engine/Core/GUI/B3DGUIInteractable.h"
 
 namespace b3d { class GUIInteractable; }
 namespace b3d

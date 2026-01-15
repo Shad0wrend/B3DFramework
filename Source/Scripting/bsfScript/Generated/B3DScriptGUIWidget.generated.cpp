@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/GUI/B3DGUIWidget.h"
+#include "../../../Engine/Core/GUI/B3DGUIWidget.h"
 #include "B3DScriptGUIPanel.generated.h"
 #include "B3DScriptTVector2.generated.h"
 #include "B3DScriptTArea2.generated.h"

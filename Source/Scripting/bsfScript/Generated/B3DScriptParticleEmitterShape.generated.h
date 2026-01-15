@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
 
 namespace b3d { class ParticleEmitterShape; }
 namespace b3d

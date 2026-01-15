@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
 #include "B3DScriptParticleEmissionMode.generated.h"
 
 namespace b3d

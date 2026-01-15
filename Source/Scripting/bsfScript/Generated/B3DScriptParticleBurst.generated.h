@@ -4,8 +4,8 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Foundation/Core/Particles/B3DParticleEmitter.h"
-#include "../../../Foundation/Core/Particles/B3DParticleDistribution.h"
+#include "../../../Engine/Core/Particles/B3DParticleEmitter.h"
+#include "../../../Engine/Core/Particles/B3DParticleDistribution.h"
 
 namespace b3d
 {

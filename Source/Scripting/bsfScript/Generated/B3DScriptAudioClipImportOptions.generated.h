@@ -5,9 +5,9 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptReflectableWrapper.h"
 #include "B3DScriptImportOptions.generated.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClipImportOptions.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClip.h"
-#include "../../../Foundation/Core/Audio/B3DAudioClip.h"
+#include "../../../Engine/Core/Audio/B3DAudioClipImportOptions.h"
+#include "../../../Engine/Core/Audio/B3DAudioClip.h"
+#include "../../../Engine/Core/Audio/B3DAudioClip.h"
 
 namespace b3d { class AudioClipImportOptions; }
 namespace b3d

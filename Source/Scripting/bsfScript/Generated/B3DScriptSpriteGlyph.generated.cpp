@@ -4,12 +4,12 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Foundation/Core/Image/B3DSpriteGlyph.h"
+#include "../../../Engine/Core/Image/B3DSpriteGlyph.h"
 #include "B3DScriptResourceManager.h"
 #include "Wrappers/B3DScriptRRefBase.h"
-#include "../../../Foundation/Core/Image/B3DSpriteGlyph.h"
+#include "../../../Engine/Core/Image/B3DSpriteGlyph.h"
 #include "B3DScriptSpriteGlyphCreateInformation.generated.h"
-#include "../../../Foundation/Core/Text/B3DFont.h"
+#include "../../../Engine/Core/Text/B3DFont.h"
 
 namespace b3d
 {

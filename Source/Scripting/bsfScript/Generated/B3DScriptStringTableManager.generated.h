@@ -3,9 +3,9 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "../../../Foundation/Core/Localization/B3DStringTableManager.h"
+#include "../../../Engine/Core/Localization/B3DStringTableManager.h"
 #include "B3DScriptTypeDefinition.h"
-#include "../../../Foundation/Core/Localization/B3DStringTable.h"
+#include "../../../Engine/Core/Localization/B3DStringTable.h"
 
 namespace b3d
 {
