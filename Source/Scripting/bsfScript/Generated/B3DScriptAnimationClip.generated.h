@@ -5,6 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptResourceWrapper.h"
 #include "../../../Engine/Core/Animation/B3DAnimationClip.h"
+#include "../../../Engine/Core/Animation/B3DAnimationClip.h"
 
 namespace b3d { class AnimationClip; }
 namespace b3d { struct __AnimationEventInterop; }
