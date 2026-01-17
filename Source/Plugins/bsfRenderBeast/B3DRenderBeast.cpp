@@ -121,7 +121,7 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 			decalInfo.Set = GpuPipelineSet::kPerObject;
 			decalInfo.Slot = 1;
 			decalInfo.Size = Math::CeilToMultiple(gDecalUniformDefinition.GetSize() / 4u, 4u);
-			decalInfo.Stages = GpuProgramStageBit::Fragment;
+			decalInfo.Stages = GpuProgramStageBit::Vertex | GpuProgramStageBit::Fragment;
 			decalInfo.IsShareable = true;
 			decalDescription.UniformBuffers["DecalParams"] = decalInfo;
 
