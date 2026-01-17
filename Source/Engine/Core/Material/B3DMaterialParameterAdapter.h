@@ -31,8 +31,8 @@ namespace b3d
 		/** Information about how a data parameter maps from a material parameter into a uniform buffer. */
 		struct DataParamInfo
 		{
-			u32 ParamIdx;
-			u32 BlockIdx;
+			u32 ParameterIndex;
+			u32 UniformBufferIndex;
 			u32 Offset;
 			u32 ArrayStride;
 		};
@@ -40,9 +40,9 @@ namespace b3d
 		/** Information about how an object parameter maps from a material parameter to a GPU stage slot. */
 		struct ObjectParamInfo
 		{
-			u32 ParamIdx;
-			u32 SlotIdx;
-			u32 SetIdx;
+			u32 ParameterIndex;
+			u32 SlotIndex;
+			u32 SetIndex;
 		};
 
 		/** Information about all object parameters for a specific GPU programmable stage. */
@@ -156,9 +156,9 @@ namespace b3d
 			u32 Slot;
 			UniformBufferPointerType Buffer;
 			u32 SuballocationByteOffset;
-			bool Shareable;
-			bool AllowUpdate;
-			bool IsUsed;
+			bool Shareable : 1;
+			bool AllowUpdate : 1;
+			bool IsUsed : 1;
 
 			PassUniformBufferBindings* PassData;
 		};

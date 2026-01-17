@@ -627,8 +627,8 @@ TMaterialParameterAdapter<IsRenderProxy>::TMaterialParameterAdapter(const SPtr<V
 
 					mDataParamInfos.push_back(DataParamInfo());
 					DataParamInfo& paramInfo = mDataParamInfos.back();
-					paramInfo.ParamIdx = paramIdx;
-					paramInfo.BlockIdx = globalBlockIdx;
+					paramInfo.ParameterIndex = paramIdx;
+					paramInfo.UniformBufferIndex = globalBlockIdx;
 					paramInfo.Offset = dataParam.second.CpuOffset;
 					paramInfo.ArrayStride = dataParam.second.ArrayElementStride;
 				}
@@ -687,9 +687,9 @@ TMaterialParameterAdapter<IsRenderProxy>::TMaterialParameterAdapter(const SPtr<V
 
 						objParamInfos.push_back(ObjectParamInfo());
 						ObjectParamInfo& paramInfo = objParamInfos.back();
-						paramInfo.ParamIdx = paramIndex;
-						paramInfo.SlotIdx = param.second.Slot;
-						paramInfo.SetIdx = param.second.Set;
+						paramInfo.ParameterIndex = paramIndex;
+						paramInfo.SlotIndex = param.second.Slot;
+						paramInfo.SetIndex = param.second.Set;
 
 						stageOffsets[stageIndex]++;
 						totalNumObjects++;
@@ -953,14 +953,50 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 		}
 	};
 
+	// Pre-processing: Determine which buffers need full update due to staging.
+	// When using staging buffers, only dirty parameters are written, but the entire staging buffer
+	// is copied to the uniform buffer. This would overwrite valid data with uninitialized garbage.
+	// Solution: If a buffer uses staging and has any dirty parameter, write ALL parameters in that buffer.
+	TInlineArray<bool, 8> bufferNeedsFullUpdate;
+	if constexpr(IsRenderProxy)
+	{
+		bufferNeedsFullUpdate.Resize((u32)mUniformBuffers.size(), false);
+
+			for(const auto& paramInfo : mDataParamInfos)
+		{
+			const UniformBufferInfo& uniformBufferInfo = mUniformBuffers[paramInfo.UniformBufferIndex];
+			if(uniformBufferInfo.Buffer == nullptr || !uniformBufferInfo.AllowUpdate)
+				continue;
+
+			// Check if buffer uses staging (non-mapped memory means staging is required)
+			if(uniformBufferInfo.Buffer->GetMappedMemory() != nullptr)
+				continue;
+
+			const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
+			const u32 arraySize = materialParamInfo->ArraySize == 0 ? 1 : materialParamInfo->ArraySize;
+
+			bool isAnimated = false;
+			for(u32 i = 0; i < arraySize; i++)
+			{
+				isAnimated = materialParameters->IsAnimated(*materialParamInfo, i);
+				if(isAnimated)
+					break;
+			}
+
+			// If this parameter is dirty, mark the buffer for full update
+			if(materialParamInfo->Version > mParamVersion || updateAll || isAnimated)
+				bufferNeedsFullUpdate[paramInfo.UniformBufferIndex] = true;
+		}
+	}
+
 	// Update data params
 	for(auto& paramInfo : mDataParamInfos)
 	{
-		const UniformBufferInfo& uniformBufferInfo = mUniformBuffers[paramInfo.BlockIdx];
+		const UniformBufferInfo& uniformBufferInfo = mUniformBuffers[paramInfo.UniformBufferIndex];
 		if(uniformBufferInfo.Buffer == nullptr || !uniformBufferInfo.AllowUpdate)
 			continue;
 
-		const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
+		const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
 		u32 arraySize = materialParamInfo->ArraySize == 0 ? 1 : materialParamInfo->ArraySize;
 
 		bool isAnimated = false;
@@ -971,11 +1007,16 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 				break;
 		}
 
-		if(materialParamInfo->Version <= mParamVersion && !updateAll && !isAnimated)
+		// Don't skip if buffer needs full update due to staging
+		bool forceUpdate = false;
+		if constexpr(IsRenderProxy)
+			forceUpdate = bufferNeedsFullUpdate[paramInfo.UniformBufferIndex];
+
+		if(!forceUpdate && materialParamInfo->Version <= mParamVersion && !updateAll && !isAnimated)
 			continue;
 
 		// Map new buffer when block changes
-		if(paramInfo.BlockIdx != curentBlockIndex)
+		if(paramInfo.UniformBufferIndex != curentBlockIndex)
 		{
 			fnFinalizePreviousBuffer();
 
@@ -998,7 +1039,7 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 
 			bufferMemory = mappedScope.GetMappedMemory();
 			currentUniformBufferInfo = &uniformBufferInfo;
-			curentBlockIndex = paramInfo.BlockIdx;
+			curentBlockIndex = paramInfo.UniformBufferIndex;
 		}
 
 		if(materialParamInfo->DataType != GPDT_STRUCT)
@@ -1213,7 +1254,7 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.SampledTextures[k];
 
-				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
@@ -1221,11 +1262,11 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 				TextureType texture;
 				materialParameters->GetTexture(*materialParamInfo, texture, surface);
 
-				if(paramInfo.SetIdx < gpuParametersForPass.Size())
+				if(paramInfo.SetIndex < gpuParametersForPass.Size())
 				{
-					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIdx];
+					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIndex];
 					if(gpuParameters)
-						gpuParameters->SetSampledTexture(paramInfo.SlotIdx, texture, surface, 0);
+						gpuParameters->SetSampledTexture(paramInfo.SlotIndex, texture, surface, 0);
 				}
 			}
 
@@ -1233,7 +1274,7 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.StorageTextures[k];
 
-				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
@@ -1241,11 +1282,11 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 				TextureType texture;
 				materialParameters->GetStorageTexture(*materialParamInfo, texture, surface);
 
-				if(paramInfo.SetIdx < gpuParametersForPass.Size())
+				if(paramInfo.SetIndex < gpuParametersForPass.Size())
 				{
-					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIdx];
+					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIndex];
 					if(gpuParameters)
-						gpuParameters->SetStorageTexture(paramInfo.SlotIdx, texture, surface, 0);
+						gpuParameters->SetStorageTexture(paramInfo.SlotIndex, texture, surface, 0);
 				}
 			}
 
@@ -1253,18 +1294,18 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.Buffers[k];
 
-				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				BufferType buffer;
 				materialParameters->GetBuffer(*materialParamInfo, buffer);
 
-				if(paramInfo.SetIdx < gpuParametersForPass.Size())
+				if(paramInfo.SetIndex < gpuParametersForPass.Size())
 				{
-					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIdx];
+					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIndex];
 					if(gpuParameters)
-						gpuParameters->SetStorageBuffer(paramInfo.SlotIdx, buffer, 0);
+						gpuParameters->SetStorageBuffer(paramInfo.SlotIndex, buffer, 0);
 				}
 			}
 
@@ -1272,18 +1313,18 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				const ObjectParamInfo& paramInfo = stageInfo.SamplerStates[k];
 
-				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParamIdx);
+				const MaterialParameters::ParamData* materialParamInfo = materialParameters->GetParamData(paramInfo.ParameterIndex);
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
 				SPtr<SamplerState> samplerState;
 				materialParameters->GetSamplerState(*materialParamInfo, samplerState);
 
-				if(paramInfo.SetIdx < gpuParametersForPass.Size())
+				if(paramInfo.SetIndex < gpuParametersForPass.Size())
 				{
-					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIdx];
+					SPtr<GpuParametersType>& gpuParameters = gpuParametersForPass[paramInfo.SetIndex];
 					if(gpuParameters)
-						gpuParameters->SetSamplerState(paramInfo.SlotIdx, samplerState, 0);
+						gpuParameters->SetSamplerState(paramInfo.SlotIndex, samplerState, 0);
 				}
 			}
 		}
