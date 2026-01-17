@@ -818,6 +818,8 @@ namespace b3d
 		public:
 			~Material() = default;
 
+			void Initialize() override;
+
 			/** @copydoc b3d::Material::SetShader */
 			void SetShader(const SPtr<Shader>& shader);
 

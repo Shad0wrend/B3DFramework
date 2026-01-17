@@ -1003,7 +1003,7 @@ namespace b3d { namespace render
 Material::Material(const SPtr<Shader>& shader, const ShaderVariationParameters& variation)
 {
 	mVariationParameters = variation;
-	SetShader(shader);
+	mShader = shader;
 }
 
 Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Variation>>& variations, const SPtr<MaterialParameters>& materialParameters, const ShaderVariationParameters& variation)
@@ -1012,6 +1012,13 @@ Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Variation>>& va
 	mParameters = materialParameters;
 	mVariations = variations;
 	mVariationParameters = variation;
+}
+
+void Material::Initialize()
+{
+	InitializeVariations();
+
+	RenderProxy::Initialize();
 }
 
 void Material::SetShader(const SPtr<Shader>& shader)
