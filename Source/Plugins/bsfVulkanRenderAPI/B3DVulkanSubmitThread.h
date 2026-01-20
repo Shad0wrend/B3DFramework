@@ -4,7 +4,8 @@
 
 #include "B3DVulkanGpuQueue.h"
 #include "B3DVulkanPrerequisites.h"
-#include "Threading/B3DSignal.h"
+#include "CoreObject/B3DRenderThread.h"
+#include "Threading/B3DSignalEvent.h"
 #include "Threading/B3DSingleConsumerQueue.h"
 #include "Utility/B3DModule.h"
 
@@ -17,6 +18,20 @@ namespace b3d::render
 	/** Runs a worker thread responsible for executing Vulkan queue submit and present commands. */
 	class VulkanSubmitThread : public Module<VulkanSubmitThread>
 	{
+		/** Groups per-frame completion tracking data together. */
+		struct FrameCompletionMarker
+		{
+			/** Last command buffer submitted for this frame. */
+			SPtr<VulkanGpuCommandBuffer> LastCommandBuffer;
+
+			/** Event signalled when this frame has been completely processed by the submit thread. */
+			SignalEvent CompletionEvent;
+
+			FrameCompletionMarker()
+				: CompletionEvent(SignalEvent::Mode::ManuallyReset, true)
+			{}
+		};
+
 	public:
 		VulkanSubmitThread(VulkanGpuDevice& gpuDevice);
 		~VulkanSubmitThread();
@@ -49,10 +64,10 @@ namespace b3d::render
 		void QueuePresent(VulkanGpuQueue& queue, VulkanSwapChain& swapChain, GpuQueueMask syncMask);
 
 		/**
-		 * Queues an operation that checks the completion status of any command buffers submitted on the provided device. This needs to be followed by
-		 * RefreshCommandBufferCompletionStates() in order for the change to register on the render thread.
+		 * Notifies the submit thread that last command buffer for this frame had been submitted, and waits until the previous frame's command buffers
+		 * finished executing, so it's resources may be re-used.
 		 */
-		void QueueRefreshCommandBufferCompletionStates(const VulkanGpuDevice* device);
+		void QueueEndFrameAndWaitForPreviousFrame();
 
 		/**
 		 * Blocks the calling thread until all commands have finished executing.
@@ -71,9 +86,20 @@ namespace b3d::render
 		u32 GetThreadId() const;
 
 	protected:
+		static constexpr u32 kFrameCount = 2;
+
 		VulkanGpuDevice& mGpuDevice;
 		SingleConsumerQueue mCommandQueue;
 		Array<SPtr<VulkanGpuCommandBufferPool>, GQT_COUNT> mCommandBufferPools;
+
+		/** Current frame index (0 to kFrameCount-1), tracked internally by submit thread. */
+		u32 mCurrentFrameIndex = 0;
+
+		/** Per-frame completion tracking (last command buffer and completion event). */
+		Array<FrameCompletionMarker, kFrameCount> mFrameMarkers;
+
+		/** Tracks the command buffer being built up as "last" during the current frame. */
+		SPtr<VulkanGpuCommandBuffer> mCurrentFrameLastCommandBuffer;
 	};
 
 	/** Retrieves an instance of VulkanSubmitThread. */

@@ -153,12 +153,13 @@ void VulkanGpuCommandBufferPool::Reset()
 
 	for(const auto& entry : mCommandBuffers)
 	{
+		const GpuCommandBufferState state = entry.second->GetState();
+
 		// Already reset and was not used since
-		if(entry.second->GetState() == GpuCommandBufferState::Ready)
+		if(state == GpuCommandBufferState::Ready)
 			continue;
 
-		// If RecordingDone then command buffer was not yet submitted
-		B3D_ASSERT(entry.second->GetState() == GpuCommandBufferState::Done || entry.second->GetState() == GpuCommandBufferState::RecordingDone);
+		B3D_ASSERT(state == GpuCommandBufferState::Done || state == GpuCommandBufferState::RecordingDone);
 		entry.second->NotifyParentPoolReset();
 	}
 
@@ -246,6 +247,9 @@ void VulkanGpuCommandBuffer::Begin()
 {
 	EnsureValidThread();
 	B3D_ASSERT(mState == GpuCommandBufferState::Ready);
+
+	const VkResult resetResult = vkResetFences(GetVulkanGpuDevice().GetLogical(), 1, &mFence);
+	B3D_ASSERT(resetResult == VK_SUCCESS);
 
 	VkCommandBufferBeginInfo beginInfo;
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1581,9 +1585,6 @@ void VulkanGpuCommandBuffer::Cleanup()
 
 	OnDidComplete.Clear();
 	OnDestroyed.Clear();
-
-	const VkResult result = vkResetFences(GetVulkanGpuDevice().GetLogical(), 1, &mFence);
-	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 void VulkanGpuCommandBuffer::Reset()

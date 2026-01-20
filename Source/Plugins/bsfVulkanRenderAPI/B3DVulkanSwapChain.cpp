@@ -159,8 +159,12 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 		}
 	}
 
+	// One extra semaphore because when acquiring an image the semaphore seems to be signaled after the acquire, so we get a Vulkan validation warning
+	// about using a semaphore that is being waited on
+	const u32 semaphoreCount = imageCount;// + 1;
+
 	mSemaphores.Resize(imageCount);
-	for(u32 imageIndex = 0; imageIndex < imageCount; imageIndex++)
+	for(u32 imageIndex = 0; imageIndex < semaphoreCount; imageIndex++)
 	{
 		mSemaphores[imageIndex] = owner->Create<VulkanSemaphore>();
 	}

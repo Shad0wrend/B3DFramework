@@ -235,9 +235,6 @@ void VulkanGpuQueue::ExecuteSubmitOnSubmitThread(const GpuCommandBufferSubmitInf
 
 	TInlineArray<VkSubmitInfo, 3> submitInfos;
 
-	if (submitInformation.QueryResetCommandBuffer != nullptr)
-		submitInfos.Add(RegisterSubmissionAndGenerateSubmitInfo(submitInformation.QueryResetCommandBuffer, {}));
-
 	if (submitInformation.DestinationQueueTransitionCommandBuffer != nullptr)
 	{
 		submitInfos.Add(RegisterSubmissionAndGenerateSubmitInfo(submitInformation.DestinationQueueTransitionCommandBuffer, mWaitSemaphoreBuffer));

@@ -6,6 +6,7 @@
 #include "B3DVulkanUtility.h"
 #include "B3DVulkanGpuBackend.h"
 #include "B3DVulkanSubmitThread.h"
+#include "CoreObject/B3DRenderThread.h"
 #include "Managers/B3DVulkanDescriptorManager.h"
 #include "Managers/B3DVulkanQueries.h"
 #include "RenderAPI/B3DGpuTransferBufferHelper.h"
@@ -598,7 +599,8 @@ void VulkanGpuDevice::EndFrame()
 	// Advance transfer buffer helper pools to next frame
 	mTransferBufferHelper->EndFrame();
 
-	GetVulkanSubmitThread().QueueRefreshCommandBufferCompletionStates(this);
+	// Signal end-of-frame to submit thread. This blocks until the previous frame's resources are safe to reuse.
+	GetVulkanSubmitThread().QueueEndFrameAndWaitForPreviousFrame();
 }
 
 void VulkanGpuDevice::SubmitTransferCommandBuffers(bool wait)
