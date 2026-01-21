@@ -84,7 +84,6 @@ namespace b3d
 		/** All the information required for submitting a VulkanGpuCommandBuffer */
 		struct GpuCommandBufferSubmitInformation
 		{
-			SPtr<VulkanGpuCommandBuffer> QueryResetCommandBuffer; /**< Helper command buffer on which to reset queries. Should be submitted first. */
 			SPtr<VulkanGpuCommandBuffer> SourceQueueTransitionCommandBuffer[GQT_COUNT]; /**< Contains resource transitions from their current queue to the destination queue, if there is a queue change. May be empty if there are no queue changes. To be executed on the source queue, rather than on the queue you are submitting on. */
 			SPtr<VulkanGpuCommandBuffer> DestinationQueueTransitionCommandBuffer; /**< Contains image layout transitions and transitions from source to the destination queue, if there are any. Should be submitted after the query reset command buffer. This submit should contain the provided semaphores if not empty. */
 			SPtr<VulkanGpuCommandBuffer> PrimaryCommandBuffer; /**< Primary command buffer we're submitting. This should be submitted after the destination queue transition command buffer. This submit should contain the semaphores if destination queue transition command buffer is not present. */

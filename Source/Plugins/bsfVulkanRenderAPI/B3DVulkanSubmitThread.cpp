@@ -66,21 +66,22 @@ VulkanSubmitThread::~VulkanSubmitThread()
 
 void VulkanSubmitThread::QueueSubmit(const SPtr<VulkanGpuCommandBuffer>& commandBuffer, VulkanGpuQueue& queue, GpuQueueMask syncMask, bool blocking)
 {
-	auto fnCommand = [commandBuffer, &queue, syncMask]() mutable
+	auto fnCommand = [this, commandBuffer, &queue, syncMask]() mutable
 	{
 		GpuCommandBufferSubmitInformation submitInformation = commandBuffer->PrepareForSubmitOnSubmitThread(queue.GetType(), queue.GetIndex());
 
 		syncMask |= commandBuffer->GetQueueSyncMask();
 		queue.ExecuteSubmitOnSubmitThread(submitInformation, syncMask);
+
+		// Track this as the last submitted command buffer for the current frame
+		mCurrentFrameLastCommandBuffer = commandBuffer;
 	};
 
 	commandBuffer->NotifyWillQueueForSubmit();
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Command buffer submit");
 
 	if (blocking)
-	{
 		WaitUntilIdle();
-	}
 }
 
 void VulkanSubmitThread::QueuePresent(VulkanGpuQueue& queue, VulkanSwapChain& swapChain, GpuQueueMask syncMask)
@@ -93,18 +94,8 @@ void VulkanSubmitThread::QueuePresent(VulkanGpuQueue& queue, VulkanSwapChain& sw
 		return;
 	}
 
-	auto fnCommand = [this, acquiredImageIndex, &queue, &swapChain, syncMask]
+	auto fnCommand = [acquiredImageIndex, &queue, &swapChain, syncMask]
 	{
-		VulkanGpuDevice& device = queue.GetDevice();
-
-		const VkResult result = kEnableSubmitThread ? RunBlockingCallAsYieldable(vkDeviceWaitIdle, device.GetLogical()) : vkDeviceWaitIdle(device.GetLogical());
-		B3D_ASSERT(result == VK_SUCCESS);
-
-		device.DoForEachQueue([](VulkanGpuQueue& queue)
-		{
-			queue.RefreshCompletionStateOnSubmitThread(true, false);
-		});
-
 		swapChain.Present(acquiredImageIndex, queue, syncMask);
 	};
 
@@ -127,17 +118,46 @@ void VulkanSubmitThread::QueueImageAcquire(VulkanSwapChain& swapChain)
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Acquire swap chain image");
 }
 
-void VulkanSubmitThread::QueueRefreshCommandBufferCompletionStates(const VulkanGpuDevice* device)
+void VulkanSubmitThread::QueueEndFrameAndWaitForPreviousFrame()
 {
-	if(device == nullptr)
-		return;
+	const u32 frameIndex = mCurrentFrameIndex;
+	const u32 nextFrameIndex = (frameIndex + 1) % kFrameCount;
 
-	auto fnCommand = [this, device]
+	mCurrentFrameIndex = nextFrameIndex;
+
+	// Mark this frame's end processing as pending (will be signalled when submit thread finishes)
+	mFrameMarkers[frameIndex].CompletionEvent.Reset();
+
+	auto fnCommand = [this, frameIndex, nextFrameIndex]
 	{
-		device->DoForEachQueue([](VulkanGpuQueue& queue) { queue.RefreshCompletionStateOnSubmitThread(false, false); });
+		mFrameMarkers[frameIndex].LastCommandBuffer = mCurrentFrameLastCommandBuffer;
+		mCurrentFrameLastCommandBuffer = nullptr;
+
+		// Wait for that frame's last command buffer to complete
+		const SPtr<VulkanGpuCommandBuffer>& commandBufferToWaitFor = mFrameMarkers[nextFrameIndex].LastCommandBuffer;
+		if (commandBufferToWaitFor != nullptr)
+		{
+			const bool completed = commandBufferToWaitFor->UpdateExecutionStatus(true);
+			B3D_ASSERT(completed && "Frame completion wait timed out!");
+		}
+
+		// Refresh completion states for finished command buffers
+		mGpuDevice.DoForEachQueue([](VulkanGpuQueue& queue)
+		{
+			queue.RefreshCompletionStateOnSubmitThread(false, false);
+		});
+
+		// TODO: This could be signalled earlier. In case the command buffer finishes earlier the submit thread could set the signal
+		// before this point. This would avoid the render thread blocking if the command buffer is already finished.
+		mFrameMarkers[nextFrameIndex].CompletionEvent.Signal();
 	};
 
-	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Queue command buffer refresh");
+	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "End frame");
+
+	// We're about to start rendering frame at 'nextFrameIndex', so we must make sure it has completed on the GPU, and we have sent the Reset() calls to their
+	// message queues, as we're about to re-use those command buffers.
+	mCurrentFrameIndex = nextFrameIndex;
+	mFrameMarkers[nextFrameIndex].CompletionEvent.Wait();
 }
 
 void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)

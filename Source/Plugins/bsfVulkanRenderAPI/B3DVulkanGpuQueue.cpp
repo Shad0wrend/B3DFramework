@@ -78,6 +78,7 @@ VkResult VulkanGpuQueue::Present(VulkanSwapChain* swapChain, u32 swapChainImageI
 	RegisterSemaphoresAndGetHandles(waitSemaphores, mWaitSemaphoreHandleBuffer);
 
 	VkSwapchainKHR vkSwapChain = swapChain->GetHandle();
+
 	VkPresentInfoKHR presentInfo;
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.pNext = nullptr;
@@ -234,9 +235,6 @@ void VulkanGpuQueue::ExecuteSubmitOnSubmitThread(const GpuCommandBufferSubmitInf
 	B3D_ENSURE(mCommandBufferHandleBuffer.Empty());
 
 	TInlineArray<VkSubmitInfo, 3> submitInfos;
-
-	if (submitInformation.QueryResetCommandBuffer != nullptr)
-		submitInfos.Add(RegisterSubmissionAndGenerateSubmitInfo(submitInformation.QueryResetCommandBuffer, {}));
 
 	if (submitInformation.DestinationQueueTransitionCommandBuffer != nullptr)
 	{
