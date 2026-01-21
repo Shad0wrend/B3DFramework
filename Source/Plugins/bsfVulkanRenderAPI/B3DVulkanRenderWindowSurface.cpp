@@ -148,18 +148,16 @@ VulkanFramebuffer* VulkanRenderWindowSurface::GetActiveFramebuffer(bool acquireI
 {
 	B3D_ASSERT(mSwapChain != nullptr);
 
+	// If there is a swap chain acquire already queued, wait for it
+	mSwapChain->WaitUntilFirstImageAcquired();
+
 	// Try to get already-acquired image
 	bool isImageAcquired = mSwapChain->TryGetFirstAcquiredImageIndex(mActiveImageIndex);
 
-	// It's possible this is a fresh swap chain we haven't acquired any images for yet
+	// It's possible this is a fresh swap chain and no acquires were queued for it yet
 	if(!isImageAcquired && acquireIfUnavailable)
 	{
-		const u32 maximumColorImageCount = mSwapChain->GetColorImageCount();
-		const u32 acquireableColorImageCount = maximumColorImageCount > 0 ? maximumColorImageCount - 1 : 0; // One is reserved for OS compositor
-
-		for(u32 imageIndex = 0; imageIndex < acquireableColorImageCount; imageIndex++)
-			GetVulkanSubmitThread().QueueImageAcquire(*mSwapChain);
-
+		GetVulkanSubmitThread().QueueImageAcquire(*mSwapChain);
 		mSwapChain->WaitUntilFirstImageAcquired();
 		isImageAcquired = mSwapChain->TryGetFirstAcquiredImageIndex(mActiveImageIndex);
 	}
