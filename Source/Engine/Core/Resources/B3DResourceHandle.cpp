@@ -12,12 +12,18 @@ using namespace b3d;
 
 void ResourceHandleData::DestroyManagedResource()
 {
+	if(!IsCreated)
+		return; // Already destroyed or never created
+
 	GetResources().Destroy(*this);
 }
 
 void ResourceHandleData::DestroySelf()
 {
-	GetResources().DestroyHandleData(*this);
+	// If Resources module is destroyed we're shutting down and no need to clear handle data
+	if(!Resources::IsDestroyed())
+		GetResources().DestroyHandleData(*this);
+
 	B3DDelete(this);
 }
 
