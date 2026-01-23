@@ -939,25 +939,32 @@ void VulkanTexture::CopyImageToImage(VulkanGpuCommandBuffer& commandBuffer, Vulk
 	B3DStackFree(imageRegions);
 }
 
+ImageSubresourcePitch VulkanTexture::GetStagingBufferPitchForSubresource(u32 face, u32 mipLevel) const
+{
+	u32 mipWidth, mipHeight, mipDepth;
+	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
+
+	u32 rowPitch, depthPitch;
+	PixelUtility::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.Format, rowPitch, depthPitch);
+
+	VkSubresourceLayout subresourceLayout;
+	subresourceLayout.rowPitch = rowPitch;
+	subresourceLayout.depthPitch = depthPitch;
+
+	return VulkanImage::ConvertSubresourceLayoutToBlocks(subresourceLayout, mProperties.Format);
+}
+
 ImageSubresourcePitch VulkanTexture::GetPitchForSubresource(u32 face, u32 mipLevel) const
 {
 	VkSubresourceLayout subresourceLayout;
 	if(mDirectlyMappable && mImage != nullptr)
-	{
 		subresourceLayout = mImage->GetSubresourceLayout(face, mipLevel);
-	}
 	else
 	{
-		u32 mipWidth, mipHeight, mipDepth;
-		PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
-
-		u32 rowPitch, depthPitch;
-		PixelUtility::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.Format, rowPitch, depthPitch);
-
-		subresourceLayout.rowPitch = rowPitch;
-		subresourceLayout.depthPitch = depthPitch;
+		subresourceLayout.rowPitch = 0;
+		subresourceLayout.depthPitch = 0;
 	}
-
+	
 	return VulkanImage::ConvertSubresourceLayoutToBlocks(subresourceLayout, mProperties.Format);
 }
 
@@ -974,7 +981,7 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanGpuCommandBuffer& command
 	VkExtent3D extent;
 	PixelUtility::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, sourceMipLevel, extent.width, extent.height, extent.depth);
 
-	const ImageSubresourcePitch pitch = GetPitchForSubresource(sourceFace, sourceMipLevel);
+	const ImageSubresourcePitch pitch = GetStagingBufferPitchForSubresource(sourceFace, sourceMipLevel);
 
 	VkImageSubresourceRange subresourceRange;
 	subresourceRange.baseArrayLayer = sourceFace;

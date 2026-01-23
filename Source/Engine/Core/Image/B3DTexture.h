@@ -533,15 +533,6 @@ namespace b3d
 			 */
 			virtual void Invalidate(u32 mipLevel, u32 arrayLayer) {}
 
-			/**
-			 * Returns pitch information for a particular image subresource.
-			 *
-			 * @param face		Face (array slice or cubemap face) of the subresource.
-			 * @param mipLevel	Mipmap level of the subresource.
-			 * @return			Row and slice pitch information for the subresource.
-			 */
-			virtual ImageSubresourcePitch GetPitchForSubresource(u32 face, u32 mipLevel) const = 0;
-
 			/** Recreates the underlying texture. Note this will clear all currently written data. Old texture will be released once its done being used. */
 			virtual void RecreateInternalTexture() = 0;
 

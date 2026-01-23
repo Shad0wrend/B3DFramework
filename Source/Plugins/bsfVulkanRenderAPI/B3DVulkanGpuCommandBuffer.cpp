@@ -946,7 +946,7 @@ void VulkanGpuCommandBuffer::CopyBufferToTexture(const SPtr<GpuBuffer>& source, 
 	VkExtent3D extent;
 	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, extent.width, extent.height, extent.depth);
 
-	const ImageSubresourcePitch pitch = vulkanDestination->GetPitchForSubresource(arrayLayer, mipLevel);
+	const ImageSubresourcePitch pitch = vulkanDestination->GetStagingBufferPitchForSubresource(arrayLayer, mipLevel);
 
 	VkImageSubresourceRange range;
 	range.aspectMask = destinationImage->GetAspectFlags();
@@ -983,7 +983,7 @@ void VulkanGpuCommandBuffer::CopyTextureToBuffer(const SPtr<Texture>& source, co
 	VkExtent3D extent;
 	PixelUtility::GetSizeForMipLevel(textureProperties.Width, textureProperties.Height, textureProperties.Depth, mipLevel, extent.width, extent.height, extent.depth);
 
-	const ImageSubresourcePitch pitch = vulkanSource->GetPitchForSubresource(arrayLayer, mipLevel);
+	const ImageSubresourcePitch pitch = vulkanSource->GetStagingBufferPitchForSubresource(arrayLayer, mipLevel);
 
 	VkImageSubresourceRange range;
 	if(textureProperties.Usage.IsSet(TextureUsageFlag::DepthStencil))

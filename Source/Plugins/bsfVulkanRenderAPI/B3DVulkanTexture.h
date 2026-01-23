@@ -295,7 +295,26 @@ namespace b3d
 			void Flush(u32 mipLevel, u32 arrayLayer) override;
 			void Invalidate(u32 mipLevel, u32 arrayLayer) override;
 			void RecreateInternalTexture() override;
-			ImageSubresourcePitch GetPitchForSubresource(u32 face, u32 mipLevel) const override;
+
+			/**
+			 * Returns pitch information for a particular image subresource. This information can be used for allocating a staging buffer,
+			 * and does not correspond to the actual image memory layout on the GPU.
+			 *
+			 * @param face		Face (array slice or cubemap face) of the subresource.
+			 * @param mipLevel	Mipmap level of the subresource.
+			 * @return			Row and slice pitch information for the subresource.
+			 */
+			ImageSubresourcePitch GetStagingBufferPitchForSubresource(u32 face, u32 mipLevel) const;
+
+			/**
+			 * Returns pitch information for a particular image subresource. Unlike GetStagingBufferPitchForSubresource this information corresponds to the actual
+			 * image memory layout on the GPU. Only relevant for textures created with linear tiling.
+			 *
+			 * @param face		Face (array slice or cubemap face) of the subresource.
+			 * @param mipLevel	Mipmap level of the subresource.
+			 * @return			Row and slice pitch information for the subresource.
+			 */
+			ImageSubresourcePitch GetPitchForSubresource(u32 face, u32 mipLevel) const;
 
 		protected:
 			friend class VulkanGpuDevice;
