@@ -253,7 +253,10 @@ void RendererView::BeginFrame(const FrameInfo& frameInfo)
 		perViewBufferDirty = true;
 	}
 
-	if(perViewBufferDirty)
+	// Note: We're updating the buffer every frame because certain properties depend on previous view/projection data. Ideally we store those in a separate buffer
+	// we can update
+	(void)(perViewBufferDirty);
+	//if(perViewBufferDirty)
 		UpdatePerViewBuffer();
 
 	mFrameTimings = frameInfo.Timings;
