@@ -175,13 +175,22 @@ void SnapshotTestRunner::RequestScreenCapture()
 	if(!mainScene)
 	{
 		mResult.Errors.push_back("No main scene available for screenshot capture");
+		mScreenCaptureOp.CompleteOperation(nullptr);
 		return;
 	}
 
 	HCamera mainCamera = mainScene->GetMainCamera();
 	if(!mainCamera.IsValid())
 	{
+		const UnorderedMap<UUID, HCamera> cameras = mainScene->GetAllCameras();
+		if(!cameras.empty())
+			mainCamera = cameras.begin()->second;
+	}
+
+	if(!mainCamera.IsValid())
+	{
 		mResult.Errors.push_back("No main camera available for screenshot capture");
+		mScreenCaptureOp.CompleteOperation(nullptr);
 		return;
 	}
 
@@ -199,6 +208,9 @@ bool SnapshotTestRunner::SaveScreenshot(const SPtr<PixelData>& pixelData)
 	screenshotPath.Append(filename);
 
 	mResult.ScreenshotPath = screenshotPath;
+
+	if(!FileSystem::Exists(mConfiguration.OutputPath))
+		FileSystem::CreateFolder(mConfiguration.OutputPath);
 
 	bool success = PixelUtility::SaveImage(pixelData, screenshotPath, ImageFormat::PNG);
 	if(!success)
