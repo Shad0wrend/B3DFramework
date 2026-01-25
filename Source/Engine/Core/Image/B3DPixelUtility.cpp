@@ -3379,16 +3379,16 @@ bool PixelUtility::SaveImage(const SPtr<PixelData>& pixelData, const Path& outpu
 	switch (format)
 	{
 	case ImageFormat::PNG:
-		finalPath.SetExtension("png");
+		finalPath.SetExtension(".png");
 		break;
 	case ImageFormat::JPG:
-		finalPath.SetExtension("jpg");
+		finalPath.SetExtension(".jpg");
 		break;
 	case ImageFormat::BMP:
-		finalPath.SetExtension("bmp");
+		finalPath.SetExtension(".bmp");
 		break;
 	case ImageFormat::TGA:
-		finalPath.SetExtension("tga");
+		finalPath.SetExtension(".tga");
 		break;
 	}
 
