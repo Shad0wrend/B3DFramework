@@ -139,8 +139,10 @@ namespace b3d
 
 			auto fnContinuation = [data = mData, callback = std::move(callback)]() mutable
 			{
-				Lock lock(data->Mutex);
-				data->Signal.Wait(lock, [data = data.get()]() { return data->IsCompleted; });
+				{
+					Lock lock(data->Mutex);
+					data->Signal.Wait(lock, [data = data.get()]() { return data->IsCompleted; });
+				}
 
 				callback();
 
