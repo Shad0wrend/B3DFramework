@@ -39,6 +39,7 @@ PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice&
 	if(!fnIsFormatSupported(vkFormat))
 	{
 		const PixelFormat originalFormat = format;
+		bool safeFallback = false; // Set to true to avoid any log messages about fallback format
 
 		if(usage.IsSet(TextureUsageFlag::DepthStencil))
 		{
@@ -48,7 +49,12 @@ PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice&
 			if(hasStencil)
 			{
 				if(fnIsFormatSupported(VK_FORMAT_D32_SFLOAT_S8_UINT))
+				{
+					if(format == PF_D24S8)
+						safeFallback = true;
+
 					format = PF_D32_S8X24;
+				}
 				else
 					format = PF_D24S8;
 
@@ -83,7 +89,8 @@ PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice&
 				format = PF_RGBA8;
 		}
 
-		B3D_LOG(Error, LogGeneric, "Provided an unsupported Vulkan image format with ID={0}. Falling back to format with ID={1}", originalFormat, format);
+		if(!safeFallback)
+			B3D_LOG(Error, LogGeneric, "Provided an unsupported Vulkan image format with ID={0}. Falling back to format with ID={1}", originalFormat, format);
 	}
 
 	return format;
