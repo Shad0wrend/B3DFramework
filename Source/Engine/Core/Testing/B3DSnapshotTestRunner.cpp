@@ -66,7 +66,7 @@ SnapshotTestRunner::SnapshotTestRunner(const SnapshotTestConfiguration& configur
 {
 	mStartTimeUs = GetTime().GetTimePrecise();
 	mStartFrame = GetTime().GetCurrentFrameIndex();
-	mExitAfterNFrames = (u64)CommandLine::GetParameterValueAsInt("ExitAfterNFrames", 0);
+	mExitAfterNFrames = (u64)CommandLine::GetParameterValueAsInt("exit-after-n-frames", 0);
 	mResult.TestName = configuration.GetEffectiveTestName();
 
 	// Set up log callback to capture logs

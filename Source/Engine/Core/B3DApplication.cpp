@@ -216,11 +216,11 @@ void Application::OnStartUp()
 	Time::StartUp();
 
 	// Parse command-line parameters for fixed timestep and exit after N frames
-	const i32 fixedTimestepFPS = CommandLine::GetParameterValueAsInt("FixedTimestep", 0);
+	const i32 fixedTimestepFPS = CommandLine::GetParameterValueAsInt("fixed-timestep", 0);
 	if(fixedTimestepFPS > 0)
 		GetTime().SetFixedDeltaTime(1.0f / (float)fixedTimestepFPS);
 
-	mExitAfterNFrames = (u32)CommandLine::GetParameterValueAsInt("ExitAfterNFrames", 0);
+	mExitAfterNFrames = (u32)CommandLine::GetParameterValueAsInt("exit-after-n-frames", 0);
 
 #if B3D_ENABLE_TESTS
 	const SnapshotTestConfiguration snapshotTestConfiguration = SnapshotTestConfiguration::ParseFromCommandLine();
