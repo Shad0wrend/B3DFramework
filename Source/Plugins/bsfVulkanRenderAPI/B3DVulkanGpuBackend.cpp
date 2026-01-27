@@ -14,6 +14,7 @@
 #include "B3DVulkanSubmitThread.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "Utility/B3DCommandLine.h"
+#include "Utility/B3DConfigVariable.h"
 #include "Win32/B3DRenderDocFrameCapture.h"
 
 #if B3D_PLATFORM_WIN32
@@ -63,6 +64,9 @@ static const bool kEnableVulkanValidationLayers = B3D_DEBUG;
 
 /** Enabled Vulkan debug labels for objects. */
 static const bool kEnableVulkanDebugLabels = B3D_DEBUG;
+
+static TConfigVariable gPreferIntegratedGPU("gpu.PreferIntegrated", "Prefer using integrated GPU over discrete GPU when both are available.", false, ConfigVariableFlag::ReadOnly);
+static TConfigVariable gPreferredGPUIndex("gpu.PreferredDeviceIndex", "Specifies the index of the GPU to use. Use < 0 is provided, best GPU is selected automatically.", -1, ConfigVariableFlag::ReadOnly);
 
 } // namespace b3d
 
@@ -361,19 +365,17 @@ void VulkanGpuBackend::OnStartUp()
 	// Find primary device
 	uint32_t primaryDeviceIndex = ~0u;
 
-	const i32 preferredGpuIndex = CommandLine::GetParameterValueAsInt("preferred-gpu", -1);
-	if(preferredGpuIndex >= 0 && preferredGpuIndex < (i32)physicalDeviceCount)
-		primaryDeviceIndex = (u32)preferredGpuIndex;
+	if(gPreferredGPUIndex >= 0 && gPreferredGPUIndex < (i32)physicalDeviceCount)
+		primaryDeviceIndex = (u32)gPreferredGPUIndex;
 
 	if(primaryDeviceIndex == ~0u)
 	{
-		const bool preferIntegratedGpu = CommandLine::HasParameter("integrated-gpu");
 		for(uint32_t deviceIndex = 0; deviceIndex < physicalDeviceCount; deviceIndex++)
 		{
 			VkPhysicalDeviceProperties deviceProperties;
 			vkGetPhysicalDeviceProperties(physicalDevices[deviceIndex], &deviceProperties);
 
-			const bool isPrimary = preferIntegratedGpu ? deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU : deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+			const bool isPrimary = gPreferIntegratedGPU ? deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU : deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 
 			if(isPrimary)
 			{

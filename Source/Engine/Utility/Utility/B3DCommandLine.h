@@ -102,6 +102,14 @@ namespace b3d
 		 */
 		static bool GetParameterValueAsBool(const String& name, bool defaultValue = false);
 
+		/**
+		 * Get all command-line parameters as a map.
+		 * Keys are normalized to lowercase.
+		 *
+		 * @return	Const reference to the parameters map.
+		 */
+		static const UnorderedMap<String, String>& GetAllParameters() { return sParameters; }
+
 	private:
 		/** Parse the command-line with proper quote and escape character handling. Populates sArguments and sParameters. */
 		static void Parse(const TArray<String>& tokens);

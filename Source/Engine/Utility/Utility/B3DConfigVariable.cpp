@@ -90,12 +90,14 @@ namespace b3d
 	ConfigVariable::ConfigVariable(const char* name, const char* description, ConfigVariableFlags flags)
 		: mName(name), mDescription(description), mFlags(flags)
 	{
-		ConfigVariableRegistry::Register(this);
+		// Note: Registration is done in TConfigVariable constructor, not here.
+		// This avoids calling virtual methods (SetFromString) before the derived vtable is set up.
 	}
 
 	ConfigVariable::~ConfigVariable()
 	{
-		ConfigVariableRegistry::Unregister(this);
+		// Note: Unregistration is done in TConfigVariable destructor, not here.
+		// This ensures the derived vtable is still valid if any virtual calls are needed.
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -142,6 +144,72 @@ namespace b3d
 		return true;
 	}
 
+	template<typename T>
+	TConfigVariable<T>::TConfigVariable(const char* name, const char* description, T defaultValue, ConfigVariableFlags flags)
+		: ConfigVariable(name, description, flags), mValue(defaultValue), mDefaultValue(defaultValue), mPendingValue(defaultValue), mHasPendingUpdate(false)
+	{
+		// Register here (not in base class) so vtable is set up before any virtual calls
+		ConfigVariableRegistry::Register(this);
+	}
+
+	template<typename T>
+	TConfigVariable<T>::~TConfigVariable()
+	{
+		// Unregister here (not in base class) so vtable is still valid
+		ConfigVariableRegistry::Unregister(this);
+	}
+
+	template<typename T>
+	bool TConfigVariable<T>::Set(T value)
+	{
+		if (mInitialized && IsReadOnly())
+			return false;
+
+		if (IsRenderThreadSafe())
+		{
+			mPendingValue.store(value, std::memory_order_relaxed);
+			mHasPendingUpdate.store(true, std::memory_order_release);
+		}
+		else
+			mValue.store(value, std::memory_order_relaxed);
+
+		if (mInitialized)
+			mSource.store(ConfigVariableSource::Runtime, std::memory_order_relaxed);
+
+		return true;
+	}
+
+	template<typename T>
+	String TConfigVariable<T>::GetValueAsString() const
+	{
+		return ToString(mValue.load(std::memory_order_relaxed));
+	}
+
+	template<typename T>
+	String TConfigVariable<T>::GetDefaultValueAsString() const
+	{
+		return ToString(mDefaultValue);
+	}
+
+	template<typename T>
+	void TConfigVariable<T>::ApplyPendingUpdate()
+	{
+		if (mHasPendingUpdate.exchange(false, std::memory_order_acq_rel))
+			mValue.store(mPendingValue.load(std::memory_order_relaxed), std::memory_order_relaxed);
+	}
+
+	template<typename T>
+	void TConfigVariable<T>::SetValueWithoutChecks(T value, ConfigVariableSource source)
+	{
+		// Only set if source priority is higher or equal
+		if (static_cast<u8>(source) >= static_cast<u8>(mSource.load(std::memory_order_relaxed)))
+		{
+			mValue.store(value, std::memory_order_relaxed);
+			mPendingValue.store(value, std::memory_order_relaxed);
+			mSource.store(source, std::memory_order_relaxed);
+		}
+	}
+
 	// Explicit template instantiations
 	template class B3D_EXPORT TConfigVariable<bool>;
 	template class B3D_EXPORT TConfigVariable<i32>;
@@ -151,6 +219,41 @@ namespace b3d
 	//////////////////////////////////////////////////////////////////////////
 	// ConfigVariableManager
 	//////////////////////////////////////////////////////////////////////////
+
+	String ConfigVariableManager::NormalizeName(StringView name)
+	{
+		String normalized(name);
+		StringUtility::ToLowerCase(normalized);
+		return normalized;
+	}
+
+	void ConfigVariableManager::StorePendingValue(StringView name, StringView value, ConfigVariableSource source)
+	{
+		String normalizedName = NormalizeName(name);
+
+		auto iter = mPendingValues.find(normalizedName);
+		if (iter != mPendingValues.end())
+		{
+			// Only overwrite if new source has higher or equal priority
+			if (static_cast<u8>(source) >= static_cast<u8>(iter->second.source))
+			{
+				iter->second.value = String(value);
+				iter->second.source = source;
+			}
+		}
+		else
+			mPendingValues[normalizedName] = PendingConfigValue{String(value), source};
+	}
+
+	void ConfigVariableManager::ApplyPendingValueIfExists(ConfigVariable* variable, const String& normalizedName)
+	{
+		auto iter = mPendingValues.find(normalizedName);
+		if (iter != mPendingValues.end())
+		{
+			variable->SetFromString(iter->second.value, iter->second.source);
+			mPendingValues.erase(iter);
+		}
+	}
 
 	void ConfigVariableManager::OnStartUp()
 	{
@@ -170,17 +273,20 @@ namespace b3d
 
 	void ConfigVariableManager::RegisterVariable(ConfigVariable* variable)
 	{
-		std::lock_guard<std::mutex> lock(mMutex);
+		Lock lock(mMutex);
 
-		const String name(variable->GetName());
-		auto iter = mVariables.find(name);
+		const String normalizedName = NormalizeName(variable->GetName());
+		auto iter = mVariables.find(normalizedName);
 		if (iter != mVariables.end())
 		{
-			B3D_LOG(Warning, LogConfigVariable, "Duplicate config variable registration: {0}", name);
+			B3D_LOG(Warning, LogConfigVariable, "Duplicate config variable registration: {0}", variable->GetName());
 			return;
 		}
 
-		mVariables[name] = variable;
+		mVariables[normalizedName] = variable;
+
+		// Apply any pending value from INI/command line (for late-registered variables)
+		ApplyPendingValueIfExists(variable, normalizedName);
 
 		if (variable->IsRenderThreadSafe())
 			mRenderThreadSafeVariables.push_back(variable);
@@ -188,10 +294,10 @@ namespace b3d
 
 	void ConfigVariableManager::UnregisterVariable(ConfigVariable* variable)
 	{
-		std::lock_guard<std::mutex> lock(mMutex);
+		Lock lock(mMutex);
 
-		const String name(variable->GetName());
-		mVariables.erase(name);
+		const String normalizedName = NormalizeName(variable->GetName());
+		mVariables.erase(normalizedName);
 
 		if (variable->IsRenderThreadSafe())
 		{
@@ -281,30 +387,37 @@ namespace b3d
 			return;
 		}
 
-		// Create String for map lookup (required for current map implementation)
-		ConfigVariable* variable = FindVariable(String(key));
-		if (variable == nullptr)
-		{
-			B3D_LOG(Warning, LogConfigVariable, "Unknown config variable '{0}' at line {1} in {2}", key, lineNumber, filePath);
-			return;
-		}
+		Lock lock(mMutex);
 
-		variable->SetFromString(String(value), ConfigVariableSource::ConfigFile);
+		String normalizedKey = NormalizeName(key);
+		auto iter = mVariables.find(normalizedKey);
+		if (iter != mVariables.end())
+			iter->second->SetFromString(String(value), ConfigVariableSource::ConfigFile);
+		else
+		{
+			// Store for late-registered variables (e.g., from dynamically loaded libraries)
+			StorePendingValue(key, value, ConfigVariableSource::ConfigFile);
+		}
 	}
 
 	void ConfigVariableManager::ApplyCommandLineOverrides()
 	{
 		Lock lock(mMutex);
 
-		for (auto& pair : mVariables)
+		// Iterate over all command-line parameters and apply or store them
+		const auto& parameters = CommandLine::GetAllParameters();
+		for (const auto& pair : parameters)
 		{
-			const String& name = pair.first;
-			ConfigVariable* variable = pair.second;
+			const String& name = pair.first;  // Already normalized (lowercase) by CommandLine
+			const String& value = pair.second;
 
-			if (CommandLine::HasParameter(name))
+			auto iter = mVariables.find(name);
+			if (iter != mVariables.end())
+				iter->second->SetFromString(value, ConfigVariableSource::CommandLine);
+			else
 			{
-				String value = CommandLine::GetParameterValue(name);
-				variable->SetFromString(value, ConfigVariableSource::CommandLine);
+				// Store for late-registered variables
+				StorePendingValue(name, value, ConfigVariableSource::CommandLine);
 			}
 		}
 	}
@@ -319,9 +432,14 @@ namespace b3d
 
 	void ConfigVariableManager::ApplyPendingUpdates()
 	{
-		// No lock needed - mRenderThreadSafeVariables is only modified during registration
-		// which happens before the main loop starts
-		for (ConfigVariable* variable : mRenderThreadSafeVariables)
+		// Copy the vector under lock to handle late registration from dynamic libraries
+		Vector<ConfigVariable*> variablesToUpdate;
+		{
+			Lock lock(mMutex);
+			variablesToUpdate = mRenderThreadSafeVariables;
+		}
+
+		for (ConfigVariable* variable : variablesToUpdate)
 			variable->ApplyPendingUpdate();
 	}
 
@@ -329,34 +447,47 @@ namespace b3d
 	{
 		Lock lock(mMutex);
 
-		// Collect and sort variable names
-		Vector<String> names;
-		names.reserve(mVariables.size());
+		// Collect variables and sort by normalized name
+		Vector<ConfigVariable*> variables;
+		variables.reserve(mVariables.size());
 		for (const auto& pair : mVariables)
-			names.push_back(pair.first);
+			variables.push_back(pair.second);
 
-		std::sort(names.begin(), names.end());
+		std::sort(variables.begin(), variables.end(), [](ConfigVariable* a, ConfigVariable* b)
+		{
+			String nameA(a->GetName());
+			String nameB(b->GetName());
+			return StringUtility::LexicographicalCompare(nameA, nameB, false) < 0;
+		});
 
 		std::cout << "\nConfiguration Variables:\n";
 		std::cout << "========================\n\n";
 
 		String currentPrefix;
-		for (const String& name : names)
+		for (ConfigVariable* variable : variables)
 		{
-			ConfigVariable* variable = mVariables.at(name);
+			const char* originalName = variable->GetName();
 
 			// Group by prefix (everything before first '.')
-			size_t dotPos = name.find('.');
-			String prefix = (dotPos != String::npos) ? name.substr(0, dotPos) : "";
-			if (prefix != currentPrefix)
+			StringView nameView(originalName);
+			size_t dotPos = nameView.find('.');
+			String prefix = (dotPos != StringView::npos) ? String(nameView.substr(0, dotPos)) : "";
+
+			// Normalize prefix for grouping comparison
+			String normalizedPrefix = prefix;
+			StringUtility::ToLowerCase(normalizedPrefix);
+			String normalizedCurrentPrefix = currentPrefix;
+			StringUtility::ToLowerCase(normalizedCurrentPrefix);
+
+			if (normalizedPrefix != normalizedCurrentPrefix)
 			{
 				if (!currentPrefix.empty())
 					std::cout << "\n";
 				currentPrefix = prefix;
 			}
 
-			// Print variable info
-			std::cout << "  " << name << " (" << variable->GetTypeName() << ")\n";
+			// Print variable info with original case
+			std::cout << "  " << originalName << " (" << variable->GetTypeName() << ")\n";
 			std::cout << "      " << variable->GetDescription() << "\n";
 			std::cout << "      Default: " << variable->GetDefaultValueAsString().c_str();
 
@@ -378,7 +509,8 @@ namespace b3d
 	{
 		Lock lock(mMutex);
 
-		auto found = mVariables.find(name);
+		String normalizedName = NormalizeName(name);
+		auto found = mVariables.find(normalizedName);
 		if (found != mVariables.end())
 			return found->second;
 

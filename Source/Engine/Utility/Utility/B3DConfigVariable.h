@@ -67,7 +67,7 @@ namespace b3d
 		const char* GetDescription() const { return mDescription; }
 
 		/** Returns the source from which the current value was set. */
-		ConfigVariableSource GetSource() const { return mSource; }
+		ConfigVariableSource GetSource() const { return mSource.load(std::memory_order_relaxed); }
 
 		/** Returns the flags controlling this variable's behavior. */
 		ConfigVariableFlags GetFlags() const { return mFlags; }
@@ -108,7 +108,7 @@ namespace b3d
 		const char* mName;
 		const char* mDescription;
 		ConfigVariableFlags mFlags;
-		ConfigVariableSource mSource = ConfigVariableSource::Default;
+		std::atomic<ConfigVariableSource> mSource{ConfigVariableSource::Default};
 		bool mInitialized = false;
 	};
 
@@ -179,68 +179,9 @@ namespace b3d
 		T mDefaultValue;
 
 		// Deferred update storage for RenderThreadSafe variables
-		T mPendingValue{};
+		std::atomic<T> mPendingValue{};
 		std::atomic<bool> mHasPendingUpdate{false};
 	};
-
-	template<typename T>
-	TConfigVariable<T>::TConfigVariable(const char* name, const char* description, T defaultValue, ConfigVariableFlags flags)
-		: ConfigVariable(name, description, flags), mValue(defaultValue), mDefaultValue(defaultValue), mPendingValue(defaultValue)
-	{ }
-
-	template<typename T>
-	TConfigVariable<T>::~TConfigVariable() = default;
-
-	template<typename T>
-	bool TConfigVariable<T>::Set(T value)
-	{
-		if (mInitialized && IsReadOnly())
-			return false;
-
-		if (IsRenderThreadSafe())
-		{
-			mPendingValue = value;
-			mHasPendingUpdate.store(true, std::memory_order_release);
-		}
-		else
-			mValue.store(value, std::memory_order_relaxed);
-
-		if (mInitialized)
-			mSource = ConfigVariableSource::Runtime;
-
-		return true;
-	}
-
-	template<typename T>
-	String TConfigVariable<T>::GetValueAsString() const
-	{
-		return ToString(mValue.load(std::memory_order_relaxed));
-	}
-
-	template<typename T>
-	String TConfigVariable<T>::GetDefaultValueAsString() const
-	{
-		return ToString(mDefaultValue);
-	}
-
-	template<typename T>
-	void TConfigVariable<T>::ApplyPendingUpdate()
-	{
-		if (mHasPendingUpdate.exchange(false, std::memory_order_acq_rel))
-			mValue.store(mPendingValue, std::memory_order_relaxed);
-	}
-
-	template<typename T>
-	void TConfigVariable<T>::SetValueWithoutChecks(T value, ConfigVariableSource source)
-	{
-		// Only set if source priority is higher or equal
-		if (static_cast<u8>(source) >= static_cast<u8>(mSource))
-		{
-			mValue.store(value, std::memory_order_relaxed);
-			mPendingValue = value;
-			mSource = source;
-		}
-	}
 
 	// Explicit instantiation declarations
 	extern template class TConfigVariable<bool>;
@@ -328,7 +269,26 @@ namespace b3d
 		 */
 		void ParseIniLine(StringView line, u32 lineNumber, const Path& filePath);
 
-		UnorderedMap<String, ConfigVariable*> mVariables;
+		/**
+		 * Normalizes a variable name for case-insensitive lookup.
+		 * Converts the name to lowercase.
+		 */
+		static String NormalizeName(StringView name);
+
+		/**
+		 * Stores a pending value for a variable that hasn't been registered yet.
+		 * If a value already exists, it's only overwritten if the new source has higher priority.
+		 */
+		void StorePendingValue(StringView name, StringView value, ConfigVariableSource source);
+
+		/**
+		 * Applies any pending value for the given variable, if one exists.
+		 * Removes the pending value after applying.
+		 */
+		void ApplyPendingValueIfExists(ConfigVariable* variable, const String& normalizedName);
+
+		UnorderedMap<String, ConfigVariable*> mVariables;  // Keys are normalized (lowercase)
+		UnorderedMap<String, PendingConfigValue> mPendingValues;  // For late-registered variables
 		Vector<ConfigVariable*> mRenderThreadSafeVariables;  // Cached for fast sync
 		mutable std::mutex mMutex;
 	};

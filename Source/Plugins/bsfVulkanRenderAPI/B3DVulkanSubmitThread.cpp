@@ -8,10 +8,12 @@
 #include "B3DVulkanSwapChain.h"
 #include "Threading/B3DBlockingCall.h"
 #include "Threading/B3DScheduler.h"
+#include "Utility/B3DConfigVariable.h"
 
 using namespace b3d;
 using namespace b3d::render;
 
+/** Toggle submit thread usage. If disabled all commands are executed on the calling thread - for debugging only. */
 static constexpr bool kEnableSubmitThread = true;
 
 static void RunSubmitThreadCommand(SingleConsumerQueue& commandQueue, std::function<void()>&& function, const char* commandName, bool waitUntilComplete = false)
