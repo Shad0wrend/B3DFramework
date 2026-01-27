@@ -417,11 +417,17 @@ namespace b3d
 		/** @copydoc StringUtility::Trim(String&, bool, bool) */
 		static WString Trim(const WString& str, bool left = true, bool right = true);
 
+		/** Removes any whitespace characters from beginning or end of the string view. */
+		static StringView Trim(StringView str, bool left = true, bool right = true);
+
 		/**	Removes specified characters from beginning or end of the string. */
 		static String Trim(const String& str, const String& delims, bool left = true, bool right = true);
 
 		/** @copydoc StringUtility::Trim(String&, const String&, bool, bool) */
 		static WString Trim(const WString& str, const WString& delims, bool left = true, bool right = true);
+
+		/** Removes specified characters from beginning or end of the string view. */
+		static StringView Trim(StringView str, StringView delims, bool left = true, bool right = true);
 
 		/**
 		 * Returns a vector of strings containing all the substrings delimited by the provided delimiter characters.

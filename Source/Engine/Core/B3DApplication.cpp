@@ -59,6 +59,7 @@
 #include "Text/B3DFont.h"
 #include "Threading/B3DScheduler.h"
 #include "Utility/B3DCommandLine.h"
+#include "Utility/B3DConfigVariable.h"
 #include "Utility/B3DDynamicLibrary.h"
 #include "Utility/B3DPersistentCache.h"
 
@@ -184,6 +185,7 @@ Application::~Application()
 	MemStack::EndThread();
 	Platform::ShutDownInternal();
 
+	ConfigVariableManager::ShutDown();
 	CrashHandler::ShutDown();
 }
 
@@ -214,6 +216,16 @@ void Application::OnStartUp()
 	StringTableManager::StartUp();
 	DeferredCallManager::StartUp();
 	Time::StartUp();
+
+	// Initialize configuration variable system
+	ConfigVariableManager::StartUp();
+
+	// Handle --help-config
+	if (CommandLine::HasParameter("list-config-variables"))
+	{
+		ConfigVariableManager::Instance().PrintHelp();
+		StopMainLoop();
+	}
 
 	// Parse command-line parameters for fixed timestep and exit after N frames
 	const i32 fixedTimestepFPS = CommandLine::GetParameterValueAsInt("fixed-timestep", 0);
@@ -471,6 +483,9 @@ void Application::RunMainLoopFrame()
 	// thread, in which case main thread needs to wait. Optimal solution would be to get an average
 	// difference between main/render thread and start the main thread a bit later so they finish at nearly the same time.
 	WaitUntilFrameFinished();
+
+	// Apply deferred config variable updates at frame boundary (render thread is idle)
+	ConfigVariableManager::Instance().ApplyPendingUpdates();
 
 	GetRenderThread().PostCommand([this] { BeginRenderThreadProfiling(); }, "BeginRenderThreadProfiling");
 

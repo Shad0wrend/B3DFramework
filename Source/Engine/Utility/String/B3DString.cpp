@@ -56,6 +56,38 @@ WString StringUtility::Trim(const WString& str, const WString& delims, bool left
 	return output;
 }
 
+StringView StringUtility::Trim(StringView str, bool left, bool right)
+{
+	static constexpr StringView kDelims = " \t\r";
+	return Trim(str, kDelims, left, right);
+}
+
+StringView StringUtility::Trim(StringView str, StringView delims, bool left, bool right)
+{
+	if (str.empty())
+		return str;
+
+	size_t start = 0;
+	size_t end = str.size();
+
+	if (left)
+	{
+		start = str.find_first_not_of(delims);
+		if (start == StringView::npos)
+			return StringView();
+	}
+
+	if (right)
+	{
+		end = str.find_last_not_of(delims);
+		if (end == StringView::npos)
+			return StringView();
+		end++;
+	}
+
+	return str.substr(start, end - start);
+}
+
 Vector<String> StringUtility::Split(const String& str, const String& delims, unsigned int maxSplits)
 {
 	return SplitInternal<char>(str, delims, maxSplits);
