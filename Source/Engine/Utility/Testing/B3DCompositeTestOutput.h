@@ -15,7 +15,7 @@ namespace b3d
 	 * Broadcasts test events to multiple TestOutput instances. Can be used to output test results both to console
 	 * and log it in a file for example.
 	 */
-	class CompositeTestOutput : public TestOutput
+	class B3D_EXPORT CompositeTestOutput : public TestOutput
 	{
 	public:
 		/** Adds an output to receive test events. Output must remain valid for the lifetime of this object. */

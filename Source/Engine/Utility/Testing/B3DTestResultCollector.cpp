@@ -24,7 +24,6 @@ namespace b3d
 	{
 		mCurrentTest = TestResult();
 		mCurrentTest.Name = testName;
-		mCurrentTestName = testName;
 	}
 
 	void TestResultCollector::DoOnTestEnd(const String& testName, bool passed, u64 durationUs)
@@ -38,7 +37,7 @@ namespace b3d
 	void TestResultCollector::DoOnOutputFail(const String& description, const String& function, const String& file, long line)
 	{
 		TestFailureInfo failure;
-		failure.TestName = mCurrentTestName;
+		failure.TestName = mCurrentTest.Name;
 		failure.Description = description;
 		failure.File = file;
 		failure.Line = line;

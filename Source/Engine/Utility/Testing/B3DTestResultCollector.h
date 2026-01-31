@@ -47,6 +47,8 @@ namespace b3d
 	class B3D_EXPORT TestResultCollector : public TestOutput
 	{
 	public:
+		~TestResultCollector() override = default;
+
 		void DoOnSuiteStart(const String& suiteName) override;
 		void DoOnSuiteEnd(const String& suiteName, u32 totalTestCount, u32 passedTestCount,
 			u32 failedTestCount, u64 durationUs) override;
@@ -69,7 +71,6 @@ namespace b3d
 		Vector<TestSuiteResult> mResults;
 		TestSuiteResult mCurrentSuite;
 		TestResult mCurrentTest;
-		String mCurrentTestName;
 		bool mHadFailures = false;
 	};
 

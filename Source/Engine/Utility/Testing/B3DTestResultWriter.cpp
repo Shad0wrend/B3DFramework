@@ -258,13 +258,17 @@ namespace b3d
 
 			std::cout << "Total: " << ToString((u64)suite.TotalTestCount) << " tests\n";
 
-			float passedPercent = (float)suite.PassedTestCount * 100.0f / (float)suite.TotalTestCount;
+			float passedPercent = suite.TotalTestCount > 0
+				? (float)suite.PassedTestCount * 100.0f / (float)suite.TotalTestCount
+				: 0.0f;
 			PrintColored("Passed: " + ToString((u64)suite.PassedTestCount) + " (" +
 				ToString(passedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Green);
 
 			if (suite.FailedTestCount > 0)
 			{
-				float failedPercent = (float)suite.FailedTestCount * 100.0f / (float)suite.TotalTestCount;
+				float failedPercent = suite.TotalTestCount > 0
+					? (float)suite.FailedTestCount * 100.0f / (float)suite.TotalTestCount
+					: 0.0f;
 				PrintColored("Failed: " + ToString((u64)suite.FailedTestCount) + " (" +
 					ToString(failedPercent, 1, 0, ' ', std::ios::fixed) + "%)", ConsoleColor::Red);
 			}
