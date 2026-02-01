@@ -18,6 +18,9 @@
 
 using namespace b3d;
 
+/** Tracks whether we allocated a console, so we know whether to free it. */
+static bool gAllocatedConsole = false;
+
 /** Encapsulate native cursor data so we can avoid including windows.h as it pollutes the global namespace. */
 struct B3D_EXPORT NativeCursorData
 {
@@ -479,23 +482,33 @@ void Platform::StartUpInternal()
 	const bool isHeadless = CommandLine::HasParameter("headless");
 	if(isHeadless)
 	{
-		if(!AttachConsole(ATTACH_PARENT_PROCESS))
-			AllocConsole();
+		// Check if stdout is already connected (e.g., to a pipe from parent process).
+		// If so, don't redirect to console - that would break piped output.
+		HANDLE existingStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+		DWORD handleType = existingStdout ? GetFileType(existingStdout) : FILE_TYPE_UNKNOWN;
+		bool stdoutConnected = (handleType == FILE_TYPE_PIPE || handleType == FILE_TYPE_DISK);
 
-		SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-
-		// Redirect stdout/stderr for printf to work
-		freopen("CONOUT$", "w", stdout);
-		freopen("CONOUT$", "w", stderr);
-
-		// Update Win32 standard handles so GetStdHandle returns the correct console handles.
-		// This is needed because freopen only updates C runtime FILE* pointers, not Win32 handles.
-		// Without this, console color output breaks.
-		HANDLE consoleOut = CreateFileW(L"CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
-		if(consoleOut != INVALID_HANDLE_VALUE)
+		if(!stdoutConnected)
 		{
-			SetStdHandle(STD_OUTPUT_HANDLE, consoleOut);
-			SetStdHandle(STD_ERROR_HANDLE, consoleOut);
+			if(!AttachConsole(ATTACH_PARENT_PROCESS))
+				AllocConsole();
+
+			gAllocatedConsole = true;
+			SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+
+			// Redirect stdout/stderr for printf to work
+			freopen("CONOUT$", "w", stdout);
+			freopen("CONOUT$", "w", stderr);
+
+			// Update Win32 standard handles so GetStdHandle returns the correct console handles.
+			// This is needed because freopen only updates C runtime FILE* pointers, not Win32 handles.
+			// Without this, console color output breaks.
+			HANDLE consoleOut = CreateFileW(L"CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
+			if(consoleOut != INVALID_HANDLE_VALUE)
+			{
+				SetStdHandle(STD_OUTPUT_HANDLE, consoleOut);
+				SetStdHandle(STD_ERROR_HANDLE, consoleOut);
+			}
 		}
 	}
 
@@ -564,9 +577,11 @@ void Platform::UpdateInternal()
 
 void Platform::ShutDownInternal()
 {
-	const bool isHeadless = CommandLine::HasParameter("headless");
-	if(isHeadless)
+	if(gAllocatedConsole)
+	{
 		FreeConsole();
+		gAllocatedConsole = false;
+	}
 
 	Lock lock(mData->Sync);
 
