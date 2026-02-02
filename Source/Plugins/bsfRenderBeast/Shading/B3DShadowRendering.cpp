@@ -679,7 +679,7 @@ namespace b3d
 		{
 			ShadowRenderQueueSpotOptions(
 				ShadowRendering& shadowRendering,
-				Area2 viewportArea,
+				const Area2& viewportArea,
 				const ConvexVolume& boundingVolume,
 				const GpuBufferSuballocation& shadowUniformBuffer)
 				: ShadowRenderer(shadowRendering), ViewportArea(viewportArea), BoundingVolume(boundingVolume), ShadowUniformBuffer(shadowUniformBuffer)
