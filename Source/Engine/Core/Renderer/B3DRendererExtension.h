@@ -57,14 +57,14 @@ namespace b3d
 	enum class RendererExtensionRequest
 	{
 		/**
-		 * Ensures RendererExtension::render method() will be called. You want to set this to true
+		 * Ensures RendererExtension::Render() method will be called. You want to set this to true
 		 * if the internal data that's being rendered has changed since the last render() call for
 		 * the specified camera.
 		 */
 		ForceRender,
 
 		/**
-		 * RendererExtension::render() method will be called only if the underlying render target
+		 * RendererExtension::Render() method will be called only if the underlying render target
 		 * will change and its contents need to be redrawn. You want to set this to true if the
 		 * internal data being rendered is the same as the previous frame. If your scene is fully
 		 * static and nothing is changing then this will avoid doing unnecessary redrawing.
@@ -75,7 +75,7 @@ namespace b3d
 		RenderIfTargetDirty,
 
 		/**
-		 * RendererExtension::render() method will not be called. e.g. use this if the camera provided
+		 * RendererExtension::Render() method will not be called. e.g. use this if the camera provided
 		 * is not relevant for the purposes of the extension.
 		 */
 		DontRender

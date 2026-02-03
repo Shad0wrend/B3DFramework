@@ -484,6 +484,9 @@ namespace b3d
 			/** Processes pending captures after rendering completes. */
 			void ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& target) const;
 
+			/** Returns true if any scene captures are pending this frame. */
+			bool HasPendingSceneCaptures() const { return mRequestedScreenCaptures.size() > 0; }
+
 			/**
 			 * Extracts the necessary values from the projection matrix that allow you to transform device Z value (range [0, 1]
 			 * into view Z value.

@@ -664,7 +664,7 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 	const Set<RendererExtension*, RendererExtension::SortFunction>& rendererExtensions = scene.GetCombinedRendererExtensions();
 
 	// Trigger overlay callbacks
-	bool needsRedraw = false;
+	bool needsRedraw = view.HasPendingSceneCaptures();
 	if(!rendererExtensions.empty())
 	{
 		view.NotifyCompositorTargetChangedInternal(target);
@@ -701,7 +701,6 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 		view.NotifyCompositorTargetChangedInternal(nullptr);
 	}
 
-	// Resolve any pending screen captures (overlay-only path bypasses RenderCompositor)
 	view.ResolveSceneCaptures(commandBuffer, target);
 
 	view.EndFrame();
