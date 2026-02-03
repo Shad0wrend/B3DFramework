@@ -697,7 +697,12 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScen
 
 			entry->Render(*camera, context);
 		}
+
+		view.NotifyCompositorTargetChangedInternal(nullptr);
 	}
+
+	// Resolve any pending screen captures (overlay-only path bypasses RenderCompositor)
+	view.ResolveSceneCaptures(commandBuffer, target);
 
 	view.EndFrame();
 

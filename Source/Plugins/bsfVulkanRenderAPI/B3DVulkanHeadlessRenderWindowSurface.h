@@ -35,6 +35,8 @@ namespace b3d::render
 		VulkanFramebuffer* GetActiveFramebuffer(bool acquireIfUnavailable = true) override;
 		bool AppendWaitSemaphoresIfRequired(TInlineArray<VulkanSemaphore*, 8>& outSemaphores) override { return false; }
 		bool IsSwapChainValid() const override { return mIsValid && mFramebuffers[mCurrentImageIndex] != nullptr; }
+		VulkanImage* GetCurrentColorImage() const override { return mColorImages[mCurrentImageIndex]; }
+		PixelFormat GetColorPixelFormat() const override { return PF_RGBA8; }
 
 	private:
 		/** Creates all the necessary swap chain images and framebuffers. */

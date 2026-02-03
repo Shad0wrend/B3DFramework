@@ -332,6 +332,7 @@ namespace b3d
 
 			void Initialize() override;
 			void Destroy() override;
+			TAsyncOp<SPtr<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex = 0, u32 mipLevel = 0, u32 arrayLayer = 0) override;
 
 			/** Called by the GPU backend after it requests swap chain back buffer to be presented. */
 			virtual void NotifySwapBuffersRequested();
@@ -405,6 +406,21 @@ namespace b3d
 
 			/** Releases any resources associated with the surface. */
 			virtual void Destroy() = 0;
+
+			/**
+			 * Reads the contents of the current swap chain image. Issues copy commands into
+			 * the command buffer and returns an async operation that triggers when read is complete.
+			 *
+			 * @param	commandBuffer	Command buffer to issue copy commands into.
+			 * @return					Async operation that completes when read is complete.
+			 */
+			virtual TAsyncOp<SPtr<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer)
+			{
+				TAsyncOp<SPtr<PixelData>> op;
+				op.CompleteOperation(nullptr);
+
+				return op;
+			}
 		};
 
 		/** @} */

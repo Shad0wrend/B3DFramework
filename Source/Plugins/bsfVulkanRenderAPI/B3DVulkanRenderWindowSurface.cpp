@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DVulkanRenderWindowSurface.h"
+#include "B3DVulkanFramebuffer.h"
 #include "B3DVulkanGpuBackend.h"
 #include "B3DVulkanGpuQueue.h"
 #include "B3DVulkanSubmitThread.h"
@@ -180,5 +181,37 @@ bool VulkanRenderWindowSurface::IsSwapChainValid() const
 	B3D_ASSERT(mSwapChain != nullptr);
 
 	return mSwapChain->IsValid();
+}
+
+VulkanImage* VulkanRenderWindowSurface::GetCurrentColorImage() const
+{
+	if(mSwapChain == nullptr)
+		return nullptr;
+
+	VulkanFramebuffer* framebuffer = mSwapChain->GetFramebufferForImage(mActiveImageIndex);
+	if(framebuffer == nullptr)
+		return nullptr;
+
+	return framebuffer->GetColorAttachment(0).Image;
+}
+
+PixelFormat VulkanRenderWindowSurface::GetColorPixelFormat() const
+{
+	switch(mColorFormat)
+	{
+	case VK_FORMAT_R8G8B8A8_UNORM:
+	case VK_FORMAT_R8G8B8A8_SRGB:
+		return PF_RGBA8;
+	case VK_FORMAT_B8G8R8A8_UNORM:
+	case VK_FORMAT_B8G8R8A8_SRGB:
+		return PF_BGRA8;
+	case VK_FORMAT_R16G16B16A16_SFLOAT:
+		return PF_RGBA16F;
+	case VK_FORMAT_A2B10G10R10_UNORM_PACK32:
+		return PF_RGB10A2;
+	default:
+		B3D_LOG(Warning, LogRenderBackend, "Unhandled swap chain format {0} in GetColorPixelFormat(), defaulting to PF_RGBA8", (u32)mColorFormat);
+		return PF_RGBA8;
+	}
 }
 

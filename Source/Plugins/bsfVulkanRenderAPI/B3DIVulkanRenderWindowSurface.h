@@ -46,6 +46,14 @@ namespace b3d::render
 
 		/** Returns the underlying Vulkan swap chain, or nullptr if the surface doesn't use a swap chain (e.g. headless). */
 		virtual VulkanSwapChain* GetSwapChain() const { return nullptr; }
+
+		/** Returns the VulkanImage for the currently active color surface. Used for reading back the rendered frame. */
+		virtual VulkanImage* GetCurrentColorImage() const = 0;
+
+		/** Returns the pixel format of the color surface. Used for reading back the rendered frame. */
+		virtual PixelFormat GetColorPixelFormat() const = 0;
+
+		TAsyncOp<SPtr<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer) override;
 	};
 
 	/** @} */

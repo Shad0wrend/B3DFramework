@@ -6,6 +6,7 @@
 #include "CoreObject/B3DCoreObjectSync.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "Managers/B3DRenderWindowManager.h"
+#include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DViewport.h"
 #include "Platform/B3DPlatform.h"
 #include "RTTI/B3DRenderTargetRTTI.h"
@@ -278,5 +279,13 @@ void RenderWindow::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& 
 		mShowOnSwap = false;
 
 	Super::SyncFromCoreObject(data, allocator);
+}
+
+TAsyncOp<SPtr<PixelData>> RenderWindow::ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
+{
+	if(!B3D_ENSURE(colorSurfaceIndex == 0 && mipLevel == 0 && arrayLayer == 0) || mRenderWindowSurface == nullptr)
+		return RenderTarget::ReadAsync(commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
+
+	return mRenderWindowSurface->ReadAsync(commandBuffer);
 }
 }}

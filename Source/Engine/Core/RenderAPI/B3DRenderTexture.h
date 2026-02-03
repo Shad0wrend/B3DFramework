@@ -123,6 +123,7 @@ namespace b3d
 			virtual ~RenderTexture() = default;
 
 			void Initialize() override;
+			TAsyncOp<SPtr<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex = 0, u32 mipLevel = 0, u32 arrayLayer = 0) override;
 
 			/** @copydoc TextureManager::CreateRenderTexture(const RenderTextureCreateInformation&, u32) */
 			static SPtr<RenderTexture> Create(const RenderTextureCreateInformation& createInformation);

@@ -32,6 +32,8 @@ namespace b3d::render
 		bool AppendWaitSemaphoresIfRequired(TInlineArray<VulkanSemaphore*, 8>& outSemaphores) override;
 		bool IsSwapChainValid() const override;
 		VulkanSwapChain* GetSwapChain() const override { return mSwapChain; }
+		VulkanImage* GetCurrentColorImage() const override;
+		PixelFormat GetColorPixelFormat() const override;
 
 	private:
 		SPtr<VulkanSurface> mSurface;

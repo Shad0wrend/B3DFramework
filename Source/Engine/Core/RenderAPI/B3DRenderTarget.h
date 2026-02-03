@@ -7,6 +7,7 @@
 #include "Image/B3DPixelUtility.h"
 #include "RenderAPI/B3DViewport.h"
 #include "CoreObject/B3DCoreObject.h"
+#include "Threading/B3DAsyncOp.h"
 #include "Utility/B3DEvent.h"
 
 namespace b3d
@@ -186,6 +187,18 @@ namespace b3d
 
 			/** Increments the update count, letting other code know that the contents of the render target changed. */
 			void TickUpdateCountInternal() { mUpdateCount++; }
+
+			/**
+			 * Reads the contents of this render target. Issues a copy command into the command buffer
+			 * and returns an async operation that triggers when the data has been read.
+			 *
+			 * @param	commandBuffer		Command buffer to issue copy commands into.
+			 * @param	colorSurfaceIndex	Which color surface to read (default 0).
+			 * @param	mipLevel			Mip level to read (default 0).
+			 * @param	arrayLayer			Array layer to read (default 0).
+			 * @return						Async operation that triggers when the read operation is complete. May retun null PixelData if reading is not supported.
+			 */
+			virtual TAsyncOp<SPtr<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex = 0, u32 mipLevel = 0, u32 arrayLayer = 0);
 
 			/** @} */
 		protected:

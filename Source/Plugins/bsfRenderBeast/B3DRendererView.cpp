@@ -13,6 +13,7 @@
 #include "B3DRendererDecal.h"
 #include "Animation/B3DAnimationScene.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "RenderAPI/B3DRenderTarget.h"
 #include "Image/B3DTexture.h"
 
 namespace b3d {
@@ -1011,12 +1012,12 @@ void RendererView::RequestScreenCapture(TAsyncOp<SPtr<PixelData>> asyncOp)
 	mRequestedScreenCaptures.push_back(std::move(asyncOp));
 }
 
-void RendererView::ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColorTexture) const
+void RendererView::ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& target) const
 {
 	if(mRequestedScreenCaptures.empty())
 		return;
 
-	if(sceneColorTexture == nullptr)
+	if(target == nullptr)
 	{
 		for(auto& entry : mRequestedScreenCaptures)
 			entry.CompleteOperation(nullptr);
@@ -1028,7 +1029,7 @@ void RendererView::ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const S
 	Vector<TAsyncOp<SPtr<PixelData>>> captureOps = std::move(mRequestedScreenCaptures);
 	mRequestedScreenCaptures.clear();
 
-	TAsyncOp<SPtr<PixelData>> readOp = TextureUtility::ReadAsync(sceneColorTexture, commandBuffer, 0, 0);
+	TAsyncOp<SPtr<PixelData>> readOp = target->ReadAsync(commandBuffer);
 
 	auto fnOnReadOpCompleted = [captureOps = std::move(captureOps), readOp]() mutable
 	{

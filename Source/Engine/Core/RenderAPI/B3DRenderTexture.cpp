@@ -4,6 +4,7 @@
 #include "Error/B3DException.h"
 #include "Image/B3DTexture.h"
 #include "Managers/B3DTextureManager.h"
+#include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "Resources/B3DResources.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "RTTI/B3DRenderTargetRTTI.h"
@@ -316,5 +317,14 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 			B3D_EXCEPT(InvalidParametersException, "Provided texture and depth stencil buffer don't match!" + errorInfo);
 		}
 	}
+}
+
+TAsyncOp<SPtr<PixelData>> RenderTexture::ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
+{
+	SPtr<Texture> colorTexture = GetColorTexture(colorSurfaceIndex);
+	if(colorTexture == nullptr)
+		return RenderTarget::ReadAsync(commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
+
+	return TextureUtility::ReadAsync(colorTexture, commandBuffer, mipLevel, arrayLayer);
 }
 }}

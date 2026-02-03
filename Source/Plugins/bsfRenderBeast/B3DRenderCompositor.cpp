@@ -1814,7 +1814,7 @@ void RCNodeFinalResolve::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	// Process pending frame captures (after overlays, before clearing target)
-	inputs.View.ResolveSceneCaptures(*inputs.ActiveCommandBuffer, input);
+	inputs.View.ResolveSceneCaptures(*inputs.ActiveCommandBuffer, target);
 
 	inputs.View.NotifyCompositorTargetChangedInternal(nullptr);
 }

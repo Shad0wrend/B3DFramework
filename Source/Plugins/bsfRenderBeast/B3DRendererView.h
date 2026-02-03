@@ -482,7 +482,7 @@ namespace b3d
 			void RequestScreenCapture(TAsyncOp<SPtr<PixelData>> asyncOp);
 
 			/** Processes pending captures after rendering completes. */
-			void ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColorTexture) const;
+			void ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const SPtr<RenderTarget>& target) const;
 
 			/**
 			 * Extracts the necessary values from the projection matrix that allow you to transform device Z value (range [0, 1]

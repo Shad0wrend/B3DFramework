@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/B3DRenderTarget.h"
 #include "RenderAPI/B3DViewport.h"
+#include "Image/B3DTexture.h"
 #include "RTTI/B3DRenderTargetRTTI.h"
 #include "Error/B3DException.h"
 #include "CoreObject/B3DRenderThread.h"
@@ -48,5 +49,12 @@ RenderTarget::RenderTarget()
 void RenderTarget::SetPriority(i32 priority)
 {
 	mRenderTargetProperties.Priority = priority;
+}
+
+TAsyncOp<SPtr<PixelData>> RenderTarget::ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
+{
+	TAsyncOp<SPtr<PixelData>> asyncOp;
+	asyncOp.CompleteOperation(nullptr);
+	return asyncOp;
 }
 }}

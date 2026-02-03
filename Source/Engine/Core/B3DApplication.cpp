@@ -122,6 +122,11 @@ Application::Application(VideoMode videoMode, const String& title, bool fullscre
 
 Application::~Application()
 {
+#if B3D_ENABLE_TESTS
+	// Must destroy before renderer library is unloaded
+	mSnapshotTestRunner.reset();
+#endif
+
 	// Cleanup any new objects queued for destruction by unloaded scripts
 	CoreObjectManager::Instance().SyncToRenderThread(true);
 	GetRenderThread().PostCommand([]{}, "SyncToRenderThread() before shutdown", true);
