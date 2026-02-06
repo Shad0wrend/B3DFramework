@@ -15,7 +15,7 @@ namespace b3d
 	/**	GUI element representing a toggle (on/off) button. */
 	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI)) GUIToggle : public GUIToggleable, public TGUIConstructionMethods<GUIToggle, GUIToggleContent>
 	{
-		using Super = GUIClickable;
+		using Super = GUIToggleable;
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
 		static const String& GetGuiTypeName();
