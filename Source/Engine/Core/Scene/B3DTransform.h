@@ -6,7 +6,6 @@
 #include "Math/B3DMatrix4.h"
 #include "Math/B3DVector3.h"
 #include "Math/B3DQuaternion.h"
-#include "Reflection/B3DRTTIType.h"
 
 namespace b3d
 {
@@ -17,7 +16,7 @@ namespace b3d
 	/**
 	 * Contains information about 3D object's position, rotation and scale, and provides methods to manipulate it.
 	 */
-	class B3D_EXPORT Transform : public IReflectable
+	class B3D_EXPORT Transform
 	{
 	public:
 		Transform() = default;
@@ -29,26 +28,17 @@ namespace b3d
 		/**	Gets the local position of the object. */
 		const Vector3& GetPosition() const { return mPosition; }
 
-		/** Shorthand for GetPosition(). */
-		const Vector3& Pos() const { return mPosition; }
-
 		/**	Sets the local rotation of the object. */
 		void SetRotation(const Quaternion& rotation) { mRotation = rotation; }
 
 		/**	Gets the local rotation of the object. */
 		const Quaternion& GetRotation() const { return mRotation; }
 
-		/** Shorthand for GetRotation(). */
-		const Quaternion& Rot() const { return mRotation; }
-
 		/**	Sets the local scale of the object. */
 		void SetScale(const Vector3& scale) { mScale = scale; }
 
 		/**	Gets the local scale of the object. */
 		const Vector3& GetScale() const { return mScale; }
-
-		/** Shorthand for GetScale(). */
-		const Vector3& Scl() const { return mScale; }
 
 		/**
 		 * Converts the provided world position to a space relative to the provided parent, and sets it as the current
@@ -165,10 +155,7 @@ namespace b3d
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
-	public:
-		friend class TransformRTTI;
-		static RTTIType* GetRttiStatic();
-		RTTIType* GetRtti() const override;
+		template <class T> friend struct RTTIPlainType;
 	};
 
 	/** @} */

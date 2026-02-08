@@ -6,6 +6,7 @@
 #include "Reflection/B3DRTTIType.h"
 #include "RTTI/B3DStringRTTI.h"
 #include "RTTI/B3DMathRTTI.h"
+#include "RTTI/B3DTransformRTTI.h"
 #include "Animation/B3DSkeleton.h"
 
 namespace b3d

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "Reflection/B3DRTTIType.h"
 #include "Reflection/B3DRTTIPlain.h"
 #include "Scene/B3DTransform.h"
 #include "RTTI/B3DMathRTTI.h"
@@ -15,30 +14,15 @@ namespace b3d
 	 *  @{
 	 */
 
-	class B3D_EXPORT TransformRTTI : public TRTTIType<Transform, IReflectable, TransformRTTI>
+	template<>
+	struct RTTIPlainType<Transform> : RTTIPlainTypeHelper<Transform, TID_Transform, 255, 0>
 	{
-	private:
-		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mPosition, 0)
-			B3D_RTTI_MEMBER(mRotation, 1)
-			B3D_RTTI_MEMBER(mScale, 2)
-		B3D_RTTI_END_MEMBERS
-
-	public:
-		const String& GetRttiName()
+		template <class Processor>
+		static void RTTIEnumerateFields(Transform& object, Processor& processor, u8 version)
 		{
-			static String name = "Transform";
-			return name;
-		}
-
-		u32 GetRttiId() const override
-		{
-			return TID_Transform;
-		}
-
-		SPtr<IReflectable> NewRttiObject()
-		{
-			return B3DMakeShared<Transform>();
+			processor(object.mPosition);
+			processor(object.mRotation);
+			processor(object.mScale);
 		}
 	};
 

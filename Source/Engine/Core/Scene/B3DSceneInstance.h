@@ -306,9 +306,6 @@ namespace b3d
 		/**	Notifies the scene instance that a camera either became the main camera, or has stopped being main camera. */
 		void NotifyMainCameraStateChanged(const HCamera& camera);
 
-		/** Updates dirty transforms on any scene actors that are linked with scene objects. */
-		void UpdateLinkedSceneActorTransforms();
-
 		/**
 		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
 		 * the main game window when running standalone, or the Game viewport when running in editor.
