@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Scene/B3DSceneObject.h"
+#include "Scene/B3DSceneObjectFragments.h"
 
 #include "Scene/B3DComponent.h"
 #include "Scene/B3DSceneManager.h"
@@ -42,6 +43,8 @@ HSceneObject SceneObject::CreateInternal(const SPtr<GameObjectCollection>& owner
 {
 	const SPtr<SceneObject> sceneObject = SPtr<SceneObject>(new(B3DAllocate<SceneObject>()) SceneObject(name, flags), &B3DDelete<SceneObject>, StdAlloc<SceneObject>());
 	sceneObject->mId = UUIDGenerator::GenerateRandom();
+
+	sceneObject->CreateECSEntity(&ownerCollection->GetECSRegistry());
 
 	return CreateInternal(ownerCollection, sceneObject);
 }
@@ -93,6 +96,16 @@ void SceneObject::QueueForDestroy()
 	GameObject::QueueForDestroy();
 }
 
+void SceneObject::CreateECSEntity(ecs::Registry* registry)
+{
+	B3D_ASSERT(mECSRegistry == nullptr && mECSEntity == ecs::kNullEntity);
+
+	mECSRegistry = registry;
+	mECSEntity = mECSRegistry->CreateEntity();
+	mECSRegistry->AddComponent<ecs::LocalTransform>(mECSEntity, ecs::LocalTransform());
+	mECSRegistry->AddComponent<ecs::WorldTransform>(mECSEntity, ecs::WorldTransform());
+}
+
 void SceneObject::DestroyImmediate()
 {
 	// If queued for destroy, children will be queued as well
@@ -117,6 +130,13 @@ void SceneObject::DestroyImmediate()
 
 	mChildren.clear();
 	mComponents.clear();
+
+	if(mECSRegistry != nullptr && mECSEntity != ecs::kNullEntity)
+	{
+		mECSRegistry->EraseEntity(mECSEntity);
+		mECSEntity = ecs::kNullEntity;
+		mECSRegistry = nullptr;
+	}
 
 	GameObject::DestroyImmediate();
 }
@@ -246,12 +266,40 @@ void SceneObject::Initialize()
 /* 								Transform	                     		*/
 /************************************************************************/
 
+Transform& SceneObject::GetMutableLocalTransform()
+{
+	B3D_ASSERT(mECSRegistry != nullptr);
+	return mECSRegistry->GetComponents<ecs::LocalTransform>(mECSEntity);
+}
+
+Transform& SceneObject::GetMutableWorldTransform()
+{
+	B3D_ASSERT(mECSRegistry != nullptr);
+	return mECSRegistry->GetComponents<ecs::WorldTransform>(mECSEntity);
+}
+
+const Transform& SceneObject::GetLocalTransform() const
+{
+	B3D_ASSERT(mECSRegistry != nullptr);
+	return mECSRegistry->GetComponents<ecs::LocalTransform>(mECSEntity);
+}
+
+const Transform& SceneObject::GetTransform() const
+{
+	B3D_ASSERT(mECSRegistry != nullptr);
+
+	if(!IsCachedWorldTransformUpToDate())
+		UpdateWorldTfrm();
+
+	return mECSRegistry->GetComponents<ecs::WorldTransform>(mECSEntity);
+}
+
 void SceneObject::SetLocalTransform(const Transform& transform)
 {
 	if(mMobility != ObjectMobility::Movable)
 		return;
 
-	mLocalTfrm = transform;
+	GetMutableLocalTransform() = transform;
 	NotifyTransformChanged(TCF_Transform);
 }
 
@@ -259,7 +307,7 @@ void SceneObject::SetPosition(const Vector3& position)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.SetPosition(position);
+		GetMutableLocalTransform().SetPosition(position);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -268,7 +316,7 @@ void SceneObject::SetRotation(const Quaternion& rotation)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.SetRotation(rotation);
+		GetMutableLocalTransform().SetRotation(rotation);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -277,7 +325,7 @@ void SceneObject::SetScale(const Vector3& scale)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.SetScale(scale);
+		GetMutableLocalTransform().SetScale(scale);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -287,10 +335,11 @@ void SceneObject::SetWorldPosition(const Vector3& position)
 	if(mMobility != ObjectMobility::Movable)
 		return;
 
+	Transform& localTfrm = GetMutableLocalTransform();
 	if(mParent != nullptr)
-		mLocalTfrm.SetWorldPosition(position, mParent->GetTransform());
+		localTfrm.SetWorldPosition(position, mParent->GetTransform());
 	else
-		mLocalTfrm.SetPosition(position);
+		localTfrm.SetPosition(position);
 
 	NotifyTransformChanged(TCF_Transform);
 }
@@ -300,10 +349,11 @@ void SceneObject::SetWorldRotation(const Quaternion& rotation)
 	if(mMobility != ObjectMobility::Movable)
 		return;
 
+	Transform& localTfrm = GetMutableLocalTransform();
 	if(mParent != nullptr)
-		mLocalTfrm.SetWorldRotation(rotation, mParent->GetTransform());
+		localTfrm.SetWorldRotation(rotation, mParent->GetTransform());
 	else
-		mLocalTfrm.SetRotation(rotation);
+		localTfrm.SetRotation(rotation);
 
 	NotifyTransformChanged(TCF_Transform);
 }
@@ -313,20 +363,13 @@ void SceneObject::SetWorldScale(const Vector3& scale)
 	if(mMobility != ObjectMobility::Movable)
 		return;
 
+	Transform& localTfrm = GetMutableLocalTransform();
 	if(mParent != nullptr)
-		mLocalTfrm.SetWorldScale(scale, mParent->GetTransform());
+		localTfrm.SetWorldScale(scale, mParent->GetTransform());
 	else
-		mLocalTfrm.SetScale(scale);
+		localTfrm.SetScale(scale);
 
 	NotifyTransformChanged(TCF_Transform);
-}
-
-const Transform& SceneObject::GetTransform() const
-{
-	if(!IsCachedWorldTransformUpToDate())
-		UpdateWorldTfrm();
-
-	return mWorldTfrm;
 }
 
 void SceneObject::LookAt(const Vector3& location, const Vector3& up)
@@ -350,11 +393,7 @@ const Matrix4& SceneObject::GetWorldMatrix() const
 
 Matrix4 SceneObject::GetInvWorldMatrix() const
 {
-	if(!IsCachedWorldTransformUpToDate())
-		UpdateWorldTfrm();
-
-	Matrix4 worldToLocal = mWorldTfrm.GetInvMatrix();
-	return worldToLocal;
+	return GetTransform().GetInvMatrix();
 }
 
 const Matrix4& SceneObject::GetLocalMatrix() const
@@ -369,7 +408,7 @@ void SceneObject::Move(const Vector3& vec)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Move(vec);
+		GetMutableLocalTransform().Move(vec);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -378,7 +417,7 @@ void SceneObject::MoveRelative(const Vector3& vec)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.MoveRelative(vec);
+		GetMutableLocalTransform().MoveRelative(vec);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -387,7 +426,7 @@ void SceneObject::Rotate(const Vector3& axis, const Radian& angle)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Rotate(axis, angle);
+		GetMutableLocalTransform().Rotate(axis, angle);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -396,7 +435,7 @@ void SceneObject::Rotate(const Quaternion& q)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Rotate(q);
+		GetMutableLocalTransform().Rotate(q);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -405,7 +444,7 @@ void SceneObject::Roll(const Radian& angle)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Roll(angle);
+		GetMutableLocalTransform().Roll(angle);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -414,7 +453,7 @@ void SceneObject::Yaw(const Radian& angle)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Yaw(angle);
+		GetMutableLocalTransform().Yaw(angle);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -423,7 +462,7 @@ void SceneObject::Pitch(const Radian& angle)
 {
 	if(mMobility == ObjectMobility::Movable)
 	{
-		mLocalTfrm.Pitch(angle);
+		GetMutableLocalTransform().Pitch(angle);
 		NotifyTransformChanged(TCF_Transform);
 	}
 }
@@ -484,26 +523,28 @@ void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 
 void SceneObject::UpdateWorldTfrm() const
 {
-	mWorldTfrm = mLocalTfrm;
+	B3D_ASSERT(mECSRegistry != nullptr);
+
+	Transform& worldTfrm = const_cast<SceneObject*>(this)->GetMutableWorldTransform();
+	worldTfrm = GetLocalTransform();
 
 	// Don't allow movement from parent when not movable
 	if(mParent != nullptr && mMobility == ObjectMobility::Movable)
 	{
-		mWorldTfrm.MakeWorld(mParent->GetTransform());
-
-		mCachedWorldTfrm = mWorldTfrm.GetMatrix();
+		worldTfrm.MakeWorld(mParent->GetTransform());
+		mCachedWorldTfrm = worldTfrm.GetMatrix();
 	}
 	else
-	{
 		mCachedWorldTfrm = GetLocalMatrix();
-	}
 
 	mDirtyFlags &= ~DirtyFlags::WorldTransformDirty;
 }
 
 void SceneObject::UpdateLocalTfrm() const
 {
-	mCachedLocalTfrm = mLocalTfrm.GetMatrix();
+	B3D_ASSERT(mECSRegistry != nullptr);
+
+	mCachedLocalTfrm = GetLocalTransform().GetMatrix();
 	mDirtyFlags &= ~DirtyFlags::LocalTransformDirty;
 }
 
@@ -564,12 +605,13 @@ void SceneObject::SetParentInternal(const HSceneObject& parent, bool keepWorldTr
 
 		mParent = parent;
 
-		if(keepWorldTransform)
+		if(keepWorldTransform && parent != nullptr)
 		{
-			mLocalTfrm = worldTfrm;
+			Transform& localTfrm = GetMutableLocalTransform();
+			localTfrm = worldTfrm;
 
 			if(mParent != nullptr)
-				mLocalTfrm.MakeLocal(mParent->GetTransform());
+				localTfrm.MakeLocal(mParent->GetTransform());
 		}
 
 		if(const bool isInitialized = HasGameObjectFlag(GameObjectTransientFlag::Initialized))
@@ -595,7 +637,37 @@ void SceneObject::SetScene(const SPtr<SceneInstance>& scene, bool recursive)
 	mParentScene = scene;
 
 	if(scene != nullptr)
-		SetOwnerCollection(scene->GetGameObjectCollection());
+	{
+		const SPtr<GameObjectCollection>& sceneCollection = scene->GetGameObjectCollection();
+		SetOwnerCollection(sceneCollection);
+
+		ecs::Registry* sceneRegistry = &sceneCollection->GetECSRegistry();
+		if(mECSRegistry == nullptr)
+			CreateECSEntity(sceneRegistry);
+		else if(mECSRegistry != sceneRegistry)
+		{
+			// Migrate entity to new registry (e.g. persistent object moving between scenes)
+			Transform localTfrm = GetLocalTransform();
+			Transform worldTfrm = GetTransform();
+			mECSRegistry->EraseEntity(mECSEntity);
+
+			mECSRegistry = sceneRegistry;
+			mECSEntity = mECSRegistry->CreateEntity();
+			mECSRegistry->AddComponent<ecs::LocalTransform>(mECSEntity, ecs::LocalTransform(localTfrm));
+			mECSRegistry->AddComponent<ecs::WorldTransform>(mECSEntity, ecs::WorldTransform(worldTfrm));
+		}
+		// else: already in correct registry (e.g. entity created via CreateInternal with same collection)
+	}
+	else
+	{
+		// Leaving scene: destroy entity
+		if(mECSRegistry != nullptr && mECSEntity != ecs::kNullEntity)
+		{
+			mECSRegistry->EraseEntity(mECSEntity);
+			mECSEntity = ecs::kNullEntity;
+			mECSRegistry = nullptr;
+		}
+	}
 
 	if(recursive)
 	{

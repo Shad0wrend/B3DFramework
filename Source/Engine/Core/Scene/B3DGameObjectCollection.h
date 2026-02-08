@@ -5,6 +5,7 @@
 #include "B3DPrerequisites.h"
 #include "Utility/B3DModule.h"
 #include "Scene/B3DGameObject.h"
+#include "ECS/B3DRegistry.h"
 
 namespace b3d
 {
@@ -15,6 +16,8 @@ namespace b3d
 	/**
 	 * Collection of all game objects associated with a particular scene or prefab. Provides functionality to patch game object handles
 	 * as may be needed when deserializing, updating from prefab, applying deltas, and similar.
+	 *
+	 * Also maintains an ECS registry that holds all the entities and components created by its game objects.
 	 */
 	class B3D_EXPORT GameObjectCollection final : public std::enable_shared_from_this<GameObjectCollection>
 	{
@@ -127,6 +130,10 @@ namespace b3d
 		/**	Destroys any GameObjects that were queued for destruction. */
 		void DestroyQueuedObjects();
 
+		/** Returns the ECS registry associated with this collection. */
+		ecs::Registry& GetECSRegistry() { return mECSRegistry; }
+		const ecs::Registry& GetECSRegistry() const { return mECSRegistry; }
+
 		/** Creates a new empty game object collection. */
 		static SPtr<GameObjectCollection> Create();
 
@@ -142,6 +149,7 @@ namespace b3d
 		Vector<UUID> mOrderedQueuedForDestroy;
 		UnorderedMap<UUID, SPtr<GameObjectHandleData>> mUnresolvedHandleSharedHandleData;
 		Vector<GameObjectHandle> mUnresolvedHandles;
+		ecs::Registry mECSRegistry;
 	};
 
 	/** @} */

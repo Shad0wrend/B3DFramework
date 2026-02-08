@@ -18,7 +18,7 @@ namespace b3d
 	struct RTTIPlainType<Transform> : RTTIPlainTypeHelper<Transform, TID_Transform, 255, 0>
 	{
 		template <class Processor>
-		static void RTTIEnumerateFields(Transform& object, Processor& processor, u8 version)
+		static void RTTIEnumerateFields(Transform& object, Processor& processor)
 		{
 			processor(object.mPosition);
 			processor(object.mRotation);

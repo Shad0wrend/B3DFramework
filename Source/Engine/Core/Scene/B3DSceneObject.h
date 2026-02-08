@@ -11,6 +11,7 @@
 #include "Scene/B3DComponent.h"
 #include "Scene/B3DTransform.h"
 #include "Script/B3DIScriptExportable.h"
+#include "ECS/B3DIECSEntityOwner.h"
 
 namespace b3d
 {
@@ -43,7 +44,7 @@ namespace b3d
 	 * Each scene object can have one or multiple Component%s attached to it, where the components inherit the scene
 	 * object's transform, and receive updates about transform and hierarchy changes.
 	 */
-	class B3D_EXPORT SceneObject : public GameObject
+	class B3D_EXPORT SceneObject : public GameObject, public ecs::IECSEntityOwner
 	{
 		/**	Flags that signify which part of the SceneObject needs updating. */
 		enum DirtyFlags
@@ -188,7 +189,7 @@ namespace b3d
 		const Transform& GetTransform() const;
 
 		/** Gets the transform object representing object's position/rotation/scale relative to its parent. */
-		const Transform& GetLocalTransform() const { return mLocalTfrm; }
+		const Transform& GetLocalTransform() const;
 
 		/** Sets a new transform for the object, relative to the parent. */
 		void SetLocalTransform(const Transform& transform);
@@ -295,15 +296,28 @@ namespace b3d
 		 */
 		u32 GetTransformHash() const { return mDirtyHash; }
 
+	public:
+		// IECSEntityOwner interface
+		ecs::Registry* GetECSRegistry() const override { return mECSRegistry; }
+		ecs::Entity GetECSEntity() const override { return mECSEntity; }
+		void CreateECSEntity(ecs::Registry* registry) override;
+
 	private:
-		Transform mLocalTfrm;
-		mutable Transform mWorldTfrm;
 
 		mutable Matrix4 mCachedLocalTfrm = Matrix4::kIdentity;
 		mutable Matrix4 mCachedWorldTfrm = Matrix4::kIdentity;
 
 		mutable u32 mDirtyFlags = 0xFFFFFFFF;
 		mutable u32 mDirtyHash = 0;
+
+		ecs::Registry* mECSRegistry = nullptr;
+		ecs::Entity mECSEntity = ecs::kNullEntity;
+
+		/** Returns a mutable reference to the local transform stored in the ECS registry. */
+		Transform& GetMutableLocalTransform();
+
+		/** Returns a mutable reference to the world transform stored in the ECS registry. */
+		Transform& GetMutableWorldTransform();
 
 		/**
 		 * Notifies components and child scene object that a transform has been changed.
@@ -450,9 +464,9 @@ namespace b3d
 		 *
 		 * @param		cloneOwnerCollection	Collection into which to place the cloned scene objects. If @p preserveIds is true
 		 *										this must be a different collection that the current scene object, otherwise IDs would
-		 *										conflict.
+		 *										conflict. The collection's ECS registry will be used for the cloned hierarchy's entities and components.
 		 * @param		preserveIds				If false, each cloned game object will be assigned a brand new ID. Otherwise
-		 *										the ID of the original game objects will be preserved. 
+		 *										the ID of the original game objects will be preserved.
 		 * @return								Cloned scene object hierarchy.
 		 */
 		HSceneObject Clone(const SPtr<GameObjectCollection>& cloneOwnerCollection, bool preserveIds = false);
