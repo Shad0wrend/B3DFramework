@@ -4,13 +4,14 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
+#include "Reflection/B3DRTTIECSField.h"
 #include "Scene/B3DSceneObject.h"
 #include "Scene/B3DSceneObjectFragments.h"
 #include "Scene/B3DGameObjectHandle.h"
 #include "Scene/B3DGameObjectManager.h"
 #include "Scene/B3DComponent.h"
 #include "RTTI/B3DGameObjectRTTI.h"
-#include "RTTI/B3DTransformRTTI.h"
+#include "RTTI/B3DSceneObjectFragmentsRTTI.h"
 #include "Scene/B3DGameObjectCollection.h"
 #include "Scene/B3DSceneObjectHierarchyDelta.h"
 #include "Utility/B3DUtility.h"
@@ -26,8 +27,6 @@ namespace b3d
 	{
 		Vector<SPtr<SceneObject>> mChildren;
 		Vector<SPtr<Component>> mComponents;
-		Transform mLocalTfrm;
-		Transform mWorldTfrm;
 
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_GENERATED_MEMBER_CONTAINER(mChildren, 0)
@@ -36,8 +35,8 @@ namespace b3d
 			B3D_RTTI_MEMBER(mPrefabDelta, 4)
 			B3D_RTTI_MEMBER(mPrefabVersion, 5)
 			B3D_RTTI_MEMBER(mMobility, 10)
-			B3D_RTTI_GENERATED_MEMBER(mWorldTfrm, 11)
-			B3D_RTTI_GENERATED_MEMBER(mLocalTfrm, 12)
+			B3D_RTTI_MEMBER_FRAGMENT(WorldTransform, 11)
+			B3D_RTTI_MEMBER_FRAGMENT(LocalTransform, 12)
 			B3D_RTTI_MEMBER_INFO(mPrefabResourceId, 13, RTTIFieldInfo(RTTIFieldFlag::SkipInDeltaCompare | RTTIFieldFlag::SkipInDeltaCopy))
 		B3D_RTTI_END_MEMBERS
 
@@ -55,9 +54,6 @@ namespace b3d
 				mComponents.reserve(object.mComponents.size());
 				for(const auto& entry : object.mComponents)
 					mComponents.push_back(entry.GetShared());
-
-				mLocalTfrm = object.GetLocalTransform();
-				mWorldTfrm = object.GetTransform();
 			}
 
 			if(operationType.IsSet(RTTIOperationType::WriteBit))
@@ -79,6 +75,13 @@ namespace b3d
 
 						if(serializationContext->GameObjectCollection != nullptr)
 							serializationContext->GameObjectCollection->BeginHandleResolve();
+					}
+
+					// Create ECS entity early so that ECS fragment fields can write to it during deserialization
+					if(object.mECSEntity == ecs::kNullEntity && serializationContext->GameObjectCollection != nullptr)
+					{
+						ecs::Registry& registry = serializationContext->GameObjectCollection->GetECSRegistry();
+						object.CreateECSEntity(&registry);
 					}
 				}
 			}
@@ -113,15 +116,6 @@ namespace b3d
 				}
 
 				HSceneObject sceneObjectHandle = SceneObject::CreateInternal(serializationContext->GameObjectCollection, sceneObjectShared);
-
-				// Create the ECS entity and push deserialized transforms
-				if(serializationContext->GameObjectCollection != nullptr)
-				{
-					ecs::Registry& registry = serializationContext->GameObjectCollection->GetECSRegistry();
-					object.CreateECSEntity(&registry);
-					static_cast<Transform&>(registry.GetComponents<ecs::LocalTransform>(object.mECSEntity)) = mLocalTfrm;
-					static_cast<Transform&>(registry.GetComponents<ecs::WorldTransform>(object.mECSEntity)) = mWorldTfrm;
-				}
 
 				// We stored all components and children in a temporary structure because they rely on the SceneObject being
 				// initialized with the GameObjectManager. Now that it is, we add them.

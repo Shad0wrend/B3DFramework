@@ -25,7 +25,7 @@ namespace b3d::ecs
 		/** Returns the ECS entity handle. */
 		virtual Entity GetECSEntity() const = 0;
 
-		/** Creates an ECS entity in the provided registry and adds default components. Asserts if entity already exists. */
+		/** Creates an ECS entity in the provided registry and adds default fragments. Asserts if entity already exists. */
 		virtual void CreateECSEntity(Registry* registry) = 0;
 	};
 

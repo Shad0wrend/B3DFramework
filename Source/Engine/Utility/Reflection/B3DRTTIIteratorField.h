@@ -15,6 +15,142 @@ namespace b3d
 	 *  @{
 	 */
 
+	/** @addtogroup RTTI-Detail
+	 *  @{
+	 */
+
+	/** Shared helper functions used by both TRTTIIteratorField and TRTTIECSField. */
+	namespace detail
+	{
+		/** Checks is the provided type a value type deriving from IReflectable. */
+		template<class T>
+		constexpr bool IsReflectable()
+		{
+			return std::is_base_of_v<IReflectable, std::remove_reference_t<std::remove_cv_t<T>>>;
+		}
+
+		/** Checks is the provided type a shared pointer referencing a type deriving from IReflectable. */
+		template<class T>
+		constexpr bool IsReflectableShared()
+		{
+			return B3DIsSharedPointer<std::remove_reference_t<std::remove_cv_t<T>>>::value && IsReflectable<typename B3DDecaySharedPointer<std::remove_reference_t<std::remove_cv_t<T>>>::value>();
+		}
+
+		/** Checks is the provided type a plain type (implements the RTTIPlainType<T> specialization). */
+		template<class T>
+		constexpr bool IsPlain()
+		{
+			return B3DHasRTTIPlainTypeSpecialization<std::remove_reference_t<std::remove_cv_t<T>>>::value;
+		}
+
+		/** Creates a schema for a type stored in a field. */
+		template<typename FieldType>
+		RTTIFieldDataTypeSchema CreateFieldTypeSchema(const RTTIFieldInfo& fieldInfo)
+		{
+			if constexpr(IsReflectableShared<FieldType>())
+			{
+				using UnderlyingType = typename B3DDecaySharedPointer<FieldType>::value;
+				static_assert(std::is_base_of_v<IReflectable, UnderlyingType>, "RTTI fields holding shared pointers must ensure the pointed-to data types implement the IReflectable interface.");
+
+				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::ReflectablePointer, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
+			}
+			else if constexpr(IsReflectable<FieldType>())
+			{
+				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
+			}
+			else if constexpr(IsPlain<FieldType>())
+			{
+				static_assert(sizeof(RTTIPlainType<FieldType>::id) > 0, "Plain type has no valid ID."); // TODO - sizeof here is probably a bug, but it would break too many things to fix right now (also breaks memcpy serialization)
+
+				BitLength fixedSize = 0;
+				const bool hasDynamicSize = RTTIPlainType<FieldType>::hasDynamicSize != 0;
+				if(!hasDynamicSize)
+				{
+					// Note: Would be nice to avoid the construction of FieldType
+					fixedSize = RTTIPlainType<FieldType>::GetSize(FieldType(), fieldInfo, false);
+
+					if(fixedSize.Bytes > 255)
+					{
+						B3D_ASSERT(false);
+						B3D_LOG(Error, LogRTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain types please specialize RTTIPlainType, set hasDynamicSize to true.");
+					}
+				}
+
+				return RTTIFieldDataTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, RTTIFieldDataType::Plain, RTTIPlainType<FieldType>::id, nullptr);
+			}
+			else
+			{
+				static_assert(false, "Cannot initialize RTTIField. Unsupported type provided. Make sure your type either derives from IReflectable or implements the RTTIPlainType<T> specialization.");
+				return RTTIFieldDataTypeSchema();
+			}
+		}
+
+		/** Reads the provided plain object from the stream. */
+		template<typename T>
+		void ReadPlainType(T& value, Bitstream& stream, const RTTIFieldInfo& info, bool useCompression)
+		{
+			if constexpr(IsPlain<T>())
+				RTTIPlainType<T>::FromMemory(value, stream, info, useCompression);
+		}
+
+		/** Writes the provided plain object to the stream. */
+		template<typename T>
+		void WritePlainType(const T& value, Bitstream& stream, const RTTIFieldInfo& info, bool useCompression)
+		{
+			if constexpr(IsPlain<T>())
+				RTTIPlainType<T>::ToMemory(value, stream, info, useCompression);
+		}
+
+		/** Returns the size of the provided plain object. */
+		template<typename T>
+		BitLength GetPlainTypeSize(const T& value, const RTTIFieldInfo& info, bool useCompression)
+		{
+			if constexpr(IsPlain<T>())
+				return RTTIPlainType<T>::GetSize(value, info, useCompression);
+
+			return 0;
+		}
+
+		/** Assigns the reflectable value to the provided field value. */
+		template<typename T>
+		void SetReflectableValue(T& value, const IReflectable& reflectable)
+		{
+			if constexpr(IsReflectable<T>())
+				value = static_cast<const T&>(reflectable);
+		}
+
+		/** Reads the reflectable value from the provided field value. */
+		template<typename T>
+		const IReflectable& GetReflectableValue(const T& value)
+		{
+			if constexpr(IsReflectable<T>())
+				return value;
+
+			B3D_ASSERT(false);
+			static IReflectable* kNull = nullptr;
+			return *kNull;
+		}
+
+		/** Assigns the reflectable pointer to the provided field value. */
+		template<typename T>
+		void SetReflectablePointerValue(T& value, const SPtr<IReflectable>& reflectable)
+		{
+			if constexpr(IsReflectableShared<T>())
+				value = std::static_pointer_cast<typename B3DDecaySharedPointer<T>::value>(reflectable);
+		}
+
+		/** Reads the reflectable pointer from the provided field value. */
+		template<typename T>
+		SPtr<IReflectable> GetReflectablePointerValue(const T& value)
+		{
+			if constexpr(IsReflectableShared<T>())
+				return value;
+			return nullptr;
+		}
+	} // namespace detail
+
+	/** @} */
+
 	/** Provides interface to be implemented by specializations of TRTTIIteratorField. */
 	struct RTTIIteratorField : public RTTIField
 	{
@@ -164,12 +300,12 @@ namespace b3d
 			// Special case for pairs so we natively support reflectable types in maps (This could technically be extended to support std::tuple as well if needed)
 			if constexpr(B3DIsStdPair<ElementType>::value)
 			{
-				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::first_type>>(this->Schema.Info));
-				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::second_type>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(detail::CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::first_type>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(detail::CreateFieldTypeSchema<std::remove_cv_t<typename ElementType::second_type>>(this->Schema.Info));
 			}
 			else
 			{
-				this->Schema.FieldDataTypes.Add(CreateFieldTypeSchema<std::remove_cv_t<ElementType>>(this->Schema.Info));
+				this->Schema.FieldDataTypes.Add(detail::CreateFieldTypeSchema<std::remove_cv_t<ElementType>>(this->Schema.Info));
 			}
 		}
 
@@ -241,13 +377,13 @@ namespace b3d
 				{
 					// Make sure to remove constness, as map values usually have a const key (Proper fix would be to deduce a non-const version of std::pair<const K, V>/etc.)
 					using MutableType = std::remove_cv_t<typename ElementType::first_type>;
-					ReadPlainTypeFromStream(const_cast<MutableType&>(value.first), stream, useCompression);
+					detail::ReadPlainType(const_cast<MutableType&>(value.first), stream, Schema.Info, useCompression);
 				}
 				else
 				{
 					// Same as above
 					using MutableType = std::remove_cv_t<typename ElementType::second_type>;
-					ReadPlainTypeFromStream(const_cast<MutableType&>(value.second), stream, useCompression);
+					detail::ReadPlainType(const_cast<MutableType&>(value.second), stream, Schema.Info, useCompression);
 				}
 			}
 			else
@@ -256,7 +392,7 @@ namespace b3d
 
 				// Same as above
 				using MutableType = std::remove_cv_t<ElementType>;
-				ReadPlainTypeFromStream(const_cast<MutableType&>(value), stream, useCompression);
+				detail::ReadPlainType(const_cast<MutableType&>(value), stream, Schema.Info, useCompression);
 			}
 		}
 
@@ -268,14 +404,14 @@ namespace b3d
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					WritePlainTypeToStream(value.first, stream, useCompression);
+					detail::WritePlainType(value.first, stream, Schema.Info, useCompression);
 				else
-					WritePlainTypeToStream(value.second, stream, useCompression);
+					detail::WritePlainType(value.second, stream, Schema.Info, useCompression);
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				WritePlainTypeToStream(value, stream, useCompression);
+				detail::WritePlainType(value, stream, Schema.Info, useCompression);
 			}
 		}
 
@@ -290,17 +426,13 @@ namespace b3d
 				{
 					// Make sure to remove constness, as map values usually have a const key (Proper fix would be to deduce a non-const version of std::pair<const K, V>/etc.)
 					using MutableType = std::remove_cv_t<typename ElementType::first_type>;
-
-					if constexpr(IsReflectableShared<MutableType>())
-						const_cast<MutableType&>(value.first) = std::static_pointer_cast<typename B3DDecaySharedPointer<MutableType>::value>(reflectable);
+					detail::SetReflectablePointerValue(const_cast<MutableType&>(value.first), reflectable);
 				}
 				else
 				{
 					// Same as above
 					using MutableType = std::remove_cv_t<typename ElementType::second_type>;
-
-					if constexpr(IsReflectableShared<MutableType>())
-						const_cast<MutableType&>(value.second) = std::static_pointer_cast<typename B3DDecaySharedPointer<MutableType>::value>(reflectable);
+					detail::SetReflectablePointerValue(const_cast<MutableType&>(value.second), reflectable);
 				}
 			}
 			else
@@ -309,9 +441,7 @@ namespace b3d
 
 				// Same as above
 				using MutableType = std::remove_cv_t<ElementType>;
-
-				if constexpr(IsReflectableShared<MutableType>())
-					const_cast<MutableType&>(value) = std::static_pointer_cast<typename B3DDecaySharedPointer<MutableType>::value>(reflectable);
+				detail::SetReflectablePointerValue(const_cast<MutableType&>(value), reflectable);
 			}
 		}
 
@@ -323,23 +453,15 @@ namespace b3d
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-				{
-					if constexpr(IsReflectableShared<typename ElementType::first_type>())
-						return value.first;
-				}
+					return detail::GetReflectablePointerValue(value.first);
 
-				if constexpr(IsReflectableShared<typename ElementType::second_type>())
-					return value.second;
+				return detail::GetReflectablePointerValue(value.second);
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-
-				if constexpr(IsReflectableShared<ElementType>())
-					return value;
+				return detail::GetReflectablePointerValue(value);
 			}
-
-			return nullptr;
 		}
 
 		void SetReflectable(void* fieldValue, u32 tupleElementIndex, const IReflectable& reflectable) override
@@ -353,17 +475,13 @@ namespace b3d
 				{
 					// Make sure to remove constness, as map values usually have a const key (Proper fix would be to deduce a non-const version of std::pair<const K, V>/etc.)
 					using MutableType = std::remove_cv_t<typename ElementType::first_type>;
-
-					if constexpr(IsReflectable<MutableType>())
-						const_cast<MutableType&>(value.first) = static_cast<const MutableType&>(reflectable);
+					detail::SetReflectableValue(const_cast<MutableType&>(value.first), reflectable);
 				}
 				else
 				{
 					// Same as above
 					using MutableType = std::remove_cv_t<typename ElementType::second_type>;
-
-					if constexpr(IsReflectable<MutableType>())
-						const_cast<MutableType&>(value.second) = static_cast<const MutableType&>(reflectable);
+					detail::SetReflectableValue(const_cast<MutableType&>(value.second), reflectable);
 				}
 			}
 			else
@@ -372,9 +490,7 @@ namespace b3d
 
 				// Same as above
 				using MutableType = std::remove_cv_t<ElementType>;
-
-				if constexpr(IsReflectable<MutableType>())
-					const_cast<MutableType&>(value) = static_cast<const ElementType&>(reflectable);
+				detail::SetReflectableValue(const_cast<MutableType&>(value), reflectable);
 			}
 		}
 
@@ -386,25 +502,15 @@ namespace b3d
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-				{
-					if constexpr(IsReflectable<typename ElementType::first_type>())
-						return value.first;
-				}
+					return detail::GetReflectableValue(value.first);
 
-				if constexpr(IsReflectable<typename ElementType::second_type>())
-					return value.second;
+				return detail::GetReflectableValue(value.second);
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-
-				if constexpr(IsReflectable<ElementType>())
-					return value;
+				return detail::GetReflectableValue(value);
 			}
-
-			B3D_ASSERT(false);
-			static IReflectable* kNull = nullptr;
-			return *kNull;
 		}
 
 		BitLength GetPlainTypeSize(const void* fieldValue, u32 tupleElementIndex, bool useCompression) override
@@ -415,107 +521,18 @@ namespace b3d
 				B3D_ENSURE(tupleElementIndex <= 1);
 
 				if(tupleElementIndex == 0)
-					return GetPlainTypeSize(value.first, useCompression);
+					return detail::GetPlainTypeSize(value.first, Schema.Info, useCompression);
 				else
-					return GetPlainTypeSize(value.second, useCompression);
+					return detail::GetPlainTypeSize(value.second, Schema.Info, useCompression);
 			}
 			else
 			{
 				B3D_ENSURE(tupleElementIndex == 0);
-				return GetPlainTypeSize(value, useCompression);
+				return detail::GetPlainTypeSize(value, Schema.Info, useCompression);
 			}
 		}
 
 	private:
-		/** Creates a schema for a type stored in the field. */
-		template<typename FieldType>
-		RTTIFieldDataTypeSchema CreateFieldTypeSchema(const RTTIFieldInfo& fieldInfo)
-		{
-			if constexpr(IsReflectableShared<FieldType>())
-			{
-				using UnderlyingType = typename B3DDecaySharedPointer<FieldType>::value;
-				static_assert(std::is_base_of_v<IReflectable, UnderlyingType>, "RTTI fields holding shared pointers must ensure the pointed-to data types implement the IReflectable interface.");
-
-				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::ReflectablePointer, UnderlyingType::GetRttiStatic()->GetRttiId(), UnderlyingType::GetRttiStatic()->GetSchema());
-			}
-			else if constexpr(IsReflectable<FieldType>())
-			{
-				return RTTIFieldDataTypeSchema(true, 0, RTTIFieldDataType::Reflectable, FieldType::GetRttiStatic()->GetRttiId(), FieldType::GetRttiStatic()->GetSchema());
-			}
-			else if constexpr(IsPlain<FieldType>())
-			{
-				static_assert(sizeof(RTTIPlainType<FieldType>::id) > 0, "Plain type has no valid ID."); // TODO - sizeof here is probably a bug, but it would break too many things to fix right now (also breaks memcpy serialization)
-
-				BitLength fixedSize = 0; 
-				const bool hasDynamicSize = RTTIPlainType<FieldType>::hasDynamicSize != 0;
-				if(!hasDynamicSize)
-				{
-					// Note: Would be nice to avoid the construction of FieldType
-					fixedSize = RTTIPlainType<FieldType>::GetSize(FieldType(), fieldInfo, false);
-					
-					if(fixedSize.Bytes > 255)
-					{
-						B3D_ASSERT(false);
-						B3D_LOG(Error, LogRTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain types please specialize RTTIPlainType, set hasDynamicSize to true.");
-					}
-				}
-
-				return RTTIFieldDataTypeSchema(RTTIPlainType<FieldType>::hasDynamicSize, fixedSize, RTTIFieldDataType::Plain, RTTIPlainType<FieldType>::id, nullptr);
-			}
-			else
-			{
-				static_assert(false, "Cannot initialize RTTIField. Unsupported type provided. Make sure your type either derives from IReflectable or implements the RTTIPlainType<T> specialization.");
-				return RTTIFieldDataTypeSchema();
-			}
-		}
-
-		/** Writes the provided plain object to the stream. */
-		template<typename T>
-		void WritePlainTypeToStream(const T& value, Bitstream& stream, bool useCompression)
-		{
-			if constexpr(IsPlain<T>())
-				RTTIPlainType<T>::ToMemory(value, stream, Schema.Info, useCompression);
-		}
-
-		/** Reads the provided plain object from the stream. */
-		template<typename T>
-		void ReadPlainTypeFromStream(T& value, Bitstream& stream, bool useCompression)
-		{
-			if constexpr(IsPlain<T>())
-				RTTIPlainType<T>::FromMemory(value, stream, Schema.Info, useCompression);
-		}
-
-		/** Returns the size of the provided plain object. */
-		template<typename T>
-		BitLength GetPlainTypeSize(const T& value, bool useCompression)
-		{
-			if constexpr(IsPlain<T>())
-				return RTTIPlainType<T>::GetSize(value, Schema.Info, useCompression);
-
-			return 0;
-		}
-
-		/** Checks is the provided type a value type deriving from IReflectable. */
-		template<class T>
-		static constexpr bool IsReflectable()
-		{
-			return std::is_base_of_v<IReflectable, std::remove_reference_t<std::remove_cv_t<T>>>;
-		}
-
-		/** Checks is the provided type a shared pointer referencing a type deriving from IReflectable. */
-		template<class T>
-		static constexpr bool IsReflectableShared()
-		{
-			return B3DIsSharedPointer<std::remove_reference_t<std::remove_cv_t<T>>>::value && IsReflectable<typename B3DDecaySharedPointer<std::remove_reference_t<std::remove_cv_t<T>>>::value>();
-		}
-
-		/** Checks is the provided type a plain type (implements the RTTIPlainType<T> specialization). */
-		template<class T>
-		static constexpr bool IsPlain()
-		{
-			return B3DHasRTTIPlainTypeSpecialization<std::remove_reference_t<std::remove_cv_t<T>>>::value;
-		}
-		
 		GetIteratorDelegate mGetIteratorCallback;
 		GetValueDelegate mGetValueCallback;
 		SetValueDelegate mSetValueCallback;

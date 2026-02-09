@@ -218,7 +218,7 @@ namespace b3d::ecs
 		template<typename FirstComponentType, typename... OtherComponentType>
 		u64 RemoveComponents(Entity entity)
 		{
-			return (GetOrCreateStorage<FirstComponentType>().EraseIfValid(entity) + ... + GetOrCreateStorage<OtherComponentType>(entity));
+			return (GetOrCreateStorage<FirstComponentType>().EraseIfValid(entity) + ... + GetOrCreateStorage<OtherComponentType>().EraseIfValid(entity));
 		}
 
 		/** Removes one or multiple components from a range of entities. */
