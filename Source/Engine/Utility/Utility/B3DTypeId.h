@@ -20,8 +20,18 @@ namespace b3d
 	constexpr std::string_view B3DGetTypeNameFromPrettyFunction()
 	{
 		const std::string_view prettyFunctionString(B3D_PRETTY_FUNCTION);
-		auto typeNameStart = prettyFunctionString.find_first_not_of(' ', prettyFunctionString.find_first_of(B3D_PRETTY_FUNCTION_PREFIX) + 1);
+
+#if B3D_COMPILER_MSVC
+		// MSVC __FUNCSIG__ includes other template signatures before our template argument, so parse by function token.
+		constexpr std::string_view kTypeNameStartToken = "B3DGetTypeNameFromPrettyFunction<";
+		constexpr std::string_view kTypeNameEndToken = ">(void)";
+		const auto typeNameStart = prettyFunctionString.find(kTypeNameStartToken) + kTypeNameStartToken.length();
+		const auto typeNameEnd = prettyFunctionString.find(kTypeNameEndToken, typeNameStart);
+		return prettyFunctionString.substr(typeNameStart, typeNameEnd - typeNameStart);
+#else
+		const auto typeNameStart = prettyFunctionString.find_first_not_of(' ', prettyFunctionString.find_first_of(B3D_PRETTY_FUNCTION_PREFIX) + 1);
 		return prettyFunctionString.substr(typeNameStart, prettyFunctionString.find_last_of(B3D_PRETTY_FUNCTION_SUFFIX) - typeNameStart);
+#endif
 	}
 
 	/** Computes a hash value for the current class name. Uses B3DGetTypeNameFromPrettyFunction() to compute the hash from. */
