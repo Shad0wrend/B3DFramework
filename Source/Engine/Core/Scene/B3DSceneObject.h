@@ -49,8 +49,7 @@ namespace b3d
 		/**	Flags that signify which part of the SceneObject needs updating. */
 		enum DirtyFlags
 		{
-			LocalTransformDirty = 0x01,
-			WorldTransformDirty = 0x02
+			WorldTransformDirty = 0x01
 		};
 
 		friend class SceneManager;
@@ -227,7 +226,7 @@ namespace b3d
 		 *
 		 * @note	Performance warning: This might involve updating the transforms if the transform is dirty.
 		 */
-		const Matrix4& GetWorldMatrix() const;
+		Matrix4 GetWorldMatrix() const;
 
 		/**
 		 * Gets the objects inverse world transform matrix.
@@ -237,7 +236,7 @@ namespace b3d
 		Matrix4 GetInvWorldMatrix() const;
 
 		/** Gets the objects local transform matrix. */
-		const Matrix4& GetLocalMatrix() const;
+		Matrix4 GetLocalMatrix() const;
 
 		/**	Moves the object's position by the vector offset provided along world axes. */
 		void Move(const Vector3& vec);
@@ -282,15 +281,6 @@ namespace b3d
 		void Pitch(const Radian& angle);
 
 		/**
-		 * Forces any dirty transform matrices on this object to be updated.
-		 *
-		 * @note
-		 * Normally this is done internally when retrieving a transform, but sometimes it is useful to update transforms
-		 * manually.
-		 */
-		void UpdateTransformsIfDirty();
-
-		/**
 		 * Returns a hash value that changes whenever a scene objects transform gets updated. It allows you to detect
 		 * changes with the local or world transforms without directly comparing their values with some older state.
 		 */
@@ -303,9 +293,6 @@ namespace b3d
 		void CreateECSEntity(ecs::Registry* registry) override;
 
 	private:
-
-		mutable Matrix4 mCachedLocalTfrm = Matrix4::kIdentity;
-		mutable Matrix4 mCachedWorldTfrm = Matrix4::kIdentity;
 
 		mutable u32 mDirtyFlags = 0xFFFFFFFF;
 		mutable u32 mDirtyHash = 0;
@@ -326,18 +313,12 @@ namespace b3d
 		 */
 		void NotifyTransformChanged(TransformChangedFlags flags) const;
 
-		/** Updates the local transform. Normally just reconstructs the transform matrix from the position/rotation/scale. */
-		void UpdateLocalTfrm() const;
-
 		/**
 		 * Updates the world transform. Reconstructs the local transform matrix and multiplies it with any parent transforms.
 		 *
 		 * @note	If parent transforms are dirty they will be updated.
 		 */
 		void UpdateWorldTfrm() const;
-
-		/**	Checks if cached local transform needs updating. */
-		bool IsCachedLocalTransformUpToDate() const { return (mDirtyFlags & DirtyFlags::LocalTransformDirty) == 0; }
 
 		/**	Checks if cached world transform needs updating. */
 		bool IsCachedWorldTransformUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTransformDirty) == 0; }

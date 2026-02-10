@@ -383,12 +383,9 @@ void SceneObject::LookAt(const Vector3& location, const Vector3& up)
 	SetWorldRotation(rotation);
 }
 
-const Matrix4& SceneObject::GetWorldMatrix() const
+Matrix4 SceneObject::GetWorldMatrix() const
 {
-	if(!IsCachedWorldTransformUpToDate())
-		UpdateWorldTfrm();
-
-	return mCachedWorldTfrm;
+	return GetTransform().GetMatrix();
 }
 
 Matrix4 SceneObject::GetInvWorldMatrix() const
@@ -396,12 +393,9 @@ Matrix4 SceneObject::GetInvWorldMatrix() const
 	return GetTransform().GetInvMatrix();
 }
 
-const Matrix4& SceneObject::GetLocalMatrix() const
+Matrix4 SceneObject::GetLocalMatrix() const
 {
-	if(!IsCachedLocalTransformUpToDate())
-		UpdateLocalTfrm();
-
-	return mCachedLocalTfrm;
+	return GetLocalTransform().GetMatrix();
 }
 
 void SceneObject::Move(const Vector3& vec)
@@ -476,15 +470,6 @@ void SceneObject::SetForward(const Vector3& forwardDir)
 	SetWorldRotation(currentRotation);
 }
 
-void SceneObject::UpdateTransformsIfDirty()
-{
-	if(!IsCachedLocalTransformUpToDate())
-		UpdateLocalTfrm();
-
-	if(!IsCachedWorldTransformUpToDate())
-		UpdateWorldTfrm();
-}
-
 void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 {
 	// If object is immovable, don't send transform changed events nor mark the transform dirty
@@ -493,7 +478,7 @@ void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 		componentFlags = (TransformChangedFlags)(componentFlags & ~TCF_Transform);
 	else
 	{
-		mDirtyFlags |= DirtyFlags::LocalTransformDirty | DirtyFlags::WorldTransformDirty;
+		mDirtyFlags |= DirtyFlags::WorldTransformDirty;
 		mDirtyHash++;
 	}
 
@@ -530,22 +515,9 @@ void SceneObject::UpdateWorldTfrm() const
 
 	// Don't allow movement from parent when not movable
 	if(mParent != nullptr && mMobility == ObjectMobility::Movable)
-	{
 		worldTfrm.MakeWorld(mParent->GetTransform());
-		mCachedWorldTfrm = worldTfrm.GetMatrix();
-	}
-	else
-		mCachedWorldTfrm = GetLocalMatrix();
 
 	mDirtyFlags &= ~DirtyFlags::WorldTransformDirty;
-}
-
-void SceneObject::UpdateLocalTfrm() const
-{
-	B3D_ASSERT(mECSRegistry != nullptr);
-
-	mCachedLocalTfrm = GetLocalTransform().GetMatrix();
-	mDirtyFlags &= ~DirtyFlags::LocalTransformDirty;
 }
 
 /************************************************************************/
