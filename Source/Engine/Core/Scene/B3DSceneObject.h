@@ -46,12 +46,6 @@ namespace b3d
 	 */
 	class B3D_EXPORT SceneObject : public GameObject, public ecs::IECSEntityOwner
 	{
-		/**	Flags that signify which part of the SceneObject needs updating. */
-		enum DirtyFlags
-		{
-			WorldTransformDirty = 0x01
-		};
-
 		friend class SceneManager;
 		friend class Scene;
 		friend class Prefab;
@@ -294,7 +288,6 @@ namespace b3d
 
 	private:
 
-		mutable u32 mDirtyFlags = 0xFFFFFFFF;
 		mutable u32 mDirtyHash = 0;
 
 		ecs::Registry* mECSRegistry = nullptr;
@@ -319,9 +312,6 @@ namespace b3d
 		 * @note	If parent transforms are dirty they will be updated.
 		 */
 		void UpdateWorldTfrm() const;
-
-		/**	Checks if cached world transform needs updating. */
-		bool IsCachedWorldTransformUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTransformDirty) == 0; }
 
 		/************************************************************************/
 		/* 								Hierarchy	                     		*/

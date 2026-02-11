@@ -288,7 +288,7 @@ const Transform& SceneObject::GetTransform() const
 {
 	B3D_ASSERT(mECSRegistry != nullptr);
 
-	if(!IsCachedWorldTransformUpToDate())
+	if(mECSRegistry->HasAllOf<ecs::TransformDirty>(mECSEntity))
 		UpdateWorldTfrm();
 
 	return mECSRegistry->GetComponents<ecs::WorldTransform>(mECSEntity);
@@ -478,7 +478,7 @@ void SceneObject::NotifyTransformChanged(TransformChangedFlags flags) const
 		componentFlags = (TransformChangedFlags)(componentFlags & ~TCF_Transform);
 	else
 	{
-		mDirtyFlags |= DirtyFlags::WorldTransformDirty;
+		mECSRegistry->AddTag<ecs::TransformDirty>(mECSEntity);
 		mDirtyHash++;
 	}
 
@@ -517,7 +517,7 @@ void SceneObject::UpdateWorldTfrm() const
 	if(mParent != nullptr && mMobility == ObjectMobility::Movable)
 		worldTfrm.MakeWorld(mParent->GetTransform());
 
-	mDirtyFlags &= ~DirtyFlags::WorldTransformDirty;
+	mECSRegistry->RemoveTag<ecs::TransformDirty>(mECSEntity);
 }
 
 /************************************************************************/

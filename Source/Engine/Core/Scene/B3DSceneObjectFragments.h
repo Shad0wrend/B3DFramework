@@ -39,6 +39,9 @@ namespace b3d::ecs
 	/** Tag indicating the scene object is fully static and may not change in any way. */
 	struct Static {};
 
+	/** Tag indicating the scene object's world transform needs recalculation. */
+	struct TransformDirty {};
+
 	/** Groups mobility-related tags for serialization. */
 	using MobilityTags = TagGroup<u8, Movable, Immovable, Static>;
 
