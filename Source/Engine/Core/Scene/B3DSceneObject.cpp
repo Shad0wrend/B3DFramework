@@ -106,6 +106,7 @@ void SceneObject::CreateECSEntity(ecs::Registry* registry)
 	mECSRegistry->AddComponent<ecs::LocalTransform>(mECSEntity, ecs::LocalTransform());
 	mECSRegistry->AddComponent<ecs::WorldTransform>(mECSEntity, ecs::WorldTransform());
 	mECSRegistry->AddComponent<ecs::HierarchyDepth>(mECSEntity, ecs::HierarchyDepth());
+	mECSRegistry->AddComponent<ecs::Parent>(mECSEntity, ecs::Parent{ ecs::kNullEntity });
 }
 
 void SceneObject::DestroyImmediate()
@@ -610,17 +611,14 @@ void SceneObject::SetParentInternal(const HSceneObject& parent, bool keepWorldTr
 
 		mParent = parent;
 
+		ecs::Parent& parentFragment = mECSRegistry->GetOrAddComponent<ecs::Parent>(mECSEntity);
 		if(parent != nullptr)
 		{
-			ecs::Parent& parentFragment = mECSRegistry->GetOrAddComponent<ecs::Parent>(mECSEntity);
-
 			B3D_ASSERT(parent->mECSEntity != ecs::kNullEntity);
 			parentFragment.Entity = parent->mECSEntity;
 		}
 		else
-		{
-			mECSRegistry->RemoveComponents<ecs::Parent>(mECSEntity);
-		}
+			parentFragment.Entity = ecs::kNullEntity;
 
 		UpdateHierarchyDepthFromParent();
 
@@ -646,7 +644,9 @@ void SceneObject::ClearParent()
 	SetScene(nullptr);
 	mParent = nullptr;
 
-	mECSRegistry->RemoveComponents<ecs::Parent>(mECSEntity);
+	ecs::Parent& parentFragment = mECSRegistry->GetOrAddComponent<ecs::Parent>(mECSEntity);
+	parentFragment.Entity = ecs::kNullEntity;
+
 	UpdateHierarchyDepthFromParent();
 }
 
@@ -687,13 +687,14 @@ void SceneObject::SetScene(const SPtr<SceneInstance>& scene)
 		}
 
 		// Update reference to the parent entity in the new registry
+		ecs::Parent& parent = mECSRegistry->GetOrAddComponent<ecs::Parent>(mECSEntity);
 		if(mParent != nullptr)
 		{
-			ecs::Parent& parent = mECSRegistry->AddComponent<ecs::Parent>(mECSEntity);
-
 			B3D_ASSERT(mParent->mECSEntity != ecs::kNullEntity);
 			parent.Entity = mParent->mECSEntity;
 		}
+		else
+			parent.Entity = ecs::kNullEntity;
 	}
 	else
 	{
@@ -1024,7 +1025,9 @@ HSceneObject SceneObject::Clone(const SPtr<GameObjectCollection>& cloneOwnerColl
 
 	// Clear the parent of the clone, as it will belong to the original game object collection, which is not valid
 	clone->mParent = nullptr;
-	clone->mECSRegistry->RemoveComponents<ecs::Parent>(clone->mECSEntity);
+
+	ecs::Parent& parentFragment = mECSRegistry->GetOrAddComponent<ecs::Parent>(mECSEntity);
+	parentFragment.Entity = ecs::kNullEntity;
 
 	return clone->GetHandle();
 }

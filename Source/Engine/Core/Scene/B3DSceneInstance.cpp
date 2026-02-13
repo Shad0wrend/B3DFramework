@@ -8,6 +8,7 @@
 #include "B3DSceneManager.h"
 #include "Components/B3DCamera.h"
 #include "Scene/B3DSceneObject.h"
+#include "Scene/B3DTransformSystem.h"
 #include "Scene/B3DComponent.h"
 #include "Components/B3DRenderable.h"
 #include "RenderAPI/B3DViewport.h"
@@ -426,6 +427,7 @@ void SceneInstance::FixedUpdate()
 	const float stepSeconds = fixedUpdateStep / 1000000.0f;
 	for(u32 i = 0; i < iterationCount; i++)
 	{
+		ecs::TransformSystem::Update(mGameObjectCollection->GetECSRegistry());
 		PROFILE_CALL(SceneInstanceComponents::FixedUpdate(), "Scene fixed update");
 		PROFILE_CALL(mPhysicsScene->FixedUpdate(stepSeconds), "Physics simulation");
 
@@ -435,6 +437,7 @@ void SceneInstance::FixedUpdate()
 
 void SceneInstance::Update()
 {
+	ecs::TransformSystem::Update(mGameObjectCollection->GetECSRegistry());
 	SceneInstanceComponents::Update();
 	mGameObjectCollection->DestroyQueuedObjects();
 
