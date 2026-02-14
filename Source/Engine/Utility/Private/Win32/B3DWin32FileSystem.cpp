@@ -511,7 +511,7 @@ std::time_t FileSystem::GetLastModifiedTime(const Path& fullPath)
 	return Win32GetLastModifiedTime(UTF8::ToWide(fullPath.ToString()));
 }
 
-Path FileSystem::GetWorkingFolderPath()
+Path FileSystem::GetExecutableFolderPath()
 {
 	wchar_t path[MAX_PATH];
 	DWORD characterCount = GetModuleFileNameW(nullptr, path, (DWORD)B3DSize(path));
@@ -525,6 +525,19 @@ Path FileSystem::GetWorkingFolderPath()
 	pathToModule = pathToModule.GetParent();
 
 	return pathToModule;
+}
+
+Path FileSystem::GetWorkingDirectoryPath()
+{
+	wchar_t path[MAX_PATH];
+	DWORD length = GetCurrentDirectoryW(MAX_PATH, path);
+	if(length == 0)
+	{
+		B3D_LOG(Error, LogFileSystem, "Internal error. Failed to retrieve current working directory.");
+		return Path::kBlank;
+	}
+
+	return Path(UTF8::FromWide(path));
 }
 
 Path FileSystem::GetTemporaryFolderPath()
@@ -554,6 +567,6 @@ Path FileSystem::GetApplicationDataFolder()
 	}
 
 	// Fallback
-	return GetWorkingFolderPath();
+	return GetExecutableFolderPath();
 }
 

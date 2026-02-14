@@ -23,9 +23,8 @@ const Path& Paths::GetDataPath()
 
 	if(!initialized)
 	{
-		if(FileSystem::Exists(kFrameworkDataPath))
-			path = FileSystem::GetWorkingFolderPath() + kFrameworkDataPath;
-		else
+		path = FileSystem::GetExecutableFolderPath() + kFrameworkDataPath;
+		if(!FileSystem::Exists(path))
 #if B3D_IS_ENGINE
 			path = Path(kRawAppRoot) + Path("Framework") + kFrameworkDataPath;
 #else
@@ -45,7 +44,7 @@ const Path& Paths::GetBinariesPath()
 
 	if(!initialized)
 	{
-		path = FileSystem::GetWorkingFolderPath();
+		path = FileSystem::GetExecutableFolderPath();
 
 		// Look for bsf library to find the right path
 		Path anchorFile = path;
@@ -72,11 +71,11 @@ const Path& Paths::GetEditorDataPath()
 
 	if(!initialized)
 	{
-		// Look for the folder in the direct descendant of the working directory
-		if(FileSystem::Exists(kEditorDataPath))
-			path = FileSystem::GetWorkingFolderPath() + kEditorDataPath;
+		// Look for the folder in the direct descendant of the executable directory
+		path = FileSystem::GetExecutableFolderPath() + kEditorDataPath;
+
 		// Then check the source distribution itself, in case we're running directly from the build directory
-		else
+		if(!FileSystem::Exists(path))
 		{
 			path = Path(kRawAppRoot) + kFrameworkDataPath;
 
@@ -109,16 +108,13 @@ Path Paths::FindPath(const Path& path)
 {
 	// Note: These paths should be searched for during start-up and cached
 
-	// First, look for the direct descendant of the working directory
-	Path output = path;
-	if(FileSystem::Exists(path))
-	{
-		output.MakeAbsolute(FileSystem::GetWorkingFolderPath());
+	// First, look for the direct descendant of the executable directory
+	Path output = FileSystem::GetExecutableFolderPath() + path;
+	if(FileSystem::Exists(output))
 		return output;
-	}
 
 	// Then, check the build directory itself, in case we're running directly from it (during development)
-	output.MakeAbsolute(kBuildAppRoot);
+	output = Path(kBuildAppRoot) + path;
 	if(FileSystem::Exists(output))
 		return output;
 

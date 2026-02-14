@@ -14,7 +14,7 @@ const String CrashHandler::kSFatalErrorMsg =
 
 const Path& CrashHandler::GetCrashFolder()
 {
-	static const Path kPath = FileSystem::GetWorkingFolderPath() + kSCrashReportFolder +
+	static const Path kPath = FileSystem::GetExecutableFolderPath() + kSCrashReportFolder +
 		GetCrashTimestamp();
 
 	static bool first = true;

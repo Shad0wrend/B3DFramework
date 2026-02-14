@@ -124,8 +124,11 @@ namespace b3d
 		 */
 		static std::time_t GetLastModifiedTime(const Path& fullPath);
 
-		/** Returns the path to the currently working directory. */
-		static Path GetWorkingFolderPath();
+		/** Returns the path to the directory containing the current executable. */
+		static Path GetExecutableFolderPath();
+
+		/** Returns the path to the current working directory. */
+		static Path GetWorkingDirectoryPath();
 
 		/** Returns the path to a directory where temporary files may be stored. */
 		static Path GetTemporaryFolderPath();

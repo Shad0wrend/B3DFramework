@@ -260,7 +260,7 @@ namespace b3d
 		ConfigVariableRegistry::OnManagerStarted();
 
 		// Load config file (if exists)
-		Path configPath = FileSystem::GetWorkingFolderPath();
+		Path configPath = FileSystem::GetExecutableFolderPath();
 		configPath.SetFilename("engine.ini");
 		LoadFromFile(configPath);
 
