@@ -50,6 +50,10 @@ namespace b3d::ecs
 		auto view = registry.CreateView<TransformDirty, LocalTransform, WorldTransform, Parent>();
 		view.SetLeadingType<TransformDirty>();
 
+		// NOTE: This loop could be faster by reducing the loop dependencies, which currently block out of order execution.
+		// We should split the loop into higher level loop per depth layer. This way each "depth layer loop" can operate on
+		// its entities completely independently. One easy improvement here would be to do a sort on the transforms based
+		// on the hierarchy depth, this way entities on the same layer remain close in cache.
 		for(auto entity : view)
 		{
 			const LocalTransform& localTransform = view.Get<LocalTransform>(entity);

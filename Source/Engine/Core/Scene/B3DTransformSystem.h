@@ -12,7 +12,7 @@ namespace b3d::ecs
 	 */
 
 	/** Processes scene object transform hierarchy: propagates dirty flags down the hierarchy and recomputes world-space transforms. */
-	class TransformSystem
+	class B3D_EXPORT TransformSystem
 	{
 	public:
 		/** Runs the full transform update: propagate dirty flags, then recompute world transforms. */

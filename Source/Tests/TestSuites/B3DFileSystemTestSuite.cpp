@@ -38,7 +38,7 @@ String ReadFile(Path path)
 
 void FileSystemTestSuite::StartUp()
 {
-	mTestDirectory = FileSystem::GetWorkingFolderPath() + kTestDirectoryName;
+	mTestDirectory = FileSystem::GetExecutableFolderPath() + kTestDirectoryName;
 	if(FileSystem::Exists(mTestDirectory))
 	{
 		B3D_EXCEPT(InternalErrorException, String("Directory '") + kTestDirectoryName + "' should not already exist; you should remove it manually.");
