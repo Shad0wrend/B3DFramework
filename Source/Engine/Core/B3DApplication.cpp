@@ -172,7 +172,8 @@ Application::~Application()
 	// All CoreObject related modules should be shut down now. They have likely queued CoreObjects for destruction, so
 	// we need to wait for those objects to get destroyed before continuing.
 	CoreObjectManager::Instance().SyncToRenderThread(true);
-	RenderProxySyncManager::Instance().SyncToRenderThread(true);
+	// Note: On purpose not doing ECS sync here, as that is done per-scene, and the scene manager is shut down at this point
+
 	GetRenderThread().PostCommand([] {}, "SyncToRenderThread before shutdown", true);
 
 	// Destroy profiler after render thread is shut down, because we rely on it to clear the profiler resources
