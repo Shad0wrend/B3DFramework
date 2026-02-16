@@ -683,18 +683,30 @@ void SceneObject::SetScene(const SPtr<SceneInstance>& scene)
 		else if(mECSRegistry != sceneRegistry)
 		{
 			// Migrate entity to new registry (e.g. persistent object moving between scenes)
+			ecs::Registry* oldRegistry = mECSRegistry;
+			ecs::Entity oldEntity = mECSEntity;
+
+			// Read SceneObject's own data from old entity
 			Transform localTfrm = GetLocalTransform();
 			Transform worldTfrm = GetTransform();
 			ObjectMobility mobility = GetMobility();
-			ecs::HierarchyDepth hierarchyDepth = mECSRegistry->GetComponents<ecs::HierarchyDepth>(mECSEntity);
-			mECSRegistry->EraseEntity(mECSEntity);
+			ecs::HierarchyDepth hierarchyDepth = oldRegistry->GetComponents<ecs::HierarchyDepth>(oldEntity);
 
+			// Create new entity in new registry (old entity still alive for component reads)
 			mECSRegistry = sceneRegistry;
 			mECSEntity = mECSRegistry->CreateEntity();
 			mECSRegistry->AddComponent<ecs::LocalTransform>(mECSEntity, ecs::LocalTransform(localTfrm));
 			mECSRegistry->AddComponent<ecs::WorldTransform>(mECSEntity, ecs::WorldTransform(worldTfrm));
 			mECSRegistry->AddComponent<ecs::HierarchyDepth>(mECSEntity, hierarchyDepth);
 			AddMobilityTag(mobility);
+
+			// Notify components so they can migrate their ECS fragments
+			// (old entity is still alive — components can read from it)
+			for(auto& entry : mComponents)
+				entry->OnSceneChanged(oldRegistry, oldEntity);
+
+			// Old entity no longer needed
+			oldRegistry->EraseEntity(oldEntity);
 
 			updatedRegistry = true;
 		}

@@ -238,21 +238,15 @@ void Renderable::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Renderable>(mThisHandle).GetShared());
 
-	// Set up ECS fragments BEFORE Component/CoreObject::Initialize
-	// (MarkRenderProxyDataDirty may be called during init)
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
-	registry->AddComponent<ecs::RenderableProxy>(entity, ecs::RenderableProxy{});
-	registry->AddComponent<ecs::RenderableComponent>(entity, ecs::RenderableComponent{this});
-
 	Component::Initialize();
-	CoreObject::Initialize(); // Creates render proxy
+	CoreObject::Initialize();
 
-	// Fill in the proxy reference (now that render proxy exists)
-	auto proxy = std::static_pointer_cast<render::Renderable>(GetRenderProxy());
-	registry->GetComponents<ecs::RenderableProxy>(entity).Proxy = proxy;
+	const HSceneObject& sceneObject = SceneObject();
+	ecs::Registry* registry = sceneObject->GetECSRegistry();
+	ecs::Entity entity = sceneObject->GetECSEntity();
 
-	// Tag dirty for initial state sync
+	registry->AddComponent<ecs::RenderableComponent>(entity, ecs::RenderableComponent{this});
+	registry->AddComponent<ecs::RenderableProxy>(entity, ecs::RenderableProxy{ B3DGetRenderProxy(this) });
 	registry->AddTag<ecs::RenderableDirty>(entity);
 }
 
@@ -296,6 +290,20 @@ void Renderable::OnDestroyed()
 	registry->RemoveComponents<ecs::RenderableComponent>(entity);
 
 	CoreObject::Destroy();
+}
+
+void Renderable::OnSceneChanged(ecs::Registry* oldRegistry, ecs::Entity oldEntity)
+{
+	ecs::Registry* registry = SceneObject()->GetECSRegistry();
+	ecs::Entity entity = SceneObject()->GetECSEntity();
+
+	// Migrate RenderableProxy — read from old entity, write to new
+	ecs::RenderableProxy& oldProxy = oldRegistry->GetComponents<ecs::RenderableProxy>(oldEntity);
+	registry->AddComponent<ecs::RenderableProxy>(entity, ecs::RenderableProxy{ B3DGetRenderProxy(this) });
+	registry->AddComponent<ecs::RenderableComponent>(entity, ecs::RenderableComponent{ this });
+
+	// Full sync needed after migration
+	registry->AddTag<ecs::RenderableDirty>(entity);
 }
 
 void Renderable::OnTransformChanged(TransformChangedFlags flags)

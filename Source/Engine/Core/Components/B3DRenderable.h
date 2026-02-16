@@ -238,6 +238,7 @@ namespace b3d
 		void OnEnabled() override;
 		void OnDisabled() override;
 		void OnDestroyed() override;
+		void OnSceneChanged(ecs::Registry* oldRegistry, ecs::Entity oldEntity) override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		void DoOnMeshChanged() override;

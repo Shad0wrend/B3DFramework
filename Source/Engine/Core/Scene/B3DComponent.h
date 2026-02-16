@@ -5,6 +5,9 @@
 #include "B3DPrerequisites.h"
 #include "Scene/B3DGameObject.h"
 #include "Math/B3DBounds.h"
+#include "ECS/B3DEntity.h"
+
+namespace b3d::ecs { class Registry; }
 
 namespace b3d
 {
@@ -187,6 +190,13 @@ namespace b3d
 		 * Also only called if necessary notify flags are set via SetNotifyFlagsInternal().
 		 */
 		virtual void OnTransformChanged(TransformChangedFlags flags) {}
+
+		/**
+		 * Called when the parent SceneObject's ECS entity is migrated to a new registry (e.g. when moving between
+		 * scenes). The old registry and entity are provided so that components can read any data stored only in ECS
+		 * fragments. 
+		 */
+		virtual void OnSceneChanged(ecs::Registry* oldRegistry, ecs::Entity oldEntity) {}
 
 		/**
 		 * Destroys the component without delay. Object will be removed from its game object collection, and reference to the object
