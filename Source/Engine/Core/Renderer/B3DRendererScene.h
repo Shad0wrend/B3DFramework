@@ -2,24 +2,33 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "B3DPackedSlotAllocator.h"
 #include "B3DPrerequisites.h"
 #include "B3DRendererExtension.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "CoreObject/B3DRenderProxy.h"
-#include "Components/B3DRenderable.h"
+#include "ECS/B3DEntity.h"
 
 namespace b3d
 {
-	class IRendererObjectSyncHandler;
+	class FrameAllocator;
+	class RenderableObjectStorageBase;
 
+	namespace ecs { class Registry; }
 	namespace render
 	{
 		class RendererScene;
 	}
 
-	/** @addtogroup Renderere
+	/** @addtogroup Renderer
 	 *  @{
 	 */
+
+	/** Frame-allocated data produced by RendererScene::SyncRead, consumed by render::RendererScene::SyncWrite. */
+	struct RendererSceneSyncData
+	{
+		void* RenderableBatchData = nullptr;
+	};
 
 	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
 	class RendererScene : public CoreObject
@@ -30,21 +39,24 @@ namespace b3d
 		/** Creates a new renderer scene. */
 		static SPtr<RendererScene> Create();
 
-		/** Returns the allocator used for assigning packed renderable slot IDs on the main thread. */
-		TPackedSlotAllocator<ecs::RenderableSlotId>& GetRenderableSlotAllocator() { return mRenderableSlotAllocator; }
+		/** Allocates a packed renderable slot for the given entity. */
+		SlotId AllocateRenderableSlot(ecs::Entity entity);
 
-		/** Returns the sync handlers owned by this scene. */
-		const Vector<UPtr<IRendererObjectSyncHandler>>& GetSyncHandlers() const { return mSyncHandlers; }
+		/** Deallocates the renderable slot belonging to the given entity. */
+		void DeallocateRenderableSlot(ecs::Entity entity, ecs::Registry& registry);
+
+		/**
+		 * Reads dirty ECS data for all sync handlers in this scene into a frame-allocated RendererSceneSyncData.
+		 * Returns nullptr if no data is dirty.
+		 */
+		RendererSceneSyncData* SyncRead(ecs::Registry& registry, FrameAllocator& allocator);
 
 	protected:
-		friend class render::RendererScene;
-
 		void Initialize() override;
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 
 	private:
-		TPackedSlotAllocator<ecs::RenderableSlotId> mRenderableSlotAllocator;
-		Vector<UPtr<IRendererObjectSyncHandler>> mSyncHandlers;
+		SPtr<RenderableObjectStorageBase> mRenderableStorage;
 	};
 
 	/** @} */
@@ -60,6 +72,19 @@ namespace b3d
 		{
 		public:
 			virtual ~RendererScene() = default;
+
+			RendererScene(const RendererScene&) = delete;
+			RendererScene& operator=(const RendererScene&) = delete;
+
+		protected:
+			RendererScene() = default;
+
+		public:
+			/** Returns the renderable object storage for this scene. */
+			const SPtr<RenderableObjectStorageBase>& GetRenderableStorage() const { return mRenderableStorage; }
+
+			/** Applies sync data from SyncRead to render-thread representations and frees frame-allocated memory. */
+			void SyncWrite(RendererSceneSyncData& batchData, FrameAllocator& allocator);
 
 			/** Registers a new camera in the scene. */
 			virtual void RegisterCamera(Camera* camera) = 0;
@@ -78,22 +103,6 @@ namespace b3d
 
 			/** Removes a light from the scene. */
 			virtual void UnregisterLight(Light* light) = 0;
-
-			/**
-			 * Replays slot allocate/deallocate commands recorded by the main-thread, which re-orders
-			 * the internal packed arrays to match the current state on the main thread. Must be called
-			 * at the start of the frame before any Register/Unregister/Update calls.
-			 */
-			virtual void UpdateRenderableSlotIds(const SlotCommand* commands, u32 count) {}
-
-			/** Registers a new renderable object in the scene. */
-			virtual void RegisterRenderable(Renderable* renderable) = 0;
-
-			/** Updates information about a previously registered renderable object. */
-			virtual void UpdateRenderable(Renderable* renderable) = 0;
-
-			/** Removes a renderable object from the scene. */
-			virtual void UnregisterRenderable(Renderable* renderable) = 0;
 
 			/** Registers a new reflection probe in the scene. */
 			virtual void RegisterReflectionProbe(ReflectionProbe* probe) = 0;
@@ -160,7 +169,7 @@ namespace b3d
 			const Set<RendererExtension*, RendererExtension::SortFunction>& GetCombinedRendererExtensions() const { return mCombinedRendererExtensions; }
 
 		protected:
-			friend class b3d::RendererScene;
+			SPtr<RenderableObjectStorageBase> mRenderableStorage;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			Set<RendererExtension*, RendererExtension::SortFunction> mCombinedRendererExtensions; /**< Transient set of per-scene and global renderer extensions. */

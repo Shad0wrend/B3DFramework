@@ -417,8 +417,9 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	if(frameInfo.PerSceneFrameData.Particles)
 		PROFILE_CALL(scene.UpdateParticleSystemBounds(frameInfo.PerSceneFrameData.Particles), "Particle bounds")
 
-	sceneInfo.RenderableReady.resize(sceneInfo.Renderables.size(), false);
-	sceneInfo.RenderableReady.assign(sceneInfo.Renderables.size(), false);
+	RenderableObjectStorage& renderableStorage = scene.GetRenderableStorage();
+	sceneInfo.RenderableReady.resize(renderableStorage.GetRenderableCount(), false);
+	sceneInfo.RenderableReady.assign(renderableStorage.GetRenderableCount(), false);
 
 	mDevice->BeginFrame();
 
@@ -429,8 +430,8 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	scene.UpdateReflectionProbes(*commandBuffer);
 
 	// Update per-frame data for all renderable objects
-	for(u32 i = 0; i < sceneInfo.Renderables.size(); i++)
-		scene.PrepareRenderable(i, frameInfo);
+	for(u32 i = 0; i < renderableStorage.GetRenderableCount(); i++)
+		renderableStorage.PrepareRenderable(i, frameInfo);
 
 	for(u32 i = 0; i < sceneInfo.ParticleSystems.size(); i++)
 		scene.PrepareParticleSystem(i, frameInfo);
@@ -512,7 +513,6 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RenderBeastScene&
 
 	if(needs3DRender)
 	{
-		const SceneInfo& sceneInfo = scene.GetSceneInfo();
 		const VisibilityInfo& visibility = viewGroup.GetVisibilityInfo();
 
 		// Render shadow maps
@@ -520,13 +520,14 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RenderBeastScene&
 		shadowRenderer.RenderShadowMaps(commandBuffer,scene, viewGroup, frameInfo);
 
 		// Update various buffers required by each renderable
-		u32 renderableCount = (u32)sceneInfo.Renderables.size();
+		RenderableObjectStorage& renderableStorage = scene.GetRenderableStorage();
+		u32 renderableCount = renderableStorage.GetRenderableCount();
 		for(u32 i = 0; i < renderableCount; i++)
 		{
 			if(!visibility.Renderables[i])
 				continue;
 
-			scene.PrepareVisibleRenderable(i, frameInfo);
+			renderableStorage.PrepareVisibleRenderable(i, frameInfo);
 		}
 	}
 

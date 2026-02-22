@@ -7,6 +7,7 @@
 #include "CoreObject/B3DRenderProxy.h"
 #include "Math/B3DBounds.h"
 #include "Renderer/B3DPackedSlotAllocator.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 #include "Resources/B3DIResourceListener.h"
 #include "Scene/B3DComponent.h"
 #include "Scene/B3DTransform.h"
@@ -14,7 +15,7 @@
 namespace b3d
 {
 	struct EvaluatedAnimationData;
-	class RenderableSyncHandler;
+	class RenderableObjectStorageBase;
 
 	namespace ecs
 	{
@@ -234,7 +235,7 @@ namespace b3d
 
 		friend class SceneObject;
 		friend class render::Renderable;
-		friend class RenderableSyncHandler;
+		friend class RenderableObjectStorageBase;
 		friend struct RenderableSyncBatch;
 
 		struct FullSyncPacket;
@@ -308,7 +309,7 @@ namespace b3d
 
 		protected:
 			friend class b3d::Renderable;
-			friend class b3d::RenderableSyncHandler;
+			friend class b3d::RenderableObjectStorageBase;
 
 			Renderable(const SPtr<SceneInstance>& scene);
 			Renderable() = default;
@@ -332,6 +333,29 @@ namespace b3d
 			SPtr<SceneInstance> mSceneInstance;
 		};
 	} // namespace render
+
+	/** Implements main -> render thread synchronization logic for Renderable objects. */
+	class B3D_EXPORT RenderableObjectStorageBase : public TRendererObjectStorage<ecs::RenderableSlotId>
+	{
+	public:
+		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
+		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
+
+		/** Registers a new object on the render thread. */
+		virtual void Register(render::Renderable* renderProxy) = 0;
+
+		/** Updates an existing object on the render thread. */
+		virtual void Update(render::Renderable* renderProxy) = 0;
+
+		/** Unregisters an object from the render thread. */
+		virtual void Unregister(render::Renderable* renderProxy) = 0;
+
+	private:
+		static void PopulatePacket(Renderable::FullSyncPacket& packet, Renderable& renderable);
+
+		/** Applies sync packet data to the render proxy. Non-static because it dispatches to Register/Unregister. */
+		void ApplyPacket(Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId);
+	};
 
 	/** @} */
 } // namespace b3d

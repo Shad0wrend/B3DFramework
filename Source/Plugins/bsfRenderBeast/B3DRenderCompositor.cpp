@@ -404,13 +404,13 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	// Prepare all visible objects. Note that this also prepares non-opaque objects.
 	//// Prepare normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto renderableCount = (u32)inputs.Scene.Renderables.size();
+	const auto renderableCount = (u32)inputs.Scene.GetRenderableCount();
 	for(u32 i = 0; i < renderableCount; i++)
 	{
 		if(!visibility.Renderables[i])
 			continue;
 
-		for(auto& element : inputs.Scene.Renderables[i]->Elements)
+		for(auto& element : inputs.Scene.GetRenderable(i)->Elements)
 		{
 			element.PerFrameUniformBufferParameter.Set(*inputs.Scene.PerFrameSuballocation);
 			element.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
@@ -1581,13 +1581,14 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	// Prepare objects for rendering by binding forward lighting data
 	//// Normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto numRenderables = (u32)sceneInfo.Renderables.size();
-	for(u32 i = 0; i < numRenderables; i++)
+
+	const u32 renderableCount = sceneInfo.GetRenderableCount();
+	for(u32 renderableIndex = 0; renderableIndex < renderableCount; renderableIndex++)
 	{
-		if(!visibility.Renderables[i])
+		if(!visibility.Renderables[renderableIndex])
 			continue;
 
-		for(auto& element : sceneInfo.Renderables[i]->Elements)
+		for(auto& element : sceneInfo.GetRenderable(renderableIndex)->Elements)
 		{
 			ShaderFlags shaderFlags = element.Material->GetShader()->GetFlags();
 
@@ -1602,7 +1603,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			else
 			{
 				// Populate light & probe buffers
-				const Bounds& bounds = sceneInfo.RenderableCullInfos[i].Bounds;
+				const Bounds& bounds = sceneInfo.GetRenderableCullInfo(renderableIndex).Bounds;
 				fnBindStandardDeferredParameters(*element.ParameterAdapter, bounds, element.ForwardLightingParams, element.ImageBasedParams);
 			}
 

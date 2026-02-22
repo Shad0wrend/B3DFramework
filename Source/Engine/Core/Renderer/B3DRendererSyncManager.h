@@ -11,6 +11,7 @@
 
 namespace b3d
 {
+	struct RendererSceneSyncData;
 	class RendererScene;
 	namespace ecs { class Registry; }
 	namespace render { class RendererScene; }
@@ -99,7 +100,7 @@ namespace b3d
 	 * which can then be used by this system to fetch all dirty objects and store the dirty data
 	 * into a frame-allocated buffer to be passed to the render thread so it can be applied there.
 	 */
-	class IRendererObjectSyncHandler
+	class B3D_EXPORT IRendererObjectSyncHandler
 	{
 	public:
 		virtual ~IRendererObjectSyncHandler() = default;
@@ -107,6 +108,8 @@ namespace b3d
 		/**
 		 * Scans the provided registry for dirty objects, generates the update packets and stores them into a batch buffer allocated
 		 * by @p allocator. Returns pointer to the batch buffer memory.
+		 *
+		 * @note Main thread only
 		 */
 		virtual void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) = 0;
 
@@ -140,103 +143,27 @@ namespace b3d
 		 * If @p swapBuffers is true, rotate the frame allocator ring buffer.
 		 */
 		void SyncToRenderThread(bool swapBuffers);
-
-		/**
-		 * @name Internal
-		 * @{
-		 */
-
-		/** Registers a handler factory to be applied when the module starts up. Called from static initializers. */
-		static void RegisterHandlerFactoryAtLoadTime(HandlerFactory factory);
-
-		/** Creates handler instances for a scene from all registered factories. Called by RendererScene::Initialize(). */
-		Vector<UPtr<IRendererObjectSyncHandler>> CreateHandlers(RendererScene& rendererScene);
-
-		/** @} */
 	private:
-		struct HandlerFrameData
+		struct SceneSyncFrameData
 		{
-			IRendererObjectSyncHandler* Handler;
-			void* BatchData;
+			render::RendererScene* RenderScene;
+			RendererSceneSyncData* BatchData;
 		};
 
 		struct PerFrameSyncData
 		{
 			FrameAllocator* Allocator = nullptr;
-			TInlineArray<HandlerFrameData, 8> HandlerData;
+			TInlineArray<SceneSyncFrameData, 4> SceneData;
 		};
 
 		void SyncRead(FrameAllocator* allocator);
 		void SyncWrite();
 
-		Vector<HandlerFactory> mHandlerFactories;
 		List<PerFrameSyncData> mPerFrameSyncData;
 		Mutex mSyncDataMutex;
 		FrameAllocator* mSyncAllocators[RenderThread::kSyncBufferCount + 1];
 		u32 mActiveFrameAllocatorIndex = 0;
 	};
-
-	/** Ensures that TRendererObjectSyncHandler types are registered at application load time. */
-	template<typename HandlerType>
-	struct InitializeSyncHandlerOnLoadTime
-	{
-		InitializeSyncHandlerOnLoadTime()
-		{
-			RendererSyncManager::RegisterHandlerFactoryAtLoadTime([](RendererScene& scene) { return B3DMakeUnique<HandlerType>(scene); });
-		}
-
-		void MakeSureIAmInstantiated() {}
-	};
-
-	/**
-	 * Helper base class that automatically registers itself with RendererSyncManager at application load time,
-	 * and provides common slot management logic (allocator caching, command consume/replay).
-	 *
-	 * The derived class must implement two CRTP methods:
-	 * - AllocatorT& GetAllocator(RendererScene& rendererScene) — returns the allocator for this type from the scene.
-	 * - void ReplayCommands(render::RendererScene& scene, const SlotCommand* commands, u32 count) — calls the
-	 *   appropriate replay virtual on the scene.
-	 *
-	 * @tparam SelfType				The concrete handler type deriving from this class.
-	 * @tparam SlotAllocatorType	The packed slot allocator type for this object kind.
-	 */
-	template<typename SelfType, typename SlotAllocatorType>
-	class TRendererObjectSyncHandler : public IRendererObjectSyncHandler
-	{
-	public:
-		TRendererObjectSyncHandler(RendererScene& rendererScene)
-			: mRendererScene(*B3DGetRenderProxy(&rendererScene))
-		{
-			sInitializeOnLoadTime.MakeSureIAmInstantiated();
-			mAllocator = &static_cast<SelfType*>(this)->GetAllocator(rendererScene);
-		}
-
-	protected:
-		/** Consumes commands from the allocator and frame-allocates a copy. */
-		u32 ConsumeAndAllocateCommands(FrameAllocator& allocator, SlotCommand*& outCommands)
-		{
-			B3D_ASSERT(mAllocator != nullptr);
-			const auto& commands = mAllocator->ConsumeCommands();
-			u32 commandCount = (u32)commands.size();
-			if(commandCount == 0)
-			{
-				outCommands = nullptr;
-				return 0;
-			}
-			outCommands = reinterpret_cast<SlotCommand*>(allocator.AllocateAligned(sizeof(SlotCommand) * commandCount, alignof(SlotCommand)));
-			memcpy(outCommands, commands.data(), sizeof(SlotCommand) * commandCount);
-			return commandCount;
-		}
-
-		SlotAllocatorType* mAllocator = nullptr;
-		render::RendererScene& mRendererScene;
-
-	private:
-		static InitializeSyncHandlerOnLoadTime<SelfType> sInitializeOnLoadTime;
-	};
-
-	template<typename SelfType, typename AllocatorT>
-	InitializeSyncHandlerOnLoadTime<SelfType> TRendererObjectSyncHandler<SelfType, AllocatorT>::sInitializeOnLoadTime;
 
 	/** @} */
 } // namespace b3d

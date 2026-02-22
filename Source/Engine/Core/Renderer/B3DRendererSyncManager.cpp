@@ -9,44 +9,16 @@
 
 using namespace b3d;
 
-namespace
-{
-	Vector<RendererSyncManager::HandlerFactory>& GetPendingRegistrations()
-	{
-		static Vector<RendererSyncManager::HandlerFactory> registrations;
-		return registrations;
-	}
-}
-
 RendererSyncManager::RendererSyncManager()
 {
 	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
 		mSyncAllocators[allocatorIndex] = B3DNew<FrameAllocator>();
-
-	for(auto& pending : GetPendingRegistrations())
-		mHandlerFactories.push_back(std::move(pending));
-
-	GetPendingRegistrations().clear();
 }
 
 RendererSyncManager::~RendererSyncManager()
 {
 	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
 		B3DDelete(mSyncAllocators[allocatorIndex]);
-}
-
-void RendererSyncManager::RegisterHandlerFactoryAtLoadTime(HandlerFactory factory)
-{
-	GetPendingRegistrations().push_back(std::move(factory));
-}
-
-Vector<UPtr<IRendererObjectSyncHandler>> RendererSyncManager::CreateHandlers(RendererScene& rendererScene)
-{
-	Vector<UPtr<IRendererObjectSyncHandler>> handlers;
-	for(auto& factory : mHandlerFactories)
-		handlers.push_back(factory(rendererScene));
-
-	return handlers;
 }
 
 void RendererSyncManager::SyncToRenderThread(bool swapBuffers)
@@ -76,13 +48,12 @@ void RendererSyncManager::SyncRead(FrameAllocator* allocator)
 			continue;
 
 		ecs::Registry& registry = scene->GetGameObjectCollection()->GetECSRegistry();
-		const auto& handlers = scene->GetRendererScene()->GetSyncHandlers();
-
-		for(auto& handler : handlers)
+		RendererScene* rendererScene = scene->GetRendererScene().get();
+		RendererSceneSyncData* sceneSyncData = rendererScene->SyncRead(registry, *allocator);
+		if(sceneSyncData != nullptr)
 		{
-			void* batchData = handler->SyncRead(registry, *allocator);
-			if(batchData != nullptr)
-				syncData.HandlerData.Add({handler.get(), batchData});
+			auto renderScene = B3DGetRenderProxy(rendererScene);
+			syncData.SceneData.Add({renderScene.get(), sceneSyncData});
 		}
 	}
 
@@ -102,9 +73,9 @@ void RendererSyncManager::SyncWrite()
 		mPerFrameSyncData.pop_front();
 	}
 
-	for(u32 handlerIndex = 0; handlerIndex < (u32)syncData.HandlerData.Size(); ++handlerIndex)
+	for(u32 sceneIndex = 0; sceneIndex < (u32)syncData.SceneData.Size(); ++sceneIndex)
 	{
-		auto& handlerData = syncData.HandlerData[handlerIndex];
-		handlerData.Handler->SyncWrite(handlerData.BatchData, *syncData.Allocator);
+		auto& sceneData = syncData.SceneData[sceneIndex];
+		sceneData.RenderScene->SyncWrite(*sceneData.BatchData, *syncData.Allocator);
 	}
 }

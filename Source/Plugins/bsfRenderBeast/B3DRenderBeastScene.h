@@ -7,6 +7,7 @@
 #include "B3DRendererView.h"
 #include "B3DRendererParticles.h"
 #include "Renderer/B3DRendererScene.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 #include "Renderer/B3DPackedSlotAllocator.h"
 #include "Shading/B3DLightProbes.h"
 #include "Utility/B3DSamplerOverrides.h"
@@ -17,8 +18,11 @@ namespace b3d
 	struct EvaluatedAnimationData;
 	struct EvaluatedParticleData;
 
+	class RenderableObjectStorageBase;
+
 	namespace render
 	{
+		class RenderableObjectStorage;
 		struct RendererDecal;
 		class Decal;
 		struct FrameInfo;
@@ -30,6 +34,69 @@ namespace b3d
 		// Limited by max number of array elements in texture for DX11 hardware
 		constexpr u32 kMaxReflectionCubemaps = 2048 / 6;
 
+		/**
+		 * Concrete renderable object storage for RenderBeast. Owns the packed renderable and cull-info arrays,
+		 * and implements register/unregister/update/slot-replay operations.
+		 */
+		class RenderableObjectStorage final : public RenderableObjectStorageBase
+		{
+		public:
+			RenderableObjectStorage();
+
+			void UpdateSlotIds(const SlotCommand* commands, u32 count) override;
+			void Register(Renderable* renderable) override;
+			void Update(Renderable* renderable) override;
+			void Unregister(Renderable* renderable) override;
+
+			/** Returns total number of renderables currently stored. */
+			u32 GetRenderableCount() const { return (u32)mRenderables.size(); }
+
+			/** Returns renderable at the provided index. Valid index is range [0, GetRenderableCount()). */
+			RendererRenderable* GetRenderable(u32 index) const { return mRenderables[index]; }
+
+			/** Returns renderable cull info at the provided index. Valid index is range [0, GetRenderableCount()). */
+			const CullInfo& GetRenderableCullInfo(u32 index) const { return mRenderableCullInfos[index]; }
+
+			/**
+			 * Performs necessary per-frame updates to a renderable. This must be called once every frame for every renderable.
+			 *
+			 * @param	id			Slot ID of the renderable to prepare.
+			 * @param	frameInfo	Global information describing the current frame.
+			 */
+			void PrepareRenderable(SlotId id, const FrameInfo& frameInfo);
+
+			/**
+			 * Performs necessary steps to make a renderable ready for rendering. This must be called at least once every frame
+			 * for every renderable that will be drawn. Multiple calls for the same renderable during a single frame will result
+			 * in a no-op.
+			 *
+			 * @param	id			Slot ID of the renderable to prepare.
+			 * @param	frameInfo	Global information describing the current frame.
+			 */
+			void PrepareVisibleRenderable(SlotId id, const FrameInfo& frameInfo);
+
+			/** Returns the packed renderable array. */
+			Vector<RendererRenderable*>& GetRenderables() { return mRenderables; }
+
+			/** @copydoc GetRenderables */
+			const Vector<RendererRenderable*>& GetRenderables() const { return mRenderables; }
+
+			/** Returns the packed cull info array. */
+			Vector<CullInfo>& GetRenderableCullInfos() { return mRenderableCullInfos; }
+
+			/** @copydoc GetRenderableCullInfos */
+			const Vector<CullInfo>& GetRenderableCullInfos() const { return mRenderableCullInfos; }
+
+			/** Sets the owning RenderBeastScene. Called by RenderBeastScene::Initialize(). */
+			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
+
+		private:
+			Vector<RendererRenderable*> mRenderables;
+			Vector<CullInfo> mRenderableCullInfos;
+
+			RenderBeastScene* mRenderBeastScene = nullptr;
+		};
+
 		/** Contains most scene objects relevant to the renderer. */
 		struct SceneInfo
 		{
@@ -38,9 +105,9 @@ namespace b3d
 			Vector<RendererView*> Views;
 			UnorderedMap<const Camera*, u32> CameraToView;
 
-			// Renderables
-			Vector<RendererRenderable*> Renderables;
-			Vector<CullInfo> RenderableCullInfos;
+			// Renderables — pointers to arrays in RenderableObjectStorage
+			const Vector<RendererRenderable*>* Renderables = nullptr;
+			const Vector<CullInfo>* RenderableCullInfos = nullptr;
 
 			// Lights
 			Vector<RendererLight> DirectionalLights;
@@ -74,13 +141,18 @@ namespace b3d
 			mutable Vector<bool> RenderableReady;
 			// Per-frame uniform buffer suballocation (updated each frame)
 			const GpuBufferSuballocation* PerFrameSuballocation = nullptr;
+
+			// Renderable accessors — convenience wrappers around the storage-owned arrays
+			u32 GetRenderableCount() const { return (u32)Renderables->size(); }
+			RendererRenderable* GetRenderable(u32 idx) const { return (*Renderables)[idx]; }
+			const CullInfo& GetRenderableCullInfo(u32 idx) const { return (*RenderableCullInfos)[idx]; }
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
 		class RenderBeastScene : public RendererScene
 		{
 		public:
-			RenderBeastScene(const SPtr<RenderBeastOptions>& options);
+			explicit RenderBeastScene(const SPtr<RenderBeastOptions>& options);
 
 			void RegisterCamera(Camera* camera) override;
 			void UpdateCamera(Camera* camera, u32 updateFlag) override;
@@ -89,11 +161,6 @@ namespace b3d
 			void RegisterLight(Light* light) override;
 			void UpdateLight(Light* light) override;
 			void UnregisterLight(Light* light) override;
-
-			void UpdateRenderableSlotIds(const SlotCommand* commands, u32 count) override;
-			void RegisterRenderable(Renderable* renderable) override;
-			void UpdateRenderable(Renderable* renderable) override;
-			void UnregisterRenderable(Renderable* renderable) override;
 
 			void RegisterReflectionProbe(ReflectionProbe* probe) override;
 			void UpdateReflectionProbe(ReflectionProbe* probe, bool texture) override;
@@ -135,36 +202,11 @@ namespace b3d
 			/** Updates scene according to the newly provided renderer options. */
 			void SetOptions(const SPtr<RenderBeastOptions>& options);
 
-			/**
-			 * Checks all sampler overrides in case material sampler states changed, and updates them.
-			 *
-			 * @param[in]	force	If true, all sampler overrides will be updated, regardless of a change in the material
-			 *						was detected or not.
-			 */
-			void RefreshSamplerOverrides(bool force = false);
-
 			/** Updates global per frame parameter buffers with new values. To be called at the start of every frame. */
 			void SetParamFrameParams(float time);
+
 			/** Returns the current per-frame uniform buffer suballocation. Valid after SetParamFrameParams() is called. */
 			const GpuBufferSuballocation& GetPerFrameSuballocation() const { return mPerFrameSuballocation; }
-
-			/**
-			 * Performs necessary per-frame updates to a renderable. This must be called once every frame for every renderable.
-			 *
-			 * @param[in]	idx			Index of the renderable to prepare.
-			 * @param[in]	frameInfo	Global information describing the current frame.
-			 */
-			void PrepareRenderable(SlotId idx, const FrameInfo& frameInfo);
-
-			/**
-			 * Performs necessary steps to make a renderable ready for rendering. This must be called at least once every frame
-			 * for every renderable that will be drawn. Multiple calls for the same renderable during a single frame will result
-			 * in a no-op.
-			 *
-			 * @param[in]	idx			Index of the renderable to prepare.
-			 * @param[in]	frameInfo	Global information describing the current frame.
-			 */
-			void PrepareVisibleRenderable(SlotId idx, const FrameInfo& frameInfo);
 
 			/**
 			 * Performs necessary steps to make a particle system ready for rendering. This must be called at least once every
@@ -193,7 +235,30 @@ namespace b3d
 			/** Returns the object for managing uniform buffer allocations. */
 			UniformBufferPools& GetUniformBufferPools() { return mUniformBufferPools; }
 
+			/** Returns the concrete renderable object storage. */
+			RenderableObjectStorage& GetRenderableStorage() { return static_cast<RenderableObjectStorage&>(*mRenderableStorage.get()); }
+			const RenderableObjectStorage& GetRenderableStorage() const { return static_cast<const RenderableObjectStorage&>(*mRenderableStorage.get()); }
+
+			/**
+			 * Generates sampler state overrides for the provided render element, or returns existing ones if they
+			 * already exist for the element's material. Shared between renderables and decals.
+			 */
+			MaterialSamplerOverrides* AllocSamplerStateOverrides(RenderElement& elem);
+
+			/** Releases sampler state overrides for the provided render element. */
+			void FreeSamplerStateOverrides(RenderElement& elem);
+
+			/**
+			 * Checks all sampler overrides in case material sampler states changed, and updates them.
+			 *
+			 * @param[in]	force	If true, all sampler overrides will be updated, regardless of a change in the material
+			 *						was detected or not.
+			 */
+			void RefreshSamplerOverrides(bool force = false);
+
 		private:
+			friend class RenderableObjectStorage;
+
 			/** Creates a renderer view descriptor for the particular camera. */
 			RendererViewCreateInformation CreateViewDesc(Camera* camera) const;
 
@@ -203,22 +268,13 @@ namespace b3d
 			 */
 			void UpdateCameraRenderTargets(Camera* camera, bool remove = false);
 
-			/**
-			 * Allocates (or returns existing) set of sampler state overrides that can be used for the provided render
-			 * element.
-			 */
-			MaterialSamplerOverrides* AllocSamplerStateOverrides(RenderElement& elem);
-
-			/** Frees sampler state overrides previously allocated with allocSamplerStateOverrides(). */
-			void FreeSamplerStateOverrides(RenderElement& elem);
-
 			SPtr<GpuDevice> mGpuDevice;
 			SceneInfo mInfo;
 			GpuBufferSuballocation mPerFrameSuballocation;
-			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;
 			UniformBufferPools mUniformBufferPools;
 
 			SPtr<RenderBeastOptions> mOptions;
+			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(PerFrameUniformDefinition)

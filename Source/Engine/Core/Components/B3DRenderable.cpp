@@ -1,7 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Components/B3DRenderable.h"
-#include "Renderer/B3DRendererSyncManager.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 #include "B3DApplication.h"
 #include "Animation/B3DMorphShapes.h"
 #include "Scene/B3DSceneObject.h"
@@ -74,27 +74,6 @@ namespace b3d
 
 		SlotCommand* Commands = nullptr;
 		u32 CommandCount = 0;
-	};
-
-	class RenderableSyncHandler : public TRendererObjectSyncHandler<RenderableSyncHandler, ecs::RenderableSlotId>
-	{
-	public:
-		RenderableSyncHandler(RendererScene& rendererScene)
-			: TRendererObjectSyncHandler(rendererScene)
-		{}
-
-		// CRTP interface
-		TPackedSlotAllocator<ecs::RenderableSlotId>& GetAllocator(RendererScene& rendererScene)
-		{
-			return rendererScene.GetRenderableSlotAllocator();
-		}
-
-		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
-		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
-
-	private:
-		static void PopulatePacket(Renderable::FullSyncPacket& packet, Renderable& renderable);
-		static void ApplyPacket(Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId);
 	};
 } // namespace b3d
 
@@ -264,8 +243,8 @@ void Renderable::Initialize()
 
 	// Allocate a packed renderable slot
 	const SPtr<RendererScene>& rendererScene = sceneObject->GetScene()->GetRendererScene();
-	SlotId rendererId = rendererScene->GetRenderableSlotAllocator().Allocate(entity);
-	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{rendererId}); // TODO - Do this in Allocate() above?
+	SlotId rendererId = rendererScene->AllocateRenderableSlot(entity);
+	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{rendererId}); // TODO - Do this in AllocateSlot() above?
 
 	registry->AddTag<ecs::RenderableDirty>(entity);
 }
@@ -312,7 +291,7 @@ void Renderable::OnDestroyed()
 		if(rendererId != kInvalidSlotId)
 		{
 			const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-			rendererScene->GetRenderableSlotAllocator().Deallocate(entity, *registry);
+			rendererScene->DeallocateRenderableSlot(entity, *registry);
 		}
 
 		registry->RemoveComponents<ecs::RenderableSlotId>(entity);
@@ -337,7 +316,7 @@ void Renderable::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 	{
 		SlotId oldRendererId = oldRegistry->GetComponents<ecs::RenderableSlotId>(oldEntity).Id;
 		if(oldRendererId != kInvalidSlotId)
-			oldScene->GetRendererScene()->GetRenderableSlotAllocator().Deallocate(oldEntity, *oldRegistry);
+			oldScene->GetRendererScene()->DeallocateRenderableSlot(oldEntity, *oldRegistry);
 	}
 
 	// Migrate RenderableProxy — write to new
@@ -346,8 +325,8 @@ void Renderable::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 
 	// Allocate from new scene's allocator
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	SlotId newRendererId = rendererScene->GetRenderableSlotAllocator().Allocate(entity);
-	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{newRendererId}); // TODO - Do this in Allocate() above?
+	SlotId newRendererId = rendererScene->AllocateRenderableSlot(entity);
+	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{newRendererId}); // TODO - Do this in AllocateSlot() above?
 
 	// Full sync needed after migration
 	registry->AddTag<ecs::RenderableDirty>(entity);
@@ -735,7 +714,7 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 }
 }}
 
-void RenderableSyncHandler::PopulatePacket(Renderable::FullSyncPacket& packet, Renderable& renderable)
+void RenderableObjectStorageBase::PopulatePacket(Renderable::FullSyncPacket& packet, Renderable& renderable)
 {
 	packet.mActive = renderable.GetEnabled();
 	packet.mAnimationId = renderable.GetAnimation().IsValid() ? renderable.GetAnimation()->GetAnimationId() : (u64)-1;
@@ -743,7 +722,7 @@ void RenderableSyncHandler::PopulatePacket(Renderable::FullSyncPacket& packet, R
 	packet.mTransform = renderable.SceneObject()->GetTransform();
 }
 
-void RenderableSyncHandler::ApplyPacket(Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId)
+void RenderableObjectStorageBase::ApplyPacket(Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId)
 {
 	// Skip packets for renderables that were destroyed (slot already deallocated by command replay)
 	// TODO - Can this even happen?
@@ -770,23 +749,21 @@ void RenderableSyncHandler::ApplyPacket(Renderable::FullSyncPacket& packet, rend
 	else
 		proxy.mMorphVertexDescription = nullptr;
 
-	const SPtr<render::RendererScene>& rendererScene = proxy.mSceneInstance->GetRendererScene();
-
 	if(oldIsActive != proxy.mActive)
 	{
 		if(proxy.mActive)
-			rendererScene->RegisterRenderable(&proxy);
+			Register(&proxy);
 		else
-			rendererScene->UnregisterRenderable(&proxy);
+			Unregister(&proxy);
 	}
 	else if(proxy.mActive)
 	{
-		rendererScene->UnregisterRenderable(&proxy);
-		rendererScene->RegisterRenderable(&proxy);
+		Unregister(&proxy);
+		Register(&proxy);
 	}
 }
 
-void* RenderableSyncHandler::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
+void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
 {
 	// Consume structural commands from the allocator
 	SlotCommand* slotCommands = nullptr;
@@ -847,24 +824,24 @@ void* RenderableSyncHandler::SyncRead(ecs::Registry& registry, FrameAllocator& a
 	return batchData;
 }
 
-void RenderableSyncHandler::SyncWrite(void* rawData, FrameAllocator& allocator)
+void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& allocator)
 {
 	auto* batch = static_cast<RenderableSyncBatch*>(rawData);
 
 	if(batch->CommandCount > 0)
 	{
-		mRendererScene.UpdateRenderableSlotIds(batch->Commands, batch->CommandCount);
+		UpdateSlotIds(batch->Commands, batch->CommandCount);
 		allocator.Free(reinterpret_cast<u8*>(batch->Commands));
 	}
 
 	batch->Full.Each(
-		[](Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId)
+		[this](Renderable::FullSyncPacket& packet, render::Renderable& proxy, SlotId rendererId)
 		{
 			ApplyPacket(packet, proxy, rendererId);
 		});
 
 	batch->Transform.Each(
-		[](Renderable::TransformSyncPacket& packet, render::Renderable& proxy, SlotId /*rendererId*/)
+		[this](Renderable::TransformSyncPacket& packet, render::Renderable& proxy, SlotId /*rendererId*/)
 		{
 			packet.ApplySyncData(&proxy);
 
@@ -872,10 +849,7 @@ void RenderableSyncHandler::SyncWrite(void* rawData, FrameAllocator& allocator)
 			proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
 
 			if(proxy.mActive)
-			{
-				const SPtr<render::RendererScene>& rendererScene = proxy.mSceneInstance->GetRendererScene();
-				rendererScene->UpdateRenderable(&proxy);
-			}
+				Update(&proxy);
 		});
 
 	batch->Full.Free(allocator);

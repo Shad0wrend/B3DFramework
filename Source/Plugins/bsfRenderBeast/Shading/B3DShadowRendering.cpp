@@ -478,7 +478,7 @@ namespace b3d
 			{
 				static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
-				const SceneInfo& sceneInfo = scene.GetSceneInfo();
+				RenderableObjectStorage& renderableStorage = scene.GetRenderableStorage();
 
 				B3DMarkAllocatorFrame();
 				{
@@ -494,15 +494,15 @@ namespace b3d
 					TInlineArray<SPtr<GpuParameterSet>, 4> perObjectParameterSets;
 
 					// Make a list of relevant renderables and prepare them for rendering
-					for(u32 renderableIndex = 0; renderableIndex < sceneInfo.Renderables.size(); renderableIndex++)
+					for(u32 renderableIndex = 0; renderableIndex < renderableStorage.GetRenderableCount(); renderableIndex++)
 					{
-						const Sphere& bounds = sceneInfo.RenderableCullInfos[renderableIndex].Bounds.GetSphere();
+						const Sphere& bounds = renderableStorage.GetRenderableCullInfo(renderableIndex).Bounds.GetSphere();
 						if(!opt.Intersects(bounds))
 							continue;
 
-						scene.PrepareVisibleRenderable(renderableIndex, frameInfo);
+						renderableStorage.PrepareVisibleRenderable(renderableIndex, frameInfo);
 
-						RendererRenderable* renderable = sceneInfo.Renderables[renderableIndex];
+						RendererRenderable* renderable = renderableStorage.GetRenderable(renderableIndex);
 
 						// Register per-object shadow parameter set if not already registered
 						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable);

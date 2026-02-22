@@ -570,16 +570,16 @@ void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 	B3D_ENSURE(mTransparentQueue->GetSortedElements().empty());
 	
 	// Queue renderables
-	for(u32 i = 0; i < (u32)sceneInfo.Renderables.size(); i++)
+	for(u32 i = 0; i < sceneInfo.GetRenderableCount(); i++)
 	{
 		if(!mVisibility.Renderables[i])
 			continue;
 
-		const AABox& boundingBox = sceneInfo.RenderableCullInfos[i].Bounds.GetBox();
+		const AABox& boundingBox = sceneInfo.GetRenderableCullInfo(i).Bounds.GetBox();
 		const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 		bool needsVelocity = RequiresVelocityWrites();
-		for(auto& renderElem : sceneInfo.Renderables[i]->Elements)
+		for(auto& renderElem : sceneInfo.GetRenderable(i)->Elements)
 		{
 			u32 variationIndex;
 			if(needsVelocity)
@@ -927,8 +927,8 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 		return;
 
 	// Calculate renderable visibility per view
-	mVisibility.Renderables.resize(sceneInfo.Renderables.size(), false);
-	mVisibility.Renderables.assign(sceneInfo.Renderables.size(), false);
+	mVisibility.Renderables.resize(sceneInfo.GetRenderableCount(), false);
+	mVisibility.Renderables.assign(sceneInfo.GetRenderableCount(), false);
 
 	mVisibility.ParticleSystems.resize(sceneInfo.ParticleSystems.size(), false);
 	mVisibility.ParticleSystems.assign(sceneInfo.ParticleSystems.size(), false);
@@ -938,7 +938,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 
 	for(u32 i = 0; i < numViews; i++)
 	{
-		mViews[i]->DetermineVisible(sceneInfo.Renderables, sceneInfo.RenderableCullInfos, &mVisibility.Renderables);
+		mViews[i]->DetermineVisible(*sceneInfo.Renderables, *sceneInfo.RenderableCullInfos, &mVisibility.Renderables);
 		mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
 		mViews[i]->DetermineVisible(sceneInfo.Decals, sceneInfo.DecalCullInfos, &mVisibility.Decals);
 	}

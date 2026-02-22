@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DRenderBeastScene.h"
+#include "Components/B3DRenderable.h"
 #include "Components/B3DCamera.h"
 #include "Components/B3DLight.h"
 #include "Components/B3DSkybox.h"
@@ -20,6 +21,7 @@
 #include "Components/B3DDecal.h"
 #include "Renderer/B3DIBLUtility.h"
 #include "Renderer/B3DRendererUtility.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 #include "Utility/B3DBitwise.h"
 
 namespace b3d { namespace render {
@@ -166,6 +168,7 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
 	: mOptions(options)
 {
+	mRenderableStorage = B3DMakeShared<RenderableObjectStorage>();
 }
 
 void RenderBeastScene::RegisterCamera(Camera* camera)
@@ -349,41 +352,47 @@ void RenderBeastScene::UnregisterLight(Light* light)
 	}
 }
 
-void RenderBeastScene::UpdateRenderableSlotIds(const SlotCommand* commands, u32 count)
+// ---- RenderableObjectStorage ----
+
+RenderableObjectStorage::RenderableObjectStorage() = default;
+
+void RenderableObjectStorage::UpdateSlotIds(const SlotCommand* commands, u32 count)
 {
 	ReplaySlotCommands(commands, count,
 		[this](SlotId slotId)
 		{
-			RendererRenderable* rendererRenderable = mInfo.Renderables[slotId];
+			RendererRenderable* rendererRenderable = mRenderables[slotId];
 			if(rendererRenderable != nullptr && rendererRenderable->Renderable != nullptr)
-				UnregisterRenderable(rendererRenderable->Renderable);
+				Unregister(rendererRenderable->Renderable);
 		},
 		[this](SlotId slotId)
 		{
-			RendererRenderable* swapped = mInfo.Renderables[slotId];
+			RendererRenderable* swapped = mRenderables[slotId];
 			if(swapped != nullptr && swapped->Renderable != nullptr)
 				swapped->Renderable->SetRendererId(slotId);
 		},
-		mInfo.Renderables,
-		mInfo.RenderableCullInfos);
+		mRenderables,
+		mRenderableCullInfos);
 }
 
-void RenderBeastScene::RegisterRenderable(Renderable* renderable)
+void RenderableObjectStorage::Register(Renderable* renderable)
 {
 	SlotId renderableId = renderable->GetRendererId();
 
-	// Slot was pre-allocated by ReplayRenderableSlotCommands — populate it
-	B3D_ASSERT(renderableId < (SlotId)mInfo.Renderables.size());
-	B3D_ASSERT(mInfo.Renderables[renderableId] == nullptr);
+	// Slot was pre-allocated by ReplaySlotCommands — populate it
+	B3D_ASSERT(renderableId < (SlotId)mRenderables.size());
+	B3D_ASSERT(mRenderables[renderableId] == nullptr);
 
-	mInfo.Renderables[renderableId] = B3DNew<RendererRenderable>();
-	mInfo.RenderableCullInfos[renderableId] = CullInfo(renderable->GetBounds(), renderable->GetLayer(), renderable->GetCullDistanceFactor());
+	mRenderables[renderableId] = B3DNew<RendererRenderable>();
+	mRenderableCullInfos[renderableId] = CullInfo(renderable->GetBounds(), renderable->GetLayer(), renderable->GetCullDistanceFactor());
 
-	RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
+	RendererRenderable* rendererRenderable = mRenderables[renderableId];
 	rendererRenderable->Renderable = renderable;
 	rendererRenderable->UpdatePerObjectData();
 	rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
+
+	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
 
 	SPtr<Mesh> mesh = renderable->GetMesh();
 	if(mesh != nullptr)
@@ -458,20 +467,20 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 				renElement.WriteVelocityVariationIndex = (u32)-1;
 
 			// Generate or assign sampler state overrides
-			renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
+			renElement.SamplerOverrides = mRenderBeastScene->AllocSamplerStateOverrides(renElement);
 		}
 	}
 
 	// Allocate from the uniform buffer manager
 	if(!rendererRenderable->Elements.empty())
 	{
-		auto result = mUniformBufferPools.Allocate();
+		auto result = uniformBufferPools.Allocate();
 		rendererRenderable->PerObjectBufferAllocationHandle = result.Handle;
 		rendererRenderable->PerObjectParameterSet = result.ParameterSet;
 		rendererRenderable->PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
 	}
 
-	mUniformBufferPools.UpdatePerObjectBuffer(*rendererRenderable);
+	uniformBufferPools.UpdatePerObjectBuffer(*rendererRenderable);
 
 	// Prepare all parameter bindings
 	for(auto& element : rendererRenderable->Elements)
@@ -509,11 +518,13 @@ void RenderBeastScene::RegisterRenderable(Renderable* renderable)
 	}
 }
 
-void RenderBeastScene::UpdateRenderable(Renderable* renderable)
+void RenderableObjectStorage::Update(Renderable* renderable)
 {
 	SlotId renderableId = renderable->GetRendererId();
 
-	RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
+	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
+
+	RendererRenderable* rendererRenderable = mRenderables[renderableId];
 
 	if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Updated)
 		rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
@@ -521,27 +532,27 @@ void RenderBeastScene::UpdateRenderable(Renderable* renderable)
 	rendererRenderable->UpdatePerObjectData();
 	rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
-	mUniformBufferPools.UpdatePerObjectBuffer(*rendererRenderable);
+	uniformBufferPools.UpdatePerObjectBuffer(*rendererRenderable);
 
-	mInfo.RenderableCullInfos[renderableId].Bounds = renderable->GetBounds();
-	mInfo.RenderableCullInfos[renderableId].CullDistanceFactor = renderable->GetCullDistanceFactor();
+	mRenderableCullInfos[renderableId].Bounds = renderable->GetBounds();
+	mRenderableCullInfos[renderableId].CullDistanceFactor = renderable->GetCullDistanceFactor();
 }
 
-void RenderBeastScene::UnregisterRenderable(Renderable* renderable)
+void RenderableObjectStorage::Unregister(Renderable* renderable)
 {
 	SlotId slotId = renderable->GetRendererId();
 	renderable->SetRendererId(kInvalidSlotId);
 
-	RendererRenderable* rendererRenderable = mInfo.Renderables[slotId];
+	RendererRenderable* rendererRenderable = mRenderables[slotId];
 
 	Vector<RenderableElement>& elements = rendererRenderable->Elements;
 	for(auto& element : elements)
 	{
-		FreeSamplerStateOverrides(element);
+		mRenderBeastScene->FreeSamplerStateOverrides(element);
 		element.SamplerOverrides = nullptr;
 	}
 
-	mUniformBufferPools.Release(rendererRenderable->PerObjectBufferAllocationHandle);
+	mRenderBeastScene->GetUniformBufferPools().Release(rendererRenderable->PerObjectBufferAllocationHandle);
 
 	B3DDelete(rendererRenderable);
 }
@@ -1181,6 +1192,12 @@ void RenderBeastScene::Initialize()
 
 	mGpuDevice = GetRenderBeast()->GetGpuDevice();
 
+	RenderableObjectStorage& renderableStorage = GetRenderableStorage();
+	renderableStorage.SetScene(*this);
+
+	mInfo.Renderables = &renderableStorage.GetRenderables();
+	mInfo.RenderableCullInfos = &renderableStorage.GetRenderableCullInfos();
+
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())
 		mUniformBufferPools.RegisterType(config);
@@ -1192,7 +1209,8 @@ void RenderBeastScene::Initialize()
 
 void RenderBeastScene::Destroy()
 {
-	for(auto& entry : mInfo.Renderables)
+	RenderableObjectStorage& renderableStorage = GetRenderableStorage();
+	for(auto& entry : renderableStorage.GetRenderables())
 		B3DDelete(entry);
 
 	for(auto& entry : mInfo.Views)
@@ -1392,10 +1410,11 @@ void RenderBeastScene::RefreshSamplerOverrides(bool force)
 	if(!anyDirty)
 		return;
 
-	u32 renderableCount = (u32)mInfo.Renderables.size();
-	for(u32 renderableIndex = 0; renderableIndex < renderableCount; renderableIndex++)
+	// Rebind sampler overrides for renderables
+	RenderableObjectStorage& renderableStorage = GetRenderableStorage();
+	for(const auto& renderable : renderableStorage.GetRenderables())
 	{
-		for(auto& renderableElement : mInfo.Renderables[renderableIndex]->Elements)
+		for(auto& renderableElement : renderable->Elements)
 		{
 			MaterialSamplerOverrides* overrides = renderableElement.SamplerOverrides;
 			if(overrides != nullptr && overrides->IsDirty)
@@ -1443,9 +1462,9 @@ void RenderBeastScene::SetParamFrameParams(float time)
 	gPerFrameUniformDefinition.gTime.Set(mappedScope, time);
 }
 
-void RenderBeastScene::PrepareRenderable(SlotId idx, const FrameInfo& frameInfo)
+void RenderableObjectStorage::PrepareRenderable(SlotId id, const FrameInfo& frameInfo)
 {
-	RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
+	RendererRenderable* rendererRenderable = mRenderables[id];
 
 	for(auto& element : rendererRenderable->Elements)
 		element.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
@@ -1456,20 +1475,21 @@ void RenderBeastScene::PrepareRenderable(SlotId idx, const FrameInfo& frameInfo)
 			rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
 		else if(rendererRenderable->PrevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
 		{
-			rendererRenderable->PrevWorldTransform = mInfo.Renderables[idx]->WorldTransform;
+			rendererRenderable->PrevWorldTransform = mRenderables[id]->WorldTransform;
 			rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 
-			mUniformBufferPools.UpdatePerObjectBuffer(*rendererRenderable);
+			mRenderBeastScene->GetUniformBufferPools().UpdatePerObjectBuffer(*rendererRenderable);
 		}
 	}
 }
 
-void RenderBeastScene::PrepareVisibleRenderable(SlotId idx, const FrameInfo& frameInfo)
+void RenderableObjectStorage::PrepareVisibleRenderable(SlotId id, const FrameInfo& frameInfo)
 {
-	if(mInfo.RenderableReady[idx])
+	SceneInfo& sceneInfo = mRenderBeastScene->GetSceneInfo();
+	if(sceneInfo.RenderableReady[id])
 		return;
 
-	RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
+	RendererRenderable* rendererRenderable = mRenderables[id];
 
 	// Note: Before uploading bone matrices perhaps check if they has actually been changed since last frame
 	SPtr<GpuBuffer> boneMatrixBuffer;
@@ -1501,7 +1521,7 @@ void RenderBeastScene::PrepareVisibleRenderable(SlotId idx, const FrameInfo& fra
 		}
 	}
 
-	mInfo.RenderableReady[idx] = true;
+	sceneInfo.RenderableReady[id] = true;
 }
 
 void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
