@@ -356,16 +356,20 @@ void RenderBeastScene::UnregisterLight(Light* light)
 
 RenderableObjectStorage::RenderableObjectStorage() = default;
 
-void RenderableObjectStorage::UpdateSlotIds(const SlotCommand* commands, u32 count)
+void RenderableObjectStorage::ProcessCommands(const RendererIdCommand* commands, u32 count)
 {
-	ReplaySlotCommands(commands, count,
-		[this](SlotId slotId)
+	ReplayRendererIdCommands(commands, count,
+		mSparseSlots, mDenseToSparse,
+		[this](PackedRendererId slotId)
 		{
 			RendererRenderable* rendererRenderable = mRenderables[slotId];
 			if(rendererRenderable != nullptr)
+			{
 				Unregister(mRenderableProxies[slotId], slotId);
+				mRenderables[slotId] = nullptr;
+			}
 		},
-		[this](SlotId slotId)
+		[this](PackedRendererId slotId)
 		{
 			mRenderableProxies[slotId].SetRendererId(slotId);
 		},
@@ -374,10 +378,10 @@ void RenderableObjectStorage::UpdateSlotIds(const SlotCommand* commands, u32 cou
 		mRenderableProxies);
 }
 
-void RenderableObjectStorage::Register(RenderableProxy& proxy, SlotId renderableId)
+void RenderableObjectStorage::Register(RenderableProxy& proxy, PackedRendererId renderableId)
 {
-	// Slot was pre-allocated by ReplaySlotCommands — populate it
-	B3D_ASSERT(renderableId < (SlotId)mRenderables.size());
+	// Slot was pre-allocated by ReplayObjectCommands — populate it
+	B3D_ASSERT(renderableId < (PackedRendererId)mRenderables.size());
 	B3D_ASSERT(mRenderables[renderableId] == nullptr);
 
 	mRenderables[renderableId] = B3DNew<RendererRenderable>();
@@ -512,7 +516,7 @@ void RenderableObjectStorage::Register(RenderableProxy& proxy, SlotId renderable
 	}
 }
 
-void RenderableObjectStorage::Update(RenderableProxy& proxy, SlotId renderableId)
+void RenderableObjectStorage::Update(RenderableProxy& proxy, PackedRendererId renderableId)
 {
 	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
 
@@ -530,9 +534,9 @@ void RenderableObjectStorage::Update(RenderableProxy& proxy, SlotId renderableId
 	mRenderableCullInfos[renderableId].CullDistanceFactor = proxy.GetCullDistanceFactor();
 }
 
-void RenderableObjectStorage::Unregister(RenderableProxy& proxy, SlotId slotId)
+void RenderableObjectStorage::Unregister(RenderableProxy& proxy, PackedRendererId slotId)
 {
-	proxy.SetRendererId(kInvalidSlotId);
+	proxy.SetRendererId(kInvalidPackedRendererId);
 
 	RendererRenderable* rendererRenderable = mRenderables[slotId];
 
@@ -1453,7 +1457,7 @@ void RenderBeastScene::SetParamFrameParams(float time)
 	gPerFrameUniformDefinition.gTime.Set(mappedScope, time);
 }
 
-void RenderableObjectStorage::PrepareRenderable(SlotId id, const FrameInfo& frameInfo)
+void RenderableObjectStorage::PrepareRenderable(PackedRendererId id, const FrameInfo& frameInfo)
 {
 	RendererRenderable* rendererRenderable = mRenderables[id];
 
@@ -1474,7 +1478,7 @@ void RenderableObjectStorage::PrepareRenderable(SlotId id, const FrameInfo& fram
 	}
 }
 
-void RenderableObjectStorage::PrepareVisibleRenderable(SlotId id, const FrameInfo& frameInfo)
+void RenderableObjectStorage::PrepareVisibleRenderable(PackedRendererId id, const FrameInfo& frameInfo)
 {
 	SceneInfo& sceneInfo = mRenderBeastScene->GetSceneInfo();
 	if(sceneInfo.RenderableReady[id])

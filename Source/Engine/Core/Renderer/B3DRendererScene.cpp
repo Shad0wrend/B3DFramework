@@ -3,6 +3,7 @@
 #include "Renderer/B3DRendererScene.h"
 #include "Allocators/B3DFrameAllocator.h"
 #include "Components/B3DRenderable.h"
+#include "ECS/B3DRegistry.h"
 #include "B3DRenderer.h"
 
 namespace b3d
@@ -27,14 +28,24 @@ namespace b3d
 		mRenderableStorage = renderProxy->GetRenderableStorage();
 	}
 
-	SlotId RendererScene::AllocateRenderableSlot(ecs::Entity entity)
+	RendererId RendererScene::AllocateRenderableId(ecs::Registry& registry, ecs::Entity entity)
 	{
-		return mRenderableStorage->AllocateSlot(entity);
+		RendererId objectId = mRenderableStorage->AllocateRendererId();
+		registry.AddComponent<ecs::RenderableId>(entity, ecs::RenderableId{objectId});
+
+		return objectId;
 	}
 
-	void RendererScene::DeallocateRenderableSlot(ecs::Entity entity, ecs::Registry& registry)
+	void RendererScene::DeallocateRenderableId(ecs::Registry& registry, ecs::Entity entity)
 	{
-		mRenderableStorage->DeallocateSlot(entity, registry);
+		if(!registry.HasAllOf<ecs::RenderableId>(entity))
+			return;
+
+		RendererId objectId = registry.GetComponents<ecs::RenderableId>(entity).Id;
+		if(objectId != kInvalidRendererId)
+			mRenderableStorage->DeallocateRendererId(objectId);
+
+		registry.RemoveComponents<ecs::RenderableId>(entity);
 	}
 
 	SPtr<render::RenderProxy> RendererScene::CreateRenderProxy() const

@@ -2,8 +2,8 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "B3DPackedSlotAllocator.h"
 #include "B3DPrerequisites.h"
+#include "B3DRendererId.h"
 #include "B3DRendererExtension.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "CoreObject/B3DRenderProxy.h"
@@ -39,11 +39,11 @@ namespace b3d
 		/** Creates a new renderer scene. */
 		static SPtr<RendererScene> Create();
 
-		/** Allocates a packed renderable slot for the given entity. */
-		SlotId AllocateRenderableSlot(ecs::Entity entity);
+		/** Allocates a persistent render object ID for a renderable and adds the ecs::RenderableId fragment. */
+		RendererId AllocateRenderableId(ecs::Registry& registry, ecs::Entity entity);
 
-		/** Deallocates the renderable slot belonging to the given entity. */
-		void DeallocateRenderableSlot(ecs::Entity entity, ecs::Registry& registry);
+		/** Removes the ecs::RenderableId fragment and deallocates the persistent render object ID. */
+		void DeallocateRenderableId(ecs::Registry& registry, ecs::Entity entity);
 
 		/**
 		 * Reads dirty ECS data for all sync handlers in this scene into a frame-allocated RendererSceneSyncData.

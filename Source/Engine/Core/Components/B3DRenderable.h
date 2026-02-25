@@ -5,7 +5,6 @@
 #include "B3DPrerequisites.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Math/B3DBounds.h"
-#include "Renderer/B3DPackedSlotAllocator.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 #include "Resources/B3DIResourceListener.h"
 #include "Scene/B3DComponent.h"
@@ -18,10 +17,10 @@ namespace b3d
 
 	namespace ecs
 	{
-		/** ECS fragment storing the packed renderable slot ID. */
-		struct RenderableSlotId
+		/** ECS fragment storing the persistent render object ID for a renderable. */
+		struct RenderableId
 		{
-			SlotId Id = kInvalidSlotId;
+			RendererId Id = kInvalidRendererId;
 		};
 	}
 
@@ -281,10 +280,10 @@ namespace b3d
 			Bounds GetBounds() const;
 
 			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-			void SetRendererId(SlotId id) { mRendererId = id; }
+			void SetRendererId(PackedRendererId id) { mRendererId = id; }
 
 			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-			SlotId GetRendererId() const { return mRendererId; }
+			PackedRendererId GetRendererId() const { return mRendererId; }
 
 			/** Returns the type of animation influencing this renderable, if any. */
 			RenderableAnimType GetAnimType() const { return mAnimType; }
@@ -317,7 +316,7 @@ namespace b3d
 			/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
 			void CreateAnimationBuffers();
 
-			SlotId mRendererId = 0;
+			PackedRendererId mRendererId = kInvalidPackedRendererId;
 			u64 mAnimationId = (u64)-1;
 			u32 mMorphShapeVersion = 0;
 
@@ -331,30 +330,33 @@ namespace b3d
 		};
 	} // namespace render
 
-	/** Implements main -> render thread synchronization logic for Renderable objects. */
-	class B3D_EXPORT RenderableObjectStorageBase : public TRendererObjectStorage<ecs::RenderableSlotId>
+	/**
+	 * Contains render thread representation of renderable objects, stored in packed arrays accessible by PackedRendererId.
+	 * Implements main -> render thread synchronization logic for renderable objects.
+	 */
+	class B3D_EXPORT RenderableObjectStorageBase : public RendererObjectStorage
 	{
 	public:
 		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
 		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
 
 		/** Returns the renderable proxy at the given slot. */
-		render::RenderableProxy& GetRenderableProxy(SlotId slotId) { return mRenderableProxies[slotId]; }
+		render::RenderableProxy& GetRenderableProxy(PackedRendererId slotId) { return mRenderableProxies[slotId]; }
 
 		/** Returns the renderable proxy at the given slot (const). */
-		const render::RenderableProxy& GetRenderableProxy(SlotId slotId) const { return mRenderableProxies[slotId]; }
+		const render::RenderableProxy& GetRenderableProxy(PackedRendererId slotId) const { return mRenderableProxies[slotId]; }
 
 		/** Returns the total number of renderables. */
 		u32 GetRenderableCount() const { return (u32)mRenderableProxies.size(); }
 
 		/** Registers a new object on the render thread. */
-		virtual void Register(render::RenderableProxy& proxy, SlotId rendererId) = 0;
+		virtual void Register(render::RenderableProxy& proxy, PackedRendererId rendererId) = 0;
 
 		/** Updates an existing object on the render thread. */
-		virtual void Update(render::RenderableProxy& proxy, SlotId rendererId) = 0;
+		virtual void Update(render::RenderableProxy& proxy, PackedRendererId rendererId) = 0;
 
 		/** Unregisters an object from the render thread. */
-		virtual void Unregister(render::RenderableProxy& proxy, SlotId rendererId) = 0;
+		virtual void Unregister(render::RenderableProxy& proxy, PackedRendererId rendererId) = 0;
 
 	protected:
 		Vector<render::RenderableProxy> mRenderableProxies;
@@ -363,7 +365,7 @@ namespace b3d
 		static void PopulatePacket(Renderable::FullSyncPacket& packet, Renderable& renderable);
 
 		/** Applies sync packet data to the renderable proxy. Non-static because it dispatches to Register/Unregister. */
-		void ApplyPacket(Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, SlotId rendererId);
+		void ApplyPacket(Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId);
 	};
 
 	/** @} */

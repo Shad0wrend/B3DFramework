@@ -64,7 +64,7 @@ namespace b3d
 		TBatchSyncBuffer<Renderable::FullSyncPacket> Full;
 		TBatchSyncBuffer<Renderable::TransformSyncPacket> Transform;
 
-		SlotCommand* Commands = nullptr;
+		RendererIdCommand* Commands = nullptr;
 		u32 CommandCount = 0;
 	};
 } // namespace b3d
@@ -204,6 +204,7 @@ void TRenderable<IsRenderProxy>::MarkReferencedResourcesDirty()
 		IResourceListener::MarkListenerResourcesDirty(); // TODO - Rename the base class method
 }
 
+template class TRenderableData<false>;
 template class TRenderableData<true>;
 template class TRenderable<false>;
 
@@ -232,10 +233,9 @@ void Renderable::Initialize()
 
 	registry->AddComponent<ecs::RenderableComponent>(entity, ecs::RenderableComponent{this});
 
-	// Allocate a packed renderable slot
+	// Allocate a persistent render object ID and add the ECS fragment
 	const SPtr<RendererScene>& rendererScene = sceneObject->GetScene()->GetRendererScene();
-	SlotId rendererId = rendererScene->AllocateRenderableSlot(entity);
-	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{rendererId}); // TODO - Do this in AllocateSlot() above?
+	rendererScene->AllocateRenderableId(*registry, entity);
 
 	registry->AddTag<ecs::RenderableDirty>(entity);
 }
@@ -275,18 +275,9 @@ void Renderable::OnDestroyed()
 	ecs::Registry* registry = SceneObject()->GetECSRegistry();
 	ecs::Entity entity = SceneObject()->GetECSEntity();
 
-	// Deallocate the packed renderable slot if one was assigned
-	if(registry->HasAllOf<ecs::RenderableSlotId>(entity))
-	{
-		SlotId rendererId = registry->GetComponents<ecs::RenderableSlotId>(entity).Id;
-		if(rendererId != kInvalidSlotId)
-		{
-			const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-			rendererScene->DeallocateRenderableSlot(entity, *registry);
-		}
-
-		registry->RemoveComponents<ecs::RenderableSlotId>(entity);
-	}
+	// Deallocate the persistent render object ID and remove the ECS fragment
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+	rendererScene->DeallocateRenderableId(*registry, entity);
 
 	registry->RemoveComponents<ecs::RenderableDirty>(entity);
 	registry->RemoveComponents<ecs::RenderableTransformDirty>(entity);
@@ -301,21 +292,16 @@ void Renderable::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 	ecs::Registry* registry = SceneObject()->GetECSRegistry();
 	ecs::Entity entity = SceneObject()->GetECSEntity();
 
-	// Deallocate from old scene's allocator
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::RenderableSlotId>(oldEntity))
-	{
-		SlotId oldRendererId = oldRegistry->GetComponents<ecs::RenderableSlotId>(oldEntity).Id;
-		if(oldRendererId != kInvalidSlotId)
-			oldScene->GetRendererScene()->DeallocateRenderableSlot(oldEntity, *oldRegistry);
-	}
+	// Deallocate from old scene's storage and remove the ECS fragment
+	if(oldRegistry != nullptr)
+		oldScene->GetRendererScene()->DeallocateRenderableId(*oldRegistry, oldEntity);
 
 	// Migrate RenderableComponent to new registry
 	registry->AddComponent<ecs::RenderableComponent>(entity, ecs::RenderableComponent{ this });
 
-	// Allocate from new scene's allocator
+	// Allocate from new scene's storage and add the ECS fragment
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	SlotId newRendererId = rendererScene->AllocateRenderableSlot(entity);
-	registry->AddComponent<ecs::RenderableSlotId>(entity, ecs::RenderableSlotId{newRendererId}); // TODO - Do this in AllocateSlot() above?
+	rendererScene->AllocateRenderableId(*registry, entity);
 
 	// Full sync needed after migration
 	registry->AddTag<ecs::RenderableDirty>(entity);
@@ -687,11 +673,11 @@ void RenderableObjectStorageBase::PopulatePacket(Renderable::FullSyncPacket& pac
 	packet.mTransform = renderable.SceneObject()->GetTransform();
 }
 
-void RenderableObjectStorageBase::ApplyPacket(Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, SlotId rendererId)
+void RenderableObjectStorageBase::ApplyPacket(Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId)
 {
 	// Skip packets for renderables that were destroyed (slot already deallocated by command replay)
 	// TODO - Can this even happen?
-	if(rendererId == kInvalidSlotId)
+	if(rendererId == kInvalidPackedRendererId)
 		return;
 
 	bool oldIsActive = proxy.mActive;
@@ -731,8 +717,8 @@ void RenderableObjectStorageBase::ApplyPacket(Renderable::FullSyncPacket& packet
 void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
 {
 	// Consume structural commands from the allocator
-	SlotCommand* slotCommands = nullptr;
-	u32 commandCount = ConsumeAndAllocateCommands(allocator, slotCommands);
+	RendererIdCommand* objectCommands = nullptr;
+	u32 commandCount = FlushCommands(allocator, objectCommands);
 
 	auto* fullStorage = registry.TryGetStorage<ecs::RenderableDirty>();
 	auto* transformStorage = registry.TryGetStorage<ecs::RenderableTransformDirty>();
@@ -744,22 +730,22 @@ void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAlloca
 		return nullptr;
 
 	auto* batchData = allocator.Construct<RenderableSyncBatch>();
-	batchData->Commands = slotCommands;
+	batchData->Commands = objectCommands;
 	batchData->CommandCount = commandCount;
 
 	if(fullCount > 0)
 	{
 		batchData->Full.Allocate(allocator, fullCount);
 
-		auto view = registry.CreateView<ecs::RenderableDirty, ecs::RenderableComponent, ecs::RenderableSlotId>();
+		auto view = registry.CreateView<ecs::RenderableDirty, ecs::RenderableComponent, ecs::RenderableId>();
 		view.SetLeadingType<ecs::RenderableDirty>();
 
 		for(auto entity : view)
 		{
 			auto& compRef = view.Get<ecs::RenderableComponent>(entity);
-			SlotId rendererId = view.Get<ecs::RenderableSlotId>(entity).Id;
+			RendererId objectId = view.Get<ecs::RenderableId>(entity).Id;
 
-			auto& packet = batchData->Full.Add(rendererId, *compRef.Component, allocator, 0);
+			auto& packet = batchData->Full.Add(objectId, *compRef.Component, allocator, 0);
 			PopulatePacket(packet, *compRef.Component);
 		}
 	}
@@ -768,15 +754,15 @@ void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAlloca
 	{
 		batchData->Transform.Allocate(allocator, transformCount);
 
-		auto view = registry.CreateView<ecs::RenderableTransformDirty, ecs::RenderableComponent, ecs::RenderableSlotId>(ecs::TExcludedTypes<ecs::RenderableDirty>{});
+		auto view = registry.CreateView<ecs::RenderableTransformDirty, ecs::RenderableComponent, ecs::RenderableId>(ecs::TExcludedTypes<ecs::RenderableDirty>{});
 		view.SetLeadingType<ecs::RenderableTransformDirty>();
 
 		for(auto entity : view)
 		{
 			auto& compRef = view.Get<ecs::RenderableComponent>(entity);
-			SlotId rendererId = view.Get<ecs::RenderableSlotId>(entity).Id;
+			RendererId objectId = view.Get<ecs::RenderableId>(entity).Id;
 
-			auto& packet = batchData->Transform.Add(rendererId, *compRef.Component, allocator, 0);
+			auto& packet = batchData->Transform.Add(objectId, *compRef.Component, allocator, 0);
 			packet.mTransform = compRef.Component->SceneObject()->GetTransform();
 		}
 	}
@@ -793,20 +779,28 @@ void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& alloc
 
 	if(batch->CommandCount > 0)
 	{
-		UpdateSlotIds(batch->Commands, batch->CommandCount);
+		ProcessCommands(batch->Commands, batch->CommandCount);
 		allocator.Free(reinterpret_cast<u8*>(batch->Commands));
 	}
 
 	batch->Full.Each(
-		[this](Renderable::FullSyncPacket& packet, SlotId rendererId)
+		[this](Renderable::FullSyncPacket& packet, RendererId objectId)
 		{
+			PackedRendererId rendererId = GetPackedRendererId(objectId);
+			if(rendererId == kInvalidPackedRendererId)
+				return;
+
 			render::RenderableProxy& proxy = mRenderableProxies[rendererId];
 			ApplyPacket(packet, proxy, rendererId);
 		});
 
 	batch->Transform.Each(
-		[this](Renderable::TransformSyncPacket& packet, SlotId rendererId)
+		[this](Renderable::TransformSyncPacket& packet, RendererId objectId)
 		{
+			PackedRendererId rendererId = GetPackedRendererId(objectId);
+			if(rendererId == kInvalidPackedRendererId)
+				return;
+
 			render::RenderableProxy& proxy = mRenderableProxies[rendererId];
 			packet.ApplySyncData(&proxy);
 

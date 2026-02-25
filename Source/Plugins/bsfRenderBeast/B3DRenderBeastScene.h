@@ -8,7 +8,6 @@
 #include "B3DRendererParticles.h"
 #include "Renderer/B3DRendererScene.h"
 #include "Renderer/B3DRendererObjectStorage.h"
-#include "Renderer/B3DPackedSlotAllocator.h"
 #include "Shading/B3DLightProbes.h"
 #include "Utility/B3DSamplerOverrides.h"
 #include "Utility/B3DUniformBufferPools.h"
@@ -43,10 +42,10 @@ namespace b3d
 		public:
 			RenderableObjectStorage();
 
-			void UpdateSlotIds(const SlotCommand* commands, u32 count) override;
-			void Register(RenderableProxy& proxy, SlotId rendererId) override;
-			void Update(RenderableProxy& proxy, SlotId rendererId) override;
-			void Unregister(RenderableProxy& proxy, SlotId rendererId) override;
+			void ProcessCommands(const RendererIdCommand* commands, u32 count) override;
+			void Register(RenderableProxy& proxy, PackedRendererId rendererId) override;
+			void Update(RenderableProxy& proxy, PackedRendererId rendererId) override;
+			void Unregister(RenderableProxy& proxy, PackedRendererId rendererId) override;
 
 			/** Returns renderable at the provided index. Valid index is range [0, GetRenderableCount()). */
 			RendererRenderable* GetRenderable(u32 index) const { return mRenderables[index]; }
@@ -60,7 +59,7 @@ namespace b3d
 			 * @param	id			Slot ID of the renderable to prepare.
 			 * @param	frameInfo	Global information describing the current frame.
 			 */
-			void PrepareRenderable(SlotId id, const FrameInfo& frameInfo);
+			void PrepareRenderable(PackedRendererId id, const FrameInfo& frameInfo);
 
 			/**
 			 * Performs necessary steps to make a renderable ready for rendering. This must be called at least once every frame
@@ -70,7 +69,7 @@ namespace b3d
 			 * @param	id			Slot ID of the renderable to prepare.
 			 * @param	frameInfo	Global information describing the current frame.
 			 */
-			void PrepareVisibleRenderable(SlotId id, const FrameInfo& frameInfo);
+			void PrepareVisibleRenderable(PackedRendererId id, const FrameInfo& frameInfo);
 
 			/** Returns the packed renderable array. */
 			Vector<RendererRenderable*>& GetRenderables() { return mRenderables; }

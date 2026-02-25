@@ -3,8 +3,8 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
+#include "Renderer/B3DRendererId.h"
 #include "Renderer/B3DRendererSyncManager.h"
-#include "Renderer/B3DPackedSlotAllocator.h"
 
 namespace b3d
 {
@@ -12,85 +12,159 @@ namespace b3d
 	 *  @{
 	 */
 
-	/**
-	 * Allocates slot IDs for renderer objects. Slots are guaranteed to result in packed array layout. Deallocating
-	 * a slot can result in slot ID for an existing object to be changed, as the data is swapped with the deallocated slot.
-	 *
-	 * Implementers should assign the allocated slot to an ECS fragment on the provided ECS entity, and update swapped slot
-	 * ECS fragment on deallocation (if any changed).
-	 */
-	class B3D_EXPORT IRendererObjectStorage
+	/** Determines whether a renderer ID was allocated or deallocated. Used for re-playing the operation on the render thread.  */
+	enum class RendererIdCommandType : u8
 	{
-	public:
-		virtual ~IRendererObjectStorage() = default;
-
-		/**
-		 * Allocates a packed slot for the given entity.
-		 *
-		 * @note: Main thread only.
-		 */
-		virtual SlotId AllocateSlot(ecs::Entity entity) = 0;
-
-		/**
-		 * Deallocates the slot belonging to the given entity.
-		 *
-		 * @note: Main thread only.
-		 */
-		virtual void DeallocateSlot(ecs::Entity entity, ecs::Registry& registry) = 0;
+		Allocate,
+		Deallocate
 	};
+
+	/** Records a single allocation or deallocation of a persistent renderer object ID. */
+	struct RendererIdCommand
+	{
+		RendererIdCommandType Type;
+		RendererId ObjectId;
+	};
+
+	/**
+	 * Replays renderer object ID allocation/deallocation commands on the render thread. This ensures the render thread can maintain packed arrays
+	 * of renderer objects, while the main thread can freely allocate/deallocate RendererId values without needing to know about slots or packed array management.
+	 *
+	 * @tparam ClearFn		Callable(PackedRendererId) — called on the entry being deallocated, before swapping.
+	 * @tparam SwappedFn	Callable(PackedRendererId) — called on the entry after swapping (arrays now hold new data at this position). Only called if swap occurred.
+	 * @tparam Arrays		One or multiple packed array that hold the data associated with the renderer objects. This data will be moved to ensure they arrays remain packed.
+	 *						Must be vector-like containers that support push_back, pop_back, operator[], std::swap.
+	 */
+	template<typename ClearFn, typename SwappedFn, typename... Arrays>
+	void ReplayRendererIdCommands(const RendererIdCommand* commands, u32 commandCount, Vector<RendererId>& sparseSlots, Vector<RendererId>& denseToSparse, ClearFn&& fnClear, SwappedFn&& fnSwapped, Arrays&... arrays)
+	{
+		for(u32 commandIndex = 0; commandIndex < commandCount; ++commandIndex)
+		{
+			const RendererIdCommand& command = commands[commandIndex];
+			const u32 identifier = command.ObjectId.GetIdentifier();
+
+			if(command.Type == RendererIdCommandType::Allocate)
+			{
+				const PackedRendererId newSlot = (PackedRendererId)denseToSparse.size();
+
+				// Grow sparse array if needed
+				if(identifier >= (u32)sparseSlots.size())
+					sparseSlots.resize(identifier + 1);
+
+				sparseSlots[identifier] = RendererId((RendererId::IdentifierType)newSlot, (RendererId::VersionType)command.ObjectId.GetVersion());
+
+				denseToSparse.push_back(command.ObjectId);
+				(arrays.push_back(typename std::remove_reference_t<decltype(arrays)>::value_type{}), ...);
+			}
+			else
+			{
+				B3D_ASSERT(identifier < (u32)sparseSlots.size());
+				B3D_ASSERT(sparseSlots[identifier].GetVersion() == command.ObjectId.GetVersion());
+
+				const PackedRendererId slotToRemove = (PackedRendererId)sparseSlots[identifier].GetIdentifier();
+
+				fnClear(slotToRemove);
+
+				const PackedRendererId lastSlot = (PackedRendererId)denseToSparse.size() - 1;
+				if(slotToRemove != lastSlot)
+				{
+					// Swap-and-pop: move last element into the removed slot
+					(std::swap(arrays[slotToRemove], arrays[lastSlot]), ...);
+					std::swap(denseToSparse[slotToRemove], denseToSparse[lastSlot]);
+
+					// Update the swapped object's sparse entry to point to its new slot
+					const u32 swappedIdentifier = denseToSparse[slotToRemove].GetIdentifier();
+					sparseSlots[swappedIdentifier].Identifier = slotToRemove;
+
+					fnSwapped(slotToRemove);
+				}
+
+				denseToSparse.pop_back();
+				(arrays.pop_back(), ...);
+
+				sparseSlots[identifier] = kInvalidRendererId;
+			}
+		}
+	}
 
 	/**
 	 * Provides render thread storage for renderer objects, and synchronization of object data from the main thread into that storage.
 	 *
 	 * On the main thread renderer objects are represented as ECS entities, with ECS fragments for storing data. On the render thread the objects are stored
-	 * in packed arrays referenced by slot IDs. Slot IDs are allocated from the main thread and stored on the ECS entity, and then used on the render thread
-	 * to update the correct entry in the packed array.
+	 * in packed arrays referenced by PackedRendererIds. Persistent RendererId values are allocated from the main thread and stored on the ECS entity, and then
+	 * resolved on the render thread to packed PackedRendererId values for array access.
 	 *
-	 * # Allocating slots
-	 * Slot represents a single array entry in the packed arrays on the render thread. Slots should be allocated / deallocated from the main thread using
-	 * AllocateSlot / DeallocateSlot. The allocated slot ID should be stored on the entity as a fragment of type @p SlotFragmentType.
+	 * # Allocating renderer object IDs
+	 * Renderer object IDs are allocated / deallocated from the main thread using AllocateRendererId / DeallocateRendererId. 
 	 *
-	 * Since slot IDs are allocated/deallocated from the main thread, the render thread needs to be informed about those changes so it can update the slot IDs in its storage.
-	 * This is done via UpdateSlotIds(), which replays the slot allocation/deallocation commands recorded by the main thread allocator on the render thread.
-	 * This should be called during SyncWrite().
+	 * Since RendererId values are allocated/deallocated from the main thread, the render thread needs to be informed about which IDs were allocated/deallocated
+	 * so it can update its packed arrays to match. This is done via FLushCommands/ProcessCommands(), which replays the allocation/deallocation commands recorded by the main
+	 * thread on the render thread.
+	 *
+	 * It is expected for the main thread to call FlushCommands during SyncRead(), and render thread to call ProcessCommands during SyncWrite()
+	 * This should be called as the first step during SyncWrite().
 	 *
 	 * # Syncing data
-	 * Data should be synced from the main thread to the render thread using SyncRead / SyncWrite.
-	 *  - SyncRead is called on the main thread, and should gather dirty data from ECS fragments associated with the entity into a batch buffer allocated by the provided allocator,
-	 *    and return a pointer to that buffer.
-	 *  - SyncWrite is called on the render thread with the batch buffer generated by SyncRead, and should apply the data to the render thread packed arrays using at the location of
-	 *    the provided slot ID, then free the batch buffer using the provided allocator. SyncWrite must call UpdateSlotIds() before any operation to ensure the slot IDs in the
-	 *    render thread storage are up to date with the main thread.
-	 *
-	 * @tparam SlotFragmentType	ECS fragment type that stores the packed ID (e.g. ecs::RenderableSlotId).
+	 * Data should be synced from the main thread to the render thread using SyncRead() / SyncWrite().
+	 *  - SyncRead is called on the main thread, and should gather dirty data from ECS fragments associated with the entity into a batch buffer allocated by the
+	 *    provided allocator, and return a pointer to that buffer. It must call FlushCommands() to ensure SyncWrite() can replay the commands.
+	 *  - SyncWrite is called on the render thread with the batch buffer generated by SyncRead. It must call ProcessCommands() first to ensure packed arrays
+	 *    are up to date, then resolve RendererId values to PackedRendererId via GetPackedRendererId() for array access.
 	 */
-	template<typename SlotFragmentType>
-	class TRendererObjectStorage : public IRendererObjectSyncHandler, public IRendererObjectStorage
+	class B3D_EXPORT RendererObjectStorage : public IRendererObjectSyncHandler
 	{
 	public:
-		SlotId AllocateSlot(ecs::Entity entity) override { return mAllocator.Allocate(entity); }
-		void DeallocateSlot(ecs::Entity entity, ecs::Registry& registry) override { mAllocator.Deallocate(entity, registry); }
+		virtual ~RendererObjectStorage() = default;
 
-	protected:
-		/** Replays slot allocate/deallocate commands on the render thread. */
-		virtual void UpdateSlotIds(const SlotCommand* commands, u32 count) = 0;
+		/**
+		 * Allocates a persistent renderer object ID.
+		 *
+		 * @note Main thread only.
+		 */
+		RendererId AllocateRendererId();
 
-		/** Consumes commands from the allocator and frame-allocates a copy. */
-		u32 ConsumeAndAllocateCommands(FrameAllocator& allocator, SlotCommand*& outCommands)
+		/**
+		 * Deallocates a persistent renderer object ID.
+		 *
+		 * @note Main thread only.
+		 */
+		void DeallocateRendererId(RendererId objectId);
+
+		/**
+		 * Resolves a RendererId to the current packed PackedRendererId on the render thread.
+		 * Returns kInvalidPackedRendererId if the ID is stale or out of range.
+		 *
+		 * @note Render thread only.
+		 */
+		PackedRendererId GetPackedRendererId(RendererId objectId) const
 		{
-			const auto& commands = mAllocator.ConsumeCommands();
-			u32 commandCount = (u32)commands.size();
-			if(commandCount == 0)
-			{
-				outCommands = nullptr;
-				return 0;
-			}
-			outCommands = reinterpret_cast<SlotCommand*>(allocator.AllocateAligned(sizeof(SlotCommand) * commandCount, alignof(SlotCommand)));
-			memcpy(outCommands, commands.data(), sizeof(SlotCommand) * commandCount);
-			return commandCount;
+			u32 identifier = objectId.GetIdentifier();
+			if(identifier >= (u32)mSparseSlots.size())
+				return kInvalidPackedRendererId;
+
+			const RendererId& entry = mSparseSlots[identifier];
+			if(entry.GetVersion() != objectId.GetVersion())
+				return kInvalidPackedRendererId;
+
+			return (PackedRendererId)entry.GetIdentifier();
 		}
 
-		TPackedSlotAllocator<SlotFragmentType> mAllocator;
+	protected:
+		/** Replays renderer object commands on the render thread, updating packed arrays. */
+		virtual void ProcessCommands(const RendererIdCommand* commands, u32 count) = 0;
+
+		/**
+		 * Consumes commands from the allocator and allocates a copy using the provided allocator.
+		 * Copy is to be passed to the render thread, to be replayed using ReplayRendererIdCommands.
+		 */
+		u32 FlushCommands(FrameAllocator& allocator, RendererIdCommand*& outCommands);
+
+		RendererIdAllocator mObjectIdAllocator;
+		TArray<RendererIdCommand> mCommandBuffers[2];
+		u32 mActiveBuffer = 0;
+
+		Vector<RendererId> mSparseSlots; /**< RendererId -> PackedRendererId. */
+		Vector<RendererId> mDenseToSparse; /**< PackedRendererId -> RendererId. */
 	};
 
 	/** @} */
