@@ -714,7 +714,7 @@ RenderableAction RenderableObjectStorageBase::ApplyPacket(Renderable::FullSyncPa
 void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
 {
 	// Consume structural commands from the allocator
-	RendererObjectStorage::FlushedCommands flushedCommands = FlushCommands(allocator);
+	FlushedCommands flushedCommands = FlushCommands(allocator);
 	const u32 commandCount = (u32)flushedCommands.Deallocations.Size() + (u32)flushedCommands.Allocations.Size();
 
 	auto* fullStorage = registry.TryGetStorage<ecs::RenderableDirty>();
@@ -773,7 +773,7 @@ void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& alloc
 {
 	RenderableSyncBatch* batch = static_cast<RenderableSyncBatch*>(rawData);
 
-	const RendererObjectStorage::FlushedCommands& commands = batch->Commands;
+	const FlushedCommands& commands = batch->Commands;
 
 	if(commands.Deallocations.Size() > 0 || commands.Allocations.Size() > 0)
 		ProcessCommands(commands.Deallocations, commands.Allocations);

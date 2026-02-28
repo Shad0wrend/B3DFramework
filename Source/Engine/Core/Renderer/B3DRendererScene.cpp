@@ -78,6 +78,8 @@ namespace b3d
 		{
 			if(batchData.RenderableBatchData != nullptr)
 				mRenderableStorage->SyncWrite(batchData.RenderableBatchData, allocator);
+
+			allocator.Destruct(&batchData);
 		}
 
 		void RendererScene::UpdateCombinedRendererExtensionsIfNeeded(const Set<RendererExtension*, RendererExtension::SortFunction>& globalRendererExtensions, bool forceUpdate)
