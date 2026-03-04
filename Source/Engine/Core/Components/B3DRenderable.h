@@ -106,28 +106,23 @@ namespace b3d
 		RenderableAnimType mAnimType = RenderableAnimType::None;
 	};
 
-	/** Common code used both by main and render thread variants of Renderable. */
-	template <bool IsRenderProxy>
-	class B3D_EXPORT TRenderable : public TRenderableData<IsRenderProxy>, public CoreVariantType<CoreObject, IsRenderProxy>, public std::conditional_t<IsRenderProxy, EmptyBase, IResourceListener>
+	/**
+	 * Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will
+	 * render any Renderable objects visible by a camera.
+	 */
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Renderable : public Component, public TRenderableData<false>, public CoreObject, public IResourceListener
 	{
-		using MeshType = CoreVariantHandleType<Mesh, IsRenderProxy>;
-		using MaterialType = CoreVariantHandleType<Material, IsRenderProxy>;
-		using Super = CoreVariantType<CoreObject, IsRenderProxy>;
-
 	public:
-		TRenderable();
-		virtual ~TRenderable() = default;
-
-		/** @copydoc GetMesh */
+		/** @copydoc TRenderableData::GetMesh */
 		B3D_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
-		void SetMesh(const MeshType& mesh);
+		void SetMesh(const HMesh& mesh);
 
 		/**
 		 * Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn't have
 		 * a specific material set then the primary material will be used.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetMaterial))
-		void SetMaterial(u32 index, const MaterialType& material);
+		void SetMaterial(u32 index, const HMaterial& material);
 
 		/**
 		 * Sets the primary material to use for rendering. Any sub-mesh that doesn't have an explicit material set will use
@@ -136,13 +131,13 @@ namespace b3d
 		 * @note	This is equivalent to calling SetMaterial(0, material).
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(SetMaterial))
-		void SetMaterial(const MaterialType& material) { SetMaterial(0, material); }
+		void SetMaterial(const HMaterial& material) { SetMaterial(0, material); }
 
-		/** @copydoc GetMaterials() */
+		/** @copydoc TRenderableData::GetMaterials() */
 		B3D_SCRIPT_EXPORT(ExportName(Materials), Property(Setter))
-		void SetMaterials(const Vector<MaterialType>& materials);
+		void SetMaterials(const Vector<HMaterial>& materials);
 
-		/** @copydoc GetLayer() */
+		/** @copydoc TRenderableData::GetLayer() */
 		B3D_SCRIPT_EXPORT(ExportName(Layers), Property(Setter))
 		void SetLayer(u64 layer);
 
@@ -160,34 +155,14 @@ namespace b3d
 		 */
 		void SetUseOverrideBounds(bool enable);
 
-		/** @copydoc GetWriteVelocity */
+		/** @copydoc TRenderableData::GetWriteVelocity */
 		B3D_SCRIPT_EXPORT(ExportName(WriteVelocity), Property(Setter))
 		void SetWriteVelocity(bool enable);
 
-		/** @copydoc GetCullDistanceFactor() */
+		/** @copydoc TRenderableData::GetCullDistanceFactor() */
 		B3D_SCRIPT_EXPORT(ExportName(CullDistance), Property(Setter))
 		void SetCullDistanceFactor(float factor);
-	protected:
-		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
-		virtual void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
 
-		/** @copydoc CoreObject::MarkDependenciesDirty */
-		void MarkCoreObjectDependenciesDirty();
-
-		/** @copydoc IResourceListener::MarkListenerResourcesDirty */
-		void MarkReferencedResourcesDirty();
-
-		/** Triggered whenever the renderable's mesh changes. */
-		virtual void DoOnMeshChanged() {}
-	};
-
-	/**
-	 * Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will
-	 * render any Renderable objects visible by a camera.
-	 */
-	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Renderable : public Component, public TRenderable<false>
-	{
-	public:
 		/**
 		 * Determines the animation that will be used for animating the attached mesh. Note this will automatically be set if an
 		 * animation component exists on the same scene object as the renderable.
@@ -236,7 +211,13 @@ namespace b3d
 		/************************************************************************/
 
 	protected:
-		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything) override;
+		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
+
+		/** @copydoc CoreObject::MarkDependenciesDirty */
+		void MarkCoreObjectDependenciesDirty();
+
+		/** @copydoc IResourceListener::MarkListenerResourcesDirty */
+		void MarkReferencedResourcesDirty();
 
 		friend class SceneObject;
 		friend class RenderableObjectStorageBase;
@@ -256,7 +237,8 @@ namespace b3d
 		void OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity) override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
-		void DoOnMeshChanged() override;
+		/** Triggered whenever the renderable's mesh changes. */
+		void DoOnMeshChanged();
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

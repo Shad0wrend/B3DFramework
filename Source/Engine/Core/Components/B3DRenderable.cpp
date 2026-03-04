@@ -76,14 +76,10 @@ typename TRenderableData<IsRenderProxy>::MaterialType TRenderableData<IsRenderPr
 	return mMaterials[index];
 }
 
-template <bool IsRenderProxy>
-TRenderable<IsRenderProxy>::TRenderable()
-{
-	mMaterials.resize(1);
-}
+template class TRenderableData<false>;
+template class TRenderableData<true>;
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetMesh(const MeshType& mesh)
+void Renderable::SetMesh(const HMesh& mesh)
 {
 	mMesh = mesh;
 
@@ -100,8 +96,7 @@ void TRenderable<IsRenderProxy>::SetMesh(const MeshType& mesh)
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetMaterial(u32 index, const MaterialType& material)
+void Renderable::SetMaterial(u32 index, const HMaterial& material)
 {
 	if(index >= (u32)mMaterials.size())
 		return;
@@ -113,8 +108,7 @@ void TRenderable<IsRenderProxy>::SetMaterial(u32 index, const MaterialType& mate
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetMaterials(const Vector<MaterialType>& materials)
+void Renderable::SetMaterials(const Vector<HMaterial>& materials)
 {
 	const u32 materialCount = (u32)mMaterials.size();
 	const u32 materialCountToAssign = std::min(materialCount, (u32)materials.size());
@@ -130,8 +124,7 @@ void TRenderable<IsRenderProxy>::SetMaterials(const Vector<MaterialType>& materi
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetLayer(u64 layer)
+void Renderable::SetLayer(u64 layer)
 {
 	const bool isPow2 = layer && !((layer - 1) & layer);
 
@@ -141,70 +134,51 @@ void TRenderable<IsRenderProxy>::SetLayer(u64 layer)
 		return;
 	}
 
-	this->mLayer = layer;
+	mLayer = layer;
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetOverrideBounds(const AABox& bounds)
+void Renderable::SetOverrideBounds(const AABox& bounds)
 {
-	this->mOverrideBounds = bounds;
+	mOverrideBounds = bounds;
 
-	if(this->mUseOverrideBounds)
+	if(mUseOverrideBounds)
 		MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetUseOverrideBounds(bool enable)
+void Renderable::SetUseOverrideBounds(bool enable)
 {
-	if(this->mUseOverrideBounds == enable)
+	if(mUseOverrideBounds == enable)
 		return;
 
-	this->mUseOverrideBounds = enable;
+	mUseOverrideBounds = enable;
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetWriteVelocity(bool enable)
+void Renderable::SetWriteVelocity(bool enable)
 {
-	if(this->mWriteVelocity == enable)
+	if(mWriteVelocity == enable)
 		return;
 
-	this->mWriteVelocity = enable;
+	mWriteVelocity = enable;
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::SetCullDistanceFactor(float factor)
+void Renderable::SetCullDistanceFactor(float factor)
 {
-	this->mCullDistanceFactor = factor;
+	mCullDistanceFactor = factor;
 	MarkRenderProxyDataDirty();
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
+void Renderable::MarkCoreObjectDependenciesDirty()
 {
-	if constexpr(!IsRenderProxy)
-		CoreObject::MarkRenderProxyDataDirty((u32)flag);
+	CoreObject::MarkDependenciesDirty(); // TODO - Rename the base class method
 }
 
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::MarkCoreObjectDependenciesDirty()
+void Renderable::MarkReferencedResourcesDirty()
 {
-	if constexpr(!IsRenderProxy)
-		CoreObject::MarkDependenciesDirty(); // TODO - Rename the base class method
+	IResourceListener::MarkListenerResourcesDirty(); // TODO - Rename the base class method
 }
-
-template <bool IsRenderProxy>
-void TRenderable<IsRenderProxy>::MarkReferencedResourcesDirty()
-{
-	if constexpr(!IsRenderProxy)
-		IResourceListener::MarkListenerResourcesDirty(); // TODO - Rename the base class method
-}
-
-template class TRenderableData<false>;
-template class TRenderableData<true>;
-template class TRenderable<false>;
 
 Renderable::Renderable(const HSceneObject& parent)
 	: Component(parent)
@@ -212,6 +186,7 @@ Renderable::Renderable(const HSceneObject& parent)
 	SetName("Renderable");
 	SetFlag(ComponentFlag::AlwaysRun, true);
 	mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
+	mMaterials.resize(1);
 }
 
 Renderable::Renderable()
