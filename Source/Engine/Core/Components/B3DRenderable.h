@@ -84,15 +84,6 @@ namespace b3d
 		B3D_SCRIPT_EXPORT(ExportName(Layers), Property(Getter))
 		u64 GetLayer() const { return mLayer; }
 
-		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
-
-		/**
-		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
-		 * not include scale values.
-		 */
-		Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
-
 	protected:
 		MeshType mMesh;
 		Vector<MaterialType> mMaterials;
@@ -101,8 +92,6 @@ namespace b3d
 		bool mUseOverrideBounds = false;
 		bool mWriteVelocity = true;
 		float mCullDistanceFactor = 1.0f;
-		Matrix4 mWorldTransformMatrix = kIdentityTag;
-		Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
 		RenderableAnimType mAnimType = RenderableAnimType::None;
 	};
 
@@ -291,6 +280,15 @@ namespace b3d
 			/** Returns vertex declaration used for rendering meshes containing morph shape information. */
 			const SPtr<VertexDescription>& GetMorphVertexDescription() const { return mMorphVertexDescription; }
 
+			/**	Returns the transform matrix that is applied to the object when its being rendered. */
+			Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
+
+			/**
+			 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
+			 * not include scale values.
+			 */
+			Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
+
 		protected:
 			friend class b3d::Renderable;
 			friend class b3d::RenderableObjectStorageBase;
@@ -308,6 +306,8 @@ namespace b3d
 			SPtr<VertexDescription> mMorphVertexDescription;
 
 			Transform mTransform;
+			Matrix4 mWorldTransformMatrix = kIdentityTag;
+			Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
 		};
 	} // namespace render
 

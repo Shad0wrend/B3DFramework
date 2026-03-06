@@ -305,34 +305,27 @@ void Renderable::OnTransformChanged(TransformChangedFlags flags)
 	if(ignoreOwnTransform)
 		SceneObject()->SetLocalTransform(Transform::kIdentity);
 
-	const Transform& transform = SceneObject()->GetLocalTransform();
-	mWorldTransformMatrix = transform.GetMatrix();
-	mWorldTransformMatrixWithoutScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
-
 	MarkRenderProxyDataDirty(ComponentDirtyFlag::Transform);
 }
 
 Bounds Renderable::GetBounds() const
 {
+	const Transform& transform = SceneObject()->GetTransform();
+
 	if(mUseOverrideBounds)
 	{
 		Bounds bounds(mOverrideBounds);
-		bounds.TransformAffine(mWorldTransformMatrix);
-
+		bounds.TransformAffine(transform);
 		return bounds;
 	}
 
 	HMesh mesh = GetMesh();
 	if(!mesh.IsLoaded())
-	{
-		const Transform& transform = SceneObject()->GetTransform();
 		return Bounds(transform.GetPosition(), Vector3::kZero, 0.0f);
-	}
 	else
 	{
 		Bounds bounds = mesh->GetProperties().Bounds;
-		bounds.TransformAffine(mWorldTransformMatrix);
-
+		bounds.TransformAffine(transform);
 		return bounds;
 	}
 }
