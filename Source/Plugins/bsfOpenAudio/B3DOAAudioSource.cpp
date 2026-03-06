@@ -4,7 +4,7 @@
 #include "B3DOAAudio.h"
 #include "B3DOAAudioClip.h"
 #include "AL/al.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 using namespace b3d;
 

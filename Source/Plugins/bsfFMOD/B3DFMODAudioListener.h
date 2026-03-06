@@ -4,7 +4,7 @@
 
 #include "B3DFMODPrerequisites.h"
 #include "Components/B3DAudioListener.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {

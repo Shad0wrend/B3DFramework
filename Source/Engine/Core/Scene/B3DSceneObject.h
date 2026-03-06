@@ -9,7 +9,7 @@
 #include "Reflection/B3DRTTIType.h"
 #include "Scene/B3DGameObject.h"
 #include "Scene/B3DComponent.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "Script/B3DIScriptExportable.h"
 #include "ECS/B3DIECSEntityOwner.h"
 

@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIPlain.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "RTTI/B3DMathRTTI.h"
 
 namespace b3d

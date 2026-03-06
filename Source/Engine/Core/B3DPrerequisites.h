@@ -411,7 +411,6 @@ namespace b3d
 	class MorphShapes;
 	class MorphShape;
 	class MorphChannel;
-	class Transform;
 	class CoreObjectManager;
 	struct CollisionData;
 	class VirtualButton;
@@ -659,7 +658,7 @@ namespace b3d
 		//TID_LightProbeVolume = 1136,
 		TID_SavedLightProbeInfo = 1137,
 		TID_LightProbeVolume = 1138,
-		TID_Transform = 1139,
+		//TID_Transform = 1139, // Moved to TypeID_Utility
 		TID_SceneActor = 1140,
 		//TID_AudioListener = 1141,
 		//TID_AudioSource = 1142,

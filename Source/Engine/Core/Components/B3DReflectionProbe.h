@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Scene/B3DComponent.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Scene/B3DSceneObject.h"
 

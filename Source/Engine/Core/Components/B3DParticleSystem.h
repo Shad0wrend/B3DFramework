@@ -7,7 +7,7 @@
 #include "CoreObject/B3DCoreObject.h"
 #include "Particles/B3DParticleDistribution.h"
 #include "Particles/B3DParticleModule.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {

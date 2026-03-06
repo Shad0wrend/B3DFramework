@@ -8,7 +8,7 @@
 #include "Renderer/B3DRendererObjectStorage.h"
 #include "Resources/B3DIResourceListener.h"
 #include "Scene/B3DComponent.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {

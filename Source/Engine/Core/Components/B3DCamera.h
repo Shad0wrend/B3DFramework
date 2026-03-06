@@ -6,7 +6,7 @@
 #include "Scene/B3DComponent.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Math/B3DConvexVolume.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "Math/B3DRay.h"
 
 namespace b3d

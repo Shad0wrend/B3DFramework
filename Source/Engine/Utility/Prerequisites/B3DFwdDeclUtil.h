@@ -215,6 +215,11 @@ namespace b3d
 
 	/** @} */
 
+	template<typename T> class TTransform;
+	using Transform = TTransform<float>;
+	using TransformF = TTransform<float>;
+	using TransformD = TTransform<double>;
+
 	class Math;
 	class Rect3;
 	class Color;
@@ -347,5 +352,7 @@ namespace b3d
 		TID_UUID = 124,
 		TID_SettingsPrimitivevalue = 125,
 		TID_SettingsKeyInfo = 126,
+
+		TID_Transform = 1139, // Moved from TypeID_Core, ID preserved for compatibility
 	};
 } // namespace b3d

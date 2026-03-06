@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Math/B3DBounds.h"
+#include "Math/B3DMatrix3.h"
 #include "Math/B3DRay.h"
 #include "Math/B3DSphere.h"
 
@@ -78,6 +79,29 @@ void TBounds<T>::TransformAffine(const TMatrix4<T>& matrix)
 
 	T maximumLengthSquared = std::max(lengthSquared[0], std::max(lengthSquared[1], lengthSquared[2]));
 	mSphereRadius *= Math::SquareRoot(maximumLengthSquared);
+}
+
+template<typename T>
+void TBounds<T>::TransformAffine(const TTransform<T>& transform)
+{
+	const TVector3<T>& position = transform.GetPosition();
+	const TQuaternion<T>& rotation = transform.GetRotation();
+	const TVector3<T>& scale = transform.GetScale();
+
+	// Transform center: rotate scaled center, then translate
+	mCenter = rotation.Rotate(scale * mCenter) + position;
+
+	// Build rotation matrix to compute new axis-aligned extents.
+	// The affine 3x3 part is R * S, so entry [i][j] = R[i][j] * S[j].
+	const TMatrix3<T> rotationMatrix(rotation);
+
+	mBoxExtents = TVector3<T>(
+		Math::Abs(rotationMatrix[0][0] * scale.X) * mBoxExtents.X + Math::Abs(rotationMatrix[0][1] * scale.Y) * mBoxExtents.Y + Math::Abs(rotationMatrix[0][2] * scale.Z) * mBoxExtents.Z,
+		Math::Abs(rotationMatrix[1][0] * scale.X) * mBoxExtents.X + Math::Abs(rotationMatrix[1][1] * scale.Y) * mBoxExtents.Y + Math::Abs(rotationMatrix[1][2] * scale.Z) * mBoxExtents.Z,
+		Math::Abs(rotationMatrix[2][0] * scale.X) * mBoxExtents.X + Math::Abs(rotationMatrix[2][1] * scale.Y) * mBoxExtents.Y + Math::Abs(rotationMatrix[2][2] * scale.Z) * mBoxExtents.Z);
+
+	// Rotation columns are unit length, so column length equals |scale| per axis — no sqrt needed
+	mSphereRadius *= Math::Max(Math::Abs(scale.X), Math::Max(Math::Abs(scale.Y), Math::Abs(scale.Z)));
 }
 
 template struct B3D_EXPORT TBounds<float>;

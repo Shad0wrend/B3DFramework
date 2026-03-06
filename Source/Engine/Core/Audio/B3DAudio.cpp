@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Audio/B3DAudio.h"
 #include "Components/B3DAudioSource.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 using namespace b3d;
 

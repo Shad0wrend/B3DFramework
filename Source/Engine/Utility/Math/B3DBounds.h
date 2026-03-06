@@ -7,6 +7,7 @@
 #include "Math/B3DAABox.h"
 #include "Math/B3DSphere.h"
 #include "Math/B3DMatrix4.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {
@@ -58,6 +59,16 @@ namespace b3d
 		 * Provided matrix must be affine.
 		 */
 		void TransformAffine(const TMatrix4<T>& matrix);
+
+		/**
+		 * Transforms the bounds by the given transform.
+		 *
+		 * @note
+		 * As the resulting box will no longer be axis aligned, an axis align box
+		 * is instead created by encompassing the transformed oriented bounding box.
+		 * Retrieving the value as an actual OBB would provide a tighter fit.
+		 */
+		void TransformAffine(const TTransform<T>& transform);
 
 		static const TBounds<T> kEmpty;
 		static const TBounds<T> kUnit;

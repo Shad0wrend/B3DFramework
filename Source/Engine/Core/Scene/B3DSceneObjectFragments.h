@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "ECS/B3DECSTagGroup.h"
 
 namespace b3d::ecs

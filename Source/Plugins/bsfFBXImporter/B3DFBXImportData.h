@@ -10,7 +10,7 @@
 #include "Math/B3DQuaternion.h"
 #include "Animation/B3DAnimationCurve.h"
 #include "RenderAPI/B3DSubMesh.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {

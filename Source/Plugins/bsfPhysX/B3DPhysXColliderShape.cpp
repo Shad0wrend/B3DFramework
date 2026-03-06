@@ -12,7 +12,7 @@
 #include "PxScene.h"
 #include "PxShape.h"
 #include "Physics/B3DPhysicsMesh.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 #include "Components/B3DCollider.h"
 #include "Components/B3DRigidbody.h"
 #include "Scene/B3DSceneObject.h"

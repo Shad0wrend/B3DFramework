@@ -3,7 +3,7 @@
 #include "B3DFMODAudioSource.h"
 #include "B3DFMODAudio.h"
 #include "B3DFMODAudioClip.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 using namespace b3d;
 

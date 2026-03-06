@@ -9,7 +9,7 @@
 #include "Math/B3DVector3.h"
 #include "Math/B3DQuaternion.h"
 #include "Animation/B3DCurveCache.h"
-#include "Scene/B3DTransform.h"
+#include "Math/B3DTransform.h"
 
 namespace b3d
 {
