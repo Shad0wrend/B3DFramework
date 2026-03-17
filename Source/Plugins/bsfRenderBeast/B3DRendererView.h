@@ -9,7 +9,7 @@
 #include "Math/B3DConvexVolume.h"
 #include "Shading/B3DLightGrid.h"
 #include "Shading/B3DShadowRendering.h"
-#include "B3DRendererRenderable.h"
+#include "RenderState/B3DRenderableRenderState.h"
 #include "B3DRenderCompositor.h"
 #include "B3DRendererParticles.h"
 #include "B3DRendererDecal.h"
@@ -314,7 +314,7 @@ namespace b3d
 			 *									As a side-effect, per-view visibility data is also calculated and can be
 			 *									retrieved by calling getVisibilityMask().
 			 */
-			void DetermineVisible(const Vector<RendererRenderable*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
+			void DetermineVisible(const Vector<RenderableRenderState*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
 
 			/**
 			 * Populates view render queues by determining visible particle systems.

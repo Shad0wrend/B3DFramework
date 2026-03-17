@@ -86,7 +86,7 @@ namespace b3d
 		};
 
 		/** Contains information about a Renderable, used by the Renderer. */
-		struct RendererRenderable : RendererObject
+		struct RenderableRenderState : RendererObject
 		{
 			/** Updates the per-object data from the provided renderable proxy. */
 			void UpdatePerObjectData(const RenderableProxy& proxy);

@@ -393,7 +393,7 @@ void RenderableObjectStorage::DestroyRenderState(TArrayView<const PackedRenderer
 	for(u32 slotIndex = 0; slotIndex < slotIds.Size(); ++slotIndex)
 	{
 		PackedRendererId slotId = slotIds[slotIndex];
-		RendererRenderable* rendererRenderable = mRenderables[slotId];
+		RenderableRenderState* rendererRenderable = mRenderables[slotId];
 		if(rendererRenderable == nullptr)
 			continue;
 
@@ -425,10 +425,10 @@ void RenderableObjectStorage::CreateRenderState(TArrayView<const PackedRendererI
 		B3D_ASSERT(renderableId < (PackedRendererId)mRenderables.size());
 		B3D_ASSERT(mRenderables[renderableId] == nullptr);
 
-		mRenderables[renderableId] = B3DNew<RendererRenderable>();
+		mRenderables[renderableId] = B3DNew<RenderableRenderState>();
 		mRenderableCullInfos[renderableId] = CullInfo(proxy.GetBounds(), proxy.GetLayer(), proxy.GetCullDistanceFactor());
 
-		RendererRenderable* rendererRenderable = mRenderables[renderableId];
+		RenderableRenderState* rendererRenderable = mRenderables[renderableId];
 		rendererRenderable->UpdatePerObjectData(proxy);
 		rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
 		rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
@@ -564,7 +564,7 @@ void RenderableObjectStorage::UpdateRenderState(TArrayView<const PackedRendererI
 	{
 		PackedRendererId renderableId = slotIds[slotIndex];
 		RenderableProxy& proxy = mRenderableProxies[renderableId];
-		RendererRenderable* rendererRenderable = mRenderables[renderableId];
+		RenderableRenderState* rendererRenderable = mRenderables[renderableId];
 
 		if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Updated)
 			rendererRenderable->PrevWorldTransform = rendererRenderable->WorldTransform;
@@ -1486,7 +1486,7 @@ void RenderBeastScene::SetParamFrameParams(float time)
 
 void RenderableObjectStorage::PrepareRenderable(PackedRendererId id, const FrameInfo& frameInfo)
 {
-	RendererRenderable* rendererRenderable = mRenderables[id];
+	RenderableRenderState* rendererRenderable = mRenderables[id];
 
 	for(auto& element : rendererRenderable->Elements)
 		element.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
@@ -1511,7 +1511,7 @@ void RenderableObjectStorage::PrepareVisibleRenderable(PackedRendererId id, cons
 	if(sceneInfo.RenderableReady[id])
 		return;
 
-	RendererRenderable* rendererRenderable = mRenderables[id];
+	RenderableRenderState* rendererRenderable = mRenderables[id];
 	RenderableProxy& proxy = GetRenderableProxy(id);
 
 	// Note: Before uploading bone matrices perhaps check if they has actually been changed since last frame

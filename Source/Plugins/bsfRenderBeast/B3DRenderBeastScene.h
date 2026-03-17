@@ -48,7 +48,7 @@ namespace b3d
 			void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) override;
 
 			/** Returns renderable at the provided index. Valid index is range [0, GetRenderableCount()). */
-			RendererRenderable* GetRenderable(u32 index) const { return mRenderables[index]; }
+			RenderableRenderState* GetRenderable(u32 index) const { return mRenderables[index]; }
 
 			/** Returns renderable cull info at the provided index. Valid index is range [0, GetRenderableCount()). */
 			const CullInfo& GetRenderableCullInfo(u32 index) const { return mRenderableCullInfos[index]; }
@@ -72,10 +72,10 @@ namespace b3d
 			void PrepareVisibleRenderable(PackedRendererId id, const FrameInfo& frameInfo);
 
 			/** Returns the packed renderable array. */
-			Vector<RendererRenderable*>& GetRenderables() { return mRenderables; }
+			Vector<RenderableRenderState*>& GetRenderables() { return mRenderables; }
 
 			/** @copydoc GetRenderables */
-			const Vector<RendererRenderable*>& GetRenderables() const { return mRenderables; }
+			const Vector<RenderableRenderState*>& GetRenderables() const { return mRenderables; }
 
 			/** Returns the packed cull info array. */
 			Vector<CullInfo>& GetRenderableCullInfos() { return mRenderableCullInfos; }
@@ -87,7 +87,7 @@ namespace b3d
 			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
 
 		private:
-			Vector<RendererRenderable*> mRenderables;
+			Vector<RenderableRenderState*> mRenderables;
 			Vector<CullInfo> mRenderableCullInfos;
 
 			RenderBeastScene* mRenderBeastScene = nullptr;
@@ -102,7 +102,7 @@ namespace b3d
 			UnorderedMap<const Camera*, u32> CameraToView;
 
 			// Renderables — pointers to arrays in RenderableObjectStorage
-			const Vector<RendererRenderable*>* Renderables = nullptr;
+			const Vector<RenderableRenderState*>* Renderables = nullptr;
 			const Vector<CullInfo>* RenderableCullInfos = nullptr;
 
 			// Lights
@@ -140,7 +140,7 @@ namespace b3d
 
 			// Renderable accessors — convenience wrappers around the storage-owned arrays
 			u32 GetRenderableCount() const { return (u32)Renderables->size(); }
-			RendererRenderable* GetRenderable(u32 idx) const { return (*Renderables)[idx]; }
+			RenderableRenderState* GetRenderable(u32 idx) const { return (*Renderables)[idx]; }
 			const CullInfo& GetRenderableCullInfo(u32 idx) const { return (*RenderableCullInfos)[idx]; }
 		};
 

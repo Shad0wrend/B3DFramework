@@ -12,7 +12,7 @@
 #include "Utility/B3DBitwise.h"
 #include "RenderAPI/B3DVertexDescription.h"
 #include "Renderer/B3DRenderer.h"
-#include "B3DRendererRenderable.h"
+#include "RenderState/B3DRenderableRenderState.h"
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DRenderTexture.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
@@ -465,7 +465,7 @@ namespace b3d
 				union
 				{
 					RenderableElement* Element;
-					RendererRenderable* Renderable;
+					RenderableRenderState* Renderable;
 				};
 
 				SPtr<GpuParameterSet> GpuParameterSet;
@@ -502,7 +502,7 @@ namespace b3d
 
 						renderableStorage.PrepareVisibleRenderable(renderableIndex, frameInfo);
 
-						RendererRenderable* renderable = renderableStorage.GetRenderable(renderableIndex);
+						RenderableRenderState* renderable = renderableStorage.GetRenderable(renderableIndex);
 
 						// Register per-object shadow parameter set if not already registered
 						const SPtr<GpuParameterSet>& perObjectParameterSet = opt.GetShadowParameterSet(renderable);
@@ -614,7 +614,7 @@ namespace b3d
 				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RenderableRenderState* renderable) const
 			{
 				// Need to create a new parameter set since we also use geometry shaders, and the default parameter set doesn't support it
 				return ShadowRenderer.GetOrCreateCubemapShadowParameterSet(renderable->PerObjectSuballocation.GetBuffer());
@@ -662,7 +662,7 @@ namespace b3d
 				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RenderableRenderState* renderable) const
 			{
 				return renderable->PerObjectParameterSet;
 			}
@@ -709,7 +709,7 @@ namespace b3d
 				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RenderableRenderState* renderable) const
 			{
 				return renderable->PerObjectParameterSet;
 			}
@@ -755,7 +755,7 @@ namespace b3d
 				Material->Bind(commandBuffer, command.GpuParameterSet);
 			}
 
-			SPtr<GpuParameterSet> GetShadowParameterSet(RendererRenderable* renderable) const
+			SPtr<GpuParameterSet> GetShadowParameterSet(RenderableRenderState* renderable) const
 			{
 				return renderable->PerObjectParameterSet;
 			}

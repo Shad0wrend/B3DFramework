@@ -36,7 +36,7 @@
 #include "RenderAPI/B3DRenderTexture.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 #include "Resources/B3DBuiltinResources.h"
-#include "B3DRendererRenderable.h"
+#include "RenderState/B3DRenderableRenderState.h"
 #include "B3DRendererDecal.h"
 #include "B3DRendererParticles.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"

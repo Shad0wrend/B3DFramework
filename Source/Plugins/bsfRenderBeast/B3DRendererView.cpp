@@ -397,7 +397,7 @@ void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<GpuCommandBuffer> c
 	mLuminanceUpdates.emplace_back(frameIdx, std::move(readbackAsyncOp), std::move(texture));
 }
 
-void RendererView::DetermineVisible(const Vector<RendererRenderable*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility)
+void RendererView::DetermineVisible(const Vector<RenderableRenderState*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility)
 {
 	mVisibility.Renderables.clear();
 	mVisibility.Renderables.resize(renderables.size(), false);
