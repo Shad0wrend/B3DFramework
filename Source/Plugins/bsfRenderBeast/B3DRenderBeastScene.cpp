@@ -167,36 +167,14 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 
 RenderableObjectStorage::RenderableObjectStorage() = default;
 
-void RenderableObjectStorage::ProcessCommands(TArrayView<const RendererIdCommand> deallocations, TArrayView<const RendererIdCommand> allocations)
+void RenderableObjectStorage::ProcessAllocationsAndDeallocations(TArrayView<const RendererIdCommand> deallocations, TArrayView<const RendererIdCommand> allocations)
 {
-	if(deallocations.Size() > 0)
-	{
-		const PackedRendererId originalSize = (PackedRendererId)mDenseToSparse.size();
-
-		// First move all deallocations to the end of the arrays
-		PackedRendererId logicalSize = ProcessRenderObjectDeallocations(deallocations, mSparseSlots, mDenseToSparse,
-			[this](PackedRendererId slot) { mRenderableProxies[slot].SetRendererId(slot); },
-			mRenderableProxies, mRenderables, mRenderableCullInfos);
-
-		const u32 removedCount = originalSize - logicalSize;
-
-		// Destroy render state for all deallocated entries
-		FrameAllocatorScope frameAllocatorScope;
-		FrameVector<PackedRendererId> deallocSlotIds(removedCount);
-		for(u32 slotIndex = 0; slotIndex < removedCount; ++slotIndex)
-			deallocSlotIds[slotIndex] = logicalSize + slotIndex;
-
-		DestroyRenderState(TArrayView<const PackedRendererId>(deallocSlotIds.data(), removedCount));
-
-		// Resize the arrays to remove the deallocated entries
-		mRenderables.resize(logicalSize);
-		mRenderableCullInfos.resize(logicalSize);
-		mRenderableProxies.resize(logicalSize);
-		mDenseToSparse.resize(logicalSize);
-	}
-
-	if(allocations.Size() > 0)
-		ProcessRenderObjectAllocations(allocations, mSparseSlots, mDenseToSparse, mRenderableProxies, mRenderables, mRenderableCullInfos);
+	RendererObjectStorage::ProcessAllocationsAndDeallocations(
+		deallocations,
+		allocations,
+		[this](PackedRendererId slot) { mRenderableProxies[slot].SetRendererId(slot); },
+		[this](TArrayView<const PackedRendererId> slotIds) { DestroyRenderState(slotIds); },
+		mRenderableProxies, mRenderables, mRenderableCullInfos);
 }
 
 void RenderableObjectStorage::DestroyRenderState(TArrayView<const PackedRendererId> slotIds)

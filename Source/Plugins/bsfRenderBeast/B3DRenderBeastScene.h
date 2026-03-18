@@ -42,7 +42,7 @@ namespace b3d
 		public:
 			RenderableObjectStorage();
 
-			void ProcessCommands(TArrayView<const RendererIdCommand> deallocations, TArrayView<const RendererIdCommand> allocations) override;
+			void ProcessAllocationsAndDeallocations(TArrayView<const RendererIdCommand> deallocations, TArrayView<const RendererIdCommand> allocations) override;
 			void CreateRenderState(TArrayView<const PackedRendererId> slotIds) override;
 			void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) override;
 			void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) override;

@@ -780,7 +780,7 @@ void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& alloc
 	const FlushedCommands& commands = batch->Commands;
 
 	if(commands.Deallocations.Size() > 0 || commands.Allocations.Size() > 0)
-		ProcessCommands(commands.Deallocations, commands.Allocations);
+		ProcessAllocationsAndDeallocations(commands.Deallocations, commands.Allocations);
 
 	if(commands.Deallocations.Data())
 		allocator.Free(reinterpret_cast<u8*>(const_cast<RendererIdCommand*>(commands.Deallocations.Data())));
