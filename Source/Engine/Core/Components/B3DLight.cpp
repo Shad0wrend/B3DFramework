@@ -13,17 +13,17 @@ using namespace b3d;
 namespace b3d
 {
 	B3D_SYNC_BLOCK_BEGIN(Light, FullSyncPacket)
-		B3D_SYNC_BLOCK_ENTRY(mType)
-		B3D_SYNC_BLOCK_ENTRY(mCastsShadows)
-		B3D_SYNC_BLOCK_ENTRY(mColor)
-		B3D_SYNC_BLOCK_ENTRY(mAttRadius)
-		B3D_SYNC_BLOCK_ENTRY(mSourceRadius)
-		B3D_SYNC_BLOCK_ENTRY(mIntensity)
-		B3D_SYNC_BLOCK_ENTRY(mSpotAngle)
-		B3D_SYNC_BLOCK_ENTRY(mSpotFalloffAngle)
-		B3D_SYNC_BLOCK_ENTRY(mAutoAttenuation)
-		B3D_SYNC_BLOCK_ENTRY(mBounds)
-		B3D_SYNC_BLOCK_ENTRY(mShadowBias)
+		B3D_SYNC_BLOCK_ENTRY(Type)
+		B3D_SYNC_BLOCK_ENTRY(CastsShadows)
+		B3D_SYNC_BLOCK_ENTRY(LightColor)
+		B3D_SYNC_BLOCK_ENTRY(AttRadius)
+		B3D_SYNC_BLOCK_ENTRY(SourceRadius)
+		B3D_SYNC_BLOCK_ENTRY(Intensity)
+		B3D_SYNC_BLOCK_ENTRY(SpotAngle)
+		B3D_SYNC_BLOCK_ENTRY(SpotFalloffAngle)
+		B3D_SYNC_BLOCK_ENTRY(AutoAttenuation)
+		B3D_SYNC_BLOCK_ENTRY(Bounds)
+		B3D_SYNC_BLOCK_ENTRY(ShadowBias)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(bool, mActive)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(SPtr<SceneInstance>, mSceneInstance)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
@@ -40,13 +40,13 @@ TLight<IsRenderProxy>::TLight()
 
 template<bool IsRenderProxy>
 TLight<IsRenderProxy>::TLight(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
-	: mType(type), mCastsShadows(castsShadows), mColor(color), mAttRadius(attRadius), mSourceRadius(srcRadius), mIntensity(intensity), mSpotAngle(spotAngle), mSpotFalloffAngle(spotFalloffAngle)
+	: TLightData<IsRenderProxy>{ type, castsShadows, color, attRadius, srcRadius, intensity, spotAngle, spotFalloffAngle, false, Sphere(), 0.5f }
 { }
 
 template<bool IsRenderProxy>
 void TLight<IsRenderProxy>::SetUseAutoAttenuation(bool enabled)
 {
-	mAutoAttenuation = enabled;
+	this->AutoAttenuation = enabled;
 
 	if(enabled)
 		UpdateAttenuationRange();
@@ -57,10 +57,10 @@ void TLight<IsRenderProxy>::SetUseAutoAttenuation(bool enabled)
 template<bool IsRenderProxy>
 void TLight<IsRenderProxy>::SetAttenuationRadius(float radius)
 {
-	if(mAutoAttenuation)
+	if(this->AutoAttenuation)
 		return;
 
-	mAttRadius = radius;
+	this->AttRadius = radius;
 	MarkRenderProxyDataDirty();
 	UpdateBounds();
 }
@@ -68,9 +68,9 @@ void TLight<IsRenderProxy>::SetAttenuationRadius(float radius)
 template<bool IsRenderProxy>
 void TLight<IsRenderProxy>::SetSourceRadius(float radius)
 {
-	mSourceRadius = radius;
+	this->SourceRadius = radius;
 
-	if(mAutoAttenuation)
+	if(this->AutoAttenuation)
 		UpdateAttenuationRange();
 
 	MarkRenderProxyDataDirty();
@@ -79,118 +79,137 @@ void TLight<IsRenderProxy>::SetSourceRadius(float radius)
 template<bool IsRenderProxy>
 void TLight<IsRenderProxy>::SetIntensity(float intensity)
 {
-	mIntensity = intensity;
+	this->Intensity = intensity;
 
-	if(mAutoAttenuation)
+	if(this->AutoAttenuation)
 		UpdateAttenuationRange();
 
 	MarkRenderProxyDataDirty();
 }
 
-template<bool IsRenderProxy>
-float TLight<IsRenderProxy>::GetLuminance() const
+template <bool IsRenderProxy>
+void TLightData<IsRenderProxy>::ComputeBounds(const Transform& transform)
 {
-	float radiusSquared = mSourceRadius * mSourceRadius;
-
-	switch(mType)
-	{
-	case LightType::Radial:
-		if(mSourceRadius > 0.0f)
-			return mIntensity / (4 * radiusSquared * Math::kPi); // Luminous flux -> luminance
-		else
-			return mIntensity / (4 * Math::kPi); // Luminous flux -> luminous intensity
-	case LightType::Spot:
-		{
-			if(mSourceRadius > 0.0f)
-				return mIntensity / (radiusSquared * Math::kPi); // Luminous flux -> luminance
-			else
-			{
-				// Note: Consider using the simpler conversion I / PI to match with the area-light conversion
-				float cosTotalAngle = Math::Cos(mSpotAngle);
-				float cosFalloffAngle = Math::Cos(mSpotFalloffAngle);
-
-				// Luminous flux -> luminous intensity
-				return mIntensity / (Math::kTwoPi * (1.0f - (cosFalloffAngle + cosTotalAngle) * 0.5f));
-			}
-		}
-	case LightType::Directional:
-		if(mSourceRadius > 0.0f)
-		{
-			// Use cone solid angle formulae to calculate disc solid angle
-			float solidAngle = Math::kTwoPi * (1 - cos(mSourceRadius * Math::kDeG2Rad));
-			return mIntensity / solidAngle; // Illuminance -> luminance
-		}
-		else
-			return mIntensity; // In luminance units by default
-	default:
-		return 0.0f;
-	}
-}
-
-template<bool IsRenderProxy>
-void TLight<IsRenderProxy>::UpdateAttenuationRange()
-{
-	// Value to which intensity needs to drop in order for the light contribution to fade out to zero
-	const float minAttenuation = 0.2f;
-
-	if(mSourceRadius > 0.0f)
-	{
-		// Inverse of the attenuation formula for area lights:
-		//   a = I / (1 + (2/r) * d + (1/r^2) * d^2
-		// Where r is the source radius, and d is the distance from the light. As derived here:
-		//   https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
-
-		float luminousFlux = GetIntensity();
-
-		float a = sqrt(minAttenuation);
-		mAttRadius = (mSourceRadius * (sqrt(luminousFlux - a))) / a;
-	}
-	else // Based on the basic inverse square distance formula
-	{
-		float luminousIntensity = GetIntensity();
-
-		float a = minAttenuation;
-		mAttRadius = sqrt(std::max(0.0f, luminousIntensity / a));
-	}
-
-	UpdateBounds();
-}
-
-template<bool IsRenderProxy>
-void TLight<IsRenderProxy>::UpdateBounds()
-{
-	const Transform& transform = this->GetTransform();
-
-	switch(mType)
+	switch(Type)
 	{
 	case LightType::Directional:
-		mBounds = Sphere(transform.GetPosition(), std::numeric_limits<float>::infinity());
+		Bounds = Sphere(transform.GetPosition(), std::numeric_limits<float>::infinity());
 		break;
 	case LightType::Radial:
-		mBounds = Sphere(transform.GetPosition(), mAttRadius);
+		Bounds = Sphere(transform.GetPosition(), AttRadius);
 		break;
 	case LightType::Spot:
 		{
 			// Note: We could use the formula for calculating the circumcircle of a triangle (after projecting the cone),
 			// but the radius of the sphere is the same as in the formula we use here, yet it is much simpler with no need
 			// to calculate multiple determinants. Neither are good approximations when cone angle is wide.
-			Vector3 offset(0, 0, mAttRadius * 0.5f);
+			Vector3 offset(0, 0, AttRadius * 0.5f);
 
 			// Direction along the edge of the cone, on the YZ plane (doesn't matter if we used XZ instead)
-			Degree angle = Math::Clamp(mSpotAngle * 0.5f, Degree(-89), Degree(89));
-			Vector3 coneDir(0, Math::Tan(angle) * mAttRadius, mAttRadius);
+			Degree angle = Math::Clamp(SpotAngle * 0.5f, Degree(-89), Degree(89));
+			Vector3 coneDir(0, Math::Tan(angle) * AttRadius, AttRadius);
 
 			// Distance between the "corner" of the cone and our center, must be the radius (provided the center is at
 			// the middle of the range)
 			float radius = (offset - coneDir).Length();
 
 			Vector3 center = transform.GetPosition() - transform.GetRotation().Rotate(offset);
-			mBounds = Sphere(center, radius);
+			Bounds = Sphere(center, radius);
 		}
 		break;
 	default:
 		break;
 	}
+}
+
+template void TLightData<true>::ComputeBounds(const Transform& transform);
+template void TLightData<false>::ComputeBounds(const Transform& transform);
+
+template <bool IsRenderProxy>
+float TLightData<IsRenderProxy>::ComputeLuminance() const
+{
+	float radiusSquared = SourceRadius * SourceRadius;
+
+	switch(Type)
+	{
+	case LightType::Radial:
+		if(SourceRadius > 0.0f)
+			return Intensity / (4 * radiusSquared * Math::kPi); // Luminous flux -> luminance
+		else
+			return Intensity / (4 * Math::kPi); // Luminous flux -> luminous intensity
+	case LightType::Spot:
+		{
+			if(SourceRadius > 0.0f)
+				return Intensity / (radiusSquared * Math::kPi); // Luminous flux -> luminance
+			else
+			{
+				// Note: Consider using the simpler conversion I / PI to match with the area-light conversion
+				float cosTotalAngle = Math::Cos(SpotAngle);
+				float cosFalloffAngle = Math::Cos(SpotFalloffAngle);
+
+				// Luminous flux -> luminous intensity
+				return Intensity / (Math::kTwoPi * (1.0f - (cosFalloffAngle + cosTotalAngle) * 0.5f));
+			}
+		}
+	case LightType::Directional:
+		if(SourceRadius > 0.0f)
+		{
+			// Use cone solid angle formulae to calculate disc solid angle
+			float solidAngle = Math::kTwoPi * (1 - cos(SourceRadius * Math::kDeG2Rad));
+			return Intensity / solidAngle; // Illuminance -> luminance
+		}
+		else
+			return Intensity; // In luminance units by default
+	default:
+		return 0.0f;
+	}
+}
+
+template float TLightData<true>::ComputeLuminance() const;
+template float TLightData<false>::ComputeLuminance() const;
+
+template <bool IsRenderProxy>
+void TLightData<IsRenderProxy>::ComputeAttenuationRange(const Transform& transform)
+{
+	// Value to which intensity needs to drop in order for the light contribution to fade out to zero
+	const float minAttenuation = 0.2f;
+
+	if(SourceRadius > 0.0f)
+	{
+		// Inverse of the attenuation formula for area lights:
+		//   a = I / (1 + (2/r) * d + (1/r^2) * d^2
+		// Where r is the source radius, and d is the distance from the light. As derived here:
+		//   https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
+
+		float luminousFlux = Intensity;
+
+		float a = sqrt(minAttenuation);
+		AttRadius = (SourceRadius * (sqrt(luminousFlux - a))) / a;
+	}
+	else // Based on the basic inverse square distance formula
+	{
+		float luminousIntensity = Intensity;
+
+		float a = minAttenuation;
+		AttRadius = sqrt(std::max(0.0f, luminousIntensity / a));
+	}
+
+	ComputeBounds(transform);
+}
+
+template void TLightData<true>::ComputeAttenuationRange(const Transform& transform);
+template void TLightData<false>::ComputeAttenuationRange(const Transform& transform);
+
+template<bool IsRenderProxy>
+void TLight<IsRenderProxy>::UpdateBounds()
+{
+	this->ComputeBounds(this->GetTransform());
+}
+
+template<bool IsRenderProxy>
+void TLight<IsRenderProxy>::UpdateAttenuationRange()
+{
+	this->ComputeAttenuationRange(this->GetTransform());
 }
 
 template <bool IsRenderProxy>
@@ -227,7 +246,7 @@ SPtr<render::RenderProxy> Light::CreateRenderProxy() const
 {
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 
-	render::Light* renderProxy = new(B3DAllocate<render::Light>()) render::Light(B3DGetRenderProxy(scene), mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
+	render::Light* renderProxy = new(B3DAllocate<render::Light>()) render::Light(B3DGetRenderProxy(scene), Type, LightColor, Intensity, AttRadius, SourceRadius, CastsShadows, SpotAngle, SpotFalloffAngle);
 	SPtr<render::Light> renderProxyShared = B3DMakeSharedFromExisting<render::Light>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
@@ -335,7 +354,7 @@ void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 		return;
 
 	bool previousActiveState = mActive;
-	LightType previousType = mType;
+	LightType previousType = Type;
 
 	syncPacket->ApplySyncData(this);
 
@@ -353,18 +372,18 @@ void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 				rendererScene->RegisterLight(this);
 			else
 			{
-				LightType currentType = mType;
-				mType = previousType;
+				LightType currentType = Type;
+				Type = previousType;
 				rendererScene->UnregisterLight(this);
-				mType = currentType;
+				Type = currentType;
 			}
 		}
 		else
 		{
-			LightType currentType = mType;
-			mType = previousType;
+			LightType currentType = Type;
+			Type = previousType;
 			rendererScene->UnregisterLight(this);
-			mType = currentType;
+			Type = currentType;
 
 			rendererScene->RegisterLight(this);
 		}

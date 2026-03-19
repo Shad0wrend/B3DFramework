@@ -20,16 +20,16 @@ namespace b3d
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mType, 0)
-			B3D_RTTI_MEMBER(mCastsShadows, 1)
-			B3D_RTTI_MEMBER(mColor, 2)
-			B3D_RTTI_MEMBER(mAttRadius, 3)
-			B3D_RTTI_MEMBER(mIntensity, 4)
-			B3D_RTTI_MEMBER(mSpotAngle, 5)
-			B3D_RTTI_MEMBER(mSpotFalloffAngle, 6)
-			B3D_RTTI_MEMBER(mAutoAttenuation, 7)
-			B3D_RTTI_MEMBER(mSourceRadius, 8)
-			B3D_RTTI_MEMBER(mShadowBias, 9)
+			B3D_RTTI_MEMBER(Type, 0)
+			B3D_RTTI_MEMBER(CastsShadows, 1)
+			B3D_RTTI_MEMBER(LightColor, 2)
+			B3D_RTTI_MEMBER(AttRadius, 3)
+			B3D_RTTI_MEMBER(Intensity, 4)
+			B3D_RTTI_MEMBER(SpotAngle, 5)
+			B3D_RTTI_MEMBER(SpotFalloffAngle, 6)
+			B3D_RTTI_MEMBER(AutoAttenuation, 7)
+			B3D_RTTI_MEMBER(SourceRadius, 8)
+			B3D_RTTI_MEMBER(ShadowBias, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
