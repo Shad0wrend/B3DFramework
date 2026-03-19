@@ -7,6 +7,7 @@
 #include "CoreObject/B3DCoreObject.h"
 #include "Image/B3DColor.h"
 #include "Math/B3DTransform.h"
+#include "Renderer/B3DRendererId.h"
 
 namespace b3d
 {
@@ -62,7 +63,7 @@ namespace b3d
 		void ComputeAttenuationRange(const Transform& transform);
 	};
 
-	/** CRTP getter interface providing shared read access for both Light and render::Light. */
+	/** CRTP getter interface providing shared read access for light data to both Light and render::Light. */
 	template <typename Derived, bool IsRenderProxy>
 	class TLightGetters
 	{
@@ -151,7 +152,7 @@ namespace b3d
 		}
 	};
 
-	/** Base class for both main and render thread Light implementations. */
+	/** Base class for the render thread Light implementation. */
 	template<bool IsRenderProxy>
 	class B3D_EXPORT TLight : public CoreVariantType<CoreObject, IsRenderProxy>, public TLightData<IsRenderProxy>, public TLightGetters<TLight<IsRenderProxy>, IsRenderProxy>
 	{
@@ -252,6 +253,34 @@ namespace b3d
 
 	/** @} */
 
+	/** @addtogroup Renderer-Internal
+	 *  @{
+	 */
+
+	namespace ecs
+	{
+		class ECSLightRTTI;
+
+		/** ECS fragment storing light visual data (type, color, intensity, bounds, etc.). */
+		struct B3D_EXPORT Light : TLightData<false>, IReflectable
+		{
+			struct FullSyncPacket;
+			struct TransformSyncPacket;
+
+			friend class ECSLightRTTI;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
+		};
+
+		/** ECS fragment storing the persistent render object ID for a light. */
+		struct LightId
+		{
+			RendererId Id = kInvalidRendererId;
+		};
+	} // namespace ecs
+
+	/** @} */
+
 	/** @addtogroup Components
 	 *  @{
 	 */
@@ -261,15 +290,57 @@ namespace b3d
 	 *
 	 * @note	Wraps Light as a Component.
 	 */
-	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Light : public Component, public TLight<false>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Light : public Component, public TLightGetters<Light, false>, public CoreObject
 	{
+		friend class TLightGetters<Light, false>;
 	public:
 		Light(const HSceneObject& parent);
 
+		/** @copydoc TLightGetters::GetType */
+		B3D_SCRIPT_EXPORT(ExportName(Type), Property(Setter))
+		void SetType(LightType type);
+
+		/** @copydoc TLightGetters::GetCastsShadow */
+		B3D_SCRIPT_EXPORT(ExportName(CastsShadow), Property(Setter))
+		void SetCastsShadow(bool castsShadow);
+
+		/** @copydoc TLightGetters::GetShadowBias */
+		B3D_SCRIPT_EXPORT(ExportName(ShadowBias), Property(Setter), UIValueRange([ -1, 1 ]), UI(AsSlider))
+		void SetShadowBias(float bias);
+
+		/** @copydoc TLightGetters::GetColor */
+		B3D_SCRIPT_EXPORT(ExportName(Color), Property(Setter))
+		void SetColor(const Color& color);
+
+		/** @copydoc TLightGetters::GetAttenuationRadius */
+		B3D_SCRIPT_EXPORT(ExportName(AttenuationRadius), Property(Setter))
+		void SetAttenuationRadius(float radius);
+
+		/** @copydoc TLightGetters::GetSourceRadius */
+		B3D_SCRIPT_EXPORT(ExportName(SourceRadius), Property(Setter))
+		void SetSourceRadius(float radius);
+
+		/** @copydoc TLightGetters::GetUseAutoAttenuation */
+		B3D_SCRIPT_EXPORT(ExportName(UseAutoAttenuation), Property(Setter))
+		void SetUseAutoAttenuation(bool enabled);
+
+		/** @copydoc TLightGetters::GetIntensity */
+		B3D_SCRIPT_EXPORT(ExportName(Intensity), Property(Setter))
+		void SetIntensity(float intensity);
+
+		/** @copydoc TLightGetters::GetSpotAngle */
+		B3D_SCRIPT_EXPORT(ExportName(SpotAngle), Property(Setter), UIValueRange([ 1, 180 ]), UI(AsSlider))
+		void SetSpotAngle(const Degree& spotAngle);
+
+		/** @copydoc TLightGetters::GetSpotFalloffAngle */
+		B3D_SCRIPT_EXPORT(ExportName(SpotAngleFalloff), Property(Setter), UIValueRange([ 1, 180 ]), UI(AsSlider))
+		void SetSpotFalloffAngle(const Degree& spotFallofAngle);
+
+		/** @copydoc TLightData::ComputeLuminance */
+		float GetLuminance() const;
+
 	protected:
 		friend class render::Light;
-		struct FullSyncPacket;
-		struct TransformSyncPacket;
 
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -285,6 +356,7 @@ namespace b3d
 		void OnEnabled() override;
 		void OnDisabled() override;
 		void OnDestroyed() override;
+		void OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity) override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		/************************************************************************/
@@ -297,6 +369,22 @@ namespace b3d
 
 	protected:
 		Light(); // Serialization only
+
+	private:
+		/** Returns a reference to the light data for the CRTP getter interface. */
+		const TLightData<false>& GetLightData() const;
+
+		/** Returns a mutable reference to the ECS light fragment. */
+		ecs::Light& GetFragment();
+
+		/** Returns a const reference to the ECS light fragment. */
+		const ecs::Light& GetFragment() const;
+
+		/** Updates the internal bounds for the light. Call this whenever a property affecting the bounds changes. */
+		void UpdateBounds();
+
+		/** Calculates maximum light range based on light intensity. */
+		void UpdateAttenuationRange();
 	};
 
 	/** @} */
@@ -327,6 +415,8 @@ namespace b3d
 
 		protected:
 			friend class b3d::Light;
+			friend struct ecs::Light::FullSyncPacket;
+			friend struct ecs::Light::TransformSyncPacket;
 
 			Light(const SPtr<SceneInstance>& scene, LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 

@@ -796,6 +796,7 @@ namespace b3d
 		TID_WorldTransform = 1273,
 		TID_HierarchyDepth = 1274,
 		TID_ECSRenderable = 1275,
+		TID_ECSLight = 1276,
 
 		// Moved from Engine layer
 		TID_Camera = 30000,

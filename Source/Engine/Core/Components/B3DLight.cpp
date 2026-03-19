@@ -3,6 +3,7 @@
 #include "Components/B3DLight.h"
 
 #include "CoreObject/B3DCoreObjectSync.h"
+#include "ECS/B3DRegistry.h"
 #include "Image/B3DColor.h"
 #include "RTTI/B3DLightRTTI.h"
 #include "Renderer/B3DRendererScene.h"
@@ -12,7 +13,7 @@ using namespace b3d;
 
 namespace b3d
 {
-	B3D_SYNC_BLOCK_BEGIN(Light, FullSyncPacket)
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Light, FullSyncPacket, render::Light)
 		B3D_SYNC_BLOCK_ENTRY(Type)
 		B3D_SYNC_BLOCK_ENTRY(CastsShadows)
 		B3D_SYNC_BLOCK_ENTRY(LightColor)
@@ -29,7 +30,7 @@ namespace b3d
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
 	B3D_SYNC_BLOCK_END
 
-	B3D_SYNC_BLOCK_BEGIN(Light, TransformSyncPacket)
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Light, TransformSyncPacket, render::Light)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
 	B3D_SYNC_BLOCK_END
 }
@@ -222,14 +223,129 @@ void TLight<IsRenderProxy>::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 template <bool IsRenderProxy>
 const Transform& TLight<IsRenderProxy>::GetTransform() const
 {
-	if constexpr(!IsRenderProxy)
-		return static_cast<const Light*>(this)->SceneObject()->GetTransform();
-	else
-		return static_cast<const render::Light*>(this)->GetWorldTransform();
+	return static_cast<const render::Light*>(this)->GetWorldTransform();
 }
 
 template class TLight<true>;
-template class TLight<false>;
+
+// ecs::Light fragment access
+
+ecs::Light& Light::GetFragment()
+{
+	return GetECSRegistry()->GetComponents<ecs::Light>(GetECSEntity());
+}
+
+const ecs::Light& Light::GetFragment() const
+{
+	return GetECSRegistry()->GetComponents<ecs::Light>(GetECSEntity());
+}
+
+const TLightData<false>& Light::GetLightData() const
+{
+	return GetFragment();
+}
+
+// b3d::Light setters
+
+void Light::SetType(LightType type)
+{
+	GetFragment().Type = type;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+	UpdateBounds();
+}
+
+void Light::SetCastsShadow(bool castsShadow)
+{
+	GetFragment().CastsShadows = castsShadow;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetShadowBias(float bias)
+{
+	GetFragment().ShadowBias = bias;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetColor(const Color& color)
+{
+	GetFragment().LightColor = color;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetAttenuationRadius(float radius)
+{
+	ecs::Light& fragment = GetFragment();
+	if(fragment.AutoAttenuation)
+		return;
+
+	fragment.AttRadius = radius;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+	UpdateBounds();
+}
+
+void Light::SetSourceRadius(float radius)
+{
+	ecs::Light& fragment = GetFragment();
+	fragment.SourceRadius = radius;
+
+	if(fragment.AutoAttenuation)
+		UpdateAttenuationRange();
+
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetUseAutoAttenuation(bool enabled)
+{
+	ecs::Light& fragment = GetFragment();
+	fragment.AutoAttenuation = enabled;
+
+	if(enabled)
+		UpdateAttenuationRange();
+
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetIntensity(float intensity)
+{
+	ecs::Light& fragment = GetFragment();
+	fragment.Intensity = intensity;
+
+	if(fragment.AutoAttenuation)
+		UpdateAttenuationRange();
+
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+}
+
+void Light::SetSpotAngle(const Degree& spotAngle)
+{
+	GetFragment().SpotAngle = spotAngle;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+	UpdateBounds();
+}
+
+void Light::SetSpotFalloffAngle(const Degree& spotFallofAngle)
+{
+	GetFragment().SpotFalloffAngle = spotFallofAngle;
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
+	UpdateBounds();
+}
+
+float Light::GetLuminance() const
+{
+	return GetFragment().ComputeLuminance();
+}
+
+void Light::UpdateBounds()
+{
+	GetFragment().ComputeBounds(SceneObject()->GetTransform());
+}
+
+void Light::UpdateAttenuationRange()
+{
+	GetFragment().ComputeAttenuationRange(SceneObject()->GetTransform());
+}
+
+// b3d::Light lifecycle
 
 Light::Light(const HSceneObject& parent)
 	: Component(parent)
@@ -244,9 +360,13 @@ Light::Light()
 
 SPtr<render::RenderProxy> Light::CreateRenderProxy() const
 {
+	const ecs::Light& fragment = GetFragment();
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 
-	render::Light* renderProxy = new(B3DAllocate<render::Light>()) render::Light(B3DGetRenderProxy(scene), Type, LightColor, Intensity, AttRadius, SourceRadius, CastsShadows, SpotAngle, SpotFalloffAngle);
+	render::Light* renderProxy = new(B3DAllocate<render::Light>()) render::Light(
+		B3DGetRenderProxy(scene), fragment.Type, fragment.LightColor, fragment.Intensity,
+		fragment.AttRadius, fragment.SourceRadius, fragment.CastsShadows,
+		fragment.SpotAngle, fragment.SpotFalloffAngle);
 	SPtr<render::Light> renderProxyShared = B3DMakeSharedFromExisting<render::Light>(renderProxy);
 	renderProxyShared->SetShared(renderProxyShared);
 
@@ -255,9 +375,11 @@ SPtr<render::RenderProxy> Light::CreateRenderProxy() const
 
 RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
 {
+	ecs::Light& fragment = GetFragment();
+
 	if(flags != (u32)ComponentDirtyFlag::Transform)
 	{
-		FullSyncPacket* const syncPacket = allocator.Construct<FullSyncPacket>(*this, allocator, flags);
+		ecs::Light::FullSyncPacket* const syncPacket = allocator.Construct<ecs::Light::FullSyncPacket>(fragment, allocator, flags);
 		syncPacket->mActive = GetEnabled();
 		syncPacket->mSceneInstance = B3DGetRenderProxy(SceneObject()->GetScene());
 		syncPacket->mTransform = SceneObject()->GetTransform();
@@ -266,7 +388,7 @@ RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& alloca
 	}
 	else
 	{
-		TransformSyncPacket* const syncPacket = allocator.Construct<TransformSyncPacket>(*this, allocator, flags);
+		ecs::Light::TransformSyncPacket* const syncPacket = allocator.Construct<ecs::Light::TransformSyncPacket>(fragment, allocator, flags);
 		syncPacket->mTransform = SceneObject()->GetTransform();
 
 		return syncPacket;
@@ -276,6 +398,15 @@ RenderProxySyncPacket* Light::CreateRenderProxySyncPacket(FrameAllocator& alloca
 void Light::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Light>(mThisHandle).GetShared());
+
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	if(!registry->HasAllOf<ecs::Light>(entity))
+	{
+		ecs::Light fragmentData;
+		registry->AddComponent<ecs::Light>(entity, std::move(fragmentData));
+	}
 
 	Component::Initialize();
 	CoreObject::Initialize();
@@ -290,24 +421,42 @@ void Light::OnCreated()
 
 void Light::OnEnabled()
 {
-	MarkRenderProxyDataDirty();
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
 }
 
 void Light::OnDisabled()
 {
-	MarkRenderProxyDataDirty();
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
 }
 
 void Light::OnDestroyed()
 {
+	GetECSRegistry()->RemoveComponents<ecs::Light>(GetECSEntity());
+
 	CoreObject::Destroy();
+}
+
+void Light::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
+{
+	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	// Migrate ecs::Light fragment to new entity
+	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::Light>(oldEntity))
+	{
+		ecs::Light fragmentCopy = oldRegistry->GetComponents<ecs::Light>(oldEntity);
+		registry->AddComponent<ecs::Light>(entity, std::move(fragmentCopy));
+	}
+
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Everything);
 }
 
 void Light::OnTransformChanged(TransformChangedFlags flags)
 {
 	UpdateBounds();
 
-	MarkRenderProxyDataDirty(ComponentDirtyFlag::Transform);
+	CoreObject::MarkRenderProxyDataDirty((u32)ComponentDirtyFlag::Transform);
 }
 
 RTTIType* Light::GetRttiStatic()
@@ -318,6 +467,12 @@ RTTIType* Light::GetRttiStatic()
 RTTIType* Light::GetRtti() const
 {
 	return Light::GetRttiStatic();
+}
+
+namespace b3d::ecs
+{
+	RTTIType* Light::GetRttiStatic() { return ECSLightRTTI::Instance(); }
+	RTTIType* Light::GetRtti() const { return Light::GetRttiStatic(); }
 }
 
 namespace b3d { namespace render

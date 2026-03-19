@@ -62,16 +62,12 @@ namespace b3d
 
 ecs::Renderable& Renderable::GetFragment()
 {
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
-	return registry->GetComponents<ecs::Renderable>(entity);
+	return GetECSRegistry()->GetComponents<ecs::Renderable>(GetECSEntity());
 }
 
 const ecs::Renderable& Renderable::GetFragment() const
 {
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
-	return registry->GetComponents<ecs::Renderable>(entity);
+	return GetECSRegistry()->GetComponents<ecs::Renderable>(GetECSEntity());
 }
 
 void Renderable::SetMesh(const HMesh& mesh)
@@ -197,9 +193,8 @@ void Renderable::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Renderable>(mThisHandle).GetShared());
 
-	const HSceneObject& sceneObject = SceneObject();
-	ecs::Registry* registry = sceneObject->GetECSRegistry();
-	ecs::Entity entity = sceneObject->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
 	if(!registry->HasAllOf<ecs::Renderable>(entity))
 	{
@@ -230,11 +225,10 @@ void Renderable::OnBeginPlay()
 
 void Renderable::OnEnabled()
 {
-	const HSceneObject& sceneObject = SceneObject();
-	ecs::Registry* registry = sceneObject->GetECSRegistry();
-	ecs::Entity entity = sceneObject->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
-	const SPtr<RendererScene>& rendererScene = sceneObject->GetScene()->GetRendererScene();
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
 	rendererScene->AllocateRenderableId(*registry, entity);
 
 	registry->AddTag<ecs::RenderableDirty>(entity);
@@ -242,11 +236,10 @@ void Renderable::OnEnabled()
 
 void Renderable::OnDisabled()
 {
-	const HSceneObject& sceneObject = SceneObject();
-	ecs::Registry* registry = sceneObject->GetECSRegistry();
-	ecs::Entity entity = sceneObject->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
-	const SPtr<RendererScene>& rendererScene = sceneObject->GetScene()->GetRendererScene();
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
 	rendererScene->DeallocateRenderableId(*registry, entity);
 
 	registry->RemoveComponents<ecs::RenderableDirty>(entity);
@@ -258,8 +251,8 @@ void Renderable::OnDestroyed()
 	if(mAnimation != nullptr)
 		mAnimation->UnregisterRenderable();
 
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
 	// Deallocate only if currently active (has a RenderableId fragment)
 	if(registry->HasAllOf<ecs::RenderableId>(entity))
@@ -278,8 +271,8 @@ void Renderable::OnDestroyed()
 void Renderable::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
 	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
 	// Deallocate from old scene only if was active
 	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::RenderableId>(oldEntity))
@@ -369,16 +362,12 @@ void Renderable::OnDependencyDirty(CoreObject* dependency, u32 dirtyFlags)
 
 	if(fragment.Mesh.IsLoaded(false) && fragment.Mesh.Get() == dependency)
 	{
-		ecs::Registry* registry = SceneObject()->GetECSRegistry();
-		registry->AddTag<ecs::RenderableDirty>(SceneObject()->GetECSEntity());
+		GetECSRegistry()->AddTag<ecs::RenderableDirty>(GetECSEntity());
 		return;
 	}
 
 	if(((u32)MaterialDirtyFlags::Shader & dirtyFlags) != 0)
-	{
-		ecs::Registry* registry = SceneObject()->GetECSRegistry();
-		registry->AddTag<ecs::RenderableDirty>(SceneObject()->GetECSEntity());
-	}
+		GetECSRegistry()->AddTag<ecs::RenderableDirty>(GetECSEntity());
 }
 
 void Renderable::GetListenerResources(Vector<HResource>& resources)
@@ -481,8 +470,8 @@ void Renderable::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 	if(!SceneObject().IsValid())
 		return; // Not yet attached to scene (e.g. during deserialization)
 
-	ecs::Registry* registry = SceneObject()->GetECSRegistry();
-	ecs::Entity entity = SceneObject()->GetECSEntity();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
 
 	if(flag == ComponentDirtyFlag::Transform)
 	{
