@@ -235,6 +235,12 @@ namespace b3d
 			return (PackedRendererId)entry.GetIdentifier();
 		}
 
+		/**
+		 * Applies flushed renderer object commands on the render thread, updating packed arrays and freeing command buffers.
+		 * Subclasses must call the protected ApplyCommands template with their specific packed arrays.
+		 */
+		virtual void ApplyCommands(const FlushedCommands& commands, FrameAllocator& allocator) = 0;
+
 	protected:
 		/**
 		 * Applies flushed renderer object commands on the render thread, updating packed arrays and freeing the command buffers.
@@ -292,6 +298,13 @@ namespace b3d
 		// Render thread
 		Vector<RendererId> mSparseSlots; /**< RendererId -> PackedRendererId. */
 		Vector<RendererId> mDenseToSparse; /**< PackedRendererId -> RendererId. */
+	};
+
+	/** Action determined by ApplyPacket during SyncWrite. Indicates whether the object is newly registered or needs re-registration. */
+	enum class RendererObjectApplyAction : u8
+	{
+		Register,
+		Reregister
 	};
 
 	/** @} */

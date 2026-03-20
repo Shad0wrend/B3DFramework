@@ -664,7 +664,7 @@ void RenderableProxy::UpdateAnimationBuffers(const EvaluatedAnimationData& animD
 }
 }}
 
-RenderableAction RenderableObjectStorageBase::ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId)
+RendererObjectApplyAction RenderableObjectStorageBase::ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId)
 {
 	bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
 	proxy.mRendererId = rendererId;
@@ -690,9 +690,9 @@ RenderableAction RenderableObjectStorageBase::ApplyPacket(ecs::Renderable::FullS
 		proxy.mMorphVertexDescription = nullptr;
 
 	if(wasRegistered)
-		return RenderableAction::Reregister;
+		return RendererObjectApplyAction::Reregister;
 
-	return RenderableAction::Register;
+	return RendererObjectApplyAction::Register;
 }
 
 void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
@@ -807,16 +807,16 @@ void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& alloc
 		if(rendererId == kInvalidPackedRendererId)
 			return;
 
-		RenderableAction action = ApplyPacket(packet, mRenderableProxies[rendererId], rendererId);
+		RendererObjectApplyAction action = ApplyPacket(packet, mRenderableProxies[rendererId], rendererId);
 		switch(action)
 		{
-		case RenderableAction::Register:
+		case RendererObjectApplyAction::Register:
 			createRenderStateList[createRenderStateCount++] = rendererId;
 #if B3D_BUILD_TYPE_DEVELOPMENT
 			++fullUpdateForNewlyAddedObjectCount;
 #endif
 			break;
-		case RenderableAction::Reregister:
+		case RendererObjectApplyAction::Reregister:
 			destroyRenderStateList[destroyRenderStateCount++] = rendererId;
 			createRenderStateList[createRenderStateCount++] = rendererId;
 			break;

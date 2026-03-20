@@ -8,9 +8,12 @@
 #include "Image/B3DColor.h"
 #include "Math/B3DTransform.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
 {
+	class LightObjectStorageBase;
+
 	/** @addtogroup Renderer-Internal
 	 *  @{
 	 */
@@ -429,6 +432,86 @@ namespace b3d
 			SPtr<SceneInstance> mSceneInstance;
 		};
 	} // namespace render
+
+
+	namespace render
+	{
+		/** Render-thread representation of a light, stored in packed arrays in LightObjectStorageBase. */
+		class B3D_EXPORT LightProxy : public TLightGetters<LightProxy, true>
+		{
+			friend class TLightGetters<LightProxy, true>;
+			friend class b3d::LightObjectStorageBase;
+
+		public:
+			/** Returns the world space transform for the light. */
+			const Transform& GetWorldTransform() const { return mTransform; }
+
+			/** Returns world space bounds that encompass the light's area of influence. */
+			Sphere GetBounds() const { return mBounds; }
+
+			/** Returns the luminance of the light source. */
+			float GetLuminance() const { return mData.ComputeLuminance(); }
+
+			/** Sets the renderer-assigned packed slot ID. */
+			void SetRendererId(PackedRendererId id) { mRendererId = id; }
+
+			/** Returns the renderer-assigned packed slot ID. */
+			PackedRendererId GetRendererId() const { return mRendererId; }
+
+		protected:
+			const TLightData<true>& GetLightData() const { return mData; }
+
+			TLightData<true> mData;
+			Transform mTransform;
+			Sphere mBounds;
+			PackedRendererId mRendererId = kInvalidPackedRendererId;
+		};
+	} // namespace render
+
+	/**
+	 * Contains render thread representation of light objects, stored in packed arrays accessible by PackedRendererId.
+	 * Implements main -> render thread synchronization logic for light objects.
+	 */
+	class B3D_EXPORT LightObjectStorageBase : public RendererObjectStorage
+	{
+	public:
+		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
+		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
+
+		/** Returns the light proxy at the given slot. */
+		render::LightProxy& GetLightProxy(PackedRendererId slotId) { return mLightProxies[slotId]; }
+
+		/** Returns the light proxy at the given slot (const). */
+		const render::LightProxy& GetLightProxy(PackedRendererId slotId) const { return mLightProxies[slotId]; }
+
+		/** Returns the total number of lights. */
+		u32 GetLightCount() const { return (u32)mLightProxies.size(); }
+
+		/**
+		 * Called once per frame for each new light being added, or a light whose data needs to be rebuilt
+		 * after a significant update (in which case DestroyRenderState will be called first).
+		 */
+		virtual void CreateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each light that is being removed, or a light that needs to be rebuilt
+		 * after a significant update (in which case CreateRenderState will be called right after).
+		 */
+		virtual void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each light that needs to be updated after a minor update (e.g. one that doesn't
+		 * require a full render state rebuild, such as a transform change).
+		 */
+		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+	protected:
+		Vector<render::LightProxy> mLightProxies;
+
+	private:
+		/** Applies sync packet data to the light proxy. Returns the action needed for this light. */
+		RendererObjectApplyAction ApplyPacket(ecs::Light::FullSyncPacket& packet, render::LightProxy& proxy, PackedRendererId rendererId);
+	};
 
 	/** @} */
 } // namespace b3d

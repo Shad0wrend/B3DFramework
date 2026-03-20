@@ -300,9 +300,6 @@ namespace b3d
 			friend class b3d::Renderable;
 			friend class b3d::RenderableObjectStorageBase;
 
-			/** Returns the renderable data. Used by the CRTP getter interface. */
-			const TRenderableData<true>& GetRenderableData() const { return mData; }
-
 		public:
 			/**	Gets world bounds of the mesh rendered by this object. */
 			Bounds GetBounds() const;
@@ -344,11 +341,14 @@ namespace b3d
 			Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
 
 		protected:
-			/** Renderable data (mesh, materials, layer, etc.). */
-			TRenderableData<true> mData;
+			/** Returns the renderable data. Used by the CRTP getter interface. */
+			const TRenderableData<true>& GetRenderableData() const { return mData; }
 
 			/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
 			void CreateAnimationBuffers();
+
+			/** Renderable data (mesh, materials, layer, etc.). */
+			TRenderableData<true> mData;
 
 			PackedRendererId mRendererId = kInvalidPackedRendererId;
 			u64 mAnimationId = (u64)-1;
@@ -365,12 +365,6 @@ namespace b3d
 		};
 	} // namespace render
 
-	/** Action determined by ApplyPacket for a dirty renderable during SyncWrite. */
-	enum class RenderableAction : u8
-	{
-		Register,
-		Reregister
-	};
 
 	/**
 	 * Contains render thread representation of renderable objects, stored in packed arrays accessible by PackedRendererId.
@@ -393,13 +387,13 @@ namespace b3d
 
 		/**
 		 * Called once per frame for each new renderable being added, or a renderable whose data needs to be rebuilt
-		 * after a significant update (in which DestroyRenderState will be called first).
+		 * after a significant update (in which case DestroyRenderState will be called first).
 		 */
 		virtual void CreateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
 
 		/**
 		 * Called once per frame for each renderable that is being removed, or a renderable that needs to be rebuilt
-		 * after a significant update (in which CreateRenderState will be called right after).
+		 * after a significant update (in which case CreateRenderState will be called right after).
 		 */
 		virtual void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
 
@@ -410,20 +404,11 @@ namespace b3d
 		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
 
 	protected:
-		/**
-		 * Applies flushed renderer object commands on the render thread, updating packed arrays and freeing command buffers.
-		 * Subclasses must call RendererObjectStorage::ApplyCommands with their specific arrays.
-		 *
-		 * @param commands		Flushed allocation/deallocation commands to apply.
-		 * @param allocator		FrameAllocator used to free the command buffers.
-		 */
-		virtual void ApplyCommands(const FlushedCommands& commands, FrameAllocator& allocator) = 0;
-
 		Vector<render::RenderableProxy> mRenderableProxies;
 
 	private:
 		/** Applies sync packet data to the renderable proxy. Returns the action needed for this renderable. */
-		RenderableAction ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId);
+		RendererObjectApplyAction ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId);
 	};
 
 	/** @} */
