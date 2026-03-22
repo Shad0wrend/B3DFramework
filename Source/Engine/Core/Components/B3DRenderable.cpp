@@ -32,34 +32,6 @@ namespace b3d::ecs
 
 } // namespace b3d::ecs
 
-namespace b3d
-{
-	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Renderable, FullSyncPacket, TRenderableData<true>)
-		B3D_SYNC_BLOCK_ENTRY(Layer)
-		B3D_SYNC_BLOCK_ENTRY(OverrideBounds)
-		B3D_SYNC_BLOCK_ENTRY(UseOverrideBounds)
-		B3D_SYNC_BLOCK_ENTRY(WriteVelocity)
-		B3D_SYNC_BLOCK_ENTRY(AnimType)
-		B3D_SYNC_BLOCK_ENTRY(CullDistanceFactor)
-		B3D_SYNC_BLOCK_ENTRY(Mesh)
-		B3D_SYNC_BLOCK_ENTRY(Materials)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u64, AnimationId)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
-	B3D_SYNC_BLOCK_END
-
-	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Renderable, TransformSyncPacket, TRenderableData<true>)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
-	B3D_SYNC_BLOCK_END
-
-	struct RenderableSyncBatch
-	{
-		TBatchSyncBuffer<ecs::Renderable::FullSyncPacket> Full;
-		TBatchSyncBuffer<ecs::Renderable::TransformSyncPacket> Transform;
-
-		RendererObjectStorage::FlushedCommands Commands;
-	};
-} // namespace b3d
-
 ecs::Renderable& Renderable::GetFragment()
 {
 	return GetECSRegistry()->GetComponents<ecs::Renderable>(GetECSEntity());
@@ -502,6 +474,134 @@ RTTIType* Renderable::GetRtti() const
 	return Renderable::GetRttiStatic();
 }
 
+namespace b3d
+{
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Renderable, FullSyncPacket, TRenderableData<true>)
+		B3D_SYNC_BLOCK_ENTRY(Layer)
+		B3D_SYNC_BLOCK_ENTRY(OverrideBounds)
+		B3D_SYNC_BLOCK_ENTRY(UseOverrideBounds)
+		B3D_SYNC_BLOCK_ENTRY(WriteVelocity)
+		B3D_SYNC_BLOCK_ENTRY(AnimType)
+		B3D_SYNC_BLOCK_ENTRY(CullDistanceFactor)
+		B3D_SYNC_BLOCK_ENTRY(Mesh)
+		B3D_SYNC_BLOCK_ENTRY(Materials)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u64, AnimationId)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
+	B3D_SYNC_BLOCK_END
+
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Renderable, TransformSyncPacket, TRenderableData<true>)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
+	B3D_SYNC_BLOCK_END
+
+	struct RenderableFullUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		RenderableFullUpdateChannel,
+		ecs::Renderable::FullSyncPacket,
+		ecs::RenderableDirty,
+		ecs::Renderable, ecs::WorldTransform, ecs::RenderableId
+	>
+	{
+		void Write(RenderableObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToCreate(&allocator);
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToDestroy(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToCreate, &renderStatesToDestroy, &storage](ecs::Renderable::FullSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::RenderableProxy& proxy = storage.GetRenderableProxy(rendererId);
+
+				bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
+				proxy.mRendererId = rendererId;
+
+				packet.ApplySyncData(&proxy.mData);
+
+				proxy.mAnimationId = packet.AnimationId;
+				proxy.mTransform = packet.TransformData;
+
+				proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
+				proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
+
+				proxy.CreateAnimationBuffers();
+
+				if(proxy.mData.AnimType == RenderableAnimType::Morph || proxy.mData.AnimType == RenderableAnimType::SkinnedMorph)
+				{
+					TInlineArray<VertexElement, 8> vertexElements = proxy.mData.Mesh->GetVertexDescription()->GetElements();
+					vertexElements.Add(VertexElement(VET_FLOAT3, VES_POSITION, 1, 1));
+					vertexElements.Add(VertexElement(VET_UBYTE4_NORM, VES_NORMAL, 1, 1));
+
+					proxy.mMorphVertexDescription = B3DMakeShared<VertexDescription>(vertexElements);
+				}
+				else
+					proxy.mMorphVertexDescription = nullptr;
+
+				if(wasRegistered)
+					renderStatesToDestroy.push_back(rendererId);
+
+				renderStatesToCreate.push_back(rendererId);
+			});
+
+			if(!renderStatesToDestroy.empty())
+				storage.DestroyRenderState(renderStatesToDestroy);
+
+			if(!renderStatesToCreate.empty())
+				storage.CreateRenderState(renderStatesToCreate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Renderable& fragment, ecs::WorldTransform& transform, ecs::RenderableId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.AnimationId = fragment.AnimationId;
+			packet.TransformData = transform;
+		}
+	};
+
+	struct RenderableTransformUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		RenderableTransformUpdateChannel,
+		ecs::Renderable::TransformSyncPacket,
+		ecs::RenderableTransformDirty,
+		ecs::Renderable, ecs::WorldTransform, ecs::RenderableId
+	>
+	{
+		void Write(RenderableObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToUpdate(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToUpdate, &storage](ecs::Renderable::TransformSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::RenderableProxy& proxy = storage.GetRenderableProxy(rendererId);
+
+				proxy.mTransform = packet.TransformData;
+				proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
+				proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
+
+				renderStatesToUpdate.push_back(rendererId);
+			});
+
+			if(!renderStatesToUpdate.empty())
+				storage.UpdateRenderState(renderStatesToUpdate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Renderable& fragment, ecs::WorldTransform& transform, ecs::RenderableId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.TransformData = transform;
+		}
+	};
+
+	using RenderableSyncBatch = TRendererObjectECSSyncBatch<RenderableFullUpdateChannel, RenderableTransformUpdateChannel>;
+} // namespace b3d
+
+void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
+{
+	return RenderableSyncBatch::Read(*this, registry, allocator);
+}
+
+void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& allocator)
+{
+	RenderableSyncBatch::Write(*this, rawData, allocator);
+}
+
 namespace b3d { namespace render
 {
 static SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 boneCount)
@@ -664,206 +764,3 @@ void RenderableProxy::UpdateAnimationBuffers(const EvaluatedAnimationData& animD
 }
 }}
 
-RendererObjectApplyAction RenderableObjectStorageBase::ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId)
-{
-	bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
-	proxy.mRendererId = rendererId;
-	packet.ApplySyncData(&proxy.mData);
-
-	proxy.mAnimationId = packet.AnimationId;
-	proxy.mTransform = packet.TransformData;
-
-	proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
-	proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
-
-	proxy.CreateAnimationBuffers();
-
-	if(proxy.mData.AnimType == RenderableAnimType::Morph || proxy.mData.AnimType == RenderableAnimType::SkinnedMorph)
-	{
-		TInlineArray<VertexElement, 8> vertexElements = proxy.mData.Mesh->GetVertexDescription()->GetElements();
-		vertexElements.Add(VertexElement(VET_FLOAT3, VES_POSITION, 1, 1));
-		vertexElements.Add(VertexElement(VET_UBYTE4_NORM, VES_NORMAL, 1, 1));
-
-		proxy.mMorphVertexDescription = B3DMakeShared<VertexDescription>(vertexElements);
-	}
-	else
-		proxy.mMorphVertexDescription = nullptr;
-
-	if(wasRegistered)
-		return RendererObjectApplyAction::Reregister;
-
-	return RendererObjectApplyAction::Register;
-}
-
-void* RenderableObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
-{
-	// Consume structural commands from the allocator
-	FlushedCommands flushedCommands = FlushCommands(allocator);
-	const u32 commandCount = (u32)flushedCommands.Deallocations.Size() + (u32)flushedCommands.Allocations.Size();
-
-	auto* fullStorage = registry.TryGetStorage<ecs::RenderableDirty>();
-	auto* transformStorage = registry.TryGetStorage<ecs::RenderableTransformDirty>();
-
-	u32 fullCount = fullStorage ? (u32)fullStorage->Size() : 0;
-	u32 transformCount = transformStorage ? (u32)transformStorage->Size() : 0;
-
-	if(fullCount == 0 && transformCount == 0 && commandCount == 0)
-		return nullptr;
-
-	auto* batchData = allocator.Construct<RenderableSyncBatch>();
-	batchData->Commands = flushedCommands;
-
-	if(fullCount > 0)
-	{
-		batchData->Full.Allocate(allocator, fullCount);
-
-		auto view = registry.CreateView<ecs::RenderableDirty, ecs::Renderable, ecs::WorldTransform, ecs::RenderableId>();
-		view.SetLeadingType<ecs::RenderableDirty>();
-
-		for(auto entity : view)
-		{
-#if B3D_BUILD_TYPE_DEVELOPMENT
-			B3D_ASSERT(!registry.HasAllOf<ecs::TransformDirty>(entity) && "WorldTransform is stale during SyncRead — TransformSystem must flush before renderer sync");
-#endif
-			auto& renderableData = view.Get<ecs::Renderable>(entity);
-			auto& worldTransform = view.Get<ecs::WorldTransform>(entity);
-			RendererId objectId = view.Get<ecs::RenderableId>(entity).Id;
-
-			auto& packet = batchData->Full.Add(objectId, renderableData, allocator, 0);
-			packet.AnimationId = renderableData.AnimationId;
-			packet.TransformData = worldTransform;
-		}
-	}
-
-	if(transformCount > 0)
-	{
-		batchData->Transform.Allocate(allocator, transformCount);
-
-		auto view = registry.CreateView<ecs::RenderableTransformDirty, ecs::Renderable, ecs::WorldTransform, ecs::RenderableId>(ecs::TExcludedTypes<ecs::RenderableDirty>{});
-		view.SetLeadingType<ecs::RenderableTransformDirty>();
-
-		for(auto entity : view)
-		{
-#if B3D_BUILD_TYPE_DEVELOPMENT
-			B3D_ASSERT(!registry.HasAllOf<ecs::TransformDirty>(entity) && "WorldTransform is stale during SyncRead — TransformSystem must flush before renderer sync");
-#endif
-			auto& renderableData = view.Get<ecs::Renderable>(entity);
-			auto& worldTransform = view.Get<ecs::WorldTransform>(entity);
-			RendererId objectId = view.Get<ecs::RenderableId>(entity).Id;
-
-			auto& packet = batchData->Transform.Add(objectId, renderableData, allocator, 0);
-			packet.TransformData = worldTransform;
-		}
-	}
-
-	registry.ClearStorage<ecs::RenderableDirty>();
-	registry.ClearStorage<ecs::RenderableTransformDirty>();
-
-	return batchData;
-}
-
-void RenderableObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& allocator)
-{
-	RenderableSyncBatch* batch = static_cast<RenderableSyncBatch*>(rawData);
-
-	const FlushedCommands& commands = batch->Commands;
-
-	if(commands.Deallocations.Size() > 0 || commands.Allocations.Size() > 0)
-		ApplyCommands(commands, allocator);
-
-	// Upper-bound counts for batch arrays
-	const u32 fullUpdateCount = batch->Full.Count;
-	const u32 transformUpdateCount = batch->Transform.Count;
-
-	// Allocate batch arrays from the FrameAllocator
-	PackedRendererId* createRenderStateList = nullptr;
-	u32 createRenderStateCount = 0;
-
-	PackedRendererId* destroyRenderStateList = nullptr;
-	u32 destroyRenderStateCount = 0;
-
-	PackedRendererId* updateRenderStateList = nullptr;
-	u32 updateRenderStateCount = 0;
-
-	if(fullUpdateCount > 0)
-	{
-		createRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * fullUpdateCount, alignof(PackedRendererId)));
-		destroyRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * fullUpdateCount, alignof(PackedRendererId)));
-	}
-
-	if(transformUpdateCount > 0)
-	{
-		updateRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * transformUpdateCount, alignof(PackedRendererId)));
-	}
-
-	// Apply full sync packets, collect render state create/destroy actions
-#if B3D_BUILD_TYPE_DEVELOPMENT
-	u32 fullUpdateForNewlyAddedObjectCount = 0;
-#endif
-
-	batch->Full.Each([this, createRenderStateList, &createRenderStateCount, destroyRenderStateList, &destroyRenderStateCount, &fullUpdateForNewlyAddedObjectCount](ecs::Renderable::FullSyncPacket& packet, RendererId objectId)
-	{
-		PackedRendererId rendererId = GetPackedRendererId(objectId);
-		if(rendererId == kInvalidPackedRendererId)
-			return;
-
-		RendererObjectApplyAction action = ApplyPacket(packet, mRenderableProxies[rendererId], rendererId);
-		switch(action)
-		{
-		case RendererObjectApplyAction::Register:
-			createRenderStateList[createRenderStateCount++] = rendererId;
-#if B3D_BUILD_TYPE_DEVELOPMENT
-			++fullUpdateForNewlyAddedObjectCount;
-#endif
-			break;
-		case RendererObjectApplyAction::Reregister:
-			destroyRenderStateList[destroyRenderStateCount++] = rendererId;
-			createRenderStateList[createRenderStateCount++] = rendererId;
-			break;
-		}
-	});
-
-	// Apply transform packets, collect render update actions
-	batch->Transform.Each([&](ecs::Renderable::TransformSyncPacket& packet, RendererId objectId)
-	{
-		PackedRendererId rendererId = GetPackedRendererId(objectId);
-		if(rendererId == kInvalidPackedRendererId)
-			return;
-
-		render::RenderableProxy& proxy = mRenderableProxies[rendererId];
-		proxy.mTransform = packet.TransformData;
-		proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
-		proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
-
-		updateRenderStateList[updateRenderStateCount++] = rendererId;
-	});
-
-	// Update render state in batches
-	if(destroyRenderStateCount > 0)
-		DestroyRenderState(TArrayView<const PackedRendererId>(destroyRenderStateList, destroyRenderStateCount));
-
-	if(createRenderStateCount > 0)
-		CreateRenderState(TArrayView<const PackedRendererId>(createRenderStateList, createRenderStateCount));
-
-	if(updateRenderStateCount > 0)
-		UpdateRenderState(TArrayView<const PackedRendererId>(updateRenderStateList, updateRenderStateCount));
-
-#if B3D_BUILD_TYPE_DEVELOPMENT
-	// Every new renderable must have also received a full sync packet
-	B3D_ASSERT(fullUpdateForNewlyAddedObjectCount == commands.Allocations.Size() && "Newly allocated RendererId missing full sync packet");
-#endif
-
-	if(updateRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(updateRenderStateList));
-
-	if(destroyRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(destroyRenderStateList));
-
-	if(createRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(createRenderStateList));
-
-	batch->Full.Free(allocator);
-	batch->Transform.Free(allocator);
-
-	allocator.Destruct(batch);
-}

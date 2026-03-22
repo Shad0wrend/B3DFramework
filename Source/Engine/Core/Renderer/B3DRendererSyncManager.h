@@ -10,73 +10,9 @@
 
 namespace b3d
 {
-	namespace ecs { class Registry; }
-
 	/** @addtogroup Renderer-Internal
 	 *  @{
 	 */
-
-	/**
-	 * Helper used for batch synchronization of ECS objects from the main thread into packed arrays on the render thread.
-	 *
-	 * Stores a contiguous array of packets containing the data to synchronize, as well as render slots which determine to which
-	 * entries in the packed renderer arrays those packets should be applied to.
-	 *
-	 * @tparam DataType		Data type that is being synced.
-	 */
-	template<typename DataType>
-	struct TBatchSyncBuffer
-	{
-		u32 Count = 0;
-		u32 Maximum = 0;
-		DataType* Packets = nullptr;
-		RendererId* RendererIds = nullptr;
-
-		/** Allocate internal arrays for @p count entries using @p allocator. */
-		void Allocate(FrameAllocator& allocator, u32 count)
-		{
-			Packets = reinterpret_cast<DataType*>(allocator.AllocateAligned(sizeof(DataType) * count, alignof(DataType)));
-			RendererIds = reinterpret_cast<RendererId*>(allocator.AllocateAligned(sizeof(RendererId) * count, alignof(RendererId)));
-
-			Maximum = count;
-		}
-
-		/** Construct a new DataType in-place and store the associated renderer ID. Returns a reference to the constructed packet. */
-		template<typename... Args>
-		DataType& Add(RendererId rendererId, Args&&... args)
-		{
-			B3D_ASSERT(Count < Maximum);
-
-			auto* packet = new(&Packets[Count]) DataType(std::forward<Args>(args)...);
-			RendererIds[Count] = rendererId;
-			++Count;
-			return *packet;
-		}
-
-		/**
-		 * Iterates entries, calling @p fn(DataType&, RendererId rendererId) for each.
-		 * Destructs the packet after the callback finishes.
-		 */
-		template<typename Fn>
-		void Each(Fn&& fn)
-		{
-			for(u32 entryIndex = 0; entryIndex < Count; ++entryIndex)
-			{
-				fn(Packets[entryIndex], RendererIds[entryIndex]);
-				Packets[entryIndex].~DataType();
-			}
-		}
-
-		/** Frees the frame-allocated Packets and RendererIds arrays. Must be called after Each(). */
-		void Free(FrameAllocator& allocator)
-		{
-			if(Packets)
-				allocator.Free((u8*)Packets);
-
-			if(RendererIds)
-				allocator.Free((u8*)RendererIds);
-		}
-	};
 
 	/**
 	 * Interface used for batch synchronization of main thread objects with their renderer-side representations.

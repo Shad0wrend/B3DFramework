@@ -14,6 +14,8 @@ namespace b3d
 {
 	struct EvaluatedAnimationData;
 	class RenderableObjectStorageBase;
+	struct RenderableFullUpdateChannel;
+	struct RenderableTransformUpdateChannel;
 
 	namespace ecs
 	{
@@ -263,7 +265,6 @@ namespace b3d
 
 		friend class SceneObject;
 		friend class RenderableObjectStorageBase;
-		friend struct RenderableSyncBatch;
 
 		Renderable(const HSceneObject& parent);
 
@@ -298,7 +299,8 @@ namespace b3d
 		{
 			friend class TRenderableGetters<RenderableProxy, true>;
 			friend class b3d::Renderable;
-			friend class b3d::RenderableObjectStorageBase;
+			friend struct b3d::RenderableFullUpdateChannel;
+			friend struct b3d::RenderableTransformUpdateChannel;
 
 		public:
 			/**	Gets world bounds of the mesh rendered by this object. */
@@ -405,10 +407,6 @@ namespace b3d
 
 	protected:
 		Vector<render::RenderableProxy> mRenderableProxies;
-
-	private:
-		/** Applies sync packet data to the renderable proxy. Returns the action needed for this renderable. */
-		RendererObjectApplyAction ApplyPacket(ecs::Renderable::FullSyncPacket& packet, render::RenderableProxy& proxy, PackedRendererId rendererId);
 	};
 
 	/** @} */

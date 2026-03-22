@@ -23,7 +23,7 @@ namespace b3d
 		mObjectIdAllocator.Deallocate(objectId);
 	}
 
-	RendererObjectStorage::FlushedCommands RendererObjectStorage::FlushCommands(FrameAllocator& allocator)
+	RendererObjectStorage::CommandBatch RendererObjectStorage::FlushCommands(FrameAllocator& allocator)
 	{
 		const u32 deallocationCount = (u32)mDeallocations.size();
 		const u32 allocationCount = (u32)mPendingAllocations.size();
@@ -31,29 +31,24 @@ namespace b3d
 		if(deallocationCount == 0 && allocationCount == 0)
 			return {};
 
-		FlushedCommands result;
+		CommandBatch result;
 		if(deallocationCount > 0)
 		{
-			RendererIdCommand* commands = reinterpret_cast<RendererIdCommand*>(allocator.AllocateAligned(sizeof(RendererIdCommand) * deallocationCount, alignof(RendererIdCommand)));
+			RendererId* ids = reinterpret_cast<RendererId*>(allocator.AllocateAligned(sizeof(RendererId) * deallocationCount, alignof(RendererId)));
 			for(u32 index = 0; index < deallocationCount; ++index)
-			{
-				commands[index].Type = RendererIdCommandType::Deallocate;
-				commands[index].ObjectId = mDeallocations[index];
-			}
-			result.Deallocations = TArrayView<const RendererIdCommand>(commands, deallocationCount);
+				ids[index] = mDeallocations[index];
+
+			result.DeallocatedIds = TArrayView<const RendererId>(ids, deallocationCount);
 		}
 
 		if(allocationCount > 0)
 		{
-			RendererIdCommand* commands = reinterpret_cast<RendererIdCommand*>(allocator.AllocateAligned(sizeof(RendererIdCommand) * allocationCount, alignof(RendererIdCommand)));
-			u32 commandIndex = 0;
+			RendererId* ids = reinterpret_cast<RendererId*>(allocator.AllocateAligned(sizeof(RendererId) * allocationCount, alignof(RendererId)));
+			u32 index = 0;
 			for(const RendererId& pendingId : mPendingAllocations)
-			{
-				commands[commandIndex].Type = RendererIdCommandType::Allocate;
-				commands[commandIndex].ObjectId = pendingId;
-				++commandIndex;
-			}
-			result.Allocations = TArrayView<const RendererIdCommand>(commands, allocationCount);
+				ids[index++] = pendingId;
+
+			result.AllocatedIds = TArrayView<const RendererId>(ids, allocationCount);
 		}
 
 		mDeallocations.clear();

@@ -13,6 +13,8 @@
 namespace b3d
 {
 	class LightObjectStorageBase;
+	struct LightFullUpdateChannel;
+	struct LightTransformUpdateChannel;
 
 	/** @addtogroup Renderer-Internal
 	 *  @{
@@ -440,7 +442,8 @@ namespace b3d
 		class B3D_EXPORT LightProxy : public TLightGetters<LightProxy, true>
 		{
 			friend class TLightGetters<LightProxy, true>;
-			friend class b3d::LightObjectStorageBase;
+			friend struct b3d::LightFullUpdateChannel;
+			friend struct b3d::LightTransformUpdateChannel;
 
 		public:
 			/** Returns the world space transform for the light. */
@@ -507,10 +510,6 @@ namespace b3d
 
 	protected:
 		Vector<render::LightProxy> mLightProxies;
-
-	private:
-		/** Applies sync packet data to the light proxy. Returns the action needed for this light. */
-		RendererObjectApplyAction ApplyPacket(ecs::Light::FullSyncPacket& packet, render::LightProxy& proxy, PackedRendererId rendererId);
 	};
 
 	/** @} */

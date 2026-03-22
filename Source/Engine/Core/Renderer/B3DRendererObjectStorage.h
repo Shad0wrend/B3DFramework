@@ -7,200 +7,59 @@
 #include "Renderer/B3DRendererId.h"
 #include "Renderer/B3DRendererSyncManager.h"
 
+namespace b3d::ecs
+{
+	class Registry;
+	template<typename... Types> struct TExcludedTypes;
+}
+
 namespace b3d
 {
 	/** @addtogroup Renderer-Internal
 	 *  @{
 	 */
 
-	/** Determines whether a renderer ID was allocated or deallocated. Used for re-playing the operation on the render thread.  */
-	enum class RendererIdCommandType : u8
-	{
-		Allocate,
-		Deallocate
-	};
-
-	/** Records a single allocation or deallocation of a persistent renderer object ID. */
-	struct RendererIdCommand
-	{
-		RendererIdCommandType Type;
-		RendererId ObjectId;
-	};
-
-
 	/**
-	 * Replays renderer object ID allocation/deallocation commands on the render thread. This ensures the render thread can maintain packed arrays
-	 * of renderer objects, while the main thread can freely allocate/deallocate RendererId values without needing to know about slots or packed array management.
+	 * Provides common functionality for types that exist on the main thread, but also need a representation on the render thread. In particular, it is responsible for:
+	 *  - Maintaining data arrays that store the render thread data. Arrays are kept packed for fast iteration on the render thread.
+	 *  - Maintaining persistent ID -> packed ID mapping so objects know at which array index to find their data.
+	 *  - Synchronizing changes between main and render thread. Once some main thread object property changes the packed array data for that object needs to be updated.
+	 *    Synchronization is done is batches for all objects needing update within a single frame, for best performance.
 	 *
-	 * @tparam ClearFn		Callable(PackedRendererId) — called on the entry being deallocated, before swapping.
-	 * @tparam SwappedFn	Callable(PackedRendererId) — called on the entry after swapping (arrays now hold new data at this position). Only called if swap occurred.
-	 * @tparam Arrays		One or multiple packed array that hold the data associated with the renderer objects. This data will be moved to ensure they arrays remain packed.
-	 *						Must be vector-like containers that support push_back, pop_back, operator[], std::swap.
-	 */
-	template<typename ClearFn, typename SwappedFn, typename... Arrays>
-	void ReplayRendererIdCommands(const RendererIdCommand* commands, u32 commandCount, Vector<RendererId>& sparseSlots, Vector<RendererId>& denseToSparse, ClearFn&& fnClear, SwappedFn&& fnSwapped, Arrays&... arrays)
-	{
-		for(u32 commandIndex = 0; commandIndex < commandCount; ++commandIndex)
-		{
-			const RendererIdCommand& command = commands[commandIndex];
-			const u32 identifier = command.ObjectId.GetIdentifier();
-
-			if(command.Type == RendererIdCommandType::Allocate)
-			{
-				const PackedRendererId newSlot = (PackedRendererId)denseToSparse.size();
-
-				// Grow sparse array if needed
-				if(identifier >= (u32)sparseSlots.size())
-					sparseSlots.resize(identifier + 1);
-
-				sparseSlots[identifier] = RendererId((RendererId::IdentifierType)newSlot, (RendererId::VersionType)command.ObjectId.GetVersion());
-
-				denseToSparse.push_back(command.ObjectId);
-				(arrays.push_back(typename std::remove_reference_t<decltype(arrays)>::value_type{}), ...);
-			}
-			else
-			{
-				B3D_ASSERT(identifier < (u32)sparseSlots.size());
-				B3D_ASSERT(sparseSlots[identifier].GetVersion() == command.ObjectId.GetVersion());
-
-				const PackedRendererId slotToRemove = (PackedRendererId)sparseSlots[identifier].GetIdentifier();
-
-				fnClear(slotToRemove);
-
-				const PackedRendererId lastSlot = (PackedRendererId)denseToSparse.size() - 1;
-				if(slotToRemove != lastSlot)
-				{
-					// Swap-and-pop: move last element into the removed slot
-					(std::swap(arrays[slotToRemove], arrays[lastSlot]), ...);
-					std::swap(denseToSparse[slotToRemove], denseToSparse[lastSlot]);
-
-					// Update the swapped object's sparse entry to point to its new slot
-					const u32 swappedIdentifier = denseToSparse[slotToRemove].GetIdentifier();
-					sparseSlots[swappedIdentifier].Identifier = slotToRemove;
-
-					fnSwapped(slotToRemove);
-				}
-
-				denseToSparse.pop_back();
-				(arrays.pop_back(), ...);
-
-				sparseSlots[identifier] = kInvalidRendererId;
-			}
-		}
-	}
-
-	/**
-	 * Processes provided Deallocate commands. Swaps the provided arrays so that all removed entries are moved to the tail of the arrays,
-	 * and returns the index past the last non-deallocated entry (logical size). This allows the caller to batch-notify and resize arrays
-	 * after processing all deallocations.
-	 *
-	 * @param commands			Array of deallocation commands to process.
-	 * @param sparseSlots		Sparse array mapping RendererId identifiers to PackedRendererId slots. This will be updated to point to new slots after swapping, and invalidated for removed entries.
-	 * @param denseToSparse		Dense array mapping PackedRendererId slots to RendererId values. This will be updated to point to new slots after swapping, and have removed entries swapped to the tail.
-	 * @param fnSwapped			Callable(PackedRendererId) — Called on each entry that was swapped into a new slot.
-	 * @param arrays			One or multiple packed arrays to swap. Must support operator[] and std::swap. These will be swapped according to the new slot positions.
-	 * @return					Index past the last non-deallocated entry (logical size). All entries at and past this index are deallocated and can be popped from @p sparseSlots and @p arrays.
-	 */
-	template<typename SwappedFn, typename... Arrays>
-	PackedRendererId ProcessRendererObjectDeallocations(TArrayView<const RendererIdCommand> commands, Vector<RendererId>& sparseSlots, Vector<RendererId>& denseToSparse, SwappedFn&& fnSwapped, Arrays&... arrays)
-	{
-		PackedRendererId logicalSize = (PackedRendererId)denseToSparse.size();
-
-		for(u32 commandIndex = 0; commandIndex < commands.Size(); ++commandIndex)
-		{
-			const RendererIdCommand& command = commands[commandIndex];
-			const u32 identifier = command.ObjectId.GetIdentifier();
-
-			B3D_ASSERT(identifier < (u32)sparseSlots.size());
-			B3D_ASSERT(sparseSlots[identifier].GetVersion() == command.ObjectId.GetVersion());
-
-			const PackedRendererId slotToRemove = (PackedRendererId)sparseSlots[identifier].GetIdentifier();
-
-			--logicalSize;
-			if(slotToRemove != logicalSize)
-			{
-				// Swap into the "to-be-removed" zone at the tail
-				(std::swap(arrays[slotToRemove], arrays[logicalSize]), ...);
-				std::swap(denseToSparse[slotToRemove], denseToSparse[logicalSize]);
-
-				// Update the swapped element's sparse entry to point to its new slot
-				const u32 swappedIdentifier = denseToSparse[slotToRemove].GetIdentifier();
-				sparseSlots[swappedIdentifier].Identifier = slotToRemove;
-
-				fnSwapped(slotToRemove);
-			}
-
-			// Invalidate the removed element's sparse entry
-			sparseSlots[identifier] = kInvalidRendererId;
-		}
-
-		return logicalSize;
-	}
-
-	/**
-	 * Processes provided Allocate commands, growing sparse/dense arrays and pushing default-constructed entries to the provided packed arrays.
-	 *
-	 * @param commands			Array of allocation commands to process.
-	 * @param sparseSlots		Sparse array mapping RendererId identifiers to PackedRendererId slots. This will be updated to point to new slots for allocated entries.
-	 * @param denseToSparse		Dense array mapping PackedRendererId slots to RendererId values. This will be appended with new entries for allocated objects.
-	 * @param arrays			One or multiple packed arrays to grow. Must support push_back with default-constructed value_type. These will be appended with default-constructed entries for allocated objects.
-	 */
-	template<typename... Arrays>
-	void ProcessRendererObjectAllocations(TArrayView<const RendererIdCommand> commands, Vector<RendererId>& sparseSlots, Vector<RendererId>& denseToSparse, Arrays&... arrays)
-	{
-		for(u32 commandIndex = 0; commandIndex < commands.Size(); ++commandIndex)
-		{
-			const RendererIdCommand& command = commands[commandIndex];
-			const u32 identifier = command.ObjectId.GetIdentifier();
-
-			const PackedRendererId newSlot = (PackedRendererId)denseToSparse.size();
-
-			// Grow sparse array if needed
-			if(identifier >= (u32)sparseSlots.size())
-				sparseSlots.resize(identifier + 1);
-
-			sparseSlots[identifier] = RendererId((RendererId::IdentifierType)newSlot, (RendererId::VersionType)command.ObjectId.GetVersion());
-
-			denseToSparse.push_back(command.ObjectId);
-			(arrays.push_back(typename std::remove_reference_t<decltype(arrays)>::value_type{}), ...);
-		}
-	}
-
-	/**
-	 * Provides render thread storage for renderer objects, and synchronization of object data from the main thread into that storage.
-	 *
-	 * On the main thread renderer objects are represented as ECS entities, with ECS fragments for storing data. On the render thread the objects are stored
-	 * in packed arrays referenced by PackedRendererIds. Persistent RendererId values are allocated from the main thread and stored on the ECS entity, and then
-	 * resolved on the render thread to packed PackedRendererId values for array access.
+	 * # General concepts
+	 * - On the main thread renderer objects allocate and store a persistent renderer ID during their lifetime.
+	 * - On the render thread the objects are stored in one or multiple packed arrays referenced by PackedRendererIds.
+	 * - Exact data stored in packed array(s) is defined by implementations of this class.
+	 * - Persistent renderer IDs are resolved on the render thread to packed PackedRendererId, which can be used for packed array access.
 	 *
 	 * # Allocating renderer object IDs
-	 * Renderer object IDs are allocated / deallocated from the main thread using AllocateRendererId / DeallocateRendererId.
+	 * Renderer object IDs are allocated / deallocated from the main thread using AllocateRendererId() / DeallocateRendererId().
 	 *
 	 * Since RendererId values are allocated/deallocated from the main thread, the render thread needs to be informed about which IDs were allocated/deallocated
-	 * so it can update its packed arrays to match. This is done via FlushCommands/ApplyCommands(), which replays the allocation/deallocation
-	 * commands recorded by the main thread on the render thread.
-	 *
-	 * It is expected for the main thread to call FlushCommands during SyncRead(), and render thread to call ApplyCommands during SyncWrite().
-	 * This should be called as the first step during SyncWrite().
+	 * every frame so it can update its packed arrays to match. This is done via FlushCommands()/ApplyCommands().
+	 *  - FlushCommands() must be called on the main thread during SyncRead. It returns a list of all IDs that were allocated or deallocated this frame.
+	 *  - ApplyCommands() must be called on the render thread during SyncWrite. It updates the mapping of persistent -> packed object IDs, based on the IDs that
+	 *    were allocated/deallocated. It also adds/removes/swaps entries in the associated packed arrays.
 	 *
 	 * # Syncing data
 	 * Data should be synced from the main thread to the render thread using SyncRead() / SyncWrite().
-	 *  - SyncRead is called on the main thread, and should gather dirty data from ECS fragments associated with the entity into a batch buffer allocated by the
+	 *  - SyncRead() is called on the main thread, and should gather dirty data from dirty main thread objects into a buffer allocated by the
 	 *    provided allocator, and return a pointer to that buffer. It must call FlushCommands() to ensure SyncWrite() can replay the commands.
-	 *  - SyncWrite is called on the render thread with the batch buffer generated by SyncRead. It must call ApplyCommands() first to
-	 *    ensure packed arrays are up to date, then resolve RendererId values to PackedRendererId via GetPackedRendererId() for array access.
+	 *  - SyncWrite() is called on the render thread with the buffer generated by SyncRead(). It must call ApplyCommands() first to
+	 *    ensure packed arrays are up to date, then resolve RendererId values to PackedRendererId via GetPackedRendererId() for array access, and
+	 *    copy the data from the buffer into relevant entries in the packed arrays.
+	 *
+	 * # This versus CoreObject/RenderProxy system
+	 * Note this system serves a similar purpose as the CoreObject/RenderProxy system. The main improvements compared to that system are:
+	 *  - Updates are done in batches, improving performance (i.e. all objects of the same type at once, each frame).
+	 *  - Main thread objects can be ECS fragments or regular structs, they don't need to implement CoreObject interface (they just need a persistent renderer ID).
+	 *  - Management of packed arrays on the render thread is abstracted and generalized, reducing boilerplate.
+	 *
 	 */
 	class B3D_EXPORT RendererObjectStorage : public IRendererObjectSyncHandler
 	{
 	public:
 		virtual ~RendererObjectStorage() = default;
-
-		/** Result of FlushCommands — views into FrameAllocator-backed deallocation and allocation command arrays. */
-		struct FlushedCommands
-		{
-			TArrayView<const RendererIdCommand> Deallocations;
-			TArrayView<const RendererIdCommand> Allocations;
-		};
 
 		/**
 		 * Allocates a persistent renderer object ID.
@@ -225,10 +84,10 @@ namespace b3d
 		PackedRendererId GetPackedRendererId(RendererId objectId) const
 		{
 			u32 identifier = objectId.GetIdentifier();
-			if(identifier >= (u32)mSparseSlots.size())
+			if(identifier >= (u32)mPersistentToPackedId.size())
 				return kInvalidPackedRendererId;
 
-			const RendererId& entry = mSparseSlots[identifier];
+			const RendererId& entry = mPersistentToPackedId[identifier];
 			if(entry.GetVersion() != objectId.GetVersion())
 				return kInvalidPackedRendererId;
 
@@ -236,58 +95,56 @@ namespace b3d
 		}
 
 		/**
+		 * @name Internal
+		 * @{
+		 */
+
+		/**
+		 * Contains a list of renderer IDs that were allocated and deallocated during a single frame. Provided array views are only valid
+		 * while the FrameAllocator for the current frame is valid (i.e. between a pair of SyncRead() and SyncWrite() calls).
+		 */
+		struct CommandBatch
+		{
+			TArrayView<const RendererId> DeallocatedIds;
+			TArrayView<const RendererId> AllocatedIds;
+		};
+
+		/**
 		 * Applies flushed renderer object commands on the render thread, updating packed arrays and freeing command buffers.
 		 * Subclasses must call the protected ApplyCommands template with their specific packed arrays.
+		 *
+		 * @note Render thread only.
 		 */
-		virtual void ApplyCommands(const FlushedCommands& commands, FrameAllocator& allocator) = 0;
+		virtual void ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator) = 0;
+
+		/**
+		 * Returns all renderer IDs that were allocated and deallocated since the last call to FlushCommands().
+		 * Returned command batch is only valid until and during the next ApplyCommands() call.
+		 *
+		 * @note Main thread only.
+		 */
+		CommandBatch FlushCommands(FrameAllocator& allocator);
+
+		/** @} */
 
 	protected:
 		/**
-		 * Applies flushed renderer object commands on the render thread, updating packed arrays and freeing the command buffers.
-		 * Handles the full cycle: deallocations are swapped to the tail, destroyed via @p fnDestroy, arrays are resized,
-		 * then allocations are appended. Finally, the command buffers are freed from the allocator.
+		 * Helper function that handles updating of render thread data after renderer IDs were allocated or deallocated on the main thread. Allocations require
+		 * packed arrays to be expanded to accomodate space for the new object. Deallocations cause the arrays to shrink, but cause the data to be swapped so
+		 * arrays remain packed, using swap and pop mechanism (i.e. so there is no hole where an object was deallocated). This means packed array IDs for objects
+		 * may change during this call. Persistent -> packed array IDs are also updated accordingly.
 		 *
-		 * @param commands		Flushed allocation/deallocation commands to apply.
-		 * @param allocator		FrameAllocator used to free the command buffers.
-		 * @param fnSwapped		Callable(PackedRendererId) — called on each entry that was swapped into a new slot during deallocation.
-		 * @param fnDestroy		Callable(TArrayView<const PackedRendererId>) — called with the slot IDs of all deallocated entries (at the tail) before they are resized away.
-		 * @param arrays		Packed arrays to manage. Must support operator[], resize, push_back, and std::swap.
+		 * @param commands					List of all allocated & deallocated renderer IDs.
+		 * @param allocator					FrameAllocator used for allocating the arrays in @p commands.
+		 * @param fnDoOnPackedIdChanged		Callable(PackedRendererId) — Called when a packed array ID for an object changes. This can happen when an object is
+		 *									swapped into a packed array gap left by deallocation.
+		 * @param fnDoOnWillDestroy			Callable(TArrayView<const PackedRendererId>) — Called before an object is destroyed. Note the provided packed ID is
+		 *									after the data has been swapped to the end of the packed array, but the data itself is still valid.
+		 * @param arrays					A list of packed data arrays that packed IDs reference into. They will be resized and entries swapped according to the required operations.
+		 *									Must support operator[], resize, push_back, and std::swap.
 		 */
-		template<typename SwappedFn, typename DestroyFn, typename... Arrays>
-		void ApplyCommands(const FlushedCommands& commands, FrameAllocator& allocator, SwappedFn&& fnSwapped, DestroyFn&& fnDestroy, Arrays&... arrays)
-		{
-			if(commands.Deallocations.Size() > 0)
-			{
-				const PackedRendererId originalSize = (PackedRendererId)mDenseToSparse.size();
-
-				PackedRendererId logicalSize = ProcessRendererObjectDeallocations(commands.Deallocations, mSparseSlots, mDenseToSparse,
-					std::forward<SwappedFn>(fnSwapped), arrays...);
-
-				const u32 removedCount = originalSize - logicalSize;
-
-				FrameAllocatorScope frameAllocatorScope;
-				FrameVector<PackedRendererId> deallocSlotIds(removedCount);
-				for(u32 slotIndex = 0; slotIndex < removedCount; ++slotIndex)
-					deallocSlotIds[slotIndex] = logicalSize + slotIndex;
-
-				fnDestroy(TArrayView<const PackedRendererId>(deallocSlotIds.data(), removedCount));
-
-				(arrays.resize(logicalSize), ...);
-				mDenseToSparse.resize(logicalSize);
-			}
-
-			if(commands.Allocations.Size() > 0)
-				ProcessRendererObjectAllocations(commands.Allocations, mSparseSlots, mDenseToSparse, arrays...);
-
-			if(commands.Deallocations.Data())
-				allocator.Free(reinterpret_cast<u8*>(const_cast<RendererIdCommand*>(commands.Deallocations.Data())));
-
-			if(commands.Allocations.Data())
-				allocator.Free(reinterpret_cast<u8*>(const_cast<RendererIdCommand*>(commands.Allocations.Data())));
-		}
-
-		/** Consumes pending allocations and deallocations, returning views into FrameAllocator-backed arrays. */
-		FlushedCommands FlushCommands(FrameAllocator& allocator);
+		template<typename FnDoOnPackedIdChanged, typename FnDoOnWillDestroy, typename... Arrays>
+		void ApplyCommandsHelper(const CommandBatch& commands, FrameAllocator& allocator, FnDoOnPackedIdChanged&& fnDoOnPackedIdChanged, FnDoOnWillDestroy&& fnDoOnWillDestroy, Arrays&... arrays);
 
 		// Main thread
 		RendererIdAllocator mObjectIdAllocator;
@@ -296,15 +153,309 @@ namespace b3d
 		TArray<RendererId> mDeallocations; /**< Deallocations this frame, not yet flushed. */
 
 		// Render thread
-		Vector<RendererId> mSparseSlots; /**< RendererId -> PackedRendererId. */
-		Vector<RendererId> mDenseToSparse; /**< PackedRendererId -> RendererId. */
+		Vector<RendererId> mPersistentToPackedId; /**< RendererId -> PackedRendererId. */
+		Vector<RendererId> mPackedToPersistentId; /**< PackedRendererId -> RendererId. */
 	};
 
-	/** Action determined by ApplyPacket during SyncWrite. Indicates whether the object is newly registered or needs re-registration. */
-	enum class RendererObjectApplyAction : u8
+	template<typename SwappedFn, typename DestroyFn, typename... Arrays>
+	void RendererObjectStorage::ApplyCommandsHelper(const CommandBatch& commands, FrameAllocator& allocator, SwappedFn&& fnDoOnPackedIdChanged, DestroyFn&& fnDoOnWillDestroy, Arrays&... arrays)
 	{
-		Register,
-		Reregister
+		if(commands.DeallocatedIds.Size() > 0)
+		{
+			const PackedRendererId originalSize = (PackedRendererId)mPackedToPersistentId.size();
+			PackedRendererId logicalSize = originalSize;
+
+			for(u32 commandIndex = 0; commandIndex < commands.DeallocatedIds.Size(); ++commandIndex)
+			{
+				const RendererId objectId = commands.DeallocatedIds[commandIndex];
+				const u32 identifier = objectId.GetIdentifier();
+
+				B3D_ASSERT(identifier < (u32)mSparseSlots.size());
+				B3D_ASSERT(mSparseSlots[identifier].GetVersion() == objectId.GetVersion());
+
+				const PackedRendererId slotToRemove = (PackedRendererId)mPersistentToPackedId[identifier].GetIdentifier();
+
+				--logicalSize;
+				if(slotToRemove != logicalSize)
+				{
+					// Swap into the "to-be-removed" zone at the tail
+					(std::swap(arrays[slotToRemove], arrays[logicalSize]), ...);
+					std::swap(mPackedToPersistentId[slotToRemove], mPackedToPersistentId[logicalSize]);
+
+					// Update the swapped element's sparse entry to point to its new slot
+					const u32 swappedIdentifier = mPackedToPersistentId[slotToRemove].GetIdentifier();
+					mPersistentToPackedId[swappedIdentifier].Identifier = slotToRemove;
+
+					fnDoOnPackedIdChanged(slotToRemove);
+				}
+
+				// Invalidate the removed element's sparse entry
+				mPersistentToPackedId[identifier] = kInvalidRendererId;
+			}
+
+			const u32 removedCount = originalSize - logicalSize;
+
+			FrameAllocatorScope frameAllocatorScope;
+			FrameVector<PackedRendererId> deallocSlotIds(removedCount);
+			for(u32 slotIndex = 0; slotIndex < removedCount; ++slotIndex)
+				deallocSlotIds[slotIndex] = logicalSize + slotIndex;
+
+			fnDoOnWillDestroy(TArrayView<const PackedRendererId>(deallocSlotIds.data(), removedCount));
+
+			(arrays.resize(logicalSize), ...);
+			mPackedToPersistentId.resize(logicalSize);
+		}
+
+		if(commands.AllocatedIds.Size() > 0)
+		{
+			for(u32 commandIndex = 0; commandIndex < commands.AllocatedIds.Size(); ++commandIndex)
+			{
+				const RendererId objectId = commands.AllocatedIds[commandIndex];
+				const u32 identifier = objectId.GetIdentifier();
+
+				const PackedRendererId newSlot = (PackedRendererId)mPackedToPersistentId.size();
+
+				// Grow sparse array if needed
+				if(identifier >= (u32)mPersistentToPackedId.size())
+					mPersistentToPackedId.resize(identifier + 1);
+
+				mPersistentToPackedId[identifier] = RendererId((RendererId::IdentifierType)newSlot, (RendererId::VersionType)objectId.GetVersion());
+
+				mPackedToPersistentId.push_back(objectId);
+				(arrays.push_back(typename std::remove_reference_t<decltype(arrays)>::value_type{}), ...);
+			}
+		}
+
+		if(commands.DeallocatedIds.Data())
+			allocator.Free(reinterpret_cast<u8*>(const_cast<RendererId*>(commands.DeallocatedIds.Data())));
+
+		if(commands.AllocatedIds.Data())
+			allocator.Free(reinterpret_cast<u8*>(const_cast<RendererId*>(commands.AllocatedIds.Data())));
+	}
+
+	/**
+	 * CRTP interface that serves as a helper to synchronize data between the main and render thread. A single channel
+	 * is used to synchronize data from one or multiple ECS fragments from the main thread, into a single packet struct which
+	 * is then sent to the render thread to be applied.
+	 *
+	 * Different channels can be defined for different purposes. For example one channel might be used for only updating object
+	 * transform (fast path), and other channel for more substantial updates (e.g. renderable mesh or material changed). Generally
+	 * each channel type also requires its own ECS dirty tag.
+	 *
+	 * Derived types must provide:
+	 *  - void CreateAndPopulatePacket(FragmentTypes&... fragments, FrameAllocator& allocator)
+	 *    - Must call CreatePacket() to create a packet with data to sync, then populate it with data from @p fragments.
+	 *  - void ApplyPacket(PacketType& packet, PackedRendererId rendererId, StorageType& storage)
+	 *    - Use provided @p rendererId to access the render thread packed array data for the object from @p storage, then
+	 *      update it to latest version using the data you stored in @p packet.
+	 *
+	 * @tparam Derived			CRTP derived type.
+	 * @tparam PacketType		Data type that will store the intermediate data being transferred.
+	 * @tparam DirtyTagType		ECS tag type used to mark dirty entities (e.g. ecs::RenderableDirty). CreateAndPopulatePacket() will be called for each dirty entity.
+	 * @tparam FragmentTypes	ECS fragment types included in the view and passed to CreateAndPopulatePacket (e.g. ecs::Renderable, ecs::WorldTransform, ecs::RenderableId).
+	 */
+	template<typename Derived, typename PacketType, typename DirtyTagType, typename... FragmentTypes>
+	struct TRendererObjectECSSyncChannel
+	{
+		using DirtyTag = DirtyTagType;
+
+		/** Returns the number of packets that have been added to this channel. */
+		u32 GetPacketCount() const { return mPacketCount; }
+
+		/** Returns the number of entities marked with DirtyTag in the registry. */
+		static u32 GetDirtyCount(ecs::Registry& registry)
+		{
+			auto* storage = registry.TryGetStorage<DirtyTag>();
+			return storage ? (u32)storage->Size() : 0;
+		}
+
+		/** Allocates the packet storage, iterates all dirty entities, populating packet data via Derived::CreateAndPopulatePacket(). */
+		void Read(ecs::Registry& registry, FrameAllocator& allocator, u32 count)
+		{
+			AllocatePacketStorage(allocator, count);
+
+			auto view = registry.CreateView<DirtyTag, FragmentTypes...>();
+			view.template SetLeadingType<DirtyTag>();
+
+			for(auto entity : view)
+				static_cast<Derived*>(this)->CreateAndPopulatePacket(view.template Get<FragmentTypes>(entity)..., allocator);
+		}
+
+		/** Overload that excludes entities matching @p excluded types from the view. */
+		template<typename ExcludedTypes>
+		void Read(ecs::Registry& registry, FrameAllocator& allocator, u32 count, ExcludedTypes excluded)
+		{
+			AllocatePacketStorage(allocator, count);
+
+			auto view = registry.CreateView<DirtyTag, FragmentTypes...>(excluded);
+			view.template SetLeadingType<DirtyTag>();
+
+			for(auto entity : view)
+				static_cast<Derived*>(this)->CreateAndPopulatePacket(view.template Get<FragmentTypes>(entity)..., allocator);
+		}
+
+		/**
+		 * Default write implementation. Resolves IDs and calls Derived::ApplyPacket for each valid entry.
+		 * Derived types may shadow this to use WritePackets with a custom callable instead.
+		 */
+		template<typename StorageType>
+		void Write(StorageType& storage, FrameAllocator& allocator)
+		{
+			WritePackets(storage, allocator, [this](PacketType& packet, PackedRendererId rendererId, StorageType& storageRef)
+			{
+				static_cast<Derived*>(this)->ApplyPacket(packet, rendererId, storageRef);
+			});
+		}
+
+	protected:
+		/**
+		 * Iterates all packets, resolving each RendererId to a PackedRendererId via @p storage, then calling
+		 * @p fnApplyPacket for each valid entry. Destructs packets after processing and frees packet storage.
+		 */
+		template<typename StorageType, typename FnApplyPacket>
+		void WritePackets(StorageType& storage, FrameAllocator& allocator, FnApplyPacket&& fnApplyPacket)
+		{
+			for(u32 entryIndex = 0; entryIndex < mPacketCount; ++entryIndex)
+			{
+				PackedRendererId rendererId = storage.GetPackedRendererId(mRendererIds[entryIndex]);
+				if(rendererId != kInvalidPackedRendererId)
+					fnApplyPacket(mPackets[entryIndex], rendererId);
+
+				mPackets[entryIndex].~PacketType();
+			}
+
+			FreePacketStorage(allocator);
+		}
+
+		/** Construct a new PacketType in-place and store the associated renderer ID. Returns a reference to the constructed packet. */
+		template<typename... Args>
+		PacketType& CreatePacket(RendererId rendererId, Args&&... args)
+		{
+			B3D_ASSERT(mPacketCount < mMaximumPacketCount);
+
+			auto* packet = new(&mPackets[mPacketCount]) PacketType(std::forward<Args>(args)...);
+			mRendererIds[mPacketCount] = rendererId;
+			++mPacketCount;
+			return *packet;
+		}
+
+	private:
+		/** Frees the frame-allocated packet and renderer ID arrays. */
+		void FreePacketStorage(FrameAllocator& allocator)
+		{
+			if(mPackets)
+				allocator.Free((u8*)mPackets);
+
+			if(mRendererIds)
+				allocator.Free((u8*)mRendererIds);
+		}
+
+		/** Allocate internal arrays for @p count of packet data and renderer ID entries using @p allocator. */
+		void AllocatePacketStorage(FrameAllocator& allocator, u32 count)
+		{
+			mPackets = reinterpret_cast<PacketType*>(allocator.AllocateAligned(sizeof(PacketType) * count, alignof(PacketType)));
+			mRendererIds = reinterpret_cast<RendererId*>(allocator.AllocateAligned(sizeof(RendererId) * count, alignof(RendererId)));
+
+			mMaximumPacketCount = count;
+		}
+
+		u32 mPacketCount = 0;
+		u32 mMaximumPacketCount = 0;
+		PacketType* mPackets = nullptr;
+		RendererId* mRendererIds = nullptr;
+	};
+
+	/**
+	 * Helper object used for synchronizing data from ECS entity/fragments on the main thread to packed arrays stored in RendererObjectStorage on the render thread.
+	 *
+	 * A single sync batch contains:
+	 *  - A list of renderer IDs that were allocated and deallocated since the last batch. See RendererObjectStorage.
+	 *  - One or multiple sync channels, containing data used for updating live objects on the render thread. See TRendererObjectECSSyncChannel.
+	 *
+	 * The intended use of this helper is inside RendererObjectStorage::SyncRead/SyncWrite method implementations.
+	 *
+	 * @tparam FullUpdateChannelType		Channel that syncs all the data from the main thread to the render thread object. This is the default
+	 *										channel that must always exist. A full channel sync is always sent after a new object is allocated.
+	 * @tparam PartialUpdateChannelTypes	Zero or more TRendererObjectSyncChannels that can be used for partial property synchronization (e.g.
+	 *										if object transform changes a channel that only sends transform updates, acting as a fast path). If
+	 *										a full update is scheduled for the same object, partial update channels are ignored.
+	 */
+	template<typename FullUpdateChannelType, typename... PartialUpdateChannelTypes>
+	struct TRendererObjectECSSyncBatch
+	{
+		using FullDirtyTag = typename FullUpdateChannelType::DirtyTag;
+
+		FullUpdateChannelType FullUpdateChannel;
+		std::tuple<PartialUpdateChannelTypes...> AdditionalChannels;
+		RendererObjectStorage::CommandBatch Commands;
+
+		/**
+		 * Allocates a TRendererObjectECSSyncBatch buffer using the provided @p allocator. Flushes renderer ID allocation/deallocation
+		 * commands from @p storage and stores them into the sync batch. Performs read operations on all channels, storing their
+		 * sync data in the sync batch. Clears all dirty tags used by the channels. Returns nullptr if nothing is dirty.
+		 *
+		 * @note Main thread only.
+		 */
+		static void* Read(RendererObjectStorage& storage, ecs::Registry& registry, FrameAllocator& allocator)
+		{
+			auto flushedCommands = storage.FlushCommands(allocator);
+			const u32 commandCount = (u32)flushedCommands.DeallocatedIds.Size() + (u32)flushedCommands.AllocatedIds.Size();
+
+			u32 fullCount = FullUpdateChannelType::GetDirtyCount(registry);
+			bool hasAdditional = (false || ... || (PartialUpdateChannelTypes::GetDirtyCount(registry) > 0));
+
+			if(fullCount == 0 && !hasAdditional && commandCount == 0)
+				return nullptr;
+
+			auto* batchData = allocator.Construct<TRendererObjectECSSyncBatch>();
+			batchData->Commands = flushedCommands;
+
+			if(fullCount > 0)
+				batchData->FullUpdateChannel.Read(registry, allocator, fullCount);
+
+			// Read each additional channel, excluding entities already marked with FullDirtyTag
+			std::apply([&](auto&... channels)
+			{
+				auto fnReadChannel = [&](auto& channel)
+				{
+					u32 count = std::remove_reference_t<decltype(channel)>::GetDirtyCount(registry);
+					if(count > 0)
+						channel.Read(registry, allocator, count, ecs::TExcludedTypes<FullDirtyTag>{});
+				};
+				(fnReadChannel(channels), ...);
+			}, batchData->AdditionalChannels);
+
+			registry.ClearStorage<FullDirtyTag>();
+			(registry.ClearStorage<typename PartialUpdateChannelTypes::DirtyTag>(), ...);
+
+			return batchData;
+		}
+
+		/**
+		 * Reads allocation/deallocation commands from sync batch provided as @p rawData, then applies them to @p storage,
+		 * which resizes and reorders packed arrays. Then it reads all packets for all provided channels and calls Write()
+		 * on each channel. When done cleans up the sync batch.
+		 *
+		 * @tparam StorageType	Storage type holding the packed arrays.
+		 */
+		template<typename StorageType>
+		static void Write(StorageType& storage, void* rawData, FrameAllocator& allocator)
+		{
+			auto* batch = static_cast<TRendererObjectECSSyncBatch*>(rawData);
+			const auto& commands = batch->Commands;
+
+			if(commands.DeallocatedIds.Size() > 0 || commands.AllocatedIds.Size() > 0)
+				storage.ApplyCommands(commands, allocator);
+
+			batch->FullUpdateChannel.Write(storage, allocator);
+
+			std::apply([&](auto&... channels)
+			{
+				(channels.Write(storage, allocator), ...);
+			}, batch->AdditionalChannels);
+
+			allocator.Destruct(batch);
+		}
 	};
 
 	/** @} */

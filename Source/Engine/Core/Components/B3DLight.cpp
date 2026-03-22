@@ -44,13 +44,85 @@ namespace b3d
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
 	B3D_SYNC_BLOCK_END
 
-	struct LightSyncBatch
+	struct LightFullUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		LightFullUpdateChannel,
+		ecs::Light::FullSyncPacket,
+		ecs::LightDirty,
+		ecs::Light, ecs::WorldTransform, ecs::LightId
+	>
 	{
-		TBatchSyncBuffer<ecs::Light::FullSyncPacket> Full;
-		TBatchSyncBuffer<ecs::Light::TransformSyncPacket> Transform;
+		void Write(LightObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToCreate(&allocator);
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToDestroy(&allocator);
 
-		RendererObjectStorage::FlushedCommands Commands;
+			WritePackets(storage, allocator, [&renderStatesToCreate, &renderStatesToDestroy, &storage](ecs::Light::FullSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::LightProxy& proxy = storage.GetLightProxy(rendererId);
+
+				bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
+				proxy.mRendererId = rendererId;
+				packet.ApplySyncData(&proxy.mData);
+
+				proxy.mTransform = packet.TransformData;
+				proxy.mData.ComputeBounds(proxy.mTransform);
+				proxy.mBounds = proxy.mData.Bounds;
+
+				if(wasRegistered)
+					renderStatesToDestroy.push_back(rendererId);
+
+				renderStatesToCreate.push_back(rendererId);
+			});
+
+			if(!renderStatesToDestroy.empty())
+				storage.DestroyRenderState(renderStatesToDestroy);
+
+			if(!renderStatesToCreate.empty())
+				storage.CreateRenderState(renderStatesToCreate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Light& fragment, ecs::WorldTransform& transform, ecs::LightId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.TransformData = transform;
+		}
 	};
+
+	struct LightTransformUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		LightTransformUpdateChannel,
+		ecs::Light::TransformSyncPacket,
+		ecs::LightTransformDirty,
+		ecs::Light, ecs::WorldTransform, ecs::LightId
+	>
+	{
+		void Write(LightObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToUpdate(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToUpdate, &storage](ecs::Light::TransformSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::LightProxy& proxy = storage.GetLightProxy(rendererId);
+				proxy.mTransform = packet.TransformData;
+				proxy.mData.ComputeBounds(proxy.mTransform);
+				proxy.mBounds = proxy.mData.Bounds;
+
+				renderStatesToUpdate.push_back(rendererId);
+			});
+
+			if(!renderStatesToUpdate.empty())
+				storage.UpdateRenderState(renderStatesToUpdate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Light& fragment, ecs::WorldTransform& transform, ecs::LightId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.TransformData = transform;
+		}
+	};
+
+	using LightSyncBatch = TRendererObjectECSSyncBatch<LightFullUpdateChannel, LightTransformUpdateChannel>;
 }
 
 template<bool IsRenderProxy>
@@ -585,171 +657,13 @@ void Light::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 
 // LightObjectStorageBase
 
-RendererObjectApplyAction LightObjectStorageBase::ApplyPacket(ecs::Light::FullSyncPacket& packet, render::LightProxy& proxy, PackedRendererId rendererId)
-{
-	bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
-	proxy.mRendererId = rendererId;
-	packet.ApplySyncData(&proxy.mData);
-	proxy.mTransform = packet.TransformData;
-	proxy.mData.ComputeBounds(proxy.mTransform);
-	proxy.mBounds = proxy.mData.Bounds;
-
-	return wasRegistered ? RendererObjectApplyAction::Reregister : RendererObjectApplyAction::Register;
-}
-
 void* LightObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
 {
-	FlushedCommands flushedCommands = FlushCommands(allocator);
-	const u32 commandCount = (u32)flushedCommands.Deallocations.Size() + (u32)flushedCommands.Allocations.Size();
-
-	auto* fullStorage = registry.TryGetStorage<ecs::LightDirty>();
-	auto* transformStorage = registry.TryGetStorage<ecs::LightTransformDirty>();
-
-	u32 fullCount = fullStorage ? (u32)fullStorage->Size() : 0;
-	u32 transformCount = transformStorage ? (u32)transformStorage->Size() : 0;
-
-	if(fullCount == 0 && transformCount == 0 && commandCount == 0)
-		return nullptr;
-
-	auto* batchData = allocator.Construct<LightSyncBatch>();
-	batchData->Commands = flushedCommands;
-
-	if(fullCount > 0)
-	{
-		batchData->Full.Allocate(allocator, fullCount);
-
-		auto view = registry.CreateView<ecs::LightDirty, ecs::Light, ecs::WorldTransform, ecs::LightId>();
-		view.SetLeadingType<ecs::LightDirty>();
-
-		for(auto entity : view)
-		{
-#if B3D_BUILD_TYPE_DEVELOPMENT
-			B3D_ASSERT(!registry.HasAllOf<ecs::TransformDirty>(entity) && "WorldTransform is stale during SyncRead — TransformSystem must flush before renderer sync");
-#endif
-			auto& lightData = view.Get<ecs::Light>(entity);
-			auto& worldTransform = view.Get<ecs::WorldTransform>(entity);
-			RendererId objectId = view.Get<ecs::LightId>(entity).Id;
-
-			auto& packet = batchData->Full.Add(objectId, lightData, allocator, 0);
-			packet.TransformData = worldTransform;
-		}
-	}
-
-	if(transformCount > 0)
-	{
-		batchData->Transform.Allocate(allocator, transformCount);
-
-		auto view = registry.CreateView<ecs::LightTransformDirty, ecs::Light, ecs::WorldTransform, ecs::LightId>(ecs::TExcludedTypes<ecs::LightDirty>{});
-		view.SetLeadingType<ecs::LightTransformDirty>();
-
-		for(auto entity : view)
-		{
-#if B3D_BUILD_TYPE_DEVELOPMENT
-			B3D_ASSERT(!registry.HasAllOf<ecs::TransformDirty>(entity) && "WorldTransform is stale during SyncRead — TransformSystem must flush before renderer sync");
-#endif
-			auto& lightData = view.Get<ecs::Light>(entity);
-			auto& worldTransform = view.Get<ecs::WorldTransform>(entity);
-			RendererId objectId = view.Get<ecs::LightId>(entity).Id;
-
-			auto& packet = batchData->Transform.Add(objectId, lightData, allocator, 0);
-			packet.TransformData = worldTransform;
-		}
-	}
-
-	registry.ClearStorage<ecs::LightDirty>();
-	registry.ClearStorage<ecs::LightTransformDirty>();
-
-	return batchData;
+	return LightSyncBatch::Read(*this, registry, allocator);
 }
 
 void LightObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& allocator)
 {
-	LightSyncBatch* batch = static_cast<LightSyncBatch*>(rawData);
-
-	const FlushedCommands& commands = batch->Commands;
-
-	if(commands.Deallocations.Size() > 0 || commands.Allocations.Size() > 0)
-		ApplyCommands(commands, allocator);
-
-	// Upper-bound counts for batch arrays
-	const u32 fullUpdateCount = batch->Full.Count;
-	const u32 transformUpdateCount = batch->Transform.Count;
-
-	// Allocate batch arrays from the FrameAllocator
-	PackedRendererId* createRenderStateList = nullptr;
-	u32 createRenderStateCount = 0;
-
-	PackedRendererId* destroyRenderStateList = nullptr;
-	u32 destroyRenderStateCount = 0;
-
-	PackedRendererId* updateRenderStateList = nullptr;
-	u32 updateRenderStateCount = 0;
-
-	if(fullUpdateCount > 0)
-	{
-		createRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * fullUpdateCount, alignof(PackedRendererId)));
-		destroyRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * fullUpdateCount, alignof(PackedRendererId)));
-	}
-
-	if(transformUpdateCount > 0)
-		updateRenderStateList = reinterpret_cast<PackedRendererId*>(allocator.AllocateAligned(sizeof(PackedRendererId) * transformUpdateCount, alignof(PackedRendererId)));
-
-	// Apply full sync packets, collect render state create/destroy actions
-	batch->Full.Each([this, createRenderStateList, &createRenderStateCount, destroyRenderStateList, &destroyRenderStateCount](ecs::Light::FullSyncPacket& packet, RendererId objectId)
-	{
-		PackedRendererId rendererId = GetPackedRendererId(objectId);
-		if(rendererId == kInvalidPackedRendererId)
-			return;
-
-		RendererObjectApplyAction action = ApplyPacket(packet, mLightProxies[rendererId], rendererId);
-		switch(action)
-		{
-		case RendererObjectApplyAction::Register:
-			createRenderStateList[createRenderStateCount++] = rendererId;
-			break;
-		case RendererObjectApplyAction::Reregister:
-			destroyRenderStateList[destroyRenderStateCount++] = rendererId;
-			createRenderStateList[createRenderStateCount++] = rendererId;
-			break;
-		}
-	});
-
-	// Apply transform packets, collect render update actions
-	batch->Transform.Each([&](ecs::Light::TransformSyncPacket& packet, RendererId objectId)
-	{
-		PackedRendererId rendererId = GetPackedRendererId(objectId);
-		if(rendererId == kInvalidPackedRendererId)
-			return;
-
-		render::LightProxy& proxy = mLightProxies[rendererId];
-		proxy.mTransform = packet.TransformData;
-		proxy.mData.ComputeBounds(proxy.mTransform);
-		proxy.mBounds = proxy.mData.Bounds;
-
-		updateRenderStateList[updateRenderStateCount++] = rendererId;
-	});
-
-	// Update render state in batches
-	if(destroyRenderStateCount > 0)
-		DestroyRenderState(TArrayView<const PackedRendererId>(destroyRenderStateList, destroyRenderStateCount));
-
-	if(createRenderStateCount > 0)
-		CreateRenderState(TArrayView<const PackedRendererId>(createRenderStateList, createRenderStateCount));
-
-	if(updateRenderStateCount > 0)
-		UpdateRenderState(TArrayView<const PackedRendererId>(updateRenderStateList, updateRenderStateCount));
-
-	if(updateRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(updateRenderStateList));
-
-	if(destroyRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(destroyRenderStateList));
-
-	if(createRenderStateList)
-		allocator.Free(reinterpret_cast<u8*>(createRenderStateList));
-
-	batch->Full.Free(allocator);
-	batch->Transform.Free(allocator);
-
-	allocator.Destruct(batch);
+	LightSyncBatch::Write(*this, rawData, allocator);
 }
+

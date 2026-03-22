@@ -167,9 +167,9 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 
 RenderableObjectStorage::RenderableObjectStorage() = default;
 
-void RenderableObjectStorage::ApplyCommands(const FlushedCommands& commands, FrameAllocator& allocator)
+void RenderableObjectStorage::ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator)
 {
-	RendererObjectStorage::ApplyCommands(
+	RendererObjectStorage::ApplyCommandsHelper(
 		commands,
 		allocator,
 		[this](PackedRendererId slot) { mRenderableProxies[slot].SetRendererId(slot); },
