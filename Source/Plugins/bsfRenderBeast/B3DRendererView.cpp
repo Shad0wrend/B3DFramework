@@ -910,8 +910,9 @@ void RendererViewGroup::SetViews(RendererView** views, u32 numViews)
 	}
 }
 
-void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo)
+void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene)
 {
+	const SceneInfo& sceneInfo = scene.GetSceneInfo();
 	const auto viewCount = (u32)mViews.size();
 
 	// Early exit if no views render scene geometry
@@ -953,11 +954,11 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	}
 
 	// Calculate light visibility for all views
-	const auto radialLightCount = (u32)sceneInfo.GetRadialLights().size();
+	const auto radialLightCount = (u32)scene.GetRadialLights().size();
 	mVisibility.RadialLights.resize(radialLightCount, false);
 	mVisibility.RadialLights.assign(radialLightCount, false);
 
-	const auto spotLightCount = (u32)sceneInfo.GetSpotLights().size();
+	const auto spotLightCount = (u32)scene.GetSpotLights().size();
 	mVisibility.SpotLights.resize(spotLightCount, false);
 	mVisibility.SpotLights.assign(spotLightCount, false);
 
@@ -966,9 +967,9 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 		if(!mViews[viewIndex]->ShouldDraw3D())
 			continue;
 
-		mViews[viewIndex]->DetermineVisible(sceneInfo.GetRadialLightWorldBounds(), LightType::Radial, &mVisibility.RadialLights);
+		mViews[viewIndex]->DetermineVisible(scene.GetRadialLightWorldBounds(), LightType::Radial, &mVisibility.RadialLights);
 
-		mViews[viewIndex]->DetermineVisible(sceneInfo.GetSpotLightWorldBounds(), LightType::Spot, &mVisibility.SpotLights);
+		mViews[viewIndex]->DetermineVisible(scene.GetSpotLightWorldBounds(), LightType::Spot, &mVisibility.SpotLights);
 	}
 
 	// Calculate refl. probe visibility for all views
@@ -993,7 +994,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	// Note: I'm determining light and refl. probe visibility for the entire group. It might be more performance
 	// efficient to do it per view. Additionally I'm using a single GPU buffer to hold their information, which is
 	// then updated when each view group is rendered. It might be better to keep one buffer reserved per-view.
-	mVisibleLightData.Update(sceneInfo, *this);
+	mVisibleLightData.Update(scene, *this);
 	mVisibleReflProbeData.Update(sceneInfo, *this);
 
 	const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;

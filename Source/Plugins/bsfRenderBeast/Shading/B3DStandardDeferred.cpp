@@ -88,10 +88,10 @@ DeferredIBLSetupMaterial* DeferredIBLSetupMaterial::GetVariation(bool msaa, bool
 	}
 }
 
-void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer)
+void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const RenderBeastScene& scene, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer)
 {
 	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput);
-	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, sceneInfo.ReflProbeCubemapsTex);
+	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, scene.GetSceneInfo().ReflProbeCubemapsTex);
 
 	gpuParameters->SetUniformBuffer("PerCamera", perCamera);
 	gpuParameters->SetUniformBuffer("ReflProbeParams", globalProbeUniformBuffer);
@@ -215,7 +215,7 @@ DeferredIBLFinalizeMaterial* DeferredIBLFinalizeMaterial::GetVariation(bool msaa
 	}
 }
 
-StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(TArrayView<const PackedRendererId> lights, const SceneInfo& sceneInfo, const RendererView& view, const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion)
+StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(TArrayView<const PackedRendererId> lights, const RenderBeastScene& scene, const RendererView& view, const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion)
 {
 	LightBatches batches;
 
@@ -225,7 +225,7 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(TArrayView<
 	// Group lights by material variation
 	for(PackedRendererId lightId : lights)
 	{
-		const LightProxy& proxy = sceneInfo.GetLightProxy(lightId);
+		const LightProxy& proxy = scene.GetLightProxy(lightId);
 		const LightType lightType = proxy.GetType();
 
 		// Determine material variation
@@ -269,7 +269,7 @@ StandardDeferred::LightBatches StandardDeferred::PrepareLightBatches(TArrayView<
 		// Write light parameters to buffer
 		for(u32 lightIndex = 0; lightIndex < lightCount; lightIndex++)
 		{
-			const LightProxy& lightProxy = sceneInfo.GetLightProxy(batch.Lights[lightIndex].LightId);
+			const LightProxy& lightProxy = scene.GetLightProxy(batch.Lights[lightIndex].LightId);
 			PopulateLightUniformBuffer(lightProxy, batch.PerLightUniformBuffer, lightIndex);
 			batch.Lights[lightIndex].UniformBufferOffset = lightIndex * uniformBlockStride;
 		}
@@ -360,7 +360,7 @@ void StandardDeferred::RenderLightBatches(GpuCommandBuffer& commandBuffer, const
 	}
 }
 
-TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const GpuBufferSuballocation& globalReflectionProbeUniformBuffer)
+TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const RenderBeastScene& scene, const GpuBufferSuballocation& globalReflectionProbeUniformBuffer)
 {
 	TArray<ReflectionProbeRenderInformation> output;
 
@@ -400,7 +400,7 @@ TArray<StandardDeferred::ReflectionProbeRenderInformation> StandardDeferred::Pre
 
 		DeferredIBLProbeMaterial* material = DeferredIBLProbeMaterial::GetVariation(renderInformation.IsViewerInside, isMSAA, true);
 		renderInformation.GpuParameters = material->CreateGpuParameterSet();
-		DeferredIBLProbeMaterial::PopulateParameters(device, renderInformation.GpuParameters, gBufferInput, perViewBuffer, sceneInfo, perProbeBuffer, globalReflectionProbeUniformBuffer);
+		DeferredIBLProbeMaterial::PopulateParameters(device, renderInformation.GpuParameters, gBufferInput, perViewBuffer, scene, perProbeBuffer, globalReflectionProbeUniformBuffer);
 
 		output.Add(renderInformation);
 	}

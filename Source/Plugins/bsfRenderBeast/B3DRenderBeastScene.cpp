@@ -550,16 +550,6 @@ void LightObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> id
 	}
 }
 
-// ---- SceneInfo ----
-
-TArrayView<const PackedRendererId> SceneInfo::GetDirectionalLights() const { return mLightStorage->GetDirectionalLights(); }
-TArrayView<const PackedRendererId> SceneInfo::GetRadialLights() const { return mLightStorage->GetRadialLights(); }
-TArrayView<const PackedRendererId> SceneInfo::GetSpotLights() const { return mLightStorage->GetSpotLights(); }
-TArrayView<const Sphere> SceneInfo::GetRadialLightWorldBounds() const { return mLightStorage->GetRadialLightWorldBounds(); }
-TArrayView<const Sphere> SceneInfo::GetSpotLightWorldBounds() const { return mLightStorage->GetSpotLightWorldBounds(); }
-const LightProxy& SceneInfo::GetLightProxy(PackedRendererId packedId) const { return mLightStorage->GetLightProxy(packedId); }
-const LightRenderState& SceneInfo::GetLightRenderState(PackedRendererId packedId) const { return mLightStorage->GetLightRenderState(packedId); }
-
 // ---- RenderBeastScene ----
 
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
@@ -1292,9 +1282,6 @@ void RenderBeastScene::Initialize()
 
 	mInfo.Renderables = &renderableStorage.GetRenderables();
 	mInfo.RenderableCullInfos = &renderableStorage.GetRenderableCullInfos();
-
-	LightObjectStorage& lightStorage = GetLightStorage();
-	mInfo.mLightStorage = &lightStorage;
 
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())

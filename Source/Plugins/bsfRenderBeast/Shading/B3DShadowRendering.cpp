@@ -1116,12 +1116,12 @@ namespace b3d
 			return shadowMapTfrm * mixedToShadow;
 		}
 
-		ShadowRendering::ProjectedShadowRenderingBatchInformation ShadowRendering::PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, PackedRendererId lightId, const SceneInfo& sceneInfo, GBufferTextures gbuffer) const
+		ShadowRendering::ProjectedShadowRenderingBatchInformation ShadowRendering::PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, PackedRendererId lightId, const RenderBeastScene& scene, GBufferTextures gbuffer) const
 		{
 			const u32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
 
-			const LightProxy& light = sceneInfo.GetLightProxy(lightId);
-			const u32 lightIndexInTypeArray = sceneInfo.GetLightRenderState(lightId).TypeArrayIndex;
+			const LightProxy& light = scene.GetLightProxy(lightId);
+			const u32 lightIndexInTypeArray = scene.GetLightRenderState(lightId).TypeArrayIndex;
 
 			const auto& viewProperties = view.GetProperties();
 			const GpuBufferSuballocation& perViewBuffer = view.GetPerViewBuffer();
@@ -1373,9 +1373,9 @@ namespace b3d
 			return batchRenderingInfo;
 		}
 
-		void ShadowRendering::RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, PackedRendererId lightId, const SceneInfo& sceneInfo, const ProjectedShadowRenderingBatchInformation& batch) const
+		void ShadowRendering::RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, PackedRendererId lightId, const RenderBeastScene& scene, const ProjectedShadowRenderingBatchInformation& batch) const
 		{
-			const LightProxy& light = sceneInfo.GetLightProxy(lightId);
+			const LightProxy& light = scene.GetLightProxy(lightId);
 			const auto& viewProperties = view.GetProperties();
 
 			// TODO - Calculate and set a scissor rectangle for the light

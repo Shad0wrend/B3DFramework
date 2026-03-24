@@ -16,7 +16,7 @@ namespace b3d
 
 	namespace render
 	{
-		struct SceneInfo;
+		class RenderBeastScene;
 		class RendererViewGroup;
 		class RenderCompositorNode;
 		struct PooledStorageBuffer;
@@ -29,8 +29,8 @@ namespace b3d
 		/** Inputs provided to each node in the render compositor hierarchy */
 		struct RenderCompositorNodeInputs
 		{
-			RenderCompositorNodeInputs(const RendererViewGroup& viewGroup, const RendererView& view, const SceneInfo& scene, const RenderBeastOptions& options, const FrameInfo& frameInfo, RenderBeastFeatureSet featureSet)
-				: ViewGroup(viewGroup), View(view), Scene(scene), Options(options), FrameInfo(frameInfo), FeatureSet(featureSet)
+			RenderCompositorNodeInputs(RenderBeastScene& scene, const RendererViewGroup& viewGroup, const RendererView& view, const RenderBeastOptions& options, const FrameInfo& frameInfo, RenderBeastFeatureSet featureSet)
+				: Scene(scene), ViewGroup(viewGroup), View(view), Options(options), FrameInfo(frameInfo), FeatureSet(featureSet)
 			{}
 
 			SPtr<GpuCommandBuffer> ActiveCommandBuffer;
@@ -38,9 +38,9 @@ namespace b3d
 			SPtr<GpuCommandBufferProfiler> CommandBufferProfiler;
 #endif
 
+			RenderBeastScene& Scene;
 			const RendererViewGroup& ViewGroup;
 			const RendererView& View;
-			const SceneInfo& Scene;
 			const RenderBeastOptions& Options;
 			const FrameInfo& FrameInfo;
 			const RenderBeastFeatureSet FeatureSet;

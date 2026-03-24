@@ -458,7 +458,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 		}
 
 		mMainViewGroup->SetViews(views.data(), (u32)views.size());
-		PROFILE_CALL(mMainViewGroup->DetermineVisibility(*commandBuffer, sceneInfo), "Determine visibility")
+		PROFILE_CALL(mMainViewGroup->DetermineVisibility(*commandBuffer, scene), "Determine visibility")
 
 		// Render everything
 		const bool anythingDrawnForView = RenderViews(*commandBuffer, scene, *mMainViewGroup, frameInfo, renderTargetNeedsRedraw);
@@ -569,7 +569,6 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 {
 	GetProfilerCPU().BeginSample("Render view");
 
-	const SceneInfo& sceneInfo = scene.GetSceneInfo();
 	auto& viewProps = view.GetProperties();
 
 	// Make sure light probe data is up to date
@@ -578,7 +577,7 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, RenderBeastScene& 
 
 	view.BeginFrame(frameInfo);
 
-	RenderCompositorNodeInputs inputs(viewGroup, view, sceneInfo, *mRenderThreadOptions, frameInfo, mFeatureSet);
+	RenderCompositorNodeInputs inputs(scene, viewGroup, view, *mRenderThreadOptions, frameInfo, mFeatureSet);
 	inputs.ActiveCommandBuffer = commandBuffer.GetShared();
 
 #if B3D_PROFILING_ENABLED
@@ -837,7 +836,7 @@ void RenderBeast::CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& co
 	RendererView* viewPtrs[] = { &views[0], &views[1], &views[2], &views[3], &views[4], &views[5] };
 
 	RendererViewGroup viewGroup(viewPtrs, 6, false, mRenderThreadOptions->ShadowMapSize);
-	viewGroup.DetermineVisibility(commandBuffer, sceneInfo);
+	viewGroup.DetermineVisibility(commandBuffer, renderBeastScene);
 
 	FrameInfo frameInfo({ 0.0f, 1.0f / 60.0f, 0 }, false, PerSceneFrameData());
 	RenderViews(commandBuffer, renderBeastScene, viewGroup, frameInfo, false);

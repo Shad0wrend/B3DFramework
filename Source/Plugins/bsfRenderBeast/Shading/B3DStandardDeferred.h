@@ -13,6 +13,7 @@ namespace b3d
 	namespace render
 	{
 		struct SceneInfo;
+		class RenderBeastScene;
 
 		B3D_UNIFORM_BUFFER_BEGIN(PerLightUniformDefinition)
 			B3D_UNIFORM_BUFFER_MEMBER(Vector4, gLightPositionAndSrcRadius)
@@ -168,7 +169,7 @@ namespace b3d
 			DeferredIBLProbeMaterial() = default;
 
 			/** Populates the provided GPU parameters with the provided parameters. */
-			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const SceneInfo& sceneInfo, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer);
+			static void PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const RenderBeastScene& scene, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer);
 
 			/** Creates a new transient uniform buffer containing provided per-probe data. */
 			static GpuBufferSuballocation CreatePerProbeUniformBuffer(const ReflectioneProbeData& probeData);
@@ -340,7 +341,7 @@ namespace b3d
 			 * @param lightOcclusion    Shadow occlusion texture (or Texture::kBlack if no shadows).
 			 * @return                  Prepared batch containing grouped lights and GPU resources.
 			 */
-			LightBatches PrepareLightBatches(TArrayView<const PackedRendererId> lights, const SceneInfo& sceneInfo, const RendererView& view, const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion);
+			LightBatches PrepareLightBatches(TArrayView<const PackedRendererId> lights, const RenderBeastScene& scene, const RendererView& view, const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion);
 
 			/**
 			 * Renders a prepared light batch using dynamic offsets.
@@ -352,7 +353,7 @@ namespace b3d
 			void RenderLightBatches(GpuCommandBuffer& commandBuffer, const LightBatches& batches);
 
 			/** Prepares all GPU parameters required for rendering reflection probes. */
-			TArray<ReflectionProbeRenderInformation> PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const GpuBufferSuballocation& globalReflectionProbeUniformBuffer);
+			TArray<ReflectionProbeRenderInformation> PrepareReflectionProbes(GpuDevice& device, const VisibleReflectionProbeData& visibleReflectionProbeData, const RendererView& view, const GBufferTextures& gBufferInput, const RenderBeastScene& scene, const GpuBufferSuballocation& globalReflectionProbeUniformBuffer);
 
 			/**
 			 * Evaluates filtered radiance from provided reflection probes and blends it into the current render target.

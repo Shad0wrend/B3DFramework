@@ -555,13 +555,13 @@ namespace b3d
 			void RenderShadowMaps(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
 			/** Prepares all the GpuParameterSet objects required for rendering projected shadows for the specified light. Should be followed by RenderShadowProjectionBatch. */
-			ProjectedShadowRenderingBatchInformation PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, PackedRendererId lightId, const SceneInfo& sceneInfo, GBufferTextures gbuffer) const;
+			ProjectedShadowRenderingBatchInformation PrepareParametersForRenderShadowProjection(GpuDevice& gpuDevice, const RendererView& view, PackedRendererId lightId, const RenderBeastScene& scene, GBufferTextures gbuffer) const;
 
 			/**
 			 * Renders shadow occlusion values for the specified light, through the provided view, into the currently bound
 			 * render target. User must have started a render pass externally. The system uses shadow maps rendered by RenderShadowMaps().
 			 */
-			void RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, PackedRendererId lightId, const SceneInfo& sceneInfo, const ProjectedShadowRenderingBatchInformation& batch) const;
+			void RenderShadowProjectionBatch(GpuCommandBuffer& commandBuffer, const RendererView& view, PackedRendererId lightId, const RenderBeastScene& scene, const ProjectedShadowRenderingBatchInformation& batch) const;
 
 			/** Changes the default shadow map size. Will cause all shadow maps to be rebuilt. */
 			void SetShadowMapSize(u32 size);

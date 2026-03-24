@@ -183,7 +183,7 @@ VisibleLightData::VisibleLightData()
 	: mLightCounts{}, mShadowedLightCounts{}
 {}
 
-void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup)
+void VisibleLightData::Update(const RenderBeastScene& scene, const RendererViewGroup& viewGroup)
 {
 	const VisibilityInfo& visibility = viewGroup.GetVisibilityInfo();
 
@@ -191,11 +191,11 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 		mVisibleLights[i].clear();
 
 	// Generate a list of visible light packed IDs
-	TArrayView<const PackedRendererId> directionalLights = sceneInfo.GetDirectionalLights();
+	TArrayView<const PackedRendererId> directionalLights = scene.GetDirectionalLights();
 	for(u32 i = 0; i < (u32)directionalLights.size(); i++)
 		mVisibleLights[(u32)LightType::Directional].push_back(directionalLights[i]);
 
-	TArrayView<const PackedRendererId> radialLights = sceneInfo.GetRadialLights();
+	TArrayView<const PackedRendererId> radialLights = scene.GetRadialLights();
 	for(u32 i = 0; i < (u32)radialLights.size(); i++)
 	{
 		if(!visibility.RadialLights[i])
@@ -204,7 +204,7 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 		mVisibleLights[(u32)LightType::Radial].push_back(radialLights[i]);
 	}
 
-	TArrayView<const PackedRendererId> spotLights = sceneInfo.GetSpotLights();
+	TArrayView<const PackedRendererId> spotLights = scene.GetSpotLights();
 	for(u32 i = 0; i < (u32)spotLights.size(); i++)
 	{
 		if(!visibility.SpotLights[i])
@@ -217,13 +217,13 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 		mLightCounts[i] = (u32)mVisibleLights[i].size();
 
 	// Partition all visible lights so that unshadowed ones come first
-	auto partition = [&sceneInfo](Vector<PackedRendererId>& entries)
+	auto fnPartition = [&scene](Vector<PackedRendererId>& entries)
 	{
 		u32 numUnshadowed = 0;
 		int first = -1;
 		for(u32 i = 0; i < (u32)entries.size(); ++i)
 		{
-			if(sceneInfo.GetLightProxy(entries[i]).GetCastsShadow())
+			if(scene.GetLightProxy(entries[i]).GetCastsShadow())
 			{
 				first = i;
 				break;
@@ -236,7 +236,7 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 		{
 			for(u32 i = first + 1; i < (u32)entries.size(); ++i)
 			{
-				if(!sceneInfo.GetLightProxy(entries[i]).GetCastsShadow())
+				if(!scene.GetLightProxy(entries[i]).GetCastsShadow())
 				{
 					std::swap(entries[i], entries[first]);
 					++numUnshadowed;
@@ -248,7 +248,7 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 	};
 
 	for(u32 i = 0; i < (u32)LightType::Count; i++)
-		mShadowedLightCounts[i] = mLightCounts[i] - partition(mVisibleLights[i]);
+		mShadowedLightCounts[i] = mLightCounts[i] - fnPartition(mVisibleLights[i]);
 
 	// Generate light data to initialize the GPU buffer with
 	mVisibleLightData.clear();
@@ -257,7 +257,7 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 		for(PackedRendererId lightId : lightsPerType)
 		{
 			mVisibleLightData.push_back(LightData());
-			GetLightParameters(sceneInfo.GetLightProxy(lightId), mVisibleLightData.back());
+			GetLightParameters(scene.GetLightProxy(lightId), mVisibleLightData.back());
 		}
 	}
 

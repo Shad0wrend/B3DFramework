@@ -21,6 +21,7 @@ namespace b3d
 	namespace render
 	{
 		struct SceneInfo;
+		class RenderBeastScene;
 
 
 		/** @addtogroup RenderBeast
@@ -624,7 +625,7 @@ namespace b3d
 			 * and updates the render queues of each individual view. Use getVisibilityInfo() to retrieve the calculated
 			 * visibility information.
 			 */
-			void DetermineVisibility(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo);
+			void DetermineVisibility(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene);
 
 		private:
 			Vector<RendererView*> mViews;

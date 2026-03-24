@@ -147,19 +147,6 @@ namespace b3d
 			const Vector<RenderableRenderState*>* Renderables = nullptr;
 			const Vector<CullInfo>* RenderableCullInfos = nullptr;
 
-			// Light accessors — delegate to LightObjectStorage
-			const LightObjectStorage& GetLightStorage() const { return *mLightStorage; }
-			LightObjectStorage& GetLightStorage() { return *mLightStorage; }
-
-			TArrayView<const PackedRendererId> GetDirectionalLights() const;
-			TArrayView<const PackedRendererId> GetRadialLights() const;
-			TArrayView<const PackedRendererId> GetSpotLights() const;
-			TArrayView<const Sphere> GetRadialLightWorldBounds() const;
-			TArrayView<const Sphere> GetSpotLightWorldBounds() const;
-
-			const LightProxy& GetLightProxy(PackedRendererId packedId) const;
-			const LightRenderState& GetLightRenderState(PackedRendererId packedId) const;
-
 			// Reflection probes
 			Vector<ReflectionProbeRenderState> ReflProbes;
 			Vector<Sphere> ReflProbeWorldBounds;
@@ -190,10 +177,6 @@ namespace b3d
 			u32 GetRenderableCount() const { return (u32)Renderables->size(); }
 			RenderableRenderState* GetRenderable(u32 idx) const { return (*Renderables)[idx]; }
 			const CullInfo& GetRenderableCullInfo(u32 idx) const { return (*RenderableCullInfos)[idx]; }
-
-		private:
-			friend class RenderBeastScene;
-			LightObjectStorage* mLightStorage = nullptr;
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -286,6 +269,19 @@ namespace b3d
 			/** Returns the light object storage. */
 			LightObjectStorage& GetLightStorage() { return static_cast<LightObjectStorage&>(*mLightStorage.get()); }
 			const LightObjectStorage& GetLightStorage() const { return static_cast<const LightObjectStorage&>(*mLightStorage.get()); }
+
+			/**
+			 * @name Light accessors — convenience wrappers around LightObjectStorage
+			 * @{
+			 */
+			TArrayView<const PackedRendererId> GetDirectionalLights() const { return GetLightStorage().GetDirectionalLights(); }
+			TArrayView<const PackedRendererId> GetRadialLights() const { return GetLightStorage().GetRadialLights(); }
+			TArrayView<const PackedRendererId> GetSpotLights() const { return GetLightStorage().GetSpotLights(); }
+			TArrayView<const Sphere> GetRadialLightWorldBounds() const { return GetLightStorage().GetRadialLightWorldBounds(); }
+			TArrayView<const Sphere> GetSpotLightWorldBounds() const { return GetLightStorage().GetSpotLightWorldBounds(); }
+			const LightProxy& GetLightProxy(PackedRendererId packedId) const { return GetLightStorage().GetLightProxy(packedId); }
+			const LightRenderState& GetLightRenderState(PackedRendererId packedId) const { return GetLightStorage().GetLightRenderState(packedId); }
+			/** @} */
 
 			/**
 			 * Generates sampler state overrides for the provided render element, or returns existing ones if they

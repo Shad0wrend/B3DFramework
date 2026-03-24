@@ -402,17 +402,19 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	// Prepare all visible objects. Note that this also prepares non-opaque objects.
+	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
+
 	//// Prepare normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto renderableCount = (u32)inputs.Scene.GetRenderableCount();
+	const auto renderableCount = (u32)sceneInfo.GetRenderableCount();
 	for(u32 i = 0; i < renderableCount; i++)
 	{
 		if(!visibility.Renderables[i])
 			continue;
 
-		for(auto& drawCommand : inputs.Scene.GetRenderable(i)->DrawCommands)
+		for(auto& drawCommand : sceneInfo.GetRenderable(i)->DrawCommands)
 		{
-			drawCommand.PerFrameUniformBufferParameter.Set(*inputs.Scene.PerFrameSuballocation);
+			drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);
 			drawCommand.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
 		}
 	}
@@ -421,7 +423,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
-		const auto particleSystemCount = (u32)inputs.Scene.ParticleSystems.size();
+		const auto particleSystemCount = (u32)sceneInfo.ParticleSystems.size();
 		const GpuParticleResources& gpuSimResources = GpuParticleSimulation::Instance().GetResources();
 
 		bool isGpuSortingUsed = false;
@@ -430,7 +432,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			if(!visibility.ParticleSystems[i])
 				continue;
 
-			const ParticleRenderState& renderState = inputs.Scene.ParticleSystems[i];
+			const ParticleRenderState& renderState = sceneInfo.ParticleSystems[i];
 			ParticlesDrawCommand& drawCommand = renderState.DrawCommand;
 
 			if(!drawCommand.IsValid())
@@ -457,16 +459,16 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	//// Prepare decals
-	const auto decalCount = (u32)inputs.Scene.Decals.size();
+	const auto decalCount = (u32)sceneInfo.Decals.size();
 	for(u32 i = 0; i < decalCount; i++)
 	{
 		if(!visibility.Decals[i])
 			continue;
 
-		const DecalRenderState& renderState = inputs.Scene.Decals[i];
+		const DecalRenderState& renderState = sceneInfo.Decals[i];
 		DecalDrawCommand& drawCommand = renderState.DrawCommand;
 
-		drawCommand.PerFrameUniformBufferParameter.Set(*inputs.Scene.PerFrameSuballocation);
+		drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);
 		drawCommand.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
 		drawCommand.DepthInputTexture.Set(sceneDepthTex->Texture);
 		drawCommand.MaskInputTexture.Set(IdTex->Texture);
@@ -737,7 +739,7 @@ void RCNodeParticleSimulate::Render(const RenderCompositorNodeInputs& inputs)
 		gbuffer.RoughMetal = gbufferNode->RoughMetalTex->Texture;
 		gbuffer.Depth = sceneDepthNode->DepthTex->Texture;
 
-		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene, inputs.FrameInfo.PerSceneFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
+		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene.GetSceneInfo(), inputs.FrameInfo.PerSceneFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
 	}
 
 	GpuParticleSimulation::Instance().Sort(*inputs.ActiveCommandBuffer, inputs.View);
@@ -760,9 +762,10 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 	if(!particleData)
 		return;
 
+	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto particleSystemCount = (u32)inputs.Scene.ParticleSystems.size();
+	const auto particleSystemCount = (u32)sceneInfo.ParticleSystems.size();
 
 	// Sort particles
 	B3DMarkAllocatorFrame();
@@ -779,7 +782,7 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 			if(!visibility.ParticleSystems[particleSystemIndex])
 				continue;
 
-			const ParticleRenderState& renderState = inputs.Scene.ParticleSystems[particleSystemIndex];
+			const ParticleRenderState& renderState = sceneInfo.ParticleSystems[particleSystemIndex];
 
 			ParticleSystem* particleSystem = renderState.ParticleSystem;
 			const auto iterFind = particleData->CpuData.find(particleSystem->GetId());
@@ -1151,8 +1154,9 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
+	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 
-	const LightProbes& lightProbes = inputs.Scene.LightProbes;
+	const LightProbes& lightProbes = sceneInfo.LightProbes;
 	LightProbesInfo lpInfo = lightProbes.GetInfo();
 
 	IrradianceEvaluateMaterial* evaluateMat;
@@ -1206,7 +1210,7 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 
 	Skybox* skybox = nullptr;
 	if(inputs.View.GetRenderSettings().EnableSkybox)
-		skybox = inputs.Scene.Skybox;
+		skybox = sceneInfo.Skybox;
 
 	evaluateMat->Execute(commandBuffer, inputs.View, gbuffer, volumeIndicesTex, lpInfo, skybox, ssaoNode->Output, lightAccumNode->RenderTarget);
 
@@ -1235,6 +1239,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 	RCNodeSSAO* ssaoNode = dependencies.Get<RCNodeSSAO>();
 
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 
 	GBufferTextures gbuffer;
 	gbuffer.Albedo = gbufferNode->AlbedoTex->Texture;
@@ -1269,7 +1274,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		if(sceneColorNode->SceneColorTexArray)
 			iblInputs.SceneColorTexArray = sceneColorNode->SceneColorTexArray->Texture;
 
-		material->Execute(*inputs.ActiveCommandBuffer, inputs.View, inputs.Scene, inputs.ViewGroup.GetVisibleReflProbeData(), iblInputs);
+		material->Execute(*inputs.ActiveCommandBuffer, inputs.View, sceneInfo, inputs.ViewGroup.GetVisibleReflProbeData(), iblInputs);
 
 		if(viewProps.Target.NumSamples > 1)
 			sceneColorNode->MsaaTexArrayToTexture(*inputs.ActiveCommandBuffer);
@@ -1299,7 +1304,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		Skybox* skybox = nullptr;
 		if(inputs.View.GetRenderSettings().EnableSkybox)
-			skybox = inputs.Scene.Skybox;
+			skybox = sceneInfo.Skybox;
 
 		DeferredIBLSetupMaterial* const setupMaterial = DeferredIBLSetupMaterial::GetVariation(isMSAA, true);
 		DeferredIBLSkyMaterial* const skyMaterial = DeferredIBLSkyMaterial::GetVariation(isMSAA, true);
@@ -1314,7 +1319,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		// Prepare buffers and parameters for rendering
 		GpuBufferSuballocation reflProbeParamsBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
-		ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), inputs.Scene.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+		ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
 
 		RenderPassCreateInformation mainPassCreateInformation(iblRadianceRT, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 		{
@@ -1447,7 +1452,7 @@ RCNodeDeferredIndirectSpecularLighting::DependencyDefinition RCNodeDeferredIndir
 
 void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 {
-	const SceneInfo& sceneInfo = inputs.Scene;
+	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
 	const VisibleLightData& visibleLightData = inputs.ViewGroup.GetVisibleLightData();
@@ -1615,14 +1620,14 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
-		const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
+		const auto numParticleSystems = (u32)inputs.Scene.GetSceneInfo().ParticleSystems.size();
 
 		for(u32 i = 0; i < numParticleSystems; i++)
 		{
 			if(!visibility.ParticleSystems[i])
 				continue;
 
-			const ParticleRenderState& particleRenderState = inputs.Scene.ParticleSystems[i];
+			const ParticleRenderState& particleRenderState = inputs.Scene.GetSceneInfo().ParticleSystems[i];
 			ParticlesDrawCommand& drawCommand = particleRenderState.DrawCommand;
 
 			ShaderFlags shaderFlags = drawCommand.Material->GetShader()->GetFlags();
@@ -1716,7 +1721,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 {
 	Skybox* skybox = nullptr;
 	if(inputs.View.GetRenderSettings().EnableSkybox)
-		skybox = inputs.Scene.Skybox;
+		skybox = inputs.Scene.GetSceneInfo().Skybox;
 
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	SPtr<Texture> radiance = skybox ? skybox->GetTexture() : nullptr;

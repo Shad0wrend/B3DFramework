@@ -13,6 +13,7 @@ namespace b3d
 	namespace render
 	{
 		struct SceneInfo;
+		class RenderBeastScene;
 		class RendererViewGroup;
 
 		/** @addtogroup RenderBeast
@@ -156,7 +157,7 @@ namespace b3d
 			 * Updates the internal buffers with a new set of lights. Before calling make sure that light visibility has
 			 * been calculated for the provided view group.
 			 */
-			void Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
+			void Update(const RenderBeastScene& scene, const RendererViewGroup& viewGroup);
 
 			/** Returns a GPU bindable buffer containing information about every light. */
 			SPtr<GpuBuffer> GetLightBuffer() const { return mLightBuffer; }
