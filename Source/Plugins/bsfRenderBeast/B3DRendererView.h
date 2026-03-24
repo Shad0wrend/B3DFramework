@@ -387,7 +387,7 @@ namespace b3d
 			 * by calling DetermineVisible(). After the call render elements can be retrieved from the queues using
 			 * GetOpaqueQueue or GetTransparentQueue() calls.
 			 */
-			void QueueDrawCommands(const SceneInfo& sceneInfo);
+			void QueueDrawCommands(const RenderBeastScene& scene);
 
 			/** Returns the visibility mask calculated with the last call to determineVisible(). */
 			const VisibilityInfo& GetVisibilityMasks() const { return mVisibility; }

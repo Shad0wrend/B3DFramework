@@ -1280,9 +1280,6 @@ void RenderBeastScene::Initialize()
 	RenderableObjectStorage& renderableStorage = GetRenderableStorage();
 	renderableStorage.SetScene(*this);
 
-	mInfo.Renderables = &renderableStorage.GetRenderables();
-	mInfo.RenderableCullInfos = &renderableStorage.GetRenderableCullInfos();
-
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())
 		mUniformBufferPools.RegisterType(config);

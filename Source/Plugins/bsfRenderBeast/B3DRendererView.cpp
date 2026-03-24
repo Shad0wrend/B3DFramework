@@ -564,24 +564,26 @@ void RendererView::CalculateVisibility(const Vector<AABox>& bounds, Vector<bool>
 	}
 }
 
-void RendererView::QueueDrawCommands(const SceneInfo& sceneInfo)
+void RendererView::QueueDrawCommands(const RenderBeastScene& scene)
 {
+	const SceneInfo& sceneInfo = scene.GetSceneInfo();
+
 	B3D_ENSURE(mDeferredOpaqueQueue->GetSortedEntries().empty());
 	B3D_ENSURE(mForwardOpaqueQueue->GetSortedEntries().empty());
 	B3D_ENSURE(mDecalQueue->GetSortedEntries().empty());
 	B3D_ENSURE(mTransparentQueue->GetSortedEntries().empty());
-	
+
 	// Queue renderables
-	for(u32 i = 0; i < sceneInfo.GetRenderableCount(); i++)
+	for(u32 i = 0; i < scene.GetRenderableCount(); i++)
 	{
 		if(!mVisibility.Renderables[i])
 			continue;
 
-		const AABox& boundingBox = sceneInfo.GetRenderableCullInfo(i).Bounds.GetBox();
+		const AABox& boundingBox = scene.GetRenderableCullInfo(i).Bounds.GetBox();
 		const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 		bool needsVelocity = RequiresVelocityWrites();
-		for(auto& drawCommand : sceneInfo.GetRenderable(i)->DrawCommands)
+		for(auto& drawCommand : scene.GetRenderable(i)->DrawCommands)
 		{
 			u32 variationIndex;
 			if(needsVelocity)
@@ -930,8 +932,8 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 		return;
 
 	// Calculate renderable visibility per view
-	mVisibility.Renderables.resize(sceneInfo.GetRenderableCount(), false);
-	mVisibility.Renderables.assign(sceneInfo.GetRenderableCount(), false);
+	mVisibility.Renderables.resize(scene.GetRenderableCount(), false);
+	mVisibility.Renderables.assign(scene.GetRenderableCount(), false);
 
 	mVisibility.ParticleSystems.resize(sceneInfo.ParticleSystems.size(), false);
 	mVisibility.ParticleSystems.assign(sceneInfo.ParticleSystems.size(), false);
@@ -941,7 +943,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 
 	for(u32 i = 0; i < viewCount; i++)
 	{
-		mViews[i]->DetermineVisible(*sceneInfo.Renderables, *sceneInfo.RenderableCullInfos, &mVisibility.Renderables);
+		mViews[i]->DetermineVisible(scene.GetRenderables(), scene.GetRenderableCullInfos(), &mVisibility.Renderables);
 		mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
 		mViews[i]->DetermineVisible(sceneInfo.Decals, sceneInfo.DecalCullInfos, &mVisibility.Decals);
 	}
@@ -950,7 +952,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	for(u32 i = 0; i < viewCount; i++)
 	{
 		if(mViews[i]->ShouldDraw3D())
-			mViews[i]->QueueDrawCommands(sceneInfo);
+			mViews[i]->QueueDrawCommands(scene);
 	}
 
 	// Calculate light visibility for all views

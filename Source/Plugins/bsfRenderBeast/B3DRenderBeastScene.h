@@ -143,10 +143,6 @@ namespace b3d
 			Vector<RendererView*> Views;
 			UnorderedMap<const Camera*, u32> CameraToView;
 
-			// Renderables — pointers to arrays in RenderableObjectStorage
-			const Vector<RenderableRenderState*>* Renderables = nullptr;
-			const Vector<CullInfo>* RenderableCullInfos = nullptr;
-
 			// Reflection probes
 			Vector<ReflectionProbeRenderState> ReflProbes;
 			Vector<Sphere> ReflProbeWorldBounds;
@@ -173,10 +169,6 @@ namespace b3d
 			// Per-frame uniform buffer suballocation (updated each frame)
 			const GpuBufferSuballocation* PerFrameSuballocation = nullptr;
 
-			// Renderable accessors — convenience wrappers around the storage-owned arrays
-			u32 GetRenderableCount() const { return (u32)Renderables->size(); }
-			RenderableRenderState* GetRenderable(u32 idx) const { return (*Renderables)[idx]; }
-			const CullInfo& GetRenderableCullInfo(u32 idx) const { return (*RenderableCullInfos)[idx]; }
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -269,6 +261,17 @@ namespace b3d
 			/** Returns the light object storage. */
 			LightObjectStorage& GetLightStorage() { return static_cast<LightObjectStorage&>(*mLightStorage.get()); }
 			const LightObjectStorage& GetLightStorage() const { return static_cast<const LightObjectStorage&>(*mLightStorage.get()); }
+
+			/**
+			 * @name Renderable accessors — convenience wrappers around RenderableObjectStorage
+			 * @{
+			 */
+			u32 GetRenderableCount() const { return GetRenderableStorage().GetRenderableCount(); }
+			RenderableRenderState* GetRenderable(u32 index) const { return GetRenderableStorage().GetRenderable(index); }
+			const CullInfo& GetRenderableCullInfo(u32 index) const { return GetRenderableStorage().GetRenderableCullInfo(index); }
+			const Vector<RenderableRenderState*>& GetRenderables() const { return GetRenderableStorage().GetRenderables(); }
+			const Vector<CullInfo>& GetRenderableCullInfos() const { return GetRenderableStorage().GetRenderableCullInfos(); }
+			/** @} */
 
 			/**
 			 * @name Light accessors — convenience wrappers around LightObjectStorage

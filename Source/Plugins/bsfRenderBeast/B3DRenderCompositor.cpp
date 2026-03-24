@@ -406,13 +406,13 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 	//// Prepare normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto renderableCount = (u32)sceneInfo.GetRenderableCount();
+	const auto renderableCount = inputs.Scene.GetRenderableCount();
 	for(u32 i = 0; i < renderableCount; i++)
 	{
 		if(!visibility.Renderables[i])
 			continue;
 
-		for(auto& drawCommand : sceneInfo.GetRenderable(i)->DrawCommands)
+		for(auto& drawCommand : inputs.Scene.GetRenderable(i)->DrawCommands)
 		{
 			drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);
 			drawCommand.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
@@ -1587,13 +1587,13 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	//// Normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
 
-	const u32 renderableCount = sceneInfo.GetRenderableCount();
+	const u32 renderableCount = inputs.Scene.GetRenderableCount();
 	for(u32 renderableIndex = 0; renderableIndex < renderableCount; renderableIndex++)
 	{
 		if(!visibility.Renderables[renderableIndex])
 			continue;
 
-		for(auto& drawCommand : sceneInfo.GetRenderable(renderableIndex)->DrawCommands)
+		for(auto& drawCommand : inputs.Scene.GetRenderable(renderableIndex)->DrawCommands)
 		{
 			ShaderFlags shaderFlags = drawCommand.Material->GetShader()->GetFlags();
 
@@ -1608,7 +1608,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			else
 			{
 				// Populate light & probe buffers
-				const Bounds& bounds = sceneInfo.GetRenderableCullInfo(renderableIndex).Bounds;
+				const Bounds& bounds = inputs.Scene.GetRenderableCullInfo(renderableIndex).Bounds;
 				fnBindStandardDeferredParameters(*drawCommand.ParameterAdapter, bounds, drawCommand.ForwardLightingParams, drawCommand.ImageBasedParams);
 			}
 
