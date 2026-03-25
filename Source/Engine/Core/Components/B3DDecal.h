@@ -6,6 +6,7 @@
 #include "Scene/B3DComponent.h"
 #include "Math/B3DTransform.h"
 #include "CoreObject/B3DCoreObject.h"
+#include "Renderer/B3DRendererId.h"
 
 namespace b3d
 {
@@ -155,20 +156,79 @@ namespace b3d
 	};
 
 	/** @} */
+
+	/** @addtogroup Renderer-Internal
+	 *  @{
+	 */
+
+	namespace ecs
+	{
+		class ECSDecalRTTI;
+
+		/** ECS fragment storing decal visual data (material, size, layer, etc.). */
+		struct B3D_EXPORT Decal : TDecalData<false>, IReflectable
+		{
+			struct FullSyncPacket;
+			struct TransformSyncPacket;
+
+			friend class ECSDecalRTTI;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
+		};
+
+		/** ECS fragment storing the persistent render object ID for a decal. */
+		struct DecalId
+		{
+			RendererId Id = kInvalidRendererId;
+		};
+	} // namespace ecs
+
+	/** @} */
+
 	/** @addtogroup Components
 	 *  @{
 	 */
 
 	/** Wraps Decal as a Component. */
-	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Decal : public Component, public TDecal<false>
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Decal : public Component, public TDecalGetters<Decal, false>, public CoreObject
 	{
+		friend class TDecalGetters<Decal, false>;
 	public:
 		Decal(const HSceneObject& parent);
 
-	protected:
-		struct FullSyncPacket;
-		struct TransformSyncPacket;
+		/** @copydoc TDecalGetters::GetSize */
+		B3D_SCRIPT_EXPORT(ExportName(Size), Property(Setter))
+		void SetSize(const Vector2& size);
 
+		/** @copydoc TDecalGetters::GetMaterial */
+		B3D_SCRIPT_EXPORT(ExportName(Material), Property(Setter))
+		void SetMaterial(const HMaterial& material);
+
+		/** @copydoc TDecalGetters::GetMaxDistance */
+		B3D_SCRIPT_EXPORT(ExportName(MaxDistance), Property(Setter))
+		void SetMaxDistance(float distance);
+
+		/** @copydoc TDecalGetters::GetLayerMask */
+		B3D_SCRIPT_EXPORT(ExportName(LayerMask), Property(Setter))
+		void SetLayerMask(u32 mask);
+
+		/** @copydoc TDecalGetters::GetLayer */
+		B3D_SCRIPT_EXPORT(ExportName(Layer), Property(Setter))
+		void SetLayer(u64 layer);
+
+		/**	Gets world bounds of this object. */
+		Bounds GetBounds() const { return mBounds; }
+
+		/**	Returns the transform matrix that is applied to the object when its being rendered. */
+		Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
+
+		/**
+		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
+		 * not include scale values.
+		 */
+		Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
+
+	protected:
 		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
@@ -183,6 +243,7 @@ namespace b3d
 		void OnEnabled() override;
 		void OnDisabled() override;
 		void OnDestroyed() override;
+		void OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity) override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		/************************************************************************/
@@ -195,6 +256,26 @@ namespace b3d
 
 	protected:
 		Decal(); // Serialization only
+
+	private:
+		/** Returns a reference to the decal data for the CRTP getter interface. */
+		const TDecalData<false>& GetDecalData() const;
+
+		/** Returns a mutable reference to the ECS decal fragment. */
+		ecs::Decal& GetFragment();
+
+		/** Returns a const reference to the ECS decal fragment. */
+		const ecs::Decal& GetFragment() const;
+
+		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
+		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
+
+		/** Updates the internal bounds for the decal. Call this whenever a property affecting the bounds changes. */
+		void UpdateBounds();
+
+		Matrix4 mWorldTransformMatrix = kIdentityTag;
+		Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
+		Bounds mBounds = Bounds::kEmpty;
 	};
 
 	namespace render
@@ -225,6 +306,7 @@ namespace b3d
 
 		protected:
 			friend class b3d::Decal;
+			friend struct ecs::Decal;
 
 			Decal(const SPtr<SceneInstance>& scene);
 
