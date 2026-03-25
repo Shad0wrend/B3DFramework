@@ -8,8 +8,18 @@
 #include "Renderer/B3DRendererScene.h"
 #include "Material/B3DMaterial.h"
 #include "Scene/B3DSceneInstance.h"
+#include "Scene/B3DSceneObjectFragments.h"
 
 using namespace b3d;
+
+namespace b3d::ecs
+{
+	/** Tag indicating a Decal needs to sync all of its properties to its render proxy. */
+	struct DecalDirty {};
+
+	/** Tag indicating a Decal needs to sync transform to its render proxy. */
+	struct DecalTransformDirty {};
+} // namespace b3d::ecs
 
 Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Matrix4& worldTransform)
 {
@@ -83,6 +93,106 @@ namespace b3d
 	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, TransformSyncPacket, render::Decal)
 		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
 	B3D_SYNC_BLOCK_END
+
+	// ECS sync packets targeting TDecalData<true> (for new DecalProxy path)
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, FullSyncPacketECS, TDecalData<true>)
+		B3D_SYNC_BLOCK_ENTRY(Size)
+		B3D_SYNC_BLOCK_ENTRY(MaxDistance)
+		B3D_SYNC_BLOCK_ENTRY(Material)
+		B3D_SYNC_BLOCK_ENTRY(Layer)
+		B3D_SYNC_BLOCK_ENTRY(LayerMask)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrix)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrixWithoutScale)
+	B3D_SYNC_BLOCK_END
+
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, TransformSyncPacketECS, TDecalData<true>)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrix)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrixWithoutScale)
+	B3D_SYNC_BLOCK_END
+
+	struct DecalFullUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		DecalFullUpdateChannel,
+		ecs::Decal::FullSyncPacketECS,
+		ecs::DecalDirty,
+		ecs::Decal, ecs::WorldTransform, ecs::DecalId
+	>
+	{
+		void Write(DecalObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToCreate(&allocator);
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToDestroy(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToCreate, &renderStatesToDestroy, &storage](ecs::Decal::FullSyncPacketECS& packet, PackedRendererId rendererId)
+			{
+				render::DecalProxy& proxy = storage.GetDecalProxy(rendererId);
+
+				bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
+				proxy.mRendererId = rendererId;
+				packet.ApplySyncData(&proxy.mData);
+
+				proxy.mWorldTransformMatrix = packet.WorldTransformMatrix;
+				proxy.mWorldTransformMatrixWithoutScale = packet.WorldTransformMatrixWithoutScale;
+				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mWorldTransformMatrix);
+
+				if(wasRegistered)
+					renderStatesToDestroy.push_back(rendererId);
+
+				renderStatesToCreate.push_back(rendererId);
+			});
+
+			if(!renderStatesToDestroy.empty())
+				storage.DestroyRenderState(renderStatesToDestroy);
+
+			if(!renderStatesToCreate.empty())
+				storage.CreateRenderState(renderStatesToCreate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Decal& fragment, ecs::WorldTransform& transform, ecs::DecalId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.WorldTransformMatrix = transform.GetMatrix();
+			packet.WorldTransformMatrixWithoutScale = Matrix4::TRS(
+				transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
+		}
+	};
+
+	struct DecalTransformUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		DecalTransformUpdateChannel,
+		ecs::Decal::TransformSyncPacketECS,
+		ecs::DecalTransformDirty,
+		ecs::Decal, ecs::WorldTransform, ecs::DecalId
+	>
+	{
+		void Write(DecalObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToUpdate(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToUpdate, &storage](ecs::Decal::TransformSyncPacketECS& packet, PackedRendererId rendererId)
+			{
+				render::DecalProxy& proxy = storage.GetDecalProxy(rendererId);
+				proxy.mWorldTransformMatrix = packet.WorldTransformMatrix;
+				proxy.mWorldTransformMatrixWithoutScale = packet.WorldTransformMatrixWithoutScale;
+				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mWorldTransformMatrix);
+
+				renderStatesToUpdate.push_back(rendererId);
+			});
+
+			if(!renderStatesToUpdate.empty())
+				storage.UpdateRenderState(renderStatesToUpdate);
+		}
+
+		void CreateAndPopulatePacket(ecs::Decal& fragment, ecs::WorldTransform& transform, ecs::DecalId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.WorldTransformMatrix = transform.GetMatrix();
+			packet.WorldTransformMatrixWithoutScale = Matrix4::TRS(
+				transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
+		}
+	};
+
+	using DecalSyncBatch = TRendererObjectECSSyncBatch<DecalFullUpdateChannel, DecalTransformUpdateChannel>;
 }
 
 // ecs::Decal fragment access
@@ -347,3 +457,15 @@ void Decal::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocat
 	}
 }
 }}
+
+// DecalObjectStorageBase
+
+void* DecalObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
+{
+	return DecalSyncBatch::Read(*this, registry, allocator);
+}
+
+void DecalObjectStorageBase::SyncWrite(void* rawData, FrameAllocator& allocator)
+{
+	DecalSyncBatch::Write(*this, rawData, allocator);
+}

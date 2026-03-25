@@ -7,9 +7,14 @@
 #include "Math/B3DTransform.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
 {
+	class DecalObjectStorageBase;
+	struct DecalFullUpdateChannel;
+	struct DecalTransformUpdateChannel;
+
 	/** @addtogroup Implementation
 	 *  @{
 	 */
@@ -170,6 +175,8 @@ namespace b3d
 		{
 			struct FullSyncPacket;
 			struct TransformSyncPacket;
+			struct FullSyncPacketECS;
+			struct TransformSyncPacketECS;
 
 			friend class ECSDecalRTTI;
 			static RTTIType* GetRttiStatic();
@@ -319,6 +326,83 @@ namespace b3d
 			SPtr<SceneInstance> mSceneInstance;
 		};
 	} // namespace render
+
+	namespace render
+	{
+		/** Render-thread representation of a decal, stored in packed arrays in DecalObjectStorageBase. */
+		class B3D_EXPORT DecalProxy : public TDecalGetters<DecalProxy, true>
+		{
+			friend class TDecalGetters<DecalProxy, true>;
+			friend struct b3d::DecalFullUpdateChannel;
+			friend struct b3d::DecalTransformUpdateChannel;
+
+		public:
+			/** Returns the world space transform matrix for the decal. */
+			const Matrix4& GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
+
+			/** Returns the world space transform matrix without scale for the decal. */
+			const Matrix4& GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
+
+			/** Returns world space bounds that encompass the decal's area of influence. */
+			Bounds GetBounds() const { return mBounds; }
+
+			/** Sets the renderer-assigned packed slot ID. */
+			void SetRendererId(PackedRendererId id) { mRendererId = id; }
+
+			/** Returns the renderer-assigned packed slot ID. */
+			PackedRendererId GetRendererId() const { return mRendererId; }
+
+		protected:
+			const TDecalData<true>& GetDecalData() const { return mData; }
+
+			TDecalData<true> mData;
+			Matrix4 mWorldTransformMatrix = kIdentityTag;
+			Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
+			Bounds mBounds = Bounds::kEmpty;
+			PackedRendererId mRendererId = kInvalidPackedRendererId;
+		};
+	} // namespace render
+
+	/**
+	 * Contains render thread representation of decal objects, stored in packed arrays accessible by PackedRendererId.
+	 * Implements main -> render thread synchronization logic for decal objects.
+	 */
+	class B3D_EXPORT DecalObjectStorageBase : public RendererObjectStorage
+	{
+	public:
+		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
+		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
+
+		/** Returns the decal proxy at the given slot. */
+		render::DecalProxy& GetDecalProxy(PackedRendererId slotId) { return mDecalProxies[slotId]; }
+
+		/** Returns the decal proxy at the given slot (const). */
+		const render::DecalProxy& GetDecalProxy(PackedRendererId slotId) const { return mDecalProxies[slotId]; }
+
+		/** Returns the total number of decals. */
+		u32 GetDecalCount() const { return (u32)mDecalProxies.size(); }
+
+		/**
+		 * Called once per frame for each new decal being added, or a decal whose data needs to be rebuilt
+		 * after a significant update (in which case DestroyRenderState will be called first).
+		 */
+		virtual void CreateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each decal that is being removed, or a decal that needs to be rebuilt
+		 * after a significant update (in which case CreateRenderState will be called right after).
+		 */
+		virtual void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each decal that needs to be updated after a minor update (e.g. one that doesn't
+		 * require a full render state rebuild, such as a transform change).
+		 */
+		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+	protected:
+		Vector<render::DecalProxy> mDecalProxies;
+	};
 
 	/** @} */
 } // namespace b3d
