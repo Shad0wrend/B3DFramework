@@ -241,6 +241,8 @@ void Decal::Initialize()
 		registry->AddComponent<ecs::Decal>(entity, std::move(fragmentData));
 	}
 
+	UpdateBounds();
+
 	Component::Initialize();
 	CoreObject::Initialize();
 }
