@@ -459,13 +459,13 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	//// Prepare decals
-	const auto decalCount = (u32)sceneInfo.Decals.size();
+	const auto decalCount = inputs.Scene.GetDecalCount();
 	for(u32 i = 0; i < decalCount; i++)
 	{
 		if(!visibility.Decals[i])
 			continue;
 
-		const DecalRenderState& renderState = sceneInfo.Decals[i];
+		const DecalRenderState& renderState = inputs.Scene.GetDecalRenderState(i);
 		DecalDrawCommand& drawCommand = renderState.DrawCommand;
 
 		drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);

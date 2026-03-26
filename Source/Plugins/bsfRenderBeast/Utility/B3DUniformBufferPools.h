@@ -11,6 +11,7 @@ namespace b3d::render
 	struct RenderState;
 	struct DecalRenderState;
 	struct ParticleRenderState;
+	class DecalProxy;
 
 	/** @addtogroup RenderBeast
 	 *  @{
@@ -130,12 +131,13 @@ namespace b3d::render
 		void UpdatePerObjectBuffer(const RenderState& renderState, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 		/**
-		 * Updates decal parameter buffer using data from a decal render state.
+		 * Updates decal parameter buffer using data from a decal render state and proxy.
 		 *
 		 * @param decal			Decal render state whose decal param buffer should be updated.
+		 * @param proxy			DecalProxy providing transform and property data.
 		 * @param commandBuffer	Command buffer to queue the copy on. If null, uses the transfer command buffer.
 		 */
-		void UpdateDecalParamBuffer(const DecalRenderState& decal, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+		void UpdateDecalParamBuffer(const DecalRenderState& decal, const DecalProxy& proxy, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 		/**
 		 * Updates GPU particle parameter buffer using data from particles render state.

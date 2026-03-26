@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/B3DRendererScene.h"
 #include "Allocators/B3DFrameAllocator.h"
+#include "Components/B3DDecal.h"
 #include "Components/B3DLight.h"
 #include "Components/B3DRenderable.h"
 #include "CoreObject/B3DRenderThread.h"
@@ -27,6 +28,7 @@ namespace b3d
 		CoreObject::Initialize();
 
 		SPtr<render::RendererScene> renderProxy = B3DGetRenderProxy(this);
+		mDecalStorage = renderProxy->GetDecalStorage();
 		mRenderableStorage = renderProxy->GetRenderableStorage();
 		mLightStorage = renderProxy->GetLightStorage();
 	}
@@ -69,6 +71,26 @@ namespace b3d
 			mLightStorage->DeallocateRendererId(objectId);
 
 		registry.RemoveComponents<ecs::LightId>(entity);
+	}
+
+	RendererId RendererScene::AllocateDecalId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		RendererId objectId = mDecalStorage->AllocateRendererId();
+		registry.AddComponent<ecs::DecalId>(entity, ecs::DecalId{objectId});
+
+		return objectId;
+	}
+
+	void RendererScene::DeallocateDecalId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		if(!registry.HasAllOf<ecs::DecalId>(entity))
+			return;
+
+		RendererId objectId = registry.GetComponents<ecs::DecalId>(entity).Id;
+		if(objectId != kInvalidRendererId)
+			mDecalStorage->DeallocateRendererId(objectId);
+
+		registry.RemoveComponents<ecs::DecalId>(entity);
 	}
 
 	SPtr<render::RenderProxy> RendererScene::CreateRenderProxy() const
@@ -119,6 +141,18 @@ namespace b3d
 			}
 		}
 
+		if(mDecalStorage != nullptr)
+		{
+			void* decalBatchData = mDecalStorage->SyncRead(registry, allocator);
+			if(decalBatchData != nullptr)
+			{
+				if(batch == nullptr)
+					batch = allocator.Construct<RendererSceneSyncData>();
+
+				batch->DecalBatchData = decalBatchData;
+			}
+		}
+
 		return batch;
 	}
 
@@ -131,6 +165,9 @@ namespace b3d
 
 			if(batchData.LightBatchData != nullptr)
 				mLightStorage->SyncWrite(batchData.LightBatchData, allocator);
+
+			if(batchData.DecalBatchData != nullptr)
+				mDecalStorage->SyncWrite(batchData.DecalBatchData, allocator);
 
 			allocator.Destruct(&batchData);
 		}

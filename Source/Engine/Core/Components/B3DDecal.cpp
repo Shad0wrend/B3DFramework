@@ -21,7 +21,7 @@ namespace b3d::ecs
 	struct DecalTransformDirty {};
 } // namespace b3d::ecs
 
-Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Matrix4& worldTransform)
+Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Transform& transform)
 {
 	const Vector2& extents = size * 0.5f;
 
@@ -29,85 +29,24 @@ Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Mat
 		Vector3(-extents.X, -extents.Y, -maxDistance),
 		Vector3(extents.X, extents.Y, 0.0f));
 
-	localAABB.TransformAffine(worldTransform);
+	localAABB.TransformAffine(transform.GetMatrix());
 
 	return Bounds(localAABB);
 }
 
-template<bool IsRenderProxy>
-TDecal<IsRenderProxy>::TDecal()
-{
-	UpdateBounds();
-}
-
-template<bool IsRenderProxy>
-void TDecal<IsRenderProxy>::SetLayer(u64 layer)
-{
-	const bool isPowerOfTwo = layer && !((layer - 1) & layer);
-
-	if(!isPowerOfTwo)
-	{
-		B3D_LOG(Warning, LogRenderer, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
-		return;
-	}
-
-	this->Layer = layer;
-	MarkRenderProxyDataDirty();
-}
-
-template<bool IsRenderProxy>
-void TDecal<IsRenderProxy>::UpdateBounds()
-{
-	mBounds = ComputeDecalBounds(this->Size, this->MaxDistance, mWorldTransformMatrix);
-}
-
-template <bool IsRenderProxy>
-void TDecal<IsRenderProxy>::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
-{
-	if constexpr(!IsRenderProxy)
-		CoreObject::MarkRenderProxyDataDirty((u32)flag);
-}
-
-template <bool IsRenderProxy>
-void TDecal<IsRenderProxy>::MarkCoreObjectDependenciesDirty()
-{
-	if constexpr(!IsRenderProxy)
-		CoreObject::MarkDependenciesDirty();
-}
-
-template class TDecal<true>;
-
 namespace b3d
 {
-	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, FullSyncPacket, render::Decal)
-		B3D_SYNC_BLOCK_ENTRY(Size)
-		B3D_SYNC_BLOCK_ENTRY(MaxDistance)
-		B3D_SYNC_BLOCK_ENTRY(Material)
-		B3D_SYNC_BLOCK_ENTRY(Layer)
-		B3D_SYNC_BLOCK_ENTRY(LayerMask)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(bool, mActive)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(SPtr<SceneInstance>, mSceneInstance)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
-	B3D_SYNC_BLOCK_END
-
-	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, TransformSyncPacket, render::Decal)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
-	B3D_SYNC_BLOCK_END
-
-	// ECS sync packets targeting TDecalData<true> (for new DecalProxy path)
 	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, FullSyncPacketECS, TDecalData<true>)
 		B3D_SYNC_BLOCK_ENTRY(Size)
 		B3D_SYNC_BLOCK_ENTRY(MaxDistance)
 		B3D_SYNC_BLOCK_ENTRY(Material)
 		B3D_SYNC_BLOCK_ENTRY(Layer)
 		B3D_SYNC_BLOCK_ENTRY(LayerMask)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrix)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrixWithoutScale)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
 	B3D_SYNC_BLOCK_END
 
 	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::Decal, TransformSyncPacketECS, TDecalData<true>)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrix)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Matrix4, WorldTransformMatrixWithoutScale)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
 	B3D_SYNC_BLOCK_END
 
 	struct DecalFullUpdateChannel : TRendererObjectECSSyncChannel
@@ -131,9 +70,10 @@ namespace b3d
 				proxy.mRendererId = rendererId;
 				packet.ApplySyncData(&proxy.mData);
 
-				proxy.mWorldTransformMatrix = packet.WorldTransformMatrix;
-				proxy.mWorldTransformMatrixWithoutScale = packet.WorldTransformMatrixWithoutScale;
-				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mWorldTransformMatrix);
+				proxy.mTransform = packet.TransformData;
+				proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
+				proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
+				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mTransform);
 
 				if(wasRegistered)
 					renderStatesToDestroy.push_back(rendererId);
@@ -151,9 +91,7 @@ namespace b3d
 		void CreateAndPopulatePacket(ecs::Decal& fragment, ecs::WorldTransform& transform, ecs::DecalId& id, FrameAllocator& allocator)
 		{
 			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
-			packet.WorldTransformMatrix = transform.GetMatrix();
-			packet.WorldTransformMatrixWithoutScale = Matrix4::TRS(
-				transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
+			packet.TransformData = transform;
 		}
 	};
 
@@ -172,9 +110,10 @@ namespace b3d
 			WritePackets(storage, allocator, [&renderStatesToUpdate, &storage](ecs::Decal::TransformSyncPacketECS& packet, PackedRendererId rendererId)
 			{
 				render::DecalProxy& proxy = storage.GetDecalProxy(rendererId);
-				proxy.mWorldTransformMatrix = packet.WorldTransformMatrix;
-				proxy.mWorldTransformMatrixWithoutScale = packet.WorldTransformMatrixWithoutScale;
-				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mWorldTransformMatrix);
+				proxy.mTransform = packet.TransformData;
+				proxy.mWorldTransformMatrix = proxy.mTransform.GetMatrix();
+				proxy.mWorldTransformMatrixWithoutScale = Matrix4::TRS(proxy.mTransform.GetPosition(), proxy.mTransform.GetRotation(), Vector3::kOne);
+				proxy.mBounds = ComputeDecalBounds(proxy.mData.Size, proxy.mData.MaxDistance, proxy.mTransform);
 
 				renderStatesToUpdate.push_back(rendererId);
 			});
@@ -186,9 +125,7 @@ namespace b3d
 		void CreateAndPopulatePacket(ecs::Decal& fragment, ecs::WorldTransform& transform, ecs::DecalId& id, FrameAllocator& allocator)
 		{
 			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
-			packet.WorldTransformMatrix = transform.GetMatrix();
-			packet.WorldTransformMatrixWithoutScale = Matrix4::TRS(
-				transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
+			packet.TransformData = transform;
 		}
 	};
 
@@ -257,12 +194,24 @@ void Decal::SetLayer(u64 layer)
 void Decal::UpdateBounds()
 {
 	const ecs::Decal& fragment = GetFragment();
-	mBounds = ComputeDecalBounds(fragment.Size, fragment.MaxDistance, mWorldTransformMatrix);
+	mBounds = ComputeDecalBounds(fragment.Size, fragment.MaxDistance, SceneObject()->GetTransform());
 }
 
 void Decal::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 {
-	CoreObject::MarkRenderProxyDataDirty((u32)flag);
+	if(!SceneObject().IsValid())
+		return;
+
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	if(flag == ComponentDirtyFlag::Transform)
+	{
+		if(!registry->HasAllOf<ecs::DecalDirty>(entity))
+			registry->AddTag<ecs::DecalTransformDirty>(entity);
+	}
+	else
+		registry->AddTag<ecs::DecalDirty>(entity);
 }
 
 // b3d::Decal lifecycle
@@ -298,12 +247,25 @@ void Decal::Initialize()
 
 void Decal::OnEnabled()
 {
-	MarkRenderProxyDataDirty();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+	rendererScene->AllocateDecalId(*registry, entity);
+
+	registry->AddTag<ecs::DecalDirty>(entity);
 }
 
 void Decal::OnDisabled()
 {
-	MarkRenderProxyDataDirty();
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+	rendererScene->DeallocateDecalId(*registry, entity);
+
+	registry->RemoveComponents<ecs::DecalDirty>(entity);
+	registry->RemoveComponents<ecs::DecalTransformDirty>(entity);
 }
 
 void Decal::OnDestroyed()
@@ -311,6 +273,15 @@ void Decal::OnDestroyed()
 	ecs::Registry* registry = GetECSRegistry();
 	ecs::Entity entity = GetECSEntity();
 
+	// Deallocate only if currently active (has a DecalId fragment)
+	if(registry->HasAllOf<ecs::DecalId>(entity))
+	{
+		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+		rendererScene->DeallocateDecalId(*registry, entity);
+	}
+
+	registry->RemoveComponents<ecs::DecalDirty>(entity);
+	registry->RemoveComponents<ecs::DecalTransformDirty>(entity);
 	registry->RemoveComponents<ecs::Decal>(entity);
 
 	CoreObject::Destroy();
@@ -322,32 +293,31 @@ void Decal::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 	ecs::Registry* registry = GetECSRegistry();
 	ecs::Entity entity = GetECSEntity();
 
+	// Deallocate from old scene only if was active
+	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::DecalId>(oldEntity))
+		oldScene->GetRendererScene()->DeallocateDecalId(*oldRegistry, oldEntity);
+
+	// Migrate ecs::Decal fragment to new entity
 	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::Decal>(oldEntity))
 	{
 		ecs::Decal fragmentCopy = oldRegistry->GetComponents<ecs::Decal>(oldEntity);
 		registry->AddComponent<ecs::Decal>(entity, std::move(fragmentCopy));
 	}
+
+	// Allocate in new scene only if currently active
+	if(GetEnabled())
+	{
+		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+		rendererScene->AllocateDecalId(*registry, entity);
+
+		registry->AddTag<ecs::DecalDirty>(entity);
+	}
 }
 
 void Decal::OnTransformChanged(TransformChangedFlags flags)
 {
-	const Transform& transform = SceneObject()->GetTransform();
-	mWorldTransformMatrix = transform.GetMatrix();
-	mWorldTransformMatrixWithoutScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::kOne);
-
 	UpdateBounds();
 	MarkRenderProxyDataDirty(ComponentDirtyFlag::Transform);
-}
-
-SPtr<render::RenderProxy> Decal::CreateRenderProxy() const
-{
-	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
-
-	render::Decal* renderProxy = new(B3DAllocate<render::Decal>()) render::Decal(B3DGetRenderProxy(scene));
-	SPtr<render::Decal> renderProxyShared = B3DMakeSharedFromExisting<render::Decal>(renderProxy);
-	renderProxyShared->SetShared(renderProxyShared);
-
-	return renderProxyShared;
 }
 
 void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
@@ -355,28 +325,6 @@ void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	const auto& material = GetFragment().Material;
 	if(material.IsLoaded())
 		dependencies.push_back(material.Get());
-}
-
-RenderProxySyncPacket* Decal::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
-{
-	ecs::Decal& fragment = GetFragment();
-
-	if(flags != (u32)ComponentDirtyFlag::Transform)
-	{
-		ecs::Decal::FullSyncPacket* const syncPacket = allocator.Construct<ecs::Decal::FullSyncPacket>(fragment, allocator, flags);
-		syncPacket->mActive = GetEnabled();
-		syncPacket->mSceneInstance = B3DGetRenderProxy(SceneObject()->GetScene());
-		syncPacket->mTransform = SceneObject()->GetTransform();
-
-		return syncPacket;
-	}
-	else
-	{
-		ecs::Decal::TransformSyncPacket* const syncPacket = allocator.Construct<ecs::Decal::TransformSyncPacket>(fragment, allocator, flags);
-		syncPacket->mTransform = SceneObject()->GetTransform();
-
-		return syncPacket;
-	}
 }
 
 RTTIType* Decal::GetRttiStatic()
@@ -389,74 +337,25 @@ RTTIType* Decal::GetRtti() const
 	return Decal::GetRttiStatic();
 }
 
+namespace b3d::render
+{
+	Vector2 DecalProxy::GetWorldSize() const
+	{
+		const Vector3& scale = mTransform.GetScale();
+		return Vector2(mData.Size.X * scale.X, mData.Size.Y * scale.Y);
+	}
+
+	float DecalProxy::GetWorldMaxDistance() const
+	{
+		return mData.MaxDistance * mTransform.GetScale().Z;
+	}
+}
+
 namespace b3d::ecs
 {
 	RTTIType* Decal::GetRttiStatic() { return ECSDecalRTTI::Instance(); }
 	RTTIType* Decal::GetRtti() const { return Decal::GetRttiStatic(); }
 }
-
-namespace b3d { namespace render
-{
-Decal::Decal(const SPtr<SceneInstance>& scene)
-	: mSceneInstance(scene)
-{}
-
-Decal::~Decal()
-{
-	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-	rendererScene->UnregisterDecal(this);
-}
-
-void Decal::Initialize()
-{
-	UpdateBounds();
-
-	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-	rendererScene->RegisterDecal(this);
-
-	RenderProxy::Initialize();
-}
-
-void Decal::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
-{
-	RenderProxySyncPacket* const syncPacket = data.GetSyncPacket();
-	if(syncPacket == nullptr)
-		return;
-
-	bool previousActiveState = mActive;
-	syncPacket->ApplySyncData(this);
-
-	mWorldTransformMatrix = mTransform.GetMatrix();
-	mWorldTransformMatrixWithoutScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::kOne);
-
-	UpdateBounds();
-
-	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-
-	const u32 flags = syncPacket->Flags;
-	const u32 updateEverythingFlag = ~(u32)ComponentDirtyFlag::Transform;
-	if((flags & updateEverythingFlag) != 0)
-	{
-		if(previousActiveState != mActive)
-		{
-			if(mActive)
-				rendererScene->RegisterDecal(this);
-			else
-				rendererScene->UnregisterDecal(this);
-		}
-		else
-		{
-			rendererScene->UnregisterDecal(this);
-			rendererScene->RegisterDecal(this);
-		}
-	}
-	else
-	{
-		if(mActive)
-			rendererScene->UpdateDecal(this);
-	}
-}
-}}
 
 // DecalObjectStorageBase
 

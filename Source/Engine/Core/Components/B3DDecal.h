@@ -74,91 +74,7 @@ namespace b3d
 	};
 
 	/** Computes world-space bounds for a decal. */
-	Bounds ComputeDecalBounds(const Vector2& size, float maxDistance, const Matrix4& worldTransform);
-
-	/** Common code used both by main and render thread variants of Decal. */
-	template <bool IsRenderProxy>
-	class B3D_EXPORT TDecal : public CoreVariantType<CoreObject, IsRenderProxy>,
-		public TDecalData<IsRenderProxy>,
-		public TDecalGetters<TDecal<IsRenderProxy>, IsRenderProxy>
-	{
-	public:
-		using typename TDecalData<IsRenderProxy>::MaterialType;
-		using SceneInstanceType = CoreVariantType<SceneInstance, IsRenderProxy>;
-		using Super = CoreVariantType<CoreObject, IsRenderProxy>;
-
-		friend class TDecalGetters<TDecal<IsRenderProxy>, IsRenderProxy>;
-
-		TDecal();
-		virtual ~TDecal() = default;
-
-		/** @copydoc TDecalGetters::GetSize */
-		B3D_SCRIPT_EXPORT(ExportName(Size), Property(Setter))
-		void SetSize(const Vector2& size)
-		{
-			this->Size = Vector2::Max(Vector2::kZero, size);
-			MarkRenderProxyDataDirty();
-			UpdateBounds();
-		}
-
-		/** @copydoc TDecalGetters::GetMaterial */
-		B3D_SCRIPT_EXPORT(ExportName(Material), Property(Setter))
-		void SetMaterial(const MaterialType& material)
-		{
-			this->Material = material;
-			MarkRenderProxyDataDirty();
-		}
-
-		/** @copydoc TDecalGetters::GetMaxDistance */
-		B3D_SCRIPT_EXPORT(ExportName(MaxDistance), Property(Setter))
-		void SetMaxDistance(float distance)
-		{
-			this->MaxDistance = Math::Max(0.0f, distance);
-			MarkRenderProxyDataDirty();
-			UpdateBounds();
-		}
-
-		/** @copydoc TDecalGetters::GetLayerMask */
-		B3D_SCRIPT_EXPORT(ExportName(LayerMask), Property(Setter))
-		void SetLayerMask(u32 mask)
-		{
-			this->LayerMask = mask;
-			MarkRenderProxyDataDirty();
-		}
-
-		/** @copydoc TDecalGetters::GetLayer */
-		B3D_SCRIPT_EXPORT(ExportName(Layer), Property(Setter))
-		void SetLayer(u64 layer);
-
-		/**	Gets world bounds of this object. */
-		Bounds GetBounds() const { return mBounds; }
-
-		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
-
-		/**
-		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
-		 * not include scale values.
-		 */
-		Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
-
-		/** Returns the decal data struct. */
-		const TDecalData<IsRenderProxy>& GetDecalData() const { return *this; }
-
-	protected:
-		/** Updates the internal bounds for the decal. Call this whenever a property affecting the bounds changes. */
-		void UpdateBounds();
-
-		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
-		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
-
-		/** @copydoc CoreObject::MarkDependenciesDirty */
-		void MarkCoreObjectDependenciesDirty();
-
-		Matrix4 mWorldTransformMatrix = kIdentityTag;
-		Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
-		Bounds mBounds = Bounds::kEmpty;
-	};
+	Bounds ComputeDecalBounds(const Vector2& size, float maxDistance, const Transform& transform);
 
 	/** @} */
 
@@ -173,8 +89,6 @@ namespace b3d
 		/** ECS fragment storing decal visual data (material, size, layer, etc.). */
 		struct B3D_EXPORT Decal : TDecalData<false>, IReflectable
 		{
-			struct FullSyncPacket;
-			struct TransformSyncPacket;
 			struct FullSyncPacketECS;
 			struct TransformSyncPacketECS;
 
@@ -226,19 +140,8 @@ namespace b3d
 		/**	Gets world bounds of this object. */
 		Bounds GetBounds() const { return mBounds; }
 
-		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
-
-		/**
-		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
-		 * not include scale values.
-		 */
-		Matrix4 GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
-
 	protected:
-		SPtr<render::RenderProxy> CreateRenderProxy() const override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
-		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -280,52 +183,8 @@ namespace b3d
 		/** Updates the internal bounds for the decal. Call this whenever a property affecting the bounds changes. */
 		void UpdateBounds();
 
-		Matrix4 mWorldTransformMatrix = kIdentityTag;
-		Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
 		Bounds mBounds = Bounds::kEmpty;
 	};
-
-	namespace render
-	{
-		/** Render thread counterpart of a b3d::Decal */
-		class B3D_EXPORT Decal : public TDecal<true>
-		{
-		public:
-			~Decal();
-
-			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-			void SetRendererId(u32 id) { mRendererId = id; }
-
-			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-			u32 GetRendererId() const { return mRendererId; }
-
-			/** Returns the world space transform for the decal. */
-			const Transform& GetWorldTransform() const { return mTransform; }
-
-			/** Returns width and height of the decal, scaled by decal's transform. */
-			Vector2 GetWorldSize() const
-			{
-				return Vector2(Size.X * mTransform.GetScale().X, Size.Y * mTransform.GetScale().Y);
-			}
-
-			/** Maximum distance (from its origin) at which the decal is displayed, scaled by decal's transform. */
-			float GetWorldMaxDistance() const { return MaxDistance * mTransform.GetScale().Z; }
-
-		protected:
-			friend class b3d::Decal;
-			friend struct ecs::Decal;
-
-			Decal(const SPtr<SceneInstance>& scene);
-
-			void Initialize() override;
-			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
-
-			u32 mRendererId = 0;
-			Transform mTransform;
-			bool mActive = true;
-			SPtr<SceneInstance> mSceneInstance;
-		};
-	} // namespace render
 
 	namespace render
 	{
@@ -337,11 +196,20 @@ namespace b3d
 			friend struct b3d::DecalTransformUpdateChannel;
 
 		public:
+			/** Returns the world space transform of the decal. */
+			const Transform& GetTransform() const { return mTransform; }
+
 			/** Returns the world space transform matrix for the decal. */
 			const Matrix4& GetWorldTransformMatrix() const { return mWorldTransformMatrix; }
 
 			/** Returns the world space transform matrix without scale for the decal. */
 			const Matrix4& GetWorldTransformMatrixWithoutScale() const { return mWorldTransformMatrixWithoutScale; }
+
+			/** Returns the decal size in world space, accounting for the scene object's scale. */
+			Vector2 GetWorldSize() const;
+
+			/** Returns the max distance in world space, accounting for the scene object's scale. */
+			float GetWorldMaxDistance() const;
 
 			/** Returns world space bounds that encompass the decal's area of influence. */
 			Bounds GetBounds() const { return mBounds; }
@@ -356,6 +224,7 @@ namespace b3d
 			const TDecalData<true>& GetDecalData() const { return mData; }
 
 			TDecalData<true> mData;
+			Transform mTransform;
 			Matrix4 mWorldTransformMatrix = kIdentityTag;
 			Matrix4 mWorldTransformMatrixWithoutScale = kIdentityTag;
 			Bounds mBounds = Bounds::kEmpty;

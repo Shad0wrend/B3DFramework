@@ -21,18 +21,18 @@ void DecalDrawCommand::Draw(GpuCommandBuffer& commandBuffer) const
 	GetRendererUtility().Draw(commandBuffer, Mesh, SubMesh);
 }
 
-void DecalRenderState::UpdatePerObjectData()
+void DecalRenderState::UpdatePerObjectData(const DecalProxy& proxy)
 {
-	const Vector2 size = Decal->GetWorldSize();
-	const Vector2 extent = size * 0.5f;
-	const float maxDistance = Decal->GetWorldMaxDistance();
+	const Vector2 worldSize = proxy.GetWorldSize();
+	const float worldMaxDistance = proxy.GetWorldMaxDistance();
 
-	const Vector3 scale(extent.X, extent.Y, maxDistance * 0.5f);
-	const Vector3 offset(0.0f, 0.0f, -maxDistance * 0.5f);
+	const Vector2 extent = worldSize * 0.5f;
+	const Vector3 scale(extent.X, extent.Y, worldMaxDistance * 0.5f);
+	const Vector3 offset(0.0f, 0.0f, -worldMaxDistance * 0.5f);
 	const Matrix4 scaleAndOffset = Matrix4::TRS(offset, Quaternion::kIdentity, scale);
 
-	WorldTransform = Decal->GetWorldTransformMatrix() * scaleAndOffset;
-	WorldNoScale = Decal->GetWorldTransformMatrixWithoutScale() * scaleAndOffset;
+	WorldTransform = proxy.GetWorldTransformMatrix() * scaleAndOffset;
+	WorldNoScale = proxy.GetWorldTransformMatrixWithoutScale() * scaleAndOffset;
 	PrevWorldTransform = WorldTransform; // Decals don't track previous frame
 	Layer = 0;
 }

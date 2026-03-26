@@ -632,12 +632,12 @@ void RendererView::QueueDrawCommands(const RenderBeastScene& scene)
 
 	// Queue decals
 	const bool isMSAA = mProperties.Target.NumSamples > 1;
-	for(u32 i = 0; i < (u32)sceneInfo.Decals.size(); i++)
+	for(u32 i = 0; i < (u32)scene.GetDecalCount(); i++)
 	{
 		if(!mVisibility.Decals[i])
 			continue;
 
-		const DecalDrawCommand& drawCommand = sceneInfo.Decals[i].DrawCommand;
+		const DecalDrawCommand& drawCommand = scene.GetDecalRenderState(i).DrawCommand;
 
 		// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
 		ShaderFlags shaderFlags = drawCommand.Material->GetShader()->GetFlags();
@@ -646,7 +646,7 @@ void RendererView::QueueDrawCommands(const RenderBeastScene& scene)
 		if(shaderFlags.IsSetAny(ShaderFlag::Transparent | ShaderFlag::Forward))
 			continue;
 
-		const AABox& boundingBox = sceneInfo.DecalCullInfos[i].Bounds.GetBox();
+		const AABox& boundingBox = scene.GetDecalCullInfo(i).Bounds.GetBox();
 		const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 		// Check if viewer is inside the decal volume
@@ -938,14 +938,14 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	mVisibility.ParticleSystems.resize(sceneInfo.ParticleSystems.size(), false);
 	mVisibility.ParticleSystems.assign(sceneInfo.ParticleSystems.size(), false);
 
-	mVisibility.Decals.resize(sceneInfo.Decals.size(), false);
-	mVisibility.Decals.assign(sceneInfo.Decals.size(), false);
+	mVisibility.Decals.resize(scene.GetDecalCount(), false);
+	mVisibility.Decals.assign(scene.GetDecalCount(), false);
 
 	for(u32 i = 0; i < viewCount; i++)
 	{
 		mViews[i]->DetermineVisible(scene.GetRenderables(), scene.GetRenderableCullInfos(), &mVisibility.Renderables);
 		mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
-		mViews[i]->DetermineVisible(sceneInfo.Decals, sceneInfo.DecalCullInfos, &mVisibility.Decals);
+		mViews[i]->DetermineVisible(scene.GetDecals(), scene.GetDecalCullInfos(), &mVisibility.Decals);
 	}
 
 	// Generate render queues per camera

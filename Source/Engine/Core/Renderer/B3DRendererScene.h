@@ -11,6 +11,7 @@
 
 namespace b3d
 {
+	class DecalObjectStorageBase;
 	class FrameAllocator;
 	class LightObjectStorageBase;
 	class RenderableObjectStorageBase;
@@ -30,6 +31,7 @@ namespace b3d
 	{
 		void* RenderableBatchData = nullptr;
 		void* LightBatchData = nullptr;
+		void* DecalBatchData = nullptr;
 	};
 
 	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -53,6 +55,12 @@ namespace b3d
 		/** Removes the ecs::LightId fragment and deallocates the persistent render object ID. */
 		void DeallocateLightId(ecs::Registry& registry, ecs::Entity entity);
 
+		/** Allocates a persistent render object ID for a decal and adds the ecs::DecalId fragment. */
+		RendererId AllocateDecalId(ecs::Registry& registry, ecs::Entity entity);
+
+		/** Removes the ecs::DecalId fragment and deallocates the persistent render object ID. */
+		void DeallocateDecalId(ecs::Registry& registry, ecs::Entity entity);
+
 		/**
 		 * Reads dirty ECS data on the main thread and posts a command to write the changes to the render thread,
 		 * for all RenderableObjectStorage objects.
@@ -69,6 +77,7 @@ namespace b3d
 		 */
 		RendererSceneSyncData* SyncRead(ecs::Registry& registry, FrameAllocator& allocator);
 	private:
+		SPtr<DecalObjectStorageBase> mDecalStorage;
 		SPtr<RenderableObjectStorageBase> mRenderableStorage;
 		SPtr<LightObjectStorageBase> mLightStorage;
 	};
@@ -99,6 +108,9 @@ namespace b3d
 
 			/** Returns the light object storage for this scene. */
 			const SPtr<LightObjectStorageBase>& GetLightStorage() const { return mLightStorage; }
+
+			/** Returns the decal object storage for this scene. */
+			const SPtr<DecalObjectStorageBase>& GetDecalStorage() const { return mDecalStorage; }
 
 			/** Applies sync data from SyncRead to render-thread representations and frees frame-allocated memory. */
 			void SyncWrite(RendererSceneSyncData& batchData, FrameAllocator& allocator);
@@ -145,15 +157,6 @@ namespace b3d
 			/** Removes a particle system from the scene. */
 			virtual void UnregisterParticleSystem(ParticleSystem* particleSystem) = 0;
 
-			/** Registers a new decal object in the scene. */
-			virtual void RegisterDecal(Decal* decal) = 0;
-
-			/** Updates information about a previously registered decal object. */
-			virtual void UpdateDecal(Decal* decal) = 0;
-
-			/** Removes a decal object from the scene. */
-			virtual void UnregisterDecal(Decal* decal) = 0;
-
 			/**
 			 * Registers an extension object that will be called every frame, for view in this scene. Allows external code to perform
 			 * custom rendering interleaved with the renderer's output.
@@ -177,6 +180,7 @@ namespace b3d
 			const Set<RendererExtension*, RendererExtension::SortFunction>& GetCombinedRendererExtensions() const { return mCombinedRendererExtensions; }
 
 		protected:
+			SPtr<DecalObjectStorageBase> mDecalStorage;
 			SPtr<RenderableObjectStorageBase> mRenderableStorage;
 			SPtr<LightObjectStorageBase> mLightStorage;
 

@@ -253,22 +253,24 @@ void UniformBufferPools::UpdatePerObjectBuffer(const RenderState& renderState, c
 	actualCommandBuffer->CopyBufferToBuffer(source.GetBuffer(), destination.GetBuffer(), source.GetSuballocationOffset(), destination.GetSuballocationOffset(), source.GetSize());
 }
 
-void UniformBufferPools::UpdateDecalParamBuffer(const DecalRenderState& decal, const SPtr<GpuCommandBuffer>& commandBuffer)
+void UniformBufferPools::UpdateDecalParamBuffer(const DecalRenderState& decal, const DecalProxy& proxy, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	if (!decal.DecalParamSuballocation.IsValid())
 		return;
 
-	const Transform& tfrm = decal.Decal->GetWorldTransform();
+	const Transform& transform = proxy.GetTransform();
+	const Vector3& position = transform.GetPosition();
+	const Quaternion& rotation = transform.GetRotation();
 
-	const Vector2 size = decal.Decal->GetWorldSize();
-	const Vector2 extent = size * 0.5f;
-	const float maxDistance = decal.Decal->GetWorldMaxDistance();
+	const Vector2 worldSize = proxy.GetWorldSize();
+	const Vector2 extent = worldSize * 0.5f;
+	const float maxDistance = proxy.GetWorldMaxDistance();
 
-	const Matrix4 view = Matrix4::View(tfrm.GetPosition(), tfrm.GetRotation());
+	const Matrix4 view = Matrix4::View(position, rotation);
 	const Matrix4 proj = Matrix4::ProjectionOrthographic(-extent.X, extent.X, -extent.Y, extent.Y, 0.0f, maxDistance);
 
 	const Matrix4 worldToDecal = proj * view;
-	const Vector3 decalNormal = -tfrm.GetRotation().ZAxis();
+	const Vector3 decalNormal = -rotation.ZAxis();
 	const float normalTolerance = -0.05f;
 
 	float flipDerivatives = 1.0f;
@@ -282,7 +284,7 @@ void UniformBufferPools::UpdateDecalParamBuffer(const DecalRenderState& decal, c
 	gDecalUniformDefinition.gDecalNormal.Set(staging, decalNormal);
 	gDecalUniformDefinition.gNormalTolerance.Set(staging, normalTolerance);
 	gDecalUniformDefinition.gFlipDerivatives.Set(staging, flipDerivatives);
-	gDecalUniformDefinition.gLayerMask.Set(staging, (i32)decal.Decal->GetLayerMask());
+	gDecalUniformDefinition.gLayerMask.Set(staging, (i32)proxy.GetLayerMask());
 
 	staging.Unmap();
 

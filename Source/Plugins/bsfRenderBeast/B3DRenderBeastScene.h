@@ -4,6 +4,8 @@
 
 #include "B3DRenderBeastPrerequisites.h"
 #include "RenderState/B3DLightRenderState.h"
+#include "RenderState/B3DDecalRenderState.h"
+#include "Components/B3DDecal.h"
 #include "B3DRendererView.h"
 #include "RenderState/B3DParticleRenderState.h"
 #include "Renderer/B3DRendererScene.h"
@@ -22,8 +24,6 @@ namespace b3d
 	namespace render
 	{
 		class RenderableObjectStorage;
-		struct DecalRenderState;
-		class Decal;
 		struct FrameInfo;
 
 		/** @addtogroup RenderBeast
@@ -135,6 +135,48 @@ namespace b3d
 			Vector<LightRenderState> mLightRenderStates;
 		};
 
+		/**
+		 * Maintains packed arrays containing renderer-specific data for decals. Allows fast iteration over
+		 * all decals in a scene and provides data needed for their rendering and culling.
+		 */
+		class DecalObjectStorage final : public DecalObjectStorageBase
+		{
+		public:
+			DecalObjectStorage();
+
+			void ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator) override;
+			void CreateRenderState(TArrayView<const PackedRendererId> ids) override;
+			void DestroyRenderState(TArrayView<const PackedRendererId> ids) override;
+			void UpdateRenderState(TArrayView<const PackedRendererId> ids) override;
+
+			/** Returns the decal render state at the given packed ID. */
+			DecalRenderState& GetDecalRenderState(PackedRendererId packedId) { return mDecals[packedId]; }
+
+			/** Returns the decal render state at the given packed ID (const). */
+			const DecalRenderState& GetDecalRenderState(PackedRendererId packedId) const { return mDecals[packedId]; }
+
+			/** Returns the packed decal render state array. */
+			Vector<DecalRenderState>& GetDecals() { return mDecals; }
+
+			/** @copydoc GetDecals */
+			const Vector<DecalRenderState>& GetDecals() const { return mDecals; }
+
+			/** Returns the packed cull info array. */
+			Vector<CullInfo>& GetDecalCullInfos() { return mDecalCullInfos; }
+
+			/** @copydoc GetDecalCullInfos */
+			const Vector<CullInfo>& GetDecalCullInfos() const { return mDecalCullInfos; }
+
+			/** Sets the owning RenderBeastScene. Called by RenderBeastScene::Initialize(). */
+			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
+
+		private:
+			Vector<DecalRenderState> mDecals;
+			Vector<CullInfo> mDecalCullInfos;
+
+			RenderBeastScene* mRenderBeastScene = nullptr;
+		};
+
 		/** Contains most scene objects relevant to the renderer. */
 		struct SceneInfo
 		{
@@ -155,10 +197,6 @@ namespace b3d
 			// Particles
 			Vector<ParticleRenderState> ParticleSystems;
 			Vector<CullInfo> ParticleSystemCullInfos;
-
-			// Decals
-			Vector<DecalRenderState> Decals;
-			Vector<CullInfo> DecalCullInfos;
 
 			// Sky
 			Skybox* Skybox = nullptr;
@@ -195,10 +233,6 @@ namespace b3d
 			void RegisterParticleSystem(ParticleSystem* particleSystem) override;
 			void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly) override;
 			void UnregisterParticleSystem(ParticleSystem* particleSystem) override;
-
-			void RegisterDecal(Decal* decal) override;
-			void UpdateDecal(Decal* decal) override;
-			void UnregisterDecal(Decal* decal) override;
 
 			void Initialize() override;
 			void Destroy() override;
@@ -262,6 +296,10 @@ namespace b3d
 			LightObjectStorage& GetLightStorage() { return static_cast<LightObjectStorage&>(*mLightStorage.get()); }
 			const LightObjectStorage& GetLightStorage() const { return static_cast<const LightObjectStorage&>(*mLightStorage.get()); }
 
+			/** Returns the decal object storage. */
+			DecalObjectStorage& GetDecalStorage() { return static_cast<DecalObjectStorage&>(*mDecalStorage.get()); }
+			const DecalObjectStorage& GetDecalStorage() const { return static_cast<const DecalObjectStorage&>(*mDecalStorage.get()); }
+
 			/**
 			 * @name Renderable accessors — convenience wrappers around RenderableObjectStorage
 			 * @{
@@ -287,6 +325,17 @@ namespace b3d
 			/** @} */
 
 			/**
+			 * @name Decal accessors — convenience wrappers around DecalObjectStorage
+			 * @{
+			 */
+			u32 GetDecalCount() const { return (u32)GetDecalStorage().GetDecals().size(); }
+			const DecalRenderState& GetDecalRenderState(u32 index) const { return GetDecalStorage().GetDecals()[index]; }
+			const CullInfo& GetDecalCullInfo(u32 index) const { return GetDecalStorage().GetDecalCullInfos()[index]; }
+			const Vector<DecalRenderState>& GetDecals() const { return GetDecalStorage().GetDecals(); }
+			const Vector<CullInfo>& GetDecalCullInfos() const { return GetDecalStorage().GetDecalCullInfos(); }
+			/** @} */
+
+			/**
 			 * Generates sampler state overrides for the provided render element, or returns existing ones if they
 			 * already exist for the element's material. Shared between renderables and decals.
 			 */
@@ -306,6 +355,7 @@ namespace b3d
 		private:
 			friend class RenderableObjectStorage;
 			friend class LightObjectStorage;
+			friend class DecalObjectStorage;
 
 			/** Creates a renderer view descriptor for the particular camera. */
 			RendererViewCreateInformation CreateViewDesc(Camera* camera) const;

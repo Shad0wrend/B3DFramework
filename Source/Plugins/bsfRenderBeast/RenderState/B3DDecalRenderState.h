@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DRenderBeastPrerequisites.h"
+#include "Renderer/B3DRendererId.h"
 #include "Renderer/B3DDrawCommand.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Material/B3DMaterialParam.h"
@@ -14,7 +15,7 @@ namespace b3d
 {
 	namespace render
 	{
-		class Decal;
+		class DecalProxy;
 
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -100,10 +101,9 @@ namespace b3d
 		/** Renderer-specific state for a decal. */
 		struct DecalRenderState : RenderState
 		{
-			/** Updates the per-object data from the current Decal state. */
-			void UpdatePerObjectData();
+			/** Updates the per-object data from a DecalProxy. */
+			void UpdatePerObjectData(const DecalProxy& proxy);
 
-			Decal* Decal;
 			mutable DecalDrawCommand DrawCommand;
 
 			/** Suballocation for decal-specific uniform buffer data. */

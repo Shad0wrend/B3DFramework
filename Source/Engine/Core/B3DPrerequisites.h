@@ -292,7 +292,6 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(MaterialParameters)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Camera)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(Decal)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(ReflectionProbe)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(ParticleSystem)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Texture)
@@ -328,6 +327,7 @@ namespace b3d
 
 	class Renderable;
 	class Light;
+	class Decal;
 	class Collider;
 	class SamplerState;
 	class Rigidbody;

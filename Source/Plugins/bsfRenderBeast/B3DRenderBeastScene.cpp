@@ -550,6 +550,140 @@ void LightObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> id
 	}
 }
 
+// ---- DecalObjectStorage ----
+
+DecalObjectStorage::DecalObjectStorage() = default;
+
+void DecalObjectStorage::ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator)
+{
+	RendererObjectStorage::ApplyCommandsHelper(
+		commands,
+		allocator,
+		[this](PackedRendererId id) { mDecalProxies[id].SetRendererId(id); },
+		[this](TArrayView<const PackedRendererId> ids) { DestroyRenderState(ids); },
+		mDecalProxies, mDecals, mDecalCullInfos);
+}
+
+void DecalObjectStorage::CreateRenderState(TArrayView<const PackedRendererId> ids)
+{
+	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
+
+	for(const PackedRendererId packedId : ids)
+	{
+		const render::DecalProxy& proxy = GetDecalProxy(packedId);
+
+		DecalRenderState& renderState = mDecals[packedId];
+
+		mDecalCullInfos[packedId] = CullInfo(proxy.GetBounds(), proxy.GetLayer());
+
+		DecalDrawCommand& drawCommand = renderState.DrawCommand;
+		drawCommand.Type = (u32)DrawCommandType::Decal;
+		drawCommand.Mesh = RendererUtility::Instance().GetBoxStencil();
+		drawCommand.SubMesh = drawCommand.Mesh->GetProperties().SubMeshes[0];
+
+		drawCommand.Material = proxy.GetMaterial();
+
+		if(drawCommand.Material != nullptr && drawCommand.Material->GetShader() == nullptr)
+			drawCommand.Material = nullptr;
+
+		// If no material use the default material
+		if(drawCommand.Material == nullptr)
+			drawCommand.Material = Material::Create(DefaultDecalMaterial::Get()->GetShader());
+
+		for(u32 insideGeometryIndex = 0; insideGeometryIndex < 2; insideGeometryIndex++)
+		{
+			for(u32 msaaModeIndex = 0; msaaModeIndex < 3; msaaModeIndex++)
+			{
+				FindVariationInformation findVariationInformation;
+				findVariationInformation.VariationParameters = kDecalVariationParameterLookup[insideGeometryIndex][msaaModeIndex];
+				findVariationInformation.Override = true;
+
+				u32 variationIndex = drawCommand.Material->FindVariation(findVariationInformation);
+				if(variationIndex == ~0u)
+					variationIndex = 0;
+
+				const SPtr<Variation>& variation = drawCommand.Material->GetVariation(variationIndex);
+				if(variation)
+					variation->Compile();
+
+				drawCommand.VariationIndices[insideGeometryIndex][msaaModeIndex] = variationIndex;
+			}
+		}
+
+		drawCommand.DefaultVariationIndex = drawCommand.VariationIndices[0][0];
+
+		// Generate or assign renderer specific data for the material
+		drawCommand.ParameterAdapter = drawCommand.Material->CreateParameterAdapter(drawCommand.DefaultVariationIndex);
+		drawCommand.ParameterAdapter->Update(drawCommand.Material, 0.0f, true);
+
+		// Generate or assign sampler state overrides
+		drawCommand.SamplerOverrides = mRenderBeastScene->AllocSamplerStateOverrides(drawCommand);
+
+		// Prepare all parameter bindings
+		SPtr<GpuParameterSet> gpuParameterSet = drawCommand.ParameterAdapter->GetGpuParameterSet();
+
+		// Allocate from the uniform buffer manager after ParameterAdapter is created
+		{
+			UniformBufferPools::AllocationResult result = uniformBufferPools.Allocate(UniformBufferPools::DecalPool);
+			renderState.PerObjectBufferAllocationHandle = result.Handle;
+			renderState.PerObjectParameterSet = result.ParameterSet;
+			renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
+			renderState.DecalParamSuballocation = result.GetSuballocation(UniformBufferPools::DecalBuffer);
+		}
+
+		// Store shared parameter set and buffer offsets for render-time binding
+		drawCommand.SharedPerObjectParameterSet = renderState.PerObjectParameterSet;
+		drawCommand.PerObjectBufferOffset = renderState.PerObjectSuballocation.GetSuballocationOffset();
+		drawCommand.DecalParamBufferOffset = renderState.DecalParamSuballocation.GetSuballocationOffset();
+
+		// Now update the uniform buffers (allocation is ready)
+		renderState.UpdatePerObjectData(proxy);
+		uniformBufferPools.UpdatePerObjectBuffer(renderState);
+		uniformBufferPools.UpdateDecalParamBuffer(renderState, proxy);
+
+		gpuParameterSet->TryGetUniformBufferParameter("PerFrame", drawCommand.PerFrameUniformBufferParameter);
+		gpuParameterSet->TryGetUniformBufferParameter("PerCamera", drawCommand.PerCameraUniformBufferParameter);
+		gpuParameterSet->TryGetSampledTextureParameter("gDepthBufferTex", drawCommand.DepthInputTexture);
+		gpuParameterSet->TryGetSampledTextureParameter("gMaskTex", drawCommand.MaskInputTexture);
+	}
+}
+
+void DecalObjectStorage::DestroyRenderState(TArrayView<const PackedRendererId> ids)
+{
+	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
+
+	for(const PackedRendererId packedId : ids)
+	{
+		DecalRenderState& renderState = mDecals[packedId];
+		DecalDrawCommand& drawCommand = renderState.DrawCommand;
+
+		// Unregister sampler overrides
+		mRenderBeastScene->FreeSamplerStateOverrides(drawCommand);
+		drawCommand.SamplerOverrides = nullptr;
+
+		// Release the buffer allocation
+		uniformBufferPools.Release(renderState.PerObjectBufferAllocationHandle);
+
+	}
+}
+
+void DecalObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> ids)
+{
+	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
+
+	for(const PackedRendererId packedId : ids)
+	{
+		const render::DecalProxy& proxy = GetDecalProxy(packedId);
+		DecalRenderState& renderState = mDecals[packedId];
+
+		renderState.UpdatePerObjectData(proxy);
+		uniformBufferPools.UpdatePerObjectBuffer(renderState);
+		uniformBufferPools.UpdateDecalParamBuffer(renderState, proxy);
+
+		mDecalCullInfos[packedId] = CullInfo(proxy.GetBounds(), proxy.GetLayer());
+	}
+}
+
 // ---- RenderBeastScene ----
 
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
@@ -557,6 +691,7 @@ RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
 {
 	mRenderableStorage = B3DMakeShared<RenderableObjectStorage>();
 	mLightStorage = B3DMakeShared<LightObjectStorage>();
+	mDecalStorage = B3DMakeShared<DecalObjectStorage>();
 }
 
 void RenderBeastScene::RegisterCamera(Camera* camera)
@@ -1146,131 +1281,6 @@ void RenderBeastScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 	mInfo.ParticleSystemCullInfos.erase(mInfo.ParticleSystemCullInfos.end() - 1);
 }
 
-void RenderBeastScene::RegisterDecal(Decal* decal)
-{
-	const auto renderableId = (u32)mInfo.Decals.size();
-	decal->SetRendererId(renderableId);
-
-	mInfo.Decals.emplace_back();
-	mInfo.DecalCullInfos.push_back(CullInfo(decal->GetBounds(), decal->GetLayer()));
-
-	DecalRenderState& renderState = mInfo.Decals.back();
-	renderState.Decal = decal;
-
-	DecalDrawCommand& drawCommand = renderState.DrawCommand;
-	drawCommand.Type = (u32)DrawCommandType::Decal;
-	drawCommand.Mesh = RendererUtility::Instance().GetBoxStencil();
-	drawCommand.SubMesh = drawCommand.Mesh->GetProperties().SubMeshes[0];
-
-	drawCommand.Material = decal->GetMaterial();
-
-	if(drawCommand.Material != nullptr && drawCommand.Material->GetShader() == nullptr)
-		drawCommand.Material = nullptr;
-
-	// If no material use the default material
-	if(drawCommand.Material == nullptr)
-		drawCommand.Material = Material::Create(DefaultDecalMaterial::Get()->GetShader());
-
-	for(u32 i = 0; i < 2; i++)
-	{
-		for(u32 j = 0; j < 3; j++)
-		{
-			FindVariationInformation findVariationINformation;
-			findVariationINformation.VariationParameters = kDecalVariationParameterLookup[i][j];
-			findVariationINformation.Override = true;
-
-			u32 variationIndex = drawCommand.Material->FindVariation(findVariationINformation);
-			if(variationIndex == ~0u)
-				variationIndex = 0;
-
-			const SPtr<Variation>& variation = drawCommand.Material->GetVariation(variationIndex);
-			if(variation)
-				variation->Compile();
-
-			drawCommand.VariationIndices[i][j] = variationIndex;
-		}
-	}
-
-	drawCommand.DefaultVariationIndex = drawCommand.VariationIndices[0][0];
-
-	// Generate or assigned renderer specific data for the material
-	// Note: This makes the assumption that all variations of the material share the same parameter set
-	drawCommand.ParameterAdapter = drawCommand.Material->CreateParameterAdapter(drawCommand.DefaultVariationIndex);
-	drawCommand.ParameterAdapter->Update(drawCommand.Material, 0.0f, true);
-
-	// Generate or assign sampler state overrides
-	drawCommand.SamplerOverrides = AllocSamplerStateOverrides(drawCommand);
-
-	// Prepare all parameter bindings
-	SPtr<GpuParameterSet> gpuParameterSet = drawCommand.ParameterAdapter->GetGpuParameterSet();
-
-	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	{
-		UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::DecalPool);
-		renderState.PerObjectBufferAllocationHandle = result.Handle;
-		renderState.PerObjectParameterSet = result.ParameterSet;
-		renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
-		renderState.DecalParamSuballocation = result.GetSuballocation(UniformBufferPools::DecalBuffer);
-	}
-
-	// Store shared parameter set and buffer offsets for render-time binding
-	drawCommand.SharedPerObjectParameterSet = renderState.PerObjectParameterSet;
-	drawCommand.PerObjectBufferOffset = renderState.PerObjectSuballocation.GetSuballocationOffset();
-	drawCommand.DecalParamBufferOffset = renderState.DecalParamSuballocation.GetSuballocationOffset();
-
-	// Now update the uniform buffers (allocation is ready)
-	renderState.UpdatePerObjectData();
-	mUniformBufferPools.UpdatePerObjectBuffer(renderState);
-	mUniformBufferPools.UpdateDecalParamBuffer(renderState);
-
-	gpuParameterSet->TryGetUniformBufferParameter("PerFrame", drawCommand.PerFrameUniformBufferParameter);
-	gpuParameterSet->TryGetUniformBufferParameter("PerCamera", drawCommand.PerCameraUniformBufferParameter);
-	gpuParameterSet->TryGetSampledTextureParameter("gDepthBufferTex", drawCommand.DepthInputTexture);
-	gpuParameterSet->TryGetSampledTextureParameter("gMaskTex", drawCommand.MaskInputTexture);
-}
-
-void RenderBeastScene::UpdateDecal(Decal* decal)
-{
-	const u32 rendererId = decal->GetRendererId();
-	DecalRenderState& renderState = mInfo.Decals[rendererId];
-
-	renderState.UpdatePerObjectData();
-	mUniformBufferPools.UpdatePerObjectBuffer(renderState);
-	mUniformBufferPools.UpdateDecalParamBuffer(renderState);
-
-	mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
-}
-
-void RenderBeastScene::UnregisterDecal(Decal* decal)
-{
-	const u32 rendererId = decal->GetRendererId();
-	Decal* lastDecal = mInfo.Decals.back().Decal;
-	const u32 lastDecalId = lastDecal->GetRendererId();
-
-	DecalRenderState& renderState = mInfo.Decals[rendererId];
-	DecalDrawCommand& drawCommand = renderState.DrawCommand;
-
-	// Unregister sampler overrides
-	FreeSamplerStateOverrides(drawCommand);
-	drawCommand.SamplerOverrides = nullptr;
-
-	// Release the buffer allocation
-	mUniformBufferPools.Release(renderState.PerObjectBufferAllocationHandle);
-
-	if(rendererId != lastDecalId)
-	{
-		// Swap current last element with the one we want to erase
-		std::swap(mInfo.Decals[rendererId], mInfo.Decals[lastDecalId]);
-		std::swap(mInfo.DecalCullInfos[rendererId], mInfo.DecalCullInfos[lastDecalId]);
-
-		lastDecal->SetRendererId(rendererId);
-	}
-
-	// Last element is the one we want to erase
-	mInfo.Decals.erase(mInfo.Decals.end() - 1);
-	mInfo.DecalCullInfos.erase(mInfo.DecalCullInfos.end() - 1);
-}
-
 void RenderBeastScene::Initialize()
 {
 	GetRenderBeast()->NotifySceneCreated(std::static_pointer_cast<RenderBeastScene>(GetShared()));
@@ -1279,6 +1289,9 @@ void RenderBeastScene::Initialize()
 
 	RenderableObjectStorage& renderableStorage = GetRenderableStorage();
 	renderableStorage.SetScene(*this);
+
+	DecalObjectStorage& decalStorage = GetDecalStorage();
+	decalStorage.SetScene(*this);
 
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())
@@ -1567,7 +1580,7 @@ void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo
 
 void RenderBeastScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 {
-	DecalDrawCommand& drawCommand = mInfo.Decals[idx].DrawCommand;
+	DecalDrawCommand& drawCommand = GetDecalStorage().GetDecals()[idx].DrawCommand;
 	drawCommand.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
 	drawCommand.ParameterAdapter->Update(drawCommand.Material, drawCommand.MaterialAnimationTime);
 }
