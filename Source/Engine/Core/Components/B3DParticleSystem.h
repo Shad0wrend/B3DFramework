@@ -8,6 +8,8 @@
 #include "Particles/B3DParticleDistribution.h"
 #include "Particles/B3DParticleModule.h"
 #include "Math/B3DTransform.h"
+#include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
 {
@@ -16,11 +18,9 @@ namespace b3d
 	class ParticleEmitter;
 	class ParticleEvolver;
 	class ParticleSet;
-
-	namespace render
-	{
-		class ParticleSystem;
-	}
+	class ParticleSystemObjectStorageBase;
+	struct ParticleSystemFullUpdateChannel;
+	struct ParticleSystemTransformUpdateChannel;
 
 	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(ParticleSystemSettings)
 	B3D_CORE_OBJECT_FORWARD_DECLARE_STRUCT(ParticleVectorFieldSettings)
@@ -440,6 +440,79 @@ namespace b3d
 		};
 	} // namespace render
 
+	/** Shared particle system property data used by both main and render thread variants. */
+	template <bool IsRenderProxy>
+	struct B3D_EXPORT TParticleSystemData
+	{
+		using SettingsType = CoreVariantType<ParticleSystemSettings, IsRenderProxy>;
+		using GpuSimSettingsType = CoreVariantType<ParticleGpuSimulationSettings, IsRenderProxy>;
+
+		SettingsType Settings;
+		GpuSimSettingsType GpuSimulationSettings;
+		u64 Layer = 1;
+	};
+
+	/** CRTP getter interface providing shared read access for particle system data to both ParticleSystem and render::ParticleSystemProxy. */
+	template <typename Derived, bool IsRenderProxy>
+	class TParticleSystemGetters
+	{
+		using SettingsType = CoreVariantType<ParticleSystemSettings, IsRenderProxy>;
+		using GpuSimSettingsType = CoreVariantType<ParticleGpuSimulationSettings, IsRenderProxy>;
+
+	public:
+		/** Determines general purpose settings that apply to the particle system. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Settings), PassByCopy(true))
+		const SettingsType& GetSettings() const { return GetData().Settings; }
+
+		/** Determines settings that control particle GPU simulation. */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(GpuSimulationSettings), PassByCopy(true))
+		const GpuSimSettingsType& GetGpuSimulationSettings() const { return GetData().GpuSimulationSettings; }
+
+		/**
+		 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
+		 * Layer must match camera layer in order for the camera to render the component.
+		 */
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Layer), UI(AsLayerMask))
+		u64 GetLayer() const { return GetData().Layer; }
+
+	private:
+		const TParticleSystemData<IsRenderProxy>& GetData() const
+		{
+			return static_cast<const Derived*>(this)->GetParticleSystemData();
+		}
+	};
+
+	/** @} */
+
+	/** @addtogroup Renderer-Internal
+	 *  @{
+	 */
+
+	namespace ecs
+	{
+		class ECSParticleSystemRTTI;
+
+		/** ECS fragment storing particle system visual data (settings, gpu simulation settings, layer). */
+		struct B3D_EXPORT ParticleSystem : TParticleSystemData<false>, IReflectable
+		{
+			/** Unique identifier for this particle system. */
+			u32 Id = 0;
+
+			struct FullSyncPacket;
+			struct TransformSyncPacket;
+
+			friend class ECSParticleSystemRTTI;
+			static RTTIType* GetRttiStatic();
+			RTTIType* GetRtti() const override;
+		};
+
+		/** ECS fragment storing the persistent render object ID for a particle system. */
+		struct ParticleSystemId
+		{
+			RendererId Id = kInvalidRendererId;
+		};
+	} // namespace ecs
+
 	/** @} */
 
 	/** @addtogroup Components
@@ -454,27 +527,21 @@ namespace b3d
 	 * The particle system requires you to specify at least one ParticleEmitter, which controls how are new particles
 	 * generated. You will also want to specify one or more ParticleEvolver%s, which change particle properties over time.
 	 */
-	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleSystem : public Component, public CoreObject
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleSystem : public Component, public TParticleSystemGetters<ParticleSystem, false>, public CoreObject
 	{
+		friend class TParticleSystemGetters<ParticleSystem, false>;
+
 	public:
 		ParticleSystem(const HSceneObject& parent);
 		virtual ~ParticleSystem() = default;
 
-		/** Determines general purpose settings that apply to the particle system. */
+		/** @copydoc TParticleSystemGetters::GetSettings */
 		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Settings), PassByCopy(true), UI(Inline))
 		void SetSettings(const ParticleSystemSettings& settings);
 
-		/** @copydoc SetSettings */
-		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Settings), PassByCopy(true))
-		const ParticleSystemSettings& GetSettings() const { return mSettings; }
-
-		/** Determines settings that control particle GPU simulation. */
+		/** @copydoc TParticleSystemGetters::GetGpuSimulationSettings */
 		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(GpuSimulationSettings), PassByCopy(true))
 		void SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
-
-		/** @copydoc GetGpuSimulationSettings */
-		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(GpuSimulationSettings), PassByCopy(true))
-		const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 		/**
 		 * Set of objects that determine initial position, normal and other properties of newly spawned particles. Each
@@ -498,23 +565,22 @@ namespace b3d
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Evolvers))
 		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
-		/**
-		 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
-		 * Layer must match camera layer in order for the camera to render the component.
-		 */
+		/** @copydoc TParticleSystemGetters::GetLayer */
 		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Layer), UI(AsLayerMask))
 		void SetLayer(u64 layer);
-
-		/** @copydoc SetLayer() */
-		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Layer), UI(AsLayerMask))
-		u64 GetLayer() const { return mLayer; }
 
 		/** @name Internal
 		 *  @{
 		 */
 
 		/**
-		 * Enables or disabled preview mode. Preview mode allows the particle system to play while the game is not running,
+		 * Returns an ID that uniquely identifies the particle system. Can be used for locating evaluated particle
+		 * system render data in the structure output by the ParticlesManager.
+		 */
+		u32 GetId() const { return GetFragment().Id; }
+
+		/**
+		 * Enables or disables preview mode. Preview mode allows the particle system to play while the game is not running,
 		 * primarily for preview purposes in the editor. Returns true if the preview mode was enabled, false if it was
 		 * disabled or enabling preview failed.
 		 */
@@ -561,14 +627,12 @@ namespace b3d
 		void OnDestroyed() override;
 		void OnDisabled() override;
 		void OnEnabled() override;
+		void OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity) override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
 		friend class ParticleScene;
 		friend class ParticleEmitter;
-		friend class render::ParticleSystem;
-		struct FullSyncPacket;
-		struct TransformSyncPacket;
 
 		/** States the particle system can be in. */
 		enum class State
@@ -634,18 +698,12 @@ namespace b3d
 		 */
 		void PostSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
 
-		SPtr<render::RenderProxy> CreateRenderProxy() const override;
-		RenderProxySyncPacket* CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags) override;
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
-		ParticleSystemSettings mSettings;
-		ParticleGpuSimulationSettings mGpuSimulationSettings;
 		Vector<SPtr<ParticleEmitter>> mEmitters;
 		Vector<SPtr<ParticleEvolver>> mEvolvers;
-		u64 mLayer = 1;
 
 		// Internal state
-		u32 mId = 0;
 		State mState = State::Uninitialized;
 		float mTime = 0.0f;
 		u32 mSeed = 0;
@@ -653,6 +711,19 @@ namespace b3d
 
 		Random mRandom;
 		ParticleSet* mParticleSet = nullptr;
+
+	private:
+		/** Returns a reference to the particle system data for the CRTP getter interface. */
+		const TParticleSystemData<false>& GetParticleSystemData() const;
+
+		/** Returns a mutable reference to the particle system ECS fragment. */
+		ecs::ParticleSystem& GetFragment();
+
+		/** Returns a const reference to the particle system ECS fragment. */
+		const ecs::ParticleSystem& GetFragment() const;
+
+		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
+		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -674,31 +745,15 @@ namespace b3d
 
 	namespace render
 	{
-		/** Render  thread counterpart of b3d::ParticleSystem. */
-		class B3D_EXPORT ParticleSystem final : public RenderProxy, public INonCopyable
+		/** Render-thread representation of a particle system, stored in packed arrays in ParticleSystemObjectStorageBase. */
+		class B3D_EXPORT ParticleSystemProxy : public TParticleSystemGetters<ParticleSystemProxy, true>
 		{
+			friend class TParticleSystemGetters<ParticleSystemProxy, true>;
+			friend struct b3d::ParticleSystemFullUpdateChannel;
+			friend struct b3d::ParticleSystemTransformUpdateChannel;
+
 		public:
-			~ParticleSystem();
-
-			/** @copydoc b3d::ParticleSystem::GetSettings */
-			const ParticleSystemSettings& GetSettings() const { return mSettings; }
-
-			/** @copydoc b3d::ParticleSystem::GetGpuSimulationSettings */
-			const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
-
-			/** @copydoc b3d::ParticleSystem::SetLayer */
-			void SetLayer(u64 layer);
-
-			/** @copydoc SetLayer */
-			u64 GetLayer() const { return mLayer; }
-
-			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-			void SetRendererId(u32 id) { mRendererId = id; }
-
-			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-			u32 GetRendererId() const { return mRendererId; }
-
-			/** Returns the world space transform for the particle system. */
+			/** Returns the world space transform of the particle system. */
 			const Transform& GetWorldTransform() const { return mTransform; }
 
 			/**
@@ -707,27 +762,62 @@ namespace b3d
 			 */
 			u32 GetId() const { return mId; }
 
-			void Initialize() override;
+			/** Sets the renderer-assigned packed slot ID. */
+			void SetRendererId(PackedRendererId id) { mRendererId = id; }
 
-		private:
-			friend class b3d::ParticleSystem;
+			/** Returns the renderer-assigned packed slot ID. */
+			PackedRendererId GetRendererId() const { return mRendererId; }
 
-			ParticleSystem(const SPtr<SceneInstance>& scene, u32 id)
-				: mSceneInstance(scene), mId(id)
-			{}
+		protected:
+			/** Returns a reference to the particle system data for the CRTP getter interface. */
+			const TParticleSystemData<true>& GetParticleSystemData() const { return mData; }
 
-			void SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator) override;
-
-			u32 mRendererId = 0;
-			u32 mId;
-
-			ParticleSystemSettings mSettings;
-			ParticleGpuSimulationSettings mGpuSimulationSettings;
-			u64 mLayer = 1;
+			TParticleSystemData<true> mData;
 			Transform mTransform;
-			bool mActive = true;
-			SPtr<SceneInstance> mSceneInstance;
+			u32 mId = 0;
+			PackedRendererId mRendererId = kInvalidPackedRendererId;
 		};
 	} // namespace render
+
+	/**
+	 * Contains render thread representation of particle system objects, stored in packed arrays accessible by PackedRendererId.
+	 * Implements main -> render thread synchronization logic for particle system objects.
+	 */
+	class B3D_EXPORT ParticleSystemObjectStorageBase : public RendererObjectStorage
+	{
+	public:
+		void* SyncRead(ecs::Registry& registry, FrameAllocator& allocator) override;
+		void SyncWrite(void* batchData, FrameAllocator& allocator) override;
+
+		/** Returns the particle system proxy at the given slot. */
+		render::ParticleSystemProxy& GetParticleSystemProxy(PackedRendererId slotId) { return mParticleSystemProxies[slotId]; }
+
+		/** Returns the particle system proxy at the given slot (const). */
+		const render::ParticleSystemProxy& GetParticleSystemProxy(PackedRendererId slotId) const { return mParticleSystemProxies[slotId]; }
+
+		/** Returns the total number of particle systems. */
+		u32 GetParticleSystemCount() const { return (u32)mParticleSystemProxies.size(); }
+
+		/**
+		 * Called once per frame for each new particle system being added, or a particle system whose data needs to be rebuilt
+		 * after a significant update (in which case DestroyRenderState will be called first).
+		 */
+		virtual void CreateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each particle system that is being removed, or a particle system that needs to be rebuilt
+		 * after a significant update (in which case CreateRenderState will be called right after).
+		 */
+		virtual void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+		/**
+		 * Called once per frame for each particle system that needs to be updated after a minor update (e.g. a transform change).
+		 */
+		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
+
+	protected:
+		Vector<render::ParticleSystemProxy> mParticleSystemProxies;
+	};
+
 	/** @} */
 } // namespace b3d

@@ -3,8 +3,10 @@
 #include "Components/B3DParticleSystem.h"
 
 #include "CoreObject/B3DCoreObjectSync.h"
+#include "ECS/B3DRegistry.h"
 #include "Private/Particles/B3DParticleSet.h"
 #include "Scene/B3DSceneObject.h"
+#include "Scene/B3DSceneObjectFragments.h"
 #include "Utility/B3DTime.h"
 #include "RTTI/B3DParticleSystemRTTI.h"
 #include "Renderer/B3DRendererScene.h"
@@ -17,6 +19,25 @@
 using namespace b3d;
 
 static constexpr u32 kInitialParticleCapacity = 1000;
+
+RTTIType* ecs::ParticleSystem::GetRttiStatic()
+{
+	return ecs::ECSParticleSystemRTTI::Instance();
+}
+
+RTTIType* ecs::ParticleSystem::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+namespace b3d::ecs
+{
+	/** Tag indicating a ParticleSystem needs to sync all of its properties to its render proxy. */
+	struct ParticleSystemDirty {};
+
+	/** Tag indicating a ParticleSystem needs to sync transform to its render proxy. */
+	struct ParticleSystemTransformDirty {};
+} // namespace b3d::ecs
 
 namespace b3d
 {
@@ -115,21 +136,111 @@ RTTIType* ParticleGpuSimulationSettings::GetRtti() const
 	return GetRttiStatic();
 }
 
+// New ECS-based sync blocks for particle system data
+
 namespace b3d
 {
-	B3D_SYNC_BLOCK_BEGIN(ParticleSystem, FullSyncPacket)
-		B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(mSettings, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(mGpuSimulationSettings, SyncPacket)
-		B3D_SYNC_BLOCK_ENTRY(mLayer)
-		B3D_SYNC_BLOCK_ENTRY(mId)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(bool, mActive)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(SPtr<SceneInstance>, mSceneInstance)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::ParticleSystem, FullSyncPacket, TParticleSystemData<true>)
+		B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(Settings, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY_PACKET_FIELD(GpuSimulationSettings, SyncPacket)
+		B3D_SYNC_BLOCK_ENTRY(Layer)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(u32, Id)
 	B3D_SYNC_BLOCK_END
 
-	B3D_SYNC_BLOCK_BEGIN(ParticleSystem, TransformSyncPacket)
-		B3D_SYNC_BLOCK_ENTRY_CUSTOM_SETTER(Transform, mTransform)
+	B3D_SYNC_BLOCK_BEGIN_CUSTOM(ecs::ParticleSystem, TransformSyncPacket, TParticleSystemData<true>)
+		B3D_SYNC_BLOCK_ENTRY_CUSTOM(Transform, TransformData)
 	B3D_SYNC_BLOCK_END
+
+	struct ParticleSystemFullUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		ParticleSystemFullUpdateChannel,
+		ecs::ParticleSystem::FullSyncPacket,
+		ecs::ParticleSystemDirty,
+		ecs::ParticleSystem, ecs::WorldTransform, ecs::ParticleSystemId
+	>
+	{
+		void Write(ParticleSystemObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToCreate(&allocator);
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToDestroy(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToCreate, &renderStatesToDestroy, &storage](ecs::ParticleSystem::FullSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::ParticleSystemProxy& proxy = storage.GetParticleSystemProxy(rendererId);
+
+				bool wasRegistered = proxy.mRendererId != kInvalidPackedRendererId;
+				proxy.mRendererId = rendererId;
+				packet.ApplySyncData(&proxy.mData);
+
+				proxy.mTransform = packet.TransformData;
+				proxy.mId = packet.Id;
+
+				if(wasRegistered)
+					renderStatesToDestroy.push_back(rendererId);
+
+				renderStatesToCreate.push_back(rendererId);
+			});
+
+			if(!renderStatesToDestroy.empty())
+				storage.DestroyRenderState(renderStatesToDestroy);
+
+			if(!renderStatesToCreate.empty())
+				storage.CreateRenderState(renderStatesToCreate);
+		}
+
+		void CreateAndPopulatePacket(ecs::ParticleSystem& fragment, ecs::WorldTransform& transform, ecs::ParticleSystemId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.TransformData = transform;
+			packet.Id = fragment.Id;
+		}
+	};
+
+	struct ParticleSystemTransformUpdateChannel : TRendererObjectECSSyncChannel
+	<
+		ParticleSystemTransformUpdateChannel,
+		ecs::ParticleSystem::TransformSyncPacket,
+		ecs::ParticleSystemTransformDirty,
+		ecs::ParticleSystem, ecs::WorldTransform, ecs::ParticleSystemId
+	>
+	{
+		void Write(ParticleSystemObjectStorageBase& storage, FrameAllocator& allocator)
+		{
+			Vector<PackedRendererId, StdFrameAlloc<PackedRendererId>> renderStatesToUpdate(&allocator);
+
+			WritePackets(storage, allocator, [&renderStatesToUpdate, &storage](ecs::ParticleSystem::TransformSyncPacket& packet, PackedRendererId rendererId)
+			{
+				render::ParticleSystemProxy& proxy = storage.GetParticleSystemProxy(rendererId);
+				proxy.mTransform = packet.TransformData;
+
+				renderStatesToUpdate.push_back(rendererId);
+			});
+
+			if(!renderStatesToUpdate.empty())
+				storage.UpdateRenderState(renderStatesToUpdate);
+		}
+
+		void CreateAndPopulatePacket(ecs::ParticleSystem& fragment, ecs::WorldTransform& transform, ecs::ParticleSystemId& id, FrameAllocator& allocator)
+		{
+			auto& packet = CreatePacket(id.Id, fragment, allocator, 0);
+			packet.TransformData = transform;
+		}
+	};
+
+	using ParticleSystemSyncBatch = TRendererObjectECSSyncBatch<ParticleSystemFullUpdateChannel, ParticleSystemTransformUpdateChannel>;
+}
+
+// ParticleSystemObjectStorageBase
+
+void* ParticleSystemObjectStorageBase::SyncRead(ecs::Registry& registry, FrameAllocator& allocator)
+{
+	return ParticleSystemSyncBatch::Read(*this, registry, allocator);
+}
+
+void ParticleSystemObjectStorageBase::SyncWrite(void* batchData, FrameAllocator& allocator)
+{
+	ParticleSystemSyncBatch::Write(*this, batchData, allocator);
 }
 
 ParticleSystem::ParticleSystem(const HSceneObject& parent)
@@ -146,9 +257,9 @@ ParticleSystem::ParticleSystem()
 
 void ParticleSystem::SetSettings(const ParticleSystemSettings& settings)
 {
-	mSettings = settings;
+	const ParticleSystemSettings& oldSettings = GetSettings();
 
-	if(settings.UseAutomaticSeed != mSettings.UseAutomaticSeed)
+	if(settings.UseAutomaticSeed != oldSettings.UseAutomaticSeed)
 	{
 		if(settings.UseAutomaticSeed)
 			mSeed = rand();
@@ -166,17 +277,17 @@ void ParticleSystem::SetSettings(const ParticleSystemSettings& settings)
 		}
 	}
 
-	if(settings.MaxParticles < mSettings.MaxParticles)
+	if(mParticleSet && settings.MaxParticles < oldSettings.MaxParticles)
 		mParticleSet->Clear(settings.MaxParticles);
 
-	mSettings = settings;
+	GetFragment().Settings = settings;
 	MarkRenderProxyDataDirty();
 	MarkDependenciesDirty();
 }
 
 void ParticleSystem::SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings)
 {
-	mGpuSimulationSettings = settings;
+	GetFragment().GpuSimulationSettings = settings;
 	MarkRenderProxyDataDirty();
 }
 
@@ -213,7 +324,7 @@ void ParticleSystem::SetLayer(u64 layer)
 		return;
 	}
 
-	mLayer = layer;
+	GetFragment().Layer = layer;
 	MarkRenderProxyDataDirty();
 }
 
@@ -224,7 +335,7 @@ void ParticleSystem::Play()
 
 	if(mState == State::Uninitialized)
 	{
-		u32 particleCapacity = std::min(mSettings.MaxParticles, kInitialParticleCapacity);
+		u32 particleCapacity = std::min(GetSettings().MaxParticles, kInitialParticleCapacity);
 		mParticleSet = B3DNew<ParticleSet>(particleCapacity);
 	}
 
@@ -254,8 +365,10 @@ void ParticleSystem::Simulate(float timeDelta, const EvaluatedAnimationData* ani
 	if(mState != State::Playing)
 		return;
 
+	const ParticleSystemSettings& settings = GetSettings();
+
 	float timeStep;
-	const float newTime = AdvanceTime(mTime, timeDelta, mSettings.Duration, mSettings.IsLooping, timeStep);
+	const float newTime = AdvanceTime(mTime, timeDelta, settings.Duration, settings.IsLooping, timeStep);
 
 	if(timeStep < 0.00001f)
 		return;
@@ -266,13 +379,13 @@ void ParticleSystem::Simulate(float timeDelta, const EvaluatedAnimationData* ani
 	ParticleSystemState state;
 	state.TimeStart = mTime;
 	state.TimeEnd = newTime;
-	state.NrmTimeStart = state.TimeStart / mSettings.Duration;
-	state.NrmTimeEnd = state.TimeEnd / mSettings.Duration;
-	state.Length = mSettings.Duration;
+	state.NrmTimeStart = state.TimeStart / settings.Duration;
+	state.NrmTimeEnd = state.TimeEnd / settings.Duration;
+	state.Length = settings.Duration;
 	state.TimeStep = timeStep;
-	state.MaxParticles = mSettings.MaxParticles;
-	state.WorldSpace = mSettings.SimulationSpace == ParticleSimulationSpace::World;
-	state.GpuSimulated = mSettings.GpuSimulation;
+	state.MaxParticles = settings.MaxParticles;
+	state.WorldSpace = settings.SimulationSpace == ParticleSimulationSpace::World;
+	state.GpuSimulated = settings.GpuSimulation;
 	state.LocalToWorld = sceneObject->GetTransform().GetMatrix();
 	state.WorldToLocal = state.LocalToWorld.InverseAffine();
 	state.System = this;
@@ -280,7 +393,7 @@ void ParticleSystem::Simulate(float timeDelta, const EvaluatedAnimationData* ani
 	state.AnimData = animData;
 
 	// For GPU simulation we only care about newly spawned particles, so clear old ones
-	if(mSettings.GpuSimulation)
+	if(settings.GpuSimulation)
 		mParticleSet->Clear();
 
 	// Spawn new particles
@@ -291,7 +404,7 @@ void ParticleSystem::Simulate(float timeDelta, const EvaluatedAnimationData* ani
 	}
 
 	// Simulate if running on CPU, otherwise just pass the spawned particles off to the render thread
-	if(!mSettings.GpuSimulation)
+	if(!settings.GpuSimulation)
 	{
 		const u32 particleCount = mParticleSet->GetParticleCount();
 
@@ -427,49 +540,50 @@ void ParticleSystem::PostSimulate(const ParticleSystemState& state, u32 startInd
 	}
 }
 
-SPtr<render::RenderProxy> ParticleSystem::CreateRenderProxy() const
+ecs::ParticleSystem& ParticleSystem::GetFragment()
 {
-	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
-
-	render::ParticleSystem* renderProxy = new(B3DAllocate<render::ParticleSystem>()) render::ParticleSystem(B3DGetRenderProxy(scene), mId);
-	SPtr<render::ParticleSystem> renderProxyShared = B3DMakeSharedFromExisting<render::ParticleSystem>(renderProxy);
-	renderProxyShared->SetShared(renderProxyShared);
-
-	return renderProxyShared;
+	return GetECSRegistry()->GetComponents<ecs::ParticleSystem>(GetECSEntity());
 }
 
-RenderProxySyncPacket* ParticleSystem::CreateRenderProxySyncPacket(FrameAllocator& allocator, u32 flags)
+const ecs::ParticleSystem& ParticleSystem::GetFragment() const
 {
-	if(flags != (u32)ComponentDirtyFlag::Transform)
-	{
-		FullSyncPacket* const syncPacket = allocator.Construct<FullSyncPacket>(*this, allocator, flags);
-		syncPacket->mActive = GetEnabled();
-		syncPacket->mSceneInstance = B3DGetRenderProxy(SceneObject()->GetScene());
-		syncPacket->mTransform = SceneObject()->GetTransform();
+	return GetECSRegistry()->GetComponents<ecs::ParticleSystem>(GetECSEntity());
+}
 
-		return syncPacket;
+const TParticleSystemData<false>& ParticleSystem::GetParticleSystemData() const
+{
+	return GetFragment();
+}
+
+void ParticleSystem::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
+{
+	if(!SceneObject().IsValid())
+		return;
+
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	if(flag == ComponentDirtyFlag::Transform)
+	{
+		if(!registry->HasAllOf<ecs::ParticleSystemDirty>(entity))
+			registry->AddTag<ecs::ParticleSystemTransformDirty>(entity);
 	}
 	else
-	{
-		TransformSyncPacket* const syncPacket = allocator.Construct<TransformSyncPacket>(*this, allocator, flags);
-		syncPacket->mTransform = SceneObject()->GetTransform();
-
-		return syncPacket;
-	}
-}
-
-void ParticleSystem::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-{
-	if(mSettings.Mesh.IsLoaded())
-		dependencies.push_back(mSettings.Mesh.Get());
-
-	if(mSettings.Material.IsLoaded())
-		dependencies.push_back(mSettings.Material.Get());
+		registry->AddTag<ecs::ParticleSystemDirty>(entity);
 }
 
 void ParticleSystem::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<ParticleSystem>(mThisHandle).GetShared());
+
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	if(!registry->HasAllOf<ecs::ParticleSystem>(entity))
+	{
+		ecs::ParticleSystem fragmentData;
+		registry->AddComponent<ecs::ParticleSystem>(entity, std::move(fragmentData));
+	}
 
 	Component::Initialize();
 	CoreObject::Initialize();
@@ -478,16 +592,26 @@ void ParticleSystem::Initialize()
 void ParticleSystem::OnCreated()
 {
 	const SPtr<ParticleScene>& particleScene = SceneObject()->GetScene()->GetParticleScene();
-
-	mId = particleScene->RegisterParticleSystem(this);
+	GetFragment().Id = particleScene->RegisterParticleSystem(this);
 	mSeed = rand();
-
-	// Makes sure the ID is synced to the render thread
-	MarkRenderProxyDataDirty();
 }
 
 void ParticleSystem::OnDestroyed()
 {
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	// Deallocate only if currently active (has a ParticleSystemId fragment)
+	if(registry->HasAllOf<ecs::ParticleSystemId>(entity))
+	{
+		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+		rendererScene->DeallocateParticleSystemId(*registry, entity);
+	}
+
+	registry->RemoveComponents<ecs::ParticleSystemDirty>(entity);
+	registry->RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
+	registry->RemoveComponents<ecs::ParticleSystem>(entity);
+
 	const SPtr<ParticleScene>& particleScene = SceneObject()->GetScene()->GetParticleScene();
 	particleScene->UnregisterParticleSystem(this);
 
@@ -496,8 +620,16 @@ void ParticleSystem::OnDestroyed()
 
 void ParticleSystem::OnDisabled()
 {
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+	rendererScene->DeallocateParticleSystemId(*registry, entity);
+
+	registry->RemoveComponents<ecs::ParticleSystemDirty>(entity);
+	registry->RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
+
 	Stop();
-	MarkRenderProxyDataDirty();
 }
 
 void ParticleSystem::OnEnabled()
@@ -508,18 +640,59 @@ void ParticleSystem::OnEnabled()
 		mPreviewMode = false;
 	}
 
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+	rendererScene->AllocateParticleSystemId(*registry, entity);
+	registry->AddTag<ecs::ParticleSystemDirty>(entity);
+
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	if(scene->IsRunning())
-	{
 		Play();
+}
+
+void ParticleSystem::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
+{
+	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
+	ecs::Registry* registry = GetECSRegistry();
+	ecs::Entity entity = GetECSEntity();
+
+	// Deallocate from old scene only if was active
+	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ParticleSystemId>(oldEntity))
+		oldScene->GetRendererScene()->DeallocateParticleSystemId(*oldRegistry, oldEntity);
+
+	// Migrate ecs::ParticleSystem fragment to new entity
+	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ParticleSystem>(oldEntity))
+	{
+		ecs::ParticleSystem fragmentCopy = oldRegistry->GetComponents<ecs::ParticleSystem>(oldEntity);
+		registry->AddComponent<ecs::ParticleSystem>(entity, std::move(fragmentCopy));
 	}
 
-	MarkRenderProxyDataDirty();
+	// Allocate in new scene only if currently active
+	if(GetEnabled())
+	{
+		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
+		rendererScene->AllocateParticleSystemId(*registry, entity);
+
+		registry->AddTag<ecs::ParticleSystemDirty>(entity);
+	}
 }
 
 void ParticleSystem::OnTransformChanged(TransformChangedFlags flags)
 {
-	MarkRenderProxyDataDirty();
+	MarkRenderProxyDataDirty(ComponentDirtyFlag::Transform);
+}
+
+void ParticleSystem::GetCoreDependencies(Vector<CoreObject*>& dependencies)
+{
+	const ecs::ParticleSystem& fragment = GetFragment();
+
+	if(fragment.Settings.Mesh.IsLoaded())
+		dependencies.push_back(fragment.Settings.Mesh.Get());
+
+	if(fragment.Settings.Material.IsLoaded())
+		dependencies.push_back(fragment.Settings.Material.Get());
 }
 
 bool ParticleSystem::TogglePreviewMode(bool enabled)
@@ -561,69 +734,3 @@ RTTIType* ParticleSystem::GetRtti() const
 	return ParticleSystem::GetRttiStatic();
 }
 
-namespace b3d { namespace render
-{
-ParticleSystem::~ParticleSystem()
-{
-	if(mActive)
-	{
-		const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-		rendererScene->UnregisterParticleSystem(this);
-	}
-}
-
-void ParticleSystem::Initialize()
-{
-	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-	rendererScene->RegisterParticleSystem(this);
-
-	RenderProxy::Initialize();
-}
-
-void ParticleSystem::SetLayer(u64 layer)
-{
-	const bool isPow2 = layer && !((layer - 1) & layer);
-
-	if(!isPow2)
-	{
-		B3D_LOG(Warning, LogParticles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
-		return;
-	}
-
-	mLayer = layer;
-}
-
-void ParticleSystem::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& allocator)
-{
-	RenderProxySyncPacket* const syncPacket = data.GetSyncPacket();
-	if(syncPacket == nullptr)
-		return;
-
-	const bool wasActive = mActive;
-	syncPacket->ApplySyncData(this);
-
-	const SPtr<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
-	const u32 flags = syncPacket->Flags;
-	const u32 updateEverythingFlag = ~(u32)ComponentDirtyFlag::Transform;
-	if((flags & updateEverythingFlag) != 0)
-	{
-		if(wasActive != mActive)
-		{
-			if(mActive)
-				rendererScene->RegisterParticleSystem(this);
-			else
-				rendererScene->UnregisterParticleSystem(this);
-		}
-		else
-		{
-			if(mActive)
-				rendererScene->UpdateParticleSystem(this, false);
-		}
-	}
-	else
-	{
-		if(mActive)
-			rendererScene->UpdateParticleSystem(this, true);
-	}
-}
-}}

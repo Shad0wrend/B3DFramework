@@ -267,17 +267,6 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	B3DStackFree(indices);
 }
 
-GpuParticleSystem::GpuParticleSystem(ParticleSystem* parent)
-	: mParent(parent)
-{
-	GpuParticleSimulation::Instance().AddSystem(this);
-}
-
-GpuParticleSystem::~GpuParticleSystem()
-{
-	GpuParticleSimulation::Instance().RemoveSystem(this);
-}
-
 bool GpuParticleSystem::AllocateTiles(GpuParticleResources& resources, Vector<GpuParticle>& newParticles, Vector<u32>& newTiles)
 {
 	GpuParticleTile cachedTile = mLastAllocatedTile == (u32)-1 ? GpuParticleTile() : mTiles[mLastAllocatedTile];
@@ -449,44 +438,23 @@ void GpuParticleSystem::UpdateGpuBuffers()
 	}
 }
 
-void GpuParticleSystem::AdvanceTime(float dt)
-{
-	const ParticleSystemSettings& settings = mParent->GetSettings();
-
-	float timeStep;
-	mTime = b3d::ParticleSystem::AdvanceTime(mTime, dt, settings.Duration, settings.IsLooping, timeStep);
-}
-
-AABox GpuParticleSystem::GetBounds() const
-{
-	const ParticleSystemSettings& settings = mParent->GetSettings();
-
-	if(settings.UseAutomaticBounds)
-		return AABox(-(float)kMaximumSceneExtent, (float)kMaximumSceneExtent);
-
-	return settings.CustomBounds;
-}
-
-const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const ParticleRenderState& particleRenderState, float dt)
+SPtr<GpuParameterSet> GpuParticleSimulation::PrepareSimulateParameters(const ParticleSystemProxy& proxy, const ParticleRenderState& renderState, const GpuParticleSystem& system, float dt)
 {
 	// Note: Many of those could only be updated when relevant settings change, but for simplicity we update them every frame.
 
-	ParticleSystem* const parentSystem = GetParent();
-
-	const ParticleGpuSimulationSettings& gpuSimulationSettings = parentSystem->GetGpuSimulationSettings();
-	const ParticleSystemSettings& systemSettings = parentSystem->GetSettings();
+	const render::ParticleGpuSimulationSettings& gpuSimulationSettings = proxy.GetGpuSimulationSettings();
+	const render::ParticleSystemSettings& systemSettings = proxy.GetSettings();
 
 	const bool supportsDepthCollisions = gpuSimulationSettings.DepthCollision.Enabled;
 	const bool localSpace = systemSettings.SimulationSpace == ParticleSimulationSpace::Local;
 
 	GpuParticleSimulateMaterial* const simulateMaterial = GpuParticleSimulateMaterial::GetVariation(supportsDepthCollisions, localSpace);
-	mSimulateParameters = simulateMaterial->CreateGpuParameterSet();
+	SPtr<GpuParameterSet> simulateParameters = simulateMaterial->CreateGpuParameterSet();
 
-	// Get parent system settings
-	const ParticleSystemSettings& settings = mParent->GetSettings();
-	const ParticleGpuSimulationSettings& simSettings = mParent->GetGpuSimulationSettings();
+	const ParticleSystemSettings& settings = proxy.GetSettings();
+	const ParticleGpuSimulationSettings& simSettings = proxy.GetGpuSimulationSettings();
 
-	const float time = GetTime();
+	const float time = system.GetTime();
 	const float nrmTime = time / settings.Duration;
 
 	// Allocate transient uniform buffers
@@ -522,7 +490,7 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 		gVectorFieldUniformDefinition.gFieldTiling.Set(vectorFieldUniforms, tiling);
 		gVectorFieldUniformDefinition.gFieldIntensity.Set(vectorFieldUniforms, simSettings.VectorField.Intensity);
 
-		const Vector3 rotationRate = simSettings.VectorField.RotationRate.Evaluate(nrmTime, mRandom) * time;
+		const Vector3 rotationRate = simSettings.VectorField.RotationRate.Evaluate(nrmTime, system.GetRandom()) * time;
 		const Quaternion addedRotation(Degree(rotationRate.X), Degree(rotationRate.Y), Degree(rotationRate.Z));
 
 		const Vector3 offset = vfDesc.Bounds.Minimum + simSettings.VectorField.Offset;
@@ -530,7 +498,7 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 		const Vector3 scale = vfDesc.Bounds.GetSize() * simSettings.VectorField.Scale;
 
 		Matrix4 fieldToWorld = Matrix4::TRS(offset, rotation, scale);
-		fieldToWorld = particleRenderState.WorldTransform * fieldToWorld;
+		fieldToWorld = renderState.WorldTransform * fieldToWorld;
 
 		const Matrix3 fieldToWorld3x3 = fieldToWorld.Get3x3();
 
@@ -546,7 +514,7 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 	const ParticleDepthCollisionSettings& depthCollisionSettings = simSettings.DepthCollision;
 	if(depthCollisionSettings.Enabled)
 	{
-		Vector3 scale3D = particleRenderState.ParticleSystem->GetWorldTransform().GetScale();
+		Vector3 scale3D = proxy.GetWorldTransform().GetScale();
 		float uniformScale = std::max(std::max(scale3D.X, scale3D.Y), scale3D.Z);
 
 		gGpuParticleDepthCollisionUniformDefinition.gCollisionRange.Set(depthCollisionUniforms, 2.0f);
@@ -556,9 +524,9 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 		gGpuParticleDepthCollisionUniformDefinition.gRestitution.Set(depthCollisionUniforms, depthCollisionSettings.Restitution);
 
 		const Vector2 sizeScaleUVOffset =
-			GpuParticleCurves::GetUvOffset(particleRenderState.SizeScaleFrameIdxCurveAlloc);
+			GpuParticleCurves::GetUvOffset(renderState.SizeScaleFrameIdxCurveAlloc);
 		const float sizeScaleUVScale =
-			GpuParticleCurves::GetUvScale(particleRenderState.SizeScaleFrameIdxCurveAlloc);
+			GpuParticleCurves::GetUvScale(renderState.SizeScaleFrameIdxCurveAlloc);
 
 		gGpuParticleDepthCollisionUniformDefinition.gSizeScaleCurveOffset.Set(depthCollisionUniforms, sizeScaleUVOffset);
 		gGpuParticleDepthCollisionUniformDefinition.gSizeScaleCurveScale.Set(
@@ -566,11 +534,11 @@ const SPtr<GpuParameterSet>& GpuParticleSystem::PrepareSimulateParameters(const 
 	}
 
 	// Bind transient uniform buffers to GPU parameters
-	mSimulateParameters->SetUniformBuffer("Params", simulationUniforms);
-	mSimulateParameters->SetUniformBuffer("VectorFieldParams", vectorFieldUniforms);
-	mSimulateParameters->TrySetUniformBuffer("DepthCollisionParams", depthCollisionUniforms);
+	simulateParameters->SetUniformBuffer("Params", simulationUniforms);
+	simulateParameters->SetUniformBuffer("VectorFieldParams", vectorFieldUniforms);
+	simulateParameters->TrySetUniformBuffer("DepthCollisionParams", depthCollisionUniforms);
 
-	return mSimulateParameters;
+	return simulateParameters;
 }
 
 static SPtr<GpuBuffer> CreateGpuParticleVertexInputBuffer()
@@ -608,7 +576,6 @@ struct GpuParticleSimulation::Pimpl
 {
 	GpuParticleResources Resources;
 	GpuParticleHelperBuffers HelperBuffers;
-	UnorderedSet<GpuParticleSystem*> Systems;
 	SPtr<GpuBuffer> ParticleVertexInputBuffer;
 
 	TArray<TileClearParameters> TileClearParameterPool;
@@ -632,29 +599,27 @@ GpuParticleSimulation::~GpuParticleSimulation()
 	B3DDelete(m);
 }
 
-void GpuParticleSimulation::AddSystem(GpuParticleSystem* system)
+void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt)
 {
-	m->Systems.insert(system);
-}
+	const ParticleSystemObjectStorage& particleStorage = scene.GetParticleSystemStorage();
 
-void GpuParticleSimulation::RemoveSystem(GpuParticleSystem* system)
-{
-	m->Systems.erase(system);
-}
-
-void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt)
-{
 	m->Resources.Swap();
 	m->Resources.GetCurveTexture().ApplyChanges(commandBuffer);
 
+	const Vector<PackedRendererId>& gpuSimulatedSystemIds = particleStorage.GetGpuSimulatedIds();
+
 	Vector<u32> newTiles;
 	Vector<GpuParticle> allNewParticles;
-	for(auto& entry : m->Systems)
+	for(PackedRendererId packedId : gpuSimulatedSystemIds)
 	{
+		const ParticleRenderState& renderState = particleStorage.GetParticleRenderState(packedId);
+		GpuParticleSystem* entry = renderState.GpuParticleSystem;
+		const ParticleSystemProxy& parentProxy = particleStorage.GetParticleSystemProxy(packedId);
+
 		entry->DetectInactiveTiles();
 
 		bool tilesDirty = false;
-		const auto iterFind = simData->GpuData.find(entry->GetParent()->GetId());
+		const auto iterFind = simData->GpuData.find(parentProxy.GetId());
 		if(iterFind != simData->GpuData.end())
 		{
 			Vector<GpuParticle>& newParticles = iterFind->second->Particles;
@@ -663,7 +628,11 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 			allNewParticles.insert(allNewParticles.end(), newParticles.begin(), newParticles.end());
 		}
 
-		entry->AdvanceTime(dt);
+		const ParticleSystemSettings& parentSettings = parentProxy.GetSettings();
+		float timeStep;
+		float newTime = b3d::ParticleSystem::AdvanceTime(entry->GetTime(), dt, parentSettings.Duration, parentSettings.IsLooping, timeStep);
+		entry->SetTime(newTime);
+
 		tilesDirty |= entry->FreeInactiveTiles(m->Resources);
 
 		if(tilesDirty)
@@ -692,28 +661,31 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 	// TODO - Run multiple iterations for more stable simulation at lower/erratic framerates
 
 	RenderPassCreateInformation simulatePass(m->Resources.GetSimulationTarget(), RT_NONE, RT_ALL);
-	for(auto& entry : m->Systems)
+	for(PackedRendererId packedId : gpuSimulatedSystemIds)
 	{
+		const ParticleRenderState& renderState = particleStorage.GetParticleRenderState(packedId);
+		GpuParticleSystem* entry = renderState.GpuParticleSystem;
+
 		if(entry->GetTileCount() == 0)
 			continue;
 
-		ParticleSystem* parentSystem = entry->GetParent();
-		const ParticleRenderState& particleRenderState = sceneInfo.ParticleSystems[parentSystem->GetRendererId()];
+		const ParticleSystemProxy& parentProxy = particleStorage.GetParticleSystemProxy(packedId);
 
 		// Get vector field texture if any
 		SPtr<Texture> vectorFieldTexture;
 
-		const ParticleGpuSimulationSettings& gpuSimulationSettings = parentSystem->GetGpuSimulationSettings();
+		const render::ParticleGpuSimulationSettings& gpuSimulationSettings = parentProxy.GetGpuSimulationSettings();
 		if(gpuSimulationSettings.VectorField.VectorField)
 			vectorFieldTexture = gpuSimulationSettings.VectorField.VectorField->GetTexture();
 
 		const bool supportsDepthCollisions = gpuSimulationSettings.DepthCollision.Enabled;
 
-		const SPtr<GpuParameterSet>& systemParams = entry->PrepareSimulateParameters(particleRenderState, dt);
+		SPtr<GpuParameterSet> systemParams = PrepareSimulateParameters(parentProxy, renderState, *entry, dt);
+		entry->SetSimulateParameters(systemParams);
 
 		// Populate remaining parameters (textures and other buffers)
 		GpuParticleSimulateMaterial::PopulateParameters(systemParams, m->Resources, m->ParticleVertexInputBuffer, viewParams,
-			gbuffer.Depth, gbuffer.Normals, entry->GetTileUVs(), particleRenderState.PerObjectSuballocation, vectorFieldTexture, supportsDepthCollisions
+			gbuffer.Depth, gbuffer.Normals, entry->GetTileUVs(), renderState.PerObjectSuballocation, vectorFieldTexture, supportsDepthCollisions
 		);
 
 		simulatePass.Parameters.Add(systemParams);
@@ -747,14 +719,17 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 		simulateMaterial->Bind(commandBuffer, false);
 
 		// Render all systems matching this simulation type
-		for(auto& entry : m->Systems)
+		for(PackedRendererId packedId : gpuSimulatedSystemIds)
 		{
+			const ParticleRenderState& renderState = particleStorage.GetParticleRenderState(packedId);
+			GpuParticleSystem* entry = renderState.GpuParticleSystem;
+
 			if(entry->GetTileCount() == 0)
 				continue;
 
-			ParticleSystem* parentSystem = entry->GetParent();
-			const ParticleGpuSimulationSettings& gpuSimulationSettings = parentSystem->GetGpuSimulationSettings();
-			const ParticleSystemSettings& settings = parentSystem->GetSettings();
+			const ParticleSystemProxy& parentProxy = particleStorage.GetParticleSystemProxy(packedId);
+			const render::ParticleGpuSimulationSettings& gpuSimulationSettings = parentProxy.GetGpuSimulationSettings();
+			const render::ParticleSystemSettings& settings = parentProxy.GetSettings();
 
 			const bool supportsDepthCollisions = gpuSimulationSettings.DepthCollision.Enabled;
 			const bool localSpace = settings.SimulationSpace == ParticleSimulationSpace::Local;
@@ -778,8 +753,10 @@ void GpuParticleSimulation::Simulate(GpuCommandBuffer& commandBuffer, const Scen
 	commandBuffer.EndRenderPass();
 }
 
-void GpuParticleSimulation::Sort(GpuCommandBuffer& commandBuffer, const RendererView& view)
+void GpuParticleSimulation::Sort(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene, const RendererView& view)
 {
+	const ParticleSystemObjectStorage& particleStorage = scene.GetParticleSystemStorage();
+
 	const bool supportsCompute = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 	if(!supportsCompute)
 		return;
@@ -789,27 +766,39 @@ void GpuParticleSimulation::Sort(GpuCommandBuffer& commandBuffer, const Renderer
 	GpuParticleSortPrepareMaterial* prepareMat = GpuParticleSortPrepareMaterial::Get();
 	prepareMat->Bind(commandBuffer, m->Resources.GetCurrentState().PositionAndTimeTex);
 
+	const Vector<PackedRendererId>& gpuSimIds = particleStorage.GetGpuSimulatedIds();
+
 	u32 systemIdx = 0;
 	u32 offset = 0;
-	for(auto& entry : m->Systems)
+	for(PackedRendererId packedId : gpuSimIds)
 	{
+		const ParticleRenderState& renderState = particleStorage.GetParticleRenderState(packedId);
+		GpuParticleSystem* entry = renderState.GpuParticleSystem;
+
 		if(entry->GetTileCount() == 0)
 		{
 			entry->SetSortInfo(false, 0);
 			continue;
 		}
 
-		ParticleSystem* parentSystem = entry->GetParent();
+		const ParticleSystemProxy& parentProxy = particleStorage.GetParticleSystemProxy(packedId);
 
-		const ParticleSystemSettings& settings = parentSystem->GetSettings();
+		const render::ParticleSystemSettings& settings = parentProxy.GetSettings();
 		if(settings.SortMode != ParticleSortMode::Distance)
 		{
 			entry->SetSortInfo(false, 0);
 			continue;
 		}
 
+		Vector3 localViewOrigin = viewOrigin;
+		if(settings.SimulationSpace == ParticleSimulationSpace::Local)
+		{
+			const Matrix4& worldToLocal = parentProxy.GetWorldTransform().GetInvMatrix();
+			localViewOrigin = worldToLocal.MultiplyAffine(viewOrigin);
+		}
+
 		entry->SetSortInfo(true, offset);
-		offset += prepareMat->Execute(commandBuffer, *entry, systemIdx, viewOrigin, offset, m->Resources.mSortBuffers.Keys[0], m->Resources.mSortedIndices[0]);
+		offset += prepareMat->Execute(commandBuffer, *entry, systemIdx, localViewOrigin, offset, m->Resources.mSortBuffers.Keys[0], m->Resources.mSortedIndices[0]);
 
 		systemIdx++;
 	}

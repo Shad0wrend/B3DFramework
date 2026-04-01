@@ -169,7 +169,7 @@ void GpuParticleSortPrepareMaterial::Bind(GpuCommandBuffer& commandBuffer, const
 	RendererMaterial::Bind(commandBuffer, false);
 }
 
-u32 GpuParticleSortPrepareMaterial::Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices)
+u32 GpuParticleSortPrepareMaterial::Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& localViewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices)
 {
 	static constexpr u32 kMaxNumGroups = 128;
 
@@ -182,16 +182,6 @@ u32 GpuParticleSortPrepareMaterial::Execute(GpuCommandBuffer& commandBuffer, con
 
 	const u32 iterationsPerGroup = numIterations / numGroups;
 	const u32 extraIterations = numIterations % numGroups;
-
-	Vector3 localViewOrigin;
-	ParticleSystem* parentSystem = system.GetParent();
-	if(parentSystem->GetSettings().SimulationSpace == ParticleSimulationSpace::Local)
-	{
-		const Matrix4& worldToLocal = parentSystem->GetWorldTransform().GetInvMatrix();
-		localViewOrigin = worldToLocal.MultiplyAffine(viewOrigin);
-	}
-	else
-		localViewOrigin = viewOrigin;
 
 	GpuBufferMappedScope inputUniforms = gGpuParticleSortPrepareUniformDefinition.AllocateTransient().Map();
 

@@ -214,14 +214,14 @@ namespace b3d
 			void Draw(GpuCommandBuffer& commandBuffer) const override;
 		};
 
-		/** Renderer-specific state for a decal. */
+		/** Renderer-specific state for a particle system. */
 		struct ParticleRenderState : RenderState
 		{
-			/** Owner particle system. */
-			ParticleSystem* ParticleSystem = nullptr;
-
 			/** Variant of the particle system used for simulating the particles on the GPU. */
 			GpuParticleSystem* GpuParticleSystem = nullptr;
+
+			/** Index into array on ParticleSystemObjectStorage that holds GPU simulated particles. Only valid when GpuParticleSystem != nullptr. */
+			u32 GpuSimulatedParticleArrayIndex = 0;
 
 			/** Element used for sorting and rendering the particle system. */
 			mutable ParticlesDrawCommand DrawCommand;
@@ -236,7 +236,7 @@ namespace b3d
 			TextureRowAllocation SizeScaleFrameIdxCurveAlloc;
 
 			/** Updates the per-object data from the current ParticleSystem state. */
-			void UpdatePerObjectData();
+			void UpdatePerObjectData(const ParticleSystemProxy& proxy);
 
 			/**
 			 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the CPU.
@@ -244,7 +244,7 @@ namespace b3d
 			 * @param renderData	Render data representing the state of a CPU simulated particle system.
 			 * @param view			View the particle system is being rendered from.
 			 */
-			void BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const;
+			void BindCpuSimulatedInputs(const ParticleSystemProxy& proxy, const ParticleRenderData* renderData, const RendererView& view) const;
 
 			/**
 			 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the GPU.
@@ -252,7 +252,7 @@ namespace b3d
 			 * @param gpuSimResources	Resources containing global data for all GPU simulated particle systems.
 			 * @param view				View the particle system is being rendered from.
 			 */
-			void BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const;
+			void BindGpuSimulatedInputs(const ParticleSystemProxy& proxy, const GpuParticleResources& gpuSimResources, const RendererView& view) const;
 
 		private:
 			/**
@@ -261,7 +261,7 @@ namespace b3d
 			 * @param texSize		Size of the particle data texture.
 			 * @param bufferOffset	Offset into the particle index buffer.
 			 */
-			void PopulateAndBindParticlesUniformBuffer(i32 texSize, i32 bufferOffset) const;
+			void PopulateAndBindParticlesUniformBuffer(const ParticleSystemProxy& proxy, i32 texSize, i32 bufferOffset) const;
 		};
 
 		/** Default material used for rendering particles, when no other is available. */

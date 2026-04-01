@@ -6,6 +6,7 @@
 #include "RenderState/B3DLightRenderState.h"
 #include "RenderState/B3DDecalRenderState.h"
 #include "Components/B3DDecal.h"
+#include "Components/B3DParticleSystem.h"
 #include "B3DRendererView.h"
 #include "RenderState/B3DParticleRenderState.h"
 #include "Renderer/B3DRendererScene.h"
@@ -177,6 +178,55 @@ namespace b3d
 			RenderBeastScene* mRenderBeastScene = nullptr;
 		};
 
+		/**
+		 * Maintains packed arrays containing renderer-specific data for particle systems. Allows fast iteration over
+		 * all particle systems in a scene and provides data needed for their rendering and culling.
+		 */
+		class ParticleSystemObjectStorage final : public ParticleSystemObjectStorageBase
+		{
+		public:
+			ParticleSystemObjectStorage();
+
+			void ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator) override;
+			void CreateRenderState(TArrayView<const PackedRendererId> ids) override;
+			void DestroyRenderState(TArrayView<const PackedRendererId> ids) override;
+			void UpdateRenderState(TArrayView<const PackedRendererId> ids) override;
+
+			/** Returns the particle render state at the given packed ID. */
+			ParticleRenderState& GetParticleRenderState(PackedRendererId packedId) { return mParticleRenderStates[packedId]; }
+
+			/** Returns the particle render state at the given packed ID (const). */
+			const ParticleRenderState& GetParticleRenderState(PackedRendererId packedId) const { return mParticleRenderStates[packedId]; }
+
+			/** Returns the packed particle render state array. */
+			Vector<ParticleRenderState>& GetParticleRenderStates() { return mParticleRenderStates; }
+
+			/** @copydoc GetParticleRenderStates */
+			const Vector<ParticleRenderState>& GetParticleRenderStates() const { return mParticleRenderStates; }
+
+			/** Returns particle system cull info at the provided index. Valid index is range [0, GetParticleSystemCount()). */
+			const CullInfo& GetParticleSystemCullInfo(PackedRendererId packedId) const { return mParticleSystemCullInfos[packedId]; }
+
+			/** Returns the packed cull info array. */
+			Vector<CullInfo>& GetParticleSystemCullInfos() { return mParticleSystemCullInfos; }
+
+			/** @copydoc GetParticleSystemCullInfos */
+			const Vector<CullInfo>& GetParticleSystemCullInfos() const { return mParticleSystemCullInfos; }
+
+			/** Returns packed IDs of all GPU-simulated particle systems. */
+			const Vector<PackedRendererId>& GetGpuSimulatedIds() const { return mGpuSimulatedIds; }
+
+			/** Sets the owning RenderBeastScene. Called by RenderBeastScene::Initialize(). */
+			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
+
+		private:
+			Vector<ParticleRenderState> mParticleRenderStates;
+			Vector<CullInfo> mParticleSystemCullInfos;
+			Vector<PackedRendererId> mGpuSimulatedIds;
+
+			RenderBeastScene* mRenderBeastScene = nullptr;
+		};
+
 		/** Contains most scene objects relevant to the renderer. */
 		struct SceneInfo
 		{
@@ -193,10 +243,6 @@ namespace b3d
 
 			// Light probes (indirect lighting)
 			LightProbes LightProbes;
-
-			// Particles
-			Vector<ParticleRenderState> ParticleSystems;
-			Vector<CullInfo> ParticleSystemCullInfos;
 
 			// Sky
 			Skybox* Skybox = nullptr;
@@ -229,10 +275,6 @@ namespace b3d
 
 			void RegisterSkybox(Skybox* skybox) override;
 			void UnregisterSkybox(Skybox* skybox) override;
-
-			void RegisterParticleSystem(ParticleSystem* particleSystem) override;
-			void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly) override;
-			void UnregisterParticleSystem(ParticleSystem* particleSystem) override;
 
 			void Initialize() override;
 			void Destroy() override;
@@ -300,6 +342,10 @@ namespace b3d
 			DecalObjectStorage& GetDecalStorage() { return static_cast<DecalObjectStorage&>(*mDecalStorage.get()); }
 			const DecalObjectStorage& GetDecalStorage() const { return static_cast<const DecalObjectStorage&>(*mDecalStorage.get()); }
 
+			/** Returns the particle system object storage. */
+			ParticleSystemObjectStorage& GetParticleSystemStorage() { return static_cast<ParticleSystemObjectStorage&>(*mParticleSystemStorage.get()); }
+			const ParticleSystemObjectStorage& GetParticleSystemStorage() const { return static_cast<const ParticleSystemObjectStorage&>(*mParticleSystemStorage.get()); }
+
 			/**
 			 * @name Renderable accessors — convenience wrappers around RenderableObjectStorage
 			 * @{
@@ -336,6 +382,18 @@ namespace b3d
 			/** @} */
 
 			/**
+			 * @name ParticleSystem accessors — convenience wrappers around ParticleSystemObjectStorage
+			 * @{
+			 */
+			u32 GetParticleSystemCount() const { return GetParticleSystemStorage().GetParticleSystemCount(); }
+			const render::ParticleSystemProxy& GetParticleSystemProxy(PackedRendererId packedId) const { return GetParticleSystemStorage().GetParticleSystemProxy(packedId); }
+			const ParticleRenderState& GetParticleRenderState(u32 index) const { return GetParticleSystemStorage().GetParticleRenderState(index); }
+			const CullInfo& GetParticleSystemCullInfo(u32 index) const { return GetParticleSystemStorage().GetParticleSystemCullInfo(index); }
+			const Vector<ParticleRenderState>& GetParticleRenderStates() const { return GetParticleSystemStorage().GetParticleRenderStates(); }
+			const Vector<CullInfo>& GetParticleSystemCullInfos() const { return GetParticleSystemStorage().GetParticleSystemCullInfos(); }
+			/** @} */
+
+			/**
 			 * Generates sampler state overrides for the provided render element, or returns existing ones if they
 			 * already exist for the element's material. Shared between renderables and decals.
 			 */
@@ -356,6 +414,7 @@ namespace b3d
 			friend class RenderableObjectStorage;
 			friend class LightObjectStorage;
 			friend class DecalObjectStorage;
+			friend class ParticleSystemObjectStorage;
 
 			/** Creates a renderer view descriptor for the particular camera. */
 			RendererViewCreateInformation CreateViewDesc(Camera* camera) const;

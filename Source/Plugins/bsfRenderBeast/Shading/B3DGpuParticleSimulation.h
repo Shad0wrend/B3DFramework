@@ -16,6 +16,9 @@ namespace b3d
 	namespace render
 	{
 		struct ParticleRenderState;
+		class ParticleSystemProxy;
+		class ParticleSystemObjectStorage;
+		class RenderBeastScene;
 		class GpuParticleSimulateMaterial;
 		struct GBufferTextures;
 		struct SceneInfo;
@@ -37,11 +40,8 @@ namespace b3d
 		class GpuParticleSystem
 		{
 		public:
-			GpuParticleSystem(ParticleSystem* parent);
-			~GpuParticleSystem();
-
-			/** Returns the non-renderer particle system object that owns this object. */
-			ParticleSystem* GetParent() const { return mParent; }
+			GpuParticleSystem() = default;
+			~GpuParticleSystem() = default;
 
 			/**
 			 * Attempts to allocate room for a set of particles. Particles will attempt to be inserted into an existing tile if
@@ -80,17 +80,11 @@ namespace b3d
 			/** Rebuilds ths internal buffers that contain tile UVs and per-particle UVs. */
 			void UpdateGpuBuffers();
 
-			/** Increments the internal time counter. */
-			void AdvanceTime(float dt);
+			/** Time since the system was created. */
+			void SetTime(float time) { mTime = time; }
 
-			/** Returns the time since the system was created. */
+			/** @copydoc SetTime */
 			float GetTime() const { return mTime; }
-
-			/**
-			 * Returns the bounds of the particle system. These will be user-provided bounds, or infinite bounds if no
-			 * user-provided ones exist.
-			 */
-			AABox GetBounds() const;
 
 			/** Returns the object that can be used for retrieving random numbers when evaluating this particle system. */
 			const Random& GetRandom() const { return mRandom; }
@@ -118,14 +112,13 @@ namespace b3d
 			 */
 			u32 GetSortOffset() const { return mSortOffset; }
 
-			/** Prepares simulation parameter buffers for this system. */
-			const SPtr<GpuParameterSet>& PrepareSimulateParameters(const ParticleRenderState& particleRenderState, float dt);
+			/** Sets GPU parameters prepared for simulation. */
+			void SetSimulateParameters(const SPtr<GpuParameterSet>& params) { mSimulateParameters = params; }
 
-			/** Returns GPU parameters used for simulation. Parameters must have been prepared via a previous call to PrepareSimulationParameters. */
+			/** Returns GPU parameters used for simulation. Parameters must have been set via a previous call to SetSimulateParameters. */
 			const SPtr<GpuParameterSet>& GetSimulateParameters() const { return mSimulateParameters; }
 
 		private:
-			ParticleSystem* mParent = nullptr;
 			Vector<GpuParticleTile> mTiles;
 			TBitfield<> mActiveTiles;
 			u32 mNumActiveTiles = 0;
@@ -177,32 +170,23 @@ namespace b3d
 			~GpuParticleSimulation();
 
 			/**
-			 * Registers a new GPU particle system to simulate. The system will be simulated until removed by a call to
-			 * removeSystem().
-			 */
-			void AddSystem(GpuParticleSystem* system);
-
-			/** Unregisters a previously registered particle system. */
-			void RemoveSystem(GpuParticleSystem* system);
-
-			/**
 			 * Performs GPU particle simulation on all registered particle systems.
 			 *
 			 * @param	commandBuffer	Command buffer to execute on.
-			 * @param	sceneInfo	Information about the scene currently being rendered.
+			 * @param	scene		Scene currently being rendered.
 			 * @param	simData		Particle simulation data output on the simulation thread.
 			 * @param	viewParams	Buffer containing properties of the view that's currently being rendered.
 			 * @param	gbuffer		Populated GBuffer with depths and normals.
 			 * @param	dt			Time step to advance the simulation by.
 			 */
-			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt);
+			void Simulate(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene, const EvaluatedParticleData* simData, const GpuBufferSuballocation& viewParams, const GBufferTextures& gbuffer, float dt);
 
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only
 			 * works on systems supporting compute. Sort results are written to a global buffer accessible through
 			 * getResources(), with offsets into the buffer written into particle system objects in @p sceneInfo.
 			 */
-			void Sort(GpuCommandBuffer& commandBuffer, const RendererView& view);
+			void Sort(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene, const RendererView& view);
 
 			/** Returns textures used for storing particle data. */
 			GpuParticleResources& GetResources() const;
@@ -224,6 +208,9 @@ namespace b3d
 
 			/** Prepares buffer necessary for simulating the provided particle system. */
 			void PrepareBuffers(const GpuParticleSystem* system, const ParticleRenderState& particleRenderState);
+
+			/** Prepares simulation parameter buffers for a single GPU particle system. */
+			SPtr<GpuParameterSet> PrepareSimulateParameters(const ParticleSystemProxy& proxy, const ParticleRenderState& renderState, const GpuParticleSystem& system, float dt);
 
 			/**
 			 * Prepares scratch buffers for clearing tiles. Allocates parameters from the pool, populates buffers with tile data,

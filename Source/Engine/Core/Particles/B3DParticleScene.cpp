@@ -417,9 +417,9 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 				Lock lock(mMutex);
 
 				if(simulationDataCPU)
-					simulationData.CpuData[system->mId] = simulationDataCPU;
+					simulationData.CpuData[system->GetId()] = simulationDataCPU;
 				else if(simulationDataGPU)
-					simulationData.GpuData[system->mId] = simulationDataGPU;
+					simulationData.GpuData[system->GetId()] = simulationDataGPU;
 			}
 
 			waitGroup.NotifyDone();

@@ -423,7 +423,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
-		const auto particleSystemCount = (u32)sceneInfo.ParticleSystems.size();
+		const auto particleSystemCount = inputs.Scene.GetParticleSystemCount();
 		const GpuParticleResources& gpuSimResources = GpuParticleSimulation::Instance().GetResources();
 
 		bool isGpuSortingUsed = false;
@@ -432,25 +432,25 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			if(!visibility.ParticleSystems[i])
 				continue;
 
-			const ParticleRenderState& renderState = sceneInfo.ParticleSystems[i];
+			const ParticleRenderState& renderState = inputs.Scene.GetParticleRenderState(i);
 			ParticlesDrawCommand& drawCommand = renderState.DrawCommand;
 
 			if(!drawCommand.IsValid())
 				continue;
 
-			ParticleSystem* particleSystem = renderState.ParticleSystem;
+			const render::ParticleSystemProxy& proxy = inputs.Scene.GetParticleSystemProxy(i);
 
 			// Bind textures/buffers from CPU simulation
-			const auto iterFind = particleData->CpuData.find(particleSystem->GetId());
+			const auto iterFind = particleData->CpuData.find(proxy.GetId());
 			if(iterFind != particleData->CpuData.end())
 			{
 				ParticleRenderData* renderData = iterFind->second;
-				renderState.BindCpuSimulatedInputs(renderData, inputs.View);
+				renderState.BindCpuSimulatedInputs(proxy, renderData, inputs.View);
 			}
 			// Bind textures/buffers from GPU simulation
 			else if(renderState.GpuParticleSystem)
 			{
-				renderState.BindGpuSimulatedInputs(gpuSimResources, inputs.View);
+				renderState.BindGpuSimulatedInputs(proxy, gpuSimResources, inputs.View);
 
 				if(renderState.GpuParticleSystem->HasSortInfo())
 					isGpuSortingUsed = true;
@@ -739,10 +739,10 @@ void RCNodeParticleSimulate::Render(const RenderCompositorNodeInputs& inputs)
 		gbuffer.RoughMetal = gbufferNode->RoughMetalTex->Texture;
 		gbuffer.Depth = sceneDepthNode->DepthTex->Texture;
 
-		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene.GetSceneInfo(), inputs.FrameInfo.PerSceneFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
+		GpuParticleSimulation::Instance().Simulate(*inputs.ActiveCommandBuffer, inputs.Scene, inputs.FrameInfo.PerSceneFrameData.Particles, inputs.View.GetPerViewBuffer(), gbuffer, inputs.FrameInfo.Timings.TimeDelta);
 	}
 
-	GpuParticleSimulation::Instance().Sort(*inputs.ActiveCommandBuffer, inputs.View);
+	GpuParticleSimulation::Instance().Sort(*inputs.ActiveCommandBuffer, inputs.Scene, inputs.View);
 }
 
 void RCNodeParticleSimulate::Clear()
@@ -762,17 +762,16 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 	if(!particleData)
 		return;
 
-	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-	const auto particleSystemCount = (u32)sceneInfo.ParticleSystems.size();
+	const auto particleSystemCount = inputs.Scene.GetParticleSystemCount();
 
 	// Sort particles
 	B3DMarkAllocatorFrame();
 	{
 		struct SortData
 		{
-			ParticleSystem* System;
+			PackedRendererId ProxyId;
 			ParticleRenderData* RenderData;
 		};
 
@@ -782,27 +781,26 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 			if(!visibility.ParticleSystems[particleSystemIndex])
 				continue;
 
-			const ParticleRenderState& renderState = sceneInfo.ParticleSystems[particleSystemIndex];
-
-			ParticleSystem* particleSystem = renderState.ParticleSystem;
-			const auto iterFind = particleData->CpuData.find(particleSystem->GetId());
+			const render::ParticleSystemProxy& proxy = inputs.Scene.GetParticleSystemProxy(particleSystemIndex);
+			const auto iterFind = particleData->CpuData.find(proxy.GetId());
 			if(iterFind == particleData->CpuData.end())
 				continue;
 
 			ParticleRenderData* simulationData = iterFind->second;
-			if(particleSystem->GetSettings().SortMode == ParticleSortMode::Distance)
-				systemsToSort.push_back({ particleSystem, simulationData });
+			if(proxy.GetSettings().SortMode == ParticleSortMode::Distance)
+				systemsToSort.push_back({ (PackedRendererId)particleSystemIndex, simulationData });
 		}
 
 		WaitGroup waitGroup((u32)systemsToSort.size());
-		const auto fnSortWorker = [&waitGroup, viewOrigin = viewProps.ViewOrigin](const SortData& data)
+		const auto fnSortWorker = [&waitGroup, &scene = inputs.Scene, viewOrigin = viewProps.ViewOrigin](const SortData& data)
 		{
 			Vector3 refPoint = viewOrigin;
 
 			// Transform the view point into particle system's local space
-			const ParticleSystemSettings& settings = data.System->GetSettings();
+			const render::ParticleSystemProxy& proxy = scene.GetParticleSystemProxy(data.ProxyId);
+			const render::ParticleSystemSettings& settings = proxy.GetSettings();
 			if(settings.SimulationSpace == ParticleSimulationSpace::Local)
-				refPoint = data.System->GetWorldTransform().GetInvMatrix().MultiplyAffine(refPoint);
+				refPoint = proxy.GetWorldTransform().GetInvMatrix().MultiplyAffine(refPoint);
 
 			if(settings.RenderMode == ParticleRenderMode::Billboard)
 			{
@@ -1620,14 +1618,14 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	const EvaluatedParticleData* particleData = inputs.FrameInfo.PerSceneFrameData.Particles;
 	if(particleData)
 	{
-		const auto numParticleSystems = (u32)inputs.Scene.GetSceneInfo().ParticleSystems.size();
+		const auto numParticleSystems = inputs.Scene.GetParticleSystemCount();
 
 		for(u32 i = 0; i < numParticleSystems; i++)
 		{
 			if(!visibility.ParticleSystems[i])
 				continue;
 
-			const ParticleRenderState& particleRenderState = inputs.Scene.GetSceneInfo().ParticleSystems[i];
+			const ParticleRenderState& particleRenderState = inputs.Scene.GetParticleRenderState(i);
 			ParticlesDrawCommand& drawCommand = particleRenderState.DrawCommand;
 
 			ShaderFlags shaderFlags = drawCommand.Material->GetShader()->GetFlags();
@@ -1649,7 +1647,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 			else
 			{
 				// Populate light & probe buffers
-				const Bounds& bounds = sceneInfo.ParticleSystemCullInfos[i].Bounds;
+				const Bounds& bounds = inputs.Scene.GetParticleSystemCullInfos()[i].Bounds;
 				fnBindStandardDeferredParameters(*drawCommand.ParameterAdapter, bounds, drawCommand.ForwardLightingParams, drawCommand.ImageBasedParams);
 			}
 

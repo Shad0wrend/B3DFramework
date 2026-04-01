@@ -201,19 +201,19 @@ namespace b3d { namespace render
 		 * Executes the material, generating sort data for a particular particle system and injecting it into the specified
 		 * location in the key and index buffers.
 		 *
-		 * @param	commandBuffer	Command buffer to execute on.
-		 * @param	system			System whose particles to insert into the sort key/index buffers.
-		 * @param	systemIdx		Sequential index of the system to insert into the sort buffers.
-		 * @param	offset			Offset into the key/index buffer at which to insert the sort data.
-		 * @param	viewOrigin		View origin to use for determining sorting keys, in world space.
-		 * @param	outKeys			Pre-allocated buffer that will receive the keys used for sorting. The buffer must
+		 * @param	commandBuffer		Command buffer to execute on.
+		 * @param	system				System whose particles to insert into the sort key/index buffers.
+		 * @param	systemIdx			Sequential index of the system to insert into the sort buffers.
+		 * @param	localViewOrigin		View origin in the simulation space of the particle system.
+		 * @param	offset				Offset into the key/index buffer at which to insert the sort data.
+		 * @param	outKeys				Pre-allocated buffer that will receive the keys used for sorting. The buffer must
 		 *								be GPU writable and use a 1x 32-bit integer format.
-		 * @param	outIndices		Pre-allocated buffer that will receive the indices to be sorted. The buffer must
+		 * @param	outIndices			Pre-allocated buffer that will receive the indices to be sorted. The buffer must
 		 *								be GPU writable and use a 2x 16-bit integer format. Must have the same capacity
 		 *								as @p outKeys.
 		 * @return						Number of particle that were written to the buffers.
 		 */
-		u32 Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices);
+		u32 Execute(GpuCommandBuffer& commandBuffer, const GpuParticleSystem& system, u32 systemIdx, const Vector3& localViewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices);
 
 	private:
 		GpuParameterUniformBuffer mInputUniformBufferParameter;

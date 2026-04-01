@@ -14,6 +14,7 @@ namespace b3d
 	class DecalObjectStorageBase;
 	class FrameAllocator;
 	class LightObjectStorageBase;
+	class ParticleSystemObjectStorageBase;
 	class RenderableObjectStorageBase;
 
 	namespace ecs { class Registry; }
@@ -32,6 +33,7 @@ namespace b3d
 		void* RenderableBatchData = nullptr;
 		void* LightBatchData = nullptr;
 		void* DecalBatchData = nullptr;
+		void* ParticleSystemBatchData = nullptr;
 	};
 
 	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -61,6 +63,12 @@ namespace b3d
 		/** Removes the ecs::DecalId fragment and deallocates the persistent render object ID. */
 		void DeallocateDecalId(ecs::Registry& registry, ecs::Entity entity);
 
+		/** Allocates a persistent render object ID for a particle system and adds the ecs::ParticleSystemId fragment. */
+		RendererId AllocateParticleSystemId(ecs::Registry& registry, ecs::Entity entity);
+
+		/** Removes the ecs::ParticleSystemId fragment and deallocates the persistent render object ID. */
+		void DeallocateParticleSystemId(ecs::Registry& registry, ecs::Entity entity);
+
 		/**
 		 * Reads dirty ECS data on the main thread and posts a command to write the changes to the render thread,
 		 * for all RenderableObjectStorage objects.
@@ -80,6 +88,7 @@ namespace b3d
 		SPtr<DecalObjectStorageBase> mDecalStorage;
 		SPtr<RenderableObjectStorageBase> mRenderableStorage;
 		SPtr<LightObjectStorageBase> mLightStorage;
+		SPtr<ParticleSystemObjectStorageBase> mParticleSystemStorage;
 	};
 
 	/** @} */
@@ -111,6 +120,9 @@ namespace b3d
 
 			/** Returns the decal object storage for this scene. */
 			const SPtr<DecalObjectStorageBase>& GetDecalStorage() const { return mDecalStorage; }
+
+			/** Returns the particle system object storage for this scene. */
+			const SPtr<ParticleSystemObjectStorageBase>& GetParticleSystemStorage() const { return mParticleSystemStorage; }
 
 			/** Applies sync data from SyncRead to render-thread representations and frees frame-allocated memory. */
 			void SyncWrite(RendererSceneSyncData& batchData, FrameAllocator& allocator);
@@ -148,15 +160,6 @@ namespace b3d
 			/** Removes a skybox from the scene. */
 			virtual void UnregisterSkybox(Skybox* skybox) = 0;
 
-			/** Registers a new particle system in the scene. */
-			virtual void RegisterParticleSystem(ParticleSystem* particleSystem) = 0;
-
-			/** Updates information about a previously registered particle system. */
-			virtual void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly) = 0;
-
-			/** Removes a particle system from the scene. */
-			virtual void UnregisterParticleSystem(ParticleSystem* particleSystem) = 0;
-
 			/**
 			 * Registers an extension object that will be called every frame, for view in this scene. Allows external code to perform
 			 * custom rendering interleaved with the renderer's output.
@@ -183,6 +186,7 @@ namespace b3d
 			SPtr<DecalObjectStorageBase> mDecalStorage;
 			SPtr<RenderableObjectStorageBase> mRenderableStorage;
 			SPtr<LightObjectStorageBase> mLightStorage;
+			SPtr<ParticleSystemObjectStorageBase> mParticleSystemStorage;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			Set<RendererExtension*, RendererExtension::SortFunction> mCombinedRendererExtensions; /**< Transient set of per-scene and global renderer extensions. */

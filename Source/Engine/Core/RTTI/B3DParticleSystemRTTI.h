@@ -4,6 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
+#include "Reflection/B3DRTTIECSField.h"
 #include "Components/B3DParticleSystem.h"
 #include "Particles/B3DParticleEmitter.h"
 #include "RTTI/B3DGameObjectRTTI.h"
@@ -747,11 +748,9 @@ namespace b3d
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER(mSettings, 0)
+			B3D_RTTI_MEMBER_ECS(ParticleSystem, 0)
 			B3D_RTTI_MEMBER_CONTAINER(mEmitters, 1)
 			B3D_RTTI_MEMBER_CONTAINER(mEvolvers, 2)
-			B3D_RTTI_MEMBER(mGpuSimulationSettings, 3)
-			B3D_RTTI_MEMBER(mLayer, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -775,3 +774,41 @@ namespace b3d
 	/** @} */
 	/** @endcond */
 } // namespace b3d
+
+namespace b3d::ecs
+{
+	/** @cond RTTI */
+	/** @addtogroup RTTI-Impl-Engine
+	 *  @{
+	 */
+
+	class B3D_EXPORT ECSParticleSystemRTTI : public TRTTIType<ParticleSystem, IReflectable, ECSParticleSystemRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER(Settings, 0)
+			B3D_RTTI_MEMBER(GpuSimulationSettings, 1)
+			B3D_RTTI_MEMBER(Layer, 2)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "ECSParticleSystem";
+			return name;
+		}
+
+		u32 GetRttiId() const override
+		{
+			return TID_ECSParticleSystem;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<ParticleSystem>();
+		}
+	};
+
+	/** @} */
+	/** @endcond */
+} // namespace b3d::ecs

@@ -566,8 +566,6 @@ void RendererView::CalculateVisibility(const Vector<AABox>& bounds, Vector<bool>
 
 void RendererView::QueueDrawCommands(const RenderBeastScene& scene)
 {
-	const SceneInfo& sceneInfo = scene.GetSceneInfo();
-
 	B3D_ENSURE(mDeferredOpaqueQueue->GetSortedEntries().empty());
 	B3D_ENSURE(mForwardOpaqueQueue->GetSortedEntries().empty());
 	B3D_ENSURE(mDecalQueue->GetSortedEntries().empty());
@@ -608,16 +606,16 @@ void RendererView::QueueDrawCommands(const RenderBeastScene& scene)
 	}
 
 	// Queue particle systems
-	for(u32 i = 0; i < (u32)sceneInfo.ParticleSystems.size(); i++)
+	for(u32 i = 0; i < scene.GetParticleSystemCount(); i++)
 	{
 		if(!mVisibility.ParticleSystems[i])
 			continue;
 
-		const ParticlesDrawCommand& drawCommand = sceneInfo.ParticleSystems[i].DrawCommand;
+		const ParticlesDrawCommand& drawCommand = scene.GetParticleRenderState(i).DrawCommand;
 		if(!drawCommand.IsValid())
 			continue;
 
-		const AABox& boundingBox = sceneInfo.ParticleSystemCullInfos[i].Bounds.GetBox();
+		const AABox& boundingBox = scene.GetParticleSystemCullInfo(i).Bounds.GetBox();
 		const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 		ShaderFlags shaderFlags = drawCommand.Material->GetShader()->GetFlags();
@@ -935,8 +933,8 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	mVisibility.Renderables.resize(scene.GetRenderableCount(), false);
 	mVisibility.Renderables.assign(scene.GetRenderableCount(), false);
 
-	mVisibility.ParticleSystems.resize(sceneInfo.ParticleSystems.size(), false);
-	mVisibility.ParticleSystems.assign(sceneInfo.ParticleSystems.size(), false);
+	mVisibility.ParticleSystems.resize(scene.GetParticleSystemCount(), false);
+	mVisibility.ParticleSystems.assign(scene.GetParticleSystemCount(), false);
 
 	mVisibility.Decals.resize(scene.GetDecalCount(), false);
 	mVisibility.Decals.assign(scene.GetDecalCount(), false);
@@ -944,7 +942,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	for(u32 i = 0; i < viewCount; i++)
 	{
 		mViews[i]->DetermineVisible(scene.GetRenderables(), scene.GetRenderableCullInfos(), &mVisibility.Renderables);
-		mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
+		mViews[i]->DetermineVisible(scene.GetParticleRenderStates(), scene.GetParticleSystemCullInfos(), &mVisibility.ParticleSystems);
 		mViews[i]->DetermineVisible(scene.GetDecals(), scene.GetDecalCullInfos(), &mVisibility.Decals);
 	}
 

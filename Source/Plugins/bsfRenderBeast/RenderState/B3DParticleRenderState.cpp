@@ -116,11 +116,11 @@ void ParticlesDrawCommand::Draw(GpuCommandBuffer& commandBuffer) const
 	}
 }
 
-void ParticleRenderState::BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const
+void ParticleRenderState::BindCpuSimulatedInputs(const ParticleSystemProxy& proxy, const ParticleRenderData* renderData, const RendererView& view) const
 {
 	ParticleTexturePool& particlesTexPool = ParticleRenderer::Instance().GetTexturePool();
 
-	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
+	const ParticleSystemSettings& settings = proxy.GetSettings();
 	u32 texSize;
 	switch(settings.RenderMode)
 	{
@@ -156,11 +156,11 @@ void ParticleRenderState::BindCpuSimulatedInputs(const ParticleRenderData* rende
 
 	DrawCommand.NumParticles = renderData->NumParticles;
 
-	PopulateAndBindParticlesUniformBuffer(texSize, 0);
+	PopulateAndBindParticlesUniformBuffer(proxy, texSize, 0);
 	DrawCommand.PerCameraUniformBufferParameter.Set(view.GetPerViewBuffer());
 }
 
-void ParticleRenderState::BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const
+void ParticleRenderState::BindGpuSimulatedInputs(const ParticleSystemProxy& proxy, const GpuParticleResources& gpuSimResources, const RendererView& view) const
 {
 	const GpuParticleStateTextures& gpuSimStateTextures = gpuSimResources.GetCurrentState();
 	const GpuParticleStaticTextures& gpuSimStaticTextures = gpuSimResources.GetStaticTextures();
@@ -184,16 +184,16 @@ void ParticleRenderState::BindGpuSimulatedInputs(const GpuParticleResources& gpu
 		bufferOffset = 0;
 	}
 
-	PopulateAndBindParticlesUniformBuffer(GpuParticleConstants::kTexSize, bufferOffset);
+	PopulateAndBindParticlesUniformBuffer(proxy, GpuParticleConstants::kTexSize, bufferOffset);
 	DrawCommand.PerCameraUniformBufferParameter.Set(view.GetPerViewBuffer());
 }
 
-void ParticleRenderState::PopulateAndBindParticlesUniformBuffer(i32 texSize, i32 bufferOffset) const
+void ParticleRenderState::PopulateAndBindParticlesUniformBuffer(const ParticleSystemProxy& proxy, i32 texSize, i32 bufferOffset) const
 {
 	GpuBufferMappedScope uniforms = gParticlesUniformDefinition.AllocateTransient().Map();
 
 	// Set axis vectors
-	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
+	const ParticleSystemSettings& settings = proxy.GetSettings();
 	Vector3 axisForward = settings.OrientationPlaneNormal;
 	Vector3 axisUp = Vector3::kUnitY;
 	if(axisForward.Dot(axisUp) > 0.9998f)
@@ -513,12 +513,12 @@ void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& 
 	B3DClearAllocatorFrame();
 }
 
-void ParticleRenderState::UpdatePerObjectData()
+void ParticleRenderState::UpdatePerObjectData(const ParticleSystemProxy& proxy)
 {
-	const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
+	const ParticleSystemSettings& settings = proxy.GetSettings();
 	if(settings.SimulationSpace == ParticleSimulationSpace::Local)
 	{
-		const Transform& tfrm = ParticleSystem->GetWorldTransform();
+		const Transform& tfrm = proxy.GetWorldTransform();
 		WorldTransform = tfrm.GetMatrix();
 		WorldNoScale = Matrix4::TRS(tfrm.GetPosition(), tfrm.GetRotation(), Vector3::kOne);
 	}
@@ -528,7 +528,7 @@ void ParticleRenderState::UpdatePerObjectData()
 		WorldNoScale = Matrix4::kIdentity;
 	}
 
-	Layer = Bitwise::MostSignificantBit(ParticleSystem->GetLayer());
+	Layer = Bitwise::MostSignificantBit(proxy.GetLayer());
 }
 
 }} // namespace b3d::render

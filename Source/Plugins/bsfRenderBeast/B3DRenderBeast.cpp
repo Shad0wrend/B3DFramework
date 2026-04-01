@@ -427,7 +427,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	for(u32 i = 0; i < renderableStorage.GetRenderableCount(); i++)
 		renderableStorage.PrepareRenderable(i, frameInfo);
 
-	for(u32 i = 0; i < sceneInfo.ParticleSystems.size(); i++)
+	for(u32 i = 0; i < scene.GetParticleSystemCount(); i++)
 		scene.PrepareParticleSystem(i, frameInfo);
 
 	for(u32 i = 0; i < scene.GetDecalCount(); i++)

@@ -684,6 +684,318 @@ void DecalObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> id
 	}
 }
 
+// ---- ParticleSystemObjectStorage ----
+
+ParticleSystemObjectStorage::ParticleSystemObjectStorage() = default;
+
+void ParticleSystemObjectStorage::ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator)
+{
+	RendererObjectStorage::ApplyCommandsHelper(
+		commands,
+		allocator,
+		[this](PackedRendererId id)
+		{
+			mParticleSystemProxies[id].SetRendererId(id);
+
+			ParticleRenderState& renderState = mParticleRenderStates[id];
+			if(renderState.GpuParticleSystem)
+				mGpuSimulatedIds[renderState.GpuSimulatedParticleArrayIndex] = id;
+		},
+		[this](TArrayView<const PackedRendererId> ids) { DestroyRenderState(ids); },
+		mParticleSystemProxies, mParticleRenderStates, mParticleSystemCullInfos);
+}
+
+void ParticleSystemObjectStorage::CreateRenderState(TArrayView<const PackedRendererId> ids)
+{
+	for(PackedRendererId id : ids)
+	{
+		ParticleRenderState& renderState = mParticleRenderStates[id];
+		const render::ParticleSystemProxy& proxy = mParticleSystemProxies[id];
+
+		renderState.UpdatePerObjectData(proxy);
+
+		const render::ParticleSystemSettings& settings = proxy.GetSettings();
+
+		// Initialize GPU simulation system if needed
+		if(settings.GpuSimulation)
+		{
+			if(!renderState.GpuParticleSystem)
+			{
+				renderState.GpuParticleSystem = B3DPoolNew<GpuParticleSystem>();
+				renderState.GpuSimulatedParticleArrayIndex = (u32)mGpuSimulatedIds.size();
+				mGpuSimulatedIds.push_back(id);
+			}
+		}
+		else
+		{
+			if(renderState.GpuParticleSystem)
+			{
+				B3DPoolDelete(renderState.GpuParticleSystem);
+				renderState.GpuParticleSystem = nullptr;
+			}
+		}
+
+		// Set up draw command
+		ParticlesDrawCommand& drawCommand = renderState.DrawCommand;
+		drawCommand.Type = (u32)DrawCommandType::Particle;
+
+		drawCommand.Material = settings.Material;
+
+		if(drawCommand.Material != nullptr && drawCommand.Material->GetShader() == nullptr)
+			drawCommand.Material = nullptr;
+
+		// If no material use the default material
+		if(drawCommand.Material == nullptr)
+			drawCommand.Material = Material::Create(DefaultParticleMaterial::Get()->GetShader());
+
+		const SPtr<Shader> shader = drawCommand.Material->GetShader();
+
+		const ParticleOrientation orientation = settings.Orientation;
+		const bool lockY = settings.OrientationLockY;
+		const bool gpu = settings.GpuSimulation;
+		const bool is3d = settings.RenderMode == ParticleRenderMode::Mesh;
+
+		ShaderFlags shaderFlags = shader->GetFlags();
+		const bool requiresForwardLighting = shaderFlags.IsSet(ShaderFlag::Forward);
+		const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
+
+		ParticleForwardLightingType forwardLightingType;
+		if(requiresForwardLighting)
+		{
+			forwardLightingType = supportsClusteredForward
+				? ParticleForwardLightingType::Clustered
+				: ParticleForwardLightingType::Standard;
+		}
+		else
+			forwardLightingType = ParticleForwardLightingType::None;
+
+		const ShaderVariationParameters* variationParameters = &GetParticleShaderVariationParameters(orientation, lockY, gpu, is3d, forwardLightingType);
+
+		FindVariationInformation findVariationInformation;
+		findVariationInformation.VariationParameters = variationParameters;
+		findVariationInformation.Override = true;
+
+		u32 variationIndex = drawCommand.Material->FindVariation(findVariationInformation);
+
+		if(variationIndex == (u32)-1)
+			variationIndex = drawCommand.Material->GetDefaultVariation();
+
+		drawCommand.DefaultVariationIndex = variationIndex;
+
+		// Make sure the variation is compiled
+		const SPtr<Variation>& variation = drawCommand.Material->GetVariation(variationIndex);
+		if(variation)
+			variation->Compile();
+
+		// Generate or assigned renderer specific data for the material
+		drawCommand.ParameterAdapter = drawCommand.Material->CreateParameterAdapter(variationIndex);
+		drawCommand.ParameterAdapter->Update(drawCommand.Material, 0.0f, true);
+
+		SPtr<GpuParameterSet> gpuParameterSet = drawCommand.ParameterAdapter->GetGpuParameterSet();
+
+		// Allocate per-object uniform buffer
+		const bool typeChanged = renderState.PerObjectBufferAllocationHandle.IsValid() && (gpu != drawCommand.IsGpuSimulated);
+
+		if(typeChanged)
+			mRenderBeastScene->GetUniformBufferPools().Release(renderState.PerObjectBufferAllocationHandle);
+
+		if(!renderState.PerObjectBufferAllocationHandle.IsValid() || typeChanged)
+		{
+			if(gpu)
+			{
+				UniformBufferPools::AllocationResult result = mRenderBeastScene->GetUniformBufferPools().Allocate(UniformBufferPools::GpuParticlesPool);
+				renderState.PerObjectBufferAllocationHandle = result.Handle;
+				renderState.PerObjectParameterSet = result.ParameterSet;
+				renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
+				renderState.GpuParticlesParamSuballocation = result.GetSuballocation(UniformBufferPools::GpuParticlesBuffer);
+			}
+			else
+			{
+				UniformBufferPools::AllocationResult result = mRenderBeastScene->GetUniformBufferPools().Allocate(UniformBufferPools::RenderablePool);
+				renderState.PerObjectBufferAllocationHandle = result.Handle;
+				renderState.PerObjectParameterSet = result.ParameterSet;
+				renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
+			}
+		}
+
+		drawCommand.IsGpuSimulated = gpu;
+
+		if(gpu)
+			drawCommand.GpuParticlesParamBufferOffset = renderState.GpuParticlesParamSuballocation.GetSuballocationOffset();
+
+		drawCommand.SharedPerObjectParameterSet = renderState.PerObjectParameterSet;
+		drawCommand.PerObjectBufferOffset = renderState.PerObjectSuballocation.GetSuballocationOffset();
+
+		mRenderBeastScene->GetUniformBufferPools().UpdatePerObjectBuffer(renderState);
+
+		// Allocate and populate GPU particle system curves
+		if(gpu)
+		{
+			// Get sprite image for animation curve generation
+			SpriteImage* spriteImage = nullptr;
+			if(shader->HasTextureParameter("gTexture"))
+				spriteImage = drawCommand.Material->GetSpriteImage("gTexture").get();
+
+			if(!spriteImage && shader->HasTextureParameter("gAlbedoTex"))
+				spriteImage = drawCommand.Material->GetSpriteImage("gAlbedoTex").get();
+
+			GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
+			curves.Free(renderState.ColorCurveAlloc);
+			curves.Free(renderState.SizeScaleFrameIdxCurveAlloc);
+
+			static constexpr u32 kNumCurveSamples = 128;
+			Color samples[kNumCurveSamples];
+
+			const render::ParticleGpuSimulationSettings& gpuSimSettings = proxy.GetGpuSimulationSettings();
+
+			// Write color over lifetime curve
+			LookupTable colorLookup = gpuSimSettings.ColorOverLifetime.ToLookupTable(kNumCurveSamples, true);
+
+			for(u32 sampleIndex = 0; sampleIndex < kNumCurveSamples; sampleIndex++)
+			{
+				const float* sample = colorLookup.GetSample(sampleIndex);
+				samples[sampleIndex] = Color(sample[0], sample[1], sample[2], sample[3]);
+			}
+
+			renderState.ColorCurveAlloc = curves.Alloc(samples, kNumCurveSamples);
+
+			// Write size over lifetime / sprite animation curve
+			LookupTable sizeLookup = gpuSimSettings.SizeScaleOverLifetime.ToLookupTable(kNumCurveSamples, true);
+
+			float frameSamples[kNumCurveSamples];
+			if(spriteImage && spriteImage->GetAnimationPlayback() != SpriteAnimationPlayback::None)
+			{
+				const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
+				for(u32 sampleIndex = 0; sampleIndex < kNumCurveSamples; sampleIndex++)
+				{
+					const float t = sampleIndex / (float)(kNumCurveSamples - 1);
+					frameSamples[sampleIndex] = t * (anim.FrameCount - 1);
+				}
+			}
+			else
+				memset(frameSamples, 0, sizeof(frameSamples));
+
+			for(u32 sampleIndex = 0; sampleIndex < kNumCurveSamples; sampleIndex++)
+			{
+				const float* sample = sizeLookup.GetSample(sampleIndex);
+				samples[sampleIndex] = Color(sample[0], sample[1], frameSamples[sampleIndex], 0.0f);
+			}
+
+			renderState.SizeScaleFrameIdxCurveAlloc = curves.Alloc(samples, kNumCurveSamples);
+
+			// Update the GPU particles param buffer via staging
+			mRenderBeastScene->GetUniformBufferPools().UpdateGpuParticlesParamBuffer(renderState);
+		}
+
+		// Bind additional parameters
+		gpuParameterSet->TryGetUniformBufferParameter("PerCamera", drawCommand.PerCameraUniformBufferParameter);
+		gpuParameterSet->TryGetUniformBufferParameter("ParticleParams", drawCommand.ParticlesUniformBufferParameter);
+		gpuParameterSet->GetStorageBufferParameter("gIndices", drawCommand.IndicesBuffer);
+
+		if(gpu)
+		{
+			gpuParameterSet->GetSampledTextureParameter("gPositionTimeTex", drawCommand.ParamsGpu.PositionTimeTexture);
+			gpuParameterSet->GetSampledTextureParameter("gSizeRotationTex", drawCommand.ParamsGpu.SizeRotationTexture);
+			gpuParameterSet->GetSampledTextureParameter("gCurvesTex", drawCommand.ParamsGpu.CurvesTexture);
+
+			drawCommand.Is3D = false;
+		}
+		else
+		{
+			switch(settings.RenderMode)
+			{
+			case ParticleRenderMode::Billboard:
+				gpuParameterSet->GetSampledTextureParameter("gPositionAndRotTex", drawCommand.ParamsCpuBillboard.PositionAndRotTexture);
+				gpuParameterSet->GetSampledTextureParameter("gColorTex", drawCommand.ParamsCpuBillboard.ColorTexture);
+				gpuParameterSet->GetSampledTextureParameter("gSizeAndFrameIdxTex", drawCommand.ParamsCpuBillboard.SizeAndFrameIdxTexture);
+
+				drawCommand.Is3D = false;
+				break;
+			case ParticleRenderMode::Mesh:
+				gpuParameterSet->GetSampledTextureParameter("gPositionTex", drawCommand.ParamsCpuMesh.PositionTexture);
+				gpuParameterSet->GetSampledTextureParameter("gColorTex", drawCommand.ParamsCpuMesh.ColorTexture);
+				gpuParameterSet->GetSampledTextureParameter("gSizeTex", drawCommand.ParamsCpuMesh.SizeTexture);
+				gpuParameterSet->GetSampledTextureParameter("gRotationTex", drawCommand.ParamsCpuMesh.RotationTexture);
+
+				drawCommand.Is3D = true;
+				drawCommand.Mesh = settings.Mesh;
+				break;
+			default:
+				break;
+			}
+		}
+
+		const bool isTransparent = shaderFlags.IsSet(ShaderFlag::Transparent);
+		if(isTransparent)
+		{
+			if(gpuParameterSet->HasSampledTexture("gDepthBufferTex"))
+				gpuParameterSet->GetSampledTextureParameter("gDepthBufferTex", drawCommand.DepthInputTexture);
+		}
+
+		// Set up buffers for lighting
+		const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward);
+		if(useForwardRendering)
+		{
+			drawCommand.ForwardLightingParams.Populate(gpuParameterSet, supportsClusteredForward);
+			drawCommand.ImageBasedParams.Initialize(gpuParameterSet, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
+		}
+
+		// Initialize cull info
+		mParticleSystemCullInfos[id] = CullInfo(Bounds(kZeroTag), proxy.GetLayer());
+
+		renderState.PrevWorldTransform = renderState.WorldTransform;
+		renderState.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
+	}
+}
+
+void ParticleSystemObjectStorage::DestroyRenderState(TArrayView<const PackedRendererId> ids)
+{
+	for(PackedRendererId id : ids)
+	{
+		ParticleRenderState& renderState = mParticleRenderStates[id];
+
+		// Free curves
+		GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
+		curves.Free(renderState.ColorCurveAlloc);
+		curves.Free(renderState.SizeScaleFrameIdxCurveAlloc);
+
+		if(renderState.GpuParticleSystem != nullptr)
+		{
+			const u32 gpuSimulatedParticleArrayIndex = renderState.GpuSimulatedParticleArrayIndex;
+			const u32 lastIndex = (u32)mGpuSimulatedIds.size() - 1;
+			if(gpuSimulatedParticleArrayIndex != lastIndex)
+			{
+				std::swap(mGpuSimulatedIds[gpuSimulatedParticleArrayIndex], mGpuSimulatedIds[lastIndex]);
+
+				PackedRendererId swappedPackedId = mGpuSimulatedIds[gpuSimulatedParticleArrayIndex];
+				mParticleRenderStates[swappedPackedId].GpuSimulatedParticleArrayIndex = gpuSimulatedParticleArrayIndex;
+			}
+			mGpuSimulatedIds.pop_back();
+
+			B3DPoolDelete(renderState.GpuParticleSystem);
+			renderState.GpuParticleSystem = nullptr;
+		}
+
+		// Release the buffer allocation
+		mRenderBeastScene->GetUniformBufferPools().Release(renderState.PerObjectBufferAllocationHandle);
+	}
+}
+
+void ParticleSystemObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> ids)
+{
+	for(PackedRendererId id : ids)
+	{
+		ParticleRenderState& renderState = mParticleRenderStates[id];
+		const render::ParticleSystemProxy& proxy = mParticleSystemProxies[id];
+
+		renderState.PrevWorldTransform = renderState.WorldTransform;
+		renderState.PrevFrameDirtyState = PrevFrameDirtyState::Updated;
+
+		renderState.UpdatePerObjectData(proxy);
+		mRenderBeastScene->GetUniformBufferPools().UpdatePerObjectBuffer(renderState);
+	}
+}
+
 // ---- RenderBeastScene ----
 
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
@@ -692,6 +1004,7 @@ RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
 	mRenderableStorage = B3DMakeShared<RenderableObjectStorage>();
 	mLightStorage = B3DMakeShared<LightObjectStorage>();
 	mDecalStorage = B3DMakeShared<DecalObjectStorage>();
+	mParticleSystemStorage = B3DMakeShared<ParticleSystemObjectStorage>();
 }
 
 void RenderBeastScene::RegisterCamera(Camera* camera)
@@ -979,308 +1292,6 @@ void RenderBeastScene::UnregisterSkybox(Skybox* skybox)
 		mInfo.Skybox = nullptr;
 }
 
-void RenderBeastScene::RegisterParticleSystem(ParticleSystem* particleSystem)
-{
-	const auto rendererId = (u32)mInfo.ParticleSystems.size();
-	particleSystem->SetRendererId(rendererId);
-
-	mInfo.ParticleSystems.push_back(ParticleRenderState());
-	mInfo.ParticleSystemCullInfos.push_back(CullInfo(Bounds(kZeroTag), particleSystem->GetLayer()));
-
-	ParticleRenderState& renderState = mInfo.ParticleSystems.back();
-	renderState.ParticleSystem = particleSystem;
-
-	UpdateParticleSystem(particleSystem, false);
-
-	renderState.PrevWorldTransform = renderState.WorldTransform;
-	renderState.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
-}
-
-void RenderBeastScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly)
-{
-	const u32 rendererId = particleSystem->GetRendererId();
-	ParticleRenderState& renderState = mInfo.ParticleSystems[rendererId];
-
-	renderState.PrevWorldTransform = renderState.WorldTransform;
-	renderState.PrevFrameDirtyState = PrevFrameDirtyState::Updated;
-
-	renderState.UpdatePerObjectData();
-
-	if(tfrmOnly)
-	{
-		mUniformBufferPools.UpdatePerObjectBuffer(renderState);
-		return;
-	}
-
-	const ParticleSystemSettings& settings = particleSystem->GetSettings();
-
-	// Initialize the variant of the particle system for GPU simulation, if needed
-	if(settings.GpuSimulation)
-	{
-		if(!renderState.GpuParticleSystem)
-			renderState.GpuParticleSystem = B3DPoolNew<GpuParticleSystem>(particleSystem);
-	}
-	else
-	{
-		if(renderState.GpuParticleSystem)
-		{
-			B3DPoolDelete(renderState.GpuParticleSystem);
-			renderState.GpuParticleSystem = nullptr;
-		}
-	}
-
-	ParticlesDrawCommand& drawCommand = renderState.DrawCommand;
-	drawCommand.Type = (u32)DrawCommandType::Particle;
-
-	drawCommand.Material = settings.Material;
-
-	if(drawCommand.Material != nullptr && drawCommand.Material->GetShader() == nullptr)
-		drawCommand.Material = nullptr;
-
-	// If no material use the default material
-	if(drawCommand.Material == nullptr)
-		drawCommand.Material = Material::Create(DefaultParticleMaterial::Get()->GetShader());
-
-	const SPtr<Shader> shader = drawCommand.Material->GetShader();
-
-	const ParticleOrientation orientation = settings.Orientation;
-	const bool lockY = settings.OrientationLockY;
-	const bool gpu = settings.GpuSimulation;
-	const bool is3d = settings.RenderMode == ParticleRenderMode::Mesh;
-
-	ShaderFlags shaderFlags = shader->GetFlags();
-	const bool requiresForwardLighting = shaderFlags.IsSet(ShaderFlag::Forward);
-	const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
-
-	ParticleForwardLightingType forwardLightingType;
-	if(requiresForwardLighting)
-	{
-		forwardLightingType = supportsClusteredForward
-			? ParticleForwardLightingType::Clustered
-			: ParticleForwardLightingType::Standard;
-	}
-	else
-		forwardLightingType = ParticleForwardLightingType::None;
-
-	const ShaderVariationParameters* variationParameters = &GetParticleShaderVariationParameters(orientation, lockY, gpu, is3d, forwardLightingType);
-
-	FindVariationInformation findVariationInformation;
-	findVariationInformation.VariationParameters = variationParameters;
-	findVariationInformation.Override = true;
-
-	u32 variationIndex = drawCommand.Material->FindVariation(findVariationInformation);
-
-	if(variationIndex == (u32)-1)
-		variationIndex = drawCommand.Material->GetDefaultVariation();
-
-	drawCommand.DefaultVariationIndex = variationIndex;
-
-	// Make sure the variation is compiled
-	const SPtr<Variation>& variation = drawCommand.Material->GetVariation(variationIndex);
-	if(variation)
-		variation->Compile();
-
-	// Generate or assigned renderer specific data for the material
-	drawCommand.ParameterAdapter = drawCommand.Material->CreateParameterAdapter(variationIndex);
-	drawCommand.ParameterAdapter->Update(drawCommand.Material, 0.0f, true);
-
-	SPtr<GpuParameterSet> gpuParameterSet = drawCommand.ParameterAdapter->GetGpuParameterSet();
-
-	// Allocate from the uniform buffer manager after ParameterAdapter is created
-	// Only allocate if no allocation exists or if the particle type changed (GPU to CPU or vice-versa)
-	const bool typeChanged = renderState.PerObjectBufferAllocationHandle.IsValid() && (gpu != drawCommand.IsGpuSimulated);
-
-	// If the type changed, release the old allocation first
-	if(typeChanged)
-		mUniformBufferPools.Release(renderState.PerObjectBufferAllocationHandle);
-
-	// Allocate if no allocation exists or if type changed
-	if(!renderState.PerObjectBufferAllocationHandle.IsValid() || typeChanged)
-	{
-		if(gpu)
-		{
-			// GPU particles use GpuParticlesPool (PerObject + GpuParticleParams)
-			UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::GpuParticlesPool);
-			renderState.PerObjectBufferAllocationHandle = result.Handle;
-			renderState.PerObjectParameterSet = result.ParameterSet;
-			renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
-			renderState.GpuParticlesParamSuballocation = result.GetSuballocation(UniformBufferPools::GpuParticlesBuffer);
-		}
-		else
-		{
-			// CPU particles use RenderablePool (PerObject only)
-			UniformBufferPools::AllocationResult result = mUniformBufferPools.Allocate(UniformBufferPools::RenderablePool);
-			renderState.PerObjectBufferAllocationHandle = result.Handle;
-			renderState.PerObjectParameterSet = result.ParameterSet;
-			renderState.PerObjectSuballocation = result.GetSuballocation(UniformBufferPools::PerObjectBuffer);
-		}
-	}
-
-	// Update GPU-specific fields based on current state
-	if(gpu)
-	{
-		drawCommand.GpuParticlesParamBufferOffset = renderState.GpuParticlesParamSuballocation.GetSuballocationOffset();
-		drawCommand.IsGpuSimulated = true;
-	}
-	else
-		drawCommand.IsGpuSimulated = false;
-
-	// Store shared parameter set and buffer offset for render-time binding
-	drawCommand.SharedPerObjectParameterSet = renderState.PerObjectParameterSet;
-	drawCommand.PerObjectBufferOffset = renderState.PerObjectSuballocation.GetSuballocationOffset();
-
-	// Now update the per-object buffer (allocation is ready)
-	mUniformBufferPools.UpdatePerObjectBuffer(renderState);
-
-	if(gpu)
-	{
-		gpuParameterSet->GetSampledTextureParameter("gPositionTimeTex", drawCommand.ParamsGpu.PositionTimeTexture);
-		gpuParameterSet->GetSampledTextureParameter("gSizeRotationTex", drawCommand.ParamsGpu.SizeRotationTexture);
-		gpuParameterSet->GetSampledTextureParameter("gCurvesTex", drawCommand.ParamsGpu.CurvesTexture);
-
-		drawCommand.Is3D = false;
-	}
-	else
-	{
-		switch(settings.RenderMode)
-		{
-		case ParticleRenderMode::Billboard:
-			gpuParameterSet->GetSampledTextureParameter("gPositionAndRotTex", drawCommand.ParamsCpuBillboard.PositionAndRotTexture);
-			gpuParameterSet->GetSampledTextureParameter("gColorTex", drawCommand.ParamsCpuBillboard.ColorTexture);
-			gpuParameterSet->GetSampledTextureParameter("gSizeAndFrameIdxTex", drawCommand.ParamsCpuBillboard.SizeAndFrameIdxTexture);
-
-			drawCommand.Is3D = false;
-			break;
-		case ParticleRenderMode::Mesh:
-			gpuParameterSet->GetSampledTextureParameter("gPositionTex", drawCommand.ParamsCpuMesh.PositionTexture);
-			gpuParameterSet->GetSampledTextureParameter("gColorTex", drawCommand.ParamsCpuMesh.ColorTexture);
-			gpuParameterSet->GetSampledTextureParameter("gSizeTex", drawCommand.ParamsCpuMesh.SizeTexture);
-			gpuParameterSet->GetSampledTextureParameter("gRotationTex", drawCommand.ParamsCpuMesh.RotationTexture);
-
-			drawCommand.Is3D = true;
-			drawCommand.Mesh = settings.Mesh;
-			break;
-		default:
-			break;
-		}
-	}
-
-	gpuParameterSet->GetStorageBufferParameter("gIndices", drawCommand.IndicesBuffer);
-	gpuParameterSet->TryGetUniformBufferParameter("PerCamera", drawCommand.PerCameraUniformBufferParameter);
-	gpuParameterSet->TryGetUniformBufferParameter("ParticleParams", drawCommand.ParticlesUniformBufferParameter);
-
-	if(gpu)
-	{
-		// Get sprite image for animation curve generation
-		SpriteImage* spriteImage = nullptr;
-		if(shader->HasTextureParameter("gTexture"))
-			spriteImage = drawCommand.Material->GetSpriteImage("gTexture").get();
-
-		if(!spriteImage && shader->HasTextureParameter("gAlbedoTex"))
-			spriteImage = drawCommand.Material->GetSpriteImage("gAlbedoTex").get();
-
-		// Allocate curves
-		GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
-		curves.Free(renderState.ColorCurveAlloc);
-		curves.Free(renderState.SizeScaleFrameIdxCurveAlloc);
-
-		static constexpr u32 kNumCurveSamples = 128;
-		Color samples[kNumCurveSamples];
-
-		const ParticleGpuSimulationSettings& gpuSimSettings = particleSystem->GetGpuSimulationSettings();
-
-		// Write color over lifetime curve
-		LookupTable colorLookup = gpuSimSettings.ColorOverLifetime.ToLookupTable(kNumCurveSamples, true);
-
-		for(u32 i = 0; i < kNumCurveSamples; i++)
-		{
-			const float* sample = colorLookup.GetSample(i);
-			samples[i] = Color(sample[0], sample[1], sample[2], sample[3]);
-		}
-
-		renderState.ColorCurveAlloc = curves.Alloc(samples, kNumCurveSamples);
-
-		// Write size over lifetime / sprite animation curve
-		LookupTable sizeLookup = gpuSimSettings.SizeScaleOverLifetime.ToLookupTable(kNumCurveSamples, true);
-
-		float frameSamples[kNumCurveSamples];
-		if(spriteImage && spriteImage->GetAnimationPlayback() != SpriteAnimationPlayback::None)
-		{
-			const SpriteSheetGridAnimation& anim = spriteImage->GetAnimation();
-			for(u32 i = 0; i < kNumCurveSamples; i++)
-			{
-				const float t = i / (float)(kNumCurveSamples - 1);
-				frameSamples[i] = t * (anim.FrameCount - 1);
-			}
-		}
-		else
-			memset(frameSamples, 0, sizeof(frameSamples));
-
-		for(u32 i = 0; i < kNumCurveSamples; i++)
-		{
-			const float* sample = sizeLookup.GetSample(i);
-			samples[i] = Color(sample[0], sample[1], frameSamples[i], 0.0f);
-		}
-
-		renderState.SizeScaleFrameIdxCurveAlloc = curves.Alloc(samples, kNumCurveSamples);
-
-		// Update the GPU particles param buffer via staging
-		mUniformBufferPools.UpdateGpuParticlesParamBuffer(renderState);
-	}
-
-	// Set up buffers for lighting
-	const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward);
-	if(useForwardRendering)
-	{
-		drawCommand.ForwardLightingParams.Populate(gpuParameterSet, supportsClusteredForward);
-		drawCommand.ImageBasedParams.Initialize(gpuParameterSet, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward, supportsClusteredForward);
-	}
-
-	const bool isTransparent = shaderFlags.IsSet(ShaderFlag::Transparent);
-	if(isTransparent)
-	{
-		// Optional depth buffer input if requested
-		if(gpuParameterSet->HasSampledTexture("gDepthBufferTex"))
-			gpuParameterSet->GetSampledTextureParameter("gDepthBufferTex", drawCommand.DepthInputTexture);
-	}
-}
-
-void RenderBeastScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
-{
-	const u32 rendererId = particleSystem->GetRendererId();
-	ParticleRenderState& renderState = mInfo.ParticleSystems[rendererId];
-
-	// Free curves
-	GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
-	curves.Free(renderState.ColorCurveAlloc);
-	curves.Free(renderState.SizeScaleFrameIdxCurveAlloc);
-
-	if(renderState.GpuParticleSystem)
-	{
-		B3DPoolDelete(renderState.GpuParticleSystem);
-		renderState.GpuParticleSystem = nullptr;
-	}
-
-	// Release the buffer allocation
-	mUniformBufferPools.Release(renderState.PerObjectBufferAllocationHandle);
-
-	ParticleSystem* lastSystem = mInfo.ParticleSystems.back().ParticleSystem;
-	const u32 lastRendererId = lastSystem->GetRendererId();
-
-	if(rendererId != lastRendererId)
-	{
-		// Swap current last element with the one we want to erase
-		std::swap(mInfo.ParticleSystems[rendererId], mInfo.ParticleSystems[lastRendererId]);
-		std::swap(mInfo.ParticleSystemCullInfos[rendererId], mInfo.ParticleSystemCullInfos[lastRendererId]);
-
-		lastSystem->SetRendererId(rendererId);
-	}
-
-	// Last element is the one we want to erase
-	mInfo.ParticleSystems.erase(mInfo.ParticleSystems.end() - 1);
-	mInfo.ParticleSystemCullInfos.erase(mInfo.ParticleSystemCullInfos.end() - 1);
-}
-
 void RenderBeastScene::Initialize()
 {
 	GetRenderBeast()->NotifySceneCreated(std::static_pointer_cast<RenderBeastScene>(GetShared()));
@@ -1292,6 +1303,9 @@ void RenderBeastScene::Initialize()
 
 	DecalObjectStorage& decalStorage = GetDecalStorage();
 	decalStorage.SetScene(*this);
+
+	ParticleSystemObjectStorage& particleSystemStorage = GetParticleSystemStorage();
+	particleSystemStorage.SetScene(*this);
 
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())
@@ -1559,7 +1573,8 @@ void RenderBeastScene::SetParamFrameParams(float time)
 
 void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
 {
-	ParticleRenderState& renderState = mInfo.ParticleSystems[idx];
+	ParticleSystemObjectStorage& storage = GetParticleSystemStorage();
+	ParticleRenderState& renderState = storage.GetParticleRenderState(idx);
 
 	if(renderState.PrevFrameDirtyState != PrevFrameDirtyState::Clean)
 	{
@@ -1574,7 +1589,7 @@ void RenderBeastScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo
 		}
 	}
 
-	ParticlesDrawCommand& drawCommand = mInfo.ParticleSystems[idx].DrawCommand;
+	ParticlesDrawCommand& drawCommand = renderState.DrawCommand;
 	drawCommand.ParameterAdapter->Update(drawCommand.Material, 0.0f);
 }
 
@@ -1590,23 +1605,32 @@ void RenderBeastScene::UpdateParticleSystemBounds(const EvaluatedParticleData* p
 	// Note: Avoid updating bounds for deterministic particle systems every frame. Also see if this can be copied
 	// over in a faster way (or ideally just assigned)
 
-	for(auto& entry : mInfo.ParticleSystems)
+	ParticleSystemObjectStorage& storage = GetParticleSystemStorage();
+	const u32 particleSystemCount = storage.GetParticleSystemCount();
+
+	for(u32 particleSystemIndex = 0; particleSystemIndex < particleSystemCount; particleSystemIndex++)
 	{
-		const u32 rendererId = entry.ParticleSystem->GetRendererId();
+		ParticleRenderState& entry = storage.GetParticleRenderState(particleSystemIndex);
+		const ParticleSystemProxy& proxy = storage.GetParticleSystemProxy(particleSystemIndex);
+		const ParticleSystemSettings& settings = proxy.GetSettings();
 
 		AABox worldAABox = AABox::kInfinite;
-		const auto iterFind = particleRenderData->CpuData.find(entry.ParticleSystem->GetId());
+		const auto iterFind = particleRenderData->CpuData.find(proxy.GetId());
 		if(iterFind != particleRenderData->CpuData.end())
 			worldAABox = iterFind->second->Bounds;
 		else if(entry.GpuParticleSystem)
-			worldAABox = entry.GpuParticleSystem->GetBounds();
+		{
+			if(settings.UseAutomaticBounds)
+				worldAABox = AABox(-(float)kMaximumSceneExtent, (float)kMaximumSceneExtent);
+			else
+				worldAABox = settings.CustomBounds;
+		}
 
-		const ParticleSystemSettings& settings = entry.ParticleSystem->GetSettings();
 		if(settings.SimulationSpace == ParticleSimulationSpace::Local)
 			worldAABox.TransformAffine(entry.WorldTransform);
 
 		const Sphere worldSphere(worldAABox.GetCenter(), worldAABox.GetRadius());
-		mInfo.ParticleSystemCullInfos[rendererId].Bounds = Bounds(worldAABox, worldSphere);
+		storage.GetParticleSystemCullInfos()[particleSystemIndex].Bounds = Bounds(worldAABox, worldSphere);
 	}
 }
 

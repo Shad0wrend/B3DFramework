@@ -4,6 +4,7 @@
 #include "Allocators/B3DFrameAllocator.h"
 #include "Components/B3DDecal.h"
 #include "Components/B3DLight.h"
+#include "Components/B3DParticleSystem.h"
 #include "Components/B3DRenderable.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "ECS/B3DRegistry.h"
@@ -31,6 +32,7 @@ namespace b3d
 		mDecalStorage = renderProxy->GetDecalStorage();
 		mRenderableStorage = renderProxy->GetRenderableStorage();
 		mLightStorage = renderProxy->GetLightStorage();
+		mParticleSystemStorage = renderProxy->GetParticleSystemStorage();
 	}
 
 	RendererId RendererScene::AllocateRenderableId(ecs::Registry& registry, ecs::Entity entity)
@@ -93,6 +95,26 @@ namespace b3d
 		registry.RemoveComponents<ecs::DecalId>(entity);
 	}
 
+	RendererId RendererScene::AllocateParticleSystemId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		RendererId objectId = mParticleSystemStorage->AllocateRendererId();
+		registry.AddComponent<ecs::ParticleSystemId>(entity, ecs::ParticleSystemId{objectId});
+
+		return objectId;
+	}
+
+	void RendererScene::DeallocateParticleSystemId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		if(!registry.HasAllOf<ecs::ParticleSystemId>(entity))
+			return;
+
+		RendererId objectId = registry.GetComponents<ecs::ParticleSystemId>(entity).Id;
+		if(objectId != kInvalidRendererId)
+			mParticleSystemStorage->DeallocateRendererId(objectId);
+
+		registry.RemoveComponents<ecs::ParticleSystemId>(entity);
+	}
+
 	SPtr<render::RenderProxy> RendererScene::CreateRenderProxy() const
 	{
 		return render::GetRenderer()->CreateScene();
@@ -153,6 +175,18 @@ namespace b3d
 			}
 		}
 
+		if(mParticleSystemStorage != nullptr)
+		{
+			void* particleSystemBatchData = mParticleSystemStorage->SyncRead(registry, allocator);
+			if(particleSystemBatchData != nullptr)
+			{
+				if(batch == nullptr)
+					batch = allocator.Construct<RendererSceneSyncData>();
+
+				batch->ParticleSystemBatchData = particleSystemBatchData;
+			}
+		}
+
 		return batch;
 	}
 
@@ -168,6 +202,9 @@ namespace b3d
 
 			if(batchData.DecalBatchData != nullptr)
 				mDecalStorage->SyncWrite(batchData.DecalBatchData, allocator);
+
+			if(batchData.ParticleSystemBatchData != nullptr)
+				mParticleSystemStorage->SyncWrite(batchData.ParticleSystemBatchData, allocator);
 
 			allocator.Destruct(&batchData);
 		}
