@@ -912,7 +912,6 @@ void RendererViewGroup::SetViews(RendererView** views, u32 numViews)
 
 void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene)
 {
-	const SceneInfo& sceneInfo = scene.GetSceneInfo();
 	const auto viewCount = (u32)mViews.size();
 
 	// Early exit if no views render scene geometry
@@ -973,7 +972,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	}
 
 	// Calculate refl. probe visibility for all views
-	const auto reflectionProbeCount = (u32)sceneInfo.ReflProbes.size();
+	const auto reflectionProbeCount = scene.GetReflectionProbeCount();
 	mVisibility.ReflProbes.resize(reflectionProbeCount, false);
 	mVisibility.ReflProbes.assign(reflectionProbeCount, false);
 
@@ -986,7 +985,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 		if(viewProps.CapturingReflections)
 			continue;
 
-		mViews[viewIndex]->CalculateVisibility(sceneInfo.ReflProbeWorldBounds, mVisibility.ReflProbes);
+		mViews[viewIndex]->CalculateVisibility(scene.GetReflectionProbeWorldBounds(), mVisibility.ReflProbes);
 	}
 
 	// Organize light and refl. probe visibility information in a more GPU friendly manner
@@ -995,7 +994,7 @@ void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, con
 	// efficient to do it per view. Additionally I'm using a single GPU buffer to hold their information, which is
 	// then updated when each view group is rendered. It might be better to keep one buffer reserved per-view.
 	mVisibleLightData.Update(scene, *this);
-	mVisibleReflProbeData.Update(sceneInfo, *this);
+	mVisibleReflProbeData.Update(scene, *this);
 
 	const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 	if(supportsClusteredForward)

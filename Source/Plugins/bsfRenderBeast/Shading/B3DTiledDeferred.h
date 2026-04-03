@@ -14,7 +14,7 @@ namespace b3d
 	namespace render
 	{
 		struct SkyInfo;
-		struct SceneInfo;
+		class RenderBeastScene;
 		class RendererViewGroup;
 
 		/** @addtogroup RenderBeast
@@ -200,7 +200,7 @@ namespace b3d
 			void Initialize() override;
 
 			/** Binds the material for rendering, sets up parameters and executes it. */
-			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflectionProbeData& probeData, const Inputs& inputs);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const RenderBeastScene& scene, const VisibleReflectionProbeData& probeData, const Inputs& inputs);
 
 			/** Returns the material variation matching the provided parameters. */
 			static TiledDeferredImageBasedLightingMaterial* GetVariation(u32 msaaCount);

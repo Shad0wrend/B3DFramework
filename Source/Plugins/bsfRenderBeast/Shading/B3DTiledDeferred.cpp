@@ -338,7 +338,7 @@ void TiledDeferredImageBasedLightingMaterial::InitDefinesInternal(ShaderDefines&
 	defines.Set("TILE_SIZE", kTileSize);
 }
 
-void TiledDeferredImageBasedLightingMaterial::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflectionProbeData& probeData, const Inputs& inputs)
+void TiledDeferredImageBasedLightingMaterial::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const RenderBeastScene& scene, const VisibleReflectionProbeData& probeData, const Inputs& inputs)
 {
 	B3D_PROFILE_RENDERER_MATERIAL
 
@@ -357,10 +357,10 @@ void TiledDeferredImageBasedLightingMaterial::Execute(GpuCommandBuffer& commandB
 
 	Skybox* skybox = nullptr;
 	if(view.GetRenderSettings().EnableSkybox)
-		skybox = sceneInfo.Skybox;
+		skybox = scene.GetSkybox();
 
 	GpuBufferSuballocation reflProbeParamsBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
-	ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+	ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), scene.GetReflectionProbeCubemapsTex(), viewProps.CapturingReflections);
 	mReflProbeParamsUniformBufferParameter.Set(reflProbeParamsBuffer);
 
 	mGBufferA.Set(inputs.Gbuffer.Albedo);
@@ -374,7 +374,7 @@ void TiledDeferredImageBasedLightingMaterial::Execute(GpuCommandBuffer& commandB
 
 	mImageBasedParams.PreintegratedEnvBrdfParameter.Set(inputs.PreIntegratedGf);
 	mImageBasedParams.ReflectionProbesParameter.Set(probeData.GetProbeBuffer());
-	mImageBasedParams.ReflectionProbeCubemapsTexParameter.Set(sceneInfo.ReflProbeCubemapsTex);
+	mImageBasedParams.ReflectionProbeCubemapsTexParameter.Set(scene.GetReflectionProbeCubemapsTex());
 	mImageBasedParams.SkyReflectionsTexParam.Set(skyFilteredRadiance);
 	mImageBasedParams.AmbientOcclusionTexParam.Set(inputs.AmbientOcclusion);
 	mImageBasedParams.SsrTexParameter.Set(inputs.Ssr);

@@ -15,6 +15,7 @@ namespace b3d
 	class FrameAllocator;
 	class LightObjectStorageBase;
 	class ParticleSystemObjectStorageBase;
+	class ReflectionProbeObjectStorageBase;
 	class RenderableObjectStorageBase;
 
 	namespace ecs { class Registry; }
@@ -34,6 +35,7 @@ namespace b3d
 		void* LightBatchData = nullptr;
 		void* DecalBatchData = nullptr;
 		void* ParticleSystemBatchData = nullptr;
+		void* ReflectionProbeBatchData = nullptr;
 	};
 
 	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -69,6 +71,15 @@ namespace b3d
 		/** Removes the ecs::ParticleSystemId fragment and deallocates the persistent render object ID. */
 		void DeallocateParticleSystemId(ecs::Registry& registry, ecs::Entity entity);
 
+		/** Allocates a persistent render object ID for a reflection probe and adds the ecs::ReflectionProbeId fragment. */
+		RendererId AllocateReflectionProbeId(ecs::Registry& registry, ecs::Entity entity);
+
+		/** Removes the ecs::ReflectionProbeId fragment and deallocates the persistent render object ID. */
+		void DeallocateReflectionProbeId(ecs::Registry& registry, ecs::Entity entity);
+
+		/** Returns the reflection probe object storage for this scene. */
+		const SPtr<ReflectionProbeObjectStorageBase>& GetReflectionProbeStorage() const { return mReflectionProbeStorage; }
+
 		/**
 		 * Reads dirty ECS data on the main thread and posts a command to write the changes to the render thread,
 		 * for all RenderableObjectStorage objects.
@@ -89,6 +100,7 @@ namespace b3d
 		SPtr<RenderableObjectStorageBase> mRenderableStorage;
 		SPtr<LightObjectStorageBase> mLightStorage;
 		SPtr<ParticleSystemObjectStorageBase> mParticleSystemStorage;
+		SPtr<ReflectionProbeObjectStorageBase> mReflectionProbeStorage;
 	};
 
 	/** @} */
@@ -124,6 +136,9 @@ namespace b3d
 			/** Returns the particle system object storage for this scene. */
 			const SPtr<ParticleSystemObjectStorageBase>& GetParticleSystemStorage() const { return mParticleSystemStorage; }
 
+			/** Returns the reflection probe object storage for this scene. */
+			const SPtr<ReflectionProbeObjectStorageBase>& GetReflectionProbeStorage() const { return mReflectionProbeStorage; }
+
 			/** Applies sync data from SyncRead to render-thread representations and frees frame-allocated memory. */
 			void SyncWrite(RendererSceneSyncData& batchData, FrameAllocator& allocator);
 
@@ -135,15 +150,6 @@ namespace b3d
 
 			/** Removes a camera from the scene. */
 			virtual void UnregisterCamera(Camera* camera) = 0;
-
-			/** Registers a new reflection probe in the scene. */
-			virtual void RegisterReflectionProbe(ReflectionProbe* probe) = 0;
-
-			/** Updates information about a previously registered reflection probe. */
-			virtual void UpdateReflectionProbe(ReflectionProbe* probe, bool texture) = 0;
-
-			/** Removes a reflection probe from the scene. */
-			virtual void UnregisterReflectionProbe(ReflectionProbe* probe) = 0;
 
 			/** Registers a new light probe volume in the scene. */
 			virtual void RegisterLightProbeVolume(LightProbeVolume* volume) = 0;
@@ -187,6 +193,7 @@ namespace b3d
 			SPtr<RenderableObjectStorageBase> mRenderableStorage;
 			SPtr<LightObjectStorageBase> mLightStorage;
 			SPtr<ParticleSystemObjectStorageBase> mParticleSystemStorage;
+			SPtr<ReflectionProbeObjectStorageBase> mReflectionProbeStorage;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			Set<RendererExtension*, RendererExtension::SortFunction> mCombinedRendererExtensions; /**< Transient set of per-scene and global renderer extensions. */

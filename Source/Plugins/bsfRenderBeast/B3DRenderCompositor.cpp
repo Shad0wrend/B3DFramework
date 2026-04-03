@@ -402,7 +402,6 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	// Prepare all visible objects. Note that this also prepares non-opaque objects.
-	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 
 	//// Prepare normal renderables
 	const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
@@ -414,7 +413,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 
 		for(auto& drawCommand : inputs.Scene.GetRenderable(i)->DrawCommands)
 		{
-			drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);
+			drawCommand.PerFrameUniformBufferParameter.Set(inputs.Scene.GetPerFrameSuballocation());
 			drawCommand.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
 		}
 	}
@@ -468,7 +467,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		const DecalRenderState& renderState = inputs.Scene.GetDecalRenderState(i);
 		DecalDrawCommand& drawCommand = renderState.DrawCommand;
 
-		drawCommand.PerFrameUniformBufferParameter.Set(*sceneInfo.PerFrameSuballocation);
+		drawCommand.PerFrameUniformBufferParameter.Set(inputs.Scene.GetPerFrameSuballocation());
 		drawCommand.PerCameraUniformBufferParameter.Set(inputs.View.GetPerViewBuffer());
 		drawCommand.DepthInputTexture.Set(sceneDepthTex->Texture);
 		drawCommand.MaskInputTexture.Set(IdTex->Texture);
@@ -1152,9 +1151,8 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
-	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
 
-	const LightProbes& lightProbes = sceneInfo.LightProbes;
+	const LightProbes& lightProbes = inputs.Scene.GetLightProbes();
 	LightProbesInfo lpInfo = lightProbes.GetInfo();
 
 	IrradianceEvaluateMaterial* evaluateMat;
@@ -1208,7 +1206,7 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 
 	Skybox* skybox = nullptr;
 	if(inputs.View.GetRenderSettings().EnableSkybox)
-		skybox = sceneInfo.Skybox;
+		skybox = inputs.Scene.GetSkybox();
 
 	evaluateMat->Execute(commandBuffer, inputs.View, gbuffer, volumeIndicesTex, lpInfo, skybox, ssaoNode->Output, lightAccumNode->RenderTarget);
 
@@ -1237,8 +1235,6 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 	RCNodeSSAO* ssaoNode = dependencies.Get<RCNodeSSAO>();
 
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
-	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
-
 	GBufferTextures gbuffer;
 	gbuffer.Albedo = gbufferNode->AlbedoTex->Texture;
 	gbuffer.Normals = gbufferNode->NormalTex->Texture;
@@ -1272,7 +1268,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		if(sceneColorNode->SceneColorTexArray)
 			iblInputs.SceneColorTexArray = sceneColorNode->SceneColorTexArray->Texture;
 
-		material->Execute(*inputs.ActiveCommandBuffer, inputs.View, sceneInfo, inputs.ViewGroup.GetVisibleReflProbeData(), iblInputs);
+		material->Execute(*inputs.ActiveCommandBuffer, inputs.View, inputs.Scene, inputs.ViewGroup.GetVisibleReflProbeData(), iblInputs);
 
 		if(viewProps.Target.NumSamples > 1)
 			sceneColorNode->MsaaTexArrayToTexture(*inputs.ActiveCommandBuffer);
@@ -1302,7 +1298,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		Skybox* skybox = nullptr;
 		if(inputs.View.GetRenderSettings().EnableSkybox)
-			skybox = sceneInfo.Skybox;
+			skybox = inputs.Scene.GetSkybox();
 
 		DeferredIBLSetupMaterial* const setupMaterial = DeferredIBLSetupMaterial::GetVariation(isMSAA, true);
 		DeferredIBLSkyMaterial* const skyMaterial = DeferredIBLSkyMaterial::GetVariation(isMSAA, true);
@@ -1317,7 +1313,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 
 		// Prepare buffers and parameters for rendering
 		GpuBufferSuballocation reflProbeParamsBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
-		ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+		ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamsBuffer, skybox, probeData.GetProbeCount(), inputs.Scene.GetReflectionProbeCubemapsTex(), viewProps.CapturingReflections);
 
 		RenderPassCreateInformation mainPassCreateInformation(iblRadianceRT, RT_DEPTH_STENCIL, RT_DEPTH_STENCIL);
 		{
@@ -1450,7 +1446,7 @@ RCNodeDeferredIndirectSpecularLighting::DependencyDefinition RCNodeDeferredIndir
 
 void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 {
-	const SceneInfo& sceneInfo = inputs.Scene.GetSceneInfo();
+	const RenderBeastScene& scene = inputs.Scene;
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
 	const VisibleLightData& visibleLightData = inputs.ViewGroup.GetVisibleLightData();
@@ -1474,11 +1470,11 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 	Skybox* skybox = nullptr;
 	if(inputs.View.GetRenderSettings().EnableSkybox)
-		skybox = sceneInfo.Skybox;
+		skybox = scene.GetSkybox();
 
 	// Prepare refl. probe param buffer
 	GpuBufferSuballocation reflProbeParamBuffer = gGlobalReflectionProbeUniformBufferDefinition.AllocateTransient();
-	ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamBuffer, skybox, visibleReflProbeData.GetProbeCount(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
+	ReflectionProbeRenderState::PopulateGlobalReflectionProbeUniformBuffer(reflProbeParamBuffer, skybox, visibleReflProbeData.GetProbeCount(), scene.GetReflectionProbeCubemapsTex(), viewProps.CapturingReflections);
 
 	SPtr<Texture> skyFilteredRadiance;
 	if(skybox)
@@ -1537,7 +1533,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		fwdParams.LightAndReflectionProbeUniformBufferParameter.Set(standardForwardBuffers.LightAndReflProbeParamsUniformBuffer);
 	};
 
-	const auto fnBindCommonIBLParameters = [&reflProbeParamBuffer, &skyFilteredRadiance, &sceneInfo](MaterialParameterAdapter& parameterAdapter, ImageBasedLightingParameterBinding& iblParams)
+	const auto fnBindCommonIBLParameters = [&reflProbeParamBuffer, &skyFilteredRadiance, &scene](MaterialParameterAdapter& parameterAdapter, ImageBasedLightingParameterBinding& iblParams)
 	{
 		// Note: Ideally these should be bound once (they are the same for all renderables)
 		iblParams.ReflectionProbeUniformBufferParameter.Set(reflProbeParamBuffer);
@@ -1546,7 +1542,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 		iblParams.AmbientOcclusionTexParam.Set(Texture::kWhite); // Note: Add SSAO here?
 		iblParams.SsrTexParameter.Set(Texture::kBlack); // Note: Add SSR here?
 
-		iblParams.ReflectionProbeCubemapsTexParameter.Set(sceneInfo.ReflProbeCubemapsTex);
+		iblParams.ReflectionProbeCubemapsTexParameter.Set(scene.GetReflectionProbeCubemapsTex());
 		iblParams.PreintegratedEnvBrdfParameter.Set(RendererTextures::preintegratedEnvGF);
 	};
 
@@ -1719,7 +1715,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 {
 	Skybox* skybox = nullptr;
 	if(inputs.View.GetRenderSettings().EnableSkybox)
-		skybox = inputs.Scene.GetSceneInfo().Skybox;
+		skybox = inputs.Scene.GetSkybox();
 
 	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	SPtr<Texture> radiance = skybox ? skybox->GetTexture() : nullptr;

@@ -12,7 +12,6 @@ namespace b3d
 {
 	namespace render
 	{
-		struct SceneInfo;
 		class RenderBeastScene;
 		class RendererViewGroup;
 

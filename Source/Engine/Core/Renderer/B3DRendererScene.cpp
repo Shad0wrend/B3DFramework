@@ -5,6 +5,7 @@
 #include "Components/B3DDecal.h"
 #include "Components/B3DLight.h"
 #include "Components/B3DParticleSystem.h"
+#include "Components/B3DReflectionProbe.h"
 #include "Components/B3DRenderable.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "ECS/B3DRegistry.h"
@@ -33,6 +34,7 @@ namespace b3d
 		mRenderableStorage = renderProxy->GetRenderableStorage();
 		mLightStorage = renderProxy->GetLightStorage();
 		mParticleSystemStorage = renderProxy->GetParticleSystemStorage();
+		mReflectionProbeStorage = renderProxy->GetReflectionProbeStorage();
 	}
 
 	RendererId RendererScene::AllocateRenderableId(ecs::Registry& registry, ecs::Entity entity)
@@ -115,6 +117,26 @@ namespace b3d
 		registry.RemoveComponents<ecs::ParticleSystemId>(entity);
 	}
 
+	RendererId RendererScene::AllocateReflectionProbeId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		RendererId objectId = mReflectionProbeStorage->AllocateRendererId();
+		registry.AddComponent<ecs::ReflectionProbeId>(entity, ecs::ReflectionProbeId{objectId});
+
+		return objectId;
+	}
+
+	void RendererScene::DeallocateReflectionProbeId(ecs::Registry& registry, ecs::Entity entity)
+	{
+		if(!registry.HasAllOf<ecs::ReflectionProbeId>(entity))
+			return;
+
+		RendererId objectId = registry.GetComponents<ecs::ReflectionProbeId>(entity).Id;
+		if(objectId != kInvalidRendererId)
+			mReflectionProbeStorage->DeallocateRendererId(objectId);
+
+		registry.RemoveComponents<ecs::ReflectionProbeId>(entity);
+	}
+
 	SPtr<render::RenderProxy> RendererScene::CreateRenderProxy() const
 	{
 		return render::GetRenderer()->CreateScene();
@@ -187,6 +209,18 @@ namespace b3d
 			}
 		}
 
+		if(mReflectionProbeStorage != nullptr)
+		{
+			void* reflectionProbeBatchData = mReflectionProbeStorage->SyncRead(registry, allocator);
+			if(reflectionProbeBatchData != nullptr)
+			{
+				if(batch == nullptr)
+					batch = allocator.Construct<RendererSceneSyncData>();
+
+				batch->ReflectionProbeBatchData = reflectionProbeBatchData;
+			}
+		}
+
 		return batch;
 	}
 
@@ -205,6 +239,9 @@ namespace b3d
 
 			if(batchData.ParticleSystemBatchData != nullptr)
 				mParticleSystemStorage->SyncWrite(batchData.ParticleSystemBatchData, allocator);
+
+			if(batchData.ReflectionProbeBatchData != nullptr)
+				mReflectionProbeStorage->SyncWrite(batchData.ReflectionProbeBatchData, allocator);
 
 			allocator.Destruct(&batchData);
 		}

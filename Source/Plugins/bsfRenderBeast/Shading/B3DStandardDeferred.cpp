@@ -91,7 +91,7 @@ DeferredIBLSetupMaterial* DeferredIBLSetupMaterial::GetVariation(bool msaa, bool
 void DeferredIBLProbeMaterial::PopulateParameters(GpuDevice& gpuDevice, const SPtr<GpuParameterSet>& gpuParameters, const GBufferTextures& gBufferInput, const GpuBufferSuballocation& perCamera, const RenderBeastScene& scene, const GpuBufferSuballocation& perProbeUniformBuffer, const GpuBufferSuballocation& globalProbeUniformBuffer)
 {
 	GBufferParameterBinding::Set(gpuDevice, gpuParameters, gBufferInput);
-	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, scene.GetSceneInfo().ReflProbeCubemapsTex);
+	ImageBasedLightingParameterBinding::SetReflectionProbeCubemaps(gpuParameters, scene.GetReflectionProbeCubemapsTex());
 
 	gpuParameters->SetUniformBuffer("PerCamera", perCamera);
 	gpuParameters->SetUniformBuffer("ReflProbeParams", globalProbeUniformBuffer);

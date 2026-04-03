@@ -1,6 +1,7 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DReflectionProbeRenderState.h"
+#include "B3DRenderBeastScene.h"
 #include "Material/B3DMaterial.h"
 #include "Components/B3DReflectionProbe.h"
 #include "B3DRenderBeast.h"
@@ -13,21 +14,22 @@ static const u32 kReflProbeBufferIncrement = 16 * sizeof(ReflectioneProbeData);
 
 GlobalReflectionProbeUniformBufferDefinition gGlobalReflectionProbeUniformBufferDefinition;
 
-void VisibleReflectionProbeData::Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup)
+void VisibleReflectionProbeData::Update(const RenderBeastScene& scene, const RendererViewGroup& viewGroup)
 {
 	mReflProbeData.clear();
 
 	const VisibilityInfo& visibility = viewGroup.GetVisibilityInfo();
 
 	// Generate refl. probe data for the visible ones
-	u32 numProbes = (u32)sceneInfo.ReflProbes.size();
+	u32 numProbes = scene.GetReflectionProbeCount();
 	for(u32 i = 0; i < numProbes; i++)
 	{
 		if(!visibility.ReflProbes[i])
 			continue;
 
 		mReflProbeData.push_back(ReflectioneProbeData());
-		sceneInfo.ReflProbes[i].GetParameters(mReflProbeData.back());
+		const ReflectionProbeProxy& proxy = scene.GetReflectionProbeProxy(i);
+		scene.GetReflectionProbeRenderState(i).GetParameters(proxy, mReflProbeData.back());
 	}
 
 	// Sort probes so bigger ones get accessed first, this way we overlay smaller ones on top of biggers ones when
@@ -72,32 +74,30 @@ void VisibleReflectionProbeData::Update(const SceneInfo& sceneInfo, const Render
 	}
 }
 
-ReflectionProbeRenderState::ReflectionProbeRenderState(ReflectionProbe* probe)
-	: Probe(probe)
+ReflectionProbeRenderState::ReflectionProbeRenderState()
 {
 	ArrayIdx = -1;
 	ArrayDirty = true;
 	ErrorFlagged = false;
 }
 
-void ReflectionProbeRenderState::GetParameters(ReflectioneProbeData& output) const
+void ReflectionProbeRenderState::GetParameters(const ReflectionProbeProxy& proxy, ReflectioneProbeData& output) const
 {
-	output.Type = Probe->GetType() == ReflectionProbeType::Sphere ? 0
-		: Probe->GetType() == ReflectionProbeType::Box			  ? 1
-																  : 2;
+	output.Type = proxy.GetType() == ReflectionProbeType::Sphere ? 0
+		: proxy.GetType() == ReflectionProbeType::Box			? 1
+																: 2;
 
-	const Transform& tfrm = Probe->GetWorldTransform();
-	output.Position = tfrm.GetPosition();
-	output.BoxExtents = Probe->GetExtents();
+	output.Position = proxy.GetWorldTransform().GetPosition();
+	output.BoxExtents = proxy.GetWorldExtents();
 
-	if(Probe->GetType() == ReflectionProbeType::Sphere)
-		output.Radius = Probe->GetRadius();
+	if(proxy.GetType() == ReflectionProbeType::Sphere)
+		output.Radius = proxy.GetWorldRadius();
 	else
 		output.Radius = output.BoxExtents.Length();
 
-	output.TransitionDistance = Probe->GetTransitionDistance();
+	output.TransitionDistance = proxy.GetTransitionDistance();
 	output.CubemapIdx = ArrayIdx;
-	output.InvBoxTransform.SetInverseTrs(output.Position, tfrm.GetRotation(), output.BoxExtents);
+	output.InvBoxTransform.SetInverseTrs(output.Position, proxy.GetWorldTransform().GetRotation(), output.BoxExtents);
 }
 
 void ImageBasedLightingParameterBinding::Initialize(const SPtr<GpuParameterSet>& parameters, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray)

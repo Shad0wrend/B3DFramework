@@ -5,8 +5,10 @@
 #include "B3DRenderBeastPrerequisites.h"
 #include "RenderState/B3DLightRenderState.h"
 #include "RenderState/B3DDecalRenderState.h"
+#include "RenderState/B3DReflectionProbeRenderState.h"
 #include "Components/B3DDecal.h"
 #include "Components/B3DParticleSystem.h"
+#include "Components/B3DReflectionProbe.h"
 #include "B3DRendererView.h"
 #include "RenderState/B3DParticleRenderState.h"
 #include "Renderer/B3DRendererScene.h"
@@ -226,33 +228,51 @@ namespace b3d
 
 			RenderBeastScene* mRenderBeastScene = nullptr;
 		};
-
-		/** Contains most scene objects relevant to the renderer. */
-		struct SceneInfo
+		/**
+		 * Maintains packed arrays containing renderer-specific data for reflection probes. Allows fast iteration over
+		 * all reflection probes in a scene, manages cubemap array allocation, and provides data needed for their rendering.
+		 */
+		class ReflectionProbeObjectStorage final : public ReflectionProbeObjectStorageBase
 		{
-			// Cameras and render targets
-			Vector<RendererRenderTarget> RenderTargets;
-			Vector<RendererView*> Views;
-			UnorderedMap<const Camera*, u32> CameraToView;
+		public:
+			ReflectionProbeObjectStorage();
 
-			// Reflection probes
-			Vector<ReflectionProbeRenderState> ReflProbes;
-			Vector<Sphere> ReflProbeWorldBounds;
-			Vector<bool> ReflProbeCubemapArrayUsedSlots;
-			SPtr<Texture> ReflProbeCubemapsTex;
+			void ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator) override;
+			void CreateRenderState(TArrayView<const PackedRendererId> slotIds) override;
+			void DestroyRenderState(TArrayView<const PackedRendererId> slotIds) override;
+			void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) override;
+			void OnFilteredTextureUpdated(PackedRendererId slotId) override;
 
-			// Light probes (indirect lighting)
-			LightProbes LightProbes;
+			/** Returns the reflection probe render states. */
+			const Vector<ReflectionProbeRenderState>& GetReflectionProbeRenderStates() const { return mReflectionProbeRenderStates; }
 
-			// Sky
-			Skybox* Skybox = nullptr;
+			/** Returns the render state at the given packed ID. */
+			const ReflectionProbeRenderState& GetReflectionProbeRenderState(PackedRendererId packedId) const { return mReflectionProbeRenderStates[packedId]; }
 
-			// Buffers for various transient data that gets rebuilt every frame
-			//// Rebuilt every frame
-			mutable Vector<bool> RenderableReady;
-			// Per-frame uniform buffer suballocation (updated each frame)
-			const GpuBufferSuballocation* PerFrameSuballocation = nullptr;
+			/** Returns the world space bounds of all reflection probes. */
+			const Vector<Sphere>& GetReflProbeWorldBounds() const { return mReflProbeWorldBounds; }
 
+			/** Returns the cubemap array texture containing all reflection probe cubemaps. */
+			const SPtr<Texture>& GetReflProbeCubemapsTex() const { return mReflProbeCubemapsTex; }
+
+			/** Returns the boolean array tracking which cubemap array slots are in use. */
+			const Vector<bool>& GetReflProbeCubemapArrayUsedSlots() const { return mReflProbeCubemapArrayUsedSlots; }
+
+			/** Updates the cubemap array index for the given probe and optionally marks it as clean. */
+			void SetReflectionProbeArrayIndex(PackedRendererId packedId, u32 arrayIdx, bool markAsClean);
+
+			/** Updates the cubemap array texture with changed probe textures. */
+			void UpdateReflectionProbes(GpuCommandBuffer& commandBuffer);
+
+			/** Sets the GPU device used for texture creation. Called by RenderBeastScene::Initialize(). */
+			void SetGpuDevice(const SPtr<GpuDevice>& gpuDevice) { mGpuDevice = gpuDevice; }
+
+		private:
+			Vector<ReflectionProbeRenderState> mReflectionProbeRenderStates;
+			Vector<Sphere> mReflProbeWorldBounds;
+			Vector<bool> mReflProbeCubemapArrayUsedSlots;
+			SPtr<Texture> mReflProbeCubemapsTex;
+			SPtr<GpuDevice> mGpuDevice;
 		};
 
 		/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */
@@ -264,10 +284,6 @@ namespace b3d
 			void RegisterCamera(Camera* camera) override;
 			void UpdateCamera(Camera* camera, u32 updateFlag) override;
 			void UnregisterCamera(Camera* camera) override;
-
-			void RegisterReflectionProbe(ReflectionProbe* probe) override;
-			void UpdateReflectionProbe(ReflectionProbe* probe, bool texture) override;
-			void UnregisterReflectionProbe(ReflectionProbe* probe) override;
 
 			void RegisterLightProbeVolume(LightProbeVolume* volume) override;
 			void UpdateLightProbeVolume(LightProbeVolume* volume) override;
@@ -290,9 +306,6 @@ namespace b3d
 
 			/** Updates the global reflection probe cubemap array with changed probe textures. */
 			void UpdateReflectionProbes(GpuCommandBuffer& commandBuffer);
-
-			/** Returns a container with all relevant scene objects. */
-			const SceneInfo& GetSceneInfo() const { return mInfo; }
 
 			/** Updates scene according to the newly provided renderer options. */
 			void SetOptions(const SPtr<RenderBeastOptions>& options);
@@ -324,9 +337,6 @@ namespace b3d
 			/** Updates the bounds for all the particle systems from the provided object. */
 			void UpdateParticleSystemBounds(const EvaluatedParticleData* particleRenderData);
 
-			/** Returns a modifiable version of SceneInfo. Only to be used by friends who know what they are doing. */
-			SceneInfo& GetSceneInfo() { return mInfo; }
-
 			/** Returns the object for managing uniform buffer allocations. */
 			UniformBufferPools& GetUniformBufferPools() { return mUniformBufferPools; }
 
@@ -345,6 +355,10 @@ namespace b3d
 			/** Returns the particle system object storage. */
 			ParticleSystemObjectStorage& GetParticleSystemStorage() { return static_cast<ParticleSystemObjectStorage&>(*mParticleSystemStorage.get()); }
 			const ParticleSystemObjectStorage& GetParticleSystemStorage() const { return static_cast<const ParticleSystemObjectStorage&>(*mParticleSystemStorage.get()); }
+
+			/** Returns the reflection probe object storage. */
+			ReflectionProbeObjectStorage& GetReflectionProbeStorage() { return static_cast<ReflectionProbeObjectStorage&>(*mReflectionProbeStorage.get()); }
+			const ReflectionProbeObjectStorage& GetReflectionProbeStorage() const { return static_cast<const ReflectionProbeObjectStorage&>(*mReflectionProbeStorage.get()); }
 
 			/**
 			 * @name Renderable accessors — convenience wrappers around RenderableObjectStorage
@@ -394,6 +408,18 @@ namespace b3d
 			/** @} */
 
 			/**
+			 * @name ReflectionProbe accessors — convenience wrappers around ReflectionProbeObjectStorage
+			 * @{
+			 */
+			u32 GetReflectionProbeCount() const { return GetReflectionProbeStorage().GetReflectionProbeCount(); }
+			const render::ReflectionProbeProxy& GetReflectionProbeProxy(PackedRendererId packedId) const { return GetReflectionProbeStorage().GetReflectionProbeProxy(packedId); }
+			const ReflectionProbeRenderState& GetReflectionProbeRenderState(PackedRendererId packedId) const { return GetReflectionProbeStorage().GetReflectionProbeRenderState(packedId); }
+			const Vector<ReflectionProbeRenderState>& GetReflectionProbes() const { return GetReflectionProbeStorage().GetReflectionProbeRenderStates(); }
+			const Vector<Sphere>& GetReflectionProbeWorldBounds() const { return GetReflectionProbeStorage().GetReflProbeWorldBounds(); }
+			const SPtr<Texture>& GetReflectionProbeCubemapsTex() const { return GetReflectionProbeStorage().GetReflProbeCubemapsTex(); }
+			/** @} */
+
+			/**
 			 * Generates sampler state overrides for the provided render element, or returns existing ones if they
 			 * already exist for the element's material. Shared between renderables and decals.
 			 */
@@ -409,6 +435,28 @@ namespace b3d
 			 *						was detected or not.
 			 */
 			void RefreshSamplerOverrides(bool force = false);
+
+			/** Resets renderable ready flags for a new frame. */
+			void ResetRenderableReady();
+
+			// Cameras and render targets
+			const Vector<RendererRenderTarget>& GetRenderTargets() const { return mRenderTargets; }
+
+			/** Returns the view associated with the given camera, or nullptr if the camera has no registered view. */
+			RendererView* TryGetView(const Camera* camera) const
+			{
+				auto it = mCameraToView.find(camera);
+				if(it != mCameraToView.end())
+					return mViews[it->second];
+
+				return nullptr;
+			}
+
+			// Light probes (indirect lighting)
+			const LightProbes& GetLightProbes() const { return mLightProbes; }
+
+			// Sky
+			Skybox* GetSkybox() const { return mSkybox; }
 
 		private:
 			friend class RenderableObjectStorage;
@@ -426,12 +474,24 @@ namespace b3d
 			void UpdateCameraRenderTargets(Camera* camera, bool remove = false);
 
 			SPtr<GpuDevice> mGpuDevice;
-			SceneInfo mInfo;
 			GpuBufferSuballocation mPerFrameSuballocation;
 			UniformBufferPools mUniformBufferPools;
-
 			SPtr<RenderBeastOptions> mOptions;
 			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;
+
+			// Cameras and render targets
+			Vector<RendererRenderTarget> mRenderTargets;
+			Vector<RendererView*> mViews;
+			UnorderedMap<const Camera*, u32> mCameraToView;
+
+			// Light probes (indirect lighting)
+			LightProbes mLightProbes;
+
+			// Sky
+			Skybox* mSkybox = nullptr;
+
+			// Transient per-frame data
+			mutable Vector<bool> mRenderableReady;
 		};
 
 		B3D_UNIFORM_BUFFER_BEGIN(PerFrameUniformDefinition)

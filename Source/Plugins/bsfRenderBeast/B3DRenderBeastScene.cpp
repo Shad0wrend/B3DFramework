@@ -181,19 +181,19 @@ void RenderableObjectStorage::CreateRenderState(TArrayView<const PackedRendererI
 {
 	UniformBufferPools& uniformBufferPools = mRenderBeastScene->GetUniformBufferPools();
 
-	for(const PackedRendererId packedId : ids)
+	for(const PackedRendererId renderableId : ids)
 	{
-		RenderableProxy& proxy = mRenderableProxies[packedId];
+		RenderableProxy& proxy = mRenderableProxies[renderableId];
 
-		proxy.SetRendererId(packedId);
+		proxy.SetRendererId(renderableId);
 
-		B3D_ASSERT(renderableId < (PackedRendererId)mRenderables.size());
-		B3D_ASSERT(mRenderables[renderableId] == nullptr);
+		B3D_ASSERT(packedId < (PackedRendererId)mRenderables.size());
+		B3D_ASSERT(mRenderables[packedId] == nullptr);
 
-		mRenderables[packedId] = B3DNew<RenderableRenderState>();
-		mRenderableCullInfos[packedId] = CullInfo(proxy.GetBounds(), proxy.GetLayer(), proxy.GetCullDistanceFactor());
+		mRenderables[renderableId] = B3DNew<RenderableRenderState>();
+		mRenderableCullInfos[renderableId] = CullInfo(proxy.GetBounds(), proxy.GetLayer(), proxy.GetCullDistanceFactor());
 
-		RenderableRenderState* renderState = mRenderables[packedId];
+		RenderableRenderState* renderState = mRenderables[renderableId];
 		renderState->UpdatePerObjectData(proxy);
 		renderState->PrevWorldTransform = renderState->WorldTransform;
 		renderState->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
@@ -390,8 +390,7 @@ void RenderableObjectStorage::PrepareRenderable(PackedRendererId id, const Frame
 
 void RenderableObjectStorage::PrepareVisibleRenderable(PackedRendererId id, const FrameInfo& frameInfo)
 {
-	SceneInfo& sceneInfo = mRenderBeastScene->GetSceneInfo();
-	if(sceneInfo.RenderableReady[id])
+	if(mRenderBeastScene->mRenderableReady[id])
 		return;
 
 	RenderableRenderState* renderState = mRenderables[id];
@@ -427,7 +426,7 @@ void RenderableObjectStorage::PrepareVisibleRenderable(PackedRendererId id, cons
 		}
 	}
 
-	sceneInfo.RenderableReady[id] = true;
+	mRenderBeastScene->mRenderableReady[id] = true;
 }
 
 // ---- LightObjectStorage ----
@@ -996,6 +995,177 @@ void ParticleSystemObjectStorage::UpdateRenderState(TArrayView<const PackedRende
 	}
 }
 
+// ---- ReflectionProbeObjectStorage ----
+
+ReflectionProbeObjectStorage::ReflectionProbeObjectStorage() = default;
+
+void ReflectionProbeObjectStorage::ApplyCommands(const CommandBatch& commands, FrameAllocator& allocator)
+{
+	RendererObjectStorage::ApplyCommandsHelper(
+		commands,
+		allocator,
+		[this](PackedRendererId id)
+		{
+			mReflectionProbeProxies[id].SetRendererId(id);
+		},
+		[this](TArrayView<const PackedRendererId> ids) { DestroyRenderState(ids); },
+		mReflectionProbeProxies, mReflectionProbeRenderStates, mReflProbeWorldBounds);
+}
+
+void ReflectionProbeObjectStorage::CreateRenderState(TArrayView<const PackedRendererId> slotIds)
+{
+	for(const PackedRendererId packedId : slotIds)
+	{
+		ReflectionProbeRenderState& renderState = mReflectionProbeRenderStates[packedId];
+		renderState.ArrayIdx = (u32)-1;
+		renderState.ArrayDirty = true;
+		renderState.ErrorFlagged = false;
+
+		mReflProbeWorldBounds[packedId] = mReflectionProbeProxies[packedId].GetBounds();
+
+		// Find a free cubemap array slot
+		u32 numArrayEntries = (u32)mReflProbeCubemapArrayUsedSlots.size();
+		for(u32 slotIndex = 0; slotIndex < numArrayEntries; slotIndex++)
+		{
+			if(!mReflProbeCubemapArrayUsedSlots[slotIndex])
+			{
+				SetReflectionProbeArrayIndex(packedId, slotIndex, false);
+				mReflProbeCubemapArrayUsedSlots[slotIndex] = true;
+				break;
+			}
+		}
+
+		// No empty slot was found
+		if(renderState.ArrayIdx == (u32)-1)
+		{
+			SetReflectionProbeArrayIndex(packedId, numArrayEntries, false);
+			mReflProbeCubemapArrayUsedSlots.push_back(true);
+		}
+
+		if(renderState.ArrayIdx > kMaxReflectionCubemaps)
+		{
+			B3D_LOG(Error, LogRenderer, "Reached the maximum number of allowed reflection probe cubemaps at once. "
+									"Ignoring reflection probe data.");
+		}
+	}
+}
+
+void ReflectionProbeObjectStorage::DestroyRenderState(TArrayView<const PackedRendererId> slotIds)
+{
+	for(const PackedRendererId packedId : slotIds)
+	{
+		u32 arrayIdx = mReflectionProbeRenderStates[packedId].ArrayIdx;
+
+		if(arrayIdx != (u32)-1 && arrayIdx < (u32)mReflProbeCubemapArrayUsedSlots.size())
+			mReflProbeCubemapArrayUsedSlots[arrayIdx] = false;
+	}
+}
+
+void ReflectionProbeObjectStorage::UpdateRenderState(TArrayView<const PackedRendererId> slotIds)
+{
+	for(const PackedRendererId packedId : slotIds)
+		mReflProbeWorldBounds[packedId] = mReflectionProbeProxies[packedId].GetBounds();
+}
+
+void ReflectionProbeObjectStorage::OnFilteredTextureUpdated(PackedRendererId slotId)
+{
+	mReflectionProbeRenderStates[slotId].ArrayDirty = true;
+}
+
+void ReflectionProbeObjectStorage::SetReflectionProbeArrayIndex(PackedRendererId packedId, u32 arrayIdx, bool markAsClean)
+{
+	ReflectionProbeRenderState& renderState = mReflectionProbeRenderStates[packedId];
+	renderState.ArrayIdx = arrayIdx;
+
+	if(markAsClean)
+		renderState.ArrayDirty = false;
+}
+
+void ReflectionProbeObjectStorage::UpdateReflectionProbes(GpuCommandBuffer& commandBuffer)
+{
+	const u32 probeCount = (u32)mReflectionProbeProxies.size();
+
+	B3DMarkAllocatorFrame();
+	{
+		u32 currentCubeArraySize = 0;
+
+		if(mReflProbeCubemapsTex != nullptr)
+			currentCubeArraySize = mReflProbeCubemapsTex->GetProperties().ArraySliceCount;
+
+		bool forceArrayUpdate = false;
+		if(mReflProbeCubemapsTex == nullptr || (currentCubeArraySize < probeCount && currentCubeArraySize != kMaxReflectionCubemaps))
+		{
+			TextureCreateInformation cubeMapDesc;
+			cubeMapDesc.Name = "Reflection Probe Cubemap Array";
+			cubeMapDesc.Type = TEX_TYPE_CUBE_MAP;
+			cubeMapDesc.Format = PF_RG11B10F;
+			cubeMapDesc.Width = IBLUtility::kReflectionCubemapSize;
+			cubeMapDesc.Height = IBLUtility::kReflectionCubemapSize;
+			cubeMapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubeMapDesc.Width, cubeMapDesc.Height, 1, cubeMapDesc.Format);
+			cubeMapDesc.ArraySliceCount = std::min(kMaxReflectionCubemaps, probeCount + 4);
+
+			mReflProbeCubemapsTex = mGpuDevice->CreateTexture(cubeMapDesc);
+
+			forceArrayUpdate = true;
+		}
+
+		if(probeCount > 0)
+		{
+			auto& cubemapArrayProps = mReflProbeCubemapsTex->GetProperties();
+
+			for(u32 probeIndex = 0; probeIndex < probeCount; probeIndex++)
+			{
+				const ReflectionProbeRenderState& probeRenderState = mReflectionProbeRenderStates[probeIndex];
+
+				if(probeRenderState.ArrayIdx > kMaxReflectionCubemaps)
+					continue;
+
+				if(probeRenderState.ArrayDirty || forceArrayUpdate)
+				{
+					const SPtr<Texture>& texture = mReflectionProbeProxies[probeIndex].GetFilteredTexture();
+					if(texture == nullptr)
+						continue;
+
+					auto& srcProps = texture->GetProperties();
+					bool isValid = srcProps.Width == IBLUtility::kReflectionCubemapSize &&
+						srcProps.Height == IBLUtility::kReflectionCubemapSize &&
+						srcProps.MipMapCount == cubemapArrayProps.MipMapCount &&
+						srcProps.Type == TEX_TYPE_CUBE_MAP;
+
+					if(!isValid)
+					{
+						if(!probeRenderState.ErrorFlagged)
+						{
+							B3D_LOG(Error, LogRenderer, "Reflection cubemap texture is not a valid cubemap of the expected size and "
+								"mip count. Ignoring.");
+							probeRenderState.ErrorFlagged = true;
+						}
+					}
+					else
+					{
+						for(u32 face = 0; face < 6; face++)
+						{
+							for(u32 mip = 0; mip <= srcProps.MipMapCount; mip++)
+							{
+								TextureCopyInformation copyDesc;
+								copyDesc.SourceFace = face;
+								copyDesc.SourceMip = mip;
+								copyDesc.DestinationFace = probeRenderState.ArrayIdx * 6 + face;
+								copyDesc.DestinationMip = mip;
+
+								commandBuffer.CopyTexture(texture, mReflProbeCubemapsTex, copyDesc);
+							}
+						}
+					}
+
+					SetReflectionProbeArrayIndex(probeIndex, probeRenderState.ArrayIdx, true);
+				}
+			}
+		}
+	}
+	B3DClearAllocatorFrame();
+}
+
 // ---- RenderBeastScene ----
 
 RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
@@ -1005,6 +1175,7 @@ RenderBeastScene::RenderBeastScene(const SPtr<RenderBeastOptions>& options)
 	mLightStorage = B3DMakeShared<LightObjectStorage>();
 	mDecalStorage = B3DMakeShared<DecalObjectStorage>();
 	mParticleSystemStorage = B3DMakeShared<ParticleSystemObjectStorage>();
+	mReflectionProbeStorage = B3DMakeShared<ReflectionProbeObjectStorage>();
 }
 
 void RenderBeastScene::RegisterCamera(Camera* camera)
@@ -1015,10 +1186,10 @@ void RenderBeastScene::RegisterCamera(Camera* camera)
 	view->SetRenderSettings(camera->GetRenderSettings());
 	view->UpdatePerViewBuffer();
 
-	u32 viewIdx = (u32)mInfo.Views.size();
-	mInfo.Views.push_back(view);
+	u32 viewIdx = (u32)mViews.size();
+	mViews.push_back(view);
 
-	mInfo.CameraToView[camera] = viewIdx;
+	mCameraToView[camera] = viewIdx;
 	camera->SetRendererId(viewIdx);
 
 	UpdateCameraRenderTargets(camera);
@@ -1027,7 +1198,7 @@ void RenderBeastScene::RegisterCamera(Camera* camera)
 void RenderBeastScene::UpdateCamera(Camera* camera, u32 updateFlag)
 {
 	u32 cameraId = camera->GetRendererId();
-	RendererView* view = mInfo.Views[cameraId];
+	RendererView* view = mViews[cameraId];
 
 	if((updateFlag & (u32)CameraDirtyFlag::Redraw) != 0)
 		view->NotifyNeedsRedraw();
@@ -1064,232 +1235,71 @@ void RenderBeastScene::UnregisterCamera(Camera* camera)
 {
 	u32 cameraId = camera->GetRendererId();
 
-	Camera* lastCamera = mInfo.Views.back()->GetSceneCamera();
+	Camera* lastCamera = mViews.back()->GetSceneCamera();
 	u32 lastCameraId = lastCamera->GetRendererId();
 
 	if(cameraId != lastCameraId)
 	{
 		// Swap current last element with the one we want to erase
-		std::swap(mInfo.Views[cameraId], mInfo.Views[lastCameraId]);
+		std::swap(mViews[cameraId], mViews[lastCameraId]);
 		lastCamera->SetRendererId(cameraId);
 
-		mInfo.CameraToView[lastCamera] = cameraId;
+		mCameraToView[lastCamera] = cameraId;
 	}
 
 	// Last element is the one we want to erase
-	RendererView* view = mInfo.Views[mInfo.Views.size() - 1];
+	RendererView* view = mViews[mViews.size() - 1];
 	B3DDelete(view);
 
-	mInfo.Views.erase(mInfo.Views.end() - 1);
+	mViews.erase(mViews.end() - 1);
 
-	auto iterFind = mInfo.CameraToView.find(camera);
-	if(iterFind != mInfo.CameraToView.end())
-		mInfo.CameraToView.erase(iterFind);
+	auto iterFind = mCameraToView.find(camera);
+	if(iterFind != mCameraToView.end())
+		mCameraToView.erase(iterFind);
 
 	UpdateCameraRenderTargets(camera, true);
 }
 
 
-void RenderBeastScene::RegisterReflectionProbe(ReflectionProbe* probe)
-{
-	u32 probeId = (u32)mInfo.ReflProbes.size();
-	probe->SetRendererId(probeId);
-
-	mInfo.ReflProbes.push_back(ReflectionProbeRenderState(probe));
-	ReflectionProbeRenderState& probeInfo = mInfo.ReflProbes.back();
-
-	mInfo.ReflProbeWorldBounds.push_back(probe->GetBounds());
-
-	// Find a spot in cubemap array
-	u32 numArrayEntries = (u32)mInfo.ReflProbeCubemapArrayUsedSlots.size();
-	for(u32 i = 0; i < numArrayEntries; i++)
-	{
-		if(!mInfo.ReflProbeCubemapArrayUsedSlots[i])
-		{
-			SetReflectionProbeArrayIndex(probeId, i, false);
-			mInfo.ReflProbeCubemapArrayUsedSlots[i] = true;
-			break;
-		}
-	}
-
-	// No empty slot was found
-	if(probeInfo.ArrayIdx == (u32)-1)
-	{
-		SetReflectionProbeArrayIndex(probeId, numArrayEntries, false);
-		mInfo.ReflProbeCubemapArrayUsedSlots.push_back(true);
-	}
-
-	if(probeInfo.ArrayIdx > kMaxReflectionCubemaps)
-	{
-		B3D_LOG(Error, LogRenderer, "Reached the maximum number of allowed reflection probe cubemaps at once. "
-								"Ignoring reflection probe data.");
-	}
-}
-
-void RenderBeastScene::UpdateReflectionProbe(ReflectionProbe* probe, bool texture)
-{
-	// Should only get called if transform changes, any other major changes and ReflProbeInfo entry gets rebuild
-	u32 probeId = probe->GetRendererId();
-	mInfo.ReflProbeWorldBounds[probeId] = probe->GetBounds();
-
-	if(texture)
-	{
-		ReflectionProbeRenderState& probeInfo = mInfo.ReflProbes[probeId];
-		probeInfo.ArrayDirty = true;
-	}
-}
-
-void RenderBeastScene::UnregisterReflectionProbe(ReflectionProbe* probe)
-{
-	u32 probeId = probe->GetRendererId();
-	u32 arrayIdx = mInfo.ReflProbes[probeId].ArrayIdx;
-
-	if(arrayIdx != (u32)-1)
-		mInfo.ReflProbeCubemapArrayUsedSlots[arrayIdx] = false;
-
-	ReflectionProbe* lastProbe = mInfo.ReflProbes.back().Probe;
-	u32 lastProbeId = lastProbe->GetRendererId();
-
-	if(probeId != lastProbeId)
-	{
-		// Swap current last element with the one we want to erase
-		std::swap(mInfo.ReflProbes[probeId], mInfo.ReflProbes[lastProbeId]);
-		std::swap(mInfo.ReflProbeWorldBounds[probeId], mInfo.ReflProbeWorldBounds[lastProbeId]);
-
-		lastProbe->SetRendererId(probeId);
-	}
-
-	// Last element is the one we want to erase
-	mInfo.ReflProbes.erase(mInfo.ReflProbes.end() - 1);
-	mInfo.ReflProbeWorldBounds.erase(mInfo.ReflProbeWorldBounds.end() - 1);
-}
-
 void RenderBeastScene::UpdateReflectionProbes(GpuCommandBuffer& commandBuffer)
 {
-	SceneInfo& sceneInfo = GetSceneInfo();
-	const u32 probeCount = (u32)sceneInfo.ReflProbes.size();
-
-	B3DMarkAllocatorFrame();
-	{
-		u32 currentCubeArraySize = 0;
-
-		if(sceneInfo.ReflProbeCubemapsTex != nullptr)
-			currentCubeArraySize = sceneInfo.ReflProbeCubemapsTex->GetProperties().ArraySliceCount;
-
-		bool forceArrayUpdate = false;
-		if(sceneInfo.ReflProbeCubemapsTex == nullptr || (currentCubeArraySize < probeCount && currentCubeArraySize != kMaxReflectionCubemaps))
-		{
-			TextureCreateInformation cubeMapDesc;
-			cubeMapDesc.Name = "Reflection Probe Cubemap Array";
-			cubeMapDesc.Type = TEX_TYPE_CUBE_MAP;
-			cubeMapDesc.Format = PF_RG11B10F;
-			cubeMapDesc.Width = IBLUtility::kReflectionCubemapSize;
-			cubeMapDesc.Height = IBLUtility::kReflectionCubemapSize;
-			cubeMapDesc.MipMapCount = PixelUtility::GetMipmapCount(cubeMapDesc.Width, cubeMapDesc.Height, 1, cubeMapDesc.Format);
-			cubeMapDesc.ArraySliceCount = std::min(kMaxReflectionCubemaps, probeCount + 4); // Keep a few empty entries
-
-			sceneInfo.ReflProbeCubemapsTex = mGpuDevice->CreateTexture(cubeMapDesc);
-
-			forceArrayUpdate = true;
-		}
-
-		auto& cubemapArrayProps = sceneInfo.ReflProbeCubemapsTex->GetProperties();
-
-		FrameQueue<u32> emptySlots;
-		for(u32 i = 0; i < probeCount; i++)
-		{
-			const ReflectionProbeRenderState& probeInfo = sceneInfo.ReflProbes[i];
-
-			if(probeInfo.ArrayIdx > kMaxReflectionCubemaps)
-				continue;
-
-			if(probeInfo.ArrayDirty || forceArrayUpdate)
-			{
-				SPtr<Texture> texture = probeInfo.Probe->GetFilteredTexture();
-				if(texture == nullptr)
-					continue;
-
-				auto& srcProps = texture->GetProperties();
-				bool isValid = srcProps.Width == IBLUtility::kReflectionCubemapSize &&
-					srcProps.Height == IBLUtility::kReflectionCubemapSize &&
-					srcProps.MipMapCount == cubemapArrayProps.MipMapCount &&
-					srcProps.Type == TEX_TYPE_CUBE_MAP;
-
-				if(!isValid)
-				{
-					if(!probeInfo.ErrorFlagged)
-					{
-						B3D_LOG(Error, LogRenderer, "Cubemap texture invalid to use as a reflection cubemap. "
-												"Check texture size (must be {0}x{0}) and mip-map count",
-							   IBLUtility::kReflectionCubemapSize);
-
-						probeInfo.ErrorFlagged = true;
-					}
-				}
-				else
-				{
-					for(u32 face = 0; face < 6; face++)
-					{
-						for(u32 mip = 0; mip <= srcProps.MipMapCount; mip++)
-						{
-							TextureCopyInformation copyDesc;
-							copyDesc.SourceFace = face;
-							copyDesc.SourceMip = mip;
-							copyDesc.DestinationFace = probeInfo.ArrayIdx * 6 + face;
-							copyDesc.DestinationMip = mip;
-
-							commandBuffer.CopyTexture(texture, sceneInfo.ReflProbeCubemapsTex, copyDesc);
-						}
-					}
-				}
-
-				SetReflectionProbeArrayIndex(i, probeInfo.ArrayIdx, true);
-			}
-
-			// Note: Consider pruning the reflection cubemap array if empty slot count becomes too high
-		}
-	}
-	B3DClearAllocatorFrame();
+	GetReflectionProbeStorage().UpdateReflectionProbes(commandBuffer);
 }
 
 void RenderBeastScene::SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean)
 {
-	ReflectionProbeRenderState* probe = &mInfo.ReflProbes[probeIdx];
-	probe->ArrayIdx = arrayIdx;
-
-	if(markAsClean)
-		probe->ArrayDirty = false;
+	GetReflectionProbeStorage().SetReflectionProbeArrayIndex(probeIdx, arrayIdx, markAsClean);
 }
 
 void RenderBeastScene::RegisterLightProbeVolume(LightProbeVolume* volume)
 {
-	mInfo.LightProbes.NotifyAdded(volume);
+	mLightProbes.NotifyAdded(volume);
 }
 
 void RenderBeastScene::UpdateLightProbeVolume(LightProbeVolume* volume)
 {
-	mInfo.LightProbes.NotifyDirty(volume);
+	mLightProbes.NotifyDirty(volume);
 }
 
 void RenderBeastScene::UnregisterLightProbeVolume(LightProbeVolume* volume)
 {
-	mInfo.LightProbes.NotifyRemoved(volume);
+	mLightProbes.NotifyRemoved(volume);
 }
 
 void RenderBeastScene::UpdateLightProbes(GpuCommandBuffer& commandBuffer)
 {
-	mInfo.LightProbes.UpdateProbes(commandBuffer);
+	mLightProbes.UpdateProbes(commandBuffer);
 }
 
 void RenderBeastScene::RegisterSkybox(Skybox* skybox)
 {
-	mInfo.Skybox = skybox;
+	mSkybox = skybox;
 }
 
 void RenderBeastScene::UnregisterSkybox(Skybox* skybox)
 {
-	if(mInfo.Skybox == skybox)
-		mInfo.Skybox = nullptr;
+	if(mSkybox == skybox)
+		mSkybox = nullptr;
 }
 
 void RenderBeastScene::Initialize()
@@ -1307,6 +1317,9 @@ void RenderBeastScene::Initialize()
 	ParticleSystemObjectStorage& particleSystemStorage = GetParticleSystemStorage();
 	particleSystemStorage.SetScene(*this);
 
+	ReflectionProbeObjectStorage& reflectionProbeStorage = GetReflectionProbeStorage();
+	reflectionProbeStorage.SetGpuDevice(mGpuDevice);
+
 	// Register all types
 	for (const auto& config : GetRenderBeast()->GetPerObjectUniformTypeConfigurations())
 		mUniformBufferPools.RegisterType(config);
@@ -1322,7 +1335,7 @@ void RenderBeastScene::Destroy()
 	for(auto& entry : renderableStorage.GetRenderables())
 		B3DDelete(entry);
 
-	for(auto& entry : mInfo.Views)
+	for(auto& entry : mViews)
 		B3DDelete(entry);
 
 	B3D_ASSERT(mSamplerOverrides.empty());
@@ -1333,11 +1346,18 @@ void RenderBeastScene::Destroy()
 	RendererScene::Destroy();
 }
 
+void RenderBeastScene::ResetRenderableReady()
+{
+	const u32 renderableCount = GetRenderableStorage().GetRenderableCount();
+	mRenderableReady.resize(renderableCount, false);
+	mRenderableReady.assign(renderableCount, false);
+}
+
 void RenderBeastScene::SetOptions(const SPtr<RenderBeastOptions>& options)
 {
 	mOptions = options;
 
-	for(auto& entry : mInfo.Views)
+	for(auto& entry : mViews)
 		entry->SetStateReductionMode(mOptions->StateReductionMode);
 }
 
@@ -1409,7 +1429,7 @@ void RenderBeastScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 
 	// Remove from render target list
 	int rtChanged = 0; // 0 - No RT, 1 - RT found, 2 - RT changed
-	for(auto iterTarget = mInfo.RenderTargets.begin(); iterTarget != mInfo.RenderTargets.end(); ++iterTarget)
+	for(auto iterTarget = mRenderTargets.begin(); iterTarget != mRenderTargets.end(); ++iterTarget)
 	{
 		RendererRenderTarget& target = *iterTarget;
 		for(auto iterCam = target.Cameras.begin(); iterCam != target.Cameras.end(); ++iterCam)
@@ -1438,7 +1458,7 @@ void RenderBeastScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 
 		if(target.Cameras.empty())
 		{
-			mInfo.RenderTargets.erase(iterTarget);
+			mRenderTargets.erase(iterTarget);
 			break;
 		}
 	}
@@ -1446,17 +1466,17 @@ void RenderBeastScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 	// Register in render target list
 	if(renderTarget != nullptr && !remove && (rtChanged == 0 || rtChanged == 2))
 	{
-		auto findIter = std::find_if(mInfo.RenderTargets.begin(), mInfo.RenderTargets.end(), [&](const RendererRenderTarget& x)
+		auto findIter = std::find_if(mRenderTargets.begin(), mRenderTargets.end(), [&](const RendererRenderTarget& x)
 									 { return x.Target == renderTarget; });
 
-		if(findIter != mInfo.RenderTargets.end())
+		if(findIter != mRenderTargets.end())
 		{
 			findIter->Cameras.push_back(camera);
 		}
 		else
 		{
-			mInfo.RenderTargets.push_back(RendererRenderTarget());
-			RendererRenderTarget& renderTargetData = mInfo.RenderTargets.back();
+			mRenderTargets.push_back(RendererRenderTarget());
+			RendererRenderTarget& renderTargetData = mRenderTargets.back();
 
 			renderTargetData.Target = renderTarget;
 			renderTargetData.Cameras.push_back(camera);
@@ -1467,9 +1487,9 @@ void RenderBeastScene::UpdateCameraRenderTargets(Camera* camera, bool remove)
 		{ return a->GetPriority() > b->GetPriority(); };
 		auto renderTargetInfoComparer = [&](const RendererRenderTarget& a, const RendererRenderTarget& b)
 		{ return a.Target->GetProperties().Priority > b.Target->GetProperties().Priority; };
-		std::sort(begin(mInfo.RenderTargets), end(mInfo.RenderTargets), renderTargetInfoComparer);
+		std::sort(begin(mRenderTargets), end(mRenderTargets), renderTargetInfoComparer);
 
-		for(auto& camerasPerTarget : mInfo.RenderTargets)
+		for(auto& camerasPerTarget : mRenderTargets)
 		{
 			Vector<Camera*>& cameras = camerasPerTarget.Cameras;
 
@@ -1562,9 +1582,6 @@ void RenderBeastScene::SetParamFrameParams(float time)
 {
 	// Allocate a new transient buffer for this frame
 	mPerFrameSuballocation = gPerFrameUniformDefinition.AllocateTransient();
-
-	// Update SceneInfo pointer for compositor access
-	mInfo.PerFrameSuballocation = &mPerFrameSuballocation;
 
 	// Map and set the time parameter
 	GpuBufferMappedScope mappedScope = mPerFrameSuballocation.Map();

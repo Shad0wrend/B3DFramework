@@ -20,9 +20,7 @@ namespace b3d
 {
 	namespace render
 	{
-		struct SceneInfo;
 		class RenderBeastScene;
-
 
 		/** @addtogroup RenderBeast
 		 *  @{

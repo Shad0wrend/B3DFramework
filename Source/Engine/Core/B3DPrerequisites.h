@@ -292,7 +292,6 @@ namespace b3d
 	B3D_CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(MaterialParameters)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Camera)
-	B3D_CORE_OBJECT_FORWARD_DECLARE(ReflectionProbe)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(Texture)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteTexture)
 	B3D_CORE_OBJECT_FORWARD_DECLARE(SpriteImage)
@@ -327,6 +326,7 @@ namespace b3d
 	class ParticleSystem;
 	class Renderable;
 	class Light;
+	class ReflectionProbe;
 	class Decal;
 	class Collider;
 	class SamplerState;
@@ -799,6 +799,7 @@ namespace b3d
 		TID_ECSLight = 1276,
 		TID_ECSDecal = 1277,
 		TID_ECSParticleSystem = 1278,
+		TID_ECSReflectionProbe = 1279,
 
 		// Moved from Engine layer
 		TID_Camera = 30000,

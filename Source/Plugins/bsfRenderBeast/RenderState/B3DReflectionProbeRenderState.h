@@ -13,8 +13,9 @@ namespace b3d
 	namespace render
 	{
 		struct SkyInfo;
-		struct SceneInfo;
+		class RenderBeastScene;
 		class RendererViewGroup;
+		class ReflectionProbeProxy;
 
 		/** @addtogroup RenderBeast
 		 *  @{
@@ -46,7 +47,7 @@ namespace b3d
 			 * Updates the internal buffers with a new set of refl. probes. Before calling make sure that probe visibility has
 			 * been calculated for the provided view group.
 			 */
-			void Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
+			void Update(const RenderBeastScene& scene, const RendererViewGroup& viewGroup);
 
 			/** Returns a GPU bindable buffer containing information about every reflection probe. */
 			SPtr<GpuBuffer> GetProbeBuffer() const { return mProbeBuffer; }
@@ -78,10 +79,11 @@ namespace b3d
 		class ReflectionProbeRenderState
 		{
 		public:
-			ReflectionProbeRenderState(ReflectionProbe* probe);
+			/** Default constructor for packed array usage. */
+			ReflectionProbeRenderState();
 
 			/** Populates the structure with reflection probe parameters. */
-			void GetParameters(ReflectioneProbeData& output) const;
+			void GetParameters(const ReflectionProbeProxy& proxy, ReflectioneProbeData& output) const;
 
 			/**
 			 * Populates a transient uniform buffer with reflection probe parameters.
@@ -94,7 +96,6 @@ namespace b3d
 			 */
 			static void PopulateGlobalReflectionProbeUniformBuffer(const GpuBufferSuballocation& uniformBuffer, const Skybox* sky, u32 probeCount, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections);
 
-			ReflectionProbe* Probe;
 			u32 ArrayIdx;
 			bool ArrayDirty : 1;
 			mutable bool ErrorFlagged : 1;

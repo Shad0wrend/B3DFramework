@@ -21,7 +21,7 @@ namespace b3d
 		class RenderBeastScene;
 		class GpuParticleSimulateMaterial;
 		struct GBufferTextures;
-		struct SceneInfo;
+		class RenderBeastScene;
 		class GpuParticleResources;
 
 		/** @addtogroup RenderBeast
@@ -184,7 +184,7 @@ namespace b3d
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only
 			 * works on systems supporting compute. Sort results are written to a global buffer accessible through
-			 * getResources(), with offsets into the buffer written into particle system objects in @p sceneInfo.
+			 * getResources(), with offsets into the buffer written into particle system objects in @p scene.
 			 */
 			void Sort(GpuCommandBuffer& commandBuffer, const RenderBeastScene& scene, const RendererView& view);
 

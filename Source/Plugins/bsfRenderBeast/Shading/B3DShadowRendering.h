@@ -16,7 +16,6 @@ namespace b3d
 {
 	namespace render
 	{
-		struct SceneInfo;
 		struct FrameInfo;
 
 		class RenderBeastScene;
@@ -690,9 +689,9 @@ namespace b3d
 
 			Vector<ShadowInfo> mShadowInfos;
 
-			Vector<LocalLightShadows> mSpotLightShadows; /**< Maps a spot light in SceneInfo to zero or multiple ShadowInformation structures. */
-			Vector<LocalLightShadows> mRadialLightShadows; /**< Maps a radial light in SceneInfo to zero or multiple ShadowInformation structures. */
-			Vector<PerViewLightShadows> mDirectionalLightShadows; /**< Maps a directional in SceneInfo to zero or multiple ShadowInformation structures. */
+			Vector<LocalLightShadows> mSpotLightShadows; /**< Maps a spot light in RenderBeastScene to zero or multiple ShadowInformation structures. */
+			Vector<LocalLightShadows> mRadialLightShadows; /**< Maps a radial light in RenderBeastScene to zero or multiple ShadowInformation structures. */
+			Vector<PerViewLightShadows> mDirectionalLightShadows; /**< Maps a directional in RenderBeastScene to zero or multiple ShadowInformation structures. */
 
 			SPtr<VertexDescription> mPositionOnlyVertexDescription;
 

@@ -12,7 +12,6 @@ namespace b3d
 {
 	namespace render
 	{
-		struct SceneInfo;
 		class RenderBeastScene;
 
 		B3D_UNIFORM_BUFFER_BEGIN(PerLightUniformDefinition)

@@ -395,8 +395,6 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	commandBuffer->BeginProfiling("RenderScene");
 #endif
 
-	const SceneInfo& sceneInfo = scene.GetSceneInfo();
-
 	scene.UpdateCombinedRendererExtensionsIfNeeded(mRendererExtensions, mRendererExtensionsDirty);
 
 	// Note: I'm iterating over all sampler states every frame. If this ends up being a performance
@@ -411,9 +409,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	if(frameInfo.PerSceneFrameData.Particles)
 		PROFILE_CALL(scene.UpdateParticleSystemBounds(frameInfo.PerSceneFrameData.Particles), "Particle bounds")
 
-	RenderableObjectStorage& renderableStorage = scene.GetRenderableStorage();
-	sceneInfo.RenderableReady.resize(renderableStorage.GetRenderableCount(), false);
-	sceneInfo.RenderableReady.assign(renderableStorage.GetRenderableCount(), false);
+	scene.ResetRenderableReady();
 
 	mDevice->BeginFrame();
 
@@ -424,6 +420,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	scene.UpdateReflectionProbes(*commandBuffer);
 
 	// Update per-frame data for all renderable objects
+	RenderableObjectStorage& renderableStorage = scene.GetRenderableStorage();
 	for(u32 i = 0; i < renderableStorage.GetRenderableCount(); i++)
 		renderableStorage.PrepareRenderable(i, frameInfo);
 
@@ -434,7 +431,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 		scene.PrepareDecal(i, frameInfo);
 
 	bool anythingDrawnForScene = false;
-	for(auto& rtInfo : sceneInfo.RenderTargets)
+	for(auto& rtInfo : scene.GetRenderTargets())
 	{
 		Vector<RendererView*> views;
 		SPtr<RenderTarget> target = rtInfo.Target;
@@ -447,8 +444,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 		const u32 cameraCount = (u32)cameras.size();
 		for(u32 i = 0; i < cameraCount; i++)
 		{
-			const u32 viewIndex = sceneInfo.CameraToView.at(cameras[i]);
-			RendererView* viewInfo = sceneInfo.Views[viewIndex];
+			RendererView* viewInfo = scene.TryGetView(cameras[i]);
 
 			if (mIsFrameCaptureRequested || renderTargetNeedsRedraw)
 				viewInfo->NotifyNeedsRedraw();
@@ -710,7 +706,6 @@ void RenderBeast::CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& co
 {
 	RenderBeastScene& renderBeastScene = static_cast<RenderBeastScene&>(scene);
 
-	const SceneInfo& sceneInfo = renderBeastScene.GetSceneInfo();
 	auto& texProps = cubemap->GetProperties();
 
 	Matrix4 projTransform = Matrix4::ProjectionPerspective(Degree(90.0f), 1.0f, 0.05f, 1000.0f);
@@ -857,11 +852,9 @@ void RenderBeast::RequestScreenCapture(Camera* camera, TAsyncOp<SPtr<PixelData>>
 {
 	for (RenderBeastScene* scene : mScenes)
 	{
-		const SceneInfo& sceneInfo = scene->GetSceneInfo();
-		auto it = sceneInfo.CameraToView.find(camera);
-		if (it != sceneInfo.CameraToView.end())
+		RendererView* view = scene->TryGetView(camera);
+		if(view)
 		{
-			RendererView* view = sceneInfo.Views[it->second];
 			view->RequestScreenCapture(std::move(asyncOp));
 			return;
 		}
