@@ -1017,6 +1017,7 @@ namespace b3d
 
 	private:
 		friend class ParticleSystem;
+		friend class ParticleScene;
 
 		/**
 		 * Spawns new particles in the specified time increment (if any).

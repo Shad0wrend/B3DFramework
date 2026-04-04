@@ -49,6 +49,7 @@ namespace b3d
 
 	protected:
 		friend class ParticleSystem;
+		friend class ParticleScene;
 
 		/**
 		 * Updates properties of particles in the provided range according to the ruleset of the evolver.

@@ -11,6 +11,7 @@
 #include "Animation/B3DAnimationScene.h"
 #include "Components/B3DAnimation.h"
 #include "Mesh/B3DMesh.h"
+#include "Particles/B3DParticleScene.h"
 
 using namespace b3d;
 
@@ -1304,8 +1305,8 @@ void ParticleEmitter::Spawn(Random& random, const ParticleSystemState& state, Pa
 	const u32 startIdx = set.GetParticleCount();
 	numContinous = Spawn(numContinous, random, state, set, true);
 
-	state.System->PreSimulate(state, startIdx, numContinous, true, mEmitAccumulator);
-	state.System->Simulate(state, startIdx, numContinous, true, mEmitAccumulator);
+	state.ParticleScene->PreSimulate(state, startIdx, numContinous, true, mEmitAccumulator);
+	state.ParticleScene->Simulate(state, startIdx, numContinous, true, mEmitAccumulator);
 
 	Spawn(numBurst, random, state, set, false);
 }

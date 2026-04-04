@@ -6,6 +6,7 @@
 #include "Particles/B3DVectorField.h"
 #include "Image/B3DSpriteTexture.h"
 #include "Components/B3DCollider.h"
+#include "Components/B3DParticleSystem.h"
 #include "Material/B3DMaterial.h"
 #include "Math/B3DRay.h"
 #include "Physics/B3DPhysics.h"
@@ -70,7 +71,7 @@ void ParticleTextureAnimation::Evolve(Random& random, const ParticleSystemState&
 	ParticleSetData& particles = set.GetParticles();
 
 	SpriteImage* image = nullptr;
-	const HMaterial& material = state.System->GetSettings().Material;
+	const HMaterial& material = state.Material;
 	if(material.IsLoaded(false))
 	{
 		const HShader& shader = material->GetShader();

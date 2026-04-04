@@ -9,8 +9,15 @@
 #include "Animation/B3DAnimationScene.h"
 #include "Components/B3DParticleSystem.h"
 #include "Image/B3DPixelUtility.h"
+#include "Scene/B3DSceneInstance.h"
+#include "Scene/B3DSceneObjectFragments.h"
+#include "ECS/B3DRegistry.h"
+#include "Particles/B3DParticleEmitter.h"
+#include "Particles/B3DParticleEvolver.h"
 
 using namespace b3d;
+
+static constexpr u32 kInitialParticleCapacity = 1000;
 
 /** Helper method used for writing particle data into the @p pixels buffer. */
 template <class T, class PR>
@@ -333,6 +340,213 @@ ParticleScene::~ParticleScene()
 	B3DDelete(m);
 }
 
+void ParticleScene::Play(ecs::ParticleSimulation& simulation, const ParticleSystemSettings& settings)
+{
+	if(simulation.State == ecs::ParticleSimulationState::Playing)
+		return;
+
+	if(simulation.State == ecs::ParticleSimulationState::Uninitialized)
+	{
+		u32 particleCapacity = std::min(settings.MaxParticles, kInitialParticleCapacity);
+		simulation.Particles = B3DMakeShared<ParticleSet>(particleCapacity);
+	}
+
+	simulation.State = ecs::ParticleSimulationState::Playing;
+	simulation.Time = 0.0f;
+	simulation.Rng.SetSeed(simulation.Seed);
+}
+
+void ParticleScene::Pause(ecs::ParticleSimulation& simulation)
+{
+	if(simulation.State == ecs::ParticleSimulationState::Playing)
+		simulation.State = ecs::ParticleSimulationState::Paused;
+}
+
+void ParticleScene::Stop(ecs::ParticleSimulation& simulation)
+{
+	if(simulation.State != ecs::ParticleSimulationState::Playing &&
+	   simulation.State != ecs::ParticleSimulationState::Paused)
+		return;
+
+	simulation.State = ecs::ParticleSimulationState::Stopped;
+	if(simulation.Particles)
+		simulation.Particles->Clear();
+}
+
+AABox ParticleScene::CalculateBounds(const ecs::ParticleSimulation& simulation) const
+{
+	// TODO - If evolvers are deterministic (as well as their properties), calculate the maximal bounds in an
+	// analytical way
+
+	if(!simulation.Particles)
+		return AABox::kEmpty;
+
+	const u32 particleCount = simulation.Particles->GetParticleCount();
+	if(particleCount == 0)
+		return AABox::kEmpty;
+
+	const ParticleSetData& particles = simulation.Particles->GetParticles();
+	AABox bounds(Vector3(-(float)kMaximumSceneExtent), Vector3((float)kMaximumSceneExtent));
+	for(u32 particleIndex = 0; particleIndex < particleCount; particleIndex++)
+		bounds.Merge(particles.Position[particleIndex]);
+
+	return bounds;
+}
+
+void ParticleScene::PreSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset)
+{
+	ParticleSetData& particles = state.Particles->GetParticles();
+	const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
+	const u32 endIndex = startIndex + count;
+
+	// Decrement lifetime
+	for(u32 particleIndex = startIndex; particleIndex < endIndex; particleIndex++)
+	{
+		float timeStep = state.TimeStep;
+		if(spacing)
+		{
+			const u32 localIndex = particleIndex - startIndex;
+			const float subFrameOffset = ((float)localIndex + spacingOffset) * subFrameSpacing;
+			timeStep *= subFrameOffset;
+		}
+
+		particles.Lifetime[particleIndex] -= timeStep;
+	}
+
+	// Kill expired particles
+	u32 particleCount = count;
+	for(u32 particleSubIndex = 0; particleSubIndex < particleCount;)
+	{
+		const u32 particleIndex = startIndex + particleSubIndex;
+		if(particles.Lifetime[particleIndex] <= 0.0f)
+		{
+			state.Particles->FreeParticle(particleIndex);
+			particleCount--;
+		}
+		else
+			particleSubIndex++;
+	}
+
+	// Remember old positions
+	for(u32 particleIndex = startIndex; particleIndex < endIndex; particleIndex++)
+		particles.PrevPosition[particleIndex] = particles.Position[particleIndex];
+
+	// Evolve pre-simulation
+	for(auto& evolver : *state.Evolvers)
+	{
+		if(!evolver)
+			continue;
+
+		const ParticleEvolverProperties& props = evolver->GetProperties();
+		if(props.Priority < 0)
+			break;
+
+		evolver->Evolve(*state.Rng, state, *state.Particles, startIndex, count, spacing, spacingOffset);
+	}
+}
+
+void ParticleScene::Simulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset)
+{
+	ParticleSetData& particles = state.Particles->GetParticles();
+	const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
+	const u32 endIndex = startIndex + count;
+
+	for(u32 particleIndex = startIndex; particleIndex < endIndex; particleIndex++)
+	{
+		float timeStep = state.TimeStep;
+		if(spacing)
+		{
+			const u32 localIndex = particleIndex - startIndex;
+			const float subFrameOffset = ((float)localIndex + spacingOffset) * subFrameSpacing;
+			timeStep *= subFrameOffset;
+		}
+
+		particles.Position[particleIndex] += particles.Velocity[particleIndex] * timeStep;
+	}
+}
+
+void ParticleScene::PostSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset)
+{
+	// Evolve post-simulation
+	for(auto& evolver : *state.Evolvers)
+	{
+		if(!evolver)
+			continue;
+
+		const ParticleEvolverProperties& props = evolver->GetProperties();
+		if(props.Priority >= 0)
+			continue;
+
+		evolver->Evolve(*state.Rng, state, *state.Particles, startIndex, count, spacing, spacingOffset);
+	}
+}
+
+void ParticleScene::AdvanceSimulation(ecs::ParticleSimulation& simulation, const ecs::ParticleSystem& config, const ecs::WorldTransform& transform, float timeDelta, const EvaluatedAnimationData* animData)
+{
+	if(simulation.State != ecs::ParticleSimulationState::Playing)
+		return;
+
+	if(!simulation.Particles)
+	{
+		u32 particleCapacity = std::min(config.Settings.MaxParticles, kInitialParticleCapacity);
+		simulation.Particles = B3DMakeShared<ParticleSet>(particleCapacity);
+	}
+
+	const ParticleSystemSettings& settings = config.Settings;
+
+	float timeStep;
+	const float newTime = ParticleSystem::AdvanceTime(simulation.Time, timeDelta, settings.Duration, settings.IsLooping, timeStep);
+
+	if(timeStep < 0.00001f)
+		return;
+
+	auto owner = mOwner.lock();
+
+	// Generate per-frame state
+	ParticleSystemState state;
+	state.TimeStart = simulation.Time;
+	state.TimeEnd = newTime;
+	state.NrmTimeStart = state.TimeStart / settings.Duration;
+	state.NrmTimeEnd = state.TimeEnd / settings.Duration;
+	state.Length = settings.Duration;
+	state.TimeStep = timeStep;
+	state.MaxParticles = settings.MaxParticles;
+	state.WorldSpace = settings.SimulationSpace == ParticleSimulationSpace::World;
+	state.GpuSimulated = settings.GpuSimulation;
+	state.LocalToWorld = transform.GetMatrix();
+	state.WorldToLocal = state.LocalToWorld.InverseAffine();
+	state.Material = settings.Material;
+	state.ParticleScene = this;
+	state.Scene = owner.get();
+	state.AnimData = animData;
+	state.Particles = simulation.Particles.get();
+	state.Evolvers = &config.Evolvers;
+	state.Rng = &simulation.Rng;
+
+	// For GPU simulation we only care about newly spawned particles, so clear old ones
+	if(settings.GpuSimulation)
+		simulation.Particles->Clear();
+
+	// Spawn new particles
+	for(auto& emitter : config.Emitters)
+	{
+		if(emitter)
+			emitter->Spawn(simulation.Rng, state, *simulation.Particles);
+	}
+
+	// Simulate if running on CPU, otherwise just pass the spawned particles off to the render thread
+	if(!settings.GpuSimulation)
+	{
+		const u32 particleCount = simulation.Particles->GetParticleCount();
+
+		PreSimulate(state, 0, particleCount, false, 0.0f);
+		Simulate(state, 0, particleCount, false, 0.0f);
+		PostSimulate(state, 0, particleCount, false, 0.0f);
+	}
+
+	simulation.Time = newTime;
+}
+
 EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animData)
 {
 	// Note: Allow the worker threads to work alongside the main thread? Would require extra synchronization but
@@ -364,35 +578,63 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 	ParticleSimulationDataPool& simDataPool = m->SimDataPool[mWriteBufferIdx];
 	simDataPool.Clear();
 
-	WaitGroup waitGroup((u32)mSystems.size());
-	for(auto& system : mSystems)
+	auto owner = mOwner.lock();
+	if(!B3D_ENSURE(owner != nullptr))
+		return &mSimulationData[mReadBufferIdx];
+
+	auto& registry = owner->GetECSRegistry();
+
+	// Collect systems to simulate from the registry view
+	struct SystemToSimulate
 	{
-		const auto evaluateWorker = [this, &waitGroup, timeDelta, system, &animData, &simDataPool, &simulationData]()
+		SystemToSimulate(ecs::ParticleSimulation* simulation, const ecs::ParticleSystem* config, const ecs::WorldTransform* transform)
+			: Simulation(simulation) , Config(config) , Transform(transform) {}
+
+		ecs::ParticleSimulation* Simulation;
+		const ecs::ParticleSystem* Config;
+		const ecs::WorldTransform* Transform;
+	};
+
+	Vector<SystemToSimulate> systems;
+	auto view = registry.CreateView<ecs::ParticleSystem, ecs::ParticleSimulation, ecs::WorldTransform>();
+	for(const auto& entity : view)
+	{
+		ecs::ParticleSimulation& simulation = registry.GetComponents<ecs::ParticleSimulation>(entity);
+		const ecs::ParticleSystem& config = registry.GetComponents<ecs::ParticleSystem>(entity);
+		const ecs::WorldTransform& transform = registry.GetComponents<ecs::WorldTransform>(entity);
+
+		systems.emplace_back(&simulation, &config, &transform);
+	}
+
+	WaitGroup waitGroup((u32)systems.size());
+	for(auto& system : systems)
+	{
+		const auto evaluateWorker = [this, &waitGroup, timeDelta, &system, &animData, &simDataPool, &simulationData]()
 		{
 			// Advance the simulation
-			system->Simulate(timeDelta, &animData);
+			AdvanceSimulation(*system.Simulation, *system.Config, *system.Transform, timeDelta, &animData);
 
 			ParticleRenderData* simulationDataCPU = nullptr;
 			ParticleGPUSimulationData* simulationDataGPU = nullptr;
-			if(system->mParticleSet)
+			if(system.Simulation->Particles)
 			{
 				// Generate simulation data to transfer to the render thread
-				const u32 numParticles = system->mParticleSet->GetParticleCount();
-				const ParticleSystemSettings& settings = system->GetSettings();
+				const u32 numParticles = system.Simulation->Particles->GetParticleCount();
+				const ParticleSystemSettings& settings = system.Config->Settings;
 
 				if(settings.GpuSimulation)
-					simulationDataGPU = simDataPool.AllocGpu(*system->mParticleSet);
+					simulationDataGPU = simDataPool.AllocGpu(*system.Simulation->Particles);
 				else
 				{
 					if(settings.RenderMode == ParticleRenderMode::Billboard)
-						simulationDataCPU = simDataPool.AllocCpuBillboard(*system->mParticleSet);
+						simulationDataCPU = simDataPool.AllocCpuBillboard(*system.Simulation->Particles);
 					else
-						simulationDataCPU = simDataPool.AllocCpuMesh(*system->mParticleSet);
+						simulationDataCPU = simDataPool.AllocCpuMesh(*system.Simulation->Particles);
 
 					simulationDataCPU->NumParticles = numParticles;
 
 					if(settings.UseAutomaticBounds)
-						simulationDataCPU->Bounds = system->CalculateBounds();
+						simulationDataCPU->Bounds = CalculateBounds(*system.Simulation);
 					else
 						simulationDataCPU->Bounds = settings.CustomBounds;
 
@@ -406,7 +648,7 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 						break;
 					case ParticleSortMode::OldToYoung:
 					case ParticleSortMode::YoungToOld:
-						SortParticles(*system->mParticleSet, settings.SortMode, Vector3::kZero, simulationDataCPU->Indices.data());
+						SortParticles(*system.Simulation->Particles, settings.SortMode, Vector3::kZero, simulationDataCPU->Indices.data());
 						break;
 					case ParticleSortMode::Distance: break;
 					}
@@ -417,9 +659,9 @@ EvaluatedParticleData* ParticleScene::Update(const EvaluatedAnimationData& animD
 				Lock lock(mMutex);
 
 				if(simulationDataCPU)
-					simulationData.CpuData[system->GetId()] = simulationDataCPU;
+					simulationData.CpuData[system.Config->Id] = simulationDataCPU;
 				else if(simulationDataGPU)
-					simulationData.GpuData[system->GetId()] = simulationDataGPU;
+					simulationData.GpuData[system.Config->Id] = simulationDataGPU;
 			}
 
 			waitGroup.NotifyDone();
@@ -489,16 +731,4 @@ void ParticleScene::SortParticles(const ParticleSet& set, ParticleSortMode sortM
 			indices[i] = sortData[i].Idx;
 	}
 	B3DClearAllocatorFrame();
-}
-
-u32 ParticleScene::RegisterParticleSystem(ParticleSystem* system)
-{
-	mSystems.insert(system);
-
-	return mNextId++;
-}
-
-void ParticleScene::UnregisterParticleSystem(ParticleSystem* system)
-{
-	mSystems.erase(system);
 }

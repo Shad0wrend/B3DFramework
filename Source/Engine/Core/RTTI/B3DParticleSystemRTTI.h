@@ -749,8 +749,6 @@ namespace b3d
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_ECS(ParticleSystem, 0)
-			B3D_RTTI_MEMBER_CONTAINER(mEmitters, 1)
-			B3D_RTTI_MEMBER_CONTAINER(mEvolvers, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -789,6 +787,8 @@ namespace b3d::ecs
 			B3D_RTTI_MEMBER(Settings, 0)
 			B3D_RTTI_MEMBER(GpuSimulationSettings, 1)
 			B3D_RTTI_MEMBER(Layer, 2)
+			B3D_RTTI_MEMBER_CONTAINER(Emitters, 3)
+			B3D_RTTI_MEMBER_CONTAINER(Evolvers, 4)
 		B3D_RTTI_END_MEMBERS
 
 	public:

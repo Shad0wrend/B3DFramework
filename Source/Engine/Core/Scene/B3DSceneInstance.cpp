@@ -406,6 +406,7 @@ void SceneInstance::Initialize()
 	CoreObject::Initialize();
 
 	mAnimationScene->SetOwner(std::static_pointer_cast<SceneInstance>(GetShared()));
+	mParticleScene->SetOwner(std::static_pointer_cast<SceneInstance>(GetShared()));
 }
 
 void SceneInstance::Destroy()

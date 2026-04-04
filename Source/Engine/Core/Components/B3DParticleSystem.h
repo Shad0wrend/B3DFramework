@@ -8,6 +8,7 @@
 #include "Particles/B3DParticleDistribution.h"
 #include "Particles/B3DParticleModule.h"
 #include "Math/B3DTransform.h"
+#include "Math/B3DRandom.h"
 #include "Renderer/B3DRendererId.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 
@@ -492,11 +493,17 @@ namespace b3d
 	{
 		class ECSParticleSystemRTTI;
 
-		/** ECS fragment storing particle system visual data (settings, gpu simulation settings, layer). */
+		/** ECS fragment storing particle system configuration data (settings, gpu simulation settings, layer, emitters, evolvers). */
 		struct B3D_EXPORT ParticleSystem : TParticleSystemData<false>, IReflectable
 		{
 			/** Unique identifier for this particle system. */
 			u32 Id = 0;
+
+			/** Particle emitters that control how new particles are generated. */
+			Vector<SPtr<ParticleEmitter>> Emitters;
+
+			/** Particle evolvers that modify particle properties over time. Stored sorted by priority (descending). */
+			Vector<SPtr<ParticleEvolver>> Evolvers;
 
 			struct FullSyncPacket;
 			struct TransformSyncPacket;
@@ -504,6 +511,34 @@ namespace b3d
 			friend class ECSParticleSystemRTTI;
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
+		};
+
+		/** Determines current state of the particle system simulation. */
+		enum class ParticleSimulationState : u8
+		{
+			Uninitialized,
+			Stopped,
+			Paused,
+			Playing
+		};
+
+		/** ECS fragment storing particle simulation runtime state. */
+		struct ParticleSimulation
+		{
+			/** Active particle data. Lazily allocated on first simulation frame. */
+			SPtr<ParticleSet> Particles;
+
+			/** Current simulation time. */
+			float Time = 0.0f;
+
+			/** Random seed for deterministic simulation. */
+			u32 Seed = 0;
+
+			/** Random number generator seeded with @p Seed. */
+			Random Rng;
+
+			/** Current simulation state. */
+			ParticleSimulationState State = ParticleSimulationState::Uninitialized;
 		};
 
 		/** ECS fragment storing the persistent render object ID for a particle system. */
@@ -552,7 +587,7 @@ namespace b3d
 
 		/** @copydoc SetEmitters */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Emitters))
-		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const { return mEmitters; }
+		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const;
 
 		/**
 		 * Set of objects that determine how particle properties change during their lifetime. Evolvers only affect
@@ -563,7 +598,7 @@ namespace b3d
 
 		/** @copydoc SetEvolvers */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Evolvers))
-		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
+		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const;
 
 		/** @copydoc TParticleSystemGetters::GetLayer */
 		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Layer), UI(AsLayerMask))
@@ -632,16 +667,6 @@ namespace b3d
 
 	protected:
 		friend class ParticleScene;
-		friend class ParticleEmitter;
-
-		/** States the particle system can be in. */
-		enum class State
-		{
-			Uninitialized,
-			Stopped,
-			Paused,
-			Playing
-		};
 
 		/** Starts the particle system. New particles will be emitted and existing particles will be evolved. */
 		void Play();
@@ -652,65 +677,9 @@ namespace b3d
 		/** Stops the particle system and resets it to initial state, clearing all particles. */
 		void Stop();
 
-		/**
-		 * Decrements particle lifetime, kills expired particles and executes evolvers that need to run before
-		 * the simulation.
-		 *
-		 * @param	state			State describing the current state of the simulation.
-		 * @param	startIndex		Index of the first particle to update.
-		 * @param	count			Number of particles to update, starting from @p startIndex.
-		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
-		 *							be divided by @p count so particles are uniformly distributed over the
-		 *							time-step.
-		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
-		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
-		 *							time step, 1 = start of next particle.
-		 */
-		void PreSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
-
-		/**
-		 * Integrates particle properties, advancing the simulation.
-		 *
-		 * @param	state			State describing the current state of the simulation.
-		 * @param	startIndex		Index of the first particle to update.
-		 * @param	count			Number of particles to update, starting from @p startIndex.
-		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
-		 *							be divided by @p count so particles are uniformly distributed over the
-		 *							time-step.
-		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
-		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
-		 *							time step, 1 = start of next particle.
-		 */
-		void Simulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
-
-		/**
-		 * Executes evolvers that need to run after the simulation.
-		 *
-		 * @param	state			State describing the current state of the simulation.
-		 * @param	startIndex		Index of the first particle to update.
-		 * @param	count			Number of particles to update, starting from @p startIndex.
-		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
-		 *							be divided by @p count so particles are uniformly distributed over the
-		 *							time-step.
-		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
-		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
-		 *							time step, 1 = start of next particle.
-		 */
-		void PostSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
-
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
-		Vector<SPtr<ParticleEmitter>> mEmitters;
-		Vector<SPtr<ParticleEvolver>> mEvolvers;
-
-		// Internal state
-		State mState = State::Uninitialized;
-		float mTime = 0.0f;
-		u32 mSeed = 0;
 		bool mPreviewMode = false;
-
-		Random mRandom;
-		ParticleSet* mParticleSet = nullptr;
 
 	private:
 		/** Returns a reference to the particle system data for the CRTP getter interface. */
@@ -721,6 +690,12 @@ namespace b3d
 
 		/** Returns a const reference to the particle system ECS fragment. */
 		const ecs::ParticleSystem& GetFragment() const;
+
+		/** Returns a mutable reference to the particle simulation ECS fragment. */
+		ecs::ParticleSimulation& GetSimulationFragment();
+
+		/** Returns a const reference to the particle simulation ECS fragment. */
+		const ecs::ParticleSimulation& GetSimulationFragment() const;
 
 		/** @copydoc CoreObject::MarkRenderProxyDataDirty */
 		void MarkRenderProxyDataDirty(ComponentDirtyFlag flag = ComponentDirtyFlag::Everything);

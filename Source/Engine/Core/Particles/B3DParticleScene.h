@@ -8,10 +8,12 @@
 #include "Math/B3DAABox.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "Components/B3DParticleSystem.h"
+#include "Scene/B3DSceneObjectFragments.h"
 
 namespace b3d
 {
 	class ParticleSet;
+	class SceneInstance;
 	struct EvaluatedAnimationData;
 
 	/** @addtogroup Particles-Internal
@@ -125,8 +127,12 @@ namespace b3d
 		struct Members;
 
 	public:
+		/** Default constructor. Call SetOwner() after construction. */
 		ParticleScene();
 		~ParticleScene();
+
+		/** Set the owning scene instance. Must be called after construction. */
+		void SetOwner(const SPtr<SceneInstance>& scene) { mOwner = scene; }
 
 		/**
 		 * Advances the simulation for all particle systems using the current frame time delta. Outputs a set of data
@@ -134,17 +140,80 @@ namespace b3d
 		 */
 		EvaluatedParticleData* Update(const EvaluatedAnimationData& animData);
 
+		/** Starts or resumes the particle system. New particles will be emitted and existing particles will be evolved. */
+		void Play(ecs::ParticleSimulation& simulation, const ParticleSystemSettings& settings);
+
+		/** Pauses the particle system. New particles will stop being emitted and existing particle state will be frozen. */
+		void Pause(ecs::ParticleSimulation& simulation);
+
+		/** Stops the particle system and resets it to initial state, clearing all particles. */
+		void Stop(ecs::ParticleSimulation& simulation);
+
+		/** Calculate current particle bounds. */
+		AABox CalculateBounds(const ecs::ParticleSimulation& simulation) const;
+
+		/** Allocates a unique particle system ID. Used by the ParticleSystem component and ECS-only users. */
+		u32 AllocateId() { return mNextId++; }
+
 		/** Creates a new empty particle scene. */
 		static SPtr<ParticleScene> Create() { return B3DMakeShared<ParticleScene>(); }
 
 	private:
 		friend class ParticleSystem;
+		friend class ParticleEmitter;
 
-		/** Must be called by a ParticleSystem upon construction. */
-		u32 RegisterParticleSystem(ParticleSystem* system);
+		/**
+		 * Decrements particle lifetime, kills expired particles and executes evolvers that need to run before
+		 * the simulation.
+		 *
+		 * @param	state			State describing the current state of the simulation.
+		 * @param	startIndex		Index of the first particle to update.
+		 * @param	count			Number of particles to update, starting from @p startIndex.
+		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
+		 *							be divided by @p count so particles are uniformly distributed over the
+		 *							time-step.
+		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
+		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
+		 *							time step, 1 = start of next particle.
+		 */
+		void PreSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
 
-		/** Must be called by a ParticleSystem before destruction. */
-		void UnregisterParticleSystem(ParticleSystem* system);
+		/**
+		 * Simulates particle properties, advancing the simulation.
+		 *
+		 * @param	state			State describing the current state of the simulation.
+		 * @param	startIndex		Index of the first particle to update.
+		 * @param	count			Number of particles to update, starting from @p startIndex.
+		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
+		 *							be divided by @p count so particles are uniformly distributed over the
+		 *							time-step.
+		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
+		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
+		 *							time step, 1 = start of next particle.
+		 */
+		void Simulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
+
+		/**
+		 * Executes evolvers that need to run after the simulation.
+		 *
+		 * @param	state			State describing the current state of the simulation.
+		 * @param	startIndex		Index of the first particle to update.
+		 * @param	count			Number of particles to update, starting from @p startIndex.
+		 * @param	spacing			When false all particles will use the same time-step. If true the time-step will
+		 *							be divided by @p count so particles are uniformly distributed over the
+		 *							time-step.
+		 * @param	spacingOffset	Extra offset that controls the starting position of the first particle when
+		 *							calculating spacing. Should be in range [0, 1). 0 = beginning of the current
+		 *							time step, 1 = start of next particle.
+		 */
+		void PostSimulate(const ParticleSystemState& state, u32 startIndex, u32 count, bool spacing, float spacingOffset);
+
+
+		/**
+		 * Advances the simulation for a single particle system by the given time delta. Handles emitting, evolving,
+		 * and integrating all particles.
+		 */
+		void AdvanceSimulation(ecs::ParticleSimulation& simulation, const ecs::ParticleSystem& config, const ecs::WorldTransform& transform, float timeDelta, const EvaluatedAnimationData* animData);
 
 		/**
 		 * Sorts the particles in the provided @p using the @p sortMode. Sorted particle indices are placed in the
@@ -153,11 +222,10 @@ namespace b3d
 		 */
 		void SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, u32* indices);
 
+		WeakSPtr<SceneInstance> mOwner;
 		Members* m;
 
 		u32 mNextId = 1;
-		UnorderedSet<ParticleSystem*> mSystems;
-
 		bool mPaused = false;
 
 		// Worker threads

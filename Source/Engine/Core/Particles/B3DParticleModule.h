@@ -8,6 +8,9 @@
 
 namespace b3d
 {
+	class ParticleScene;
+	class ParticleSet;
+	class ParticleEvolver;
 	struct EvaluatedAnimationData;
 
 	/** @addtogroup Particles-Internal
@@ -28,9 +31,27 @@ namespace b3d
 		bool GpuSimulated;
 		Matrix4 LocalToWorld;
 		Matrix4 WorldToLocal;
-		ParticleSystem* System;
+
+		/** Material used by the particle system, for evolvers that need material access. */
+		HMaterial Material;
+
+		/** Pointer to the owning particle scene, for emitter sub-stepping callbacks. */
+		ParticleScene* ParticleScene;
+
+		/** Pointer to the scene instance, for physics queries. */
 		const SceneInstance* Scene;
+
+		/** Animation data for the current frame. */
 		const EvaluatedAnimationData* AnimData;
+
+		/** Active particle set, cached per-frame for simulation methods. */
+		ParticleSet* Particles;
+
+		/** Sorted evolver list, cached per-frame for simulation methods. */
+		const Vector<SPtr<ParticleEvolver>>* Evolvers;
+
+		/** Random number generator from the simulation fragment. */
+		Random* Rng;
 	};
 
 	/** Module that in some way modified or effects a ParticleSystem. */
@@ -45,6 +66,7 @@ namespace b3d
 
 	protected:
 		friend class ParticleSystem;
+		friend class ParticleScene;
 
 		ParticleModule() = default;
 		virtual ~ParticleModule() = default;
