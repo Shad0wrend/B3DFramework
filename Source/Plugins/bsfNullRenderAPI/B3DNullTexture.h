@@ -3,13 +3,13 @@
 #pragma once
 
 #include "B3DNullPrerequisites.h"
+#include "B3DNullGpuDevice.h"
 #include "Image/B3DTexture.h"
 
 namespace b3d
 {
 	namespace render
 	{
-		class NullGpuDevice;
 
 		/** @addtogroup Null
 		 *  @{
@@ -28,8 +28,8 @@ namespace b3d
 			~NullTexture();
 
 			void SetName(const StringView& name) override { mName = name; }
-			GpuDevice& GetGpuDevice() const override { return mGpuDevice; }
-			GpuQueueMask GetUseMask(u32 mipLevel, u32 arrayLayer, GpuAccessFlags accessFlags) const override { return GpuQueueMask(); }
+			GpuDevice& GetDevice() const override { return mGpuDevice; }
+			GpuQueueMask GetUseMask(u32 mipLevel, u32 arrayLayer, GpuAccessFlags accessFlags = GpuAccessFlag::Read | GpuAccessFlag::Write) const override { return GpuQueueMask(); }
 			u32 GetBoundCount(u32 mipLevel, u32 arrayLayer) const override { return 0; }
 			u32 GetUseCount(u32 mipLevel, u32 arrayLayer) const override { return 0; }
 
@@ -37,11 +37,8 @@ namespace b3d
 			friend class NullGpuDevice;
 
 			void Initialize() override {}
+			void RecreateInternalTexture() override {}
 			GpuTextureMappedScope Map(u32 mipLevel, u32 arrayLayer, GpuMapOptions options) override;
-			void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) override {}
-			void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) override {}
-			TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0) override;
-			void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr) override {}
 
 		private:
 			NullGpuDevice& mGpuDevice;

@@ -7,17 +7,12 @@
 #include "B3DNullPhysicsColliders.h"
 #include "B3DNullPhysicsJoints.h"
 #include "B3DNullPhysicsCharacterController.h"
-#include "Threading/B3DTaskScheduler.h"
-#include "Components/B3DCCollider.h"
-#include "Utility/B3DTime.h"
-#include "Math/B3DVector3.h"
-#include "Math/B3DAABox.h"
-#include "Math/B3DCapsule.h"
+#include "Physics/B3DColliderShape.h"
 
 using namespace b3d;
 
-NullPhysics::NullPhysics(const PHYSICS_INIT_DESC& input)
-	: Physics(input), mInitDesc(input)
+NullPhysics::NullPhysics(const PhysicsCreateInformation& createInformation)
+	: Physics(createInformation), mInitDesc(createInformation)
 {}
 
 NullPhysics::~NullPhysics()
@@ -27,12 +22,12 @@ NullPhysics::~NullPhysics()
 
 SPtr<PhysicsMaterial> NullPhysics::CreateMaterial(float staticFriction, float dynamicFriction, float restitution)
 {
-	return B3DMakeCoreShared<NullPhysicsMaterial>(staticFriction, dynamicFriction, restitution);
+	return B3DMakeShared<NullPhysicsMaterial>(staticFriction, dynamicFriction, restitution);
 }
 
-SPtr<PhysicsMesh> NullPhysics::CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
+UPtr<IPhysicsMeshImplementation> NullPhysics::CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
 {
-	return B3DMakeCoreShared<NullPhysicsMesh>(meshData, type);
+	return B3DMakeUnique<NullPhysicsMeshImplementation>(meshData, type);
 }
 
 SPtr<PhysicsScene> NullPhysics::CreatePhysicsScene()
@@ -43,6 +38,21 @@ SPtr<PhysicsScene> NullPhysics::CreatePhysicsScene()
 	return scene;
 }
 
+SPtr<ColliderShape> NullPhysics::CreateColliderShape()
+{
+	return B3DMakeShared<NullPhysicsColliderShape>();
+}
+
+UPtr<IColliderImplementation> NullPhysics::CreateColliderImplementation()
+{
+	return B3DMakeUnique<NullPhysicsCollider>();
+}
+
+UPtr<IRigidbodyImplementation> NullPhysics::CreateRigidbodyImplementation(Rigidbody& owner)
+{
+	return B3DMakeUnique<NullPhysicsRigidbody>(owner);
+}
+
 void NullPhysics::NotifySceneDestroyedInternal(NullPhysicsScene* scene)
 {
 	auto iterFind = std::find(mScenes.begin(), mScenes.end(), scene);
@@ -51,7 +61,7 @@ void NullPhysics::NotifySceneDestroyedInternal(NullPhysicsScene* scene)
 	mScenes.erase(iterFind);
 }
 
-NullPhysicsScene::NullPhysicsScene(const PHYSICS_INIT_DESC& input)
+NullPhysicsScene::NullPhysicsScene(const PhysicsCreateInformation& createInformation)
 {}
 
 NullPhysicsScene::~NullPhysicsScene()
@@ -59,69 +69,39 @@ NullPhysicsScene::~NullPhysicsScene()
 	GetNullPhysics().NotifySceneDestroyedInternal(this);
 }
 
-SPtr<Rigidbody> NullPhysicsScene::CreateRigidbody(const HSceneObject& linkedSO)
+UPtr<IFixedJointImplementation> NullPhysicsScene::CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsRigidbody>(linkedSO);
+	return B3DMakeUnique<NullPhysicsFixedJoint>();
 }
 
-SPtr<BoxCollider> NullPhysicsScene::CreateBoxCollider(const Vector3& extents, const Vector3& position, const Quaternion& rotation)
+UPtr<IDistanceJointImplementation> NullPhysicsScene::CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsBoxCollider>(position, rotation, extents);
+	return B3DMakeUnique<NullPhysicsDistanceJoint>();
 }
 
-SPtr<SphereCollider> NullPhysicsScene::CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation)
+UPtr<IHingeJointImplementation> NullPhysicsScene::CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsSphereCollider>(position, rotation, radius);
+	return B3DMakeUnique<NullPhysicsHingeJoint>();
 }
 
-SPtr<PlaneCollider> NullPhysicsScene::CreatePlaneCollider(const Vector3& position, const Quaternion& rotation)
+UPtr<ISphericalJointImplementation> NullPhysicsScene::CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsPlaneCollider>(position, rotation);
+	return B3DMakeUnique<NullPhysicsSphericalJoint>();
 }
 
-SPtr<CapsuleCollider> NullPhysicsScene::CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position, const Quaternion& rotation)
+UPtr<ISliderJointImplementation> NullPhysicsScene::CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsCapsuleCollider>(position, rotation, radius, halfHeight);
+	return B3DMakeUnique<NullPhysicsSliderJoint>();
 }
 
-SPtr<MeshCollider> NullPhysicsScene::CreateMeshCollider(const Vector3& position, const Quaternion& rotation)
+UPtr<ID6JointImplementation> NullPhysicsScene::CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsMeshCollider>(position, rotation);
+	return B3DMakeUnique<NullPhysicsD6Joint>();
 }
 
-SPtr<FixedJoint> NullPhysicsScene::CreateFixedJoint(const FIXED_JOINT_DESC& desc)
+UPtr<ICharacterControllerImplementation> NullPhysicsScene::CreateCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation)
 {
-	return B3DMakeShared<NullPhysicsFixedJoint>(desc);
-}
-
-SPtr<DistanceJoint> NullPhysicsScene::CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsDistanceJoint>(desc);
-}
-
-SPtr<HingeJoint> NullPhysicsScene::CreateHingeJoint(const HINGE_JOINT_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsHingeJoint>(desc);
-}
-
-SPtr<SphericalJoint> NullPhysicsScene::CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsSphericalJoint>(desc);
-}
-
-SPtr<SliderJoint> NullPhysicsScene::CreateSliderJoint(const SLIDER_JOINT_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsSliderJoint>(desc);
-}
-
-SPtr<D6Joint> NullPhysicsScene::CreateD6Joint(const D6_JOINT_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsD6Joint>(desc);
-}
-
-SPtr<CharacterController> NullPhysicsScene::CreateCharacterController(const CHAR_CONTROLLER_DESC& desc)
-{
-	return B3DMakeShared<NullPhysicsCharacterController>(desc);
+	return B3DMakeUnique<NullPhysicsCharacterController>(owner, createInformation);
 }
 
 namespace b3d {

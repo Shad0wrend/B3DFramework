@@ -5,7 +5,7 @@
 
 namespace b3d
 {
-	PixelFormat NullTextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma)
+	PixelFormat NullTextureManager::GetNativeFormat(TextureType ttype, PixelFormat format, TextureUsageFlags usage, bool hwGamma)
 	{
 		return format;
 	}

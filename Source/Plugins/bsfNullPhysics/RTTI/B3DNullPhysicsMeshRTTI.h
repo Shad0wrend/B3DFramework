@@ -14,23 +14,23 @@ namespace b3d
 	 *  @{
 	 */
 
-	class FNullPhysicsMeshRTTI : public RTTIType<FNullPhysicsMesh, FPhysicsMesh, FNullPhysicsMeshRTTI>
+	class NullPhysicsMeshImplementationRTTI : public TRTTIType<NullPhysicsMeshImplementation, IPhysicsMeshImplementation, NullPhysicsMeshImplementationRTTI>
 	{
 	public:
 		const String& GetRttiName()
 		{
-			static String name = "FNullPhysicsMesh";
+			static String name = "NullPhysicsMeshImplementation";
 			return name;
 		}
 
-		u32 GetRttiId()
+		u32 GetRttiId() const override
 		{
 			return TID_FNullPhysicsMesh;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<FNullPhysicsMesh>();
+			return B3DMakeShared<NullPhysicsMeshImplementation>();
 		}
 	};
 

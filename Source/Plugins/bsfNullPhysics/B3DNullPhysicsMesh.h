@@ -11,26 +11,12 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** Null implementation of a PhysicsMesh. */
-	class NullPhysicsMesh : public PhysicsMesh
+	/** Null implementation of IPhysicsMeshImplementation. */
+	class NullPhysicsMeshImplementation : public IPhysicsMeshImplementation
 	{
 	public:
-		NullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type);
-
-	private:
-		void Initialize() override;
-		void Destroy() override;
-
-		// Note: Must not have its own RTTI type, it's important it shares the same type ID as PhysicsMesh so the
-		// system knows to recognize it. Use FPhysicsMesh instead.
-	};
-
-	/** Null implementation of the PhysicsMesh foundation, FPhysicsMesh. */
-	class FNullPhysicsMesh : public FPhysicsMesh
-	{
-	public:
-		FNullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type);
-		~FNullPhysicsMesh() override = default;
+		NullPhysicsMeshImplementation(const SPtr<MeshData>& meshData, PhysicsMeshType type);
+		~NullPhysicsMeshImplementation() override = default;
 
 		SPtr<MeshData> GetMeshData() const override;
 
@@ -38,11 +24,14 @@ namespace b3d
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
-		FNullPhysicsMesh(); // Serialization only
+		NullPhysicsMeshImplementation(); // Serialization only
 
-		friend class FNullPhysicsMeshRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
+		friend class NullPhysicsMeshImplementationRTTI;
+		static RTTIType* GetRttiStatic();
+		RTTIType* GetRtti() const override;
+
+	private:
+		SPtr<MeshData> mMeshData;
 	};
 
 	/** @} */

@@ -25,11 +25,10 @@ namespace b3d
 		class NullGpuCommandBuffer final : public GpuCommandBuffer
 		{
 		public:
-			NullGpuCommandBuffer(NullGpuDevice& device, NullGpuCommandBufferPool& pool, u32 id, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
+			NullGpuCommandBuffer(NullGpuDevice& device, NullGpuCommandBufferPool& pool, u32 id, ThreadId ownerThread, GpuQueueType queueType, const GpuCommandBufferCreateInformation& createInformation);
 			~NullGpuCommandBuffer() override = default;
 
-			void SetName(const StringView& name) override { mName = name; }
-			CommandBufferState GetState() const override { return mState; }
+			void SetName(const StringView& name) override {}
 
 			void SetGpuParameterSet(const SPtr<GpuParameterSet>& parameters) override {}
 			void SetDynamicBufferOffset(u32 set, u32 bufferIndex, u32 offset) override {}
@@ -42,16 +41,18 @@ namespace b3d
 			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override {}
 			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override {}
 			void DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ) override {}
-			void BeginRenderPass(const SPtr<RenderTarget>& target, u32 readOnlyFlags, RenderSurfaceMask loadMask) override {}
+			void BeginRenderPass(const RenderPassCreateInformation& createInformation) override {}
 			void EndRenderPass() override {}
 			bool IsInRenderPass() const override { return false; }
 			void SetViewport(const Area2& area) override {}
-			void ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask) override {}
-			void ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask) override {}
+			void ClearRenderTarget(RenderSurfaceMask mask, const Color& color, float depth, u16 stencil) override {}
+			void ClearViewport(RenderSurfaceMask mask, const Color& color, float depth, u16 stencil) override {}
 			void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom) override {}
 			void DisableScissorTest() override {}
 			void SetStencilReferenceValue(u32 value) override {}
 			void CopyBufferToBuffer(const SPtr<GpuBuffer>& source, const SPtr<GpuBuffer>& destination, u32 sourceOffset, u32 destinationOffset, u32 length) override {}
+			void CopyBufferToTexture(const SPtr<GpuBuffer>& source, const SPtr<Texture>& destination, u32 bufferOffset, u32 mipLevel, u32 arrayLayer) override {}
+			void CopyTextureToBuffer(const SPtr<Texture>& source, const SPtr<GpuBuffer>& destination, u32 mipLevel, u32 arrayLayer, u32 bufferOffset) override {}
 			void WriteTimestamp(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool) override {}
 			void BeginQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool, GpuQueryFlags flags) override {}
 			void EndQuery(GpuQueryId query, const SPtr<GpuQueryPool>& queryPool) override {}
@@ -60,7 +61,6 @@ namespace b3d
 			void EndLabel() override {}
 			void InsertLabel(const StringView& name) override {}
 			void End() override;
-			void TransitionTextureLayout(const SPtr<Texture>& texture, GpuTextureLayout layout, const GpuTextureSubresourceRange& subresourceRange) override {}
 			void IssueBarriers(const GpuBarriers& barriers) override {}
 
 			/** Returns an unique identifier of this command buffer. */
@@ -71,11 +71,9 @@ namespace b3d
 			friend class NullGpuQueue;
 
 			/** Sets the command buffer state. Only accessible by friends (pool and queue). */
-			void SetState(CommandBufferState state) { mState = state; }
+			void SetState(GpuCommandBufferState state) { mState = state; }
 
 			u32 mId;
-			String mName;
-			CommandBufferState mState = CommandBufferState::Ready;
 		};
 
 		/** @} */

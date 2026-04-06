@@ -23,11 +23,11 @@ namespace b3d
 			~NullGpuParameterSetPool() override = default;
 
 			SPtr<GpuParameterSet> Create(const SPtr<GpuPipelineParameterSetLayout>& layout, u32 setIndex, bool deferredInitialize = false) override;
-			void Free(const SPtr<GpuParameterSet>& parameterSet) override;
 			void Reset() override;
 
 		private:
 			NullGpuDevice& mDevice;
+			u32 mAllocatedSetCount = 0;
 		};
 
 		/** @} */

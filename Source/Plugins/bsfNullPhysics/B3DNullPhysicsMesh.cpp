@@ -4,40 +4,22 @@
 #include "RTTI/B3DNullPhysicsMeshRTTI.h"
 #include "Mesh/B3DMeshData.h"
 #include "RenderAPI/B3DVertexDescription.h"
-#include "B3DNullPhysics.h"
-#include "Math/B3DAABox.h"
 
 using namespace b3d;
 
-NullPhysicsMesh::NullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
-	: PhysicsMesh(meshData, type)
+NullPhysicsMeshImplementation::NullPhysicsMeshImplementation()
+	: mMeshData(nullptr)
 {}
 
-void NullPhysicsMesh::Initialize()
-{
-	if(mInternal == nullptr) // Could be not-null if we're deserializing
-		mInternal = B3DMakeShared<FNullPhysicsMesh>(mInitMeshData, mType);
-
-	PhysicsMesh::Initialize();
-}
-
-void NullPhysicsMesh::Destroy()
-{
-	mInternal = nullptr;
-
-	PhysicsMesh::Destroy();
-}
-
-FNullPhysicsMesh::FNullPhysicsMesh()
-	: FPhysicsMesh(nullptr, PhysicsMeshType::Convex)
+NullPhysicsMeshImplementation::NullPhysicsMeshImplementation(const SPtr<MeshData>& meshData, PhysicsMeshType type)
+	: mMeshData(meshData)
 {}
 
-FNullPhysicsMesh::FNullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
-	: FPhysicsMesh(meshData, type)
-{}
-
-SPtr<MeshData> FNullPhysicsMesh::GetMeshData() const
+SPtr<MeshData> NullPhysicsMeshImplementation::GetMeshData() const
 {
+	if (mMeshData)
+		return mMeshData;
+
 	TInlineArray<VertexElement, 8> vertexElements;
 	vertexElements.Add(VertexElement(VET_FLOAT3, VES_POSITION));
 
@@ -45,12 +27,12 @@ SPtr<MeshData> FNullPhysicsMesh::GetMeshData() const
 	return MeshData::Create(0, 0, vertexDesc);
 }
 
-RTTITypeBase* FNullPhysicsMesh::GetRttiStatic()
+RTTIType* NullPhysicsMeshImplementation::GetRttiStatic()
 {
-	return FNullPhysicsMeshRTTI::Instance();
+	return NullPhysicsMeshImplementationRTTI::Instance();
 }
 
-RTTITypeBase* FNullPhysicsMesh::GetRtti() const
+RTTIType* NullPhysicsMeshImplementation::GetRtti() const
 {
 	return GetRttiStatic();
 }

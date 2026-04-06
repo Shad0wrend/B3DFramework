@@ -7,8 +7,8 @@ namespace b3d
 {
 	namespace render
 	{
-		NullGpuQueue::NullGpuQueue(NullGpuDevice& device, GpuQueueUsage usage, u32 index)
-			: GpuQueue(device, usage, index)
+		NullGpuQueue::NullGpuQueue(GpuDevice& device, GpuQueueType type, u32 index)
+			: GpuQueue(device, type, index)
 		{ }
 	} // namespace render
 } // namespace b3d

@@ -12,6 +12,7 @@
 #include "B3DNullGpuParameterSetPool.h"
 #include "B3DNullGpuPipelineParameterLayout.h"
 #include "B3DNullSamplerState.h"
+#include "RenderAPI/B3DGpuPipelineParameterLayout.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
 #include "B3DNullEventQuery.h"
 #include "B3DNullGpuQueryPool.h"
@@ -38,7 +39,7 @@ namespace b3d
 			for (u32 i = 0; i < GQT_COUNT; i++)
 			{
 				mQueueInfos[i].FamilyIndex = i;
-				mQueueInfos[i].Queues.Add(B3DMakeShared<NullGpuQueue>(*this, (GpuQueueUsage)i, 0));
+				mQueueInfos[i].Queues.Add(B3DMakeShared<NullGpuQueue>(*this, (GpuQueueType)i, 0));
 			}
 
 			// Initialize capabilities with reasonable defaults for a null backend
@@ -79,25 +80,25 @@ namespace b3d
 			mCapabilities.Conventions.MatrixOrder = GpuBackendConventions::MatrixOrder::ColumnMajor;
 
 			// Set reasonable limits
-			mCapabilities.MaxBoundVertexBuffers = 16;
-			mCapabilities.NumMultiRenderTargets = 8;
+			mCapabilities.VertexBufferCount = 16;
+			mCapabilities.RenderTargetCount = 8;
 
 			// Texture units per stage
 			constexpr u16 textureUnitsPerStage = 16;
 			for (u32 i = 0; i < GPT_COUNT; i++)
 			{
-				mCapabilities.NumTextureUnitsPerStage[i] = textureUnitsPerStage;
-				mCapabilities.NumGpuParamBlockBuffersPerStage[i] = 16;
+				mCapabilities.SampledTexturesPerStage[i] = textureUnitsPerStage;
+				mCapabilities.UniformBufferCountPerStage[i] = 16;
 			}
 
-			// Load-store texture units (only fragment and compute)
-			mCapabilities.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = 8;
-			mCapabilities.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = 8;
+			// Storage texture units (only fragment and compute)
+			mCapabilities.StorageTexturesPerStage[GPT_FRAGMENT_PROGRAM] = 8;
+			mCapabilities.StorageTexturesPerStage[GPT_COMPUTE_PROGRAM] = 8;
 
 			// Calculate combined totals
-			mCapabilities.NumCombinedTextureUnits = textureUnitsPerStage * GPT_COUNT;
-			mCapabilities.NumCombinedParamBlockBuffers = 16 * GPT_COUNT;
-			mCapabilities.NumCombinedLoadStoreTextureUnits = 16;
+			mCapabilities.TotalSampledTexturesCount = textureUnitsPerStage * GPT_COUNT;
+			mCapabilities.TotalUniformBuffersCount = 16 * GPT_COUNT;
+			mCapabilities.TotalStorageTexturesCount = 16;
 
 			mCapabilities.GeometryProgramNumOutputVertices = 1024;
 			mCapabilities.MinimumUniformBufferOffsetAlignment = 16;
@@ -111,15 +112,15 @@ namespace b3d
 			return B3DMakeShared<GpuProgramBytecode>();
 		}
 
-		u32 NullGpuDevice::GetQueueCount(GpuQueueUsage usage) const
+		u32 NullGpuDevice::GetQueueCount(GpuQueueType type) const
 		{
-			return (u32)mQueueInfos[(u32)usage].Queues.size();
+			return (u32)mQueueInfos[(u32)type].Queues.size();
 		}
 
-		SPtr<GpuQueue> NullGpuDevice::GetQueue(GpuQueueUsage usage, u32 index) const
+		SPtr<GpuQueue> NullGpuDevice::GetQueue(GpuQueueType type, u32 index) const
 		{
-			if (index < mQueueInfos[(u32)usage].Queues.size())
-				return mQueueInfos[(u32)usage].Queues[index];
+			if (index < mQueueInfos[(u32)type].Queues.size())
+				return mQueueInfos[(u32)type].Queues[index];
 
 			return nullptr;
 		}
@@ -135,7 +136,7 @@ namespace b3d
 
 			// Default: standalone (calling-thread deletion)
 			// With RenderProxy flag: forward destruction to render thread
-			SPtr<NullTexture> texture = flags.IsSet(GpuObjectCreateFlag::RenderProxy)
+			SPtr<NullTexture> texture = flags.IsSet(GpuObjectCreateFlag::RenderThreadDestroy)
 				? B3DMakeSharedFromExisting(rawTexture)
 				: MakeSharedStandalone<NullTexture>(rawTexture);
 
@@ -153,7 +154,7 @@ namespace b3d
 
 			// Default: standalone (calling-thread deletion)
 			// With RenderProxy flag: forward destruction to render thread
-			SPtr<NullGpuBuffer> buffer = flags.IsSet(GpuObjectCreateFlag::RenderProxy)
+			SPtr<NullGpuBuffer> buffer = flags.IsSet(GpuObjectCreateFlag::RenderThreadDestroy)
 				? B3DMakeSharedFromExisting(rawBuffer)
 				: MakeSharedStandalone<NullGpuBuffer>(rawBuffer);
 
@@ -210,9 +211,17 @@ namespace b3d
 			return B3DMakeShared<NullGpuPipelineParameterLayout>(*this, createInformation);
 		}
 
+		class NullGpuPipelineParameterSetLayout : public GpuPipelineParameterSetLayout
+		{
+		public:
+			NullGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
+				: GpuPipelineParameterSetLayout(parameterDescription)
+			{}
+		};
+
 		SPtr<GpuPipelineParameterSetLayout> NullGpuDevice::CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription)
 		{
-			return B3DMakeShared<GpuPipelineParameterSetLayout>(parameterDescription);
+			return B3DMakeShared<NullGpuPipelineParameterSetLayout>(parameterDescription);
 		}
 
 		UPtr<GpuParameterSetPool> NullGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)

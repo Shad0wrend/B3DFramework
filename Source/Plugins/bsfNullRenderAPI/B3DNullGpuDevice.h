@@ -43,8 +43,8 @@ namespace b3d
 			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
 			SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
 
-			u32 GetQueueCount(GpuQueueUsage usage) const override;
-			SPtr<GpuQueue> GetQueue(GpuQueueUsage usage, u32 index) const override;
+			u32 GetQueueCount(GpuQueueType type) const override;
+			SPtr<GpuQueue> GetQueue(GpuQueueType type, u32 index) const override;
 			void SubmitTransferCommandBuffers(bool wait = false) override {}
 			void PresentRenderWindow(const SPtr<RenderWindow>& renderWindow, GpuQueueMask syncMask = GpuQueueMask::kAll) override {}
 			void WaitUntilIdle() override {}

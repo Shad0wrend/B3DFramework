@@ -19,7 +19,7 @@ namespace b3d
 		class NullGpuQueue : public GpuQueue
 		{
 		public:
-			NullGpuQueue(NullGpuDevice& device, GpuQueueUsage usage, u32 index);
+			NullGpuQueue(GpuDevice& device, GpuQueueType type, u32 index);
 
 			void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, bool flushTransferCommandBuffer) override {}
 			void WaitUntilIdle() override {}

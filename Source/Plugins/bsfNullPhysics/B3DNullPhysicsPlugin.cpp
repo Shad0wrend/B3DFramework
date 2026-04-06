@@ -11,10 +11,10 @@ class B3D_PLUGIN_EXPORT NullPhysicsFactory : public PhysicsFactory
 public:
 	void StartUp(bool cooking)
 	{
-		PHYSICS_INIT_DESC initDesc;
-		initDesc.InitCooking = cooking;
+		PhysicsCreateInformation createInformation;
+		createInformation.InitCooking = cooking;
 
-		Physics::StartUp<NullPhysics>(initDesc);
+		Physics::StartUp<NullPhysics>(createInformation);
 	}
 
 	void ShutDown()

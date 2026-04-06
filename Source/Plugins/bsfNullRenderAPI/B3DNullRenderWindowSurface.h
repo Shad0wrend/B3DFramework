@@ -18,6 +18,7 @@ namespace b3d::render
 		NullRenderWindowSurface(const RenderWindowSurfaceCreateInformation& createInformation);
 		~NullRenderWindowSurface();
 
+		void SwapBuffers(GpuQueue& queue, GpuQueueMask syncMask) override {}
 		void RebuildSwapChain(u32 width, u32 height, bool vsync) override;
 		void MarkSwapChainAsInvalid() override;
 		void Destroy() override;

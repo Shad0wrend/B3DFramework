@@ -23,22 +23,20 @@ namespace b3d
 			~NullGpuBuffer();
 
 			void SetName(const StringView& name) override { mName = name; }
-			void ReadData(u32 offset, u32 length, void* destination, const SPtr<GpuQueue>& gpuQueue = nullptr) override {}
-			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override {}
-			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override {}
 			GpuQueueMask GetUseMask(GpuAccessFlags accessFlags) override { return GpuQueueMask::kNone; }
 			u32 GetBoundCount() const override { return 0; }
 			u32 GetUseCount() const override { return 0; }
+
+#if B3D_BUILD_TYPE_DEVELOPMENT
+			bool IsRangeBound(u32 offset, u32 size) const override { return false; }
+			bool IsRangeInUse(u32 offset, u32 size) const override { return false; }
+#endif
 
 		protected:
 			friend class NullGpuDevice;
 
 			void Initialize() override {}
-			void* Map(u32 offset, u32 length, GpuLockOptions options) override;
-			void Unmap() override {}
 			void RecreateInternalBuffer() override {}
-
-			void* mStagingBuffer = nullptr;
 		};
 
 		/** @} */

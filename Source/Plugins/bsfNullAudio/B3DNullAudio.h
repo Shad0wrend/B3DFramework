@@ -5,8 +5,8 @@
 #include "B3DNullAudioPrerequisites.h"
 #include "Audio/B3DAudio.h"
 #include "Audio/B3DAudioClip.h"
-#include "Audio/B3DAudioListener.h"
-#include "Audio/B3DAudioSource.h"
+#include "Components/B3DAudioListener.h"
+#include "Components/B3DAudioSource.h"
 
 namespace b3d
 {
@@ -32,9 +32,9 @@ namespace b3d
 	private:
 		friend class NullAudioSource;
 
-		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc) override;
-		SPtr<AudioListener> CreateListener() override;
-		SPtr<AudioSource> CreateSource() override;
+		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation) override;
+		SPtr<IAudioListenerImplementation> CreateListener() override;
+		SPtr<IAudioSourceImplementation> CreateSource() override;
 
 		float mVolume = 1.0f;
 		bool mIsPaused = false;
@@ -48,7 +48,7 @@ namespace b3d
 	class NullAudioClip final : public AudioClip
 	{
 	public:
-		NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc);
+		NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation);
 
 	protected:
 		void Initialize() override;
@@ -62,21 +62,34 @@ namespace b3d
 	};
 
 	/** Null implementation of an AudioListener. */
-	class NullAudioListener final : public AudioListener
+	class NullAudioListener final : public IAudioListenerImplementation
 	{
+	public:
+		void SetTransform(const Transform& transform) override {}
+		void SetVelocity(const Vector3& velocity) override {}
+
 	private:
 		friend class NullAudio;
 	};
 
 	/** Null implementation of an AudioSource. */
-	class NullAudioSource final : public AudioSource
+	class NullAudioSource final : public IAudioSourceImplementation
 	{
 	public:
-		void SetTime(float time) override { mTime = time; }
-		float GetTime() const override { return mTime; }
+		void SetClip(const HAudioClip& clip) override {}
+		void SetVelocity(const Vector3& velocity) override {}
+		void SetTransform(const Transform& transform) override {}
+		void SetVolume(float volume) override {}
+		void SetPitch(float pitch) override {}
+		void SetIsLooping(bool loop) override {}
+		void SetPriority(i32 priority) override {}
+		void SetMinDistance(float distance) override {}
+		void SetAttenuation(float attenuation) override {}
 		void Play() override { mState = AudioSourceState::Playing; }
 		void Pause() override { mState = AudioSourceState::Paused; }
 		void Stop() override { mState = AudioSourceState::Stopped; }
+		void SetTime(float time) override { mTime = time; }
+		float GetTime() const override { return mTime; }
 		AudioSourceState GetState() const override { return mState; }
 
 	private:
@@ -84,7 +97,6 @@ namespace b3d
 
 		float mTime = 0.0f;
 		AudioSourceState mState = AudioSourceState::Stopped;
-		bool mGloballyPaused = false;
 	};
 
 	/** Provides easier access to the null audio manager. */

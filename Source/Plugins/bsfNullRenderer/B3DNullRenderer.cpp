@@ -1,12 +1,9 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DNullRenderer.h"
-#include "CoreThread/B3DCoreThread.h"
 #include "Renderer/B3DRendererManager.h"
-#include "CoreThread/B3DCoreObjectManager.h"
 
 using namespace b3d;
-using namespace b3d::render;
 
 constexpr const char* NullRendererFactory::SystemName;
 
@@ -21,18 +18,22 @@ const String& NullRendererFactory::Name() const
 	return StrSystemName;
 }
 
-const StringID& NullRenderer::GetName() const
+const StringID& render::NullRenderer::GetName() const
 {
 	static StringID name = "NullRenderer";
 	return name;
 }
 
-void NullRenderer::RenderAll(PerFrameData perFrameData)
+void render::NullRenderer::RenderAll(PerFrameData perFrameData)
 {
-	CoreObjectManager::Instance().SyncToCore();
 }
 
-SPtr<NullRenderer> GetNullRenderer()
+SPtr<render::RendererScene> render::NullRenderer::CreateScene()
 {
-	return std::static_pointer_cast<NullRenderer>(RendererManager::Instance().GetActive());
+	return B3DMakeShared<render::NullRendererScene>();
+}
+
+SPtr<render::NullRenderer> render::GetNullRenderer()
+{
+	return std::static_pointer_cast<render::NullRenderer>(RendererManager::Instance().GetActive());
 }

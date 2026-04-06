@@ -26,7 +26,7 @@ namespace b3d
 
 	class NullPhysicsRigidbody;
 	class NullPhysicsMaterial;
-	class FNullPhysicsCollider;
+	class NullPhysicsCollider;
 
 	/** @addtogroup NullPhysics
 	 *  @{

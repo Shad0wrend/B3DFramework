@@ -26,12 +26,6 @@ namespace b3d::render
 		return paramSet;
 	}
 
-	void NullGpuParameterSetPool::Free(const SPtr<GpuParameterSet>& parameterSet)
-	{
-		if (mAllocatedSetCount > 0)
-			mAllocatedSetCount--;
-	}
-
 	void NullGpuParameterSetPool::Reset()
 	{
 		mAllocatedSetCount = 0;

@@ -1,7 +1,6 @@
 //************************************ B3D Framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DNullAudio.h"
-#include "Threading/B3DTaskScheduler.h"
 #include "FileSystem/B3DDataStream.h"
 
 using namespace b3d;
@@ -13,23 +12,23 @@ NullAudio::NullAudio()
 	mAllDevices.push_back(mActiveDevice);
 }
 
-SPtr<AudioClip> NullAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
+SPtr<AudioClip> NullAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation)
 {
-	return B3DMakeCoreShared<NullAudioClip>(samples, streamSize, numSamples, desc);
+	return B3DMakeShared<NullAudioClip>(samples, streamSize, sampleCount, createInformation);
 }
 
-SPtr<AudioListener> NullAudio::CreateListener()
+SPtr<IAudioListenerImplementation> NullAudio::CreateListener()
 {
 	return B3DMakeShared<NullAudioListener>();
 }
 
-SPtr<AudioSource> NullAudio::CreateSource()
+SPtr<IAudioSourceImplementation> NullAudio::CreateSource()
 {
 	return B3DMakeShared<NullAudioSource>();
 }
 
-NullAudioClip::NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
-	: AudioClip(samples, streamSize, numSamples, desc)
+NullAudioClip::NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 sampleCount, const AudioClipCreateInformation& createInformation)
+	: AudioClip(samples, streamSize, sampleCount, createInformation)
 {}
 
 void NullAudioClip::Initialize()

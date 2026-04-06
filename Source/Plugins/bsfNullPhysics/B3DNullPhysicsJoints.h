@@ -3,14 +3,13 @@
 #pragma once
 
 #include "B3DNullPhysicsPrerequisites.h"
-#include "Physics/B3DJoint.h"
-#include "Physics/B3DFJoint.h"
-#include "Physics/B3DD6Joint.h"
-#include "Physics/B3DDistanceJoint.h"
-#include "Physics/B3DFixedJoint.h"
-#include "Physics/B3DHingeJoint.h"
-#include "Physics/B3DSliderJoint.h"
-#include "Physics/B3DSphericalJoint.h"
+#include "Components/B3DJoint.h"
+#include "Components/B3DFixedJoint.h"
+#include "Components/B3DDistanceJoint.h"
+#include "Components/B3DHingeJoint.h"
+#include "Components/B3DSphericalJoint.h"
+#include "Components/B3DSliderJoint.h"
+#include "Components/B3DD6Joint.h"
 
 namespace b3d
 {
@@ -18,143 +17,176 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** Null implementation of an FJoint. */
-	class FNullPhysicsJoint : public FJoint
+	/** Null implementation of IJointImplementation base methods. */
+	class NullPhysicsJointBase
 	{
 	public:
-		FNullPhysicsJoint(const JOINT_DESC& desc);
-		~FNullPhysicsJoint() override = default;
-
-		Rigidbody* GetBody(JointBody body) const override { return mDesc.Bodies[(int)body].Body; }
-		void SetBody(JointBody body, Rigidbody* value) override { mDesc.Bodies[(int)body].Body = value; }
-		Vector3 GetPosition(JointBody body) const override { return mDesc.Bodies[(int)body].Position; }
-		Quaternion GetRotation(JointBody body) const override { return mDesc.Bodies[(int)body].Rotation; }
-		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override;
-		float GetBreakForce() const override { return mDesc.BreakForce; }
-		void SetBreakForce(float force) override { mDesc.BreakForce = force; }
-		float GetBreakTorque() const override { return mDesc.BreakTorque; }
-		void SetBreakTorque(float torque) override { mDesc.BreakTorque = torque; }
-		bool GetEnableCollision() const override { return mDesc.EnableCollision; }
-		void SetEnableCollision(bool value) override { mDesc.EnableCollision = value; }
-
-	private:
-		JOINT_DESC mDesc;
-	};
-
-	/** NullPhysics implementation of a D6 joint. */
-	class NullPhysicsD6Joint : public D6Joint
-	{
-	public:
-		NullPhysicsD6Joint(const D6_JOINT_DESC& desc);
-		~NullPhysicsD6Joint() override;
-
-		D6JointMotion GetMotion(D6JointAxis axis) const override { return mDesc.Motion[(int)axis]; }
-		void SetMotion(D6JointAxis axis, D6JointMotion motion) override { mDesc.Motion[(int)axis] = motion; }
-		Radian GetTwist() const override { return Radian(0.0f); }
-		Radian GetSwingY() const override { return Radian(0.0f); }
-		Radian GetSwingZ() const override { return Radian(0.0f); }
-		LimitLinear GetLimitLinear() const override { return mDesc.LimitLinear; }
-		void SetLimitLinear(const LimitLinear& limit) override { mDesc.LimitLinear = limit; }
-		LimitAngularRange GetLimitTwist() const override { return mDesc.LimitTwist; }
-		void SetLimitTwist(const LimitAngularRange& limit) override { mDesc.LimitTwist = limit; }
-		LimitConeRange GetLimitSwing() const override { return mDesc.LimitSwing; }
-		void SetLimitSwing(const LimitConeRange& limit) override { mDesc.LimitSwing = limit; }
-		D6JointDrive GetDrive(D6JointDriveType type) const override { return mDesc.Drive[(int)type]; }
-		void SetDrive(D6JointDriveType type, const D6JointDrive& drive) override { mDesc.Drive[(int)type] = drive; }
-		Vector3 GetDrivePosition() const override { return mDesc.DrivePosition; }
-		Quaternion GetDriveRotation() const override { return mDesc.DriveRotation; }
-		void SetDriveTransform(const Vector3& position, const Quaternion& rotation) override;
-		Vector3 GetDriveLinearVelocity() const override { return mDesc.DriveLinearVelocity; }
-		Vector3 GetDriveAngularVelocity() const override { return mDesc.DriveAngularVelocity; }
-		void SetDriveVelocity(const Vector3& linear, const Vector3& angular) override;
-
-	private:
-		D6_JOINT_DESC mDesc;
-	};
-
-	/** Null implementation of a DistanceJoint */
-	class NullPhysicsDistanceJoint : public DistanceJoint
-	{
-	public:
-		NullPhysicsDistanceJoint(const DISTANCE_JOINT_DESC& desc);
-		~NullPhysicsDistanceJoint() override;
-
-		float GetDistance() const override { return 0.0f; }
-		float GetMinDistance() const override { return mDesc.MinDistance; }
-		void SetMinDistance(float value) override { mDesc.MinDistance = value; }
-		float GetMaxDistance() const override { return mDesc.MaxDistance; }
-		void SetMaxDistance(float value) override { mDesc.MaxDistance = value; }
-		float GetTolerance() const override { return mDesc.Tolerance; }
-		void SetTolerance(float value) override { mDesc.Tolerance = value; }
-		Spring GetSpring() const override { return mDesc.Spring; }
-		void SetSpring(const Spring& value) override { mDesc.Spring = value; }
-		void SetFlag(DistanceJointFlag flag, bool enabled) override;
-		bool HasFlag(DistanceJointFlag flag) const override;
-
-	private:
-		DISTANCE_JOINT_DESC mDesc;
+		void SetBody(JointBody body, Rigidbody* value) {}
+		Rigidbody* GetBody(JointBody body) const { return nullptr; }
+		Vector3 GetPosition(JointBody body) const { return Vector3::kZero; }
+		Quaternion GetRotation(JointBody body) const { return Quaternion::kIdentity; }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) {}
+		void SetBreakForce(float force) {}
+		float GetBreakForce() const { return 0.0f; }
+		void SetBreakTorque(float torque) {}
+		float GetBreakTorque() const { return 0.0f; }
+		void SetEnableCollision(bool value) {}
+		bool GetEnableCollision() const { return false; }
 	};
 
 	/** Null implementation of a FixedJoint. */
-	class NullPhysicsFixedJoint : public FixedJoint
+	class NullPhysicsFixedJoint : public IFixedJointImplementation, public NullPhysicsJointBase
 	{
 	public:
-		NullPhysicsFixedJoint(const FIXED_JOINT_DESC& desc);
-		~NullPhysicsFixedJoint() override;
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
+	};
+
+	/** Null implementation of a DistanceJoint. */
+	class NullPhysicsDistanceJoint : public IDistanceJointImplementation, public NullPhysicsJointBase
+	{
+	public:
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
+
+		float GetDistance() const override { return 0.0f; }
+		void SetMinDistance(float value) override {}
+		float GetMinDistance() const override { return 0.0f; }
+		void SetMaxDistance(float value) override {}
+		float GetMaxDistance() const override { return 0.0f; }
+		float GetTolerance() const override { return 0.0f; }
+		void SetTolerance(float value) override {}
+		Spring GetSpring() const override { return {}; }
+		void SetSpring(const Spring& value) override {}
+		void SetFlag(DistanceJointFlag flag, bool enabled) override {}
+		bool HasFlag(DistanceJointFlag flag) const override { return false; }
 	};
 
 	/** Null implementation of a HingeJoint. */
-	class NullPhysicsHingeJoint : public HingeJoint
+	class NullPhysicsHingeJoint : public IHingeJointImplementation, public NullPhysicsJointBase
 	{
 	public:
-		NullPhysicsHingeJoint(const HINGE_JOINT_DESC& desc);
-		~NullPhysicsHingeJoint() override;
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
 
 		Radian GetAngle() const override { return Radian(0.0f); }
 		float GetSpeed() const override { return 0.0f; }
-		LimitAngularRange GetLimit() const override { return mDesc.Limit; }
-		void SetLimit(const LimitAngularRange& limit) override { mDesc.Limit = limit; }
-		HingeJointDrive GetDrive() const override { return mDesc.Drive; }
-		void SetDrive(const HingeJointDrive& drive) override { mDesc.Drive = drive; }
-		void SetFlag(HingeJointFlag flag, bool enabled) override;
-		bool HasFlag(HingeJointFlag flag) const override;
-
-	private:
-		HINGE_JOINT_DESC mDesc;
-	};
-
-	/** Null implementation of a SliderJoint. */
-	class NullPhysicsSliderJoint : public SliderJoint
-	{
-	public:
-		NullPhysicsSliderJoint(const SLIDER_JOINT_DESC& desc);
-		~NullPhysicsSliderJoint() override;
-
-		float GetPosition() const override { return 0.0f; }
-		float GetSpeed() const override { return 0.0f; }
-		LimitLinearRange GetLimit() const override { return mDesc.Limit; }
-		void SetLimit(const LimitLinearRange& limit) override { mDesc.Limit = limit; }
-		void SetFlag(SliderJointFlag flag, bool enabled) override;
-		bool HasFlag(SliderJointFlag flag) const override;
-
-	private:
-		SLIDER_JOINT_DESC mDesc;
+		LimitAngularRange GetLimit() const override { return {}; }
+		void SetLimit(const LimitAngularRange& limit) override {}
+		HingeJointDrive GetDrive() const override { return {}; }
+		void SetDrive(const HingeJointDrive& drive) override {}
+		void SetFlag(HingeJointFlag flag, bool enabled) override {}
+		bool HasFlag(HingeJointFlag flag) const override { return false; }
 	};
 
 	/** Null implementation of a SphericalJoint. */
-	class NullPhysicsSphericalJoint : public SphericalJoint
+	class NullPhysicsSphericalJoint : public ISphericalJointImplementation, public NullPhysicsJointBase
 	{
 	public:
-		NullPhysicsSphericalJoint(const SPHERICAL_JOINT_DESC& desc);
-		~NullPhysicsSphericalJoint() override;
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
 
-		LimitConeRange GetLimit() const override { return mDesc.Limit; }
-		void SetLimit(const LimitConeRange& limit) override { mDesc.Limit = limit; }
-		void SetFlag(SphericalJointFlag flag, bool enabled) override;
-		bool HasFlag(SphericalJointFlag flag) const override;
+		LimitConeRange GetLimit() const override { return {}; }
+		void SetLimit(const LimitConeRange& limit) override {}
+		void SetFlag(SphericalJointFlag flag, bool isEnabled) override {}
+		bool HasFlag(SphericalJointFlag flag) const override { return false; }
+	};
 
-	private:
-		SPHERICAL_JOINT_DESC mDesc;
+	/** Null implementation of a SliderJoint. */
+	class NullPhysicsSliderJoint : public ISliderJointImplementation, public NullPhysicsJointBase
+	{
+	public:
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
+
+		float GetPosition() const override { return 0.0f; }
+		float GetSpeed() const override { return 0.0f; }
+		LimitLinearRange GetLimit() const override { return {}; }
+		void SetLimit(const LimitLinearRange& limit) override {}
+		void SetFlag(SliderJointFlag flag, bool enabled) override {}
+		bool HasFlag(SliderJointFlag flag) const override { return false; }
+	};
+
+	/** Null implementation of a D6Joint. */
+	class NullPhysicsD6Joint : public ID6JointImplementation, public NullPhysicsJointBase
+	{
+	public:
+		void SetBody(JointBody body, Rigidbody* value) override { NullPhysicsJointBase::SetBody(body, value); }
+		Rigidbody* GetBody(JointBody body) const override { return NullPhysicsJointBase::GetBody(body); }
+		Vector3 GetPosition(JointBody body) const override { return NullPhysicsJointBase::GetPosition(body); }
+		Quaternion GetRotation(JointBody body) const override { return NullPhysicsJointBase::GetRotation(body); }
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override { NullPhysicsJointBase::SetTransform(body, position, rotation); }
+		void SetBreakForce(float force) override { NullPhysicsJointBase::SetBreakForce(force); }
+		float GetBreakForce() const override { return NullPhysicsJointBase::GetBreakForce(); }
+		void SetBreakTorque(float torque) override { NullPhysicsJointBase::SetBreakTorque(torque); }
+		float GetBreakTorque() const override { return NullPhysicsJointBase::GetBreakTorque(); }
+		void SetEnableCollision(bool value) override { NullPhysicsJointBase::SetEnableCollision(value); }
+		bool GetEnableCollision() const override { return NullPhysicsJointBase::GetEnableCollision(); }
+
+		void SetMotion(D6JointAxis axis, D6JointMotion motion) override {}
+		D6JointMotion GetMotion(D6JointAxis axis) const override { return D6JointMotion::Free; }
+		Radian GetTwist() const override { return Radian(0.0f); }
+		Radian GetSwingY() const override { return Radian(0.0f); }
+		Radian GetSwingZ() const override { return Radian(0.0f); }
+		void SetLimitLinear(const LimitLinear& limit) override {}
+		LimitLinear GetLimitLinear() const override { return {}; }
+		void SetLimitTwist(const LimitAngularRange& limit) override {}
+		LimitAngularRange GetLimitTwist() const override { return {}; }
+		void SetLimitSwing(const LimitConeRange& limit) override {}
+		LimitConeRange GetLimitSwing() const override { return {}; }
+		void SetDrive(D6JointDriveType type, const D6JointDrive& drive) override {}
+		D6JointDrive GetDrive(D6JointDriveType type) const override { return {}; }
+		Vector3 GetDrivePosition() const override { return Vector3::kZero; }
+		Quaternion GetDriveRotation() const override { return Quaternion::kIdentity; }
+		void SetDriveTransform(const Vector3& position, const Quaternion& rotation) override {}
+		Vector3 GetDriveLinearVelocity() const override { return Vector3::kZero; }
+		Vector3 GetDriveAngularVelocity() const override { return Vector3::kZero; }
+		void SetDriveVelocity(const Vector3& linear, const Vector3& angular) override {}
 	};
 
 	/** @} */

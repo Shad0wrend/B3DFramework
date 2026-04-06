@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DNullPhysicsPrerequisites.h"
-#include "Physics/B3DCharacterController.h"
+#include "Components/B3DCharacterController.h"
 
 namespace b3d
 {
@@ -11,39 +11,48 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** Null implementation if a CharacterController. */
-	class NullPhysicsCharacterController : public CharacterController
+	/** Null implementation of ICharacterControllerImplementation. */
+	class NullPhysicsCharacterController : public ICharacterControllerImplementation
 	{
 	public:
-		NullPhysicsCharacterController(const CHAR_CONTROLLER_DESC& desc);
-		~NullPhysicsCharacterController() = default;
+		NullPhysicsCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation);
+		~NullPhysicsCharacterController() override = default;
 
-		CharacterCollisionFlags Move(const Vector3& displacement) override;
-		Vector3 GetPosition() const override { return mDesc.Position; }
-		void SetPosition(const Vector3& position) override { mDesc.Position = position; }
-		Vector3 GetFootPosition() const override { return mDesc.Position; }
-		void SetFootPosition(const Vector3& position) override { mDesc.Position = position; }
-		float GetRadius() const override { return mDesc.Radius; }
-		void SetRadius(float radius) override { mDesc.Radius = radius; }
-		float GetHeight() const override { return mDesc.Height; }
-		void SetHeight(float height) override { mDesc.Height = height; }
-		Vector3 GetUp() const override { return mDesc.Up; }
-		void SetUp(const Vector3& up) override { mDesc.Up = up; }
-		CharacterClimbingMode GetClimbingMode() const override { return mDesc.ClimbingMode; }
-		void SetClimbingMode(CharacterClimbingMode mode) override { mDesc.ClimbingMode = mode; }
-		CharacterNonWalkableMode GetNonWalkableMode() const override { return mDesc.NonWalkableMode; }
-		void SetNonWalkableMode(CharacterNonWalkableMode mode) override { mDesc.NonWalkableMode = mode; }
-		float GetMinMoveDistance() const override { return mDesc.MinMoveDistance; }
-		void SetMinMoveDistance(float value) override { mDesc.MinMoveDistance = value; }
-		float GetContactOffset() const override { return mDesc.ContactOffset; }
-		void SetContactOffset(float value) override { mDesc.ContactOffset = value; }
-		float GetStepOffset() const override { return mDesc.StepOffset; }
-		void SetStepOffset(float value) override { mDesc.StepOffset = value; }
-		Radian GetSlopeLimit() const override { return mDesc.SlopeLimit; }
-		void SetSlopeLimit(Radian value) override { mDesc.SlopeLimit = value; }
+		CharacterCollisionFlags Move(const Vector3& displacement) override { return CharacterCollisionFlags(); }
+		Vector3 GetPosition() const override { return mPosition; }
+		void SetPosition(const Vector3& position) override { mPosition = position; }
+		Vector3 GetFootPosition() const override { return mPosition; }
+		void SetFootPosition(const Vector3& position) override { mPosition = position; }
+		float GetRadius() const override { return mRadius; }
+		void SetRadius(float radius) override { mRadius = radius; }
+		float GetHeight() const override { return mHeight; }
+		void SetHeight(float height) override { mHeight = height; }
+		Vector3 GetUp() const override { return mUp; }
+		void SetUp(const Vector3& up) override { mUp = up; }
+		CharacterClimbingMode GetClimbingMode() const override { return mClimbingMode; }
+		void SetClimbingMode(CharacterClimbingMode mode) override { mClimbingMode = mode; }
+		CharacterNonWalkableMode GetNonWalkableMode() const override { return mNonWalkableMode; }
+		void SetNonWalkableMode(CharacterNonWalkableMode mode) override { mNonWalkableMode = mode; }
+		float GetMinMoveDistance() const override { return mMinMoveDistance; }
+		void SetMinMoveDistance(float value) override { mMinMoveDistance = value; }
+		float GetContactOffset() const override { return mContactOffset; }
+		void SetContactOffset(float value) override { mContactOffset = value; }
+		float GetStepOffset() const override { return mStepOffset; }
+		void SetStepOffset(float value) override { mStepOffset = value; }
+		Radian GetSlopeLimit() const override { return mSlopeLimit; }
+		void SetSlopeLimit(Radian value) override { mSlopeLimit = value; }
 
 	private:
-		CHAR_CONTROLLER_DESC mDesc;
+		Vector3 mPosition = Vector3::kZero;
+		float mRadius = 0.0f;
+		float mHeight = 0.0f;
+		Vector3 mUp = Vector3::kUnitY;
+		CharacterClimbingMode mClimbingMode = CharacterClimbingMode::Normal;
+		CharacterNonWalkableMode mNonWalkableMode = CharacterNonWalkableMode::Prevent;
+		float mMinMoveDistance = 0.0f;
+		float mContactOffset = 0.0f;
+		float mStepOffset = 0.0f;
+		Radian mSlopeLimit = Radian(0.0f);
 	};
 
 	/** @} */

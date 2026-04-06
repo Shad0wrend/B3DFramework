@@ -18,7 +18,7 @@ namespace b3d
 		NullTextureManager() = default;
 		~NullTextureManager() = default;
 
-		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, TextureUsageFlags usage, bool hwGamma) override;
 
 	protected:
 		SPtr<RenderTexture> CreateRenderTextureImpl(const RenderTextureCreateInformation& createInformation) override;

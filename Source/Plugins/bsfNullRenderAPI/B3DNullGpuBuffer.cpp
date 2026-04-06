@@ -10,22 +10,17 @@ namespace b3d
 		NullGpuBuffer::NullGpuBuffer(NullGpuDevice& device, const GpuBufferCreateInformation& createInformation)
 			: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device))
 		{
-			// Allocate a dummy staging buffer for map/unmap operations
-			mStagingBuffer = B3DAllocate(mTotalSize);
+			// Allocate a dummy buffer for persistently mapped memory
+			mMappedMemory = B3DAllocate(mTotalSize);
 		}
 
 		NullGpuBuffer::~NullGpuBuffer()
 		{
-			if (mStagingBuffer)
-				B3DFree(mStagingBuffer);
-		}
-
-		void* NullGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
-		{
-			if (mStagingBuffer)
-				return static_cast<u8*>(mStagingBuffer) + offset;
-
-			return nullptr;
+			if (mMappedMemory)
+			{
+				B3DFree(mMappedMemory);
+				mMappedMemory = nullptr;
+			}
 		}
 	} // namespace render
 } // namespace b3d

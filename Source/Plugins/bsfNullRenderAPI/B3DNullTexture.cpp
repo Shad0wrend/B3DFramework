@@ -44,14 +44,5 @@ namespace b3d
 			);
 		}
 
-		TAsyncOp<SPtr<PixelData>> NullTexture::ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel, u32 face)
-		{
-			auto pixelData = B3DMakeShared<PixelData>(mProperties.Width, mProperties.Height, mProperties.Depth, mProperties.Format);
-
-			TAsyncOp<SPtr<PixelData>> asyncOp;
-			asyncOp.CompleteOperation(pixelData);
-
-			return asyncOp;
-		}
 	} // namespace render
 } // namespace b3d
