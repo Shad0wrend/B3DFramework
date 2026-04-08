@@ -313,7 +313,7 @@ namespace b3d
 			 *									As a side-effect, per-view visibility data is also calculated and can be
 			 *									retrieved by calling GetVisibilityMasks().
 			 */
-			void DetermineVisible(const Vector<RenderableRenderState*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
+			void DetermineVisible(const TChunkedArray<RenderableRenderState*>& renderables, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
 
 			/**
 			 * Populates view render queues by determining visible particle systems.
@@ -329,7 +329,7 @@ namespace b3d
 			 *									As a side-effect, per-view visibility data is also calculated and can be
 			 *									retrieved by calling GetVisibilityMasks().
 			 */
-			void DetermineVisible(const Vector<ParticleRenderState>& particleSystems, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
+			void DetermineVisible(const TChunkedArray<ParticleRenderState>& particleSystems, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
 
 			/**
 			 * Populates view render queues by determining visible decals.
@@ -345,7 +345,7 @@ namespace b3d
 			 *									As a side-effect, per-view visibility data is also calculated and can be
 			 *									retrieved by calling GetVisibilityMasks().
 			 */
-			void DetermineVisible(const Vector<DecalRenderState>& decals, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
+			void DetermineVisible(const TChunkedArray<DecalRenderState>& decals, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility = nullptr);
 
 			/**
 			 * Calculates the visibility masks for all the lights of the provided type.
@@ -366,13 +366,19 @@ namespace b3d
 			 * Culls the provided set of bounds against the current frustum and outputs a set of visibility flags determining
 			 * which entry is or isn't visible by this view. Both inputs must be arrays of the same size.
 			 */
-			void CalculateVisibility(const Vector<CullInfo>& cullInfos, Vector<bool>& visibility) const;
+			void CalculateVisibility(TArrayView<const CullInfo> cullInfos, Vector<bool>& visibility) const;
+
+			/** @copydoc CalculateVisibility(TArrayView<const CullInfo>, Vector<bool>&) const */
+			void CalculateVisibility(const TChunkedArray<CullInfo>& cullInfos, Vector<bool>& visibility) const;
 
 			/**
 			 * Culls the provided set of bounds against the current frustum and outputs a set of visibility flags determining
 			 * which entry is or isn't visible by this view. Both inputs must be arrays of the same size.
 			 */
 			void CalculateVisibility(TArrayView<const Sphere> bounds, Vector<bool>& visibility) const;
+
+			/** @copydoc CalculateVisibility(TArrayView<const Sphere>, Vector<bool>&) const */
+			void CalculateVisibility(const TChunkedArray<Sphere>& bounds, Vector<bool>& visibility) const;
 
 			/**
 			 * Culls the provided set of bounds against the current frustum and outputs a set of visibility flags determining

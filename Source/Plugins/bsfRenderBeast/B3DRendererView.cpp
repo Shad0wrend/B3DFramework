@@ -397,7 +397,7 @@ void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<GpuCommandBuffer> c
 	mLuminanceUpdates.emplace_back(frameIdx, std::move(readbackAsyncOp), std::move(texture));
 }
 
-void RendererView::DetermineVisible(const Vector<RenderableRenderState*>& renderables, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility)
+void RendererView::DetermineVisible(const TChunkedArray<RenderableRenderState*>& renderables, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility)
 {
 	mVisibility.Renderables.clear();
 	mVisibility.Renderables.resize(renderables.size(), false);
@@ -418,7 +418,7 @@ void RendererView::DetermineVisible(const Vector<RenderableRenderState*>& render
 	}
 }
 
-void RendererView::DetermineVisible(const Vector<ParticleRenderState>& particleSystems, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility)
+void RendererView::DetermineVisible(const TChunkedArray<ParticleRenderState>& particleSystems, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility)
 {
 	mVisibility.ParticleSystems.clear();
 	mVisibility.ParticleSystems.resize(particleSystems.size(), false);
@@ -439,7 +439,7 @@ void RendererView::DetermineVisible(const Vector<ParticleRenderState>& particleS
 	}
 }
 
-void RendererView::DetermineVisible(const Vector<DecalRenderState>& decals, const Vector<CullInfo>& cullInfos, Vector<bool>* visibility)
+void RendererView::DetermineVisible(const TChunkedArray<DecalRenderState>& decals, const TChunkedArray<CullInfo>& cullInfos, Vector<bool>* visibility)
 {
 	mVisibility.Decals.clear();
 	mVisibility.Decals.resize(decals.size(), false);
@@ -505,12 +505,13 @@ void RendererView::DetermineVisible(TArrayView<const Sphere> bounds, LightType l
 	}
 }
 
-void RendererView::CalculateVisibility(const Vector<CullInfo>& cullInfos, Vector<bool>& visibility) const
+template<typename CullInfoContainer>
+static void CalculateVisibilityCullInfo(const RendererViewProperties& properties, const RenderSettings& renderSettings, const CullInfoContainer& cullInfos, Vector<bool>& visibility)
 {
-	u64 cameraLayers = mProperties.VisibleLayers;
-	const ConvexVolume& worldFrustum = mProperties.CullFrustum;
-	const Vector3& worldCameraPosition = mProperties.ViewOrigin;
-	float baseCullDistance = mRenderSettings->CullDistance;
+	u64 cameraLayers = properties.VisibleLayers;
+	const ConvexVolume& worldFrustum = properties.CullFrustum;
+	const Vector3& worldCameraPosition = properties.ViewOrigin;
+	float baseCullDistance = renderSettings.CullDistance;
 
 	for(u32 i = 0; i < (u32)cullInfos.size(); i++)
 	{
@@ -542,15 +543,34 @@ void RendererView::CalculateVisibility(const Vector<CullInfo>& cullInfos, Vector
 	}
 }
 
-void RendererView::CalculateVisibility(TArrayView<const Sphere> bounds, Vector<bool>& visibility) const
+void RendererView::CalculateVisibility(TArrayView<const CullInfo> cullInfos, Vector<bool>& visibility) const
 {
-	const ConvexVolume& worldFrustum = mProperties.CullFrustum;
+	CalculateVisibilityCullInfo(mProperties, *mRenderSettings, cullInfos, visibility);
+}
 
+void RendererView::CalculateVisibility(const TChunkedArray<CullInfo>& cullInfos, Vector<bool>& visibility) const
+{
+	CalculateVisibilityCullInfo(mProperties, *mRenderSettings, cullInfos, visibility);
+}
+
+template<typename SphereContainer>
+static void CalculateVisibilitySphere(const ConvexVolume& worldFrustum, const SphereContainer& bounds, Vector<bool>& visibility)
+{
 	for(u32 i = 0; i < (u32)bounds.size(); i++)
 	{
 		if(worldFrustum.Intersects(bounds[i]))
 			visibility[i] = true;
 	}
+}
+
+void RendererView::CalculateVisibility(TArrayView<const Sphere> bounds, Vector<bool>& visibility) const
+{
+	CalculateVisibilitySphere(mProperties.CullFrustum, bounds, visibility);
+}
+
+void RendererView::CalculateVisibility(const TChunkedArray<Sphere>& bounds, Vector<bool>& visibility) const
+{
+	CalculateVisibilitySphere(mProperties.CullFrustum, bounds, visibility);
 }
 
 void RendererView::CalculateVisibility(const Vector<AABox>& bounds, Vector<bool>& visibility) const

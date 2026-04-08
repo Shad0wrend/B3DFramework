@@ -406,7 +406,7 @@ namespace b3d
 		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
 
 	protected:
-		Vector<render::RenderableProxy> mRenderableProxies;
+		TChunkedArray<render::RenderableProxy> mRenderableProxies;
 	};
 
 	/** @} */

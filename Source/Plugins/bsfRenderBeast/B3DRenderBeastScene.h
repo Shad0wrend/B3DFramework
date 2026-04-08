@@ -75,23 +75,23 @@ namespace b3d
 			void PrepareVisibleRenderable(PackedRendererId id, const FrameInfo& frameInfo);
 
 			/** Returns the packed renderable array. */
-			Vector<RenderableRenderState*>& GetRenderables() { return mRenderables; }
+			TChunkedArray<RenderableRenderState*>& GetRenderables() { return mRenderables; }
 
 			/** @copydoc GetRenderables */
-			const Vector<RenderableRenderState*>& GetRenderables() const { return mRenderables; }
+			const TChunkedArray<RenderableRenderState*>& GetRenderables() const { return mRenderables; }
 
 			/** Returns the packed cull info array. */
-			Vector<CullInfo>& GetRenderableCullInfos() { return mRenderableCullInfos; }
+			TChunkedArray<CullInfo>& GetRenderableCullInfos() { return mRenderableCullInfos; }
 
 			/** @copydoc GetRenderableCullInfos */
-			const Vector<CullInfo>& GetRenderableCullInfos() const { return mRenderableCullInfos; }
+			const TChunkedArray<CullInfo>& GetRenderableCullInfos() const { return mRenderableCullInfos; }
 
 			/** Sets the owning RenderBeastScene. Called by RenderBeastScene::Initialize(). */
 			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
 
 		private:
-			Vector<RenderableRenderState*> mRenderables;
-			Vector<CullInfo> mRenderableCullInfos;
+			TChunkedArray<RenderableRenderState*> mRenderables;
+			TChunkedArray<CullInfo> mRenderableCullInfos;
 
 			RenderBeastScene* mRenderBeastScene = nullptr;
 		};
@@ -135,7 +135,7 @@ namespace b3d
 			Vector<PackedRendererId> mDirectionalLightIds;
 			Vector<PackedRendererId> mRadialLightIds;
 			Vector<PackedRendererId> mSpotLightIds;
-			Vector<LightRenderState> mLightRenderStates;
+			TChunkedArray<LightRenderState> mLightRenderStates;
 		};
 
 		/**
@@ -159,23 +159,23 @@ namespace b3d
 			const DecalRenderState& GetDecalRenderState(PackedRendererId packedId) const { return mDecals[packedId]; }
 
 			/** Returns the packed decal render state array. */
-			Vector<DecalRenderState>& GetDecals() { return mDecals; }
+			TChunkedArray<DecalRenderState>& GetDecals() { return mDecals; }
 
 			/** @copydoc GetDecals */
-			const Vector<DecalRenderState>& GetDecals() const { return mDecals; }
+			const TChunkedArray<DecalRenderState>& GetDecals() const { return mDecals; }
 
 			/** Returns the packed cull info array. */
-			Vector<CullInfo>& GetDecalCullInfos() { return mDecalCullInfos; }
+			TChunkedArray<CullInfo>& GetDecalCullInfos() { return mDecalCullInfos; }
 
 			/** @copydoc GetDecalCullInfos */
-			const Vector<CullInfo>& GetDecalCullInfos() const { return mDecalCullInfos; }
+			const TChunkedArray<CullInfo>& GetDecalCullInfos() const { return mDecalCullInfos; }
 
 			/** Sets the owning RenderBeastScene. Called by RenderBeastScene::Initialize(). */
 			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
 
 		private:
-			Vector<DecalRenderState> mDecals;
-			Vector<CullInfo> mDecalCullInfos;
+			TChunkedArray<DecalRenderState> mDecals;
+			TChunkedArray<CullInfo> mDecalCullInfos;
 
 			RenderBeastScene* mRenderBeastScene = nullptr;
 		};
@@ -201,19 +201,19 @@ namespace b3d
 			const ParticleRenderState& GetParticleRenderState(PackedRendererId packedId) const { return mParticleRenderStates[packedId]; }
 
 			/** Returns the packed particle render state array. */
-			Vector<ParticleRenderState>& GetParticleRenderStates() { return mParticleRenderStates; }
+			TChunkedArray<ParticleRenderState>& GetParticleRenderStates() { return mParticleRenderStates; }
 
 			/** @copydoc GetParticleRenderStates */
-			const Vector<ParticleRenderState>& GetParticleRenderStates() const { return mParticleRenderStates; }
+			const TChunkedArray<ParticleRenderState>& GetParticleRenderStates() const { return mParticleRenderStates; }
 
 			/** Returns particle system cull info at the provided index. Valid index is range [0, GetParticleSystemCount()). */
 			const CullInfo& GetParticleSystemCullInfo(PackedRendererId packedId) const { return mParticleSystemCullInfos[packedId]; }
 
 			/** Returns the packed cull info array. */
-			Vector<CullInfo>& GetParticleSystemCullInfos() { return mParticleSystemCullInfos; }
+			TChunkedArray<CullInfo>& GetParticleSystemCullInfos() { return mParticleSystemCullInfos; }
 
 			/** @copydoc GetParticleSystemCullInfos */
-			const Vector<CullInfo>& GetParticleSystemCullInfos() const { return mParticleSystemCullInfos; }
+			const TChunkedArray<CullInfo>& GetParticleSystemCullInfos() const { return mParticleSystemCullInfos; }
 
 			/** Returns packed IDs of all GPU-simulated particle systems. */
 			const Vector<PackedRendererId>& GetGpuSimulatedIds() const { return mGpuSimulatedIds; }
@@ -222,8 +222,8 @@ namespace b3d
 			void SetScene(RenderBeastScene& scene) { mRenderBeastScene = &scene; }
 
 		private:
-			Vector<ParticleRenderState> mParticleRenderStates;
-			Vector<CullInfo> mParticleSystemCullInfos;
+			TChunkedArray<ParticleRenderState> mParticleRenderStates;
+			TChunkedArray<CullInfo> mParticleSystemCullInfos;
 			Vector<PackedRendererId> mGpuSimulatedIds;
 
 			RenderBeastScene* mRenderBeastScene = nullptr;
@@ -244,13 +244,13 @@ namespace b3d
 			void OnFilteredTextureUpdated(PackedRendererId slotId) override;
 
 			/** Returns the reflection probe render states. */
-			const Vector<ReflectionProbeRenderState>& GetReflectionProbeRenderStates() const { return mReflectionProbeRenderStates; }
+			const TChunkedArray<ReflectionProbeRenderState>& GetReflectionProbeRenderStates() const { return mReflectionProbeRenderStates; }
 
 			/** Returns the render state at the given packed ID. */
 			const ReflectionProbeRenderState& GetReflectionProbeRenderState(PackedRendererId packedId) const { return mReflectionProbeRenderStates[packedId]; }
 
 			/** Returns the world space bounds of all reflection probes. */
-			const Vector<Sphere>& GetReflProbeWorldBounds() const { return mReflProbeWorldBounds; }
+			const TChunkedArray<Sphere>& GetReflProbeWorldBounds() const { return mReflProbeWorldBounds; }
 
 			/** Returns the cubemap array texture containing all reflection probe cubemaps. */
 			const SPtr<Texture>& GetReflProbeCubemapsTex() const { return mReflProbeCubemapsTex; }
@@ -268,8 +268,8 @@ namespace b3d
 			void SetGpuDevice(const SPtr<GpuDevice>& gpuDevice) { mGpuDevice = gpuDevice; }
 
 		private:
-			Vector<ReflectionProbeRenderState> mReflectionProbeRenderStates;
-			Vector<Sphere> mReflProbeWorldBounds;
+			TChunkedArray<ReflectionProbeRenderState> mReflectionProbeRenderStates;
+			TChunkedArray<Sphere> mReflProbeWorldBounds;
 			Vector<bool> mReflProbeCubemapArrayUsedSlots;
 			SPtr<Texture> mReflProbeCubemapsTex;
 			SPtr<GpuDevice> mGpuDevice;
@@ -367,8 +367,8 @@ namespace b3d
 			u32 GetRenderableCount() const { return GetRenderableStorage().GetRenderableCount(); }
 			RenderableRenderState* GetRenderable(u32 index) const { return GetRenderableStorage().GetRenderable(index); }
 			const CullInfo& GetRenderableCullInfo(u32 index) const { return GetRenderableStorage().GetRenderableCullInfo(index); }
-			const Vector<RenderableRenderState*>& GetRenderables() const { return GetRenderableStorage().GetRenderables(); }
-			const Vector<CullInfo>& GetRenderableCullInfos() const { return GetRenderableStorage().GetRenderableCullInfos(); }
+			const TChunkedArray<RenderableRenderState*>& GetRenderables() const { return GetRenderableStorage().GetRenderables(); }
+			const TChunkedArray<CullInfo>& GetRenderableCullInfos() const { return GetRenderableStorage().GetRenderableCullInfos(); }
 			/** @} */
 
 			/**
@@ -391,8 +391,8 @@ namespace b3d
 			u32 GetDecalCount() const { return (u32)GetDecalStorage().GetDecals().size(); }
 			const DecalRenderState& GetDecalRenderState(u32 index) const { return GetDecalStorage().GetDecals()[index]; }
 			const CullInfo& GetDecalCullInfo(u32 index) const { return GetDecalStorage().GetDecalCullInfos()[index]; }
-			const Vector<DecalRenderState>& GetDecals() const { return GetDecalStorage().GetDecals(); }
-			const Vector<CullInfo>& GetDecalCullInfos() const { return GetDecalStorage().GetDecalCullInfos(); }
+			const TChunkedArray<DecalRenderState>& GetDecals() const { return GetDecalStorage().GetDecals(); }
+			const TChunkedArray<CullInfo>& GetDecalCullInfos() const { return GetDecalStorage().GetDecalCullInfos(); }
 			/** @} */
 
 			/**
@@ -403,8 +403,8 @@ namespace b3d
 			const render::ParticleSystemProxy& GetParticleSystemProxy(PackedRendererId packedId) const { return GetParticleSystemStorage().GetParticleSystemProxy(packedId); }
 			const ParticleRenderState& GetParticleRenderState(u32 index) const { return GetParticleSystemStorage().GetParticleRenderState(index); }
 			const CullInfo& GetParticleSystemCullInfo(u32 index) const { return GetParticleSystemStorage().GetParticleSystemCullInfo(index); }
-			const Vector<ParticleRenderState>& GetParticleRenderStates() const { return GetParticleSystemStorage().GetParticleRenderStates(); }
-			const Vector<CullInfo>& GetParticleSystemCullInfos() const { return GetParticleSystemStorage().GetParticleSystemCullInfos(); }
+			const TChunkedArray<ParticleRenderState>& GetParticleRenderStates() const { return GetParticleSystemStorage().GetParticleRenderStates(); }
+			const TChunkedArray<CullInfo>& GetParticleSystemCullInfos() const { return GetParticleSystemStorage().GetParticleSystemCullInfos(); }
 			/** @} */
 
 			/**
@@ -414,8 +414,8 @@ namespace b3d
 			u32 GetReflectionProbeCount() const { return GetReflectionProbeStorage().GetReflectionProbeCount(); }
 			const render::ReflectionProbeProxy& GetReflectionProbeProxy(PackedRendererId packedId) const { return GetReflectionProbeStorage().GetReflectionProbeProxy(packedId); }
 			const ReflectionProbeRenderState& GetReflectionProbeRenderState(PackedRendererId packedId) const { return GetReflectionProbeStorage().GetReflectionProbeRenderState(packedId); }
-			const Vector<ReflectionProbeRenderState>& GetReflectionProbes() const { return GetReflectionProbeStorage().GetReflectionProbeRenderStates(); }
-			const Vector<Sphere>& GetReflectionProbeWorldBounds() const { return GetReflectionProbeStorage().GetReflProbeWorldBounds(); }
+			const TChunkedArray<ReflectionProbeRenderState>& GetReflectionProbes() const { return GetReflectionProbeStorage().GetReflectionProbeRenderStates(); }
+			const TChunkedArray<Sphere>& GetReflectionProbeWorldBounds() const { return GetReflectionProbeStorage().GetReflProbeWorldBounds(); }
 			const SPtr<Texture>& GetReflectionProbeCubemapsTex() const { return GetReflectionProbeStorage().GetReflProbeCubemapsTex(); }
 			/** @} */
 

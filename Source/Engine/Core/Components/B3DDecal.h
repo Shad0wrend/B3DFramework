@@ -270,7 +270,7 @@ namespace b3d
 		virtual void UpdateRenderState(TArrayView<const PackedRendererId> slotIds) = 0;
 
 	protected:
-		Vector<render::DecalProxy> mDecalProxies;
+		TChunkedArray<render::DecalProxy> mDecalProxies;
 	};
 
 	/** @} */

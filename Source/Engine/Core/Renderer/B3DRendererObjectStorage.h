@@ -6,6 +6,7 @@
 #include "Allocators/B3DFrameAllocator.h"
 #include "Renderer/B3DRendererId.h"
 #include "Renderer/B3DRendererSyncManager.h"
+#include "Utility/B3DTChunkedArray.h"
 
 namespace b3d::ecs
 {
@@ -169,8 +170,8 @@ namespace b3d
 		TArray<RendererId> mDeallocations; /**< Deallocations this frame, not yet flushed. */
 
 		// Render thread
-		Vector<RendererId> mPersistentToPackedId; /**< RendererId -> PackedRendererId. */
-		Vector<RendererId> mPackedToPersistentId; /**< PackedRendererId -> RendererId. */
+		TChunkedArray<RendererId> mPersistentToPackedId; /**< RendererId -> PackedRendererId. */
+		TChunkedArray<RendererId> mPackedToPersistentId; /**< PackedRendererId -> RendererId. */
 	};
 
 	template<typename SwappedFn, typename DestroyFn, typename... Arrays>

@@ -328,7 +328,7 @@ namespace b3d
 		virtual void OnFilteredTextureUpdated(PackedRendererId slotId) {}
 
 	protected:
-		Vector<render::ReflectionProbeProxy> mReflectionProbeProxies;
+		TChunkedArray<render::ReflectionProbeProxy> mReflectionProbeProxies;
 	};
 
 	/** @} */
