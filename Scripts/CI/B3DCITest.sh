@@ -62,6 +62,7 @@ SNAPSHOT_TESTS=(
 	"PhysicallyBasedShading"
 	"SkeletalAnimation"
 	"VectorGraphics"
+	"NullBackends"
 )
 
 for TEST_NAME in "${SNAPSHOT_TESTS[@]}"; do
