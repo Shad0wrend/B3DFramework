@@ -215,7 +215,7 @@ void SchedulerThread::Stop()
 	{
 		case Mode::Internal:
 		{
-			Enqueue(SchedulerTask([this] { mIsShutdownRequested = true; }, SchedulerTaskFlag::SameThread));
+			Enqueue(SchedulerTask([this] { mIsShutdownRequested = true; }, "Scheduler thread stop", SchedulerTaskFlag::SameThread));
 			mThread.WaitUntilComplete();
 			break;
 		}
@@ -531,6 +531,9 @@ void SchedulerThread::RunUntilIdle()
 			B3D_ASSERT(fiber->mState == Fiber::State::Queued);
 
 			mCurrentFiber->mState = Fiber::State::Idle;
+#if B3D_BUILD_TYPE_DEVELOPMENT
+			mCurrentFiber->mActiveTaskName = nullptr;
+#endif
 
 			auto added = mFreeFibers.emplace(mCurrentFiber).second;
 			(void)added;
@@ -546,6 +549,9 @@ void SchedulerThread::RunUntilIdle()
 			auto task = take(mPendingTasks);
 			mMutex.unlock();
 
+#if B3D_BUILD_TYPE_DEVELOPMENT
+			mCurrentFiber->mActiveTaskName = task.GetName();
+#endif
 			task();
 
 			// std::function<> can carry arguments with complex destructors.

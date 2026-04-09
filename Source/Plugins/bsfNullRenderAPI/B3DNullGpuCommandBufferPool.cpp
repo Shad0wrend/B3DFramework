@@ -12,6 +12,11 @@ namespace b3d
 			: Base(device, createInformation)
 		{ }
 
+		NullGpuCommandBufferPool::~NullGpuCommandBufferPool()
+		{
+			NullGpuCommandBufferPool::Destroy();
+		}
+
 		SPtr<GpuCommandBuffer> NullGpuCommandBufferPool::Create(const GpuCommandBufferCreateInformation& createInformation)
 		{
 			const u32 id = mNextCommandBufferId++;
@@ -26,6 +31,16 @@ namespace b3d
 		{
 			// For simplicity, always create a new one
 			return Create(createInformation);
+		}
+
+		void NullGpuCommandBufferPool::Destroy()
+		{
+			if(mIsDestroyed)
+				return;
+
+			GetMessageQueue().PostRequestShutdownCommand(true);
+			mCommandBuffers.clear();
+			Base::Destroy();
 		}
 	} // namespace render
 } // namespace b3d

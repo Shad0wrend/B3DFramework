@@ -223,7 +223,12 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 		};
 
 		CrossCompilePassOutput crossCompilePassOutput;
-		if(language == ShadingLanguageFlag::HLSL)
+		if(language == ShadingLanguageFlag::NullSL)
+		{
+			// Null backend: no compilation needed, leave all ProgramCodePerType entries as empty strings.
+			// The null GPU device accepts empty source and produces empty bytecode.
+		}
+		else if(language == ShadingLanguageFlag::HLSL)
 		{
 			// Clean non-standard HLSL
 			// Note: Ideally we add a full HLSL output module to XShaderCompiler, instead of using simple regex. This

@@ -27,7 +27,9 @@ namespace b3d
 		VKSL = 1 << 2,
 		/** Metal shading language. */
 		MSL = 1 << 3,
-		Count = 4,
+		/** Null shading language for the null render backend. Produces no actual shader code. */
+		NullSL = 1 << 4,
+		Count = 5,
 		/** Helper entry that includes all languages. */
 		All = HLSL | GLSL | VKSL | MSL
 	};

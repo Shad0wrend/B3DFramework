@@ -26,7 +26,7 @@ void SchedulerTicket::DoWhenCalled(Function<void()>&& callback) const
 	Lock lock(mData->SharedData->Mutex);
 	if(mData->IsCalled)
 	{
-		mData->SharedData->Scheduler->Post(SchedulerTask(std::move(callback)));
+		mData->SharedData->Scheduler->Post(SchedulerTask(std::move(callback), "SchedulerTicket callback"));
 		return;
 	}
 

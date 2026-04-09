@@ -107,7 +107,7 @@ void RenderWindowManager::RequestShowWindow(u32 windowId, bool show)
 		fnShowWindow();
 	else
 	{
-		GetApplication().GetMainThreadScheduler().Post(SchedulerTask(std::move(fnShowWindow)));
+		GetApplication().GetMainThreadScheduler().Post(SchedulerTask(std::move(fnShowWindow), "Show render window"));
 
 		// Make sure to wait for the message to be processed by the main thread, because if we present an image onto a hidden window it will get lost (at least on Win32).
 		event.Wait();

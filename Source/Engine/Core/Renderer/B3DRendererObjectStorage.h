@@ -187,8 +187,8 @@ namespace b3d
 				const RendererId objectId = commands.DeallocatedIds[commandIndex];
 				const u32 identifier = objectId.GetIdentifier();
 
-				B3D_ASSERT(identifier < (u32)mSparseSlots.size());
-				B3D_ASSERT(mSparseSlots[identifier].GetVersion() == objectId.GetVersion());
+				B3D_ASSERT(identifier < (u32)mPersistentToPackedId.size());
+				B3D_ASSERT(mPersistentToPackedId[identifier].GetVersion() == objectId.GetVersion());
 
 				const PackedRendererId slotToRemove = (PackedRendererId)mPersistentToPackedId[identifier].GetIdentifier();
 

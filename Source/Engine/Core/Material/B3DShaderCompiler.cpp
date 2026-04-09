@@ -168,6 +168,9 @@ ShadingLanguageFlag ShaderCompilers::ParseShadingLanguage(const String& name)
 	if(name == "mvksl")
 		return ShadingLanguageFlag::MSL;
 
+	if(name == "nullsl")
+		return ShadingLanguageFlag::NullSL;
+
 	return ShadingLanguageFlag::Unknown;
 }
 
@@ -179,6 +182,7 @@ const char* ShaderCompilers::GetShadingLanguageName(ShadingLanguageFlag language
 	case ShadingLanguageFlag::GLSL: return "glsl";
 	case ShadingLanguageFlag::VKSL: return "vksl";
 	case ShadingLanguageFlag::MSL: return "mvksl";
+	case ShadingLanguageFlag::NullSL: return "nullsl";
 	default: return "";
 	}
 }

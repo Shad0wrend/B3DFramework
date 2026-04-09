@@ -71,7 +71,7 @@ void SingleConsumerQueue::ScheduleRunUntilShutdown(Scheduler& scheduler, bool ru
 			// If timeout reached, re-schedule itself. This lets other tasks on the scheduler thread to have a go, as the new task will be put at the back of the queue.
 			if (isTimeoutReached)
 			{
-				scheduler.Post(SchedulerTask([run]() { run(run); }, SchedulerTaskFlag::SameThread));
+				scheduler.Post(SchedulerTask([run]() { run(run); }, "SingleConsumerQueue re-schedule due timeout", SchedulerTaskFlag::SameThread));
 				return;
 			}
 
@@ -83,9 +83,9 @@ void SingleConsumerQueue::ScheduleRunUntilShutdown(Scheduler& scheduler, bool ru
 	};
 
 	if(runOnCallingThread)
-		scheduler.Post(SchedulerTask([fnRun] { fnRun(fnRun); }, SchedulerTaskFlag::SameThread));
+		scheduler.Post(SchedulerTask([fnRun] { fnRun(fnRun); }, "SingleConsumerQueue run on same thread", SchedulerTaskFlag::SameThread));
 	else
-		scheduler.Post(SchedulerTask([fnRun] { fnRun(fnRun);  }));
+		scheduler.Post(SchedulerTask([fnRun] { fnRun(fnRun); }, "SingleConsumerQueue run"));
 
 	if(blockUntilDone)
 		isDone->Wait();

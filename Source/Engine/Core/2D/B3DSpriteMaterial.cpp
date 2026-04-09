@@ -22,10 +22,10 @@ SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariatio
 	findVariationInformation.VariationParameters = &variation;
 
 	variation.SetBool("ENABLE_CLIPPING", true);
-	mWithClippingVariationIndex = mMaterial->FindVariation(findVariationInformation);
+	mWithClippingVariationIndex = material->FindVariation(findVariationInformation);
 
 	variation.SetBool("ENABLE_CLIPPING", false);
-	mWithoutClippingVariationIndex = mMaterial->FindVariation(findVariationInformation);
+	mWithoutClippingVariationIndex = material->FindVariation(findVariationInformation);
 
 	mMaterialStored.store(true, std::memory_order_release);
 

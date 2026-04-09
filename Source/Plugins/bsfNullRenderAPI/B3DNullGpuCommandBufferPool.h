@@ -21,12 +21,12 @@ namespace b3d
 			using Base = GpuCommandBufferPool;
 		public:
 			NullGpuCommandBufferPool(NullGpuDevice& device, const GpuCommandBufferPoolCreateInformation& createInformation);
-			~NullGpuCommandBufferPool() override = default;
+			~NullGpuCommandBufferPool() override;
 
 			SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) override;
 			SPtr<GpuCommandBuffer> FindOrCreate(const GpuCommandBufferCreateInformation& createInformation) override;
 			void Reset() override {}
-			void Destroy() override {}
+			void Destroy() override;
 
 		private:
 			u32 mNextCommandBufferId = 1;

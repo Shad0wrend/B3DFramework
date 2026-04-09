@@ -36,8 +36,8 @@ namespace b3d
 	{
 	public:
 		SchedulerTask() = default;
-		SchedulerTask(const SchedulerTask& other): mWorkerFunction(other.mWorkerFunction), mFlags(other.mFlags) { }
-		SchedulerTask(SchedulerTask&& other): mWorkerFunction(std::move(other.mWorkerFunction)), mFlags(other.mFlags) { }
+		SchedulerTask(const SchedulerTask& other): mName(other.mName), mWorkerFunction(other.mWorkerFunction), mFlags(other.mFlags) { }
+		SchedulerTask(SchedulerTask&& other): mName(other.mName), mWorkerFunction(std::move(other.mWorkerFunction)), mFlags(other.mFlags) { }
 		SchedulerTask(const Function<void()>& workerFunction, const char* name, SchedulerTaskFlags flags = SchedulerTaskFlag::None, const String& extraInformation = StringUtility::kBlank)
 			: mName(name), mWorkerFunction(workerFunction), mFlags(flags), mExtraInformation(extraInformation)
 		{ }
@@ -48,6 +48,7 @@ namespace b3d
 
 		SchedulerTask& operator=(const SchedulerTask& other)
 		{
+			mName = other.mName;
 			mWorkerFunction = other.mWorkerFunction;
 			mFlags = other.mFlags;
 
@@ -59,8 +60,9 @@ namespace b3d
 			if (this == &other)
 				return *this;
 
-			std::exchange(mWorkerFunction, other.mWorkerFunction);
-			std::exchange(mFlags, other.mFlags);
+			mName = std::exchange(other.mName, nullptr);
+			mWorkerFunction = std::exchange(other.mWorkerFunction, {});
+			mFlags = std::exchange(other.mFlags, {});
 
 			return *this;
 		}
@@ -89,6 +91,9 @@ namespace b3d
 
 		/** Returns the flags the task was created with. */
 		SchedulerTaskFlags GetFlags() const { return mFlags; }
+
+		/** Returns the debug name of the task. */
+		const char* GetName() const { return mName; }
 
 	private:
 		const char* mName = nullptr;
@@ -205,6 +210,9 @@ namespace b3d
 		const SPtr<marl::OSFiber> mOSFiber;
 		SchedulerThread* const mOwningThread;
 		State mState = State::Running;
+#if B3D_BUILD_TYPE_DEVELOPMENT
+		const char* mActiveTaskName = nullptr; /**< Name of the task currently being executed by this fiber, for debugging. */
+#endif
 	};
 
 	class Scheduler;

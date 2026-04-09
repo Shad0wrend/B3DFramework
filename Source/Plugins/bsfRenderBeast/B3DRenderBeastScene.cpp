@@ -187,8 +187,8 @@ void RenderableObjectStorage::CreateRenderState(TArrayView<const PackedRendererI
 
 		proxy.SetRendererId(renderableId);
 
-		B3D_ASSERT(packedId < (PackedRendererId)mRenderables.size());
-		B3D_ASSERT(mRenderables[packedId] == nullptr);
+		B3D_ASSERT(renderableId < (PackedRendererId)mRenderables.size());
+		B3D_ASSERT(mRenderables[renderableId] == nullptr);
 
 		mRenderables[renderableId] = B3DNew<RenderableRenderState>();
 		mRenderableCullInfos[renderableId] = CullInfo(proxy.GetBounds(), proxy.GetLayer(), proxy.GetCullDistanceFactor());

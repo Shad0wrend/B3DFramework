@@ -17,6 +17,7 @@
 #include "B3DNullEventQuery.h"
 #include "B3DNullGpuQueryPool.h"
 #include "RenderAPI/B3DVideoModeInfo.h"
+#include "RenderAPI/B3DGpuTransferBufferHelper.h"
 #include "Math/B3DMatrix4.h"
 
 namespace b3d
@@ -28,7 +29,10 @@ namespace b3d
 			mVideoModeInfo = B3DMakeShared<VideoModeInfo>();
 		}
 
-		NullGpuDevice::~NullGpuDevice() = default;
+		NullGpuDevice::~NullGpuDevice()
+		{
+			mTransferBufferHelper.reset();
+		}
 
 		bool NullGpuDevice::Initialize()
 		{
@@ -44,6 +48,8 @@ namespace b3d
 
 			// Initialize capabilities with reasonable defaults for a null backend
 			InitializeCapabilities();
+
+			mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this, GpuQueueId(GQT_GRAPHICS, 0));
 
 			mIsInitialized = true;
 			return true;
