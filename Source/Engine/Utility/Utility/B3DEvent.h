@@ -305,8 +305,10 @@ namespace b3d
 
 	public:
 		TEvent()
-			: mControlBlock(B3DMakeShared2<ControlBlockType, Policy>())
-		{}
+		{
+			if constexpr(Policy == ThreadSafe)
+				mControlBlock = B3DMakeShared2<ControlBlockType, Policy>();
+		}
 
 		~TEvent()
 		{
@@ -316,6 +318,9 @@ namespace b3d
 		/** Register a new callback that will get notified once the event is triggered. */
 		THEvent<Policy> Connect(std::function<ReturnType(ArgumentType...)> callback)
 		{
+			if(!mControlBlock)
+				mControlBlock = B3DMakeShared2<ControlBlockType, Policy>();
+
 			LockType lock(mControlBlock->Mutex);
 
 			TEventConnection* connection = nullptr;
@@ -357,8 +362,8 @@ namespace b3d
 		/** Trigger the event, notifying all register callback methods. */
 		void operator()(ArgumentType... arguments)
 		{
-			// Fast path: skip when no connections exist.
-			if(mControlBlock->ActiveConnections == nullptr && mControlBlock->NewConnections == nullptr)
+			// Fast path: skip when no connections exist or control block was never allocated.
+			if(!mControlBlock || (mControlBlock->ActiveConnections == nullptr && mControlBlock->NewConnections == nullptr))
 				return;
 
 			// Increase ref count to ensure this event data isn't destroyed if one of the callbacks deletes the event itself.
@@ -406,7 +411,8 @@ namespace b3d
 		/** Clear all callbacks from the event. */
 		void Clear()
 		{
-			mControlBlock->DisconnectAll();
+			if(mControlBlock)
+				mControlBlock->DisconnectAll();
 		}
 
 		/**
@@ -416,6 +422,9 @@ namespace b3d
 		 */
 		bool Empty() const
 		{
+			if(!mControlBlock)
+				return true;
+
 			LockType lock(mControlBlock->Mutex);
 
 			return mControlBlock->ActiveConnections == nullptr;
