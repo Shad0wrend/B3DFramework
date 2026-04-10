@@ -124,21 +124,29 @@ namespace b3d
 	class RendererScene;
 
 	/** Free utility functions for managing reflection probe capture and filtering without requiring a Component. */
-	namespace ReflectionProbeUtility
+	class ReflectionProbeUtility
 	{
+	public:
 		/**
 		 * Captures the scene at the probe's position and generates a filtered reflection cubemap.
 		 * No action if the fragment has a custom texture set. Requires ecs::ReflectionProbe,
 		 * ecs::WorldTransform, and ecs::ReflectionProbeId on the entity.
 		 */
-		void Capture(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene);
+		static void Capture(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene);
 
 		/**
 		 * Filters the custom texture set on the fragment. No action if no custom texture is set.
 		 * Requires ecs::ReflectionProbe, ecs::WorldTransform, and ecs::ReflectionProbeId on the entity.
 		 */
-		void Filter(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene);
-	}
+		static void Filter(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene);
+
+	private:
+		/**
+		 * Performs the actual capture and/or filter operation, creating a RendererTask.
+		 * Cancels any existing in-flight task for this probe via RendererScene::SetPendingCaptureTask.
+		 */
+		static void CaptureAndFilter(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene);
+	};
 
 	/** @} */
 
