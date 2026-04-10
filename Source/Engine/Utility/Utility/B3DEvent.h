@@ -12,6 +12,18 @@ namespace b3d
 	 *  @{
 	 */
 
+	namespace detail
+	{
+		/** No-op mutex for ThreadUnsafe events. Satisfies the BasicLockable concept. */
+		struct NullMutex {};
+
+		/** No-op RAII lock guard for ThreadUnsafe events. */
+		struct NullLock
+		{
+			NullLock(NullMutex&) {}
+		};
+	}
+
 	/** Data common to all event connections. */
 	struct EventConnection
 	{
@@ -34,12 +46,16 @@ namespace b3d
 		u32 ActiveHandleCount = 0;
 	};
 
-	/** Internal data for an Event, storing all connections. */
-	struct EventControlBlock
+	/** Internal data for an Event, storing all connections. Templated on ThreadSafetyPolicy to conditionally include a mutex. */
+	template<ThreadSafetyPolicy Policy = ThreadSafe>
+	struct TEventControlBlock
 	{
-		EventControlBlock() = default;
+		using MutexType = std::conditional_t<Policy == ThreadSafe, RecursiveMutex, detail::NullMutex>;
+		using LockType = std::conditional_t<Policy == ThreadSafe, RecursiveLock, detail::NullLock>;
 
-		~EventControlBlock()
+		TEventControlBlock() = default;
+
+		~TEventControlBlock()
 		{
 			EventConnection* connection = ActiveConnections;
 			while(connection != nullptr)
@@ -91,7 +107,7 @@ namespace b3d
 		 */
 		void Disconnect(EventConnection* connection)
 		{
-			RecursiveLock lock(Mutex);
+			LockType lock(Mutex);
 
 			connection->Deactivate();
 			connection->ActiveHandleCount--;
@@ -103,7 +119,7 @@ namespace b3d
 		/** Disconnects all connections in the event. */
 		void DisconnectAll()
 		{
-			RecursiveLock lock(Mutex);
+			LockType lock(Mutex);
 
 			EventConnection* connection = ActiveConnections;
 			while(connection != nullptr)
@@ -127,7 +143,7 @@ namespace b3d
 		 */
 		void FreeHandle(EventConnection* connection)
 		{
-			RecursiveLock lock(Mutex);
+			LockType lock(Mutex);
 
 			connection->ActiveHandleCount--;
 
@@ -166,9 +182,12 @@ namespace b3d
 		EventConnection* FreeConnections = nullptr;
 		EventConnection* NewConnections = nullptr;
 
-		RecursiveMutex Mutex;
+		MutexType Mutex;
 		bool IsCurrentlyTriggering = false;
 	};
+
+	// Backward-compatible alias
+	using EventControlBlock = TEventControlBlock<ThreadSafe>;
 
 	/** @} */
 	/** @} */
@@ -178,18 +197,19 @@ namespace b3d
 	 */
 
 	/** Event handle. Allows you to track to which events you subscribed to and disconnect from them when needed. */
-	class HEvent
+	template<ThreadSafetyPolicy Policy = ThreadSafe>
+	class THEvent
 	{
 	public:
-		HEvent() = default;
+		THEvent() = default;
 
-		explicit HEvent(TShared<EventControlBlock> eventControlBlock, EventConnection* connection)
+		explicit THEvent(TShared<TEventControlBlock<Policy>, Policy> eventControlBlock, EventConnection* connection)
 			: mConnection(connection), mEventControlBlock(std::move(eventControlBlock))
 		{
 			connection->ActiveHandleCount++;
 		}
 
-		~HEvent()
+		~THEvent()
 		{
 			if(mConnection != nullptr)
 				mEventControlBlock->FreeHandle(mConnection);
@@ -227,7 +247,7 @@ namespace b3d
 			return (mConnection != nullptr ? &Bool_struct::Member : 0);
 		}
 
-		HEvent& operator=(const HEvent& rhs)
+		THEvent& operator=(const THEvent& rhs)
 		{
 			mConnection = rhs.mConnection;
 			mEventControlBlock = rhs.mEventControlBlock;
@@ -240,8 +260,11 @@ namespace b3d
 
 	private:
 		EventConnection* mConnection = nullptr;
-		TShared<EventControlBlock> mEventControlBlock;
+		TShared<TEventControlBlock<Policy>, Policy> mEventControlBlock;
 	};
+
+	/** Backward-compatible alias for thread-safe event handles. */
+	using HEvent = THEvent<ThreadSafe>;
 
 	/** @} */
 
@@ -256,12 +279,12 @@ namespace b3d
 	/**
 	 * Events allows you to register method callbacks that get notified when the event is triggered.
 	 *
+	 * @tparam	Policy			Thread safety policy. ThreadSafe uses a mutex and atomic ref-counting. ThreadUnsafe eliminates
+	 *							all locking overhead for use in single-threaded contexts.
+	 *
 	 * @note	Callback method return value is ignored.
 	 */
-	// Note: I could create a policy template argument that allows creation of
-	// lockable and non-lockable events in the case mutex is causing too much overhead.
-	// Note: Create a variant of event without the overhead of std::function
-	template <typename ReturnType, typename... ArgumentType>
+	template <typename ReturnType, ThreadSafetyPolicy Policy, typename... ArgumentType>
 	class TEvent
 	{
 		struct TEventConnection : EventConnection
@@ -276,9 +299,13 @@ namespace b3d
 			std::function<ReturnType(ArgumentType...)> Callback;
 		};
 
+		using ControlBlockType = TEventControlBlock<Policy>;
+		using ControlBlockPtr = TShared<ControlBlockType, Policy>;
+		using LockType = typename ControlBlockType::LockType;
+
 	public:
 		TEvent()
-			: mControlBlock(B3DMakeShared2<EventControlBlock>())
+			: mControlBlock(B3DMakeShared2<ControlBlockType, Policy>())
 		{}
 
 		~TEvent()
@@ -287,9 +314,9 @@ namespace b3d
 		}
 
 		/** Register a new callback that will get notified once the event is triggered. */
-		HEvent Connect(std::function<ReturnType(ArgumentType...)> callback)
+		THEvent<Policy> Connect(std::function<ReturnType(ArgumentType...)> callback)
 		{
-			RecursiveLock lock(mControlBlock->Mutex);
+			LockType lock(mControlBlock->Mutex);
 
 			TEventConnection* connection = nullptr;
 			if(mControlBlock->FreeConnections != nullptr)
@@ -324,21 +351,20 @@ namespace b3d
 
 			connection->Callback = callback;
 
-			return HEvent(mControlBlock, connection);
+			return THEvent<Policy>(mControlBlock, connection);
 		}
 
 		/** Trigger the event, notifying all register callback methods. */
 		void operator()(ArgumentType... arguments)
 		{
-			// Fast path: skip locking when no connections exist. The pointer is only modified under the
-			// mutex so the worst case of a benign race is entering the lock unnecessarily.
+			// Fast path: skip when no connections exist.
 			if(mControlBlock->ActiveConnections == nullptr && mControlBlock->NewConnections == nullptr)
 				return;
 
 			// Increase ref count to ensure this event data isn't destroyed if one of the callbacks deletes the event itself.
-			TShared<EventControlBlock> hoistedControlBlock = mControlBlock;
+			ControlBlockPtr hoistedControlBlock = mControlBlock;
 
-			RecursiveLock lock(hoistedControlBlock->Mutex);
+			LockType lock(hoistedControlBlock->Mutex);
 			hoistedControlBlock->IsCurrentlyTriggering = true;
 
 			TEventConnection* connection = static_cast<TEventConnection*>(hoistedControlBlock->ActiveConnections);
@@ -390,13 +416,13 @@ namespace b3d
 		 */
 		bool Empty() const
 		{
-			RecursiveLock lock(mControlBlock->Mutex);
+			LockType lock(mControlBlock->Mutex);
 
 			return mControlBlock->ActiveConnections == nullptr;
 		}
 
 	private:
-		TShared<EventControlBlock> mControlBlock; // Note: Use thread unsafe shared if not using a thread safe policy
+		ControlBlockPtr mControlBlock;
 	};
 
 	/** @} */
@@ -412,12 +438,12 @@ namespace b3d
 	/************************************************************************/
 
 	/** @copydoc TEvent */
-	template <typename Signature>
+	template <typename Signature, ThreadSafetyPolicy Policy = ThreadSafe>
 	class Event;
 
 	/** @copydoc TEvent */
-	template <class RetType, class... Args>
-	class Event<RetType(Args...)> : public TEvent<RetType, Args...>
+	template <class RetType, class... Args, ThreadSafetyPolicy Policy>
+	class Event<RetType(Args...), Policy> : public TEvent<RetType, Policy, Args...>
 	{};
 
 	/** @} */

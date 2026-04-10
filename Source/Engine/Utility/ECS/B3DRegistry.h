@@ -489,7 +489,7 @@ namespace b3d::ecs
 		 * Creates the storage if it doesn't already exist.
 		 */
 		template<typename Type>
-		Event<void(Entity)>& OnComponentAdded()
+		Event<void(Entity), ThreadUnsafe>& OnComponentAdded()
 		{
 			return GetOrCreateStorage<Type>().OnWasAdded;
 		}
@@ -499,7 +499,7 @@ namespace b3d::ecs
 		 * Creates the storage if it doesn't already exist.
 		 */
 		template<typename Type>
-		Event<void(Entity)>& OnComponentRemoved()
+		Event<void(Entity), ThreadUnsafe>& OnComponentRemoved()
 		{
 			return GetOrCreateStorage<Type>().OnWillRemove;
 		}
@@ -510,7 +510,7 @@ namespace b3d::ecs
 		 * Creates the storage if it doesn't already exist.
 		 */
 		template<typename Type>
-		Event<void(Entity)>& OnComponentUpdated()
+		Event<void(Entity), ThreadUnsafe>& OnComponentUpdated()
 		{
 			return GetOrCreateStorage<Type>().OnWasUpdated;
 		}
