@@ -188,56 +188,40 @@ When you call setter methods like @b3d::Decal::SetMaterial or @b3d::Decal::SetSi
 
 Each decal also has an @b3d::ecs::DecalId fragment that stores a persistent renderer ID used by the @b3d::RendererObjectStorage system for mapping to the packed render-thread representation.
 
-## Dirty tags
-
-The renderer uses two ECS tag types to track which decals need synchronization:
- - `ecs::DecalDirty` - Added when any decal property changes. Triggers a full sync.
- - `ecs::DecalTransformDirty` - Added when only the transform changes.
-
 ## Using raw ECS fragments
 
-You can bypass the **Decal** component and create `ecs::Decal` fragments directly for maximum performance. You must manage the renderer ID, world transform, and dirty tags manually.
+You can bypass the **Decal** component and create `ecs::Decal` fragments directly for maximum performance. Helper functions @b3d::ecs::CreateDecal and @b3d::ecs::DestroyDecal handle fragment creation, world transform, renderer ID allocation, and cleanup. Use @b3d::ecs::DecalECSUtility to mark dirty after property changes.
 
 ~~~~~~~~~~~~~{.cpp}
 const SPtr<SceneInstance>& scene = SceneManager::Instance().GetMainScene();
 ecs::Registry& registry = scene->GetECSRegistry();
 const SPtr<RendererScene>& rendererScene = scene->GetRendererScene();
 
-// Create an entity with the decal data fragment
+// Create an entity with all decal fragments, a world transform, and a renderer ID
 ecs::Entity entity = registry.CreateEntity();
-ecs::Decal& fragment = registry.AddComponent<ecs::Decal>(entity);
+ecs::Decal& fragment = ecs::CreateDecal(registry, entity, rendererScene, myTransform);
+
+// Configure the decal
 fragment.Material = myDecalMaterial;
 fragment.Size = Vector2(2.0f, 2.0f);
 fragment.MaxDistance = 0.2f;
-
-// Add a world transform — the renderer reads this to position and orient the decal
-registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(myTransform));
-
-// Allocate a persistent renderer ID
-rendererScene->AllocateDecalId(registry, entity);
-
-// Mark dirty for initial sync
-registry.AddTag<ecs::DecalDirty>(entity);
 ~~~~~~~~~~~~~
 
-When modifying the fragment, add the appropriate dirty tag:
+When modifying the fragment after creation, mark it dirty so the change is synced to the render thread:
 
 ~~~~~~~~~~~~~{.cpp}
 ecs::Decal& fragment = registry.GetComponents<ecs::Decal>(entity);
 fragment.Size = Vector2(4.0f, 4.0f);
-registry.AddTag<ecs::DecalDirty>(entity);
+ecs::DecalECSUtility::MarkDirty(registry, entity);
 
 // For transform-only changes
 registry.GetComponents<ecs::WorldTransform>(entity) = ecs::WorldTransform(newTransform);
-registry.AddTag<ecs::DecalTransformDirty>(entity);
+ecs::DecalECSUtility::MarkTransformDirty(registry, entity);
 ~~~~~~~~~~~~~
 
-When destroying the entity, deallocate the renderer ID first:
+When destroying the entity, call `ecs::DestroyDecal` which removes fragments. Cleanup of the renderer ID and dirty tags is handled by the associated RendererScene:
 
 ~~~~~~~~~~~~~{.cpp}
-rendererScene->DeallocateDecalId(registry, entity);
-registry.RemoveComponents<ecs::DecalDirty>(entity);
-registry.RemoveComponents<ecs::DecalTransformDirty>(entity);
-registry.RemoveComponents<ecs::Decal>(entity);
+ecs::DestroyDecal(registry, entity);
 registry.EraseEntity(entity);
 ~~~~~~~~~~~~~

@@ -22,15 +22,20 @@
 
 using namespace b3d;
 
-namespace b3d::ecs
+ecs::Renderable& ecs::CreateRenderable(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform)
 {
-	/** Tag indicating a Renderable needs to sync all of its properties to its render proxy. */
-	struct RenderableDirty {};
+	ecs::RenderableECSUtility::CreateFragmentsIfMissing(registry, entity);
+	registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(transform));
+	rendererScene->AllocateRenderableId(registry, entity);
+	ecs::RenderableECSUtility::MarkDirty(registry, entity);
 
-	/** Tag indicating a Renderable needs to sync transform to its render proxy. */
-	struct RenderableTransformDirty {};
+	return registry.GetComponents<ecs::Renderable>(entity);
+}
 
-} // namespace b3d::ecs
+void ecs::DestroyRenderable(ecs::Registry& registry, ecs::Entity entity)
+{
+	ecs::RenderableECSUtility::RemoveFragments(registry, entity);
+}
 
 ecs::Renderable& Renderable::GetFragment()
 {
@@ -164,16 +169,12 @@ Renderable::Renderable()
 void Renderable::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Renderable>(mThisHandle).GetShared());
+	const bool created = ecs::RenderableECSUtility::CreateFragmentsIfMissing(*GetECSRegistry(), GetECSEntity());
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
+	// Ensure at least 1 material slot for newly created fragments
+	if(created)
+		GetFragment().Materials.resize(1);
 
-	if(!registry->HasAllOf<ecs::Renderable>(entity))
-	{
-		ecs::Renderable fragmentData;
-		fragmentData.Materials.resize(1);
-		registry->AddComponent<ecs::Renderable>(entity, std::move(fragmentData));
-	}
 	// Initialize after adding everything to the registry, as initialize might require the ECS fragments
 	Component::Initialize();
 	CoreObject::Initialize();
@@ -197,25 +198,14 @@ void Renderable::OnBeginPlay()
 
 void Renderable::OnEnabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->AllocateRenderableId(*registry, entity);
-
-	registry->AddTag<ecs::RenderableDirty>(entity);
+	ecs::RenderableECSUtility::RegisterWithRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Renderable::OnDisabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->DeallocateRenderableId(*registry, entity);
-
-	registry->RemoveComponents<ecs::RenderableDirty>(entity);
-	registry->RemoveComponents<ecs::RenderableTransformDirty>(entity);
+	ecs::RenderableECSUtility::UnregisterFromRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Renderable::OnDestroyed()
@@ -223,48 +213,13 @@ void Renderable::OnDestroyed()
 	if(mAnimation != nullptr)
 		mAnimation->UnregisterRenderable();
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate only if currently active (has a RenderableId fragment)
-	if(registry->HasAllOf<ecs::RenderableId>(entity))
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->DeallocateRenderableId(*registry, entity);
-	}
-
-	registry->RemoveComponents<ecs::RenderableDirty>(entity);
-	registry->RemoveComponents<ecs::RenderableTransformDirty>(entity);
-	registry->RemoveComponents<ecs::Renderable>(entity);
-
+	ecs::RenderableECSUtility::RemoveFragments(*GetECSRegistry(), GetECSEntity());
 	CoreObject::Destroy();
 }
 
 void Renderable::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
-	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate from old scene only if was active
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::RenderableId>(oldEntity))
-		oldScene->GetRendererScene()->DeallocateRenderableId(*oldRegistry, oldEntity);
-
-	// Migrate ecs::Renderable fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::Renderable>(oldEntity))
-	{
-		ecs::Renderable fragmentCopy = oldRegistry->GetComponents<ecs::Renderable>(oldEntity);
-		registry->AddComponent<ecs::Renderable>(entity, std::move(fragmentCopy));
-	}
-
-	// Allocate in new scene only if currently active
-	if(GetEnabled())
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->AllocateRenderableId(*registry, entity);
-
-		registry->AddTag<ecs::RenderableDirty>(entity);
-	}
+	ecs::RenderableECSUtility::ChangeScene(oldScene, oldEntity, *SceneObject()->GetScene(), GetECSEntity(), GetEnabled());
 }
 
 void Renderable::OnTransformChanged(TransformChangedFlags flags)
@@ -440,18 +395,9 @@ void Renderable::DoOnMeshChanged()
 void Renderable::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 {
 	if(!SceneObject().IsValid())
-		return; // Not yet attached to scene (e.g. during deserialization)
+		return;
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(flag == ComponentDirtyFlag::Transform)
-	{
-		if(!registry->HasAllOf<ecs::RenderableDirty>(entity))
-			registry->AddTag<ecs::RenderableTransformDirty>(entity);
-	}
-	else
-		registry->AddTag<ecs::RenderableDirty>(entity);
+	ecs::RenderableECSUtility::MarkDirty(*GetECSRegistry(), GetECSEntity(), flag);
 }
 
 RTTIType* ecs::Renderable::GetRttiStatic()

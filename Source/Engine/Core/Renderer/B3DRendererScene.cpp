@@ -9,11 +9,19 @@
 #include "Components/B3DRenderable.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "ECS/B3DRegistry.h"
+#include "Scene/B3DSceneInstance.h"
 #include "B3DRenderer.h"
 
 namespace b3d
 {
-	RendererScene::~RendererScene() = default;
+	RendererScene::~RendererScene()
+	{
+		mLightRemovedHandle.Disconnect();
+		mRenderableRemovedHandle.Disconnect();
+		mDecalRemovedHandle.Disconnect();
+		mParticleSystemRemovedHandle.Disconnect();
+		mReflectionProbeRemovedHandle.Disconnect();
+	}
 
 	SPtr<RendererScene> RendererScene::Create()
 	{
@@ -35,6 +43,59 @@ namespace b3d
 		mLightStorage = renderProxy->GetLightStorage();
 		mParticleSystemStorage = renderProxy->GetParticleSystemStorage();
 		mReflectionProbeStorage = renderProxy->GetReflectionProbeStorage();
+	}
+
+	void RendererScene::SetOwner(const SPtr<SceneInstance>& scene)
+	{
+		mOwner = scene;
+		ecs::Registry& registry = scene->GetECSRegistry();
+
+		mLightRemovedHandle = registry.OnComponentRemoved<ecs::Light>().Connect(
+			[this, &registry](ecs::Entity entity)
+			{
+				DeallocateLightId(registry, entity);
+				registry.RemoveComponents<ecs::LightDirty>(entity);
+				registry.RemoveComponents<ecs::LightTransformDirty>(entity);
+			});
+
+		mRenderableRemovedHandle = registry.OnComponentRemoved<ecs::Renderable>().Connect(
+			[this, &registry](ecs::Entity entity)
+			{
+				DeallocateRenderableId(registry, entity);
+				registry.RemoveComponents<ecs::RenderableDirty>(entity);
+				registry.RemoveComponents<ecs::RenderableTransformDirty>(entity);
+			});
+
+		mDecalRemovedHandle = registry.OnComponentRemoved<ecs::Decal>().Connect(
+			[this, &registry](ecs::Entity entity)
+			{
+				DeallocateDecalId(registry, entity);
+				registry.RemoveComponents<ecs::DecalDirty>(entity);
+				registry.RemoveComponents<ecs::DecalTransformDirty>(entity);
+			});
+
+		mParticleSystemRemovedHandle = registry.OnComponentRemoved<ecs::ParticleSystem>().Connect(
+			[this, &registry](ecs::Entity entity)
+			{
+				DeallocateParticleSystemId(registry, entity);
+				registry.RemoveComponents<ecs::ParticleSystemDirty>(entity);
+				registry.RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
+			});
+
+		mReflectionProbeRemovedHandle = registry.OnComponentRemoved<ecs::ReflectionProbe>().Connect(
+			[this, &registry](ecs::Entity entity)
+			{
+				ecs::ReflectionProbe& fragment = registry.GetComponents<ecs::ReflectionProbe>(entity);
+				if(fragment.PendingTask != nullptr)
+				{
+					fragment.PendingTask->Cancel();
+					fragment.PendingTask = nullptr;
+				}
+
+				DeallocateReflectionProbeId(registry, entity);
+				registry.RemoveComponents<ecs::ReflectionProbeDirty>(entity);
+				registry.RemoveComponents<ecs::ReflectionProbeTransformDirty>(entity);
+			});
 	}
 
 	RendererId RendererScene::AllocateRenderableId(ecs::Registry& registry, ecs::Entity entity)
@@ -129,17 +190,6 @@ namespace b3d
 	{
 		if(!registry.HasAllOf<ecs::ReflectionProbeId>(entity))
 			return;
-
-		// Cancel any in-flight capture task before deallocating
-		if(registry.HasAllOf<ecs::ReflectionProbe>(entity))
-		{
-			ecs::ReflectionProbe& fragment = registry.GetComponents<ecs::ReflectionProbe>(entity);
-			if(fragment.PendingTask != nullptr)
-			{
-				fragment.PendingTask->Cancel();
-				fragment.PendingTask = nullptr;
-			}
-		}
 
 		RendererId objectId = registry.GetComponents<ecs::ReflectionProbeId>(entity).Id;
 		if(objectId != kInvalidRendererId)

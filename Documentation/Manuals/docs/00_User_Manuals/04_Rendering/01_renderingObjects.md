@@ -277,17 +277,9 @@ When you call methods like @b3d::Renderable::SetMesh or @b3d::Renderable::SetMat
 
 Each renderable also has an @b3d::ecs::RenderableId fragment that stores a persistent renderer ID. This ID is used by the @b3d::RendererObjectStorage system to map the renderable to its packed render-thread representation. The ID is allocated when the component is created and deallocated when it is destroyed.
 
-## Dirty tags
-
-The renderer uses two ECS tag types to track which renderables need synchronization with the render thread:
- - `ecs::RenderableDirty` - Added when any property of the renderable changes (mesh, materials, layer, etc.). Triggers a full sync to the render thread.
- - `ecs::RenderableTransformDirty` - Added when only the transform changes. Triggers a lighter transform-only sync.
-
-When using the **Renderable** component these tags are managed automatically. When working with raw ECS fragments you must add these tags yourself after modifying fragment data, otherwise the render thread will not see your changes.
-
 ## Using raw ECS fragments
 
-For maximum performance you can bypass the **Renderable** component entirely and create `ecs::Renderable` fragments directly on the ECS registry. This avoids the overhead of `SceneObject`, `Component`, and the `CoreObject` system, but requires you to manage the renderer ID, world transform, and dirty tags manually.
+For maximum performance you can bypass the **Renderable** component entirely and create `ecs::Renderable` fragments directly on the ECS registry. This avoids the overhead of `SceneObject`, `Component`, and the `CoreObject` system. Helper functions @b3d::ecs::CreateRenderable and @b3d::ecs::DestroyRenderable handle fragment creation, world transform, renderer ID allocation, and cleanup. Use @b3d::ecs::RenderableECSUtility to mark dirty after property changes.
 
 ~~~~~~~~~~~~~{.cpp}
 // Get the scene's ECS registry and renderer scene
@@ -295,48 +287,31 @@ const SPtr<SceneInstance>& scene = SceneManager::Instance().GetMainScene();
 ecs::Registry& registry = scene->GetECSRegistry();
 const SPtr<RendererScene>& rendererScene = scene->GetRendererScene();
 
-// Create an entity and add the renderable data fragment
+// Create an entity with all renderable fragments, a world transform, and a renderer ID
 ecs::Entity entity = registry.CreateEntity();
-ecs::Renderable& fragment = registry.AddComponent<ecs::Renderable>(entity);
+ecs::Renderable& fragment = ecs::CreateRenderable(registry, entity, rendererScene, myTransform);
+
+// Configure the renderable
 fragment.Mesh = myMesh;
 fragment.Materials = { myMaterial };
 fragment.Layer = 1;
-
-// Add a world transform fragment — the renderer reads this to position the object
-registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(myTransform));
-
-// Allocate a persistent renderer ID — this registers the entity with the
-// RendererObjectStorage so it gets a packed slot on the render thread
-rendererScene->AllocateRenderableId(registry, entity);
-
-// Mark as dirty so the data is synced to the render thread on the next frame
-registry.AddTag<ecs::RenderableDirty>(entity);
 ~~~~~~~~~~~~~
 
-When modifying the fragment after creation, add the appropriate dirty tag:
+When modifying the fragment after creation, mark it dirty so the change is synced to the render thread:
 
 ~~~~~~~~~~~~~{.cpp}
-// Modify fragment data
 ecs::Renderable& fragment = registry.GetComponents<ecs::Renderable>(entity);
 fragment.Materials = { newMaterial };
-
-// Mark dirty so the change is synced
-registry.AddTag<ecs::RenderableDirty>(entity);
+ecs::RenderableECSUtility::MarkDirty(registry, entity);
 
 // For transform-only changes
 registry.GetComponents<ecs::WorldTransform>(entity) = ecs::WorldTransform(newTransform);
-registry.AddTag<ecs::RenderableTransformDirty>(entity);
+ecs::RenderableECSUtility::MarkTransformDirty(registry, entity);
 ~~~~~~~~~~~~~
 
-When destroying the entity, deallocate the renderer ID first:
+When destroying the entity, call @b3d::ecs::DestroyRenderable which removes the fragments. Cleanup of the renderer ID and dirty tags is handled by the associated RendererScene:
 
 ~~~~~~~~~~~~~{.cpp}
-// Deallocate the renderer ID before destroying the entity
-rendererScene->DeallocateRenderableId(registry, entity);
-
-// Clean up tags and fragments
-registry.RemoveComponents<ecs::RenderableDirty>(entity);
-registry.RemoveComponents<ecs::RenderableTransformDirty>(entity);
-registry.RemoveComponents<ecs::Renderable>(entity);
+ecs::DestroyRenderable(registry, entity);
 registry.EraseEntity(entity);
 ~~~~~~~~~~~~~

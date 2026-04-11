@@ -81,6 +81,12 @@ namespace b3d
 		const SPtr<ReflectionProbeObjectStorageBase>& GetReflectionProbeStorage() const { return mReflectionProbeStorage; }
 
 		/**
+		 * Sets the owning SceneInstance and subscribes to OnWillRemove events for automatic cleanup
+		 * of renderer IDs and dirty tags when data fragments are removed from entities.
+		 */
+		void SetOwner(const SPtr<SceneInstance>& scene);
+
+		/**
 		 * Reads dirty ECS data on the main thread and posts a command to write the changes to the render thread,
 		 * for all RenderableObjectStorage objects.
 		 */
@@ -96,11 +102,19 @@ namespace b3d
 		 */
 		RendererSceneSyncData* SyncRead(ecs::Registry& registry, FrameAllocator& allocator);
 	private:
+		WeakSPtr<SceneInstance> mOwner;
+
 		SPtr<DecalObjectStorageBase> mDecalStorage;
 		SPtr<RenderableObjectStorageBase> mRenderableStorage;
 		SPtr<LightObjectStorageBase> mLightStorage;
 		SPtr<ParticleSystemObjectStorageBase> mParticleSystemStorage;
 		SPtr<ReflectionProbeObjectStorageBase> mReflectionProbeStorage;
+
+		THEvent<ThreadUnsafe> mLightRemovedHandle;
+		THEvent<ThreadUnsafe> mRenderableRemovedHandle;
+		THEvent<ThreadUnsafe> mDecalRemovedHandle;
+		THEvent<ThreadUnsafe> mParticleSystemRemovedHandle;
+		THEvent<ThreadUnsafe> mReflectionProbeRemovedHandle;
 	};
 
 	/** @} */

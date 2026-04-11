@@ -5,6 +5,7 @@
 #include "B3DPrerequisites.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Math/B3DBounds.h"
+#include "Renderer/B3DRendererObjectECSUtility.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 #include "Resources/B3DIResourceListener.h"
 #include "Scene/B3DComponent.h"
@@ -17,14 +18,7 @@ namespace b3d
 	struct RenderableFullUpdateChannel;
 	struct RenderableTransformUpdateChannel;
 
-	namespace ecs
-	{
-		/** ECS fragment storing the persistent render object ID for a renderable. */
-		struct RenderableId
-		{
-			RendererId Id = kInvalidRendererId;
-		};
-	}
+	class RendererScene;
 
 	/** @addtogroup Components
 	 *  @{
@@ -122,6 +116,12 @@ namespace b3d
 
 	namespace ecs
 	{
+		/** ECS fragment storing the persistent render object ID for a renderable. */
+		struct RenderableId
+		{
+			RendererId Id = kInvalidRendererId;
+		};
+
 		class ECSRenderableRTTI;
 
 		/** ECS fragment storing renderable visual data (mesh, materials, layer, etc.). */
@@ -136,6 +136,22 @@ namespace b3d
 			static RTTIType* GetRttiStatic();
 			RTTIType* GetRtti() const override;
 		};
+
+		/** Tag indicating a Renderable needs to sync all of its properties to its render proxy. */
+		struct RenderableDirty {};
+
+		/** Tag indicating a Renderable needs to sync transform to its render proxy. */
+		struct RenderableTransformDirty {};
+
+		/** Creates all Renderable data fragments, a world transform, and allocates a renderer ID. Entity is ready for rendering after this call. Returns the Renderable data fragment. */
+		Renderable& CreateRenderable(Registry& registry, Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform = Transform::kIdentity);
+
+		/** Removes all Renderable fragments. Cleanup (ID deallocation, dirty tags) is handled by the associated RendererScene when it is notified the fragment has been removed. */
+		void DestroyRenderable(Registry& registry, Entity entity);
+
+		/** ECS utility for Renderable renderer objects. Provides fragment creation, renderer registration, dirty marking, and scene migration. */
+		using RenderableECSUtility = TRendererObjectECSUtility<RenderableId, RenderableDirty, RenderableTransformDirty,
+			&RendererScene::AllocateRenderableId, &RendererScene::DeallocateRenderableId, Renderable>;
 	}
 
 	/**

@@ -12,14 +12,20 @@
 
 using namespace b3d;
 
-namespace b3d::ecs
+ecs::Light& ecs::CreateLight(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform)
 {
-	/** Tag indicating a Light needs to sync all of its properties to its render proxy. */
-	struct LightDirty {};
+	ecs::LightECSUtility::CreateFragmentsIfMissing(registry, entity);
+	registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(transform));
+	rendererScene->AllocateLightId(registry, entity);
+	ecs::LightECSUtility::MarkDirty(registry, entity);
 
-	/** Tag indicating a Light needs to sync transform to its render proxy. */
-	struct LightTransformDirty {};
-} // namespace b3d::ecs
+	return registry.GetComponents<ecs::Light>(entity);
+}
+
+void ecs::DestroyLight(ecs::Registry& registry, ecs::Entity entity)
+{
+	ecs::LightECSUtility::RemoveFragments(registry, entity);
+}
 
 namespace b3d
 {
@@ -358,16 +364,7 @@ void Light::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 	if(!SceneObject().IsValid())
 		return;
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(flag == ComponentDirtyFlag::Transform)
-	{
-		if(!registry->HasAllOf<ecs::LightDirty>(entity))
-			registry->AddTag<ecs::LightTransformDirty>(entity);
-	}
-	else
-		registry->AddTag<ecs::LightDirty>(entity);
+	ecs::LightECSUtility::MarkDirty(*GetECSRegistry(), GetECSEntity(), flag);
 }
 
 // b3d::Light lifecycle
@@ -386,19 +383,9 @@ Light::Light()
 void Light::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Light>(mThisHandle).GetShared());
-
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(!registry->HasAllOf<ecs::Light>(entity))
-	{
-		ecs::Light fragmentData;
-		registry->AddComponent<ecs::Light>(entity, std::move(fragmentData));
-	}
-
+	ecs::LightECSUtility::CreateFragmentsIfMissing(*GetECSRegistry(), GetECSEntity());
 	Component::Initialize();
 	CoreObject::Initialize();
-
 	UpdateAttenuationRange();
 }
 
@@ -409,71 +396,26 @@ void Light::OnCreated()
 
 void Light::OnEnabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->AllocateLightId(*registry, entity);
-
-	registry->AddTag<ecs::LightDirty>(entity);
+	ecs::LightECSUtility::RegisterWithRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Light::OnDisabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->DeallocateLightId(*registry, entity);
-
-	registry->RemoveComponents<ecs::LightDirty>(entity);
-	registry->RemoveComponents<ecs::LightTransformDirty>(entity);
+	ecs::LightECSUtility::UnregisterFromRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Light::OnDestroyed()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate only if currently active (has a LightId fragment)
-	if(registry->HasAllOf<ecs::LightId>(entity))
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->DeallocateLightId(*registry, entity);
-	}
-
-	registry->RemoveComponents<ecs::LightDirty>(entity);
-	registry->RemoveComponents<ecs::LightTransformDirty>(entity);
-	registry->RemoveComponents<ecs::Light>(entity);
-
+	ecs::LightECSUtility::RemoveFragments(*GetECSRegistry(), GetECSEntity());
 	CoreObject::Destroy();
 }
 
 void Light::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
-	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate from old scene only if was active
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::LightId>(oldEntity))
-		oldScene->GetRendererScene()->DeallocateLightId(*oldRegistry, oldEntity);
-
-	// Migrate ecs::Light fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::Light>(oldEntity))
-	{
-		ecs::Light fragmentCopy = oldRegistry->GetComponents<ecs::Light>(oldEntity);
-		registry->AddComponent<ecs::Light>(entity, std::move(fragmentCopy));
-	}
-
-	// Allocate in new scene only if currently active
-	if(GetEnabled())
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->AllocateLightId(*registry, entity);
-
-		registry->AddTag<ecs::LightDirty>(entity);
-	}
+	ecs::LightECSUtility::ChangeScene(
+		oldScene, oldEntity, *SceneObject()->GetScene(), GetECSEntity(), GetEnabled());
 }
 
 void Light::OnTransformChanged(TransformChangedFlags flags)

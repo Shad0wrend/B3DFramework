@@ -29,14 +29,20 @@ RTTIType* ecs::ParticleSystem::GetRtti() const
 	return GetRttiStatic();
 }
 
-namespace b3d::ecs
+ecs::ParticleSystem& ecs::CreateParticleSystem(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform)
 {
-	/** Tag indicating a ParticleSystem needs to sync all of its properties to its render proxy. */
-	struct ParticleSystemDirty {};
+	ecs::ParticleSystemECSUtility::CreateFragmentsIfMissing(registry, entity);
+	registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(transform));
+	rendererScene->AllocateParticleSystemId(registry, entity);
+	ecs::ParticleSystemECSUtility::MarkDirty(registry, entity);
 
-	/** Tag indicating a ParticleSystem needs to sync transform to its render proxy. */
-	struct ParticleSystemTransformDirty {};
-} // namespace b3d::ecs
+	return registry.GetComponents<ecs::ParticleSystem>(entity);
+}
+
+void ecs::DestroyParticleSystem(ecs::Registry& registry, ecs::Entity entity)
+{
+	ecs::ParticleSystemECSUtility::RemoveFragments(registry, entity);
+}
 
 namespace b3d
 {
@@ -419,37 +425,13 @@ void ParticleSystem::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 	if(!SceneObject().IsValid())
 		return;
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(flag == ComponentDirtyFlag::Transform)
-	{
-		if(!registry->HasAllOf<ecs::ParticleSystemDirty>(entity))
-			registry->AddTag<ecs::ParticleSystemTransformDirty>(entity);
-	}
-	else
-		registry->AddTag<ecs::ParticleSystemDirty>(entity);
+	ecs::ParticleSystemECSUtility::MarkDirty(*GetECSRegistry(), GetECSEntity(), flag);
 }
 
 void ParticleSystem::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<ParticleSystem>(mThisHandle).GetShared());
-
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(!registry->HasAllOf<ecs::ParticleSystem>(entity))
-	{
-		ecs::ParticleSystem fragmentData;
-		registry->AddComponent<ecs::ParticleSystem>(entity, std::move(fragmentData));
-	}
-
-	if(!registry->HasAllOf<ecs::ParticleSimulation>(entity))
-	{
-		ecs::ParticleSimulation simData;
-		registry->AddComponent<ecs::ParticleSimulation>(entity, std::move(simData));
-	}
-
+	ecs::ParticleSystemECSUtility::CreateFragmentsIfMissing(*GetECSRegistry(), GetECSEntity());
 	Component::Initialize();
 	CoreObject::Initialize();
 }
@@ -465,35 +447,14 @@ void ParticleSystem::OnCreated()
 
 void ParticleSystem::OnDestroyed()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate only if currently active (has a ParticleSystemId fragment)
-	if(registry->HasAllOf<ecs::ParticleSystemId>(entity))
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->DeallocateParticleSystemId(*registry, entity);
-	}
-
-	registry->RemoveComponents<ecs::ParticleSystemDirty>(entity);
-	registry->RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
-	registry->RemoveComponents<ecs::ParticleSimulation>(entity);
-	registry->RemoveComponents<ecs::ParticleSystem>(entity);
-
+	ecs::ParticleSystemECSUtility::RemoveFragments(*GetECSRegistry(), GetECSEntity());
 	CoreObject::Destroy();
 }
 
 void ParticleSystem::OnDisabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->DeallocateParticleSystemId(*registry, entity);
-
-	registry->RemoveComponents<ecs::ParticleSystemDirty>(entity);
-	registry->RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
-
+	ecs::ParticleSystemECSUtility::UnregisterFromRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 	Stop();
 }
 
@@ -505,12 +466,8 @@ void ParticleSystem::OnEnabled()
 		mPreviewMode = false;
 	}
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->AllocateParticleSystemId(*registry, entity);
-	registry->AddTag<ecs::ParticleSystemDirty>(entity);
+	ecs::ParticleSystemECSUtility::RegisterWithRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 
 	const SPtr<SceneInstance>& scene = SceneObject()->GetScene();
 	if(scene->IsRunning())
@@ -519,36 +476,7 @@ void ParticleSystem::OnEnabled()
 
 void ParticleSystem::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
-	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate from old scene only if was active
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ParticleSystemId>(oldEntity))
-		oldScene->GetRendererScene()->DeallocateParticleSystemId(*oldRegistry, oldEntity);
-
-	// Migrate ecs::ParticleSystem fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ParticleSystem>(oldEntity))
-	{
-		ecs::ParticleSystem fragmentCopy = oldRegistry->GetComponents<ecs::ParticleSystem>(oldEntity);
-		registry->AddComponent<ecs::ParticleSystem>(entity, std::move(fragmentCopy));
-	}
-
-	// Migrate ecs::ParticleSimulation fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ParticleSimulation>(oldEntity))
-	{
-		ecs::ParticleSimulation simCopy = oldRegistry->GetComponents<ecs::ParticleSimulation>(oldEntity);
-		registry->AddComponent<ecs::ParticleSimulation>(entity, std::move(simCopy));
-	}
-
-	// Allocate in new scene only if currently active
-	if(GetEnabled())
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->AllocateParticleSystemId(*registry, entity);
-
-		registry->AddTag<ecs::ParticleSystemDirty>(entity);
-	}
+	ecs::ParticleSystemECSUtility::ChangeScene(oldScene, oldEntity, *SceneObject()->GetScene(), GetECSEntity(), GetEnabled());
 }
 
 void ParticleSystem::OnTransformChanged(TransformChangedFlags flags)

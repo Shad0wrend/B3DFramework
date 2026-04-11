@@ -7,6 +7,7 @@
 #include "Math/B3DTransform.h"
 #include "CoreObject/B3DCoreObject.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectECSUtility.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
@@ -82,6 +83,8 @@ namespace b3d
 	 *  @{
 	 */
 
+	class RendererScene;
+
 	namespace ecs
 	{
 		class ECSDecalRTTI;
@@ -102,7 +105,26 @@ namespace b3d
 		{
 			RendererId Id = kInvalidRendererId;
 		};
-	} // namespace ecs
+
+		/** Tag indicating a Decal needs to sync all of its properties to its render proxy. */
+		struct DecalDirty {};
+
+		/** Tag indicating a Decal needs to sync transform to its render proxy. */
+		struct DecalTransformDirty {};
+
+		/** Creates all Decal data fragments, a world transform, and allocates a renderer ID. Entity is ready for rendering after this call. Returns the Decal data fragment. */
+		Decal& CreateDecal(Registry& registry, Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform = Transform::kIdentity);
+
+		/** Removes all Decal fragments. Cleanup (ID deallocation, dirty tags) is handled by the associated RendererScene when it is notified the fragment has been removed. */
+		void DestroyDecal(Registry& registry, Entity entity);
+
+		/** ECS utility for Decal renderer objects. Provides fragment creation, renderer registration, dirty marking, and scene migration. */
+		using DecalECSUtility = TRendererObjectECSUtility<
+			DecalId,
+			DecalDirty, DecalTransformDirty,
+			&RendererScene::AllocateDecalId, &RendererScene::DeallocateDecalId,
+			Decal>;
+	}
 
 	/** @} */
 

@@ -8,6 +8,7 @@
 #include "Image/B3DColor.h"
 #include "Math/B3DTransform.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectECSUtility.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
@@ -163,6 +164,8 @@ namespace b3d
 	 *  @{
 	 */
 
+	class RendererScene;
+
 	namespace ecs
 	{
 		class ECSLightRTTI;
@@ -183,7 +186,26 @@ namespace b3d
 		{
 			RendererId Id = kInvalidRendererId;
 		};
-	} // namespace ecs
+
+		/** Tag indicating a Light needs to sync all of its properties to its render proxy. */
+		struct LightDirty {};
+
+		/** Tag indicating a Light needs to sync transform to its render proxy. */
+		struct LightTransformDirty {};
+
+		/** Creates all Light data fragments, a world transform, and allocates a renderer ID. Entity is ready for rendering after this call. Returns the Light data fragment. */
+		Light& CreateLight(Registry& registry, Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform = Transform::kIdentity);
+
+		/** Removes all Light fragments. Cleanup (ID deallocation, dirty tags) is handled by the associated RendererScene when it is notified the fragment has been removed. */
+		void DestroyLight(Registry& registry, Entity entity);
+
+		/** ECS utility for Light renderer objects. Provides fragment creation, renderer registration, dirty marking, and scene migration. */
+		using LightECSUtility = TRendererObjectECSUtility<
+			LightId,
+			LightDirty, LightTransformDirty,
+			&RendererScene::AllocateLightId, &RendererScene::DeallocateLightId,
+			Light>;
+	}
 
 	/** @} */
 

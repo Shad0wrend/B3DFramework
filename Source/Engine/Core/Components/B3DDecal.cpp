@@ -12,15 +12,6 @@
 
 using namespace b3d;
 
-namespace b3d::ecs
-{
-	/** Tag indicating a Decal needs to sync all of its properties to its render proxy. */
-	struct DecalDirty {};
-
-	/** Tag indicating a Decal needs to sync transform to its render proxy. */
-	struct DecalTransformDirty {};
-} // namespace b3d::ecs
-
 Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Transform& transform)
 {
 	const Vector2& extents = size * 0.5f;
@@ -32,6 +23,21 @@ Bounds b3d::ComputeDecalBounds(const Vector2& size, float maxDistance, const Tra
 	localAABB.TransformAffine(transform.GetMatrix());
 
 	return Bounds(localAABB);
+}
+
+ecs::Decal& ecs::CreateDecal(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform)
+{
+	ecs::DecalECSUtility::CreateFragmentsIfMissing(registry, entity);
+	registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(transform));
+	rendererScene->AllocateDecalId(registry, entity);
+	ecs::DecalECSUtility::MarkDirty(registry, entity);
+
+	return registry.GetComponents<ecs::Decal>(entity);
+}
+
+void ecs::DestroyDecal(ecs::Registry& registry, ecs::Entity entity)
+{
+	ecs::DecalECSUtility::RemoveFragments(registry, entity);
 }
 
 namespace b3d
@@ -202,16 +208,7 @@ void Decal::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 	if(!SceneObject().IsValid())
 		return;
 
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(flag == ComponentDirtyFlag::Transform)
-	{
-		if(!registry->HasAllOf<ecs::DecalDirty>(entity))
-			registry->AddTag<ecs::DecalTransformDirty>(entity);
-	}
-	else
-		registry->AddTag<ecs::DecalDirty>(entity);
+	ecs::DecalECSUtility::MarkDirty(*GetECSRegistry(), GetECSEntity(), flag);
 }
 
 // b3d::Decal lifecycle
@@ -231,89 +228,35 @@ Decal::Decal()
 void Decal::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<Decal>(mThisHandle).GetShared());
-
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(!registry->HasAllOf<ecs::Decal>(entity))
-	{
-		ecs::Decal fragmentData;
-		registry->AddComponent<ecs::Decal>(entity, std::move(fragmentData));
-	}
-
-	UpdateBounds();
+	ecs::DecalECSUtility::CreateFragmentsIfMissing(*GetECSRegistry(), GetECSEntity());
 
 	Component::Initialize();
 	CoreObject::Initialize();
+
+	UpdateBounds();
 }
 
 void Decal::OnEnabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->AllocateDecalId(*registry, entity);
-
-	registry->AddTag<ecs::DecalDirty>(entity);
+	ecs::DecalECSUtility::RegisterWithRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Decal::OnDisabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->DeallocateDecalId(*registry, entity);
-
-	registry->RemoveComponents<ecs::DecalDirty>(entity);
-	registry->RemoveComponents<ecs::DecalTransformDirty>(entity);
+	ecs::DecalECSUtility::UnregisterFromRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void Decal::OnDestroyed()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate only if currently active (has a DecalId fragment)
-	if(registry->HasAllOf<ecs::DecalId>(entity))
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->DeallocateDecalId(*registry, entity);
-	}
-
-	registry->RemoveComponents<ecs::DecalDirty>(entity);
-	registry->RemoveComponents<ecs::DecalTransformDirty>(entity);
-	registry->RemoveComponents<ecs::Decal>(entity);
-
+	ecs::DecalECSUtility::RemoveFragments(*GetECSRegistry(), GetECSEntity());
 	CoreObject::Destroy();
 }
 
 void Decal::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
-	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate from old scene only if was active
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::DecalId>(oldEntity))
-		oldScene->GetRendererScene()->DeallocateDecalId(*oldRegistry, oldEntity);
-
-	// Migrate ecs::Decal fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::Decal>(oldEntity))
-	{
-		ecs::Decal fragmentCopy = oldRegistry->GetComponents<ecs::Decal>(oldEntity);
-		registry->AddComponent<ecs::Decal>(entity, std::move(fragmentCopy));
-	}
-
-	// Allocate in new scene only if currently active
-	if(GetEnabled())
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->AllocateDecalId(*registry, entity);
-
-		registry->AddTag<ecs::DecalDirty>(entity);
-	}
+	ecs::DecalECSUtility::ChangeScene(oldScene, oldEntity, *SceneObject()->GetScene(), GetECSEntity(), GetEnabled());
 }
 
 void Decal::OnTransformChanged(TransformChangedFlags flags)

@@ -7,6 +7,7 @@
 #include "Scene/B3DComponent.h"
 #include "Math/B3DTransform.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectECSUtility.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 #include "Scene/B3DSceneObject.h"
 
@@ -96,6 +97,8 @@ namespace b3d
 	 *  @{
 	 */
 
+	class RendererScene;
+
 	namespace ecs
 	{
 		class ECSReflectionProbeRTTI;
@@ -119,9 +122,26 @@ namespace b3d
 		{
 			RendererId Id = kInvalidRendererId;
 		};
-	} // namespace ecs
 
-	class RendererScene;
+		/** Tag indicating a ReflectionProbe needs to sync all of its properties to its render proxy. */
+		struct ReflectionProbeDirty {};
+
+		/** Tag indicating a ReflectionProbe needs to sync transform to its render proxy. */
+		struct ReflectionProbeTransformDirty {};
+
+		/** Creates all ReflectionProbe data fragments, a world transform, and allocates a renderer ID. Entity is ready for rendering after this call. Returns the ReflectionProbe data fragment. */
+		ReflectionProbe& CreateReflectionProbe(Registry& registry, Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform = Transform::kIdentity);
+
+		/** Removes all ReflectionProbe fragments. Cleanup (ID deallocation, dirty tags, task cancellation) is handled by the associated RendererScene when it is notified the fragment has been removed. */
+		void DestroyReflectionProbe(Registry& registry, Entity entity);
+
+		/** ECS utility for ReflectionProbe renderer objects. Provides fragment creation, renderer registration, dirty marking, and scene migration. */
+		using ReflectionProbeECSUtility = TRendererObjectECSUtility<
+			ReflectionProbeId,
+			ReflectionProbeDirty, ReflectionProbeTransformDirty,
+			&RendererScene::AllocateReflectionProbeId, &RendererScene::DeallocateReflectionProbeId,
+			ReflectionProbe>;
+	}
 
 	/** Free utility functions for managing reflection probe capture and filtering without requiring a Component. */
 	class ReflectionProbeUtility

@@ -16,6 +16,23 @@
 
 using namespace b3d;
 
+// ECS free functions
+
+ecs::ReflectionProbe& ecs::CreateReflectionProbe(ecs::Registry& registry, ecs::Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform)
+{
+	ecs::ReflectionProbeECSUtility::CreateFragmentsIfMissing(registry, entity);
+	registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(transform));
+	rendererScene->AllocateReflectionProbeId(registry, entity);
+	ecs::ReflectionProbeECSUtility::MarkDirty(registry, entity);
+
+	return registry.GetComponents<ecs::ReflectionProbe>(entity);
+}
+
+void ecs::DestroyReflectionProbe(ecs::Registry& registry, ecs::Entity entity)
+{
+	ecs::ReflectionProbeECSUtility::RemoveFragments(registry, entity);
+}
+
 // TReflectionProbeData
 
 template <bool IsRenderProxy>
@@ -37,17 +54,6 @@ void TReflectionProbeData<IsRenderProxy>::ComputeBounds(const Transform& transfo
 
 template void TReflectionProbeData<true>::ComputeBounds(const Transform& transform);
 template void TReflectionProbeData<false>::ComputeBounds(const Transform& transform);
-
-// ECS dirty tags for reflection probe sync
-
-namespace b3d::ecs
-{
-	/** Tag indicating a ReflectionProbe needs to sync all of its properties to its render proxy. */
-	struct ReflectionProbeDirty {};
-
-	/** Tag indicating a ReflectionProbe needs to sync transform to its render proxy. */
-	struct ReflectionProbeTransformDirty {};
-} // namespace b3d::ecs
 
 // New ECS-based sync blocks
 
@@ -229,17 +235,7 @@ void ReflectionProbe::MarkRenderProxyDataDirty(ComponentDirtyFlag flag)
 {
 	if(!SceneObject().IsValid())
 		return;
-
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(flag == ComponentDirtyFlag::Transform)
-	{
-		if(!registry->HasAllOf<ecs::ReflectionProbeDirty>(entity))
-			registry->AddTag<ecs::ReflectionProbeTransformDirty>(entity);
-	}
-	else
-		registry->AddTag<ecs::ReflectionProbeDirty>(entity);
+	ecs::ReflectionProbeECSUtility::MarkDirty(*GetECSRegistry(), GetECSEntity(), flag);
 }
 
 // ReflectionProbeUtility
@@ -377,16 +373,7 @@ ReflectionProbe::ReflectionProbe()
 void ReflectionProbe::Initialize()
 {
 	SetShared(B3DStaticGameObjectCast<ReflectionProbe>(mThisHandle).GetShared());
-
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	if(!registry->HasAllOf<ecs::ReflectionProbe>(entity))
-	{
-		ecs::ReflectionProbe fragmentData;
-		registry->AddComponent<ecs::ReflectionProbe>(entity, std::move(fragmentData));
-	}
-
+	ecs::ReflectionProbeECSUtility::CreateFragmentsIfMissing(*GetECSRegistry(), GetECSEntity());
 	Component::Initialize();
 	CoreObject::Initialize();
 }
@@ -400,14 +387,12 @@ void ReflectionProbe::OnEnabled()
 {
 	ecs::Registry* registry = GetECSRegistry();
 	ecs::Entity entity = GetECSEntity();
-
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->AllocateReflectionProbeId(*registry, entity);
+	ecs::ReflectionProbeECSUtility::RegisterWithRenderer(*registry, entity, rendererScene);
 
-	registry->AddTag<ecs::ReflectionProbeDirty>(entity);
+	ecs::ReflectionProbe& fragment = GetFragment();
 
 	// If filtered texture doesn't exist, ensure it is generated
-	ecs::ReflectionProbe& fragment = GetFragment();
 	if(fragment.FilteredTexture == nullptr)
 	{
 		if(fragment.CustomTexture != nullptr)
@@ -419,59 +404,25 @@ void ReflectionProbe::OnEnabled()
 
 void ReflectionProbe::OnDisabled()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
+	ecs::ReflectionProbe& fragment = GetFragment();
+	if(fragment.PendingTask != nullptr)
+	{
+		fragment.PendingTask->Cancel();
+		fragment.PendingTask = nullptr;
+	}
 
 	const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-	rendererScene->DeallocateReflectionProbeId(*registry, entity);
-
-	registry->RemoveComponents<ecs::ReflectionProbeDirty>(entity);
-	registry->RemoveComponents<ecs::ReflectionProbeTransformDirty>(entity);
+	ecs::ReflectionProbeECSUtility::UnregisterFromRenderer(*GetECSRegistry(), GetECSEntity(), rendererScene);
 }
 
 void ReflectionProbe::OnDestroyed()
 {
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate only if currently active (has a ReflectionProbeId fragment)
-	// DeallocateReflectionProbeId also cancels any pending capture task
-	if(registry->HasAllOf<ecs::ReflectionProbeId>(entity))
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->DeallocateReflectionProbeId(*registry, entity);
-	}
-
-	registry->RemoveComponents<ecs::ReflectionProbeDirty>(entity);
-	registry->RemoveComponents<ecs::ReflectionProbeTransformDirty>(entity);
-	registry->RemoveComponents<ecs::ReflectionProbe>(entity);
+	ecs::ReflectionProbeECSUtility::RemoveFragments(*GetECSRegistry(), GetECSEntity());
 }
 
 void ReflectionProbe::OnSceneChanged(SceneInstance* oldScene, ecs::Entity oldEntity)
 {
-	ecs::Registry* oldRegistry = oldScene != nullptr ? &oldScene->GetECSRegistry() : nullptr;
-	ecs::Registry* registry = GetECSRegistry();
-	ecs::Entity entity = GetECSEntity();
-
-	// Deallocate from old scene only if was active
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ReflectionProbeId>(oldEntity))
-		oldScene->GetRendererScene()->DeallocateReflectionProbeId(*oldRegistry, oldEntity);
-
-	// Migrate ecs::ReflectionProbe fragment to new entity
-	if(oldRegistry != nullptr && oldRegistry->HasAllOf<ecs::ReflectionProbe>(oldEntity))
-	{
-		ecs::ReflectionProbe fragmentCopy = oldRegistry->GetComponents<ecs::ReflectionProbe>(oldEntity);
-		registry->AddComponent<ecs::ReflectionProbe>(entity, std::move(fragmentCopy));
-	}
-
-	// Allocate in new scene only if currently active
-	if(GetEnabled())
-	{
-		const SPtr<RendererScene>& rendererScene = SceneObject()->GetScene()->GetRendererScene();
-		rendererScene->AllocateReflectionProbeId(*registry, entity);
-
-		registry->AddTag<ecs::ReflectionProbeDirty>(entity);
-	}
+	ecs::ReflectionProbeECSUtility::ChangeScene(oldScene, oldEntity, *SceneObject()->GetScene(), GetECSEntity(), GetEnabled());
 }
 
 void ReflectionProbe::OnTransformChanged(TransformChangedFlags flags)

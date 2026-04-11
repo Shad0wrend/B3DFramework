@@ -10,6 +10,7 @@
 #include "Math/B3DTransform.h"
 #include "Math/B3DRandom.h"
 #include "Renderer/B3DRendererId.h"
+#include "Renderer/B3DRendererObjectECSUtility.h"
 #include "Renderer/B3DRendererObjectStorage.h"
 
 namespace b3d
@@ -489,6 +490,8 @@ namespace b3d
 	 *  @{
 	 */
 
+	class RendererScene;
+
 	namespace ecs
 	{
 		class ECSParticleSystemRTTI;
@@ -546,7 +549,26 @@ namespace b3d
 		{
 			RendererId Id = kInvalidRendererId;
 		};
-	} // namespace ecs
+
+		/** Tag indicating a ParticleSystem needs to sync all of its properties to its render proxy. */
+		struct ParticleSystemDirty {};
+
+		/** Tag indicating a ParticleSystem needs to sync transform to its render proxy. */
+		struct ParticleSystemTransformDirty {};
+
+		/** Creates all ParticleSystem data fragments, a world transform, and allocates a renderer ID. Entity is ready for rendering after this call. Returns the ParticleSystem data fragment. */
+		ParticleSystem& CreateParticleSystem(Registry& registry, Entity entity, const SPtr<RendererScene>& rendererScene, const Transform& transform = Transform::kIdentity);
+
+		/** Removes all ParticleSystem fragments. Cleanup (ID deallocation, dirty tags) is handled by the associated RendererScene when it is notified the fragment has been removed. */
+		void DestroyParticleSystem(Registry& registry, Entity entity);
+
+		/** ECS utility for ParticleSystem renderer objects. Provides fragment creation, renderer registration, dirty marking, and scene migration. */
+		using ParticleSystemECSUtility = TRendererObjectECSUtility<
+			ParticleSystemId,
+			ParticleSystemDirty, ParticleSystemTransformDirty,
+			&RendererScene::AllocateParticleSystemId, &RendererScene::DeallocateParticleSystemId,
+			ParticleSystem, ParticleSimulation>;
+	}
 
 	/** @} */
 

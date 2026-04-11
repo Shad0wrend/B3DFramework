@@ -124,35 +124,22 @@ When you call setter methods like @b3d::ReflectionProbe::SetType or @b3d::Reflec
 
 Each reflection probe also has an @b3d::ecs::ReflectionProbeId fragment that stores a persistent renderer ID used by the @b3d::RendererObjectStorage system for mapping to the packed render-thread representation.
 
-## Dirty tags
-
-The renderer uses two ECS tag types to track which reflection probes need synchronization:
- - `ecs::ReflectionProbeDirty` - Added when any probe property changes. Triggers a full sync.
- - `ecs::ReflectionProbeTransformDirty` - Added when only the transform changes.
-
 ## Using raw ECS fragments
 
-You can bypass the **ReflectionProbe** component and create `ecs::ReflectionProbe` fragments directly for maximum performance. You must manage the renderer ID, world transform, and dirty tags manually.
+You can bypass the **ReflectionProbe** component and create `ecs::ReflectionProbe` fragments directly for maximum performance. Helper functions @b3d::ecs::CreateReflectionProbe and @b3d::ecs::DestroyReflectionProbe handle fragment creation, world transform, renderer ID allocation, and cleanup. Use @b3d::ecs::ReflectionProbeECSUtility to mark dirty after property changes.
 
 ~~~~~~~~~~~~~{.cpp}
 const SPtr<SceneInstance>& scene = SceneManager::Instance().GetMainScene();
 ecs::Registry& registry = scene->GetECSRegistry();
 const SPtr<RendererScene>& rendererScene = scene->GetRendererScene();
 
-// Create an entity with the reflection probe data fragment
+// Create an entity with all reflection probe fragments, a world transform, and a renderer ID
 ecs::Entity entity = registry.CreateEntity();
-ecs::ReflectionProbe& fragment = registry.AddComponent<ecs::ReflectionProbe>(entity);
+ecs::ReflectionProbe& fragment = ecs::CreateReflectionProbe(registry, entity, rendererScene, myTransform);
+
+// Configure the reflection probe
 fragment.Type = ReflectionProbeType::Box;
 fragment.Extents = Vector3(2.0f, 2.0f, 2.0f);
-
-// Add a world transform — the renderer reads this to position the probe
-registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(myTransform));
-
-// Allocate a persistent renderer ID
-rendererScene->AllocateReflectionProbeId(registry, entity);
-
-// Mark dirty for initial sync
-registry.AddTag<ecs::ReflectionProbeDirty>(entity);
 
 // Trigger initial scene capture
 ReflectionProbeUtility::Capture(registry, entity, rendererScene);
@@ -160,7 +147,7 @@ ReflectionProbeUtility::Capture(registry, entity, rendererScene);
 
 ## Capture and filter utilities
 
-The @b3d::ReflectionProbeUtility namespace provides free functions for capturing and filtering reflection probes without requiring a **ReflectionProbe** component. These are the same operations the component uses internally.
+The @b3d::ReflectionProbeUtility class provides free functions for capturing and filtering reflection probes without requiring a **ReflectionProbe** component. These are the same operations the component uses internally.
 
 ~~~~~~~~~~~~~{.cpp}
 // Capture the scene at the probe's position (no-op if a custom texture is set)
@@ -172,26 +159,23 @@ fragment.CustomTexture = customCubemap;
 ReflectionProbeUtility::Filter(registry, entity, rendererScene);
 ~~~~~~~~~~~~~
 
-Pending capture tasks are stored on @b3d::RendererScene and are automatically cancelled when the probe is deallocated via @b3d::RendererScene::DeallocateReflectionProbeId.
+Pending capture tasks are automatically cancelled when the reflection probe fragment is removed from the registry.
 
-When modifying the fragment, add the appropriate dirty tag:
+When modifying the fragment after creation, mark it dirty so the change is synced to the render thread:
 
 ~~~~~~~~~~~~~{.cpp}
 ecs::ReflectionProbe& fragment = registry.GetComponents<ecs::ReflectionProbe>(entity);
 fragment.Extents = Vector3(4.0f, 4.0f, 4.0f);
-registry.AddTag<ecs::ReflectionProbeDirty>(entity);
+ecs::ReflectionProbeECSUtility::MarkDirty(registry, entity);
 
 // For transform-only changes
 registry.GetComponents<ecs::WorldTransform>(entity) = ecs::WorldTransform(newTransform);
-registry.AddTag<ecs::ReflectionProbeTransformDirty>(entity);
+ecs::ReflectionProbeECSUtility::MarkTransformDirty(registry, entity);
 ~~~~~~~~~~~~~
 
-When destroying the entity, deallocate the renderer ID first:
+When destroying the entity, call `ecs::DestroyReflectionProbe` which removes fragments. Cleanup of the renderer ID, dirty tags, and pending capture tasks is handled by the associated RendererScene:
 
 ~~~~~~~~~~~~~{.cpp}
-rendererScene->DeallocateReflectionProbeId(registry, entity);
-registry.RemoveComponents<ecs::ReflectionProbeDirty>(entity);
-registry.RemoveComponents<ecs::ReflectionProbeTransformDirty>(entity);
-registry.RemoveComponents<ecs::ReflectionProbe>(entity);
+ecs::DestroyReflectionProbe(registry, entity);
 registry.EraseEntity(entity);
 ~~~~~~~~~~~~~

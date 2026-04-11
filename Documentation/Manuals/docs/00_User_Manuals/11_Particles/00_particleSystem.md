@@ -317,31 +317,26 @@ In addition to the configuration data, each particle system has an @b3d::ecs::Pa
  - **Rng** - Random number generator seeded with the seed value
  - **State** - Current simulation state (uninitialized, stopped, paused, or playing)
 
-When using raw ECS fragments, you must add this fragment yourself. The **ParticleSystem** component adds it automatically, but bypassing the component requires manual creation.
+When using raw ECS fragments, the `ecs::CreateParticleSystem` helper creates this fragment automatically.
 
 ## ID fragment
 
 Each particle system also has an @b3d::ecs::ParticleSystemId fragment that stores a persistent renderer ID used by the @b3d::RendererObjectStorage system for mapping to the packed render-thread representation.
 
-## Dirty tags
-
-The renderer uses two ECS tag types to track which particle systems need synchronization:
- - `ecs::ParticleSystemDirty` - Added when any configuration property changes. Triggers a full sync.
- - `ecs::ParticleSystemTransformDirty` - Added when only the transform changes.
-
 ## Using raw ECS fragments
 
-You can bypass the **ParticleSystem** component and create `ecs::ParticleSystem` fragments directly for maximum performance. You must manage the renderer ID, world transform, simulation fragment, and dirty tags manually.
+You can bypass the **ParticleSystem** component and create `ecs::ParticleSystem` fragments directly for maximum performance. Helper functions @b3d::ecs::CreateParticleSystem and @b3d::ecs::DestroyParticleSystem handle fragment creation (including the simulation fragment), world transform, renderer ID allocation, and cleanup. Use @b3d::ecs::ParticleSystemECSUtility to mark dirty after property changes.
 
 ~~~~~~~~~~~~~{.cpp}
 const SPtr<SceneInstance>& scene = SceneManager::Instance().GetMainScene();
 ecs::Registry& registry = scene->GetECSRegistry();
 const SPtr<RendererScene>& rendererScene = scene->GetRendererScene();
 
-// Create an entity with the particle system data fragment
+// Create an entity with all particle system fragments, a world transform, and a renderer ID
 ecs::Entity entity = registry.CreateEntity();
-ecs::ParticleSystem& fragment = registry.AddComponent<ecs::ParticleSystem>(entity);
+ecs::ParticleSystem& fragment = ecs::CreateParticleSystem(registry, entity, rendererScene, myTransform);
 
+// Configure the particle system
 ParticleSystemSettings settings;
 settings.Material = myParticleMaterial;
 fragment.Settings = settings;
@@ -353,39 +348,23 @@ ParticleSphereShapeSettings sphereShape;
 sphereShape.Radius = 0.3f;
 emitter->SetShape(ParticleEmitterSphereShape::Create(sphereShape));
 fragment.Emitters = { emitter };
-
-// Add the simulation fragment — required for particle simulation to run
-registry.AddComponent<ecs::ParticleSimulation>(entity);
-
-// Add a world transform
-registry.AddComponent<ecs::WorldTransform>(entity, ecs::WorldTransform(myTransform));
-
-// Allocate a persistent renderer ID
-rendererScene->AllocateParticleSystemId(registry, entity);
-
-// Mark dirty for initial sync
-registry.AddTag<ecs::ParticleSystemDirty>(entity);
 ~~~~~~~~~~~~~
 
-When modifying the fragment, add the appropriate dirty tag:
+When modifying the fragment after creation, mark it dirty so the change is synced to the render thread:
 
 ~~~~~~~~~~~~~{.cpp}
 ecs::ParticleSystem& fragment = registry.GetComponents<ecs::ParticleSystem>(entity);
 fragment.Settings.Material = newMaterial;
-registry.AddTag<ecs::ParticleSystemDirty>(entity);
+ecs::ParticleSystemECSUtility::MarkDirty(registry, entity);
 
 // For transform-only changes
 registry.GetComponents<ecs::WorldTransform>(entity) = ecs::WorldTransform(newTransform);
-registry.AddTag<ecs::ParticleSystemTransformDirty>(entity);
+ecs::ParticleSystemECSUtility::MarkTransformDirty(registry, entity);
 ~~~~~~~~~~~~~
 
-When destroying the entity, deallocate the renderer ID first:
+When destroying the entity, call `ecs::DestroyParticleSystem` which removes fragments. Cleanup of the renderer ID and dirty tags is handled by the associated RendererScene:
 
 ~~~~~~~~~~~~~{.cpp}
-rendererScene->DeallocateParticleSystemId(registry, entity);
-registry.RemoveComponents<ecs::ParticleSystemDirty>(entity);
-registry.RemoveComponents<ecs::ParticleSystemTransformDirty>(entity);
-registry.RemoveComponents<ecs::ParticleSimulation>(entity);
-registry.RemoveComponents<ecs::ParticleSystem>(entity);
+ecs::DestroyParticleSystem(registry, entity);
 registry.EraseEntity(entity);
 ~~~~~~~~~~~~~
