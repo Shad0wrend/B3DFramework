@@ -47,9 +47,6 @@ if(WIN32)
 	target_link_libraries(bsfD3D12RenderAPI PRIVATE ${RenderDoc_LIBRARIES})
 endif()
 
-## Local libs
-target_link_libraries(bsfD3D12RenderAPI PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfD3D12RenderAPI PROPERTY FOLDER Plugins)
 

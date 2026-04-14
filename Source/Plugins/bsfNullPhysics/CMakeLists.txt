@@ -10,10 +10,6 @@ B3DSetDefaultLinkAndCompileFlags(bsfNullPhysics)
 # Includes
 target_include_directories(bsfNullPhysics PRIVATE "./")
 
-# Libraries
-## Local libs
-target_link_libraries(bsfNullPhysics PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfNullPhysics PROPERTY FOLDER Plugins)
 

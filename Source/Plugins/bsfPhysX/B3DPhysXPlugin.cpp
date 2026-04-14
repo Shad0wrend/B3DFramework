@@ -33,6 +33,7 @@ extern "C" void UnloadPlugin_bsfPhysX(void* instance)
 	B3DDelete(static_cast<PhysicsFactory*>(instance));
 }
 
+#if !B3D_MONOLITHIC_BUILD
 extern "C" B3D_PLUGIN_EXPORT void* LoadPlugin()
 {
 	return LoadPlugin_bsfPhysX();
@@ -42,3 +43,4 @@ extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(PhysXFactory* instance)
 {
 	UnloadPlugin_bsfPhysX(static_cast<void*>(instance));
 }
+#endif

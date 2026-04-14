@@ -10,10 +10,6 @@ B3DSetDefaultLinkAndCompileFlags(bsfRenderBeast)
 # Includes
 target_include_directories(bsfRenderBeast PRIVATE "./")
 
-# Libraries
-## Local libs
-target_link_libraries(bsfRenderBeast bsf)
-
 # IDE specific
 set_property(TARGET bsfRenderBeast PROPERTY FOLDER Plugins)
 

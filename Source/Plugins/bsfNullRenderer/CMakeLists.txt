@@ -10,10 +10,6 @@ B3DSetDefaultLinkAndCompileFlags(bsfNullRenderer)
 # Includes
 target_include_directories(bsfNullRenderer PRIVATE "./")
 
-# Libraries
-## Local libs
-target_link_libraries(bsfNullRenderer bsf)
-
 # IDE specific
 set_property(TARGET bsfNullRenderer PROPERTY FOLDER Plugins)
 

@@ -22,9 +22,6 @@ target_include_directories(bsfFBXImporter PRIVATE "./")
 ## External lib: FBX
 target_link_libraries(bsfFBXImporter PRIVATE ${FBXSDK_LIBRARIES})
 
-## Local libs
-target_link_libraries(bsfFBXImporter PRIVATE bsf)
-
 ## OS libs
 if(APPLE) # MacOS
 	B3DTargetLinkFramework(bsfFBXImporter CoreFoundation)

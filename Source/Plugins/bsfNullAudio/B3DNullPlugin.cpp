@@ -31,6 +31,7 @@ extern "C" void UnloadPlugin_bsfNullAudio(void* instance)
 	B3DDelete(static_cast<AudioFactory*>(instance));
 }
 
+#if !B3D_MONOLITHIC_BUILD
 /**	Returns a name of the plugin. */
 extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
@@ -49,3 +50,4 @@ extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(NullFactory* instance)
 {
 	UnloadPlugin_bsfNullAudio(static_cast<void*>(instance));
 }
+#endif

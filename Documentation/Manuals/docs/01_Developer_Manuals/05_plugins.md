@@ -104,8 +104,10 @@ extern "C" void UnloadPlugin_MyPlugin(void* instance)
 }
 
 // Dynamic-mode trampolines — the engine's PluginLoader looks up the symbols
-// "LoadPlugin" and "UnloadPlugin" by name in the plugin DLL, so both
-// trampolines must be present.
+// "LoadPlugin" and "UnloadPlugin" by name in the plugin DLL. Skipped in
+// monolithic builds because every plugin is linked into bsf and the fixed
+// names would collide across plugins.
+#if !B3D_MONOLITHIC_BUILD
 extern "C" B3D_PLUGIN_EXPORT void* LoadPlugin()
 {
 	return LoadPlugin_MyPlugin();
@@ -115,6 +117,7 @@ extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(MyPluginFactory* instance)
 {
 	UnloadPlugin_MyPlugin(instance);
 }
+#endif
 ~~~~~~~~~~~~~
 
 After you have your plugin interface, all you need to do is to pass the name of your plugin (as defined in CMake) to one of the entries in **START_UP_DESC** for it to be loaded.

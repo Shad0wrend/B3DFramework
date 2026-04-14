@@ -15,6 +15,7 @@ extern "C" void UnloadPlugin_bsfVulkanRenderAPI(void* instance)
 	B3DDelete(static_cast<GpuBackendFactory*>(instance));
 }
 
+#if !B3D_MONOLITHIC_BUILD
 extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
 	return render::VulkanGpuBackendFactory::SystemName;
@@ -29,3 +30,4 @@ extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(render::VulkanGpuBackendFactory* 
 {
 	UnloadPlugin_bsfVulkanRenderAPI(instance);
 }
+#endif

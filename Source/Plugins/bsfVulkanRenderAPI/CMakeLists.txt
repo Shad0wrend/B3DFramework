@@ -72,9 +72,6 @@ if(APPLE) # MacOS
 	B3DTargetLinkFramework(bsfVulkanRenderAPI IOSurface)
 endif()
 
-## Local libs
-target_link_libraries(bsfVulkanRenderAPI PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfVulkanRenderAPI PROPERTY FOLDER Plugins)
 

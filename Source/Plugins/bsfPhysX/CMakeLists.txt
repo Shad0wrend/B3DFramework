@@ -28,9 +28,6 @@ target_compile_definitions(bsfPhysX PRIVATE $<$<CONFIG:Debug>:_DEBUG> $<$<CONFIG
 ## External lib: PhysX
 target_link_libraries(bsfPhysX PRIVATE ${PhysX_LIBRARIES})
 
-## Local libs
-target_link_libraries(bsfPhysX PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfPhysX PROPERTY FOLDER Plugins)
 

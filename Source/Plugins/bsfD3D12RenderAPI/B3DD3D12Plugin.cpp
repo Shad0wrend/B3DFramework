@@ -15,6 +15,7 @@ extern "C" void UnloadPlugin_bsfD3D12RenderAPI(void* instance)
 	B3DDelete(static_cast<GpuBackendFactory*>(instance));
 }
 
+#if !B3D_MONOLITHIC_BUILD
 extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
 	return D3D12GpuBackendFactory::SystemName;
@@ -29,3 +30,4 @@ extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(D3D12GpuBackendFactory* instance)
 {
 	UnloadPlugin_bsfD3D12RenderAPI(instance);
 }
+#endif

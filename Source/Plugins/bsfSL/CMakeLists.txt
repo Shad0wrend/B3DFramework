@@ -58,9 +58,6 @@ endif()
 ## External lib: XShaderCompiler
 target_link_libraries(bsfSL PRIVATE ${XShaderCompiler_LIBRARIES})
 
-## Local libs
-target_link_libraries(bsfSL PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfSL PROPERTY FOLDER Plugins)
 

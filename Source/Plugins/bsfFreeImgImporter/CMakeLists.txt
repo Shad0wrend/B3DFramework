@@ -22,10 +22,7 @@ target_compile_definitions(bsfFreeImgImporter PRIVATE -D_MBCS -DFREEIMAGE_LIB)
 
 # Libraries
 ## External lib: FreeImage
-target_link_libraries(bsfFreeImgImporter ${freeimg_LIBRARIES})
-
-## Local libs
-target_link_libraries(bsfFreeImgImporter bsf)
+target_link_libraries(bsfFreeImgImporter PRIVATE ${freeimg_LIBRARIES})
 
 # IDE specific
 set_property(TARGET bsfFreeImgImporter PROPERTY FOLDER Plugins)

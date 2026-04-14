@@ -40,9 +40,6 @@ if(APPLE) # MacOS
 	B3DTargetLinkFramework(bsfOpenAudio AudioToolbox)
 endif()
 
-## Local libs
-target_link_libraries(bsfOpenAudio PRIVATE bsf)
-
 # IDE specific
 set_property(TARGET bsfOpenAudio PROPERTY FOLDER Plugins)
 

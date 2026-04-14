@@ -59,19 +59,52 @@ target_include_directories(ThirdParty INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility/ThirdParty>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility/ThirdParty>)
 
-# Target
-add_library(bsf SHARED ${B3D_UTILITY_SOURCE_FILES} ${B3D_CORE_SOURCE_FILES})
-
-B3DSetDefaultLinkAndCompileFlags(bsf)
-
-# Includes
-target_include_directories(bsf PUBLIC
+# Public usage requirements for bsf (include dirs + compile flags). Exposed as a
+# separate INTERFACE target so static plugins can inherit them in monolithic
+# builds without creating a link cycle with bsf itself.
+add_library(bsfHeaders INTERFACE)
+target_include_directories(bsfHeaders INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Core>
 	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Utility>
 	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Core>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Core>)
+
+if(MSVC)
+	if(NOT B3D_ENABLE_RTTI)
+		target_compile_options(bsfHeaders INTERFACE
+			$<$<COMPILE_LANGUAGE:CXX>:/GR->)
+	endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+	if(NOT B3D_ENABLE_EXCEPTIONS)
+		target_compile_options(bsfHeaders INTERFACE
+			-fno-exceptions)
+	endif()
+	if(NOT B3D_ENABLE_RTTI)
+		target_compile_options(bsfHeaders INTERFACE
+			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
+	endif()
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	if(NOT B3D_ENABLE_EXCEPTIONS)
+		target_compile_options(bsfHeaders INTERFACE
+			-fno-exceptions)
+	endif()
+	if(NOT B3D_ENABLE_RTTI)
+		target_compile_options(bsfHeaders INTERFACE
+			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
+	endif()
+else()
+# TODO_OTHER_COMPILERS_GO_HERE
+endif()
+
+# Target
+add_library(bsf SHARED ${B3D_UTILITY_SOURCE_FILES} ${B3D_CORE_SOURCE_FILES})
+
+B3DSetDefaultLinkAndCompileFlags(bsf)
+
+# Inherit public include dirs and compile flags from the bsfHeaders interface.
+target_link_libraries(bsf PUBLIC bsfHeaders)
 
 # Defines
 target_compile_definitions(bsf PRIVATE
@@ -80,33 +113,6 @@ target_compile_definitions(bsf PRIVATE
 	$<$<CONFIG:RelWithDebInfo>:B3D_CONFIG=B3D_CONFIG_ID_RELWITHDEBINFO>
 	$<$<CONFIG:MinSizeRel>:B3D_CONFIG=B3D_CONFIG_ID_MINSIZEREL>
 	$<$<CONFIG:Release>:B3D_CONFIG=B3D_CONFIG_ID_RELEASE>)
-
-if(MSVC)
-	if(NOT B3D_ENABLE_RTTI)
-		target_compile_options(bsf PUBLIC
-			$<$<COMPILE_LANGUAGE:CXX>:/GR->)
-	endif()
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
-	if(NOT B3D_ENABLE_EXCEPTIONS)
-		target_compile_options(bsf PUBLIC
-			-fno-exceptions)
-	endif()
-	if(NOT B3D_ENABLE_RTTI)
-		target_compile_options(bsf PUBLIC
-			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
-	endif()
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	if(NOT B3D_ENABLE_EXCEPTIONS)
-		target_compile_options(bsf PUBLIC
-			-fno-exceptions)
-	endif()
-	if(NOT B3D_ENABLE_RTTI)
-		target_compile_options(bsf PUBLIC
-			$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
-	endif()
-else()
-# TODO_OTHER_COMPILERS_GO_HERE
-endif()
 
 # Libraries
 ## External lib: NVTT
