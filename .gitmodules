@@ -8,3 +8,6 @@
 [submodule "Tools/BansheeForge"]
 	path = Tools/BansheeForge
 	url = https://github.com/BearishSun/BansheeForge.git
+[submodule "Tools/BansheeDocGenerator"]
+	path = Tools/BansheeDocGenerator
+	url = https://github.com/BearishSun/BansheeDocGenerator.git

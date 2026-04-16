@@ -6,16 +6,16 @@ set(B3D_CODEGEN_HEADER_FILES "")
 # @param	path		Path to a folder that contains the include files.
 function(B3DRegisterIncludeFolderForCodeGen path)
 	set(B3D_CODEGEN_HEADER_FOLDERS ${B3D_CODEGEN_HEADER_FOLDERS} "-I${path}" PARENT_SCOPE)
-	
+
 	file(GLOB_RECURSE allHeaderFiles ${path}/*.h)
-	
+
 	set(publicHeaderFiles "")
 	foreach(headerFile ${allHeaderFiles})
 		if("${headerFile}" MATCHES ".*\\.h" AND NOT "${headerFile}" MATCHES "Private|ThirdParty|Generated|RTTI")
 			list(APPEND publicHeaderFiles ${headerFile})
 		endif()
 	endforeach(headerFile)
-	
+
 	set(B3D_CODEGEN_HEADER_FILES ${B3D_CODEGEN_HEADER_FILES} ${publicHeaderFiles} PARENT_SCOPE)
 endfunction()
 

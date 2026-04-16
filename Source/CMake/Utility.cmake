@@ -143,6 +143,11 @@ function(B3DRegisterOptionalFrameworkSubdirectories)
 		include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/GenerateScriptBindings.cmake)
 	endif()
 
+	# Documentation generation script
+	if(B3D_BUILD_CODEGEN)
+		include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/GenerateDocumentation.cmake)
+	endif()
+
 	# Stock icon generation script
 	include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/StockIcons.cmake)
 endfunction()
