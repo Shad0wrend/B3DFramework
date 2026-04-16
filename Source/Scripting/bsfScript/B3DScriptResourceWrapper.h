@@ -141,6 +141,12 @@ namespace b3d
 		}
 	};
 
+	/** @} */
+
+	/** @addtogroup ScriptInteropEngine
+	 *  @{
+	 */
+
 	/**	Interop class between C++ & CLR for Resource. */
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptResource : public TScriptResourceWrapper<Resource, ScriptResource>
 	{

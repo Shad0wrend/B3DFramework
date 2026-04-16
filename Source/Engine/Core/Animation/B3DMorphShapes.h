@@ -9,7 +9,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Animation-Internal
+	/** @addtogroup Animation
 	 *  @{
 	 */
 

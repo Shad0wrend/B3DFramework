@@ -4,7 +4,7 @@
 
 namespace b3d
 {
-	/** @addtogroup General
+	/** @addtogroup Memory-Internal
 	 *  @{
 	 */
 
@@ -463,6 +463,12 @@ namespace b3d
 		Type* mOwnedObject = nullptr;
 		TSharedControlBlock<ThreadSafety>* mControlBlock = nullptr;
 	};
+
+	/** @} */
+
+	/** @addtogroup Memory
+	 *  @{
+	 */
 
 	/**
 	 * Reference counted object pointer that will keep the underlying object alive as long as the reference count is above 0. 

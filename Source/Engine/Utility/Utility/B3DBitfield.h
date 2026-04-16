@@ -68,6 +68,12 @@ namespace b3d
 		u32 mBitMask;
 	};
 
+	/** @} */
+
+	/** @addtogroup Containers-Internal
+	 *  @{
+	 */
+
 	/** Helper template used for specifying types for const and non-const iterator variants for Bitfield. */
 	template <bool CONST, class Allocator>
 	struct TBitfieldIteratorTypes

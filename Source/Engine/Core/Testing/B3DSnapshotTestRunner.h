@@ -10,6 +10,32 @@
 
 namespace b3d
 {
+	/** @addtogroup Testing-Internal
+	 *  @{
+	 */
+
+	/** Status of a snapshot test result. */
+	enum class SnapshotTestStatus
+	{
+		Passed,
+		Failed,
+		PassedWithWarnings
+	};
+
+	/** Results of a snapshot test execution. */
+	struct SnapshotTestResult
+	{
+		SnapshotTestStatus Status = SnapshotTestStatus::Passed;
+		String TestName;
+		Path ScreenshotPath;
+		u64 TotalFrames = 0;
+		float ExecutionTimeSeconds = 0.0f;
+		Vector<String> Errors;
+		Vector<String> Warnings;
+	};
+
+	/** @} */
+
 	/** @addtogroup Testing
 	 *  @{
 	 */
@@ -50,34 +76,6 @@ namespace b3d
 
 			return configuration;
 		}
-	};
-
-	/** Status of a snapshot test result. */
-	enum class SnapshotTestStatus
-	{
-		Passed,
-		Failed,
-		PassedWithWarnings
-	};
-
-	/** Captured log entry for snapshot test output. */
-	struct SnapshotTestLogEntry
-	{
-		String Message;
-		LogVerbosity Verbosity;
-		String Category;
-	};
-
-	/** Results of a snapshot test execution. */
-	struct SnapshotTestResult
-	{
-		SnapshotTestStatus Status = SnapshotTestStatus::Passed;
-		String TestName;
-		Path ScreenshotPath;
-		u64 TotalFrames = 0;
-		float ExecutionTimeSeconds = 0.0f;
-		Vector<String> Errors;
-		Vector<String> Warnings;
 	};
 
 	/**

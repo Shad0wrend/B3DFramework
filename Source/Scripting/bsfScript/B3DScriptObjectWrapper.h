@@ -12,7 +12,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Script
+	/** @addtogroup Script-Internal
 	 *  @{
 	 */
 
@@ -29,6 +29,12 @@ namespace b3d
 
 	template <typename T>
 	struct B3DHasGetHandle<T, std::void_t<decltype(std::declval<T>().GetHandle())>> : std::true_type {};
+
+	/** @} */
+
+	/** @addtogroup Script
+	 *  @{
+	 */
 
 	/** Determines how is script object lifetime tracked, and when should the native object be destroyed. */
 	enum class ScriptObjectLifetimeTrackingMode

@@ -13,6 +13,10 @@
  *  Templated commonly used containers.
  */
 
+/** @defgroup DataStructures Data structures
+ *  Templated commonly used data structures.
+ */
+
 /** @defgroup Debug Debug
  *  Various debugging helpers.
  */
@@ -41,10 +45,6 @@
  *  Allocators, deallocators and memory manipulation.
  */
 
-/** @defgroup Platform-Utility Platform
- *  %Platform specific functionality.
- */
-
 /** @defgroup RTTI RTTI
  *  Run-time type information defining and querying.
  */
@@ -63,12 +63,28 @@
  *  String manipulation.
  */
 
+/** @defgroup Time Time
+ *  Anything related to time.
+ */
+
 /** @defgroup Testing Testing
  *  Running unit tests.
  */
 
+/** @defgroup Metaprogramming Template metaprogramming
+ *  Helpers for template meta-programming
+ */
+
+/** @defgroup Geometry Geometry
+ *  Anything related to low-level geometry processing.
+ */
+
 /** @defgroup Threading Threading
  *  Thread manipulation and synchronization.
+ */
+
+/** @defgroup System System 
+ *  Management and helpers for engine systems.
  */
 
 /** @defgroup ECS ECS

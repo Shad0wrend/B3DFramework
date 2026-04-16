@@ -34,6 +34,12 @@ namespace b3d
 	/**	Generates an MD5 hash string for the provided source string. */
 	String B3D_EXPORT Md5(const String& source);
 
+	/** @} */
+
+	/** @addtogroup Memory
+	 *  @{
+	 */
+
 	/** Sets contents of a struct to zero. */
 	template <class T>
 	void B3DZeroOut(T& s)
@@ -120,6 +126,12 @@ namespace b3d
 		return swapped;
 	}
 
+	/** @} */
+
+	/** @addtogroup Math
+	 *  @{
+	 */
+
 	/** Encapsulates width/height/depth in a single structure. */
 	template<class T>
 	struct TSize3
@@ -148,6 +160,12 @@ namespace b3d
 
 	using Size3UI = TSize3<u32>;
 	using Size3 = TSize3<float>;
+
+	/** @} */
+
+	/** @addtogroup Memory
+	 *  @{
+	 */
 
 	/**
 	 * Represents a range of memory containing sequential elements. Elements may be optionally separated by a stride.
@@ -217,6 +235,12 @@ namespace b3d
 	using Range = TRange<float>;
 	using RangeF = TRange<float>;
 	using RangeD = TRange<double>;
+
+	/** @} */
+
+	/** @addtogroup Metaprogramming
+	 *  @{
+	 */
 
 	/** Checks is the provided type a TUnitValue<T, Unit> */
 	template <typename T>

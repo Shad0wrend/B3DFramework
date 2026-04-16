@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Script
+	/** @addtogroup Script-Internal
 	 *  @{
 	 */
 
@@ -46,6 +46,12 @@ namespace b3d
 
 		void MakeSureIAmInstantiated() {}
 	};
+
+	/** @} */
+
+	/** @addtogroup Script
+	 *  @{
+	 */
 
 	/**
 	 * Templated base class that provides information about a script type that maps to a native type. For each script type

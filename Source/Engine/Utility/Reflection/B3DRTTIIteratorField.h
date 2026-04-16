@@ -15,10 +15,6 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** @addtogroup RTTI-Detail
-	 *  @{
-	 */
-
 	/** Shared helper functions used by TRTTIIteratorField and TRTTIECSField. */
 	namespace detail
 	{
@@ -148,8 +144,6 @@ namespace b3d
 			return nullptr;
 		}
 	} // namespace detail
-
-	/** @} */
 
 	/** Provides interface to be implemented by specializations of TRTTIIteratorField. */
 	struct RTTIIteratorField : public RTTIField

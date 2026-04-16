@@ -6,7 +6,7 @@
 
 namespace b3d
 {
-	/** @addtogroup General
+	/** @addtogroup Containers
 	 *  @{
 	 */
 
@@ -21,14 +21,6 @@ namespace b3d
 	 */
 	template <class Type>
 	struct DenseMapInfo;
-
-	/** DenseMap iterator. */
-	template <class Key, class Value, class KeyInfo = DenseMapInfo<Key>>
-	class DenseMapIterator;
-
-	/** DenseMap constant iterator. */
-	template <class Key, class Value, class KeyInfo = DenseMapInfo<Key>>
-	class DenseMapConstIterator;
 
 	/**
 	 * DenseMapInfo specialization that works well for unsigned integer types, but will be used for all other types
@@ -50,6 +42,20 @@ namespace b3d
 
 		constexpr static Type* getTombstoneKey() { return reinterpret_cast<Type*>(-2); }
 	};
+
+	/** @} */
+
+	/** @addtogroup Containers-Internal
+	 *  @{
+	 */
+
+	/** DenseMap iterator. */
+	template <class Key, class Value, class KeyInfo = DenseMapInfo<Key>>
+	class DenseMapIterator;
+
+	/** DenseMap constant iterator. */
+	template <class Key, class Value, class KeyInfo = DenseMapInfo<Key>>
+	class DenseMapConstIterator;
 
 	/** DenseMap iterator implementation. */
 	template <class Key, class Value, class KeyInfo>
@@ -113,6 +119,12 @@ namespace b3d
 
 		const std::pair<Key, Value>* operator->() const { return this->ptr; }
 	};
+
+	/** @} */
+
+	/** @addtogroup Containers
+	 *  @{
+	 */
 
 	/**
 	 * Hash-map with densely stored values, using quadratic probing for lookup.

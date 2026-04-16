@@ -15,7 +15,7 @@ namespace b3d
 {
 	class SkeletonMask;
 
-	/** @addtogroup Animation-Internal
+	/** @addtogroup Animation
 	 *  @{
 	 */
 
@@ -152,7 +152,6 @@ namespace b3d
 
 		/** Returns the total number of bones in the skeleton. */
 		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
-
 		u32 GetBoneCount() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */

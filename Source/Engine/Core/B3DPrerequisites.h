@@ -113,6 +113,10 @@
   *	Base API for renderer plugins, provides a way to render renderable scene objects by issuing GpuBackend commands.
   */
 
+/** @defgroup Script Script
+  *	Helper and utility functionality for exporting native types to scripting.
+  */
+
 /** @defgroup Debug-Engine Debug
   *	Various debugging helpers.
   */

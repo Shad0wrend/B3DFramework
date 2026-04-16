@@ -41,6 +41,10 @@ namespace b3d
 	public:
 		using value_type = Type;
 
+		/** @name Internal
+		 *  @{
+		 */
+
 		/** Random-access iterator for TChunkedArray. */
 		template<bool IsConst>
 		class TIterator
@@ -93,6 +97,8 @@ namespace b3d
 			ContainerPtr mContainer = nullptr;
 			u64 mIndex = 0;
 		};
+
+		/** @} */
 
 		using Iterator = TIterator<false>;
 		using ConstIterator = TIterator<true>;

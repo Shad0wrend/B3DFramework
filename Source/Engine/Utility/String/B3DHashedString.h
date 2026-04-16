@@ -27,7 +27,7 @@ namespace b3d
 		};
 	} // namespace internal
 
-	/** @addtogroup General
+	/** @addtogroup String
 	 *  @{
 	 */
 

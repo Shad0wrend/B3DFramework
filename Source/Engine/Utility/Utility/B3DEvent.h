@@ -8,7 +8,7 @@ namespace b3d
 	 *  @{
 	 */
 
-	/** @addtogroup General-Internal
+	/** @addtogroup Threading-Internal
 	 *  @{
 	 */
 
@@ -23,6 +23,12 @@ namespace b3d
 			NullLock(NullMutex&) {}
 		};
 	}
+
+	/** @} */
+
+	/** @addtogroup General-Internal
+	 *  @{
+	 */
 
 	/** Data common to all event connections. */
 	struct EventConnection

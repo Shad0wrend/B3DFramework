@@ -206,20 +206,6 @@ namespace b3d
 
 	/** @} */
 
-	/** @addtogroup Platform-Utility
-	 *  @{
-	 */
-
-	/**	Enum that defines possible window border styles. */
-	enum class WindowBorder
-	{
-		Normal,
-		None,
-		Fixed
-	};
-
-	/** @} */
-
 	template<typename T> class TTransform;
 	using Transform = TTransform<float>;
 	using TransformF = TTransform<float>;

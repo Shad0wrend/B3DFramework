@@ -7,7 +7,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Memory-Internal
+	/** @addtogroup Memory
 	 *  @{
 	 */
 

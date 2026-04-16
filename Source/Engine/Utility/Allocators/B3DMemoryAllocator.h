@@ -17,10 +17,6 @@ namespace b3d
 {
 	class MemoryAllocatorBase;
 
-	/** @addtogroup Internal-Utility
-	 *  @{
-	 */
-
 	/** @addtogroup Memory-Internal
 	 *  @{
 	 */
@@ -125,12 +121,24 @@ namespace b3d
 		static B3D_THREADLOCAL uint64_t Frees;
 	};
 
+	/** @} */
+
+	/** @addtogroup Memory
+	 *  @{
+	 */
+
 	/**
 	 * General allocator provided by the OS. Use for persistent long term allocations, and allocations that don't
 	 * happen often.
 	 */
 	class DefaultAllocatorTag
 	{};
+
+	/** @} */
+
+	/** @addtogroup Memory-Internal
+	 *  @{
+	 */
 
 	/** Base class all memory allocators need to inherit. Provides allocation and free counting. */
 	class MemoryAllocatorBase
@@ -218,7 +226,6 @@ namespace b3d
 		}
 	};
 
-	/** @} */
 	/** @} */
 
 	/** @addtogroup Memory
@@ -392,9 +399,6 @@ namespace b3d
 	MemoryAllocator<Alloc>::free(ptr);
 
 	/** @} */
-	/** @addtogroup Internal-Utility
-	 *  @{
-	 */
 
 	/** @addtogroup Memory-Internal
 	 *  @{
@@ -474,7 +478,6 @@ namespace b3d
 
 	// NOLINTEND(readability-identifier-naming)
 
-	/** @} */
 	/** @} */
 } // namespace b3d
 

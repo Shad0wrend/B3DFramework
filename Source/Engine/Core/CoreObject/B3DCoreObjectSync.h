@@ -60,6 +60,12 @@ namespace b3d
 		return nullptr;
 	}
 
+	/** @} */
+
+	/** @addtogroup RenderThread
+	 *  @{
+	 */
+
 	// Retrieves a RenderProxy from a CoreObject. If the type is not a core-object, it is just passed through as is.
 
 	/** Pass non-shared-pointers as is, they aren't core objects. */
@@ -101,12 +107,6 @@ namespace b3d
 	{
 		return B3DGetRenderProxy(value);
 	}
-
-	/** @} */
-
-	/** @addtogroup RenderThread 
-	 *  @{
-	 */
 
 	/** Packet containing data for synchronizing a CoreObject with its RenderProxy. */
 	struct RenderProxySyncPacket

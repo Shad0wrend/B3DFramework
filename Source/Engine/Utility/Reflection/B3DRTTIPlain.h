@@ -89,6 +89,12 @@ namespace b3d
 		static RTTIFieldInfo DEFAULT;
 	};
 
+	/** @} */
+
+	/** @addtogroup RTTI-Internal
+	 *  @{
+	 */
+
 	/**
 	 * Default implementation of RTTIPlainType for a particular type T. Separated from RTTIPlainType primarily so we can specialize this for entire category of
 	 * objects (such as enums) using std::enable_if. Default implementation causes a compile error if used, because user must explicitly specialize it.
@@ -162,6 +168,12 @@ namespace b3d
 		}
 	};
 
+	/** @} */
+
+	/** @addtogroup RTTI
+	 *  @{
+	 */
+
 	/**
 	 * Template that you may specialize with a class if you want to provide simple serialization for it.
 	 *
@@ -181,6 +193,12 @@ namespace b3d
 	template <class T>
 	struct RTTIPlainType : TRTTIPlainTypeImplementation<T>
 	{ };
+
+	/** @} */
+
+	/** @addtogroup RTTI-Internal
+	 *  @{
+	 */
 
 	/** Checks has the user specialized RTTIPlainType<T> for T. */
 	template <typename T, typename = void>
@@ -237,6 +255,12 @@ namespace b3d
 				return BitLength(0, 1);
 		}
 	};
+
+	/** @} */
+
+	/** @addtogroup RTTI
+	 *  @{
+	 */
 
 	/**
 	 * Helper method when serializing known data types that have valid
@@ -351,6 +375,12 @@ namespace b3d
 			size += sizeof(size.Bytes);
 	}
 
+	/** @} */
+
+	/** @addtogroup RTTI-Internal
+	 *  @{
+	 */
+
 	/** Helper that calls B3DRTTIWrite() using operator(), and accumulates written size. */
 	struct RTTIWriteProcessor
 	{
@@ -383,6 +413,12 @@ namespace b3d
 	private:
 		BitLength mSize;
 	};
+
+	/** @} */
+
+	/** @addtogroup RTTI
+	 *  @{
+	 */
 
 	/**
 	 * Helper that allows you to construct a RTTIPlainType<T> specialization more easily. Your specialization needs to inherit this type, and

@@ -138,6 +138,12 @@ namespace b3d
 	template <typename T, typename AllocatorTag = DefaultAllocatorTag, typename Delete = Deleter<T, AllocatorTag>>
 	using UPtr = std::unique_ptr<T, Delete>;
 
+	/** @} */
+
+	/** @addtogroup Metaprogramming
+	 *  @{
+	 */
+
 	/**
 	 * Checks if the class @p T has a SharedDeleter static method that accepts a non-const pointer to T. 	 */
 	template <typename T, typename = void>
@@ -195,6 +201,9 @@ namespace b3d
 	template<typename KeyType, typename ValueType>
 	struct B3DIsStdPair<std::pair<KeyType, ValueType>> : std::true_type { };
 
+	/** @} */
+
+	/** @addtogroup Memory */
 
 	// Checks if a specific template specialization exists
 	template <class T, std::size_t = sizeof(T)>
@@ -393,6 +402,10 @@ namespace b3d
 	template <typename K, typename V, typename H = HashType<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>>>
 	using UnorderedMultimap = std::unordered_multimap<K, V, H, C, A>;
 
+	/** @addtogroup Containers-Internal
+	 *  @{
+	 */
+
 	/** Helper that provides hash and equality types for UnorderedSet and UnorderedMap containing shared pointer as a key. Key class must provide a `u64 GenerateHash()` method and an equality operator. */
 	template<class T>
 	struct TSharedUnorderedTypeHelper
@@ -417,14 +430,6 @@ namespace b3d
 		};
 	};
 
-	/** Unordered set containing @p SPtr<T> as the key. @p T must provide `u64 GenerateHash()` method and an equality operator. */
-	template<class T>
-	using TSharedUnorderedSet = UnorderedSet<SPtr<T>, typename TSharedUnorderedTypeHelper<T>::Hash, typename TSharedUnorderedTypeHelper<T>::Equals>;
-
-	/** Unordered map containing @p SPtr<K> as the key and @p V as value. @p K must provide `u64 GenerateHash()` method and an equality operator. */
-	template<class K, class V>
-	using TSharedUnorderedMap = UnorderedMap<SPtr<K>, V, typename TSharedUnorderedTypeHelper<K>::Hash, typename TSharedUnorderedTypeHelper<K>::Equals>;
-
 	/** Helper that provides hash type for UnorderedSet and UnorderedMap. Key class must provide a `u64 GenerateHash()` method and an equality operator. */
 	template<class T>
 	struct TUnorderedTypeHelper
@@ -434,6 +439,20 @@ namespace b3d
 			u64 operator()(const T& value) const { return value.GenerateHash(); }
 		};
 	};
+
+	/** @} */
+
+	/** @addtogroup Containers
+	 *  @{
+	 */
+
+	/** Unordered set containing @p SPtr<T> as the key. @p T must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class T>
+	using TSharedUnorderedSet = UnorderedSet<SPtr<T>, typename TSharedUnorderedTypeHelper<T>::Hash, typename TSharedUnorderedTypeHelper<T>::Equals>;
+
+	/** Unordered map containing @p SPtr<K> as the key and @p V as value. @p K must provide `u64 GenerateHash()` method and an equality operator. */
+	template<class K, class V>
+	using TSharedUnorderedMap = UnorderedMap<SPtr<K>, V, typename TSharedUnorderedTypeHelper<K>::Hash, typename TSharedUnorderedTypeHelper<K>::Equals>;
 
 	/** Unordered set containing @p T as the key. @p T must provide `u64 GenerateHash()` method and an equality operator. */
 	template<class T>

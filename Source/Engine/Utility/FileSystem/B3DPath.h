@@ -8,7 +8,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Filesystem
+	/** @addtogroup Filesystem-Internal
 	 *  @{
 	 */
 
@@ -19,6 +19,12 @@ namespace b3d
 	public:
 		size_t operator()(const Path& a) const { return 0; }
 	};
+
+	/** @} */
+
+	/** @addtogroup Filesystem
+	 *  @{
+	 */
 
 	/**
 	 * Class for storing and manipulating file paths. Paths may be parsed from and to raw strings according to various
@@ -472,6 +478,12 @@ namespace b3d
 		String mNode;
 		bool mIsAbsolute = false;
 	};
+
+	/** @} */
+
+	/** @addtogroup Filesystem-Internal
+	 *  @{
+	 */
 
 	/**	Compares two paths using either case sensitive or insensitive compare. */
 	template<bool CaseSensitive>

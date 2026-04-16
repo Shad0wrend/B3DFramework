@@ -7,6 +7,10 @@
 
 namespace b3d
 {
+	/** @addtogroup System
+	 *  @{
+	 */
+
 	/**
 	 * Provides access to command-line arguments passed to the application. Supports parsing parameters in various
 	 * formats: -param, --param, /param, -param=value, --param=value, /param:value.
@@ -119,4 +123,6 @@ namespace b3d
 		static TArray<String> sArguments;
 		static UnorderedMap<String, String> sParameters;
 	};
+
+	/** @} */
 }

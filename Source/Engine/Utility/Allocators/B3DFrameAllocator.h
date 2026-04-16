@@ -12,11 +12,7 @@
 
 namespace b3d
 {
-	/** @addtogroup Internal-Utility
-	 *  @{
-	 */
-
-	/** @addtogroup Memory-Internal
+	/** @addtogroup Memory
 	 *  @{
 	 */
 
@@ -304,7 +300,8 @@ namespace b3d
 
 	/**
 	 * Version of FrameAllocator that allows blocks size to be provided through the template argument instead of the
-	 * constructor. */
+	 * constructor.
+	 */
 	template <int BlockSize>
 	class TFrameAllocator : public FrameAllocator
 	{
@@ -410,13 +407,6 @@ namespace b3d
 	{
 		return false;
 	}
-
-	/** @} */
-	/** @} */
-
-	/** @addtogroup Memory
-	 *  @{
-	 */
 
 	/**
 	 * Returns a global, application wide FrameAllocator. Each thread gets its own frame allocator.

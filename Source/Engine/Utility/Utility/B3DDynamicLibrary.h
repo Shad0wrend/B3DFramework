@@ -11,7 +11,7 @@ typedef struct HINSTANCE__* hInstance;
 
 namespace b3d
 {
-	/** @addtogroup General
+	/** @addtogroup System
 	 *  @{
 	 */
 

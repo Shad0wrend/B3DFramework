@@ -11,7 +11,7 @@
 
 namespace b3d
 {
-	/** @addtogroup General
+	/** @addtogroup Serialization
 	 *  @{
 	 */
 
