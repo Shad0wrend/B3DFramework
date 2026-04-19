@@ -21,13 +21,21 @@ namespace b3d
 		void OnShutDown() override;
 
 		u32 GetDeviceCount() const override { return (u32)mDevices.size(); }
-		SPtr<GpuDevice> GetDevice(u32 index) const override { return mDevices[index]; }
+		SPtr<GpuDevice> GetDevice(u32 index) const override
+		{
+			B3D_ASSERT(index < mDevices.size());
+			return mDevices[index];
+		}
 
 		/** Returns the internal Vulkan instance object. */
 		VkInstance GetVkInstance() const { return mInstance; }
 
 		/** Returns a Vulkan device at the specified index. Must be in range [0, GetDeviceCount()) */
-		const SPtr<render::VulkanGpuDevice>& GetVulkanDevice(u32 index) const { return mDevices[index]; }
+		const SPtr<render::VulkanGpuDevice>& GetVulkanDevice(u32 index) const
+		{
+			B3D_ASSERT(index < mDevices.size());
+			return mDevices[index];
+		}
 
 		/** Returns the primary device that supports swap chain present operations. */
 		const SPtr<render::VulkanGpuDevice>& GetPresentDevice() const { return mPresentDevice; }

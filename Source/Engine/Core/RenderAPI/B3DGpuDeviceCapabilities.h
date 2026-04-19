@@ -15,7 +15,7 @@
 
 namespace b3d
 {
-	/** @addtogroup GpuBackend-Internal
+	/** @addtogroup GpuBackend
 	 *  @{
 	 */
 
@@ -59,6 +59,8 @@ namespace b3d
 		RSC_RENDER_TARGET_LAYERS = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 10),
 		/** Has native support for command buffers that can be populated from secondary threads. */
 		RSC_MULTI_THREADED_CB = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 11),
+		/** Supports GPU timer queries for measuring elapsed time of GPU work. */
+		RSC_TIMER_QUERIES = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 12),
 	};
 
 	/** Conventions used for a specific render backend. */

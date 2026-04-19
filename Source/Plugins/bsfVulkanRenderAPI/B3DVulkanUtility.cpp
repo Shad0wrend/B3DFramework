@@ -902,43 +902,6 @@ bool VulkanUtility::RangeEquals(const VkImageSubresourceRange& a, const VkImageS
 	return a.baseArrayLayer == b.baseArrayLayer && a.baseMipLevel == b.baseMipLevel && a.layerCount == b.layerCount && a.levelCount == b.levelCount && a.aspectMask == b.aspectMask;
 }
 
-u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset)
-{
-	const GpuDataParameterTypeInformation& typeInfo = b3d::GpuParameterSet::kParamSizes.Lookup[type];
-	u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
-	u32 alignment = typeInfo.Alignment / 4;
-
-	// Fix alignment if needed
-	u32 alignOffset = offset % alignment;
-	if(alignOffset != 0)
-	{
-		u32 padding = (alignment - alignOffset);
-		offset += padding;
-	}
-
-	if(arraySize > 1)
-	{
-		// Array elements are always padded and aligned to vec4
-		alignOffset = size % 4;
-		if(alignOffset != 0)
-		{
-			u32 padding = (4 - alignOffset);
-			size += padding;
-		}
-
-		alignOffset = offset % 4;
-		if(alignOffset != 0)
-		{
-			u32 padding = (4 - alignOffset);
-			offset += padding;
-		}
-
-		return size;
-	}
-	else
-		return size;
-}
-
 const char* VulkanUtility::GetAccessStageName(VulkanAccessStageFlag flag)
 {
 	switch(flag)

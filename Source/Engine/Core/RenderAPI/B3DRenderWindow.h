@@ -380,6 +380,7 @@ namespace b3d
 			u32 Width = 0; /**< Width of the render surface, in pixels. */
 			u32 Height = 0; /**< Height of the render surface, in pixels. */
 			bool VSync = false;
+			u32 VsyncInterval = 1; /**< Number of refresh cycles between presents when @c VSync is true. 1 = every refresh, 2 = half rate, etc. Backends that don't support variable present rate ignore this. */
 			bool CreateDepthBuffer = false;
 			bool UseHardwareSRGB = false;
 			bool Headless = false; /**< When true, creates a headless surface for offscreen rendering (no OS window is created). */

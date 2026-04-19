@@ -9,7 +9,7 @@
 #include <vulkan/vulkan.h>
 
 #include "B3DVulkanFramebuffer.h"
-#include "B3DVulkanGLSLToSPIRV.h"
+#include "B3DGLSLToSPIRV.h"
 #include "B3DVulkanRenderPass.h"
 #include "B3DVulkanSubmitThread.h"
 #include "CoreObject/B3DRenderThread.h"

@@ -8,6 +8,7 @@
 #include "RenderAPI/B3DGpuCommandBuffer.h"
 #include "RenderAPI/B3DGpuDevice.h"
 #include "RenderAPI/B3DGpuDeviceCapabilities.h"
+#include "RenderAPI/B3DGpuBackend.h"
 
 namespace b3d
 {
@@ -39,9 +40,9 @@ namespace b3d
 		{
 		public:
 #if B3D_PLATFORM_MACOS
-			static constexpr const char* kGpuProgramLanguageName = "mvksl";
+			static constexpr const char* kGpuProgramLanguageName = kGpuProgramLanguageMvksl;
 #else
-			static constexpr const char* kGpuProgramLanguageName = "vksl";
+			static constexpr const char* kGpuProgramLanguageName = kGpuProgramLanguageVksl;
 #endif
 
 

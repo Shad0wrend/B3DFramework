@@ -15,6 +15,20 @@ namespace b3d
 	 */
 
 	/**
+	 * Canonical identifier for the Vulkan-flavored GLSL dialect authored by BSL. Vulkan's native
+	 * language identifier - the backend consumes these through its own glslang pipeline to emit
+	 * SPIR-V.
+	 */
+	inline constexpr const char* kGpuProgramLanguageVksl = "vksl";
+
+	/**
+	 * Identifier for the Metal-flavored VKSL dialect authored by BSL when targeting the Metal
+	 * backend. Same surface syntax as kGpuProgramLanguageVksl but with the @c METAL preprocessor
+	 * define, so you can further customize for Metal specific code.
+	 */
+	inline constexpr const char* kGpuProgramLanguageMvksl = "mvksl";
+
+	/**
 	 * Provides access to all available GPU devices.
 	 *
 	 * @note	Thread safe.

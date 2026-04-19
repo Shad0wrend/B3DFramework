@@ -204,6 +204,7 @@ void RenderWindow::Initialize()
 		renderWindowSurfaceCreateInformation.CreateDepthBuffer = mCreateInformation.DepthBuffer;
 		renderWindowSurfaceCreateInformation.UseHardwareSRGB = mCreateInformation.Gamma;
 		renderWindowSurfaceCreateInformation.VSync = mCreateInformation.Vsync;
+		renderWindowSurfaceCreateInformation.VsyncInterval = mCreateInformation.VsyncInterval;
 		renderWindowSurfaceCreateInformation.PlatformWindowHandle = mPlatformWindowHandle;
 		renderWindowSurfaceCreateInformation.Headless = mCreateInformation.Headless;
 

@@ -78,9 +78,9 @@ void VulkanGpuProgram::Initialize()
 		createInformation.Type = mType;
 		createInformation.EntryPoint = mEntryPoint;
 #if B3D_PLATFORM_MACOS
-		desc.language = "mvksl";
+		desc.language = kGpuProgramLanguageMvksl;
 #else
-		createInformation.Language = "vksl";
+		createInformation.Language = kGpuProgramLanguageVksl;
 #endif
 		createInformation.Source = mSource;
 

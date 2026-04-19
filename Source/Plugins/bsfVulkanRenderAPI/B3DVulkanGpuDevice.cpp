@@ -24,7 +24,7 @@ static_assert(false, "Other platform includes go here.");
 
 #define VMA_IMPLEMENTATION
 #include "B3DVulkanEventQuery.h"
-#include "B3DVulkanGLSLToSPIRV.h"
+#include "B3DGLSLToSPIRV.h"
 #include "B3DVulkanGpuBuffer.h"
 #include "B3DVulkanGpuParameterSetPool.h"
 #include "B3DVulkanGpuParameterSet.h"
@@ -33,6 +33,7 @@ static_assert(false, "Other platform includes go here.");
 #include "B3DVulkanSamplerState.h"
 #include "B3DVulkanTexture.h"
 #include "RenderAPI/B3DGpuProgramParameterDescription.h"
+#include "RenderAPI/B3DGpuBackendUtility.h"
 #include "ThirdParty/vk_mem_alloc.h"
 #include "Utility/B3DBitwise.h"
 
@@ -257,13 +258,15 @@ SPtr<GpuProgramBytecode> VulkanGpuDevice::CompileGpuProgramBytecode(const GpuPro
 	if(!IsGpuProgramLanguageSupported(createInformation.Language))
 		return nullptr;
 
-	SPtr<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation);
-
 #if B3D_PLATFORM_MACOS
+	SPtr<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, MOLTENVK_COMPILER_ID, MOLTENVK_COMPILER_VERSION);
 	// We'll just re-purpose the existing data structure
 	SPtr<GpuProgramBytecode> msl = spirv;
-	msl->compilerId = MOLTENVK_COMPILER_ID;
-	msl->compilerVersion = MOLTENVK_COMPILER_VERSION;
+#else
+	SPtr<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, VULKAN_COMPILER_ID, VULKAN_COMPILER_VERSION);
+#endif
+
+#if B3D_PLATFORM_MACOS
 
 	// SPIR-V failed to compile, just pass along the data structure with updated compiler ID
 	if(spirv->instructions.size == 0 || !spirv->instructions.data)
@@ -653,7 +656,7 @@ GpuUniformBufferInformation VulkanGpuDevice::GenerateUniformBufferInformation(co
 			uniformBufferInformation.Size = Math::DivideAndRoundUp(uniformBufferInformation.Size, 4U) * 4;
 		}
 		else
-			size = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(member.Type, member.ArraySize, uniformBufferInformation.Size);
+			size = GpuBackendUtility::CalcStd140MemberSizeAndOffset(member.Type, member.ArraySize, uniformBufferInformation.Size);
 
 		member.ElementSize = size;
 		member.ArrayElementStride = size;
