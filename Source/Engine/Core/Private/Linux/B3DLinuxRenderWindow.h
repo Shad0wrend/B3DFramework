@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include <X11/extensions/Xrandr.h>
 
 namespace b3d

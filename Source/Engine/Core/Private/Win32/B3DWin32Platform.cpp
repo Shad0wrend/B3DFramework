@@ -1,7 +1,7 @@
 //************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Private/Win32/B3DWin32Platform.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Image/B3DPixelUtility.h"
 #include "B3DApplication.h"
 #include "Debug/B3DDebug.h"

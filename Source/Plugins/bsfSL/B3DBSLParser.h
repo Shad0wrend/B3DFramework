@@ -4,10 +4,10 @@
 
 #include "B3DSLPrerequisites.h"
 #include "Material/B3DShader.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgram.h"
 #include "Importer/B3DShaderImportOptions.h"
 #include "Material/B3DShaderCompiler.h"
-#include "RenderAPI/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuPipelineState.h"
 
 extern "C" {
 #include "B3DASTFX.h"

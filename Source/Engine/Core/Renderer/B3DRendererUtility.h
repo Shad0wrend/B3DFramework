@@ -6,7 +6,7 @@
 #include "Utility/B3DModule.h"
 #include "Math/B3DArea2.h"
 #include "Math/B3DArea2.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Mesh/B3DMeshBase.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
@@ -439,7 +439,7 @@ namespace b3d
 
 			/**
 			 * Clears the currently bound render target to the provided integer value. This is similar to
-			 * RenderAPI::clearRenderTarget(), except it supports integer clears.
+			 * GpuBackend::clearRenderTarget(), except it supports integer clears.
 			 */
 			void Clear(GpuCommandBuffer& commandBuffer, u32 value);
 

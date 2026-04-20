@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DRendererMaterial.h"
 
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 
 using namespace b3d;
 using namespace render;

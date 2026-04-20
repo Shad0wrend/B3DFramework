@@ -5,8 +5,8 @@
 #include "B3DPrerequisites.h"
 #include "Mesh/B3DMeshBase.h"
 #include "Mesh/B3DMeshData.h"
-#include "RenderAPI/B3DVertexData.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DVertexData.h"
+#include "GpuBackend/B3DSubMesh.h"
 #include "Math/B3DBounds.h"
 
 namespace b3d

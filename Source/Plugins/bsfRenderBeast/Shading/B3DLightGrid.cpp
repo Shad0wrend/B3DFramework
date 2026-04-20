@@ -7,7 +7,7 @@
 #include "RenderState/B3DLightRenderState.h"
 #include "RenderState/B3DReflectionProbeRenderState.h"
 #include "B3DTiledDeferred.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 
 namespace b3d {
 namespace render {

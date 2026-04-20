@@ -9,7 +9,7 @@
 #include "Math/B3DVector4.h"
 #include "Math/B3DQuaternion.h"
 #include "Animation/B3DAnimationCurve.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DSubMesh.h"
 #include "Math/B3DTransform.h"
 
 namespace b3d

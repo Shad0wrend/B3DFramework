@@ -17,7 +17,7 @@ You can choose which plugins are loaded on **Application** start-up, by filling 
 START_UP_DESC startUpDesc;
 
 // Required plugins
-startUpDesc.renderAPI = "bsfD3D11RenderAPI";
+startUpDesc.GpuBackend = "bsfD3D11GpuBackend";
 startUpDesc.renderer = "bsfRenderBeast";
 startUpDesc.audio = "bsfOpenAudio";
 startUpDesc.physics = "bsfPhysX";

@@ -4,7 +4,7 @@
 
 #include "B3DApplication.h"
 #include "Platform/B3DPlatform.h"
-#include "RenderAPI/B3DHeadlessRenderWindow.h"
+#include "GpuBackend/B3DHeadlessRenderWindow.h"
 
 #if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32RenderWindow.h"

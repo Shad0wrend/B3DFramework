@@ -3,8 +3,8 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "RenderAPI/B3DGpuParameter.h"
-#include "RenderAPI/B3DGpuParameterSet.h"
+#include "GpuBackend/B3DGpuParameter.h"
+#include "GpuBackend/B3DGpuParameterSet.h"
 #include "Animation/B3DAnimationCurve.h"
 
 namespace b3d

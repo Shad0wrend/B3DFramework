@@ -7,7 +7,7 @@
 #include "Private/Linux/B3DLinuxPlatform.h"
 #include "Private/Linux/B3DLinuxWindow.h"
 #include "Private/Linux/B3DLinuxDropTarget.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include <X11/X.h>
 #include <X11/Xatom.h>
 #include <X11/Xcursor/Xcursor.h>

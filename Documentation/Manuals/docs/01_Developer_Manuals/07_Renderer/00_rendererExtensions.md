@@ -59,15 +59,15 @@ public:
 
 	void Render(const render::Camera& camera, const render::RendererViewContext& viewContext) override
 	{
-		RenderAPI& rapi = RenderAPI::instance();
+		GpuCommandBuffer& commandBuffer = ...;
 		
 		// bind pipeline state, vertex/index buffers, etc.
-		rapi.DrawIndexed(0, numIndices, 0, numVertices);
+		commandBuffer.DrawIndexed(0, numIndices, 0, numVertices);
 	}
 }
 ~~~~~~~~~~~~~
 
-@b3d::RendererViewContext is an additional parameter provided to the **Render()** method, that gives you insight in the current state of the renderer. In particular it contains the current render target set by the renderer. If you ever change the render target inside the extension (through a call to **RenderAPI::SetRenderTarget()**) you must ensure to restore the original render target before exiting the method.
+@b3d::RendererViewContext is an additional parameter provided to the **Render()** method, that gives you insight in the current state of the renderer. In particular it contains the current render target set by the renderer. If you ever change the render target inside the extension (through a call to **GpuCommandBuffer::BeginRenderPass()**) you must ensure to restore the original render target before exiting the method.
 
 # Registering an extension
 Once extension is implemented you need to register it with the renderer by calling @b3d::RendererExtension::Create<T>, where the template parameter is the type of your extension. You must also provide initialization data that will be passed to the extension - this can be null.

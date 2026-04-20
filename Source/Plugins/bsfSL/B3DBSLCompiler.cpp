@@ -1,7 +1,7 @@
 //************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DBSLCompiler.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgram.h"
 #include <regex>
 #include "Material/B3DShader.h"
 #include "Material/B3DVariation.h"
@@ -12,7 +12,7 @@
 
 #include "B3DBSLParser.h"
 #include "B3DHLSLCrossCompiler.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace std;
 using namespace b3d;

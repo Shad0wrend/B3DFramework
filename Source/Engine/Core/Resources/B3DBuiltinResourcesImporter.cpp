@@ -11,7 +11,7 @@
 #include "Mesh/B3DMesh.h"
 #include "Renderer/B3DRendererMeshData.h"
 #include "Image/B3DTexture.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Serialization/B3DFileSerializer.h"
 #include "Importer/B3DImporter.h"
 #include "Importer/B3DTextureImportOptions.h"

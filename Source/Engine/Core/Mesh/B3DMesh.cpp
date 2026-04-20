@@ -8,10 +8,10 @@
 #include "Debug/B3DDebug.h"
 #include "Managers/B3DMeshManager.h"
 #include "CoreObject/B3DRenderThread.h"
-#include "RenderAPI/B3DGpuBuffer.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuBuffer.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Threading/B3DAsyncOp.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Resources/B3DResources.h"
 
 using namespace b3d;

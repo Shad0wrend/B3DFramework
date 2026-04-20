@@ -11,7 +11,7 @@
 #include "GUI/B3DGUIButton.h"
 #include "GUI/B3DGUISpace.h"
 #include "GUI/B3DGUIContent.h"
-#include "RenderAPI/B3DViewport.h"
+#include "GpuBackend/B3DViewport.h"
 #include "GUI/B3DGUIListBox.h"
 #include "GUI/B3DGUIDropDownBoxManager.h"
 #include "Scene/B3DSceneObject.h"

@@ -4,7 +4,7 @@
 #include "RTTI/B3DShaderCompilerRTTI.h"
 #include "FileSystem/B3DDataStream.h"
 #include "FileSystem/B3DFileSystem.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Resources/B3DBuiltinResources.h"
 #include "Utility/B3DPersistentCache.h"
 

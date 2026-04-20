@@ -12,11 +12,11 @@
 #include "GUI/B3DGUIInteractable.h"
 #include "GUI/B3DGUILabel.h"
 #include "GUI/B3DGUISpace.h"
-#include "RenderAPI/B3DViewport.h"
+#include "GpuBackend/B3DViewport.h"
 #include "Utility/B3DTime.h"
 #include "Resources/B3DBuiltinResources.h"
 #include "Profiling/B3DProfilingManager.h"
-#include "RenderAPI/B3DRenderTarget.h"
+#include "GpuBackend/B3DRenderTarget.h"
 #include "Components/B3DCamera.h"
 #include "Localization/B3DHEString.h"
 

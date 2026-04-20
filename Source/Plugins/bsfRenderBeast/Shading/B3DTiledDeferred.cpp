@@ -4,7 +4,7 @@
 #include "Renderer/B3DRendererUtility.h"
 #include "Components/B3DSkybox.h"
 #include "B3DRenderBeast.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 
 namespace b3d {
 namespace render {

@@ -5,8 +5,8 @@
 #include "B3DGameObjectCollection.h"
 #include "Scene/B3DSceneObject.h"
 #include "Components/B3DCamera.h"
-#include "RenderAPI/B3DViewport.h"
-#include "RenderAPI/B3DRenderTarget.h"
+#include "GpuBackend/B3DViewport.h"
+#include "GpuBackend/B3DRenderTarget.h"
 #include "Scene/B3DSceneInstance.h"
 
 using namespace b3d;

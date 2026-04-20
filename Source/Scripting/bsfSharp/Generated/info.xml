@@ -3866,8 +3866,8 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 			<param name="fullscreen" type="bool">
 			</param>
 		</ctor>
-		<field name="RenderApi" type="string">
-			<doc>Name of the render system plugin to use.</doc>
+		<field name="GpuBackend" type="string">
+			<doc>Name of the GPU backend plugin to use.</doc>
 		</field>
 		<field name="Renderer" type="string">
 			<doc>Name of the renderer plugin to use.</doc>

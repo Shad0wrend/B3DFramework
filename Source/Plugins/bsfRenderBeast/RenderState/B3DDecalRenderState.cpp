@@ -6,7 +6,7 @@
 #include "Components/B3DDecal.h"
 #include "Mesh/B3DMesh.h"
 #include "Renderer/B3DRendererUtility.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 
 namespace b3d {
 namespace render {

@@ -9,7 +9,7 @@
 #include "Material/B3DPass.h"
 #include "Renderer/B3DRenderer.h"
 #include "RTTI/B3DVariationRTTI.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Utility/B3DPersistentCache.h"
 
 using namespace b3d;

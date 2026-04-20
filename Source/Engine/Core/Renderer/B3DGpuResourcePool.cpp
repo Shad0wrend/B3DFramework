@@ -3,9 +3,9 @@
 #include "B3DGpuResourcePool.h"
 
 #include "B3DApplication.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DRenderTexture.h"
 #include "Image/B3DTexture.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace b3d;
 

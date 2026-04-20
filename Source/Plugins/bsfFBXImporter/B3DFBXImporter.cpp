@@ -9,7 +9,7 @@
 #include "Math/B3DVector2.h"
 #include "Math/B3DVector3.h"
 #include "Math/B3DVector4.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "B3DFBXUtility.h"
 #include "Mesh/B3DMeshUtility.h"
 #include "Renderer/B3DRendererMeshData.h"

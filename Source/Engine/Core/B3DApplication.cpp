@@ -29,7 +29,7 @@
 #include "Components/B3DCamera.h"
 #include "Scene/B3DSceneInstance.h"
 #include "Text/B3DStockIcons.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Scene/B3DGameObjectManager.h"
 #include "Utility/B3DDynamicLibraryManager.h"
 #include "Utility/B3DTime.h"
@@ -53,7 +53,7 @@
 #include "Particles/B3DVectorField.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Platform/B3DFolderMonitor.h"
-#include "RenderAPI/B3DGpuBackend.h"
+#include "GpuBackend/B3DGpuBackend.h"
 #include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererScene.h"
 #include "Scene/B3DPrefab.h"
@@ -267,7 +267,7 @@ void Application::OnStartUp()
 	ResourceListenerManager::StartUp();
 
 	GpuBackendManager::StartUp();
-	GpuBackendManager::Instance().Initialize(mInformation.RenderApi);
+	GpuBackendManager::Instance().Initialize(mInformation.GpuBackend);
 
 	mPrimaryGpu = GpuBackend::Instance().GetDevice(0);
 	mPrimaryGpu->Initialize();
@@ -656,7 +656,7 @@ ApplicationCreateInformation Application::BuildCreateInformation(VideoMode video
 	ApplicationCreateInformation desc;
 
 	// Set up default plugins
-	desc.RenderApi = B3D_RENDER_BACKEND;
+	desc.GpuBackend = B3D_GPU_BACKEND;
 	desc.Renderer = B3D_RENDERER;
 	desc.Audio = B3D_AUDIO_BACKEND;
 	desc.Physics = B3D_PHYSICS_BACKEND;

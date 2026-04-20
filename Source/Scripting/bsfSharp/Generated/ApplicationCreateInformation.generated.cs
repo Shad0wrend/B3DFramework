@@ -19,7 +19,7 @@ namespace b3d
 		public static ApplicationCreateInformation Default()
 		{
 			ApplicationCreateInformation value = new ApplicationCreateInformation();
-			value.RenderApi = "";
+			value.GpuBackend = "";
 			value.Renderer = "";
 			value.Physics = "";
 			value.Audio = "";
@@ -34,7 +34,7 @@ namespace b3d
 
 		public ApplicationCreateInformation(VideoMode videoMode, string title, bool fullscreen)
 		{
-			this.RenderApi = "";
+			this.GpuBackend = "";
 			this.Renderer = "";
 			this.Physics = "";
 			this.Audio = "";
@@ -45,8 +45,8 @@ namespace b3d
 			this.Importers = null;
 		}
 
-		/// <summary>Name of the render system plugin to use.</summary>
-		public string RenderApi;
+		/// <summary>Name of the GPU backend plugin to use.</summary>
+		public string GpuBackend;
 		/// <summary>Name of the renderer plugin to use.</summary>
 		public string Renderer;
 		/// <summary>Name of physics plugin to use.</summary>

@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Math/B3DVector3.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DSubMesh.h"
 
 namespace b3d
 {

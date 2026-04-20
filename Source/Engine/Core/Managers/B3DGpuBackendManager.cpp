@@ -2,14 +2,14 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/B3DGpuBackendManager.h"
 #include "CoreObject/B3DRenderThread.h"
-#include "RenderAPI/B3DGpuBackend.h"
+#include "GpuBackend/B3DGpuBackend.h"
 #include "Plugin/B3DPluginLoader.h"
 
 using namespace b3d;
 
 GpuBackendManager::~GpuBackendManager()
 {
-	if(mRenderAPIInitialized)
+	if(mGpuBackendInitialized)
 		GpuBackend::ShutDown();
 
 	// Flush any pending render thread work before unloading the plugin DLL,
@@ -23,7 +23,7 @@ GpuBackendManager::~GpuBackendManager()
 
 void GpuBackendManager::Initialize(const String& pluginFilename)
 {
-	if(!B3D_ENSURE(!mRenderAPIInitialized))
+	if(!B3D_ENSURE(!mGpuBackendInitialized))
 		return;
 
 	mPlugin = PluginLoader::Load(pluginFilename);
@@ -32,6 +32,6 @@ void GpuBackendManager::Initialize(const String& pluginFilename)
 	if(mFactory != nullptr)
 	{
 		mFactory->Create();
-		mRenderAPIInitialized = true;
+		mGpuBackendInitialized = true;
 	}
 }

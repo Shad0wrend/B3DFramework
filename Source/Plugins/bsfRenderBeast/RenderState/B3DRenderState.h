@@ -4,7 +4,7 @@
 
 #include "B3DRenderBeastPrerequisites.h"
 #include "Utility/B3DUniformBufferPools.h"
-#include "RenderAPI/B3DGpuBuffer.h"
+#include "GpuBackend/B3DGpuBuffer.h"
 
 namespace b3d::render
 {

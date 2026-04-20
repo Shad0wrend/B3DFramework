@@ -5,7 +5,7 @@
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
 #include "../../../Engine/Core/B3DApplication.h"
-#include "../../../Engine/Core/RenderAPI/B3DRenderWindow.h"
+#include "../../../Engine/Core/GpuBackend/B3DRenderWindow.h"
 #include "B3DScriptRenderWindowCreateInformation.generated.h"
 
 namespace b3d
@@ -13,7 +13,7 @@ namespace b3d
 #if !B3D_IS_ENGINE
 	struct __ApplicationCreateInformationInterop
 	{
-		MonoString* RenderApi;
+		MonoString* GpuBackend;
 		MonoString* Renderer;
 		MonoString* Physics;
 		MonoString* Audio;

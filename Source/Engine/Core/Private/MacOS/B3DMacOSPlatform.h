@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Platform/B3DPlatform.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 
 // Don't include macOS frameworks when generating script bindings, as it can't find them
 #ifndef B3D_CODEGEN

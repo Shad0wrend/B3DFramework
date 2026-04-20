@@ -57,7 +57,7 @@ class MyRenderer : public Renderer
 	
 	void RenderAllCore()
 	{
-		// ... iterate over all cameras and renderables, call RenderAPI and other low-level rendering methods to actually render something ...
+		// ... iterate over all cameras and renderables, call GpuBackend and other low-level rendering methods to actually render something ...
 	}
 };
 ~~~~~~~~~~~~~
@@ -118,7 +118,7 @@ class MyRenderer : public Renderer
 While what we have shown so far is enough to create a custom renderer, there are also a variety of utilities that can help out in the process. These systems aren't critical for renderer creation, but instead provide an easier way to perform commonly required functions.
 
 ## RendererUtility
-@b3d::render::RendererUtility provides some commonly required functionality for rendering. For the most part it provides methods that are wrappers around various **RenderAPI** methods described previously. It can be accessed globally through @b3d::render::GetRendererUtility() and the relevant methods are:
+@b3d::render::RendererUtility provides some commonly required functionality for rendering. For the most part it provides methods that are wrappers around various **GpuBackend** methods described previously. It can be accessed globally through @b3d::render::GetRendererUtility() and the relevant methods are:
  - @b3d::render::RendererUtility::SetPass - Binds a pass from a specific **Material** for rendering. Any further draw calls will be rendered using this pass.
  - @b3d::render::RendererUtility::SetPassParams - Binds parameters (textures, samplers, etc.) from a **Material**, in the form of **MaterialParameterAdapter**. Any further draw calls will be rendered using these parameters.
  - @b3d::render::RendererUtility::Draw - Draws a specific sub-mesh of the provided **render::Mesh**, using the currently bound pass.
@@ -433,8 +433,10 @@ Once you are done using the texture or buffer, it will be automatically returned
 PooledRenderTextureCreateInformation desc = PooledRenderTextureCreateInformation::Create2D(PF_R8G8B8A8, 1024, 1024, TextureUsageFlag::RenderTarget);
 SPtr<PooledRenderTexture> pooledRT = GpuResourcePool::Instance().Get(desc);
 
-RenderAPI::instance().SetRenderTarget(pooledRT->RenderTexture);
+GpuCommandBuffer& commandBuffer = ...;
+commandBuffer.BeginRenderPass(RenderPassCreateInformation(pooledRT->RenderTexture));
 ... render to target ...
+commandBuffer.EndRenderPass();
 // Keep a reference to pooledRT if we plan on re-using it, then next time just call Get() using the same descriptor
 ~~~~~~~~~~~~~
 

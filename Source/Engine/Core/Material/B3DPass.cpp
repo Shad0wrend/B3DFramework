@@ -5,11 +5,11 @@
 #include "B3DApplication.h"
 #include "RTTI/B3DPassRTTI.h"
 #include "Material/B3DMaterial.h"
-#include "RenderAPI/B3DGpuParameterSet.h"
-#include "RenderAPI/B3DGpuProgram.h"
-#include "RenderAPI/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuParameterSet.h"
+#include "GpuBackend/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuPipelineState.h"
 #include "CoreObject/B3DCoreObjectSync.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace b3d;
 

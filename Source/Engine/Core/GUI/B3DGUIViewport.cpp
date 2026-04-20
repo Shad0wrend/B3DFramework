@@ -4,8 +4,8 @@
 #include "GUI/B3DGUIWidget.h"
 #include "GUI/B3DGUISizeConstraints.h"
 #include "Components/B3DCamera.h"
-#include "RenderAPI/B3DViewport.h"
-#include "RenderAPI/B3DRenderTarget.h"
+#include "GpuBackend/B3DViewport.h"
+#include "GpuBackend/B3DRenderTarget.h"
 
 using namespace b3d;
 

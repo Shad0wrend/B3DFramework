@@ -4,7 +4,7 @@
 #include "B3DGUIManager.h"
 #include "GUI/B3DGUIMeshbatches.h"
 #include "Mesh/B3DMesh.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Image/B3DSpriteTexture.h"
 
 using namespace b3d;

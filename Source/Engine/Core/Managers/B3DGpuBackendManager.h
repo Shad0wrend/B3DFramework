@@ -38,7 +38,7 @@ namespace b3d
 	private:
 		LoadedPlugin mPlugin;
 		GpuBackendFactory* mFactory = nullptr;
-		bool mRenderAPIInitialized = false;
+		bool mGpuBackendInitialized = false;
 	};
 
 	/** @} */

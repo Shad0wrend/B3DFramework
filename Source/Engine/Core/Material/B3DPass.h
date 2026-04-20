@@ -4,10 +4,10 @@
 
 #include "B3DPrerequisites.h"
 #include "Image/B3DColor.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgram.h"
 #include "Reflection/B3DIReflectable.h"
 #include "CoreObject/B3DCoreObject.h"
-#include "RenderAPI/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuPipelineState.h"
 
 namespace b3d
 {

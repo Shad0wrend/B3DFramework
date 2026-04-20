@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Engine/Core/RenderAPI/B3DRenderWindow.h"
+#include "../../../Engine/Core/GpuBackend/B3DRenderWindow.h"
 #include "B3DScriptRenderWindowCreateInformation.generated.h"
 
 namespace b3d
@@ -26,9 +26,9 @@ namespace b3d
 	ApplicationCreateInformation ScriptApplicationCreateInformation::FromInterop(const __ApplicationCreateInformationInterop& value)
 	{
 		ApplicationCreateInformation output;
-		String tmpRenderApi;
-		tmpRenderApi = MonoUtil::MonoToString(value.RenderApi);
-		output.RenderApi = tmpRenderApi;
+		String tmpGpuBackend;
+		tmpGpuBackend = MonoUtil::MonoToString(value.GpuBackend);
+		output.GpuBackend = tmpGpuBackend;
 		String tmpRenderer;
 		tmpRenderer = MonoUtil::MonoToString(value.Renderer);
 		output.Renderer = tmpRenderer;
@@ -64,9 +64,9 @@ namespace b3d
 	__ApplicationCreateInformationInterop ScriptApplicationCreateInformation::ToInterop(const ApplicationCreateInformation& value)
 	{
 		__ApplicationCreateInformationInterop output;
-		MonoString* tmpRenderApi;
-		tmpRenderApi = MonoUtil::StringToMono(value.RenderApi);
-		output.RenderApi = tmpRenderApi;
+		MonoString* tmpGpuBackend;
+		tmpGpuBackend = MonoUtil::StringToMono(value.GpuBackend);
+		output.GpuBackend = tmpGpuBackend;
 		MonoString* tmpRenderer;
 		tmpRenderer = MonoUtil::StringToMono(value.Renderer);
 		output.Renderer = tmpRenderer;

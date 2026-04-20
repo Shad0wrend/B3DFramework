@@ -6,7 +6,7 @@
 #include "Input/B3DInputFwd.h"
 #include "Image/B3DPixelData.h"
 #include "Image/B3DColor.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Private/MacOS/B3DMacOSDropTarget.h"
 #include "String/B3DUnicode.h"
 #import <Cocoa/Cocoa.h>

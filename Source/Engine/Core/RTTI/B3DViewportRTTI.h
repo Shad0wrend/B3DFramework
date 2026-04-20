@@ -7,7 +7,7 @@
 #include "RTTI/B3DFlagsRTTI.h"
 #include "RTTI/B3DColorRTTI.h"
 #include "RTTI/B3DMathRTTI.h"
-#include "RenderAPI/B3DViewport.h"
+#include "GpuBackend/B3DViewport.h"
 
 namespace b3d
 {

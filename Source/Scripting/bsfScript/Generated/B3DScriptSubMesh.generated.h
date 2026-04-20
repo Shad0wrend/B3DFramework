@@ -4,7 +4,7 @@
 
 #include "B3DScriptEnginePrerequisites.h"
 #include "B3DScriptObjectWrapper.h"
-#include "../../../Engine/Core/RenderAPI/B3DSubMesh.h"
+#include "../../../Engine/Core/GpuBackend/B3DSubMesh.h"
 
 namespace b3d
 {

@@ -20,7 +20,7 @@
 #include "Utility/B3DUUID.h"
 #include "Material/B3DShader.h"
 #include "Material/B3DPass.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgram.h"
 
 using json = nlohmann::json;
 

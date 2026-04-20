@@ -1,10 +1,10 @@
 //************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DGLSLToSPIRV.h"
-#include "RenderAPI/B3DGpuParameterSet.h"
-#include "RenderAPI/B3DGpuProgramParameterDescription.h"
-#include "RenderAPI/B3DVertexDescription.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuParameterSet.h"
+#include "GpuBackend/B3DGpuProgramParameterDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
+#include "GpuBackend/B3DGpuProgram.h"
 #include "Math/B3DMath.h"
 #include "Debug/B3DLog.h"
 

@@ -4,7 +4,7 @@
 
 #include "B3DFBXPrerequisites.h"
 #include "Importer/B3DSpecificImporter.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DSubMesh.h"
 #include "B3DFBXImportData.h"
 
 #define FBX_IMPORT_MAX_UV_LAYERS 2

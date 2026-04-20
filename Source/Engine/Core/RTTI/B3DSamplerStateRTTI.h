@@ -5,8 +5,8 @@
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
 #include "Reflection/B3DRTTIPlain.h"
-#include "RenderAPI/B3DGpuDevice.h"
-#include "RenderAPI/B3DSamplerState.h"
+#include "GpuBackend/B3DGpuDevice.h"
+#include "GpuBackend/B3DSamplerState.h"
 #include "B3DApplication.h"
 
 namespace b3d

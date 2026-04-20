@@ -28,7 +28,7 @@ This is the lowest layer of the engine. It is a collection of very decoupled and
 All symbols are in the `b3d::` namespace, exported via `B3D_EXPORT`, and the primary prerequisite header is `B3DUtilityPrerequisites.h`.
 
 ## bsfEngine ##
-This layer builds upon the utility layer and contains the full breadth of engine functionality: abstract interfaces for all major systems (@b3d::RenderAPI, @b3d::Resources, @b3d::Importer, @b3d::Input, @b3d::Physics, @b3d::Audio and more), higher-level systems (@b3d::GUIManager, @b3d::ScriptManager), scene management, and the @b3d::Application entry-point class. Plugin implementations provide the concrete backends for most of the abstract interfaces.
+This layer builds upon the utility layer and contains the full breadth of engine functionality: abstract interfaces for all major systems (@b3d::GpuBackend, @b3d::Resources, @b3d::Importer, @b3d::Input, @b3d::Physics, @b3d::Audio and more), higher-level systems (@b3d::GUIManager, @b3d::ScriptManager), scene management, and the @b3d::Application entry-point class. Plugin implementations provide the concrete backends for most of the abstract interfaces.
 
 Code running on the main thread lives in the `b3d::` namespace. Code that runs on the render thread lives in the `b3d::render::` namespace. All symbols are exported via `B3D_EXPORT` and the primary prerequisite header is `B3DPrerequisites.h`.
 
@@ -36,11 +36,11 @@ Code running on the main thread lives in the `b3d::` namespace. Code that runs o
 Framework provides a wide variety of plugins out of the box. The plugins are loaded dynamically and allow you to change engine functionality completely transparently to other systems (e.g. you can choose to load a DirectX 12 renderer instead of a Vulkan one). Some plugins are completely optional and you can choose to ignore them (e.g. importer plugins can usually be ignored for game builds). Most importantly the plugins segregate the code, ensuring the design of the engine is decoupled and clean. Each plugin is based on an abstract interface defined in the engine layers.
 
 ## Render backend ##		
-Render backend plugins allow you to use a different backend for performing hardware accelerated rendering. Its interface is provided primarily though @b3d::RenderAPI, which handles low level rendering, including features like vertex/index buffers, creating rasterizer/depth/blend states, shader programs, render targets, textures, draw calls and similar. 
+Render backend plugins allow you to use a different backend for performing hardware accelerated rendering. Its interface is provided primarily though @b3d::GpuBackend, which handles low level rendering, including features like vertex/index buffers, creating rasterizer/depth/blend states, shader programs, render targets, textures, draw calls and similar. 
 
-The following plugins all have their own implementations of the @b3d::RenderAPI interface, as well as any related types (e.g. @b3d::VertexBuffer, @b3d::IndexBuffer):
- - **bsfVulkanRenderAPI** - Provides a render backend using Vulkan.
- - **bsfD3D12RenderAPI** - Provides a render backend using DirectX 12.
+The following plugins all have their own implementations of the @b3d::GpuBackend interface, as well as any related types (e.g. @b3d::VertexBuffer, @b3d::IndexBuffer):
+ - **bsfVulkanGpuBackend** - Provides a render backend using Vulkan.
+ - **bsfNullGpuBackend** - Provides a render backend that perform no operations
 
 ## Importers ##		
 Importers allow you to convert various types of files into formats easily readable by the engine. Normally importers are only used during development, and the game itself will only use previously imported assets (although ultimately that's up to the user).

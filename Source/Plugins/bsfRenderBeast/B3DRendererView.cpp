@@ -12,8 +12,8 @@
 #include "B3DRenderBeast.h"
 #include "RenderState/B3DDecalRenderState.h"
 #include "Animation/B3DAnimationScene.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DRenderTarget.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DRenderTarget.h"
 #include "Image/B3DTexture.h"
 
 namespace b3d {

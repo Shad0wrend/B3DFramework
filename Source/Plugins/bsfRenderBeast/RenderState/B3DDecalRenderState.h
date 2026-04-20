@@ -7,7 +7,7 @@
 #include "Renderer/B3DDrawCommand.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Material/B3DMaterialParam.h"
-#include "RenderAPI/B3DGpuPipelineParameterLayout.h"
+#include "GpuBackend/B3DGpuPipelineParameterLayout.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "B3DRenderState.h"
 

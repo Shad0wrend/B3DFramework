@@ -7,8 +7,8 @@
 #include "String/B3DStringID.h"
 #include "Resources/B3DResourceMetaData.h"
 #include "Material/B3DVariation.h"
-#include "RenderAPI/B3DGpuBuffer.h"
-#include "RenderAPI/B3DSamplerState.h"
+#include "GpuBackend/B3DGpuBuffer.h"
+#include "GpuBackend/B3DSamplerState.h"
 
 namespace b3d
 {

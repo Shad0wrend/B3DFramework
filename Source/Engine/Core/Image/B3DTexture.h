@@ -4,9 +4,9 @@
 
 #include "B3DPrerequisites.h"
 #include "Resources/B3DResource.h"
-#include "RenderAPI/B3DGpuBuffer.h"
+#include "GpuBackend/B3DGpuBuffer.h"
 #include "Image/B3DPixelUtility.h"
-#include "RenderAPI/B3DTextureView.h"
+#include "GpuBackend/B3DTextureView.h"
 #include "Math/B3DVector3I.h"
 
 namespace b3d

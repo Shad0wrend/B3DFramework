@@ -6,7 +6,7 @@
 #include "Math/B3DSphere.h"
 #include "Math/B3DAABox.h"
 #include "RTTI/B3DMeshDataRTTI.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Debug/B3DDebug.h"
 
 using namespace b3d;

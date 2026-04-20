@@ -6,11 +6,11 @@
 #include "RTTI/B3DFontRTTI.h"
 #include "B3DApplication.h"
 #include "FileSystem/B3DDataStream.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererManager.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 
 #define USE_FREETYPE2_STATIC
 #include <ft2build.h>

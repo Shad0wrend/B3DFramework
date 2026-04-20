@@ -8,7 +8,7 @@
 #include "../../../Engine/Core/Utility/B3DCommonTypes.h"
 #include "../../../Engine/Core/Renderer/B3DRendererMeshData.h"
 #include "../../../Engine/Core/Utility/B3DCommonTypes.h"
-#include "../../../Engine/Core/RenderAPI/B3DSubMesh.h"
+#include "../../../Engine/Core/GpuBackend/B3DSubMesh.h"
 #include "../../../Engine/Utility/Math/B3DAABox.h"
 #include "../../../Engine/Utility/Math/B3DSphere.h"
 

@@ -5,8 +5,8 @@
 #include "Material/B3DMaterialParameterAdapter.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "B3DRenderBeast.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DRenderTexture.h"
 
 namespace b3d { namespace render {
 

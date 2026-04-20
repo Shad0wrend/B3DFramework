@@ -6,7 +6,7 @@
 #include "Reflection/B3DRTTIType.h"
 #include "Reflection/B3DRTTIPlain.h"
 #include "Mesh/B3DMeshData.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "FileSystem/B3DDataStream.h"
 
 namespace b3d

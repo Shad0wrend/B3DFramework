@@ -6,8 +6,8 @@
 #include "Utility/B3DModule.h"
 #include "Profiling/B3DRenderStats.h"
 #include "Allocators/B3DPoolAlloc.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuQueries.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuQueries.h"
 
 namespace b3d
 {

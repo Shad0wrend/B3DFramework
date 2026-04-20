@@ -7,7 +7,7 @@
 #include "Image/B3DTexture.h"
 #include "RTTI/B3DReflectionProbeRTTI.h"
 #include "Profiling/B3DProfilerGPU.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Renderer/B3DIBLUtility.h"
 #include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererScene.h"

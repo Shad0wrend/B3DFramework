@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Utility/B3DModule.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Utility/B3DEvent.h"
 
 namespace b3d

@@ -9,7 +9,7 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "Managers/B3DRenderWindowManager.h"
 #include "Math/B3DMath.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace b3d;
 
@@ -39,7 +39,7 @@ void Win32RenderWindow::Initialize()
 #ifdef B3D_STATIC_LIB
 	windowCreateInformation.module = GetModuleHandle(NULL);
 #else
-	windowCreateInformation.Module = GetModuleHandle("bsfVulkanRenderAPI.dll");
+	windowCreateInformation.Module = GetModuleHandle("bsfVulkanGpuBackend.dll");
 #endif
 
 	if(!B3DIsWeakUnassigned(mParentWindow))

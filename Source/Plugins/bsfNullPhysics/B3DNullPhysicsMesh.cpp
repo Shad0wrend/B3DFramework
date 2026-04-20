@@ -3,7 +3,7 @@
 #include "B3DNullPhysicsMesh.h"
 #include "RTTI/B3DNullPhysicsMeshRTTI.h"
 #include "Mesh/B3DMeshData.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 
 using namespace b3d;
 

@@ -3,7 +3,7 @@
 #include "B3DGpuParticleSimulationMaterials.h"
 #include "B3DGpuParticleSimulation.h"
 #include "Renderer/B3DGpuResourcePool.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "Particles/B3DVectorField.h"
 #include "Math/B3DVector3.h"
 #include "B3DRenderBeast.h"

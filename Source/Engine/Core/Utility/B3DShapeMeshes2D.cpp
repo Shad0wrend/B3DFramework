@@ -6,7 +6,7 @@
 #include "Math/B3DVector2.h"
 #include "Math/B3DLine2.h"
 #include "Material/B3DPass.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 
 using namespace b3d;
 

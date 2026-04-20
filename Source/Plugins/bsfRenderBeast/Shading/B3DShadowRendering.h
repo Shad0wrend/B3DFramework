@@ -8,7 +8,7 @@
 #include "Math/B3DConvexVolume.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Renderer/B3DRendererMaterial.h"
-#include "RenderAPI/B3DGpuPipelineParameterLayout.h"
+#include "GpuBackend/B3DGpuPipelineParameterLayout.h"
 #include "Image/B3DTextureAtlasLayout.h"
 #include "RenderState/B3DLightRenderState.h"
 

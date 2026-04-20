@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/B3DGpuSort.h"
 #include "Math/B3DRandom.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "Renderer/B3DRendererUtility.h"
 
 namespace b3d {

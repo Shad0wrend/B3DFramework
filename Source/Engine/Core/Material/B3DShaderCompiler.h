@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Material/B3DShader.h"
-#include "RenderAPI/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgram.h"
 
 namespace b3d
 {

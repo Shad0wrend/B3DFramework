@@ -3,8 +3,8 @@
 #pragma once
 
 #include "B3DRenderBeastPrerequisites.h"
-#include "RenderAPI/B3DGpuBufferPool.h"
-#include "RenderAPI/B3DGpuParameterSet.h"
+#include "GpuBackend/B3DGpuBufferPool.h"
+#include "GpuBackend/B3DGpuParameterSet.h"
 
 namespace b3d::render
 {

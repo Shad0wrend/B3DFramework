@@ -4,8 +4,8 @@
 
 #include "B3DPrerequisites.h"
 #include "Resources/B3DGpuResourceData.h"
-#include "RenderAPI/B3DVertexDescription.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DVertexDescription.h"
+#include "GpuBackend/B3DSubMesh.h"
 #include "Math/B3DBounds.h"
 #include "Script/B3DIScriptExportable.h"
 

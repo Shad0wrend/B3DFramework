@@ -4,13 +4,13 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "RTTI/B3DStringRTTI.h"
 #include "RTTI/B3DStdRTTI.h"
 #include "RTTI/B3DFlagsRTTI.h"
 #include "RTTI/B3DDataBlobRTTI.h"
-#include "RenderAPI/B3DGpuProgram.h"
-#include "RenderAPI/B3DGpuProgramParameterDescription.h"
+#include "GpuBackend/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuProgramParameterDescription.h"
 #include "B3DApplication.h"
 
 namespace b3d

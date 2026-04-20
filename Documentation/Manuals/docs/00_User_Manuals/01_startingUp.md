@@ -101,7 +101,7 @@ Here's a complete code example. The code opens up a basic window and adds a came
 #include "B3DEntry.h"
 #include "Scene/B3DSceneObject.h"
 #include "Components/B3DCamera.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 
 int B3DMain()
 {
@@ -144,7 +144,7 @@ ApplicationCreateInformation createInfo = Application::BuildCreateInformation(
 	false);
 
 // Customize settings
-createInfo.RenderApi = "Vulkan"; // Specify render API
+createInfo.GpuBackend = "Vulkan"; // Specify render API
 createInfo.PhysicsCooking = false; // Disable physics cooking
 
 // Create application with custom settings

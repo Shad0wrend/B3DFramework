@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
-#include "RenderAPI/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuPipelineState.h"
 
 namespace b3d
 {

@@ -13,8 +13,8 @@
 #include "Material/B3DShader.h"
 #include "Profiling/B3DProfilerGPU.h"
 #include "Profiling/B3DProfilerCPU.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Scene/B3DSceneManager.h"
 
 using namespace b3d;

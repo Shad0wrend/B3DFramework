@@ -14,7 +14,7 @@
 #include "RenderState/B3DParticleRenderState.h"
 #include "RenderState/B3DDecalRenderState.h"
 #include "Renderer/B3DRenderer.h"
-#include "RenderAPI/B3DGpuBufferPool.h"
+#include "GpuBackend/B3DGpuBufferPool.h"
 
 namespace b3d
 {

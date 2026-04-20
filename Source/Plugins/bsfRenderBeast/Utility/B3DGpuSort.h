@@ -6,7 +6,7 @@
 #include "Utility/B3DModule.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Renderer/B3DRendererMaterial.h"
-#include "RenderAPI/B3DGpuPipelineParameterLayout.h"
+#include "GpuBackend/B3DGpuPipelineParameterLayout.h"
 
 namespace b3d
 {

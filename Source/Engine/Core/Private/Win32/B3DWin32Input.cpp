@@ -7,8 +7,8 @@
 #include "Input/B3DMouse.h"
 #include "Input/B3DKeyboard.h"
 #include "Input/B3DGamepad.h"
-#include "RenderAPI/B3DGpuDevice.h"
-#include "RenderAPI/B3DGpuDeviceCapabilities.h"
+#include "GpuBackend/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDeviceCapabilities.h"
 
 using namespace b3d;
 

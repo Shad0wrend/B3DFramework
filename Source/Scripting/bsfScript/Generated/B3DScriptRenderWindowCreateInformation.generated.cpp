@@ -4,7 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
-#include "../../../Engine/Core/RenderAPI/B3DVideoModeInfo.h"
+#include "../../../Engine/Core/GpuBackend/B3DVideoModeInfo.h"
 #include "B3DScriptVideoMode.generated.h"
 
 namespace b3d

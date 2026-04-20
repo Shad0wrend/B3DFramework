@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Image/B3DTexture.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DRenderTexture.h"
 #include "Utility/B3DModule.h"
 
 namespace b3d

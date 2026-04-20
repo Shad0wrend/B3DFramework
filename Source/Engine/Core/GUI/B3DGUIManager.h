@@ -16,7 +16,7 @@
 #include "Utility/B3DEvent.h"
 #include "Material/B3DMaterialParam.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 namespace b3d
 {

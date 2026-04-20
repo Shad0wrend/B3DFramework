@@ -8,7 +8,7 @@
 #include "Math/B3DRect2I.h"
 #include "Input/B3DInputFwd.h"
 #include "String/B3DUnicode.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 
 #import <QuartzCore/CAMetalLayer.h>
 

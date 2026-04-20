@@ -193,8 +193,8 @@ u32 passIndex = 0;
 u32 variationIndex = 0;
 SPtr<Pass> pass = material->GetPass(passIndex, variationIndex);
 
-RenderAPI& rapi = RenderAPI::Instance();
-rapi.SetGraphicsPipeline(pass->GetGraphicsPipelineState());
+GpuCommandBuffer& commandBuffer = ...;
+commandBuffer.SetGpuGraphicsPipelineState(pass->GetGraphicsPipelineState());
 ~~~~~~~~~~~~~
 
 Alternatively you can use the helper methods @b3d::render::RendererUtility::SetPass or @b3d::render::RendererUtility::SetComputePass.

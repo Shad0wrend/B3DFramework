@@ -3,7 +3,7 @@
 #include "String/B3DUnicode.h"
 #include "Platform/B3DPlatform.h"
 #include "Platform/B3DDropTarget.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Math/B3DRect2I.h"
 #include "Private/MacOS/B3DMacOSDropTarget.h"
 #include "Private/MacOS/B3DMacOSWindow.h"

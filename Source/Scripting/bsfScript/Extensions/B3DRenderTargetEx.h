@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DScriptEnginePrerequisites.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DRenderTexture.h"
 
 namespace b3d
 {

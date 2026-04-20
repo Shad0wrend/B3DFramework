@@ -3,7 +3,7 @@
 #include "B3DPhysXMesh.h"
 #include "RTTI/B3DPhysXMeshRTTI.h"
 #include "Mesh/B3DMeshData.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "B3DPhysX.h"
 #include "Math/B3DAABox.h"
 #include "foundation/PxAllocatorCallback.h"

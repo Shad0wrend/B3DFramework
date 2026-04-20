@@ -4,9 +4,9 @@
 
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
-#include "RenderAPI/B3DRenderTarget.h"
-#include "RenderAPI/B3DRenderTexture.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderTarget.h"
+#include "GpuBackend/B3DRenderTexture.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "CoreObject/B3DRenderThread.h"
 
 namespace b3d

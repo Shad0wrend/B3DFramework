@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DSubMesh.h"
 
 namespace b3d
 {

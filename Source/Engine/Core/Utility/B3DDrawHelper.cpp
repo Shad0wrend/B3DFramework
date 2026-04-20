@@ -4,7 +4,7 @@
 #include "Mesh/B3DMesh.h"
 #include "Math/B3DAABox.h"
 #include "Math/B3DSphere.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Utility/B3DShapeMeshes3D.h"
 #include "Text/B3DTextGeometry.h"
 #include "Math/B3DVector2.h"

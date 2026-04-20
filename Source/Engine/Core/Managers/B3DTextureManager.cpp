@@ -3,7 +3,7 @@
 #include "Managers/B3DTextureManager.h"
 #include "Image/B3DPixelUtility.h"
 #include "Image/B3DTexture.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace b3d;
 

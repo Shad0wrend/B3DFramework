@@ -3,7 +3,7 @@
 #include "B3DParticleEmitter.h"
 #include "Mesh/B3DMeshData.h"
 #include "Mesh/B3DMeshUtility.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Math/B3DRandom.h"
 #include "Components/B3DRenderable.h"
 #include "Private/Particles/B3DParticleSet.h"

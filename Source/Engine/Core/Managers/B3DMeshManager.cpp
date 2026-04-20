@@ -3,7 +3,7 @@
 #include "Managers/B3DMeshManager.h"
 #include "Math/B3DVector3.h"
 #include "Mesh/B3DMesh.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 
 using namespace b3d;
 

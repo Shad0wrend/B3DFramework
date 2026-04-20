@@ -4,7 +4,7 @@
 
 #include "B3DGUITexture.h"
 #include "GUI/B3DGUIManager.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DRenderTexture.h"
 #include "Image/B3DSpriteTexture.h"
 
 using namespace b3d;

@@ -4,7 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Plugin/B3DPluginLoader.h"
-#include "RenderAPI/B3DRenderWindow.h"
+#include "GpuBackend/B3DRenderWindow.h"
 #include "Utility/B3DEvent.h"
 #include "Utility/B3DModule.h"
 
@@ -31,7 +31,7 @@ namespace b3d
 			PrimaryWindow.Fullscreen = fullscreen;
 		}
 
-		String RenderApi; /**< Name of the render system plugin to use. */
+		String GpuBackend; /**< Name of the GPU backend plugin to use. */
 		String Renderer; /**< Name of the renderer plugin to use. */
 		String Physics; /**< Name of physics plugin to use. */
 		String Audio; /**< Name of the audio plugin to use. */

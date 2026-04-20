@@ -8,7 +8,7 @@
 #include "Math/B3DVector2.h"
 #include "Image/B3DColor.h"
 #include "Math/B3DRect3.h"
-#include "RenderAPI/B3DSubMesh.h"
+#include "GpuBackend/B3DSubMesh.h"
 #include "Math/B3DTransform.h"
 
 namespace b3d

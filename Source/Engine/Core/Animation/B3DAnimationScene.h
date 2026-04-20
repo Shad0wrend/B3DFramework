@@ -6,7 +6,7 @@
 #include "Utility/B3DModule.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "Math/B3DConvexVolume.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Threading/B3DWaitGroup.h"
 #include "Math/B3DMatrix4.h"
 

@@ -16,7 +16,7 @@
 #include "B3DRenderBeast.h"
 #include "RenderState/B3DDecalRenderState.h"
 #include "Image/B3DSpriteTexture.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 #include "Components/B3DDecal.h"
 #include "Renderer/B3DIBLUtility.h"

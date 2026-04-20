@@ -5,7 +5,7 @@
 #include "B3DGUIUtility.h"
 #include "GUI/B3DGUIPanel.h"
 #include "Components/B3DCamera.h"
-#include "RenderAPI/B3DViewport.h"
+#include "GpuBackend/B3DViewport.h"
 #include "GUI/B3DGUILayoutY.h"
 #include "GUI/B3DGUILayoutX.h"
 #include "GUI/B3DGUITexture.h"

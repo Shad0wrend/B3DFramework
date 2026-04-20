@@ -10,8 +10,8 @@
 #include "RTTI/B3DGUIWidgetRTTI.h"
 #include "Scene/B3DSceneObject.h"
 #include "Components/B3DCamera.h"
-#include "RenderAPI/B3DRenderTarget.h"
-#include "RenderAPI/B3DViewport.h"
+#include "GpuBackend/B3DRenderTarget.h"
+#include "GpuBackend/B3DViewport.h"
 #include "Resources/B3DBuiltinResources.h"
 #include "StyleSheet/B3DGUIStyleSheet.h"
 

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "RenderAPI/B3DGpuFrameCapture.h"
+#include "GpuBackend/B3DGpuFrameCapture.h"
 
 // TODO - Surround if an #if so this can be included from non-Vulkan render backends (all other Vulkan specific code too)
 #include <vulkan/vulkan.h>

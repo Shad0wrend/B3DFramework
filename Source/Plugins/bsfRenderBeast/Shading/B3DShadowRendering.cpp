@@ -10,13 +10,13 @@
 #include "Mesh/B3DMesh.h"
 #include "Components/B3DCamera.h"
 #include "Utility/B3DBitwise.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Renderer/B3DRenderer.h"
 #include "RenderState/B3DRenderableRenderState.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DRenderTexture.h"
-#include "RenderAPI/B3DGpuProgramParameterDescription.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DRenderTexture.h"
+#include "GpuBackend/B3DGpuProgramParameterDescription.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Math/B3DMath.h"
 
 namespace b3d

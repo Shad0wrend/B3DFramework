@@ -4,17 +4,17 @@
 
 #include "Image/B3DTexture.h"
 #include "Mesh/B3DMesh.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 #include "Material/B3DMaterial.h"
 #include "Material/B3DMaterialParameterAdapter.h"
 #include "Material/B3DPass.h"
-#include "RenderAPI/B3DGpuParameterSet.h"
+#include "GpuBackend/B3DGpuParameterSet.h"
 #include "Utility/B3DShapeMeshes3D.h"
 #include "Material/B3DShader.h"
 #include "Renderer/B3DIBLUtility.h"
 #include "Math/B3DAABox.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuDeviceCapabilities.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuDeviceCapabilities.h"
 #include "Components/B3DLight.h"
 
 using namespace b3d;

@@ -5,7 +5,7 @@
 #include "B3DPrerequisites.h"
 #include "Reflection/B3DRTTIType.h"
 #include "Reflection/B3DRTTIPlain.h"
-#include "RenderAPI/B3DVertexDescription.h"
+#include "GpuBackend/B3DVertexDescription.h"
 
 namespace b3d
 {

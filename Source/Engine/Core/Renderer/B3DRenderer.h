@@ -7,9 +7,9 @@
 #include "String/B3DStringID.h"
 #include "Renderer/B3DRendererMeshData.h"
 #include "Material/B3DShaderVariation.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuCommandBufferPoolRing.h"
-#include "RenderAPI/B3DGpuParameterSetPool.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuCommandBufferPoolRing.h"
+#include "GpuBackend/B3DGpuParameterSetPool.h"
 
 namespace b3d
 {

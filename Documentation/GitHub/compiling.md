@@ -63,12 +63,12 @@ The following dependencies will need to be installed manually. Which ones are re
 
 **Windows**
   - **DirectX SDK** (Required by default on Windows 7 or earlier)
-	- Optional if you have choosen a different RenderAPI in *CMake* options
+	- Optional if you have choosen a different GPU backend in *CMake* options
     - Set up DXSDK_DIR environment variable pointing to the DirectX instalation
   - **Windows SDK** (Required by default on Windows 8 or later)
-	- Optional if you have choosen a different RenderAPI in *CMake* options
+	- Optional if you have choosen a different GPU backend in *CMake* options
   - **DirectX Debug Layer** (Required by default on Windows 10)
-    - Optional if you have choosen a different RenderAPI in *CMake* options
+    - Optional if you have choosen a different GPU backend in *CMake* options
     - Go to Settings panel (type "Settings" in Start)->System->Apps & features->Manage optional Features->Add a feature->Select "Graphics Tools"
  
 **Linux**

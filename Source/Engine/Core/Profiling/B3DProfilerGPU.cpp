@@ -4,8 +4,8 @@
 
 #include "B3DApplication.h"
 #include "Profiling/B3DRenderStats.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuDevice.h"
 
 using namespace b3d;
 

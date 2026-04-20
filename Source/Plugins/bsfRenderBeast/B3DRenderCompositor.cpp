@@ -25,8 +25,8 @@
 #include "Profiling/B3DProfilerGPU.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 #include "Profiling/B3DProfilerCPU.h"
-#include "RenderAPI/B3DGpuCommandBuffer.h"
-#include "RenderAPI/B3DRenderTexture.h"
+#include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DRenderTexture.h"
 
 namespace b3d { namespace render {
 

@@ -11,7 +11,7 @@
 #include "Material/B3DShader.h"
 #include "Material/B3DPass.h"
 #include "Material/B3DShaderCompiler.h"
-#include "RenderAPI/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuPipelineState.h"
 #include "Resources/B3DBuiltinResources.h"
 
 #if B3D_PROFILING_ENABLED

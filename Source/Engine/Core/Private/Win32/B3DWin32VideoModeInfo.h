@@ -3,7 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
-#include "RenderAPI/B3DVideoModeInfo.h"
+#include "GpuBackend/B3DVideoModeInfo.h"
 
 #define WIN32_LEAN_AND_MEAN
 #if !defined(NOMINMAX) && defined(_MSC_VER)

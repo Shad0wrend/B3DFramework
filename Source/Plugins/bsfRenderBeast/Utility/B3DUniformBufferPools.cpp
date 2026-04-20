@@ -6,8 +6,8 @@
 #include "RenderState/B3DDecalRenderState.h"
 #include "RenderState/B3DParticleRenderState.h"
 #include "Components/B3DDecal.h"
-#include "RenderAPI/B3DGpuBackend.h"
-#include "RenderAPI/B3DGpuDevice.h"
+#include "GpuBackend/B3DGpuBackend.h"
+#include "GpuBackend/B3DGpuDevice.h"
 #include "Renderer/B3DRenderer.h"
 #include "Shading/B3DGpuParticleSimulation.h"
 
