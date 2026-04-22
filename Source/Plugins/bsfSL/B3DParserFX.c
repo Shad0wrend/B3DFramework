@@ -1,3 +1,5 @@
+//************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 /* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Skeleton implementation for Bison GLR parsers in C

@@ -79,6 +79,7 @@ scanned=0
 updated=0
 skipped=0
 no_header=0
+added=0
 
 make_stars() {
 	local n="$1"
@@ -131,6 +132,57 @@ compute_new_token() {
 	fi
 }
 
+# Add a copyright header to a B3D-prefixed file that is missing one.
+# Determines header style based on file path (Framework/ vs Source/).
+add_missing_header() {
+	local file="$1"
+
+	# Determine header style based on path
+	local header_kind
+	if [[ "$file" == *"/Framework/"* ]]; then
+		header_kind="framework"
+	else
+		header_kind="editor"
+	fi
+
+	local new_l1 new_l2
+	if [[ "$header_kind" == "framework" ]]; then
+		new_l1="$(rebuild_line "B3D Framework - Copyright $year Marko Pintera")"
+		new_l2="$(rebuild_line "Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed.")"
+	else
+		new_l1="$(rebuild_line "Banshee Engine")"
+		new_l2="$(rebuild_line "Copyright (c) $year Marko Pintera (marko.pintera@gmail.com). All rights reserved.")"
+	fi
+
+	# Detect line ending from first line
+	local eol=""
+	local line1
+	if IFS= read -r line1 < "$file"; then
+		if [[ "$line1" == *$'\r' ]]; then
+			eol=$'\r'
+		fi
+	fi
+
+	if [[ "$dry_run" -eq 1 ]]; then
+		printf 'WOULD ADD %s   (%s header)\n' "$file" "$header_kind"
+		added=$(( added + 1 ))
+		return
+	fi
+
+	local tmp
+	tmp="$(mktemp)"
+	{
+		printf '%s%s\n' "$new_l1" "$eol"
+		printf '%s%s\n' "$new_l2" "$eol"
+		cat "$file"
+	} > "$tmp"
+	chmod --reference="$file" "$tmp" 2>/dev/null || true
+	mv "$tmp" "$file"
+
+	printf 'ADD %s   (%s header)\n' "$file" "$header_kind"
+	added=$(( added + 1 ))
+}
+
 rx_fw_l1='^//(\*+) B3D Framework - Copyright ([0-9]{4}(-[0-9]{4})?) Marko Pintera (\*+)//$'
 rx_fw_l2='^//(\*+) Licensed under the MIT license\. See LICENSE\.md for full terms\. This notice is not to be removed\. (\*+)//$'
 rx_ed_l1_new='^//(\*+) Banshee Engine (\*+)//$'
@@ -164,7 +216,14 @@ process_file() {
 		kind="editor"
 		old_token="${BASH_REMATCH[2]}"
 	else
-		no_header=$(( no_header + 1 ))
+		# No recognized header - check if this is a B3D-prefixed file that needs one added
+		local basename
+		basename="$(basename "$file")"
+		if [[ "$basename" == B3D* ]]; then
+			add_missing_header "$file"
+		else
+			no_header=$(( no_header + 1 ))
+		fi
 		return
 	fi
 
@@ -239,6 +298,7 @@ echo "Mode:                         $mode"
 echo "Target year:                  $year"
 echo "Scanned:                      $scanned"
 echo "Updated:                      $updated"
+echo "Added (B3D files):            $added"
 echo "Skipped (already up to date): $skipped"
 echo "No recognized header:         $no_header"
 if [[ "$dry_run" -eq 1 ]]; then
