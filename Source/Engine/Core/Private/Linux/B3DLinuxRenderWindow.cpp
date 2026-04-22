@@ -33,29 +33,29 @@ void LinuxRenderWindow::Initialize()
 	int32_t numVisuals;
 	XVisualInfo* visualInfo = XGetVisualInfo(LinuxPlatform::getXDisplay(), VisualScreenMask | VisualDepthMask | VisualClassMask, &visualInfoTempl, &numVisuals);
 
-	WINDOW_DESC windowCreateInformation;
-	windowCreateInformation.x = mCreateInformation.Left;
-	windowCreateInformation.y = mCreateInformation.Top;
-	windowCreateInformation.width = mCreateInformation.VideoMode.Width;
-	windowCreateInformation.height = mCreateInformation.VideoMode.Height;
-	windowCreateInformation.title = mCreateInformation.title;
-	windowCreateInformation.showDecorations = mCreateInformation.ShowTitleBar;
-	windowCreateInformation.allowResize = mCreateInformation.AllowResize;
-	windowCreateInformation.showOnTaskBar = !mCreateInformation.ToolWindow;
-	windowCreateInformation.modal = mCreateInformation.Modal;
-	windowCreateInformation.visualInfo = *visualInfo;
-	windowCreateInformation.screen = mCreateInformation.VideoMode.OutputIdx;
-	windowCreateInformation.hidden = mCreateInformation.HideUntilSwap || mCreateInformation.Hidden;
+	WindowCreateInformation windowCreateInformation;
+	windowCreateInformation.X = mCreateInformation.Left;
+	windowCreateInformation.Y = mCreateInformation.Top;
+	windowCreateInformation.Width = mCreateInformation.VideoMode.Width;
+	windowCreateInformation.Height = mCreateInformation.VideoMode.Height;
+	windowCreateInformation.Title = mCreateInformation.Title;
+	windowCreateInformation.ShowDecorations = mCreateInformation.ShowTitleBar;
+	windowCreateInformation.AllowResize = mCreateInformation.AllowResize;
+	windowCreateInformation.ShowOnTaskBar = !mCreateInformation.ToolWindow;
+	windowCreateInformation.Modal = mCreateInformation.Modal;
+	windowCreateInformation.VisualInfo = *visualInfo;
+	windowCreateInformation.Screen = mCreateInformation.VideoMode.OutputIdx;
+	windowCreateInformation.Hidden = mCreateInformation.HideUntilSwap || mCreateInformation.Hidden;
 
-	windowCreateInformation.parent = 0;
+	windowCreateInformation.Parent = 0;
 	if(!B3DIsWeakUnassigned(mParentWindow))
 	{
 		const SPtr<LinuxRenderWindow> parentWindow = std::static_pointer_cast<LinuxRenderWindow>(mParentWindow.lock());
 		if(B3D_ENSURE(parentWindow != nullptr))
-			windowCreateInformation.parent = (::Window)parentWindow->GetPlatformWindowHandle();
+			windowCreateInformation.Parent = (::Window)parentWindow->GetPlatformWindowHandle();
 	}
 
-	mIsChild = windowCreateInformation.parent != 0;
+	mIsChild = windowCreateInformation.Parent != 0;
 	mWindowProperties.IsFullScreen = mCreateInformation.Fullscreen && !mIsChild;
 
 	mShowOnSwap = mCreateInformation.HideUntilSwap && !mCreateInformation.Hidden;
@@ -81,12 +81,12 @@ void LinuxRenderWindow::Initialize()
 		SetFullscreen(mCreateInformation.VideoMode);
 
 	if(mCreateInformation.Vsync && mCreateInformation.VsyncInterval > 0)
-		SetVSync(true, mCreateInformation.vsyncInterval);
+		SetVSync(true, mCreateInformation.VsyncInterval);
 
 	Super::Initialize();
 }
 
-LinuxRenderWindow::Destroy()
+void LinuxRenderWindow::Destroy()
 {
 	// Make sure to set the original desktop video mode before we exit
 	if(mRenderWindowProperties.IsFullScreen)
@@ -154,6 +154,7 @@ void LinuxRenderWindow::Resize(u32 width, u32 height)
 		mRenderTargetProperties.Height = mWindow->GetHeight();
 
 		MarkRenderProxyDataDirty();
+		OnResized();
 	}
 }
 
@@ -198,7 +199,7 @@ void LinuxRenderWindow::Maximize()
 	LinuxPlatform::unlockX();
 
 	mRenderWindowProperties.IsMaximized = true;
-	mRenderWindowProperties.IsMinimized = true;
+	mRenderWindowProperties.IsMinimized = false;
 
 	mRenderTargetProperties.Width = mWindow->GetWidth();
 	mRenderTargetProperties.Height = mWindow->GetHeight();
@@ -275,17 +276,17 @@ void LinuxRenderWindow::SetFullscreen(const VideoMode& mode)
 	if(mIsChild)
 		return;
 
-	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::LinuxVideoModeInfo& videoModeInfo = static_cast<const render::LinuxVideoModeInfo&>(GetApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
-	u32 outputIdx = mode.outputIdx;
+	u32 outputIdx = mode.OutputIdx;
 	if(outputIdx >= outputCount)
 	{
 		B3D_LOG(Error, LogPlatform, "Invalid output device index.");
 		return;
 	}
 
-	const LinuxVideoOutputInfo& outputInfo = static_cast<const LinuxVideoOutputInfo&>(videoModeInfo.GetOutputInfo(outputIdx));
+	const render::LinuxVideoOutputInfo& outputInfo = static_cast<const render::LinuxVideoOutputInfo&>(videoModeInfo.GetOutputInfo(outputIdx));
 
 	i32 screen = outputInfo.GetScreenInternal();
 	RROutput outputID = outputInfo.GetOutputIDInternal();
@@ -293,7 +294,7 @@ void LinuxRenderWindow::SetFullscreen(const VideoMode& mode)
 	RRMode modeID = 0;
 	if(!mode.IsCustom)
 	{
-		const LinuxVideoMode& videoMode = static_cast<const LinuxVideoMode&>(mode);
+		const render::LinuxVideoMode& videoMode = static_cast<const render::LinuxVideoMode&>(mode);
 		modeID = videoMode.GetModeIDInternal();
 	}
 	else
@@ -354,12 +355,12 @@ void LinuxRenderWindow::SetFullscreen(const VideoMode& mode)
 			else
 				refreshRate = 0.0f;
 
-			if(width == mode.width && height == mode.height)
+			if(width == mode.Width && height == mode.Height)
 			{
 				modeID = modeInfo.id;
 				foundMode = true;
 
-				if(Math::ApproxEquals(refreshRate, mode.refreshRate))
+				if(Math::ApproxEquals(refreshRate, mode.RefreshRate))
 					break;
 			}
 		}
@@ -386,8 +387,8 @@ void LinuxRenderWindow::SetFullscreen(const VideoMode& mode)
 
 	mRenderWindowProperties.Top = 0;
 	mRenderWindowProperties.Left = 0;
-	mRenderTargetProperties.Width = mode.width;
-	mRenderTargetProperties.Height = mode.height;
+	mRenderTargetProperties.Width = mode.Width;
+	mRenderTargetProperties.Height = mode.Height;
 
 	DoOnWindowMovedOrResized();
 	MarkRenderProxyDataDirty();
@@ -399,7 +400,7 @@ void LinuxRenderWindow::SetWindowed(u32 width, u32 height)
 		return;
 
 	// Restore old screen config
-	const render::Win32VideoModeInfo& videoModeInfo = static_cast<const render::Win32VideoModeInfo&>(GetApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
+	const render::LinuxVideoModeInfo& videoModeInfo = static_cast<const render::LinuxVideoModeInfo&>(GetApplication().GetPrimaryGpuDevice()->GetVideoModeInfo());
 	const u32 outputCount = videoModeInfo.GetOutputCount();
 
 	u32 outputIdx = 0; // 0 is always primary
@@ -409,14 +410,14 @@ void LinuxRenderWindow::SetWindowed(u32 width, u32 height)
 		return;
 	}
 
-	const LinuxVideoOutputInfo& outputInfo =
-		static_cast<const LinuxVideoOutputInfo&>(videoModeInfo.GetOutputInfo(outputIdx));
+	const render::LinuxVideoOutputInfo& outputInfo =
+		static_cast<const render::LinuxVideoOutputInfo&>(videoModeInfo.GetOutputInfo(outputIdx));
 
-	const LinuxVideoMode& desktopVideoMode = static_cast<const LinuxVideoMode&>(outputInfo.GetDesktopVideoMode());
+	const render::LinuxVideoMode& desktopVideoMode = static_cast<const render::LinuxVideoMode&>(outputInfo.GetDesktopVideoMode());
 
 	LinuxPlatform::lockX();
 
-	SetVideoMode(outputInfo.GetScreenInternal(), outputInfo._getOutputID(), desktopVideoMode._getModeID());
+	SetVideoMode(outputInfo.GetScreenInternal(), outputInfo.GetOutputIDInternal(), desktopVideoMode.GetModeIDInternal());
 	mWindow->SetFullscreenInternal(false);
 
 	LinuxPlatform::unlockX();

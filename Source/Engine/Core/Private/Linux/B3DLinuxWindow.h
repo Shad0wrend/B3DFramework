@@ -18,21 +18,21 @@ namespace b3d
 	 */
 
 	/**	Descriptor used for creating a platform specific native window. */
-	struct WINDOW_DESC
+	struct WindowCreateInformation
 	{
-		i32 x, y;
-		u32 width, height;
-		u32 screen;
-		String title;
-		bool showDecorations;
-		bool allowResize;
-		bool modal;
-		bool showOnTaskBar;
-		bool hidden;
-		::Window parent;
-		::Window external;
-		XVisualInfo visualInfo;
-		SPtr<PixelData> background;
+		i32 X, Y;
+		u32 Width, Height;
+		u32 Screen;
+		String Title;
+		bool ShowDecorations;
+		bool AllowResize;
+		bool Modal;
+		bool ShowOnTaskBar;
+		bool Hidden;
+		::Window Parent;
+		::Window External;
+		XVisualInfo VisualInfo;
+		SPtr<PixelData> Background;
 	};
 
 	/**
@@ -42,50 +42,50 @@ namespace b3d
 	class B3D_EXPORT LinuxWindow
 	{
 	public:
-		LinuxWindow(const WINDOW_DESC& desc);
+		LinuxWindow(const WindowCreateInformation& createInformation);
 		~LinuxWindow();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
-		i32 getLeft() const;
+		i32 GetLeft() const;
 
 		/**	Returns position of the top-most border of the window, relative to the screen. */
-		i32 getTop() const;
+		i32 GetTop() const;
 
 		/**	Returns width of the window in pixels. */
-		u32 getWidth() const;
+		u32 GetWidth() const;
 
 		/**	Returns height of the window in pixels. */
-		u32 getHeight() const;
+		u32 GetHeight() const;
 
-		/** Hides the window. */
-		void hide();
-
-		/** Shows (unhides) the window. */
-		void show();
+		/** Hides or shows the window. */
+		void SetHidden(bool hidden);
 
 		/**	Minimizes the window. */
-		void minimize();
+		void Minimize();
 
 		/**	Maximizes the window over the entire current screen. */
-		void maximize();
+		void Maximize();
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		void restore();
+		void Restore();
 
 		/**	Change the size of the window. */
-		void resize(u32 width, u32 height);
+		void Resize(u32 width, u32 height);
 
 		/**	Reposition the window. */
-		void move(i32 left, i32 top);
+		void Move(i32 left, i32 top);
 
 		/** Sets the icon to display for the window. */
-		void setIcon(const PixelData& icon);
+		void SetIcon(const PixelData& icon);
 
 		/**	Converts screen position into window local position. */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
+
+		/** Method that triggers whenever the window changes size or position. */
+		void DoOnWindowMovedOrResized();
 
 		/**
 		 * @name Internal

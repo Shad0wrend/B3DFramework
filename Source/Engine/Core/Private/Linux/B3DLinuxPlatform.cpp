@@ -276,11 +276,10 @@ void Platform::captureMouse(const RenderWindow& window)
 {
 	Lock lock(mData->lock);
 
-	LinuxWindow* linuxWindow;
-	window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
+	::Window xWindow = (::Window)window.GetPlatformWindowHandle();
 
 	u32 mask = ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask;
-	XGrabPointer(mData->xDisplay, linuxWindow->GetXWindowInternal(), False, mask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+	XGrabPointer(mData->xDisplay, xWindow, False, mask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 	XSync(mData->xDisplay, False);
 }
 
@@ -296,9 +295,7 @@ bool Platform::isPointOverWindow(const RenderWindow& window, const Vector2I& scr
 {
 	Lock lock(mData->lock);
 
-	LinuxWindow* linuxWindow;
-	window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
-	::Window xWindow = linuxWindow->GetXWindowInternal();
+	::Window xWindow = (::Window)window.GetPlatformWindowHandle();
 
 	u32 screenCount = (u32)XScreenCount(mData->xDisplay);
 
@@ -341,7 +338,12 @@ void Platform::clipCursorToWindow(const RenderWindow& window)
 {
 	Lock lock(mData->lock);
 
-	LinuxWindow* const linuxWindow = static_cast<const LinuxRenderWindow&>(window.GetLowLevelWindow());
+	::Window xWindow = (::Window)window.GetPlatformWindowHandle();
+	auto iterFind = mData->windowMap.find(xWindow);
+	if(iterFind == mData->windowMap.end())
+		return;
+
+	LinuxWindow* linuxWindow = iterFind->second;
 
 	mData->cursorClipEnabled = true;
 	mData->cursorClipWindow = linuxWindow;
@@ -417,7 +419,12 @@ void Platform::setCaptionNonClientAreas(const RenderWindow& window, const Vector
 
 	Lock lock(mData->lock);
 
-	LinuxWindow* const linuxWindow = static_cast<const LinuxRenderWindow&>(window.GetLowLevelWindow());
+	::Window xWindow = (::Window)window.GetPlatformWindowHandle();
+	auto iterFind = mData->windowMap.find(xWindow);
+	if(iterFind == mData->windowMap.end())
+		return;
+
+	LinuxWindow* linuxWindow = iterFind->second;
 	linuxWindow->SetDragZonesInternal(nonClientAreas);
 }
 
@@ -430,7 +437,12 @@ void Platform::resetNonClientAreas(const RenderWindow& window)
 {
 	Lock lock(mData->lock);
 
-	LinuxWindow* const linuxWindow = static_cast<const LinuxRenderWindow&>(window.GetLowLevelWindow());
+	::Window xWindow = (::Window)window.GetPlatformWindowHandle();
+	auto iterFind = mData->windowMap.find(xWindow);
+	if(iterFind == mData->windowMap.end())
+		return;
+
+	LinuxWindow* linuxWindow = iterFind->second;
 	linuxWindow->SetDragZonesInternal({});
 }
 
@@ -1259,12 +1271,12 @@ void Platform::StartUpInternal()
 	int firstEvent;
 	int firstError;
 	if(!XQueryExtension(mData->xDisplay, "XInputExtension", &mData->xInput2Opcode, &firstEvent, &firstError))
-		B3D_LOG(Fatal, LogPlatform "X Server doesn't support the XInput extension");
+		B3D_LOG(Fatal, LogPlatform, "X Server doesn't support the XInput extension");
 
 	int majorVersion = 2;
 	int minorVersion = 0;
 	if(XIQueryVersion(mData->xDisplay, &majorVersion, &minorVersion) != Success)
-		B3D_LOG(Fatal, LogPlatform "X Server doesn't support at least the XInput 2.0 extension");
+		B3D_LOG(Fatal, LogPlatform, "X Server doesn't support at least the XInput 2.0 extension");
 
 	// Let XInput know we are interested in raw mouse movement events
 	constexpr int maskLen = XIMaskLen(XI_LASTEVENT);

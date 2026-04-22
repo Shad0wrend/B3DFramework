@@ -80,7 +80,7 @@ bool unix_createDirectory(const String& path)
 
 bool FileSystem::RemoveFile(const Path& path)
 {
-	String pathStr = path.toString();
+	String pathStr = path.ToString();
 	if(unix_isDirectory(pathStr))
 	{
 		if(rmdir(pathStr.c_str()))
@@ -103,8 +103,8 @@ bool FileSystem::RemoveFile(const Path& path)
 
 bool FileSystem::CopyFile(const Path& source, const Path& destination)
 {
-	std::ifstream sourceStream(source.toString().c_str(), std::ios::binary);
-	std::ofstream destinationStream(destination.toString().c_str(), std::ios::binary);
+	std::ifstream sourceStream(source.ToString().c_str(), std::ios::binary);
+	std::ofstream destinationStream(destination.ToString().c_str(), std::ios::binary);
 
 	destinationStream << sourceStream.rdbuf();
 	sourceStream.close();
@@ -115,8 +115,8 @@ bool FileSystem::CopyFile(const Path& source, const Path& destination)
 
 bool FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 {
-	String oldPathStr = oldPath.toString();
-	String newPathStr = newPath.toString();
+	String oldPathStr = oldPath.ToString();
+	String newPathStr = newPath.ToString();
 	if(std::rename(oldPathStr.c_str(), newPathStr.c_str()) == -1)
 	{
 		// Cross-filesystem copy is likely needed (for example, /tmp to Banshee install dir while copying assets)
@@ -177,46 +177,46 @@ u64 FileSystem::GetFileSize(const Path& path)
 {
 	struct stat st_buf;
 
-	if(stat(path.toString().c_str(), &st_buf) == 0)
+	if(stat(path.ToString().c_str(), &st_buf) == 0)
 	{
 		return (u64)st_buf.st_size;
 	}
 	else
 	{
-		HANDLE_PATH_ERROR(path.toString(), errno);
+		HANDLE_PATH_ERROR(path.ToString(), errno);
 		return (u64)-1;
 	}
 }
 
 bool FileSystem::Exists(const Path& path)
 {
-	return unix_pathExists(path.toString());
+	return unix_pathExists(path.ToString());
 }
 
 bool FileSystem::IsFile(const Path& path)
 {
-	String pathStr = path.toString();
+	String pathStr = path.ToString();
 	return unix_pathExists(pathStr) && unix_isFile(pathStr);
 }
 
 bool FileSystem::IsDirectory(const Path& path)
 {
-	String pathStr = path.toString();
+	String pathStr = path.ToString();
 	return unix_pathExists(pathStr) && unix_isDirectory(pathStr);
 }
 
 bool FileSystem::CreateDir(const Path& path)
 {
 	Path parentPath = path;
-	while(!exists(parentPath) && parentPath.getNumDirectories() > 0)
+	while(!Exists(parentPath) && parentPath.GetDirectoryCount() > 0)
 	{
-		parentPath = parentPath.getParent();
+		parentPath = parentPath.GetParent();
 	}
 
-	for(u32 directoryIndex = parentPath.getNumDirectories(); directoryIndex < path.getNumDirectories(); directoryIndex++)
+	for(u32 directoryIndex = parentPath.GetDirectoryCount(); directoryIndex < path.GetDirectoryCount(); directoryIndex++)
 	{
 		parentPath.Append(path[directoryIndex]);
-		if(!unix_createDirectory(parentPath.toString()))
+		if(!unix_createDirectory(parentPath.ToString()))
 			return false;
 	}
 
@@ -226,11 +226,13 @@ bool FileSystem::CreateDir(const Path& path)
 		if(!unix_createDirectory(path.ToString()))
 			return false;
 	}
+
+	return true;
 }
 
 void FileSystem::GetChildren(const Path& dirPath, Vector<Path>& files, Vector<Path>& directories)
 {
-	const String pathStr = dirPath.toString();
+	const String pathStr = dirPath.ToString();
 
 	if(unix_isFile(pathStr))
 		return;
@@ -260,7 +262,7 @@ void FileSystem::GetChildren(const Path& dirPath, Vector<Path>& files, Vector<Pa
 std::time_t FileSystem::GetLastModifiedTime(const Path& path)
 {
 	struct stat st_buf;
-	stat(path.toString().c_str(), &st_buf);
+	stat(path.ToString().c_str(), &st_buf);
 	std::time_t time = st_buf.st_mtime;
 
 	return time;
@@ -282,7 +284,7 @@ Path FileSystem::GetWorkingDirectoryPath()
 
 bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback, std::function<bool(const Path&)> dirCallback, bool recursive)
 {
-	String pathStr = dirPath.toString();
+	String pathStr = dirPath.ToString();
 
 	if(unix_isFile(pathStr))
 		return false;
@@ -304,7 +306,7 @@ bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> f
 		Path fullPath = dirPath;
 		if(unix_isDirectory(pathStr + "/" + filename))
 		{
-			Path childDir = fullPath.append(filename + "/");
+			Path childDir = fullPath.Append(filename + "/");
 			if(dirCallback != nullptr)
 			{
 				if(!dirCallback(childDir))
@@ -316,7 +318,7 @@ bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> f
 
 			if(recursive)
 			{
-				if(!iterate(childDir, fileCallback, dirCallback, recursive))
+				if(!Iterate(childDir, fileCallback, dirCallback, recursive))
 				{
 					closedir(dirHandle);
 					return false;
@@ -325,7 +327,7 @@ bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> f
 		}
 		else
 		{
-			Path filePath = fullPath.append(filename);
+			Path filePath = fullPath.Append(filename);
 			if(fileCallback != nullptr)
 			{
 				if(!fileCallback(filePath))

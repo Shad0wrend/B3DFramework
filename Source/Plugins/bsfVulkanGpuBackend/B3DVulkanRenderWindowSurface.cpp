@@ -36,7 +36,7 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 	VkXlibSurfaceCreateInfoKHR surfaceCreateInfo;
 	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	surfaceCreateInfo.pNext = nullptr;
-	surfaceCreateInfo.flags = -1;
+	surfaceCreateInfo.flags = 0;
 	surfaceCreateInfo.window = (::Window)mPlatformWindowHandle;
 	surfaceCreateInfo.dpy = LinuxPlatform::getXDisplay();
 
@@ -46,12 +46,12 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 	VkResult result = vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, gVulkanAllocator, &vkSurface);
 	B3D_ASSERT(result == VK_SUCCESS);
 #elif B3D_PLATFORM_MACOS
-	MacOSPlatform::lockWindows();
+	MacOSPlatform::LockWindows();
 
-		CocoaWindow* const window = MacOSPlatform::getWindow(mCocoaWindowId);
-		if(B3D_ENSURE(window != nullptr))
+		CocoaWindow* const window = MacOSPlatform::GetWindow((u32)mPlatformWindowHandle);
+		if(!B3D_ENSURE(window != nullptr))
 		{
-			MacOSPlatform::unlockWindows();
+			MacOSPlatform::UnlockWindows();
 			return;
 		}
 
@@ -60,12 +60,12 @@ VulkanRenderWindowSurface::VulkanRenderWindowSurface(const RenderWindowSurfaceCr
 		surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
 		surfaceCreateInfo.pNext = nullptr;
 		surfaceCreateInfo.flags = 0;
-		surfaceCreateInfo.pView = window->_getLayer();
+		surfaceCreateInfo.pView = window->GetLayerInternal();
 
 		VkResult result = vkCreateMacOSSurfaceMVK(instance, &surfaceCreateInfo, gVulkanAllocator, &vkSurface);
 		B3D_ASSERT(result == VK_SUCCESS);
 
-		MacOSPlatform::unlockWindows();
+		MacOSPlatform::UnlockWindows();
 #else
 	static_assert(false);
 #endif

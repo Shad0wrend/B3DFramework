@@ -162,14 +162,14 @@ MacOSFolderMonitor::MacOSFolderMonitor(
 	, HasStarted(false)
 {}
 
-MacOSFolderMonitor::~MacFolderMonitor()
+MacOSFolderMonitor::~MacOSFolderMonitor()
 {
 	StopMonitor();
 }
 
 void MacOSFolderMonitor::StartMonitor()
 {
-	String pathString = FolderToMonitor.toString();
+	String pathString = FolderToMonitor.ToString();
 	CFStringRef path = CFStringCreateWithCString(kCFAllocatorDefault, pathString.c_str(), kCFStringEncodingUTF8);
 
 	CFArrayRef pathArray = CFArrayCreate(nullptr, (const void**)&path, 1, nullptr);
@@ -227,7 +227,7 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		Path path = CFStringGetCStringPtr(pathEntry, kCFStringEncodingUTF8);
 
 		// Ignore folder meta-data (.DS_Store)
-		String filename = path.getFilename(false);
+		String filename = path.GetFilename(false);
 		if(filename == ".DS_Store")
 			continue;
 
@@ -240,7 +240,7 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		// If not monitoring subdirectories, ignore paths that aren't direct descendants of the root path
 		if(!lowLevelMonitor->MonitorSubdirectories)
 		{
-			if(path.getParent() != lowLevelMonitor->FolderToMonitor)
+			if(path.GetParent() != lowLevelMonitor->FolderToMonitor)
 				continue;
 		}
 
@@ -262,9 +262,9 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 		if(wasRenamed)
 		{
 			if(FileSystem::Exists(path))
-				FolderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
+				folderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 			else
-				FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
+				folderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 		}
 
 		// File/folder was added
@@ -273,7 +273,7 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 			if(!isFile)
 			{
 				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
-					FolderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
+					folderData->FileActions.push_back(FileAction::CreateAdded(path.ToString()));
 			}
 			else
 			{
@@ -281,10 +281,10 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 				{
 					// We delay all file creation events until the file is done writing
 					lowLevelMonitor->CreatedFiles.push_back(CreatedFileInfo());
-					CreatedFileInfo& createdFileInfo = lowLevelMonitor->createdFiles.back();
+					CreatedFileInfo& createdFileInfo = lowLevelMonitor->CreatedFiles.back();
 					createdFileInfo.path = path;
 					createdFileInfo.lastSize = FileSystem::GetFileSize(path);
-					createdFileInfo.timer.reset();
+					createdFileInfo.timer.Reset();
 				}
 			}
 		}
@@ -295,12 +295,12 @@ static void WatcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, siz
 			if(!isFile)
 			{
 				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::DirectoryAddedOrRemoved))
-					FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
+					folderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 			}
 			else
 			{
 				if(lowLevelMonitor->Filter.IsSet(FolderChangeFlag::FileAddedOrRemoved))
-					FolderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
+					folderData->FileActions.push_back(FileAction::CreateRemoved(path.ToString()));
 			}
 		}
 
@@ -407,7 +407,7 @@ void FolderMonitor::WorkerThreadMain()
 				B3DDelete(m->LowLevelMonitor);
 				m->LowLevelMonitor = nullptr;
 
-				m->RequestLowLevelMonitorStop = false
+				m->RequestLowLevelMonitorStop = false;
 			}
 		}
 
@@ -434,10 +434,10 @@ void FolderMonitor::WorkerThreadMain()
 						entry.timer.reset();
 					}
 
-					if(entry.timer.getMilliseconds() > WRITE_STEADY_WAIT)
+					if(entry.timer.GetMilliseconds() > WRITE_STEADY_WAIT)
 					{
 						folderData->FileActions.push_back(FileAction::CreateAdded(entry.path.ToString()));
-						iter = m->lowLevelMonitor->CreatedFiles.erase(iter);
+						iter = m->LowLevelMonitor->CreatedFiles.erase(iter);
 					}
 					else
 						++iter;

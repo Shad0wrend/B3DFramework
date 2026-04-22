@@ -214,7 +214,7 @@ void Win32RenderWindow::Maximize()
 	mWindow->Maximize();
 
 	mRenderWindowProperties.IsMaximized = true;
-	mRenderWindowProperties.IsMinimized = true;
+	mRenderWindowProperties.IsMinimized = false;
 
 	mRenderTargetProperties.Width = mWindow->GetClientArea().Width;
 	mRenderTargetProperties.Height = mWindow->GetClientArea().Height;

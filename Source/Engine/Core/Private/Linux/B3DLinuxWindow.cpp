@@ -33,33 +33,33 @@ enum class WindowState
 
 struct LinuxWindow::Pimpl
 {
-	::Window xWindow = 0;
+	::Window XWindow = 0;
 
-	i32 x, y;
-	u32 width, height;
-	bool hasTitleBar = true;
-	bool dragInProgress = false;
-	bool resizeDisabled = false;
-	bool isExternal = false;
-	WindowState state = WindowState::Normal;
+	i32 X, Y;
+	u32 Width, Height;
+	bool HasTitleBar = true;
+	bool DragInProgress = false;
+	bool ResizeDisabled = false;
+	bool IsExternal = false;
+	WindowState State = WindowState::Normal;
 
-	Vector<Rect2I> dragZones;
+	Vector<Rect2I> DragZones;
 
-	void* userData = nullptr;
+	void* UserData = nullptr;
 };
 
-LinuxWindow::LinuxWindow(const WINDOW_DESC& desc)
+LinuxWindow::LinuxWindow(const WindowCreateInformation& createInformation)
 {
 	m = B3DNew<Pimpl>();
 
-	if(desc.external)
+	if(createInformation.External)
 	{
-		m->x = desc.x;
-		m->y = desc.y;
-		m->width = desc.width;
-		m->height = desc.height;
-		m->xWindow = desc.external;
-		m->isExternal = true;
+		m->X = createInformation.X;
+		m->Y = createInformation.Y;
+		m->Width = createInformation.Width;
+		m->Height = createInformation.Height;
+		m->XWindow = createInformation.External;
+		m->IsExternal = true;
 	}
 	else
 	{
@@ -100,13 +100,13 @@ LinuxWindow::LinuxWindow(const WINDOW_DESC& desc)
 					continue;
 				}
 
-				if(desc.screen == (u32)-1)
+				if(createInformation.Screen == (u32)-1)
 				{
 					if(screenRes->outputs[j] == primaryOutput)
 						foundMonitor = true;
 				}
 				else
-					foundMonitor = outputIdx == desc.screen;
+					foundMonitor = outputIdx == createInformation.Screen;
 
 				if(foundMonitor)
 				{
@@ -131,65 +131,65 @@ LinuxWindow::LinuxWindow(const WINDOW_DESC& desc)
 		attributes.border_pixel = XBlackPixel(display, screen);
 		attributes.background_pixmap = 0;
 
-		attributes.colormap = XCreateColormap(display, XRootWindow(display, screen), desc.visualInfo.visual, AllocNone);
+		attributes.colormap = XCreateColormap(display, XRootWindow(display, screen), createInformation.VisualInfo.visual, AllocNone);
 
 		// If no position specified, center on the requested monitor
-		if(desc.x == -1)
-			m->x = monitorX + (monitorWidth - desc.width) / 2;
-		else if(desc.screen != (u32)-1)
-			m->x = monitorX + desc.x;
+		if(createInformation.X == -1)
+			m->X = monitorX + (monitorWidth - createInformation.Width) / 2;
+		else if(createInformation.Screen != (u32)-1)
+			m->X = monitorX + createInformation.X;
 		else
-			m->x = desc.x;
+			m->X = createInformation.X;
 
-		if(desc.y == -1)
-			m->y = monitorY + (monitorHeight - desc.height) / 2;
-		else if(desc.screen != (u32)-1)
-			m->y = monitorY + desc.y;
+		if(createInformation.Y == -1)
+			m->Y = monitorY + (monitorHeight - createInformation.Height) / 2;
+		else if(createInformation.Screen != (u32)-1)
+			m->Y = monitorY + createInformation.Y;
 		else
-			m->y = desc.y;
+			m->Y = createInformation.Y;
 
-		m->width = desc.width;
-		m->height = desc.height;
+		m->Width = createInformation.Width;
+		m->Height = createInformation.Height;
 
-		m->xWindow = XCreateWindow(display, XRootWindow(display, screen), m->x, m->y, m->width, m->height, 0, desc.visualInfo.depth, InputOutput, desc.visualInfo.visual, CWBackPixel | CWBorderPixel | CWColormap | CWBackPixmap, &attributes);
+		m->XWindow = XCreateWindow(display, XRootWindow(display, screen), m->X, m->Y, m->Width, m->Height, 0, createInformation.VisualInfo.depth, InputOutput, createInformation.VisualInfo.visual, CWBackPixel | CWBorderPixel | CWColormap | CWBackPixmap, &attributes);
 
-		XStoreName(display, m->xWindow, desc.title.c_str());
+		XStoreName(display, m->XWindow, createInformation.Title.c_str());
 
 		// Position/size might have (and usually will) get overridden by the WM, so re-apply them
 		XSizeHints hints;
 		hints.flags = PPosition | PSize;
-		hints.x = m->x;
-		hints.y = m->y;
-		hints.width = m->width;
-		hints.height = m->height;
+		hints.x = m->X;
+		hints.y = m->Y;
+		hints.width = m->Width;
+		hints.height = m->Height;
 
-		if(!desc.allowResize)
+		if(!createInformation.AllowResize)
 		{
 			hints.flags |= PMinSize | PMaxSize;
 
-			hints.min_height = desc.height;
-			hints.max_height = desc.height;
+			hints.min_height = createInformation.Height;
+			hints.max_height = createInformation.Height;
 
-			hints.min_width = desc.width;
-			hints.max_width = desc.width;
+			hints.min_width = createInformation.Width;
+			hints.max_width = createInformation.Width;
 		}
 
-		XSetNormalHints(display, m->xWindow, &hints);
+		XSetNormalHints(display, m->XWindow, &hints);
 
-		setShowDecorations(desc.showDecorations);
-		setIsModal(desc.modal);
+		setShowDecorations(createInformation.ShowDecorations);
+		setIsModal(createInformation.Modal);
 
 		XClassHint* classHint = XAllocClassHint();
 
 		classHint->res_class = (char*)"banshee3d";
-		classHint->res_name = (char*)desc.title.c_str();
+		classHint->res_name = (char*)createInformation.Title.c_str();
 
-		XSetClassHint(display, m->xWindow, classHint);
+		XSetClassHint(display, m->XWindow, classHint);
 		XFree(classHint);
 
 		// Ensures the child window is always on top of the parent window
-		if(desc.parent)
-			XSetTransientForHint(display, m->xWindow, desc.parent);
+		if(createInformation.Parent)
+			XSetTransientForHint(display, m->XWindow, createInformation.Parent);
 
 		long eventMask =
 			ExposureMask | FocusChangeMask |
@@ -199,62 +199,62 @@ LinuxWindow::LinuxWindow(const WINDOW_DESC& desc)
 			PointerMotionMask | ButtonMotionMask |
 			StructureNotifyMask | PropertyChangeMask;
 
-		if(!desc.parent)
+		if(!createInformation.Parent)
 			eventMask |= SubstructureNotifyMask | SubstructureRedirectMask;
 
-		XSelectInput(display, m->xWindow, eventMask);
+		XSelectInput(display, m->XWindow, eventMask);
 
 		// Make sure we get the window delete message from WM, so we can clean up ourselves
 		Atom atomDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
-		XSetWMProtocols(display, m->xWindow, &atomDeleteWindow, 1);
+		XSetWMProtocols(display, m->XWindow, &atomDeleteWindow, 1);
 
 		// Enable drag and drop
-		LinuxDragAndDrop::makeDNDAware(m->xWindow);
+		LinuxDragAndDrop::makeDNDAware(m->XWindow);
 
 		// Set background image if assigned
-		if(desc.background)
+		if(createInformation.Background)
 		{
-			Pixmap pixmap = LinuxPlatform::createPixmap(*desc.background, (u32)desc.visualInfo.depth);
+			Pixmap pixmap = LinuxPlatform::createPixmap(*createInformation.Background, (u32)createInformation.VisualInfo.depth);
 
-			XSetWindowBackgroundPixmap(display, m->xWindow, pixmap);
+			XSetWindowBackgroundPixmap(display, m->XWindow, pixmap);
 			XFreePixmap(display, pixmap);
 			XSync(display, 0);
 		}
 
 		// Show the window (needs to happen after setting the background pixmap)
-		if(!desc.hidden)
-			XMapWindow(display, m->xWindow);
+		if(!createInformation.Hidden)
+			XMapWindow(display, m->XWindow);
 
-		if(!desc.showOnTaskBar)
+		if(!createInformation.ShowOnTaskBar)
 			showOnTaskbar(false);
 	}
 
-	m->HasTitleBar = desc.showDecorations;
-	m->resizeDisabled = !desc.allowResize;
+	m->HasTitleBar = createInformation.ShowDecorations;
+	m->ResizeDisabled = !createInformation.AllowResize;
 
-	LinuxPlatform::RegisterWindowInternal(m->xWindow, this);
+	LinuxPlatform::RegisterWindowInternal(m->XWindow, this);
 }
 
 LinuxWindow::~LinuxWindow()
 {
-	if(m->xWindow != 0)
+	if(m->XWindow != 0)
 		DestroyInternal();
 
 	B3DDelete(m);
 }
 
-void LinuxWindow::move(i32 x, i32 y)
+void LinuxWindow::Move(i32 x, i32 y)
 {
-	m->x = x;
-	m->y = y;
+	m->X = x;
+	m->Y = y;
 
-	XMoveWindow(LinuxPlatform::getXDisplay(), m->xWindow, x, y);
+	XMoveWindow(LinuxPlatform::getXDisplay(), m->XWindow, x, y);
 }
 
-void LinuxWindow::resize(u32 width, u32 height)
+void LinuxWindow::Resize(u32 width, u32 height)
 {
 	// If resize is disabled on WM level, we need to force it
-	if(m->resizeDisabled)
+	if(m->ResizeDisabled)
 	{
 		XSizeHints hints;
 		hints.flags = PMinSize | PMaxSize;
@@ -265,37 +265,37 @@ void LinuxWindow::resize(u32 width, u32 height)
 		hints.min_width = width;
 		hints.max_width = width;
 
-		XSetNormalHints(LinuxPlatform::getXDisplay(), m->xWindow, &hints);
+		XSetNormalHints(LinuxPlatform::getXDisplay(), m->XWindow, &hints);
 	}
 
-	m->width = width;
-	m->height = height;
+	m->Width = width;
+	m->Height = height;
 
-	XResizeWindow(LinuxPlatform::getXDisplay(), m->xWindow, width, height);
+	XResizeWindow(LinuxPlatform::getXDisplay(), m->XWindow, width, height);
 }
 
-void LinuxWindow::hide()
+void LinuxWindow::SetHidden(bool hidden)
 {
-	XUnmapWindow(LinuxPlatform::getXDisplay(), m->xWindow);
+	if(hidden)
+		XUnmapWindow(LinuxPlatform::getXDisplay(), m->XWindow);
+	else
+	{
+		XMapWindow(LinuxPlatform::getXDisplay(), m->XWindow);
+		XMoveResizeWindow(LinuxPlatform::getXDisplay(), m->XWindow, m->X, m->Y, m->Width, m->Height);
+	}
 }
 
-void LinuxWindow::show()
-{
-	XMapWindow(LinuxPlatform::getXDisplay(), m->xWindow);
-	XMoveResizeWindow(LinuxPlatform::getXDisplay(), m->xWindow, m->x, m->y, m->width, m->height);
-}
-
-void LinuxWindow::maximize()
+void LinuxWindow::Maximize()
 {
 	maximize(true);
 }
 
-void LinuxWindow::minimize()
+void LinuxWindow::Minimize()
 {
 	minimize(true);
 }
 
-void LinuxWindow::restore()
+void LinuxWindow::Restore()
 {
 	if(isMaximized())
 		maximize(false);
@@ -303,61 +303,61 @@ void LinuxWindow::restore()
 		minimize(false);
 }
 
-i32 LinuxWindow::getLeft() const
+i32 LinuxWindow::GetLeft() const
 {
 	i32 x, y;
 	::Window child;
-	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
+	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->XWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
 
 	return x;
 }
 
-i32 LinuxWindow::getTop() const
+i32 LinuxWindow::GetTop() const
 {
 	i32 x, y;
 	::Window child;
-	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
+	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->XWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
 
 	return y;
 }
 
-u32 LinuxWindow::getWidth() const
+u32 LinuxWindow::GetWidth() const
 {
 	XWindowAttributes xwa;
-	XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->xWindow, &xwa);
+	XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->XWindow, &xwa);
 
 	return (u32)xwa.width;
 }
 
-u32 LinuxWindow::getHeight() const
+u32 LinuxWindow::GetHeight() const
 {
 	XWindowAttributes xwa;
-	XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->xWindow, &xwa);
+	XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->XWindow, &xwa);
 
 	return (u32)xwa.height;
 }
 
-Vector2I LinuxWindow::windowToScreenPos(const Vector2I& windowPos) const
+Vector2I LinuxWindow::WindowToScreenPos(const Vector2I& windowPos) const
 {
 	Vector2I screenPos;
 
 	::Window child;
-	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), windowPos.x, windowPos.y, &screenPos.x, &screenPos.y, &child);
+	XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->XWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), windowPos.x, windowPos.y, &screenPos.x, &screenPos.y, &child);
 
 	return screenPos;
 }
 
-Vector2I LinuxWindow::screenToWindowPos(const Vector2I& screenPos) const
+Vector2I LinuxWindow::ScreenToWindowPos(const Vector2I& screenPos) const
 {
 	Vector2I windowPos;
 
 	::Window child;
-	XTranslateCoordinates(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), m->xWindow, screenPos.x, screenPos.y, &windowPos.x, &windowPos.y, &child);
+	XTranslateCoordinates(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), m->XWindow, screenPos.x, screenPos.y, &windowPos.x, &windowPos.y, &child);
 
 	return windowPos;
 }
 
-void LinuxWindow::setIcon(const PixelData& data)
+void LinuxWindow::SetIcon(const PixelData& data)
 {
 	constexpr u32 WIDTH = 128;
 	constexpr u32 HEIGHT = 128;
@@ -376,7 +376,7 @@ void LinuxWindow::setIcon(const PixelData& data)
 	hints->flags = IconPixmapHint;
 	hints->icon_pixmap = iconPixmap;
 
-	XSetWMHints(display, m->xWindow, hints);
+	XSetWMHints(display, m->XWindow, hints);
 
 	XFree(hints);
 	XFreePixmap(display, iconPixmap);
@@ -393,42 +393,59 @@ void LinuxWindow::setIcon(const PixelData& data)
 
 	Atom iconAtom = XInternAtom(display, "_NET_WM_ICON", False);
 	Atom cardinalAtom = XInternAtom(display, "CARDINAL", False);
-	XChangeProperty(display, m->xWindow, iconAtom, cardinalAtom, 32, PropModeReplace, (const unsigned char*)wmIconData.data(), wmIconData.size());
+	XChangeProperty(display, m->XWindow, iconAtom, cardinalAtom, 32, PropModeReplace, (const unsigned char*)wmIconData.data(), wmIconData.size());
 
 	XFlush(display);
 }
 
+void LinuxWindow::DoOnWindowMovedOrResized()
+{
+	::Display* display = LinuxPlatform::getXDisplay();
+
+	XWindowAttributes xwa;
+	XGetWindowAttributes(display, m->XWindow, &xwa);
+
+	i32 x, y;
+	::Window child;
+	XTranslateCoordinates(display, m->XWindow, DefaultRootWindow(display), 0, 0, &x, &y, &child);
+
+	m->X = x;
+	m->Y = y;
+	m->Width = (u32)xwa.width;
+	m->Height = (u32)xwa.height;
+}
+
 void LinuxWindow::DestroyInternal()
 {
-	if(!m->isExternal)
+	if(!m->IsExternal)
 	{
-		XUnmapWindow(LinuxPlatform::getXDisplay(), m->xWindow);
+		XUnmapWindow(LinuxPlatform::getXDisplay(), m->XWindow);
 		XSync(LinuxPlatform::getXDisplay(), 0);
 
-		XDestroyWindow(LinuxPlatform::getXDisplay(), m->xWindow);
+		XDestroyWindow(LinuxPlatform::getXDisplay(), m->XWindow);
 		XSync(LinuxPlatform::getXDisplay(), 0);
 	}
 
-	LinuxPlatform::UnregisterWindowInternal(m->xWindow);
-	m->xWindow = 0;
+	LinuxPlatform::UnregisterWindowInternal(m->XWindow);
+	m->XWindow = 0;
 }
 
 void LinuxWindow::SetDragZonesInternal(const Vector<Rect2I>& rects)
 {
-	m->dragZones = rects;
+	m->DragZones = rects;
 }
 
 void LinuxWindow::DragStartInternal(const XButtonEvent& event)
 {
 	// Make sure to reset the flag since WM could have (and probably has) handled the drag end event, so we never
 	// received DragEndInternal() call.
-	m->dragInProgress = false;
+	m->DragInProgress = false;
 
 	// If window has a titlebar, custom drag zones aren't used
 	if(m->HasTitleBar)
 		return;
 
-	for(auto& entry : m->dragZones)
+	for(auto& entry : m->DragZones)
 	{
 		if(entry.width == 0 || entry.height == 0)
 			continue;
@@ -443,7 +460,7 @@ void LinuxWindow::DragStartInternal(const XButtonEvent& event)
 			XEvent xev;
 			memset(&xev, 0, sizeof(xev));
 			xev.type = ClientMessage;
-			xev.xclient.window = m->xWindow;
+			xev.xclient.window = m->XWindow;
 			xev.xclient.message_type = wmMoveResize;
 			xev.xclient.format = 32;
 			xev.xclient.data.l[0] = event.x_root;
@@ -455,7 +472,7 @@ void LinuxWindow::DragStartInternal(const XButtonEvent& event)
 			XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 			XSync(LinuxPlatform::getXDisplay(), 0);
 
-			m->dragInProgress = true;
+			m->DragInProgress = true;
 			return;
 		}
 	}
@@ -466,14 +483,14 @@ void LinuxWindow::DragStartInternal(const XButtonEvent& event)
 void LinuxWindow::DragEndInternal()
 {
 	// WM failed to end the drag, send the cancel drag event
-	if(m->dragInProgress)
+	if(m->DragInProgress)
 	{
 		Atom wmMoveResize = XInternAtom(LinuxPlatform::getXDisplay(), "_NET_WM_MOVERESIZE", False);
 
 		XEvent xev;
 		memset(&xev, 0, sizeof(xev));
 		xev.type = ClientMessage;
-		xev.xclient.window = m->xWindow;
+		xev.xclient.window = m->XWindow;
 		xev.xclient.message_type = wmMoveResize;
 		xev.xclient.format = 32;
 		xev.xclient.data.l[0] = 0;
@@ -484,23 +501,23 @@ void LinuxWindow::DragEndInternal()
 
 		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
-		m->dragInProgress = false;
+		m->DragInProgress = false;
 	}
 }
 
 ::Window LinuxWindow::GetXWindowInternal() const
 {
-	return m->xWindow;
+	return m->XWindow;
 }
 
 void LinuxWindow::SetUserDataInternal(void* data)
 {
-	m->userData = data;
+	m->UserData = data;
 }
 
 void* LinuxWindow::GetUserDataInternal() const
 {
-	return m->userData;
+	return m->UserData;
 }
 
 bool LinuxWindow::isMaximized() const
@@ -512,7 +529,7 @@ bool LinuxWindow::isMaximized() const
 	uint64_t remaining;
 	uint8_t* data = nullptr;
 
-	i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState, 0, 1024, False, XA_ATOM, &type, &format, &length, &remaining, &data);
+	i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->XWindow, wmState, 0, 1024, False, XA_ATOM, &type, &format, &length, &remaining, &data);
 
 	if(result == Success)
 	{
@@ -548,7 +565,7 @@ bool LinuxWindow::isMinimized()
 	uint64_t remaining;
 	uint8_t* data = nullptr;
 
-	i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState, 0, 1024, False, AnyPropertyType, &type, &format, &length, &remaining, &data);
+	i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->XWindow, wmState, 0, 1024, False, AnyPropertyType, &type, &format, &length, &remaining, &data);
 
 	if(result == Success)
 	{
@@ -569,7 +586,7 @@ void LinuxWindow::maximize(bool enable)
 	XEvent xev;
 	memset(&xev, 0, sizeof(xev));
 	xev.type = ClientMessage;
-	xev.xclient.window = m->xWindow;
+	xev.xclient.window = m->XWindow;
 	xev.xclient.message_type = wmState;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = enable ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE;
@@ -586,7 +603,7 @@ void LinuxWindow::minimize(bool enable)
 
 	memset(&xev, 0, sizeof(xev));
 	xev.type = ClientMessage;
-	xev.xclient.window = m->xWindow;
+	xev.xclient.window = m->XWindow;
 	xev.xclient.message_type = wmChange;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = enable ? WM_IconicState : WM_NormalState;
@@ -603,7 +620,7 @@ void LinuxWindow::showOnTaskbar(bool enable)
 	XEvent xev;
 	memset(&xev, 0, sizeof(xev));
 	xev.type = ClientMessage;
-	xev.xclient.window = m->xWindow;
+	xev.xclient.window = m->XWindow;
 	xev.xclient.message_type = wmState;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = enable ? _NET_WM_STATE_REMOVE : _NET_WM_STATE_ADD;
@@ -627,7 +644,7 @@ void LinuxWindow::SetFullscreenInternal(bool fullscreen)
 		{
 			static constexpr u32 enabled = 1;
 
-			XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmBypassCompositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&enabled, 1);
+			XChangeProperty(LinuxPlatform::getXDisplay(), m->XWindow, wmBypassCompositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&enabled, 1);
 		}
 	}
 
@@ -638,7 +655,7 @@ void LinuxWindow::SetFullscreenInternal(bool fullscreen)
 
 	memset(&xev, 0, sizeof(xev));
 	xev.type = ClientMessage;
-	xev.xclient.window = m->xWindow;
+	xev.xclient.window = m->XWindow;
 	xev.xclient.message_type = wmState;
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = fullscreen ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE;
@@ -672,7 +689,7 @@ void LinuxWindow::setShowDecorations(bool show)
 	motifHints.status = 0;
 
 	Atom wmHintsAtom = XInternAtom(LinuxPlatform::getXDisplay(), "_MOTIF_WM_HINTS", False);
-	XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmHintsAtom, wmHintsAtom, 32, PropModeReplace, (unsigned char*)&motifHints, 5);
+	XChangeProperty(LinuxPlatform::getXDisplay(), m->XWindow, wmHintsAtom, wmHintsAtom, 32, PropModeReplace, (unsigned char*)&motifHints, 5);
 }
 
 void LinuxWindow::setIsModal(bool modal)
@@ -685,7 +702,7 @@ void LinuxWindow::setIsModal(bool modal)
 		XEvent xev;
 		memset(&xev, 0, sizeof(xev));
 		xev.type = ClientMessage;
-		xev.xclient.window = m->xWindow;
+		xev.xclient.window = m->XWindow;
 		xev.xclient.message_type = wmState;
 		xev.xclient.format = 32;
 		xev.xclient.data.l[0] = _NET_WM_STATE_ADD;

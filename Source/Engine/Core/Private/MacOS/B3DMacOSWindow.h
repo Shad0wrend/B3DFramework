@@ -31,18 +31,18 @@ namespace b3d
 	 */
 
 	/**	Descriptor used for creating a platform specific native window. */
-	struct WINDOW_DESC
+	struct WindowCreateInformation
 	{
-		String title;
-		i32 x = -1;
-		i32 y = -1;
-		u32 width = 20;
-		u32 height = 20;
-		bool showDecorations = true;
-		bool allowResize = true;
-		bool modal = false;
-		bool floating = false;
-		SPtr<PixelData> background;
+		String Title;
+		i32 X = -1;
+		i32 Y = -1;
+		u32 Width = 20;
+		u32 Height = 20;
+		bool ShowDecorations = true;
+		bool AllowResize = true;
+		bool Modal = false;
+		bool Floating = false;
+		SPtr<PixelData> Background;
 	};
 
 	/**
@@ -55,61 +55,73 @@ namespace b3d
 #ifdef BS_COCOA_INTERNALS
 		struct Pimpl
 		{
-			NSWindow* window = nil;
-			BSView* view = nil;
-			BSWindowListener* responder = nil;
-			BSWindowDelegate* delegate = nil;
-			CALayer* layer = nil;
-			u32 numDropTargets = 0;
-			bool isModal = false;
-			NSUInteger style = 0;
-			bool isFullscreen;
-			NSRect windowedRect;
-			NSModalSession modalSession = nil;
-			void* userData = nullptr;
+			NSWindow* Window = nil;
+			BSView* View = nil;
+			BSWindowListener* Responder = nil;
+			BSWindowDelegate* Delegate = nil;
+			CALayer* Layer = nil;
+			u32 NumDropTargets = 0;
+			bool IsModal = false;
+			NSUInteger Style = 0;
+			bool IsFullscreen;
+			NSRect WindowedRect;
+			NSModalSession ModalSession = nil;
+			void* UserData = nullptr;
 		};
 #else
 		struct Pimpl;
 #endif
 
-		CocoaWindow(const WINDOW_DESC& desc);
+		CocoaWindow(const WindowCreateInformation& createInformation);
 		~CocoaWindow();
 
 		/** Returns the current area of the window, relative to the top-left origin of the screen. */
-		Rect2I getArea() const;
+		Rect2I GetArea() const;
 
-		/** Hides the window. */
-		void hide();
+		/**	Returns position of the left-most border of the window, relative to the screen. */
+		i32 GetLeft() const;
 
-		/** Shows (unhides) the window. */
-		void show();
+		/**	Returns position of the top-most border of the window, relative to the screen. */
+		i32 GetTop() const;
+
+		/**	Returns width of the window in pixels. */
+		u32 GetWidth() const;
+
+		/**	Returns height of the window in pixels. */
+		u32 GetHeight() const;
+
+		/** Hides or shows the window. */
+		void SetHidden(bool hidden);
 
 		/**	Minimizes the window. */
-		void minimize();
+		void Minimize();
 
 		/**	Maximizes the window over the entire current screen. */
-		void maximize();
+		void Maximize();
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		void restore();
+		void Restore();
 
 		/**	Change the size of the window. */
-		void resize(u32 width, u32 height);
+		void Resize(u32 width, u32 height);
 
 		/**	Reposition the window. */
-		void move(i32 left, i32 top);
+		void Move(i32 left, i32 top);
 
 		/** Switches from fullscreen to windowed mode. */
-		void setWindowed();
+		void SetWindowed();
 
 		/** Switches from windowed to fullscreen mode. */
-		void setFullscreen();
+		void SetFullscreen();
 
 		/**	Converts screen position into window local position. */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
+
+		/** Method that triggers whenever the window changes size or position. */
+		void DoOnWindowMovedOrResized();
 
 		/**
 		 * @name Internal

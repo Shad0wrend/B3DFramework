@@ -580,12 +580,12 @@ namespace b3d
 {
 	std::atomic<UINT32> gNextWindowId(1);
 
-	CocoaWindow::CocoaWindow(const WINDOW_DESC& desc)
+	CocoaWindow::CocoaWindow(const WindowCreateInformation& createInformation)
 	{ @autoreleasepool {
 		m = B3DNew<Pimpl>();
 
 		BSWindow* window = [BSWindow alloc];
-		m->isModal = desc.modal;
+		m->IsModal = createInformation.Modal;
 		mWindowId = gNextWindowId++;
 
 		NSArray* screens = [NSScreen screens];
@@ -603,106 +603,106 @@ namespace b3d
 			INT32 bottom = (INT32)screenRect.origin.y;
 			INT32 top = bottom + (INT32)screenRect.size.height;
 
-			if(((desc.x >= left && desc.x < right) || desc.x == -1) &&
-			   ((desc.y >= bottom && desc.y < top) || desc.y == -1))
+			if(((createInformation.X >= left && createInformation.X < right) || createInformation.X == -1) &&
+			   ((createInformation.Y >= bottom && createInformation.Y < top) || createInformation.Y == -1))
 			{
-				if(desc.x == -1)
-					x = left + std::max(0, (INT32)screenRect.size.width - (INT32)desc.width) / 2;
+				if(createInformation.X == -1)
+					x = left + std::max(0, (INT32)screenRect.size.width - (INT32)createInformation.Width) / 2;
 				else
-					x = desc.x - left;
+					x = createInformation.X - left;
 
-				if(desc.y == -1)
-					y = bottom + std::max(0, (INT32)screenRect.size.height - (INT32)desc.height) / 2;
+				if(createInformation.Y == -1)
+					y = bottom + std::max(0, (INT32)screenRect.size.height - (INT32)createInformation.Height) / 2;
 				else
-					y = ((INT32)screenRect.size.height - (desc.y + desc.height)) - bottom;
+					y = ((INT32)screenRect.size.height - (createInformation.Y + createInformation.Height)) - bottom;
 
 				screen = entry;
 				break;
 			}
 		}
 
-		if(!desc.showDecorations)
-			m->style |= NSWindowStyleMaskBorderless;
+		if(!createInformation.ShowDecorations)
+			m->Style |= NSWindowStyleMaskBorderless;
 		else
-			m->style |= NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
+			m->Style |= NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable;
 
-		if(desc.allowResize)
-			m->style |= NSWindowStyleMaskResizable;
+		if(createInformation.AllowResize)
+			m->Style |= NSWindowStyleMaskResizable;
 
 		window = [window
-				initWithContentRect:NSMakeRect(x, y, desc.width, desc.height)
-				styleMask:(NSWindowStyleMask)m->style
+				initWithContentRect:NSMakeRect(x, y, createInformation.Width, createInformation.Height)
+				styleMask:(NSWindowStyleMask)m->Style
 				backing:NSBackingStoreBuffered
 				defer:NO
 				screen:screen];
-		m->window = window;
+		m->Window = window;
 		window.WindowId = mWindowId;
 
-		if(desc.allowResize)
+		if(createInformation.AllowResize)
 		{
 			bool allowSpaces = NSAppKitVersionNumber > NSAppKitVersionNumber10_6;
 			if(allowSpaces)
-				[m->window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+				[m->Window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 		}
 
-		NSString* titleString = [NSString stringWithUTF8String:desc.title.c_str()];
+		NSString* titleString = [NSString stringWithUTF8String:createInformation.Title.c_str()];
 
-		[m->window setAcceptsMouseMovedEvents:YES];
-		[m->window setReleasedWhenClosed:YES];
-		[m->window setTitle:titleString];
-		[m->window makeKeyAndOrderFront:nil];
+		[m->Window setAcceptsMouseMovedEvents:YES];
+		[m->Window setReleasedWhenClosed:YES];
+		[m->Window setTitle:titleString];
+		[m->Window makeKeyAndOrderFront:nil];
 
-		m->responder = [[BSWindowListener alloc] initWithWindow:window];
-		[m->window setNextResponder:m->responder];
+		m->Responder = [[BSWindowListener alloc] initWithWindow:window];
+		[m->Window setNextResponder:m->Responder];
 
-		m->delegate = [[BSWindowDelegate alloc] initWithWindow:window];
-		[m->window setDelegate:m->delegate];
+		m->Delegate = [[BSWindowDelegate alloc] initWithWindow:window];
+		[m->Window setDelegate:m->Delegate];
 
-		m->view = [[BSView alloc] init];
+		m->View = [[BSView alloc] init];
 
-		[m->window setContentView:m->view];
+		[m->Window setContentView:m->View];
 
-		if(desc.background)
+		if(createInformation.Background)
 		{
-			[m->window setAlphaValue:1.0f];
-			[m->window setOpaque:NO];
-			[m->window setBackgroundColor:[NSColor clearColor]];
+			[m->Window setAlphaValue:1.0f];
+			[m->Window setOpaque:NO];
+			[m->Window setBackgroundColor:[NSColor clearColor]];
 
-			NSImage* image = MacOSPlatform::createNSImage(*desc.background);
-			[m->view setBackgroundImage:image];
+			NSImage* image = MacOSPlatform::createNSImage(*createInformation.Background);
+			[m->View setBackgroundImage:image];
 		}
 
-		m->isFullscreen = false;
+		m->IsFullscreen = false;
 
 		// Makes sure that floating windows hide together with main app
 		// Also, for some reason it makes makeKeyAndOrderFront work properly when multiple windows are opened at the same
 		// frame. (Without it, only the last opened window moves to front)
-		if(desc.floating || desc.modal)
-			[m->window setHidesOnDeactivate:YES];
+		if(createInformation.Floating || createInformation.Modal)
+			[m->Window setHidesOnDeactivate:YES];
 
-		if(desc.floating)
-			[m->window setLevel:NSFloatingWindowLevel];
+		if(createInformation.Floating)
+			[m->Window setLevel:NSFloatingWindowLevel];
 
-		if(desc.modal)
-			m->modalSession = [NSApp beginModalSessionForWindow:m->window];
+		if(createInformation.Modal)
+			m->ModalSession = [NSApp beginModalSessionForWindow:m->Window];
 
 		MacOSPlatform::registerWindow(this);
 	}}
 
 	CocoaWindow::~CocoaWindow()
 	{
-        if (m->window != nil)
-            _destroy();
+        if (m->Window != nil)
+            DestroyInternal();
 
-        m->delegate = nil;
-        m->responder = nil;
-        m->view = nil;
-        m->layer = nil;
+        m->Delegate = nil;
+        m->Responder = nil;
+        m->View = nil;
+        m->Layer = nil;
 
         B3DDelete(m);
 	}
 
-	void CocoaWindow::move(INT32 x, INT32 y)
+	void CocoaWindow::Move(INT32 x, INT32 y)
 	{
 		@autoreleasepool
 		{
@@ -710,12 +710,12 @@ namespace b3d
 			point.x = x;
 			point.y = y;
 
-			flipY(m->window.screen, point);
-			[m->window setFrameTopLeftPoint:point];
+			flipY(m->Window.screen, point);
+			[m->Window setFrameTopLeftPoint:point];
 		}
 	}
 
-	void CocoaWindow::resize(UINT32 width, UINT32 height)
+	void CocoaWindow::Resize(UINT32 width, UINT32 height)
 	{
 		@autoreleasepool
 		{
@@ -723,24 +723,24 @@ namespace b3d
 			size.width = width;
 			size.height = height;
 
-			NSRect frameRect = m->window.frame;
-			NSRect contentRect = [m->window contentRectForFrameRect:frameRect];
+			NSRect frameRect = m->Window.frame;
+			NSRect contentRect = [m->Window contentRectForFrameRect:frameRect];
 
 			contentRect.size.width = size.width;
 			contentRect.size.height = size.height;
 
-			[m->window setFrame:[m->window frameRectForContentRect:contentRect] display:YES];
+			[m->Window setFrame:[m->Window frameRectForContentRect:contentRect] display:YES];
 		}
 	}
 
-	Rect2I CocoaWindow::getArea() const
+	Rect2I CocoaWindow::GetArea() const
 	{
 		@autoreleasepool
 		{
-			NSRect frameRect = [m->window frame];
-			NSRect contentRect = [m->window contentRectForFrameRect:frameRect];
+			NSRect frameRect = [m->Window frame];
+			NSRect contentRect = [m->Window contentRectForFrameRect:frameRect];
 
-			flipY([m->window screen], contentRect);
+			flipY([m->Window screen], contentRect);
 
 			return Rect2I(
 					(INT32)contentRect.origin.x,
@@ -750,88 +750,103 @@ namespace b3d
 		}
 	}
 
-	void CocoaWindow::hide()
+	i32 CocoaWindow::GetLeft() const
+	{
+		return GetArea().x;
+	}
+
+	i32 CocoaWindow::GetTop() const
+	{
+		return GetArea().y;
+	}
+
+	u32 CocoaWindow::GetWidth() const
+	{
+		return GetArea().width;
+	}
+
+	u32 CocoaWindow::GetHeight() const
+	{
+		return GetArea().height;
+	}
+
+	void CocoaWindow::SetHidden(bool hidden)
 	{
 		@autoreleasepool
 		{
-			[m->window orderOut:nil];
+			if(hidden)
+				[m->Window orderOut:nil];
+			else
+				[m->Window makeKeyAndOrderFront:nil];
 		}
 	}
 
-	void CocoaWindow::show()
+	void CocoaWindow::Maximize()
 	{
 		@autoreleasepool
 		{
-			[m->window makeKeyAndOrderFront:nil];
+			if(![m->Window isZoomed])
+				[m->Window zoom:nil];
 		}
 	}
 
-	void CocoaWindow::maximize()
+	void CocoaWindow::Minimize()
 	{
 		@autoreleasepool
 		{
-			if(![m->window isZoomed])
-				[m->window zoom:nil];
+			[m->Window miniaturize:nil];
 		}
 	}
 
-	void CocoaWindow::minimize()
+	void CocoaWindow::Restore()
 	{
 		@autoreleasepool
 		{
-			[m->window miniaturize:nil];
+			if([m->Window isMiniaturized])
+				[m->Window deminiaturize:nil];
+			else if([m->Window isZoomed])
+				[m->Window zoom:nil];
 		}
 	}
 
-	void CocoaWindow::restore()
+	void CocoaWindow::SetWindowed()
 	{
 		@autoreleasepool
 		{
-			if([m->window isMiniaturized])
-				[m->window deminiaturize:nil];
-			else if([m->window isZoomed])
-				[m->window zoom:nil];
-		}
-	}
-
-	void CocoaWindow::setWindowed()
-	{
-		@autoreleasepool
-		{
-			if(m->isFullscreen)
+			if(m->IsFullscreen)
 			{
-				[m->window setStyleMask:(NSWindowStyleMask)m->style];
-				[m->window setFrame:m->windowedRect display:NO];
-				[m->window setLevel:NSNormalWindowLevel];
+				[m->Window setStyleMask:(NSWindowStyleMask)m->Style];
+				[m->Window setFrame:m->WindowedRect display:NO];
+				[m->Window setLevel:NSNormalWindowLevel];
 
-				m->isFullscreen = false;
+				m->IsFullscreen = false;
 			}
 		}
 	}
 
-	void CocoaWindow::setFullscreen()
+	void CocoaWindow::SetFullscreen()
 	{
 		@autoreleasepool
 		{
-			if(!m->isFullscreen)
-				m->windowedRect = [m->window frame];
+			if(!m->IsFullscreen)
+				m->WindowedRect = [m->Window frame];
 
-			NSRect frame = [[m->window screen] frame];
-			[m->window setStyleMask:NSWindowStyleMaskBorderless];
-			[m->window setFrame:frame display:NO];
-			[m->window setLevel:NSMainMenuWindowLevel+1];
-			[m->window makeKeyAndOrderFront:nil];
+			NSRect frame = [[m->Window screen] frame];
+			[m->Window setStyleMask:NSWindowStyleMaskBorderless];
+			[m->Window setFrame:frame display:NO];
+			[m->Window setLevel:NSMainMenuWindowLevel+1];
+			[m->Window makeKeyAndOrderFront:nil];
 
-			m->isFullscreen = true;
+			m->IsFullscreen = true;
 		}
 	}
 
-	Vector2I CocoaWindow::windowToScreenPos(const Vector2I& windowPos) const
+	Vector2I CocoaWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	{
-		NSRect frameRect = [m->window frame];
-		NSRect contentRect = [m->window contentRectForFrameRect:frameRect];
+		NSRect frameRect = [m->Window frame];
+		NSRect contentRect = [m->Window contentRectForFrameRect:frameRect];
 
-		flipY([m->window screen], contentRect);
+		flipY([m->Window screen], contentRect);
 
 		Vector2I screenPos;
 		screenPos.x = windowPos.x + (INT32)contentRect.origin.x;
@@ -840,12 +855,12 @@ namespace b3d
 		return screenPos;
 	}
 
-	Vector2I CocoaWindow::screenToWindowPos(const Vector2I& screenPos) const
+	Vector2I CocoaWindow::ScreenToWindowPos(const Vector2I& screenPos) const
 	{
-		NSRect frameRect = [m->window frame];
-		NSRect contentRect = [m->window contentRectForFrameRect:frameRect];
+		NSRect frameRect = [m->Window frame];
+		NSRect contentRect = [m->Window contentRectForFrameRect:frameRect];
 
-		flipY([m->window screen], contentRect);
+		flipY([m->Window screen], contentRect);
 
 		Vector2I windowPos;
 		windowPos.x = screenPos.x - (INT32) contentRect.origin.x;
@@ -854,18 +869,24 @@ namespace b3d
 		return windowPos;
 	}
 
-	void CocoaWindow::_destroy()
+	void CocoaWindow::DoOnWindowMovedOrResized()
 	{
-		if(m->isModal)
-			[NSApp endModalSession:m->modalSession];
+		// On macOS the window position/size is always queried directly from NSWindow
+		// so there's nothing to cache here. This method exists for API consistency.
+	}
+
+	void CocoaWindow::DestroyInternal()
+	{
+		if(m->IsModal)
+			[NSApp endModalSession:m->ModalSession];
 
 		MacOSPlatform::unregisterWindow(this);
 
-		[m->window close];
-		m->window = nil;
+		[m->Window close];
+		m->Window = nil;
 	}
 
-	void CocoaWindow::_setDragZones(const Vector<Rect2I>& rects)
+	void CocoaWindow::SetDragZonesInternal(const Vector<Rect2I>& rects)
 	{
 		@autoreleasepool
 		{
@@ -874,53 +895,53 @@ namespace b3d
 			for(auto& entry : rects)
 				[array addObject:[NSValue valueWithBytes:&entry objCType:@encode(Rect2I)]];
 
-			[m->responder setDragAreas:array];
+			[m->Responder setDragAreas:array];
 		}
 	}
 
-	void CocoaWindow::_setUserData(void* data)
+	void CocoaWindow::SetUserDataInternal(void* data)
 	{
-		m->userData = data;
+		m->UserData = data;
 	}
 
-	void* CocoaWindow::_getUserData() const
+	void* CocoaWindow::GetUserDataInternal() const
 	{
-		return m->userData;
+		return m->UserData;
 	}
 
-	void CocoaWindow::_registerForDragAndDrop()
+	void CocoaWindow::RegisterForDragAndDropInternal()
 	{
-		if(m->numDropTargets == 0)
-			[m->window registerForDraggedTypes:@[NSFilenamesPboardType]];
+		if(m->NumDropTargets == 0)
+			[m->Window registerForDraggedTypes:@[NSFilenamesPboardType]];
 	}
 
-	void CocoaWindow::_unregisterForDragAndDrop()
+	void CocoaWindow::UnregisterForDragAndDropInternal()
 	{
-		if(m->numDropTargets == 0)
+		if(m->NumDropTargets == 0)
 			return;
 
-		m->numDropTargets--;
+		m->NumDropTargets--;
 
-		if(m->numDropTargets == 0)
-			[m->window unregisterDraggedTypes];
+		if(m->NumDropTargets == 0)
+			[m->Window unregisterDraggedTypes];
 	}
 
-	void CocoaWindow::_registerGLContext(void* context)
+	void CocoaWindow::RegisterGLContextInternal(void* context)
 	{
 		NSOpenGLContext* glContext = (__bridge_transfer NSOpenGLContext* )context;
-		[m->view setGLContext:glContext];
+		[m->View setGLContext:glContext];
 	}
 
-	void CocoaWindow::_setLayer(void* layer)
+	void CocoaWindow::SetLayerInternal(void* layer)
 	{
-		[m->view setLayer:(__bridge CALayer*)layer];
-		[m->view setWantsLayer:TRUE];
+		[m->View setLayer:(__bridge CALayer*)layer];
+		[m->View setWantsLayer:TRUE];
 
-        m->layer = (__bridge CALayer*)layer;
+        m->Layer = (__bridge CALayer*)layer;
 	}
 
-	void* CocoaWindow::_getLayer() const
+	void* CocoaWindow::GetLayerInternal() const
 	{
-		return (__bridge void *)m->layer;
+		return (__bridge void *)m->Layer;
 	}
 }

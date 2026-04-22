@@ -32,12 +32,12 @@
 		if([event keyCode] == 53) // Escape key
 		{
 			b3d::InputCommandType ic = b3d::InputCommandType::Escape;
-			b3d::MacOSPlatform::sendInputCommandEvent(ic);
+			b3d::MacOSPlatform::SendInputCommandEvent(ic);
 		}
 		else if([event keyCode] == 48) // Tab key
 		{
 			b3d::InputCommandType ic = b3d::InputCommandType::Tab;
-			b3d::MacOSPlatform::sendInputCommandEvent(ic);
+			b3d::MacOSPlatform::SendInputCommandEvent(ic);
 		}
 	}
 
@@ -64,7 +64,7 @@ namespace b3d
 	/** Contains information about a modal window session. */
 	struct ModalWindowInfo
 	{
-		UINT32 windowId;
+		u32 windowId;
 		NSModalSession session;
 	};
 
@@ -74,7 +74,7 @@ namespace b3d
 
 		Mutex windowMutex;
 		CocoaWindow* mainWindow = nullptr;
-		UnorderedMap<UINT32, CocoaWindow*> allWindows;
+		UnorderedMap<u32, CocoaWindow*> allWindows;
 		Vector<ModalWindowInfo> modalWindows;
 
 		BSFPlatform* platformManager = nil;
@@ -89,7 +89,7 @@ namespace b3d
 		// Clipboard
 		Mutex clipboardMutex;
 		String cachedClipboardData;
-		INT32 clipboardChangeCount = -1;
+		i32 clipboardChangeCount = -1;
 	};
 }
 
@@ -208,7 +208,7 @@ namespace b3d
 	[windowValue getValue:&window];
 
 	cursorClipEnabled = true;
-	cursorClipWindow = window->_getPrivateData()->window;
+	cursorClipWindow = window->GetPrivateDataInternal()->Window;
 
 	[self updateClipBounds:cursorClipWindow];
 
@@ -251,7 +251,7 @@ namespace b3d
 
 	for(auto& entry : platformData->allWindows)
 	{
-		NSWindow* window = entry.second->_getPrivateData()->window;
+		NSWindow* window = entry.second->GetPrivateDataInternal()->Window;
 		[window invalidateCursorRectsForView:[window contentView]];
 	}
 }
@@ -292,7 +292,7 @@ namespace b3d
 {
 	NSValue* windowIdValue = params[0];
 
-	b3d::UINT32 windowId;
+	b3d::u32 windowId;
 	[windowIdValue getValue:&windowId];
 
 	auto iterFind = mPlatformData->allWindows.find(windowId);
@@ -314,12 +314,12 @@ namespace b3d
 		areas.push_back(area);
 	}
 
-	window->_setDragZones(areas);
+	window->SetDragZonesInternal(areas);
 }
 
 - (void)resetNonClientAreas:(NSValue*) windowIdValue
 {
-	b3d::UINT32 windowId;
+	b3d::u32 windowId;
 	[windowIdValue getValue:&windowId];
 
 	auto iterFind = mPlatformData->allWindows.find(windowId);
@@ -327,7 +327,7 @@ namespace b3d
 		return;
 
 	b3d::CocoaWindow* window = iterFind->second;
-	window->_setDragZones({});
+	window->SetDragZonesInternal({});
 }
 
 - (void)openFolder:(NSURL*)url
@@ -498,15 +498,15 @@ namespace b3d
 		/* 127 */   BC_POWER
 	};
 
-	static UINT32 ButtonCodeToKeyCode[255];
+	static u32 ButtonCodeToKeyCode[255];
 	static void initKeyCodeMapping()
 	{
 		memset(ButtonCodeToKeyCode, 0, sizeof(ButtonCodeToKeyCode));
 
-		UINT32 numKeyCodes = sizeof(KeyCodeMapping) / sizeof(KeyCodeMapping[0]);
+		u32 numKeyCodes = sizeof(KeyCodeMapping) / sizeof(KeyCodeMapping[0]);
 
-		for(UINT32 i = 0; i < numKeyCodes; i++)
-			ButtonCodeToKeyCode[KeyCodeMapping[i]] = i;
+		for(u32 keyCodeIndex = 0; keyCodeIndex < numKeyCodes; keyCodeIndex++)
+			ButtonCodeToKeyCode[KeyCodeMapping[keyCodeIndex]] = keyCodeIndex;
 	}
 
 	void flipY(NSScreen* screen, NSRect& rect)
@@ -588,7 +588,7 @@ namespace b3d
 	Event<void(const Vector2I &, const OSPointerButtonStates &)> Platform::onCursorDoubleClick;
 	Event<void(InputCommandType)> Platform::onInputCommand;
 	Event<void(float)> Platform::onMouseWheelScrolled;
-	Event<void(UINT32)> Platform::onCharInput;
+	Event<void(u32)> Platform::onCharInput;
 
 	Event<void()> Platform::onMouseCaptureChanged;
 
@@ -598,28 +598,28 @@ namespace b3d
 	{
 	}
 
-	Vector2I Platform::getCursorPosition()
+	Vector2I Platform::GetCursorPosition()
 	{
 		Lock lock(mData->cursorMutex);
 		return mData->cursorPos;
 	}
 
-	void Platform::setCursorPosition(const Vector2I& screenPos)
+	void Platform::SetCursorPosition(const Vector2I& screenPos)
 	{
 		[mData->cursorManager setPosition:screenPos];
 	}
 
-	void Platform::captureMouse(const RenderWindow& window)
+	void Platform::CaptureMouse(const RenderWindow& window)
 	{
 		// Do nothing
 	}
 
-	void Platform::releaseMouseCapture()
+	void Platform::ReleaseMouseCapture()
 	{
 		// Do nothing
 	}
 
-	bool Platform::isPointOverWindow(const RenderWindow& window, const Vector2I& screenPos)
+	bool Platform::IsPointOverWindow(const RenderWindow& window, const Vector2I& screenPos)
 	{
 		CFArrayRef windowDicts = CGWindowListCopyWindowInfo(
 			kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
@@ -628,10 +628,13 @@ namespace b3d
 		if(!windowDicts)
 			return nil;
 
-		CocoaWindow* cocoaWindow;
-		window.getCustomAttribute("COCOA_WINDOW", &cocoaWindow);
+		u32 windowId = (u32)window.GetPlatformWindowHandle();
+		auto iterFind = mData->allWindows.find(windowId);
+		if(iterFind == mData->allWindows.end())
+			return false;
 
-		int32_t requestedWindowNumber = (int32_t)[cocoaWindow->_getPrivateData()->window windowNumber];
+		CocoaWindow* cocoaWindow = iterFind->second;
+		int32_t requestedWindowNumber = (int32_t)[cocoaWindow->GetPrivateDataInternal()->Window windowNumber];
 		CGPoint point = CGPointMake(screenPos.x, screenPos.y);
 
 		CFIndex numEntries = CFArrayGetCount(windowDicts);
@@ -674,7 +677,7 @@ namespace b3d
 		return false;
 	}
 
-	void Platform::hideCursor()
+	void Platform::HideCursor()
 	{
 		Lock lock(mData->cursorMutex);
 
@@ -685,7 +688,7 @@ namespace b3d
 		}
 	}
 
-	void Platform::showCursor()
+	void Platform::ShowCursor()
 	{
 		Lock lock(mData->cursorMutex);
 
@@ -696,25 +699,28 @@ namespace b3d
 		}
 	}
 
-	bool Platform::isCursorHidden()
+	bool Platform::IsCursorHidden()
 	{
 		Lock lock(mData->cursorMutex);
 
 		return mData->cursorIsHidden;
 	}
 
-	void Platform::clipCursorToWindow(const RenderWindow& window)
+	void Platform::ClipCursorToWindow(const RenderWindow& window)
 	{
-		CocoaWindow* cocoaWindow;
-		window.getCustomAttribute("COCOA_WINDOW", &cocoaWindow);
+		u32 windowId = (u32)window.GetPlatformWindowHandle();
+		auto iterFind = mData->allWindows.find(windowId);
+		if(iterFind == mData->allWindows.end())
+			return;
 
+		CocoaWindow* cocoaWindow = iterFind->second;
 		[mData->cursorManager
 			performSelectorOnMainThread:@selector(clipCursorToWindow:)
 			withObject:[NSValue valueWithPointer:cocoaWindow]
 			waitUntilDone:NO];
 	}
 
-	void Platform::clipCursorToRect(const Rect2I& screenRect)
+	void Platform::ClipCursorToRect(const Rect2I& screenRect)
 	{
 		[mData->cursorManager
 			performSelectorOnMainThread:@selector(clipCursorToRect:)
@@ -722,7 +728,7 @@ namespace b3d
 			waitUntilDone:NO];
 	}
 
-	void Platform::clipCursorDisable()
+	void Platform::ClipCursorDisable()
 	{
 		[mData->cursorManager
 			performSelectorOnMainThread:@selector(clipCursorDisable)
@@ -730,9 +736,9 @@ namespace b3d
 			waitUntilDone:NO];
 	}
 
-	void Platform::setCursor(PixelData& pixelData, const Vector2I& hotSpot)
+	void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{ @autoreleasepool {
-		NSImage* image = MacOSPlatform::createNSImage(pixelData);
+		NSImage* image = MacOSPlatform::CreateNSImage(pixelData);
 		NSPoint point = NSMakePoint(hotSpot.x, hotSpot.y);
 
 		NSCursor* cursor = [[NSCursor alloc] initWithImage:image hotSpot:point];
@@ -742,21 +748,19 @@ namespace b3d
 			performSelectorOnMainThread:@selector(setCursor:) withObject:params waitUntilDone:NO];
 	}}
 
-	void Platform::setIcon(const PixelData& pixelData)
+	void Platform::SetIcon(const PixelData& pixelData)
 	{ @autoreleasepool {
-		NSImage* image = MacOSPlatform::createNSImage(pixelData);
+		NSImage* image = MacOSPlatform::CreateNSImage(pixelData);
 
 		[NSApp performSelectorOnMainThread:@selector(setApplicationIconImage:) withObject:image waitUntilDone:NO];
 	}}
 
-	void Platform::setCaptionNonClientAreas(const render::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
+	void Platform::SetCaptionNonClientAreas(const render::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 	{ @autoreleasepool {
 		NSMutableArray* params = [[NSMutableArray alloc] init];
 
-		UINT32 windowId;
-		window.getCustomAttribute("WINDOW_ID", &windowId);
-
-		NSValue* windowIdValue = [NSValue valueWithBytes:&windowId objCType:@encode(UINT32)];
+		u32 windowId = (u32)window.GetPlatformWindowHandle();
+		NSValue* windowIdValue = [NSValue valueWithBytes:&windowId objCType:@encode(u32)];
 
 		[params addObject:windowIdValue];
 		for(auto& entry : nonClientAreas)
@@ -768,17 +772,15 @@ namespace b3d
 			waitUntilDone:NO];
 	}}
 
-	void Platform::setResizeNonClientAreas(const RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
+	void Platform::SetResizeNonClientAreas(const RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
 	{
 		// Do nothing, custom resize areas not needed on MacOS
 	}
 
-	void Platform::resetNonClientAreas(const RenderWindow& window)
+	void Platform::ResetNonClientAreas(const RenderWindow& window)
 	{
-		UINT32 windowId;
-		window.getCustomAttribute("WINDOW_ID", &windowId);
-
-		NSValue* windowIdValue = [NSValue valueWithBytes:&windowId objCType:@encode(UINT32)];
+		u32 windowId = (u32)window.GetPlatformWindowHandle();
+		NSValue* windowIdValue = [NSValue valueWithBytes:&windowId objCType:@encode(u32)];
 
 		[mData->platformManager
 			performSelectorOnMainThread:@selector(resetNonClientAreas:)
@@ -786,12 +788,12 @@ namespace b3d
 			waitUntilDone:NO];
 	}
 
-	void Platform::sleep(UINT32 duration)
+	void Platform::Sleep(u32 duration)
 	{
 		usleep(duration * 1000);
 	}
 
-	void Platform::copyToClipboard(const String& string)
+	void Platform::CopyToClipboard(const String& string)
 	{ @autoreleasepool {
 		NSString* text = [NSString stringWithUTF8String:string.c_str()];
 		[mData->platformManager performSelectorOnMainThread:@selector(setClipboardText:)
@@ -799,15 +801,15 @@ namespace b3d
 			waitUntilDone:NO];
 	}}
 
-	String Platform::copyFromClipboard()
+	String Platform::CopyFromClipboard()
 	{
 		Lock lock(mData->clipboardMutex);
 		return mData->cachedClipboardData;
 	}
 
-	String Platform::keyCodeToUnicode(UINT32 buttonCode)
+	String Platform::KeyCodeToUnicode(u32 buttonCode)
 	{
-		UINT32 keyCode = ButtonCodeToKeyCode[buttonCode];
+		u32 keyCode = ButtonCodeToKeyCode[buttonCode];
 
 		TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 		if(!currentKeyboard)
@@ -829,7 +831,7 @@ namespace b3d
 
 		auto keyLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(layoutData);
 
-		UINT32 keysDown = 0;
+		u32 keysDown = 0;
 		UniChar chars[4];
 		UniCharCount length = 0;
 
@@ -846,14 +848,14 @@ namespace b3d
 			chars);
 
 		U16String u16String((char16_t*)chars, (size_t)length);
-		String utf8String = UTF8::fromUTF16(u16String);
+		String utf8String = UTF8::FromUTF16(u16String);
 
 		return utf8String;
 	}
 
-	void Platform::openFolder(const Path& path)
+	void Platform::OpenFolder(const Path& path)
 	{
-		String pathStr = path.toString();
+		String pathStr = path.ToString();
 
 		NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr.c_str()]];
 		[mData->platformManager
@@ -944,29 +946,29 @@ namespace b3d
 		}
 	}}
 
-	void MacOSPlatform::registerWindow(CocoaWindow* window)
+	void MacOSPlatform::RegisterWindow(CocoaWindow* window)
 	{
 		// First window is assumed to be main
 		if(!mData->mainWindow)
 			mData->mainWindow = window;
 
-		CocoaWindow::Pimpl* windowData = window->_getPrivateData();
-		if(windowData->isModal)
+		CocoaWindow::Pimpl* windowData = window->GetPrivateDataInternal();
+		if(windowData->IsModal)
 		{
-			ModalWindowInfo info = { window->_getWindowId(), windowData->modalSession };
+			ModalWindowInfo info = { window->GetWindowIdInternal(), windowData->ModalSession };
 			mData->modalWindows.push_back(info);
 		}
 
 		Lock lock(mData->windowMutex);
-		mData->allWindows[window->_getWindowId()] = window;
+		mData->allWindows[window->GetWindowIdInternal()] = window;
 	}
 
-	void MacOSPlatform::unregisterWindow(CocoaWindow* window)
+	void MacOSPlatform::UnregisterWindow(CocoaWindow* window)
 	{
-		CocoaWindow::Pimpl* windowData = window->_getPrivateData();
-		if(windowData->isModal)
+		CocoaWindow::Pimpl* windowData = window->GetPrivateDataInternal();
+		if(windowData->IsModal)
 		{
-			UINT32 windowId = window->_getWindowId();
+			u32 windowId = window->GetWindowIdInternal();
 			auto iterFind = std::find_if(mData->modalWindows.begin(), mData->modalWindows.end(),
 										 [windowId](const ModalWindowInfo& x)
 										 {
@@ -978,9 +980,9 @@ namespace b3d
 		}
 
 		Lock lock(mData->windowMutex);
-		mData->allWindows.erase(window->_getWindowId());
+		mData->allWindows.erase(window->GetWindowIdInternal());
 
-		[mData->cursorManager unregisterWindow:windowData->window];
+		[mData->cursorManager unregisterWindow:windowData->Window];
 
 		// Shut down app when the main window is closed
 		if(mData->mainWindow == window)
@@ -990,17 +992,17 @@ namespace b3d
 		}
 	}
 
-	void MacOSPlatform::lockWindows()
+	void MacOSPlatform::LockWindows()
 	{
 		mData->windowMutex.lock();
 	}
 
-	void MacOSPlatform::unlockWindows()
+	void MacOSPlatform::UnlockWindows()
 	{
 		mData->windowMutex.unlock();
 	}
 
-	CocoaWindow* MacOSPlatform::getWindow(UINT32 windowId)
+	CocoaWindow* MacOSPlatform::GetWindow(u32 windowId)
 	{
 		auto iterFind = mData->allWindows.find(windowId);
 		if(iterFind == mData->allWindows.end())
@@ -1009,10 +1011,10 @@ namespace b3d
 		return iterFind->second;
 	}
 
-	NSImage* MacOSPlatform::createNSImage(const PixelData& data)
+	NSImage* MacOSPlatform::CreateNSImage(const PixelData& data)
 	{
 		// Premultiply alpha
-		Vector<Color> colors = data.getColors();
+		Vector<Color> colors = data.GetColors();
 		for(auto& color : colors)
 		{
 			color.r *= color.a;
@@ -1021,15 +1023,15 @@ namespace b3d
 		}
 
 		// Convert to RGBA
-		SPtr<PixelData> rgbaData = PixelData::create(data.getWidth(), data.getHeight(), 1, PF_RGBA8);
-		rgbaData->setColors(colors);
+		SPtr<PixelData> rgbaData = PixelData::Create(data.GetWidth(), data.GetHeight(), 1, PF_RGBA8);
+		rgbaData->SetColors(colors);
 		@autoreleasepool
 		{
-			INT32 pitch = data.getWidth() * sizeof(UINT32);
+			i32 pitch = data.GetWidth() * sizeof(u32);
 			NSBitmapImageRep* imageRep = [[NSBitmapImageRep alloc]
 										  initWithBitmapDataPlanes:nullptr
-										  pixelsWide:data.getWidth()
-										  pixelsHigh:data.getHeight()
+										  pixelsWide:data.GetWidth()
+										  pixelsHigh:data.GetHeight()
 										  bitsPerSample:8
 										  samplesPerPixel:4
 										  hasAlpha:YES
@@ -1039,26 +1041,26 @@ namespace b3d
 										  bitsPerPixel:32];
 
 			unsigned char* pixels = [imageRep bitmapData];
-			memcpy(pixels, rgbaData->getData(), data.getHeight() * pitch);
+			memcpy(pixels, rgbaData->GetData(), data.GetHeight() * pitch);
 
-			NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(data.getWidth(), data.getHeight())];
+			NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(data.GetWidth(), data.GetHeight())];
 			[image addRepresentation:imageRep];
 
 			return image;
 		}
 	}
 
-	void MacOSPlatform::sendInputCommandEvent(InputCommandType inputCommand)
+	void MacOSPlatform::SendInputCommandEvent(InputCommandType inputCommand)
 	{
 		onInputCommand(inputCommand);
 	}
 
-	void MacOSPlatform::sendCharInputEvent(UINT32 character)
+	void MacOSPlatform::SendCharInputEvent(u32 character)
 	{
 		onCharInput(character);
 	}
 
-	void MacOSPlatform::sendPointerButtonPressedEvent(
+	void MacOSPlatform::SendPointerButtonPressedEvent(
 		const Vector2I& pos,
 		OSMouseButton button,
 		const OSPointerButtonStates& buttonStates)
@@ -1066,7 +1068,7 @@ namespace b3d
 		onCursorButtonPressed(pos, button, buttonStates);
 	}
 
-	void MacOSPlatform::sendPointerButtonReleasedEvent(
+	void MacOSPlatform::SendPointerButtonReleasedEvent(
 		const Vector2I& pos,
 		OSMouseButton button,
 		const OSPointerButtonStates& buttonStates)
@@ -1074,22 +1076,22 @@ namespace b3d
 		onCursorButtonReleased(pos, button, buttonStates);
 	}
 
-	void MacOSPlatform::sendPointerDoubleClickEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates)
+	void MacOSPlatform::SendPointerDoubleClickEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates)
 	{
 		onCursorDoubleClick(pos, buttonStates);
 	}
 
-	void MacOSPlatform::sendPointerMovedEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates)
+	void MacOSPlatform::SendPointerMovedEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates)
 	{
 		onCursorMoved(pos, buttonStates);
 	}
 
-	void MacOSPlatform::sendMouseWheelScrollEvent(float delta)
+	void MacOSPlatform::SendMouseWheelScrollEvent(float delta)
 	{
 		onMouseWheelScrolled(delta);
 	}
 
-	void MacOSPlatform::notifyWindowEvent(b3d::WindowEventType type, b3d::UINT32 windowId)
+	void MacOSPlatform::NotifyWindowEvent(b3d::WindowEventType type, b3d::u32 windowId)
 	{
 		CocoaWindow* window = nullptr;
 		{
@@ -1100,35 +1102,35 @@ namespace b3d
 			window = iterFind->second;
 		}
 
-		auto renderWindow = (RenderWindow*)window->_getUserData();
+		auto renderWindow = (RenderWindow*)window->GetUserDataInternal();
 		if(renderWindow == nullptr)
 		{
 			// If it's a render window we allow the client code to handle the message, otherwise we just destroy it
 			if(type == WindowEventType::CloseRequested)
-				window->_destroy();
+				window->DestroyInternal();
 
 			return;
 		}
 
-		renderWindow->_notifyWindowEvent(type);
+		renderWindow->NotifyWindowEvent(type);
 	}
 
-	NSCursor* MacOSPlatform::_getCurrentCursor()
+	NSCursor* MacOSPlatform::GetCurrentCursorInternal()
 	{
 		return [mData->cursorManager currentCursor];
 	}
 
-	bool MacOSPlatform::_clipCursor(Vector2I& pos)
+	bool MacOSPlatform::ClipCursorInternal(Vector2I& pos)
 	{
 		return [mData->cursorManager clipCursor:pos];
 	}
 
-	void MacOSPlatform::_updateClipBounds(NSWindow* window)
+	void MacOSPlatform::UpdateClipBoundsInternal(NSWindow* window)
 	{
 		[mData->cursorManager updateClipBounds:window];
 	}
 
-	void MacOSPlatform::_setCursorPosition(const Vector2I& position)
+	void MacOSPlatform::SetCursorPositionInternal(const Vector2I& position)
 	{
 		[mData->cursorManager setPosition:position];
 	}
