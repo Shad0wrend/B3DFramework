@@ -1,12 +1,18 @@
-# Roadmap
+# Upcoming features
 
-All tasks are organized as GitHub issues per milestone:
- - [v1.0] Feature complete.
- - [v1.1] Feature complete.
- - [v1.2](https://github.com/GameFoundry/bsf/milestone/3)
- - [v1.3](https://github.com/GameFoundry/bsf/milestone/4)
- - [Longterm](https://github.com/GameFoundry/bsf/milestone/5)
+The following features are planned for future releases of the framework.
 
-All issues marked with the [OFFICIAL] label are tasks created internally, and generally include major features that are to be introduced in that particular milestone. Other issues are user reported bugs and enhancements.
- 
-If you feel like contributing toward a specific task first make sure it is not assigned to someone already, and then comment on the related issue.
+* __Platform support__
+	* Restore Linux support
+	* Restore macOS support, with a Metal render backend
+	* PlayStation 5 support
+* __Rendering__
+	* Shader language replaced with [Slang](https://github.com/shader-slang/slang)
+	* Persistent GPU scene
+	* Meshlet-style rendering with LOD and streaming
+	* Real-time global illumination
+	* Physical camera, light and material controls
+* __Networking__
+	* High level networking
+* __Navigation__
+	* Recast / Detour nav-mesh integration
