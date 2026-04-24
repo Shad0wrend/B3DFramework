@@ -25,20 +25,14 @@ else
     git checkout llvmorg-20.1.7
 fi
 
-# Setup Mono output folders
+# Setup LLVM output folder
 LLVMOutputFolder="$PlatformDependencyFolder/LLVM"
 
-rm -rf $MonoOutputFolder
+B3DCleanDependencyFolder "$LLVMOutputFolder"
 
-if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-    CMakeGenerator="Visual Studio 17 2022"
-else
-    CMakeGenerator="Ninja"
-fi
-
-mkdir build
-cmake -S llvm -B build -G "$CMakeGenerator" -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_INSTALL_PREFIX=$LLVMOutputFolder -DCMAKE_BUILD_TYPE=Release
-cmake --build build --target install --config Release
+mkdir -p build
+cmake -S llvm -B build -G "$CMakeGenerator" -DLLVM_ENABLE_PROJECTS="clang" -DCMAKE_INSTALL_PREFIX="$LLVMOutputFolder" -DCMAKE_BUILD_TYPE=Release || exit 1
+cmake --build build --target install --config Release || exit 1
 
 echo -e "\nBuild complete. Set clang_INSTALL_DIR in B3D CMake to '$LLVMOutputFolder' to link against the built libraries.\n\n"
 echo "IMPORTANT:"

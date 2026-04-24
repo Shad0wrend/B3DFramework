@@ -11,21 +11,6 @@ if ! command -v cmake &> /dev/null; then
 	exit 1
 fi
 
-# Platform-specific information
-if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-	echo "Building for Windows."
-	CMakeGenerator="-G \"Visual Studio 17 2022\" -A x64"
-elif [[ "$Platform" == "darwin"* ]]; then
-	echo "Building for macOS."
-	CMakeGenerator="-G \"Unix Makefiles\""
-elif [[ "$Platform" == "linux-gnu"* ]]; then
-	echo "Building for Linux."
-	CMakeGenerator="-G \"Unix Makefiles\""
-else
-	echo "[Error] This build script is not currently supported on the current platform: $Platform."
-	exit 1
-fi
-
 # Create intermediate folders
 cd ..
 
@@ -54,7 +39,7 @@ ShaderCompilerOutputFolder="$PlatformDependencyFolder/XShaderCompiler"
 
 echo "Output folder: $ShaderCompilerOutputFolder"
 
-# Read existing version before deleting the folder
+# Read existing version before cleaning the folder
 VersionFile="$ShaderCompilerOutputFolder/.version"
 if [ -f "$VersionFile" ]; then
 	CurrentVersion=$(cat "$VersionFile")
@@ -63,7 +48,7 @@ else
 	NewVersion=0
 fi
 
-rm -rf "$ShaderCompilerOutputFolder"
+B3DCleanDependencyFolder "$ShaderCompilerOutputFolder"
 mkdir -p "$ShaderCompilerOutputFolder/include/"
 mkdir -p "$ShaderCompilerOutputFolder/lib/"
 
@@ -85,7 +70,7 @@ cd cmake_build
 # - XSC_SHARED_LIB=OFF: Build static library
 echo "Configuring CMake..."
 
-eval cmake .. $CMakeGenerator \
+cmake .. -G "$CMakeGenerator" \
 	-DINSTALL_OUTPUT_PATH="$ShaderCompilerOutputFolder" \
 	-DXSC_BUILD_SHELL=OFF \
 	-DXSC_BUILD_DEBUGGER=OFF \

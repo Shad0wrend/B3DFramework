@@ -13,6 +13,7 @@
 #include "TestSuites/B3DPrefabTestSuite.h"
 #include "TestSuites/B3DSceneObjectTransformTestSuite.h"
 #include "TestSuites/B3DRenderableTestSuite.h"
+#include "TestSuites/B3DImporterTestSuite.h"
 
 namespace b3d
 {
@@ -43,6 +44,7 @@ namespace b3d
 			registry.RegisterSuite(TestSuite::Create<PrefabTestSuite>());
 			registry.RegisterSuite(TestSuite::Create<SceneObjectTransformTestSuite>());
 			registry.RegisterSuite(TestSuite::Create<RenderableTestSuite>());
+			registry.RegisterSuite(TestSuite::Create<ImporterTestSuite>());
 		}
 	}
 

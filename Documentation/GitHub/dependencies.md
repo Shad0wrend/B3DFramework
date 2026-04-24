@@ -33,21 +33,43 @@ Legend:
 Each library is accompanied by a Find***.cmake CMake module that is responsible for finding the library. These modules are located under `Source/CMake/Modules`. They follow the rules described above, but if you are unsure where library outputs should be placed you can look at the source code for those modules to find their search paths.
    
 Additionally, if the dependency structure still isn't clear, download one of the pre-compiled dependency packages to see an example.  
-      
-## Library list 
-	  
+
+## Building dependencies from source
+
+By default, pre-compiled binaries for all dependencies are bundled with the framework, so you do not need to build anything yourself to use B3D.
+
+If you do want to rebuild a dependency from source (for example to tweak compile flags, try a new version, or build on an unsupported platform), each dependency listed below with a `Build script:` entry has a matching shell script under `Framework/Scripts/`. Run it from that directory:
+
+```sh
+cd Framework/Scripts
+./B3DBuild<DepName>.sh
+```
+
+The script clones or updates the upstream source, configures CMake, builds, and installs the result into `Framework/Dependencies/<DepName>/` in the layout the framework expects.
+
+### Overriding the CMake generator
+
+The default generator is picked by `B3DBuildCommon.sh` (`Visual Studio 17 2022` on Windows, `Ninja Multi-Config` on macOS/Linux). To use a different generator, set the `B3D_CMAKE_GENERATOR` environment variable before running the script:
+
+```sh
+B3D_CMAKE_GENERATOR="Ninja" ./B3DBuildSnappy.sh
+```
+## Library list
+
 **snappy**
-- Google's Snappy compressor/decompressor
-- https://github.com/BearishSun/snappy
+- Snappy 1.2.2
+- https://github.com/google/snappy
 - Required by bsfUtility
 - Compile as a static library
-	  
+- Build script: `B3DBuildSnappy.sh`
+
 **nvtt**
-- NVIDIA Texture Tools 2.1.0
-- https://github.com/BearishSun/nvidia-texture-tools
+- NVIDIA Texture Tools 2.1.2
+- https://github.com/castano/nvidia-texture-tools
 - Required by bsfCore
 - Compile as a static library
- 
+- Build script: `B3DBuildNvtt.sh`
+
 **LibICU**
 - http://site.icu-project.org/
 - Only required for Linux builds
@@ -61,27 +83,28 @@ Additionally, if the dependency structure still isn't clear, download one of the
 - http://usa.autodesk.com/fbx
 - Required by bsfFBXImporter
 - No compilation required, libraries are provided pre-compiled
- 
+
 **freetype**
-- Freetype 2.3.5
-- https://github.com/BearishSun/freetype (branch *banshee*)
+- Freetype 2.14.3
+- https://gitlab.freedesktop.org/freetype/freetype
 - Required by bsfFontImporter
 - Compile as a static library
-   
+- Build script: `B3DBuildFreetype.sh`
+
 **freeimg**
-- FreeImage 3.17
+- FreeImage 3.18
 - http://freeimage.sourceforge.net
-- **macOS only**
-  - Make sure to to build with `./configure —-without-zlib`
 - Required by bsfFreeImgImporter
-- Compile as a static library
-      
+- Compile as a dynamic library on Windows, static library on Linux/macOS
+- Build script: `B3DBuildFreeImage.sh`
+
 **PhysX**
-- PhysX 3.3
-- https://github.com/NVIDIAGameWorks/PhysX-3.3
+- PhysX 3.4
+- https://github.com/NVIDIAGameWorks/PhysX (branch *3.4*)
 - Required by bsfPhysX
 - Compile as a dynamic library on Windows, static library on Linux/macOS (default)
-	
+- Build script: `B3DBuildPhysX.sh`
+
 **OpenAL**
 - OpenAL Soft 1.17.2
 - https://github.com/kcat/openal-soft
@@ -90,62 +113,92 @@ Additionally, if the dependency structure still isn't clear, download one of the
   - Make sure to get audio backend libraries before compiling: PulseAudio, OSS, ALSA and JACK
   - On Debian/Ubuntu run: `apt-get install libpulse libasound2-dev libjack-dev`
 - Compile as a dynamic library on Windows/Linux (default), static library on macOS
-  - Use `LIBTYPE=STATIC` CMake flag to force it to compile as a static library
-   
+- Build script: `B3DBuildOpenAL.sh`
+
 **libogg**
-- libogg v1.3.2
-- https://xiph.org/downloads/
+- libogg v1.3.5
+- https://github.com/xiph/ogg
 - Required by bsfOpenAudio and bsfFMOD
 - Compile as a static library
-  - Switch runtime library to dynamic to avoid linker warnings when adding it to the framework
-  - This is also required when compiling libvorbis and libflac (below). See readme files included with those libraries.
-  
+  - Required when compiling libvorbis and libFLAC below.
+- Build script: `B3DBuildOgg.sh`
+
 **libvorbis**
-- libvorbis commit:8a8f8589e19c5016f6548d877a8fda231fce4f93
-- https://git.xiph.org/?p=vorbis.git
+- libvorbis v1.3.7
+- https://github.com/xiph/vorbis
 - Required by bsfOpenAudio and bsfFMOD
-- Compile as a dynamic library on Windows, static library on Linux/macOS (default)
-  - Requires libogg, as described in its readme file.
-  - When compiling as static library on Linux, make sure to specify `-DCMAKE_POSITION_INDEPENDENT_CODE=ON` to CMake, otherwise it will fail to link
-   
+- Compile as a static library
+  - Requires libogg.
+- Build script: `B3DBuildVorbis.sh`
+
 **libFLAC**
-- libflac commit: f7cd466c24fb5d1966943f3ea36a1f4a37858597
-- https://git.xiph.org/?p=flac.git
+- libFLAC 1.5.0
+- https://github.com/xiph/flac
 - Required by bsfOpenAudio
-- Compile as a dynamic library on Windows (default), static library on Linux/macOS
-  - Provide `--disable-shared --enable-static` flags to `configure` to force it to compile as a static library
-  - Requires libogg, as described in its readme file.
-   
+- Compile as a static library
+  - Requires libogg.
+- Build script: `B3DBuildFLAC.sh`
+
 **glslang**
 - glslang commit: 377bccb143941ec4931e6aed9ac07752ccefb979
 - https://github.com/KhronosGroup/glslang
 - Required by bsfVulkanGpuBackend
 - Compile as a static library
-
-**SPIR-V Cross**
-- Commit ID: bccaa94db814af33d8ef05c153e7c34d8bd4d685
-- https://github.com/KhronosGroup/SPIRV-Cross
-- Required by bsfVulkanGpuBackend
-- Compile as a static library
+- Build script: `B3DBuildGlslang.sh`
 
 **MoltenVK** (macOS only)
 - Commit ID: a684b47baab834e12da2af9f5997c867c4265b46
 - https://github.com/KhronosGroup/MoltenVK
 - Required by bsfVulkanGpuBackend
 - Compile and install, then copy contents of `macOS/static/` folder into `lib` sub-folder
-   
+
 **XShaderCompiler**
 - https://github.com/BearishSun/XShaderCompiler (branch *banshee*)
 - Required by bsfSL
 - Compile as a static library
+- Build script: `B3DBuildShaderCompiler.sh`
 
-**mono**
-- Mono 5.4
+**Slang**
+- Slang v2025.21.0
+- https://github.com/shader-slang/slang
+- Required by bsfSL
+- Compile as a static library
+- Build script: `B3DBuildSlang.sh`
+
+**mono** (via .NET runtime)
+- .NET 9.0.11
 - Only required if B3D_SCRIPT_API=C# option is specified during the build (i.e. C# scripting is enabled)
-- http://www.mono-project.com/
+- https://github.com/dotnet/runtime
 - Required by bsfMono
 - Compile as a dynamic library
- - See MonoIntegrationGuide.txt for additional notes
+- Build script: `B3DBuildMono.sh`
+
+**METIS**
+- METIS v5.2.1
+- https://github.com/KarypisLab/METIS
+- Required by bsfCore
+- Compile as a static library
+- Build script: `B3DBuildMetis.sh`
+
+**protobuf**
+- Protocol Buffers v21.12
+- https://github.com/protocolbuffers/protobuf
+- Required by bsfCore (BansheeForge integration)
+- Compile as a static library
+- Build script: `B3DBuildProtobuf.sh`
+
+**GameNetworkingSockets**
+- GameNetworkingSockets v1.4.1
+- https://github.com/ValveSoftware/GameNetworkingSockets
+- Required by bsfCore (networking)
+- Compile as a static library
+- Build script: `B3DBuildGameNetworkingSockets.sh`
+
+**LLVM**
+- LLVM llvmorg-20.1.7
+- https://github.com/llvm/llvm-project
+- Only required for B3DCodeGen (the Clang-based code generator)
+- Build script: `B3DBuildLLVM.sh`
 
 **bison**
 - Bison 3.0.4
@@ -175,9 +228,3 @@ Additionally, if the dependency structure still isn't clear, download one of the
   - `brew install flex`
 - Required by bsfSL
 - Executable (tool)
-
- **BansheeCodeGenerator**
- - Only required if B3D_SCRIPT_BINDING_GENERATION option is specified during the build (off by default)
- - https://github.com/BearishSun/BansheeCodeGenerator
- - Required for generation of C# script binding files. Not required if not using the scripting sub-system.
- - Executable (tool)

@@ -12,18 +12,12 @@ if(B3D_USE_BUNDLED_LIBRARIES)
 endif()
 B3DPopulateDefaultPackageSearchPaths(FLAC)
 
-if(WIN32)
-	set(FLAC_LIBNAME libFLAC)
-else()
-	set(FLAC_LIBNAME FLAC)
-endif()
-
 B3DFindImportedIncludes(FLAC FLAC/all.h)
 
-if(UNIX)
-	B3DFindImportedLibrary(FLAC ${FLAC_LIBNAME} STATIC)
+if(WIN32)
+	B3DFindImportedLibraryWithConfigurationNames(FLAC FLAC STATIC FLAC FLACd)
 else()
-	B3DFindImportedLibraryWithAlternateBinaryName(FLAC ${FLAC_LIBNAME} SHARED libFLAC_dynamic)
+	B3DFindImportedLibrary(FLAC FLAC STATIC)
 endif()
 
-B3DEndFindPackage(FLAC ${FLAC_LIBNAME})
+B3DEndFindPackage(FLAC FLAC)

@@ -20,5 +20,6 @@ B3DFindImportedLibrary(nvtt nvcore STATIC)
 B3DFindImportedLibrary(nvtt nvmath STATIC)
 B3DFindImportedLibrary(nvtt nvthread STATIC)
 B3DFindImportedLibrary(nvtt squish STATIC)
+B3DFindImportedLibrary(nvtt nvsquish STATIC)
 
 B3DEndFindPackage(nvtt nvtt)

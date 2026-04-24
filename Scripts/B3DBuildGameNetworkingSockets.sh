@@ -90,21 +90,6 @@ if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
     fi
 fi
 
-# Platform-specific information
-if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-    echo "Building for Windows."
-    CMakeGenerator="-G \"Visual Studio 17 2022\" -A x64"
-elif [[ "$Platform" == "darwin"* ]]; then
-    echo "Building for macOS."
-    CMakeGenerator="-G Xcode"
-elif [[ "$Platform" == "linux-gnu"* ]]; then
-    echo "Building for Linux."
-    CMakeGenerator="-G Ninja Multi-Config"
-else
-    echo "[Error] This build script is not currently supported on the current platform: $Platform."
-    exit 1
-fi
-
 # Create intermediate folders
 cd ..
 
@@ -135,7 +120,7 @@ GNSOutputFolder="$PlatformDependencyFolder/GameNetworkingSockets"
 
 echo "Output folder: $GNSOutputFolder"
 
-rm -rf "$GNSOutputFolder"
+B3DCleanDependencyFolder "$GNSOutputFolder"
 mkdir -p "$GNSOutputFolder/include/"
 mkdir -p "$GNSOutputFolder/lib/"
 mkdir -p "$GNSOutputFolder/bin/"
@@ -184,7 +169,7 @@ if [ -d "$ProtobufDependencyFolder" ]; then
     fi
 fi
 
-eval cmake .. $CMakeGenerator \
+cmake .. -G "$CMakeGenerator" \
     -DCMAKE_INSTALL_PREFIX="install" \
     -DGAMENETWORKINGSOCKETS_BUILD_TESTS=OFF \
     -DGAMENETWORKINGSOCKETS_BUILD_EXAMPLES=OFF \

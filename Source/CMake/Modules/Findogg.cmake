@@ -12,13 +12,12 @@ if(B3D_USE_BUNDLED_LIBRARIES)
 endif()
 B3DPopulateDefaultPackageSearchPaths(ogg)
 
+B3DFindImportedIncludes(ogg ogg/ogg.h)
+
 if(WIN32)
-	set(ogg_LIBNAME libogg)
+	B3DFindImportedLibraryWithConfigurationNames(ogg ogg STATIC ogg oggd)
 else()
-	set(ogg_LIBNAME ogg)
+	B3DFindImportedLibrary(ogg ogg STATIC)
 endif()
 
-B3DFindImportedIncludes(ogg ogg/ogg.h)
-B3DFindImportedLibrary(ogg ${ogg_LIBNAME} STATIC)
-
-B3DEndFindPackage(ogg ${ogg_LIBNAME})
+B3DEndFindPackage(ogg ogg)

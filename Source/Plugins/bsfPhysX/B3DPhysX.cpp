@@ -212,41 +212,24 @@ void PhysXEventCallback::onContact(const PxContactPairHeader& pairHeader, const 
 		PhysXScene::ContactEvent event;
 		event.Type = type;
 
-		PxU32 contactCount = pair.contactCount;
-		const PxU8* stream = pair.contactStream;
-		PxU16 streamSize = pair.contactStreamSize;
-
-		if(contactCount > 0 && streamSize > 0)
+		if(pair.contactCount > 0)
 		{
-			PxU32 contactIdx = 0;
-			PxContactStreamIterator iter((PxU8*)stream, streamSize);
+			constexpr PxU32 kMaxContactPointsPerPair = 64;
+			PxContactPairPoint points[kMaxContactPointsPerPair];
+			const PxU32 nbPoints = pair.extractContacts(points, kMaxContactPointsPerPair);
 
-			stream += ((streamSize + 15) & ~15);
-
-			const PxReal* impulses = reinterpret_cast<const PxReal*>(stream);
-			PxU32 hasImpulses = (pair.flags & PxContactPairFlag::eINTERNAL_HAS_IMPULSES);
-
-			while(iter.hasNextPatch())
+			event.Points.reserve(nbPoints);
+			for(PxU32 pointIndex = 0; pointIndex < nbPoints; ++pointIndex)
 			{
-				iter.nextPatch();
-				while(iter.hasNextContact())
-				{
-					iter.nextContact();
+				const PxContactPairPoint& src = points[pointIndex];
 
-					ContactPoint point;
-					point.Position = FromPxVector(iter.getContactPoint());
-					point.Separation = iter.getSeparation();
-					point.Normal = FromPxVector(iter.getContactNormal());
+				ContactPoint point;
+				point.Position = FromPxVector(src.position);
+				point.Separation = src.separation;
+				point.Normal = FromPxVector(src.normal);
+				point.Impulse = src.impulse.magnitude();
 
-					if(hasImpulses)
-						point.Impulse = impulses[contactIdx];
-					else
-						point.Impulse = 0.0f;
-
-					event.Points.push_back(point);
-
-					contactIdx++;
-				}
+				event.Points.push_back(point);
 			}
 		}
 
@@ -511,10 +494,8 @@ PhysX::PhysX(const PhysicsCreateInformation& input)
 	mScale.length = input.TypicalLength;
 	mScale.speed = input.TypicalSpeed;
 
-	mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gPhysXAllocator, gPhysXErrorHandler);
-	mPhysics = PxCreateBasePhysics(PX_PHYSICS_VERSION, *mFoundation, mScale);
-
-	PxRegisterArticulations(*mPhysics);
+	mFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gPhysXAllocator, gPhysXErrorHandler);
+	mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation, mScale);
 
 	if(input.InitCooking)
 	{
@@ -589,9 +570,8 @@ bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const C
 
 	PxRaycastHit hitInfo;
 	PxU32 maxHits = 1;
-	bool anyHit = false;
 	PxHitFlags hitFlags = PxHitFlag::eDEFAULT | PxHitFlag::eUV;
-	PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), transform, maxDistance, hitFlags, maxHits, &hitInfo, anyHit);
+	PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), transform, maxDistance, hitFlags, maxHits, &hitInfo);
 
 	if(hitCount > 0)
 		ParseHit(hitInfo, hit, pxShape); // We have to provide a hint for the tested shape, as it is not contained in single-geometry raycast hit results
@@ -618,9 +598,8 @@ bool PhysX::RayCast(const Vector3& origin, const Vector3& unitDirection, const C
 
 		PxRaycastHit hitInfo;
 		PxU32 maxHits = 1;
-		bool anyHit = false;
 		PxHitFlags hitFlags = PxHitFlag::eDEFAULT | PxHitFlag::eUV;
-		PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), combinedTransform, maxDistance, hitFlags, maxHits, &hitInfo, anyHit);
+		PxU32 hitCount = PxGeometryQuery::raycast(ToPxVector(origin), ToPxVector(unitDirection), pxShape->getGeometry().any(), combinedTransform, maxDistance, hitFlags, maxHits, &hitInfo);
 
 		if(hitCount > 0 && hitInfo.distance < nearestHitDistance)
 		{

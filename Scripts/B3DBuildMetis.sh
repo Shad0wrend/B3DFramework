@@ -11,21 +11,6 @@ if ! command -v cmake &> /dev/null; then
     exit 1
 fi
 
-# Platform-specific information
-if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-    echo "Building for Windows."
-    CMakeGenerator="-G \"Visual Studio 17 2022\" -A x64"
-elif [[ "$Platform" == "darwin"* ]]; then
-    echo "Building for macOS."
-    CMakeGenerator="-G Xcode"
-elif [[ "$Platform" == "linux-gnu"* ]]; then
-    echo "Building for Linux."
-    CMakeGenerator="-G Ninja Multi-Config"
-else
-    echo "[Error] This build script is not currently supported on the current platform: $Platform."
-    exit 1
-fi
-
 # Create intermediate folders
 cd ..
 
@@ -63,7 +48,7 @@ GKlibOutputFolder="$PlatformDependencyFolder/GKlib"
 
 echo "GKlib output folder: $GKlibOutputFolder"
 
-rm -rf "$GKlibOutputFolder"
+B3DCleanDependencyFolder "$GKlibOutputFolder"
 mkdir -p "$GKlibOutputFolder/include/"
 mkdir -p "$GKlibOutputFolder/lib/"
 
@@ -79,7 +64,7 @@ cd build
 echo "Configuring GKlib CMake..."
 # GKlib options:
 # - GKLIB_BUILD_APPS=OFF: Don't build GKlib applications (they have Windows compatibility issues)
-eval cmake .. $CMakeGenerator \
+cmake .. -G "$CMakeGenerator" \
     -DCMAKE_INSTALL_PREFIX="install" \
     -DGKLIB_BUILD_APPS=OFF || exit 1
 
@@ -145,7 +130,7 @@ MetisOutputFolder="$PlatformDependencyFolder/Metis"
 
 echo "METIS output folder: $MetisOutputFolder"
 
-rm -rf "$MetisOutputFolder"
+B3DCleanDependencyFolder "$MetisOutputFolder"
 mkdir -p "$MetisOutputFolder/include/"
 mkdir -p "$MetisOutputFolder/lib/"
 mkdir -p "$MetisOutputFolder/bin/"
@@ -181,7 +166,7 @@ cd build
 # - SHARED: Build shared library (we build static by default)
 echo "Configuring METIS CMake..."
 
-eval cmake .. $CMakeGenerator \
+cmake .. -G "$CMakeGenerator" \
     -DCMAKE_INSTALL_PREFIX="install" \
     -DGKLIB_PATH="$GKlibOutputFolder" \
     -DSHARED=OFF || exit 1

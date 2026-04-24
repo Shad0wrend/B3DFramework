@@ -26,6 +26,9 @@ B3DSetDefaultLinkAndCompileFlags(bsfOpenAudio)
 # Includes
 target_include_directories(bsfOpenAudio PRIVATE "./")
 
+# Defines
+target_compile_definitions(bsfOpenAudio PRIVATE FLAC__NO_DLL)
+
 # Libraries
 ## External libs: FLAC, Vorbis, Ogg, OpenAL
 target_link_libraries(bsfOpenAudio PRIVATE ${OpenAL_LIBRARIES})

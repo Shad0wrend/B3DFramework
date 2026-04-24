@@ -108,14 +108,14 @@ PxQueryHitType::Enum PhysXCharacterController::preFilter(const PxFilterData& fil
 	const bool canCollide = GetPhysics().IsCollisionEnabled(colliderLayer, mOwner.GetLayer());
 
 	if(canCollide)
-		return PxSceneQueryHitType::eBLOCK;
+		return PxQueryHitType::eBLOCK;
 
-	return PxSceneQueryHitType::eNONE;
+	return PxQueryHitType::eNONE;
 }
 
 PxQueryHitType::Enum PhysXCharacterController::postFilter(const PxFilterData& filterData, const PxQueryHit& hit)
 {
-	return PxSceneQueryHitType::eBLOCK;
+	return PxQueryHitType::eBLOCK;
 }
 
 bool PhysXCharacterController::filter(const PxController& a, const PxController& b)

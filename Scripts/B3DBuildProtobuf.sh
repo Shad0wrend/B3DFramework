@@ -11,21 +11,6 @@ if ! command -v cmake &> /dev/null; then
     exit 1
 fi
 
-# Platform-specific information
-if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
-    echo "Building for Windows."
-    CMakeGenerator="-G \"Visual Studio 17 2022\" -A x64"
-elif [[ "$Platform" == "darwin"* ]]; then
-    echo "Building for macOS."
-    CMakeGenerator="-G Xcode"
-elif [[ "$Platform" == "linux-gnu"* ]]; then
-    echo "Building for Linux."
-    CMakeGenerator="-G Ninja Multi-Config"
-else
-    echo "[Error] This build script is not currently supported on the current platform: $Platform."
-    exit 1
-fi
-
 # Create intermediate folders
 cd ..
 
@@ -57,7 +42,7 @@ ProtobufOutputFolder="$PlatformDependencyFolder/Protobuf"
 
 echo "Output folder: $ProtobufOutputFolder"
 
-rm -rf "$ProtobufOutputFolder"
+B3DCleanDependencyFolder "$ProtobufOutputFolder"
 mkdir -p "$ProtobufOutputFolder/include/"
 mkdir -p "$ProtobufOutputFolder/lib/"
 mkdir -p "$ProtobufOutputFolder/bin/"
@@ -80,7 +65,7 @@ cd cmake_build
 # - protobuf_MSVC_STATIC_RUNTIME=OFF: Use dynamic MSVC runtime (default)
 echo "Configuring CMake..."
 
-eval cmake ../cmake $CMakeGenerator \
+cmake ../cmake -G "$CMakeGenerator" \
     -DCMAKE_INSTALL_PREFIX="install" \
     -Dprotobuf_BUILD_TESTS=OFF \
     -Dprotobuf_BUILD_SHARED_LIBS=OFF \

@@ -11,6 +11,33 @@ cd "$WORKSPACE"
 # Build type from config (default to RelWithDebInfo)
 BUILD_TYPE="${BUILD_TYPE:-RelWithDebInfo}"
 
+# Platform-specific CMake generator + architecture defaults. Override by exporting
+# B3D_CMAKE_GENERATOR and/or B3D_CMAKE_ARCHITECTURE before invoking this script
+# (e.g. to build for a non-host target such as ARM64 Windows).
+Platform="${PLATFORM:-$OSTYPE}"
+if [[ $Platform == "win32" || $Platform == "msys" || $Platform == "cygwin"* ]]; then
+	DefaultGenerator="Visual Studio 17 2022"
+	DefaultArchitecture="x64"
+elif [[ $Platform == "darwin"* ]]; then
+	DefaultGenerator="Ninja Multi-Config"
+	DefaultArchitecture=""
+elif [[ $Platform == "linux-gnu"* || $Platform == "linux"* ]]; then
+	DefaultGenerator="Ninja Multi-Config"
+	DefaultArchitecture=""
+else
+	echo "::error::Unsupported platform: $Platform"
+	exit 1
+fi
+
+CMakeGenerator="${B3D_CMAKE_GENERATOR:-$DefaultGenerator}"
+CMakeArchitecture="${B3D_CMAKE_ARCHITECTURE-$DefaultArchitecture}"
+
+echo "Platform: $Platform"
+echo "Generator: $CMakeGenerator"
+if [ -n "$CMakeArchitecture" ]; then
+	echo "Architecture: $CMakeArchitecture"
+fi
+
 # Create build directory
 BUILD_DIR="$WORKSPACE/Build"
 
@@ -34,13 +61,18 @@ else
     echo "Running fresh CMake configuration..."
 fi
 
-cmake .. \
-    -G "Visual Studio 17 2022" \
-    -A x64 \
-    -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-    -DCMAKE_INSTALL_PREFIX="$ARTIFACTS_DIR/" \
-    -DB3D_BUILD_ALL_PLUGINS=ON \
+CMakeArgs=(
+    -G "$CMakeGenerator"
+    -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+    -DCMAKE_INSTALL_PREFIX="$ARTIFACTS_DIR/"
+    -DB3D_BUILD_ALL_PLUGINS=ON
     -DB3D_BUILD_TESTS=ON
+)
+if [ -n "$CMakeArchitecture" ]; then
+    CMakeArgs+=(-A "$CMakeArchitecture")
+fi
+
+cmake .. "${CMakeArgs[@]}"
 
 # Build
 echo "::phase::compile"
