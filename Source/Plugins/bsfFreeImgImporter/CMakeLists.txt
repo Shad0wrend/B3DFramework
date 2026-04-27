@@ -18,7 +18,7 @@ B3DSetDefaultLinkAndCompileFlags(bsfFreeImgImporter)
 target_include_directories(bsfFreeImgImporter PRIVATE "./")
 
 # Defines
-target_compile_definitions(bsfFreeImgImporter PRIVATE -D_MBCS -DFREEIMAGE_LIB)
+target_compile_definitions(bsfFreeImgImporter PRIVATE -D_MBCS)
 
 # Libraries
 ## External lib: FreeImage

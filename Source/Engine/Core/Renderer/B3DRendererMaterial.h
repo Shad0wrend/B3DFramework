@@ -544,10 +544,10 @@ namespace b3d
 		}
 
 		template <class T>
-		InitRendererMaterialStart<T> RendererMaterial<T>::mInitOnStart;
+		RendererMaterialMetaData RendererMaterial<T>::mMetaData;
 
 		template <class T>
-		RendererMaterialMetaData RendererMaterial<T>::mMetaData;
+		InitRendererMaterialStart<T> RendererMaterial<T>::mInitOnStart;
 
 		template <class T>
 		SPtr<GpuParameterSet> RendererMaterial<T>::CreateGpuParameterSet(u32 set) const
