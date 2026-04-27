@@ -7,7 +7,10 @@
 
 B3DStartFindPackage(DotNETCoreMono)
 
-set(DotNETCoreMono_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/DotNETCoreMono CACHE PATH "")
+set(DotNETCoreMono_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/DotNETCoreMono)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT DotNETCoreMono_INSTALL_DIR)
+	set(DotNETCoreMono_INSTALL_DIR ${DotNETCoreMono_BUNDLED_INSTALL_DIR} CACHE PATH "Path to DotNETCoreMono dependency" FORCE)
+endif()
 
 B3DPopulateDefaultPackageSearchPaths(DotNETCoreMono)
 list(APPEND DotNETCoreMono_INCLUDE_SEARCH_DIRS ${DotNETCoreMono_INSTALL_DIR}/include)

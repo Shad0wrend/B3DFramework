@@ -7,8 +7,10 @@
 
 B3DStartFindPackage(nvtt)
 
-# Use bundled library, as there is no common packaging for nvtt
-set(nvtt_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/nvtt CACHE PATH "")
+set(nvtt_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/nvtt)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT nvtt_INSTALL_DIR)
+	set(nvtt_INSTALL_DIR ${nvtt_BUNDLED_INSTALL_DIR} CACHE PATH "Path to nvtt dependency" FORCE)
+endif()
 B3DPopulateDefaultPackageSearchPaths(nvtt)
 
 B3DFindImportedIncludes(nvtt nvtt.h)

@@ -7,8 +7,10 @@
 
 B3DStartFindPackage(PhysX)
 
-# Always use bundled library as it is not commonly available
-set(PhysX_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/PhysX CACHE PATH "")
+set(PhysX_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/PhysX)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT PhysX_INSTALL_DIR)
+	set(PhysX_INSTALL_DIR ${PhysX_BUNDLED_INSTALL_DIR} CACHE PATH "Path to PhysX dependency" FORCE)
+endif()
 B3DPopulateDefaultPackageSearchPaths(PhysX)
 
 if(NOT APPLE)

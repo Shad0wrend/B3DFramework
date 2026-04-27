@@ -4,8 +4,9 @@
 #  bison_EXECUTABLE
 #  bison_FOUND
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(bison_INSTALL_DIRS ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/bison CACHE PATH "")
+set(bison_BUNDLED_INSTALL_DIRS ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/bison)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT bison_INSTALL_DIRS)
+	set(bison_INSTALL_DIRS ${bison_BUNDLED_INSTALL_DIRS} CACHE PATH "Path to bison dependency" FORCE)
 endif()
 
 message(STATUS "Looking for bison installation...")

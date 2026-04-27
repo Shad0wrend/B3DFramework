@@ -7,7 +7,10 @@
 
 B3DStartFindPackage(mono)
 
-set(mono_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/mono CACHE PATH "")
+set(mono_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/mono)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT mono_INSTALL_DIR)
+	set(mono_INSTALL_DIR ${mono_BUNDLED_INSTALL_DIR} CACHE PATH "Path to mono dependency" FORCE)
+endif()
 
 B3DPopulateDefaultPackageSearchPaths(mono)
 list(APPEND mono_INCLUDE_SEARCH_DIRS ${mono_INSTALL_DIR}/include/mono-2.0 /usr/include/mono-2.0)

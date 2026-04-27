@@ -7,8 +7,9 @@
 
 B3DStartFindPackage(snappy)
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(snappy_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/snappy CACHE PATH "")
+set(snappy_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/snappy)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT snappy_INSTALL_DIR)
+	set(snappy_INSTALL_DIR ${snappy_BUNDLED_INSTALL_DIR} CACHE PATH "Path to snappy dependency" FORCE)
 endif()
 B3DPopulateDefaultPackageSearchPaths(snappy)
 

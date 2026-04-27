@@ -4,8 +4,9 @@
 #  flex_EXECUTABLE
 #  flex_FOUND
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(flex_INSTALL_DIRS ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/flex CACHE PATH "")
+set(flex_BUNDLED_INSTALL_DIRS ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/flex)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT flex_INSTALL_DIRS)
+	set(flex_INSTALL_DIRS ${flex_BUNDLED_INSTALL_DIRS} CACHE PATH "Path to flex dependency" FORCE)
 endif()
 
 message(STATUS "Looking for flex installation...")

@@ -7,8 +7,9 @@
 
 B3DStartFindPackage(ogg)
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(ogg_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/libogg CACHE PATH "")
+set(ogg_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/libogg)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT ogg_INSTALL_DIR)
+	set(ogg_INSTALL_DIR ${ogg_BUNDLED_INSTALL_DIR} CACHE PATH "Path to ogg dependency" FORCE)
 endif()
 B3DPopulateDefaultPackageSearchPaths(ogg)
 

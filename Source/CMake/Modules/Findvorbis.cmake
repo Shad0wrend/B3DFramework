@@ -7,8 +7,9 @@
 
 B3DStartFindPackage(vorbis)
 
-if(B3D_USE_BUNDLED_LIBRARIES)
-	set(vorbis_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/libvorbis CACHE PATH "")
+set(vorbis_BUNDLED_INSTALL_DIR ${B3D_FRAMEWORK_SOURCE_FOLDER}/../Dependencies/libvorbis)
+if(B3D_USE_BUNDLED_LIBRARIES OR NOT vorbis_INSTALL_DIR)
+	set(vorbis_INSTALL_DIR ${vorbis_BUNDLED_INSTALL_DIR} CACHE PATH "Path to vorbis dependency" FORCE)
 endif()
 B3DPopulateDefaultPackageSearchPaths(vorbis)
 
