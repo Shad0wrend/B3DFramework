@@ -12,13 +12,13 @@ B3D Framework is a C++17 library intended as a foundation for high-performance g
 Current feature-set includes a wide range of high level systems, ranging from math and utility libraries, to an ECS that scales to massive object counts, a physically based renderer backed by Vulkan, a fiber-based scheduler, a UI system with CSS-like stylesheets, an advanced serialization system, a built-in C# scripting system, and input, physics, audio and animation systems, with asset support for most popular resource formats, and a lot more.
  
 # Features
-* [Features](https://github.com/GameFoundry/bsf/blob/master/Documentation/GitHub/features.md) - A detailed list of all currently available features.
-* [Roadmap](https://github.com/GameFoundry/bsf/blob/master/Documentation/GitHub/roadmap.md) - A list of features to be implemented in both near and far future. 
+* [Features](https://github.com/GameFoundry/B3DFramework/blob/master/Documentation/GitHub/features.md) - A detailed list of all currently available features.
+* [Roadmap](https://github.com/GameFoundry/B3DFramework/blob/master/Documentation/GitHub/roadmap.md) - A list of features to be implemented in both near and far future. 
 
 # Get started
-* [Documentation](http://docs.bsframework.io/nightly/index.html) - Head over to the "Manuals" section to learn how to use the framework from the ground up. Use the API reference to look up what a particular class/method does.
-* [Examples](https://github.com/gamefoundry/bsfExamples) - Grab a set of working examples and start tinkering and analyzing them to figure out how things work. They are well documented and can be used for quickly learning the framework.
-* [Compiling](https://github.com/GameFoundry/bsf/blob/master/Documentation/GitHub/compiling.md) - Learn how to compile the framework from the source code. 
+* [Documentation](https://github.com/GameFoundry/B3DFrameworkDocumentation) - Head over to the "Manuals" section to learn how to use the framework from the ground up. Use the API reference to look up what a particular class/method does.
+* [Examples](https://github.com/GameFoundry/B3DFrameworkExamples) - Grab a set of working examples and start tinkering and analyzing them to figure out how things work. They are well documented and can be used for quickly learning the framework.
+* [Building](https://github.com/GameFoundry/B3DFramework/blob/master/Documentation/GitHub/compiling.md) - Learn how to build the framework from the source code. 
 
 # Screenshots
 
