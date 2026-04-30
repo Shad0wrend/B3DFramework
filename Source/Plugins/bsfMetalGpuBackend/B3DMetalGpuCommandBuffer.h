@@ -5,6 +5,7 @@
 #include "B3DMetalPrerequisites.h"
 #include "B3DMetalGpuPipelineState.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "GpuBackend/B3DGpuTimelineFence.h"
 
 namespace b3d
 {
@@ -93,8 +94,12 @@ namespace b3d
 			 * The @p syncMask encodes cross-queue waits: for every queue in the mask other than the
 			 * submitting one, a wait on that queue's shared-event value is prepended, and this queue's
 			 * event value is signaled at the end of the command buffer.
+			 *
+			 * @p signalFences are user-provided timeline fences whose MTLSharedEvent is signaled with
+			 * the requested value once this command buffer's GPU work completes. The signals are encoded
+			 * after the queue's own signal so they observe the same FIFO ordering as cross-queue sync.
 			 */
-			void CommitInternal(MetalGpuQueue& submitQueue, GpuQueueMask syncMask);
+			void CommitInternal(MetalGpuQueue& submitQueue, GpuQueueMask syncMask, TArrayView<const GpuTimelineFenceAndValue> signalFences = {});
 
 			/** Returns the underlying MTLCommandBuffer, acquiring it lazily if needed. */
 			id<MTLCommandBuffer> GetOrAcquireMetalCommandBuffer();

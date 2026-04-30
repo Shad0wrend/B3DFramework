@@ -11,6 +11,7 @@
 #include "B3DMetalGpuParameterSet.h"
 #include "B3DMetalGpuPipelineParameterLayout.h"
 #include "B3DMetalGpuQueryPool.h"
+#include "B3DMetalGpuTimelineFence.h"
 #include "B3DMetalRenderTexture.h"
 #include "B3DMetalRenderWindowSurface.h"
 #include "B3DMetalUtility.h"
@@ -1535,7 +1536,30 @@ namespace b3d
 			return signalValue;
 		}
 
-		void MetalGpuCommandBuffer::CommitInternal(MetalGpuQueue& submitQueue, GpuQueueMask syncMask)
+		namespace
+		{
+			/**
+			 * Encodes one encodeSignalEvent:value: per user-supplied timeline fence on @p cmdBuffer.
+			 * Must be called before [cmdBuffer commit]; ordering against the queue's own signal is
+			 * the command buffer's FIFO order, so calling this *after* EncodeQueueSyncAndSignal
+			 * means user fences fire after the queue event, after every preceding command's GPU work.
+			 */
+			void EncodeUserFenceSignals(id<MTLCommandBuffer> cmdBuffer, TArrayView<const GpuTimelineFenceAndValue> signalFences)
+			{
+				for (const GpuTimelineFenceAndValue& entry : signalFences)
+				{
+					if (!entry.Fence)
+						continue;
+
+					auto* metalFence = static_cast<MetalGpuTimelineFence*>(entry.Fence.get());
+					id<MTLSharedEvent> sharedEvent = metalFence->GetSharedEvent();
+					if (sharedEvent != nil)
+						[cmdBuffer encodeSignalEvent:sharedEvent value:entry.Value];
+				}
+			}
+		}
+
+		void MetalGpuCommandBuffer::CommitInternal(MetalGpuQueue& submitQueue, GpuQueueMask syncMask, TArrayView<const GpuTimelineFenceAndValue> signalFences)
 		{
 			// The commit path creates several autoreleased Obj-C objects (completion-handler block,
 			// NSArray of encoded waits, label strings). Draining locally guarantees they don't
@@ -1589,6 +1613,11 @@ namespace b3d
 				// recording happened to be empty.
 				const u64 signalValue = EncodeQueueSyncAndSignal(emptyCmdBuffer, submitQueue, syncMask);
 
+				// Encode any user-provided timeline fence signals on the same throwaway buffer so the
+				// device-level fence and any caller-supplied fences advance even
+				// when no real work was recorded.
+				EncodeUserFenceSignals(emptyCmdBuffer, signalFences);
+
 				mState = GpuCommandBufferState::Executing;
 
 				SPtr<GpuCommandBuffer> selfShared = GetShared();
@@ -1619,6 +1648,10 @@ namespace b3d
 
 			// A'9: cross-queue wait encoding and signal reservation shared with the empty path.
 			const u64 signalValue = EncodeQueueSyncAndSignal(cmdBuffer, submitQueue, syncMask);
+
+			// User-provided timeline fence signals are appended after the queue's own signal so they
+			// fire only once all of this command buffer's GPU work has retired (FIFO on the cmd buffer).
+			EncodeUserFenceSignals(cmdBuffer, signalFences);
 
 			// Transition through Executing; the completion handler flips to Done on GPU finish. The
 			// handler captures a strong pointer so the command buffer stays alive until completion, and

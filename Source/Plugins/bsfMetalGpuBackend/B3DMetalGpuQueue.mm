@@ -149,7 +149,6 @@ namespace b3d
 			if(flushTransferCommandBuffer)
 				mGpuDevice.SubmitTransferCommandBuffers();
 
-			(void)information.SignalFences; // Metal fence signaling is a TODO; framework default fence is always-signaled stub on this backend.
 			const SPtr<GpuCommandBuffer>& commandBuffer = information.CommandBuffer;
 			if (!commandBuffer)
 				return;
@@ -165,11 +164,12 @@ namespace b3d
 			syncMask |= metalCB->GetQueueSyncMask();
 
 			// Encode cross-queue waits *before* the command buffer's own work, then append a signal on
-			// this queue's event at the end of the buffer. See MetalGpuCommandBuffer::CommitInternal for
-			// the encoding logic. @c CommitInternal also clears the buffer-level sync mask after
-			// consumption, matching the Vulkan cleanup pattern (B3DVulkanGpuCommandBuffer.cpp resets
-			// mQueueSyncMask so subsequent Add/Submit cycles start fresh).
-			metalCB->CommitInternal(*this, syncMask);
+			// this queue's event at the end of the buffer, then encode any user-provided timeline fence
+			// signals after that so they observe the same FIFO ordering. See
+			// MetalGpuCommandBuffer::CommitInternal for the encoding logic. @c CommitInternal also clears
+			// the buffer-level sync mask after consumption, matching the Vulkan cleanup pattern
+			// (B3DVulkanGpuCommandBuffer.cpp resets mQueueSyncMask so subsequent Add/Submit cycles start fresh).
+			metalCB->CommitInternal(*this, syncMask, information.SignalFences);
 		}
 
 		void MetalGpuQueue::WaitUntilIdle()
