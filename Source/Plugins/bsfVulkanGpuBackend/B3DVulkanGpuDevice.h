@@ -4,16 +4,18 @@
 
 #include "B3DVulkanBuiltinResources.h"
 #include "B3DVulkanPrerequisites.h"
+#include "B3DVulkanHeapBackend.h"
 #include "Managers/B3DVulkanDescriptorManager.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "GpuBackend/B3DGpuDeviceCapabilities.h"
 #include "GpuBackend/B3DGpuBackend.h"
+#include "GpuBackend/Allocators/B3DGpuAllocator.h"
+#include "GpuBackend/Allocators/B3DGpuTlsfAllocator.h"
 
 namespace b3d
 {
 	class VulkanGpuBackend;
-	class VulkanHeapBackend;
 	class VulkanGpuTimelineFence;
 
 	namespace render
@@ -30,11 +32,18 @@ namespace b3d
 			VkColorSpaceKHR ColorSpace;
 		};
 
-		/** Result from the allocation functions. */
+		/**
+		 * Result from the allocation functions. Wraps a GPU location (offset within a VkDeviceMemory heap)
+		 * plus an optional persistent map. MappedMemory is non-null when the allocation lives in a
+		 * persistently-mapped, host-visible heap and points to the start of the allocation's memory range.
+		 */
 		struct VulkanAllocationResult
 		{
-			VmaAllocation Handle = VK_NULL_HANDLE; /**< Handle that can be used for releasing the allocation. */
-			void* MappedMemory = nullptr; /**< Pointer to the mapped memory, if the allocation was created with mapping enabled and the memory type supports mapping. */
+			TGpuResourceLocation<VulkanHeapBackend> Location; /**< Allocator slot — heap, offset, size, allocator-private bookkeeping. */
+			void* MappedMemory = nullptr; /**< Heap.Mapped + Location.Offset for host-visible heaps; null otherwise. */
+
+			/** Returns true once the allocator has populated this result with a live slot. */
+			bool IsValid() const { return Location.IsValid(); }
 		};
 
 		/** Represents a single GPU device usable by Vulkan. */
@@ -151,67 +160,65 @@ namespace b3d
 			 */
 
 			/**
-			 * Allocates memory for the provided image, and binds it to the image. Returns null allocation handle if it cannot find memory
-			 * with the specified flags.
+			 * Allocates memory for @p image and binds it. Picks the best memory type satisfying @p requiredFlags
+			 * and (where possible) the @p preferredFlags hint, then suballocates from the per-memory-type
+			 * allocator. @p kind controls buffer-image granularity placement: Non-linear for optimally-tiled 
+			 * images, linear for linearly-tiled images and buffers.
+			 *
+			 * TODO: TLSF allocator not currently thread safe, VMA used to be
 			 *
 			 * Thread safe.
 			 */
-			VulkanAllocationResult AllocateMemory(VkImage image, VmaMemoryUsage usage);
+			VulkanAllocationResult AllocateMemory(VkImage image, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, GpuResourceKind kind);
 
 			/**
-			 * Allocates memory for the provided buffer, and binds it to the buffer. Returns null allocation handle if it cannot find memory
-			 * with the specified flags.
+			 * Allocates memory for @p buffer and binds it. Picks the best memory type satisfying @p requiredFlags
+			 * and (where possible) the @p preferredFlags hint, then suballocates from the per-memory-type allocator.
 			 *
 			 * Thread safe.
 			 */
-			VulkanAllocationResult AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage);
+			VulkanAllocationResult AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags);
 
 			/**
-			 * Frees a previously allocated block of memory.
+			 * Returns @p allocation to its allocator's free pool synchronously. The slot becomes
+			 * immediately available for reuse on the very next AllocateMemory call.
+			 *
+			 * Caller must guarantee the GPU is no longer using the underlying memory range.
 			 *
 			 * Thread safe.
 			 */
-			void FreeMemory(VmaAllocation allocation);
+			void FreeMemory(VulkanAllocationResult& allocation);
 
 			/**
-			 * Returns a pointer to internal buffer memory. The allocation must be in host visible memory. The GPU
-			 * must not be currently writing to the buffer. If the allocation is done in non-coherent memory, you need
-			 * to call InvalidateMemory() on the touched memory range before accessing it. Must be followed by
-			 * UnmapMemory() once done using the buffer.
+			 * Returns the persistent CPU pointer for @p allocation, offset by @p offset bytes. The allocation must
+			 * live in a host-visible memory type (heaps for those types are persistently mapped on creation).
 			 *
 			 * Thread safe.
 			 */
-			void* MapMemory(const VmaAllocation& allocation) const;
+			u8* MapMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset = 0) const;
 
 			/**
-			 * Unmaps the memory mapped via MapMemory().
+			 * No-op for persistently-mapped heaps; retained for symmetry with @c MapMemory.
 			 *
 			 * Thread safe.
 			 */
-			void UnmapMemory(const VmaAllocation& allocation) const;
+			void UnmapMemory(const VulkanAllocationResult& allocation) const;
 
 			/**
-			 * Invalidates a memory range of the provided allocation. This ensures any data written by the GPU will be visible
-			 * to the CPU. Only relevant for non-coherent memory.
+			 * Invalidates @p [offset, offset+size) within @p allocation so subsequent CPU reads observe GPU writes.
+			 * Only relevant for non-coherent memory.
 			 *
 			 * Thread safe.
 			 */
-			void InvalidateMemory(const VmaAllocation& allocation, VkDeviceSize offset = 0 , VkDeviceSize size = VK_WHOLE_SIZE) const;
+			void InvalidateMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE) const;
 
 			/**
-			 * Flushes a memory range of the provided allocation. This ensures any data written by the CPU will be visible
-			 * to the GPU. Only relevant for non-coherent memory.
+			 * Flushes @p [offset, offset+size) within @p allocation so subsequent GPU reads observe CPU writes.
+			 * Only relevant for non-coherent memory.
 			 *
 			 * Thread safe.
 			 */
-			void FlushMemory(const VmaAllocation& allocation, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE) const;
-
-			/**
-			 * Returns the device memory block and offset into the block for a specific memory allocation.
-			 *
-			 * Thread safe.
-			 */
-			void GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset);
+			void FlushMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE) const;
 
 			/** @} */
 
@@ -231,8 +238,18 @@ namespace b3d
 			/** Initializes the capabilities of the device. */
 			void InitializeCapabilities();
 
-			/** Attempts to find a memory type that matches the requirements bits and the requested flags. */
-			uint32_t FindMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags);
+			/**
+			 * Picks a memory-type index satisfying @p typeBits and the @p required flags, with a preference
+			 * scoring against @p preferred. Returns VK_MAX_MEMORY_TYPES on failure.
+			 */
+			u32 PickMemoryTypeIndex(u32 typeBits, VkMemoryPropertyFlags required, VkMemoryPropertyFlags preferred) const;
+
+			/**
+			 * Returns the GPU memory allocator backing memory type @p memoryTypeIndex, lazily creating it on
+			 * first use. Each allocator owns its own VkDeviceMemory heaps via the shared VulkanHeapBackend
+			 * and is locked to a single memory-type index.
+			 */
+			TGpuTlsfAllocator<VulkanHeapBackend>& GetOrCreateGpuMemoryAllocator(u32 memoryTypeIndex);
 
 			/** Marks the device as a primary device. */
 			void SetIsPrimary() { mIsPrimary = true; }
@@ -244,7 +261,6 @@ namespace b3d
 			VulkanDescriptorManager* mDescriptorManager;
 			VulkanResourceManager* mResourceManager;
 			VulkanBuiltinResources mBuiltinResources;
-			VmaAllocator mAllocator;
 
 			VkPhysicalDeviceProperties mDeviceProperties;
 			VkPhysicalDeviceFeatures mDeviceFeatures;
@@ -263,6 +279,12 @@ namespace b3d
 
 			bool mSupportsTimelineSemaphore = false;
 			UPtr<VulkanHeapBackend> mHeapBackend;
+
+			/** Per-memory-type TLSF allocator pool. Slots are lazily populated on first allocation. */
+			UPtr<TGpuTlsfAllocator<VulkanHeapBackend>> mGpuMemoryAllocators[VK_MAX_MEMORY_TYPES];
+
+			/** Guards lazy creation of @c mTlsfAllocators entries. */
+			mutable Mutex mGpuMemoryAllocatorMutex;
 		};
 
 		/** @} */

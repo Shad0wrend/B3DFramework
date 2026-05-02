@@ -66,7 +66,7 @@ namespace b3d
 	/**
 	 * CRTP base for GPU allocation strategies. Provides deferred-free and owner-relocation logic.
 	 *
-	 * @tparam Derived		Allocator strategy implementing TryAllocateImpl, DeallocateImpl and FreeImmediateImpl.
+	 * @tparam Derived		Allocator strategy implementing TryAllocateImpl, FreeImpl and FreeImmediateImpl.
 	 * @tparam HeapBackend	Backend trait satisfying the GpuHeapBackend contract.
 	 */
 	template <typename Derived, typename HeapBackend>
@@ -103,12 +103,26 @@ namespace b3d
 		}
 
 		/**
-		 * Retires a previously allocated location and resets it to the empty state. Deallocation
-		 * is deferred until the associated resource is no longer used on the GPU.
+		 * Retires a previously allocated location and resets it to the empty state. Frees are
+		 * deferred until the associated resource is no longer used on the GPU.
 		 */
-		void Deallocate(Location& allocation)
+		void Free(Location& allocation)
 		{
-			static_cast<Derived*>(this)->DeallocateImpl(allocation);
+			static_cast<Derived*>(this)->FreeImpl(allocation);
+			allocation.Reset();
+		}
+
+		/**
+		 * Releases @p allocation immediately, bypassing the deferred-free queue. The slot is
+		 * returned to the pool synchronously so a subsequent TryAllocate can reuse it.
+		 *
+		 * The caller must guarantee the GPU is no longer using the underlying memory range — for
+		 * example, when the caller already gates resource destruction on a separate use-count or
+		 * frame fence. Use Free when no such guarantee exists.
+		 */
+		void FreeImmediate(Location& allocation)
+		{
+			static_cast<Derived*>(this)->FreeImmediateImpl(allocation.AllocatorData0, allocation.AllocatorData1);
 			allocation.Reset();
 		}
 

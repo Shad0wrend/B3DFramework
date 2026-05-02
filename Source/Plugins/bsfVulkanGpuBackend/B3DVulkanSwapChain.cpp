@@ -200,7 +200,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<Vulkan
 		imageDesc.Image = depthStencilImage;
 		imageDesc.Usage = TextureUsageFlag::DepthStencil;
 		imageDesc.Format = depthFormat;
-		imageDesc.Allocation = device.AllocateMemory(depthStencilImage, VMA_MEMORY_USAGE_GPU_ONLY);
+		imageDesc.Allocation = device.AllocateMemory(depthStencilImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, GpuResourceKind::NonLinear);
 
 		mDepthStencilImage = owner->Create<VulkanImage>(imageDesc, true, false);
 

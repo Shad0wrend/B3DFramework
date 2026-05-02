@@ -12,7 +12,7 @@ using namespace b3d;
 using namespace b3d::render;
 
 VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VulkanAllocationResult allocation, const StringView& name)
-	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation.Handle), mMappedMemory(allocation.MappedMemory)
+	: VulkanResource(owner, false, name), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation), mMappedMemory(allocation.MappedMemory)
 {
 }
 
@@ -52,12 +52,10 @@ u8* VulkanBuffer::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateR
 	if(isInvalidateRequired)
 		device.InvalidateMemory(mAllocation, offset, size);
 
-	void* data = device.MapMemory(mAllocation);
-
 	mMappedOffset = offset;
 	mMappedSize = size;
 
-	return (u8*)data + offset;
+	return device.MapMemory(mAllocation, offset);
 }
 
 void VulkanBuffer::Unmap(bool isFlushRequired)
@@ -317,22 +315,49 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 
 	mBufferCI.size = size;
 
-	VmaMemoryUsage memoryUsage;
+	// Map the engine's high-level buffer-usage hint to (required, preferred) memory-property flags. The
+	// PickMemoryTypeIndex picker prefers the lowest-index type that has all required bits and the most
+	// matching preferred bits — this mirrors VMA's prior behaviour for these usage classes.
+	VkMemoryPropertyFlags requiredFlags = 0;
+	VkMemoryPropertyFlags preferredFlags = 0;
 	if(staging)
 	{
 		if(readable)
-			memoryUsage = VMA_MEMORY_USAGE_GPU_TO_CPU;
+		{
+			// CPU readback (e.g. transfer-dst staging): host-visible + cached for fast CPU reads.
+			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+			preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+		}
 		else
-			memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
+		{
+			// CPU upload staging: host-visible + coherent for write-combined upload.
+			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+			preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		}
 	}
 	else if(mInformation.Type == GpuBufferType::StagingRead)
-		memoryUsage = VMA_MEMORY_USAGE_GPU_TO_CPU;
+	{
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+	}
 	else if(mInformation.Type == GpuBufferType::StagingWrite)
-		memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
+	{
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
 	else if(mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
-		memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-	else // StoreOnGPU
-		memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+	{
+		// Persistent CPU-write-then-GPU-read buffer (e.g. dynamic uniform buffers). Prefer ReBAR-style
+		// HOST_VISIBLE + DEVICE_LOCAL when available, otherwise plain HOST_VISIBLE.
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
+	else
+	{
+		// Pure GPU buffer (vertex / index / structured / uniform with TRANSFER_DST init): DEVICE_LOCAL only.
+		requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		preferredFlags = 0;
+	}
 
 	VkDevice vkDevice = device.GetLogical();
 
@@ -340,7 +365,7 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	VkResult result = vkCreateBuffer(vkDevice, &mBufferCI, gVulkanAllocator, &buffer);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VulkanAllocationResult allocation = device.AllocateMemory(buffer, memoryUsage);
+	VulkanAllocationResult allocation = device.AllocateMemory(buffer, requiredFlags, preferredFlags);
 	mBufferCI.usage = usage; // Restore original usage
 
 	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;

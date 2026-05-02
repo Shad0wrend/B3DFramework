@@ -143,7 +143,7 @@ namespace b3d
 			GpuBufferFlags mFlags;
 			VkBuffer mBuffer;
 			TInlineArray<ViewInformation, 2> mViews;
-			VmaAllocation mAllocation;
+			VulkanAllocationResult mAllocation;
 			void* mMappedMemory = nullptr;
 
 			mutable VkDeviceSize mMappedOffset = 0;

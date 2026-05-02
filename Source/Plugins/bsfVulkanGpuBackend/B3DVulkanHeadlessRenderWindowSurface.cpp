@@ -63,7 +63,7 @@ void VulkanHeadlessRenderWindowSurface::CreateSwapChainImages()
 		imageCreateInformation.Image = vkImage;
 		imageCreateInformation.Usage = TextureUsageFlag::RenderTarget;
 		imageCreateInformation.Format = colorFormat;
-		imageCreateInformation.Allocation = presentDevice->AllocateMemory(vkImage, VMA_MEMORY_USAGE_GPU_ONLY);
+		imageCreateInformation.Allocation = presentDevice->AllocateMemory(vkImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, GpuResourceKind::NonLinear);
 
 		mColorImages[imageIndex] = resourceManager->Create<VulkanImage>(imageCreateInformation, true, false);
 		if(mColorImages[imageIndex] != nullptr)
@@ -84,7 +84,7 @@ void VulkanHeadlessRenderWindowSurface::CreateSwapChainImages()
 		imageCreateInformation.Image = depthVkImage;
 		imageCreateInformation.Usage = TextureUsageFlag::DepthStencil;
 		imageCreateInformation.Format = depthFormat;
-		imageCreateInformation.Allocation = presentDevice->AllocateMemory(depthVkImage, VMA_MEMORY_USAGE_GPU_ONLY);
+		imageCreateInformation.Allocation = presentDevice->AllocateMemory(depthVkImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 0, GpuResourceKind::NonLinear);
 
 		mDepthImage = resourceManager->Create<VulkanImage>(imageCreateInformation, true, false);
 		if(mDepthImage != nullptr)

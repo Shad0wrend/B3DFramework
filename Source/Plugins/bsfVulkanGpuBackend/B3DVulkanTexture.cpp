@@ -36,7 +36,7 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VulkanAllo
 {}
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& createInformation, bool ownsImage, bool isShaderReadAllowed, const StringView& name)
-	: VulkanResource(owner, false, name), mImage(createInformation.Image), mAllocation(createInformation.Allocation.Handle), mMappedMemory(createInformation.Allocation.MappedMemory), mUsage(createInformation.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(createInformation.FaceCount), mDepthSliceCount(createInformation.DepthSliceCount), mMipLevelCount(createInformation.MipLevelCount)
+	: VulkanResource(owner, false, name), mImage(createInformation.Image), mAllocation(createInformation.Allocation), mMappedMemory(createInformation.Allocation.MappedMemory), mUsage(createInformation.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(createInformation.FaceCount), mDepthSliceCount(createInformation.DepthSliceCount), mMipLevelCount(createInformation.MipLevelCount)
 {
 	mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	mImageViewCI.pNext = nullptr;
@@ -428,12 +428,10 @@ u8* VulkanImage::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateRe
 	if(isInvalidateRequired)
 		device.InvalidateMemory(mAllocation, offset, size);
 
-	void* data = device.MapMemory(mAllocation);
-
 	mMappedOffset = offset;
 	mMappedSize = size;
 
-	return (u8*)data + offset;
+	return device.MapMemory(mAllocation, offset);
 }
 
 void VulkanImage::Unmap(bool isFlushRequired)
@@ -870,8 +868,25 @@ void VulkanTexture::Invalidate(u32 mipLevel, u32 arrayLayer)
 
 VulkanImage* VulkanTexture::CreateImage(PixelFormat format)
 {
-	bool directlyMappable = mImageCreateInformation.tiling == VK_IMAGE_TILING_LINEAR;
-	VmaMemoryUsage memoryUsage = directlyMappable ? VMA_MEMORY_USAGE_CPU_TO_GPU : VMA_MEMORY_USAGE_GPU_ONLY;
+	const bool directlyMappable = mImageCreateInformation.tiling == VK_IMAGE_TILING_LINEAR;
+
+	// Linearly-tiled images are CPU-accessible by spec and route through host-visible memory; optimally-tiled
+	// images live exclusively in DEVICE_LOCAL memory and are populated via staging copies.
+	VkMemoryPropertyFlags requiredFlags;
+	VkMemoryPropertyFlags preferredFlags;
+	GpuResourceKind kind;
+	if(directlyMappable)
+	{
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		kind = GpuResourceKind::Linear;
+	}
+	else
+	{
+		requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		preferredFlags = 0;
+		kind = GpuResourceKind::NonLinear;
+	}
 
 	VkDevice vkDevice = mGpuDevice.GetLogical();
 
@@ -881,7 +896,7 @@ VulkanImage* VulkanTexture::CreateImage(PixelFormat format)
 	VkResult result = vkCreateImage(vkDevice, &mImageCreateInformation, gVulkanAllocator, &image);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(image, memoryUsage);
+	VulkanAllocationResult allocation = mGpuDevice.AllocateMemory(image, requiredFlags, preferredFlags, kind);
 
 	VulkanImage *const vulkanImage = mGpuDevice.GetResourceManager().Create<VulkanImage>(image, allocation, mImageCreateInformation.initialLayout, mImageCreateInformation.format, GetProperties());
 	vulkanImage->SetName(mName);

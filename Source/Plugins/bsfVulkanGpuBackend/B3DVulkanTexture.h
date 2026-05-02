@@ -216,7 +216,7 @@ namespace b3d
 			};
 
 			VkImage mImage;
-			VmaAllocation mAllocation;
+			VulkanAllocationResult mAllocation;
 			VulkanImageView mMainView;
 			VulkanImageView mFramebufferMainView;
 			TextureUsageFlags mUsage;

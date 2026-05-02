@@ -1,6 +1,8 @@
 //************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DVulkanGpuDevice.h"
+
+#include <algorithm>
 #include "B3DVulkanGpuQueue.h"
 #include "B3DVulkanGpuCommandBuffer.h"
 #include "B3DVulkanGpuTimelineFence.h"
@@ -24,7 +26,6 @@
 static_assert(false, "Other platform includes go here.");
 #endif
 
-#define VMA_IMPLEMENTATION
 #include "B3DVulkanEventQuery.h"
 #include "B3DGLSLToSPIRV.h"
 #include "B3DVulkanGpuBuffer.h"
@@ -36,11 +37,45 @@ static_assert(false, "Other platform includes go here.");
 #include "B3DVulkanTexture.h"
 #include "GpuBackend/B3DGpuProgramParameterDescription.h"
 #include "GpuBackend/B3DGpuBackendUtility.h"
-#include "ThirdParty/vk_mem_alloc.h"
 #include "Utility/B3DBitwise.h"
 
 using namespace b3d;
 using namespace b3d::render;
+
+namespace
+{
+	/**
+	 * Builds a @c VkMappedMemoryRange for @p [offset, offset+size) within @p allocation, expanding
+	 * the range outward so the resulting offset and size satisfy
+	 * - offset must be a multiple of nonCoherentAtomSize
+	 * - size must be a multiple of nonCoherentAtomSize, OR offset+size must equal the device memory size.
+	 *
+	 * The allocator places allocations at offsets driven by the resource's required alignment, which
+	 * is generally smaller than nonCoherentAtomSize (typically 64–256 bytes). Rounding the offset
+	 * down and the end up always stays within the bounds of the parent device memory because the heap
+	 * itself is sized to whole multiples of @c nonCoherentAtomSize per Vulkan spec.
+	 */
+	VkMappedMemoryRange BuildNonCoherentMappedMemoryRange(const VulkanAllocationResult& allocation, VkDeviceSize offset, VkDeviceSize size, VkDeviceSize atom)
+	{
+		const VkDeviceSize absOffset = allocation.Location.Offset + offset;
+		const VkDeviceSize absEnd = (size == VK_WHOLE_SIZE) ? (allocation.Location.Offset + allocation.Location.Size) : (absOffset + size);
+
+		const VkDeviceSize atomMask = atom - 1;
+		const VkDeviceSize alignedOffset = atom > 1 ? (absOffset & ~atomMask) : absOffset;
+		VkDeviceSize alignedEnd = atom > 1 ? ((absEnd + atomMask) & ~atomMask) : absEnd;
+
+		// Clamp the end against the underlying device memory in case the upward round overruns its tail.
+		alignedEnd = std::min(alignedEnd, allocation.Location.Heap.Size);
+
+		VkMappedMemoryRange range = {};
+		range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		range.memory = allocation.Location.Heap.Memory;
+		range.offset = alignedOffset;
+		range.size = alignedEnd - alignedOffset;
+
+		return range;
+	}
+}
 
 VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	: mPhysicalDevice(device), mQueueInfos(), mBuiltinResources(*this)
@@ -143,9 +178,6 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	extensions[extensionCount++] = VK_KHR_MAINTENANCE2_EXTENSION_NAME;
 
 	// Enumerate supported extensions
-	bool dedicatedAllocExt = false;
-	bool getMemReqExt = false;
-
 	uint32_t availableExtensionCount = 0;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &availableExtensionCount, nullptr);
 	if(availableExtensionCount > 0)
@@ -155,17 +187,7 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 		{
 			for(auto entry : availableExtensions)
 			{
-				if(strcmp(entry.extensionName, VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME) == 0)
-				{
-					extensions[extensionCount++] = VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME;
-					dedicatedAllocExt = true;
-				}
-				else if(strcmp(entry.extensionName, VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) == 0)
-				{
-					extensions[extensionCount++] = VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME;
-					getMemReqExt = true;
-				}
-				else if(strcmp(entry.extensionName, VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME) == 0)
+				if(strcmp(entry.extensionName, VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME) == 0)
 				{
 					extensions[extensionCount++] = VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME;
 				}
@@ -234,18 +256,6 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 		}
 	}
 
-	// Set up the memory allocator
-	VmaAllocatorCreateInfo allocatorCI = {};
-	allocatorCI.physicalDevice = device;
-	allocatorCI.device = mLogicalDevice;
-	allocatorCI.instance = GetVulkanGpuBackend().GetVkInstance();
-	allocatorCI.pAllocationCallbacks = gVulkanAllocator;
-
-	if(dedicatedAllocExt && getMemReqExt)
-		allocatorCI.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
-
-	vmaCreateAllocator(&allocatorCI, &mAllocator);
-
 	mDefaultSubmissionFence = B3DMakeShared<VulkanGpuTimelineFence>(*this);
 	mHeapBackend = B3DMakeUnique<VulkanHeapBackend>(*this);
 
@@ -289,10 +299,21 @@ VulkanGpuDevice::~VulkanGpuDevice()
 	// Needs to happen after query pool & command buffer pool shutdown, to ensure their resources are destroyed
 	B3DDelete(mResourceManager);
 
+	// Drain every per-memory-type allocator before tearing down the heap backend; the allocator
+	// destructor releases all owned heaps via mHeapBackend, so the heap backend must outlive it.
+	for (u32 typeIndex = 0; typeIndex < VK_MAX_MEMORY_TYPES; typeIndex++)
+	{
+		UPtr<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator = mGpuMemoryAllocators[typeIndex];
+		if (allocator != nullptr)
+		{
+			allocator->Flush(0, true);
+			allocator.reset();
+		}
+	}
+
 	mHeapBackend.reset();
 	mDefaultSubmissionFence.reset();
 
-	vmaDestroyAllocator(mAllocator);
 	vkDestroyDevice(mLogicalDevice, gVulkanAllocator);
 }
 
@@ -658,6 +679,9 @@ void VulkanGpuDevice::EndFrame()
 	// Advance transfer buffer helper pools to next frame
 	mTransferBufferHelper->EndFrame();
 
+	// No per-frame deferred-free drain is required: VulkanBuffer / VulkanImage destruction is gated
+	// by VulkanResource::mUsedCount and FreeMemory returns each slot to its allocator synchronously.
+
 	// Signal end-of-frame to submit thread. This blocks until the previous frame's resources are safe to reuse.
 	GetVulkanSubmitThread().QueueEndFrameAndWaitForPreviousFrame();
 }
@@ -851,100 +875,159 @@ SurfaceFormat VulkanGpuDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, boo
 	return output;
 }
 
-VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
+VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkImage image, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, GpuResourceKind kind)
 {
-	VmaAllocationCreateInfo allocationCreateInformation = {};
-	allocationCreateInformation.usage = usage;
-	allocationCreateInformation.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
+	VkMemoryRequirements requirements = {};
+	vkGetImageMemoryRequirements(mLogicalDevice, image, &requirements);
 
-	VmaAllocationInfo allocationInfo;
-	VmaAllocation allocation;
-	VkResult result = vmaAllocateMemoryForImage(mAllocator, image, &allocationCreateInformation, &allocation, &allocationInfo);
-	B3D_ASSERT(result == VK_SUCCESS);
+	const u32 memoryTypeIndex = PickMemoryTypeIndex(requirements.memoryTypeBits, requiredFlags, preferredFlags);
+	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested image allocation flags.");
 
-	result = vkBindImageMemory(mLogicalDevice, image, allocationInfo.deviceMemory, allocationInfo.offset);
-	B3D_ASSERT(result == VK_SUCCESS);
+	TGpuTlsfAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
 
 	VulkanAllocationResult output;
-	output.Handle = allocation;
-	output.MappedMemory = allocationInfo.pMappedData;
+	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, kind, output.Location);
+	B3D_ASSERT(ok && "TLSF allocator failed to satisfy image allocation request.");
+	(void)ok;
+
+	const VkResult bindResult = vkBindImageMemory(mLogicalDevice, image, output.Location.Heap.Memory, output.Location.Offset);
+	B3D_ASSERT(bindResult == VK_SUCCESS);
+	(void)bindResult;
+
+	if (output.Location.Heap.Mapped != nullptr)
+		output.MappedMemory = static_cast<u8*>(output.Location.Heap.Mapped) + output.Location.Offset;
 
 	return output;
 }
 
-VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage)
+VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags)
 {
-	VmaAllocationCreateInfo allocationCreateInformation = {};
-	allocationCreateInformation.usage = usage;
-	allocationCreateInformation.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
+	VkMemoryRequirements requirements = {};
+	vkGetBufferMemoryRequirements(mLogicalDevice, buffer, &requirements);
 
-	VmaAllocationInfo allocationInfo;
-	VmaAllocation allocation;
-	VkResult result = vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocationCreateInformation, &allocation, &allocationInfo);
-	B3D_ASSERT(result == VK_SUCCESS);
+	const u32 memoryTypeIndex = PickMemoryTypeIndex(requirements.memoryTypeBits, requiredFlags, preferredFlags);
+	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested buffer allocation flags.");
 
-	result = vkBindBufferMemory(mLogicalDevice, buffer, allocationInfo.deviceMemory, allocationInfo.offset);
-	B3D_ASSERT(result == VK_SUCCESS);
+	TGpuTlsfAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
 
 	VulkanAllocationResult output;
-	output.Handle = allocation;
-	output.MappedMemory = allocationInfo.pMappedData;
+	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, output.Location);
+	B3D_ASSERT(ok && "TLSF allocator failed to satisfy buffer allocation request.");
+	(void)ok;
+
+	const VkResult bindResult = vkBindBufferMemory(mLogicalDevice, buffer, output.Location.Heap.Memory, output.Location.Offset);
+	B3D_ASSERT(bindResult == VK_SUCCESS);
+	(void)bindResult;
+
+	if (output.Location.Heap.Mapped != nullptr)
+		output.MappedMemory = static_cast<u8*>(output.Location.Heap.Mapped) + output.Location.Offset;
 
 	return output;
 }
 
-void VulkanGpuDevice::FreeMemory(VmaAllocation allocation)
+void VulkanGpuDevice::FreeMemory(VulkanAllocationResult& allocation)
 {
-	vmaFreeMemory(mAllocator, allocation);
+	if (!allocation.IsValid())
+		return;
+
+	const u32 memoryTypeIndex = allocation.Location.Heap.MemoryTypeIndex;
+	TGpuTlsfAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
+	allocator.FreeImmediate(allocation.Location);
+	allocation.MappedMemory = nullptr;
 }
 
-void* VulkanGpuDevice::MapMemory(const VmaAllocation& allocation) const
+u8* VulkanGpuDevice::MapMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset) const
 {
-	void* data;
-	VkResult result = vmaMapMemory(mAllocator, allocation, &data);
+	B3D_ASSERT(allocation.MappedMemory != nullptr && "Allocation does not live in a host-visible / persistently-mapped heap.");
+	return static_cast<u8*>(allocation.MappedMemory) + offset;
+}
+
+void VulkanGpuDevice::UnmapMemory(const VulkanAllocationResult& /*allocation*/) const
+{
+	// No-op: heaps backing host-visible memory types are persistently mapped at heap creation.
+}
+
+void VulkanGpuDevice::InvalidateMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset, VkDeviceSize size) const
+{
+	if (!allocation.IsValid())
+		return;
+
+	const VkMappedMemoryRange range = BuildNonCoherentMappedMemoryRange(allocation, offset, size, mDeviceProperties.limits.nonCoherentAtomSize);
+
+	const VkResult result = vkInvalidateMappedMemoryRanges(mLogicalDevice, 1, &range);
 	B3D_ASSERT(result == VK_SUCCESS);
-
-	return data;
+	(void)result;
 }
 
-void VulkanGpuDevice::UnmapMemory(const VmaAllocation& allocation) const
+void VulkanGpuDevice::FlushMemory(const VulkanAllocationResult& allocation, VkDeviceSize offset, VkDeviceSize size) const
 {
-	vmaUnmapMemory(mAllocator, allocation);
-}
+	if (!allocation.IsValid())
+		return;
 
-void VulkanGpuDevice::InvalidateMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
-{
-	VkResult result = vmaInvalidateAllocation(mAllocator, allocation, offset, size);
+	const VkMappedMemoryRange range = BuildNonCoherentMappedMemoryRange(allocation, offset, size, mDeviceProperties.limits.nonCoherentAtomSize);
+
+	const VkResult result = vkFlushMappedMemoryRanges(mLogicalDevice, 1, &range);
 	B3D_ASSERT(result == VK_SUCCESS);
+	(void)result;
 }
 
-void VulkanGpuDevice::FlushMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
+u32 VulkanGpuDevice::PickMemoryTypeIndex(u32 typeBits, VkMemoryPropertyFlags required, VkMemoryPropertyFlags preferred) const
 {
-	VkResult result = vmaFlushAllocation(mAllocator, allocation, offset, size);
-	B3D_ASSERT(result == VK_SUCCESS);
-}
+	u32 bestIndex = VK_MAX_MEMORY_TYPES;
+	u32 bestScore = 0;
+	bool bestIsValid = false;
 
-void VulkanGpuDevice::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
-{
-	VmaAllocationInfo allocInfo;
-	vmaGetAllocationInfo(mAllocator, allocation, &allocInfo);
-
-	memory = allocInfo.deviceMemory;
-	offset = allocInfo.offset;
-}
-
-uint32_t VulkanGpuDevice::FindMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags)
-{
-	for(uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; i++)
+	for (u32 typeIndex = 0; typeIndex < mMemoryProperties.memoryTypeCount; typeIndex++)
 	{
-		if(requirementBits & (1 << i))
+		if ((typeBits & (1u << typeIndex)) == 0)
+			continue;
+
+		const VkMemoryPropertyFlags flags = mMemoryProperties.memoryTypes[typeIndex].propertyFlags;
+		if ((flags & required) != required)
+			continue;
+
+		// Score by number of preferred bits matched; ties resolved by lowest index.
+		const u32 score = Bitwise::CountSetBits(flags & preferred);
+		if (!bestIsValid || score > bestScore)
 		{
-			if((mMemoryProperties.memoryTypes[i].propertyFlags & wantedFlags) == wantedFlags)
-				return i;
+			bestIsValid = true;
+			bestScore = score;
+			bestIndex = typeIndex;
 		}
 	}
 
-	return -1;
+	return bestIndex;
+}
+
+TGpuTlsfAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuMemoryAllocator(u32 memoryTypeIndex)
+{
+	B3D_ASSERT(memoryTypeIndex < mMemoryProperties.memoryTypeCount);
+
+	{
+		Lock lock(mGpuMemoryAllocatorMutex);
+		UPtr<TGpuTlsfAllocator<VulkanHeapBackend>>& slot = mGpuMemoryAllocators[memoryTypeIndex];
+		if (slot != nullptr)
+			return *slot;
+
+		const VkMemoryPropertyFlags flags = mMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags;
+		const bool isHostVisible = (flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0;
+		const bool isDeviceLocalOnly = (flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0 && !isHostVisible;
+
+		typename TGpuTlsfAllocator<VulkanHeapBackend>::Configuration configuration;
+		configuration.InitialHeapSize = isDeviceLocalOnly ? (64ull * 1024 * 1024) : (16ull * 1024 * 1024);
+		configuration.MaxHeapSize = 256ull * 1024 * 1024;
+		configuration.GrowthFactor = 2;
+		configuration.MaxEmptyHeapCount = 1;
+		configuration.MinAllocationSize = 16;
+		configuration.BufferImageGranularity = mDeviceProperties.limits.bufferImageGranularity;
+
+		configuration.HeapCreateInfo.MemoryTypeBits = (1u << memoryTypeIndex);
+		configuration.HeapCreateInfo.PropertyFlags = flags;
+		configuration.HeapCreateInfo.MapPersistently = isHostVisible;
+
+		slot = B3DMakeUnique<TGpuTlsfAllocator<VulkanHeapBackend>>(mHeapBackend.get(), this, configuration);
+		return *slot;
+	}
 }
 
 void VulkanGpuDevice::InitializeCapabilities()

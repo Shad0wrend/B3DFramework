@@ -183,7 +183,7 @@ namespace b3d
 		 */
 
 		bool TryAllocateImpl(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, Location& out);
-		void DeallocateImpl(Location& allocation);
+		void FreeImpl(Location& allocation);
 		void FreeImmediateImpl(u32 heapIndex, u32 nodeIndex);
 
 		/** @} */
@@ -519,7 +519,7 @@ namespace b3d
 	}
 
 	template <typename HeapBackend>
-	void TGpuTlsfAllocator<HeapBackend>::DeallocateImpl(Location& allocation)
+	void TGpuTlsfAllocator<HeapBackend>::FreeImpl(Location& allocation)
 	{
 		B3D_ASSERT(allocation.Allocator == this);
 		B3D_ASSERT(allocation.AllocatorData0 < (u32)mHeaps.size());

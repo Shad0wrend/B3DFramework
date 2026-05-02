@@ -26,8 +26,6 @@
 #undef MemoryBarrier // Conflicting define from winnt.h
 #undef None // Conflicting define from Xlib
 
-#include "ThirdParty/vk_mem_alloc.h"
-
 /** @addtogroup Plugins
  *  @{
  */

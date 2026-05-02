@@ -30,7 +30,7 @@ namespace b3d
 		/**
 		 * Behavioural cases for the deferred-delete queue: FIFO drain stops at the first incomplete
 		 * entry, subsequent advances drain remaining entries in order, Flush(true) drains
-		 * unconditionally, and the public Deallocate path snapshots slot identity into the queue
+		 * unconditionally, and the public Free path snapshots slot identity into the queue
 		 * then resets the caller's location.
 		 */
 		void TestGpuAllocatorDeferredDelete();
@@ -57,8 +57,8 @@ namespace b3d
 		/** Compiles the TLSF allocator against the mock backend, asserts trait validation, instantiates with a fresh heap. */
 		void TestTlsf_ContractAndInitialState();
 
-		/** Single allocate / deallocate round-trip with deferred-fence drain. */
-		void TestTlsf_SingleAllocateDeallocate();
+		/** Single allocate / free round-trip with deferred-fence drain. */
+		void TestTlsf_SingleAllocateFree();
 
 		/** Multiple allocations land at non-overlapping offsets aligned to the requested alignment. */
 		void TestTlsf_NonOverlappingAlignedOffsets();
