@@ -2,7 +2,7 @@
 ######################## Pre-built dependency download ################################
 #######################################################################################
 
-set(B3D_PREBUILT_DEPENDENCIES_URL "http://bearishsun.brontes.feralhosting.com/Banshee/DataPackages" CACHE STRING "The location that binary packages (prebuilt dependencies, built-in assets) will be pulled from.")
+set(B3D_PREBUILT_DEPENDENCIES_URL "https://dependencies.banshee3d.io" CACHE STRING "The location that binary packages (prebuilt dependencies, built-in assets) will be pulled from.")
 mark_as_advanced(B3D_PREBUILT_DEPENDENCIES_URL)
 
 # Downloads and extracts a package if the version is out of date.
