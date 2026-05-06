@@ -660,10 +660,13 @@ void VulkanGpuDevice::WaitUntilIdle()
 
 void VulkanGpuDevice::BeginFrame()
 {
+	ASSERT_IF_NOT_RENDER_THREAD
 }
 
 void VulkanGpuDevice::EndFrame()
 {
+	ASSERT_IF_NOT_RENDER_THREAD
+
 	RunDefragPass();
 	SubmitTransferCommandBuffers();
 

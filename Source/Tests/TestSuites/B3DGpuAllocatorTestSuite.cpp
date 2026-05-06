@@ -156,7 +156,7 @@ namespace
 	{
 	public:
 		u64 GetCurrentFrameIndex() const override { return mCurrent; }
-		bool IsFrameComplete(u64 index) const override { return index <= mCompleted; }
+		bool IsFrameComplete(u64 index) const override { return mAnyComplete && index <= mCompleted; }
 
 		/**
 		 * Simulates the device advancing to the next frame: bumps the current frame counter by one
@@ -172,12 +172,17 @@ namespace
 		/** Simulates the GPU completing all work up to (and including) frame @p index. */
 		void MarkFrameComplete(u64 index)
 		{
-			B3D_ASSERT(index >= mCompleted);
+			B3D_ASSERT(!mAnyComplete || index >= mCompleted);
 			mCompleted = index;
+			mAnyComplete = true;
 		}
 
 		/** Simulates the GPU catching up to the most recently advanced frame. */
-		void MarkAllFramesComplete() { mCompleted = mCurrent; }
+		void MarkAllFramesComplete()
+		{
+			mCompleted = mCurrent;
+			mAnyComplete = true;
+		}
 
 		u64 CurrentFrameIndex() const { return mCurrent; }
 		u64 CompletedFrameIndex() const { return mCompleted; }
@@ -185,6 +190,7 @@ namespace
 	private:
 		u64 mCurrent = 0;
 		u64 mCompleted = 0;
+		bool mAnyComplete = false;
 	};
 
 	using MockLocation = TGpuResourceLocation<MockHeapBackend>;
@@ -493,18 +499,23 @@ void GpuAllocatorTestSuite::TestFrameTracker_AdvancesOnEndFrame()
 
 	const u64 indexBefore = device->GetCurrentFrameIndex();
 
-	device->BeginFrame();
-	device->EndFrame();
+	// BeginFrame / EndFrame have a render-thread-only contract — backends advance render-thread-owned
+	// command-buffer pool rings without internal synchronization. Drive them from the render thread.
+	const auto fnTickFrame = [device = device.get()]()
+	{
+		device->BeginFrame();
+		device->EndFrame();
+	};
+
+	GetRenderThread().PostCommand(fnTickFrame, "TestFrameTracker_AdvancesOnEndFrame::Tick", true);
 
 	const u64 indexAfter = device->GetCurrentFrameIndex();
 	B3D_TEST_ASSERT(indexAfter == indexBefore + 1)
 
 	// After kMaximumFramesInFlight further EndFrame ticks, the original frame must be reported complete.
 	for (u32 i = 0; i < RenderThread::kMaximumFramesInFlight; i++)
-	{
-		device->BeginFrame();
-		device->EndFrame();
-	}
+		GetRenderThread().PostCommand(fnTickFrame, "TestFrameTracker_AdvancesOnEndFrame::Tick", true);
+
 	device->WaitUntilIdle();
 	B3D_TEST_ASSERT(device->IsFrameComplete(indexBefore))
 }
