@@ -898,7 +898,7 @@ VulkanBuffer* VulkanGpuDevice::CreateBuffer(const VulkanBufferCreateInformation&
 
 	const VulkanAllocationResult allocation = AllocateMemory(buffer, requiredFlags, preferredFlags);
 
-	return CreateBuffer(createInformation, allocation, parent);
+	return BindBufferToAllocation(createInformation, buffer, allocation, parent);
 }
 
 VulkanBuffer* VulkanGpuDevice::CreateBuffer(const VulkanBufferCreateInformation& createInformation, const VulkanAllocationResult& allocation, VulkanGpuBuffer* parent)
