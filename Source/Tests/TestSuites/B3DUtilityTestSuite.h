@@ -25,5 +25,6 @@ namespace b3d
 		void TestMPSCQueue();
 		void TestSPSCQueue();
 		void TestHashedString();
+		void TestUnique();
 	};
 } // namespace b3d

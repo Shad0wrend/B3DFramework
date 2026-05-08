@@ -26,6 +26,16 @@ namespace b3d
 			return *this;
 		}
 
+		constexpr const FirstType& GetFirst() const
+		{
+			return *this;
+		}
+
+		constexpr SecondType& GetSecond()
+		{
+			return Second;
+		}
+
 		constexpr const SecondType& GetSecond() const
 		{
 			return Second;
@@ -258,6 +268,9 @@ namespace b3d
 
 	template <typename Type, ThreadSafetyPolicy ThreadSafety = ThreadSafe>
 	class TWeak;
+
+	template <typename Type, typename AllocatorTag, typename DeleterType>
+	class TUnique;
 
 	template <class Type, class = void>
 	struct TSupportsSharedFromThis : std::false_type {};
@@ -551,6 +564,19 @@ namespace b3d
 			}
 		}
 
+		/** Adopt ownership of the object held by a TUnique. The unique pointer's deleter is preserved on the shared control block. */
+		template <typename OtherType, typename OtherAllocatorTag, typename OtherDeleterType,
+			std::enable_if_t<std::conjunction_v<std::is_convertible<OtherType*, Type*>>, int> = 0>
+		TShared(TUnique<OtherType, OtherAllocatorTag, OtherDeleterType>&& other)
+		{
+			OtherType* pointer = other.Get();
+			if(pointer != nullptr)
+			{
+				this->Construct(pointer, B3DNew<TSharedControlBlockWithCustomDeleter<OtherType, OtherDeleterType, ThreadSafety>>(pointer, std::move(other.GetDeleter())));
+				other.Release();
+			}
+		}
+
 		~TShared()
 		{
 			this->DecrementStrongReferenceCount();
@@ -584,6 +610,14 @@ namespace b3d
 
 		template<typename OtherType, typename DeleterType, std::enable_if_t<std::conjunction_v<std::is_convertible<OtherType, Type>, std::is_convertible<typename std::unique_ptr<OtherType, DeleterType>::pointer, Type*>>, int> = 0>
 		TShared& operator=(std::unique_ptr<OtherType, DeleterType>&& rhs)
+		{
+			TShared(std::move(rhs)).Swap(*this);
+			return *this;
+		}
+
+		template <typename OtherType, typename OtherAllocatorTag, typename OtherDeleterType,
+			std::enable_if_t<std::conjunction_v<std::is_convertible<OtherType*, Type*>>, int> = 0>
+		TShared& operator=(TUnique<OtherType, OtherAllocatorTag, OtherDeleterType>&& rhs)
 		{
 			TShared(std::move(rhs)).Swap(*this);
 			return *this;

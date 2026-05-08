@@ -247,6 +247,7 @@
 #include "Utility/B3DFlags.h"
 #include "Utility/B3DUtil.h"
 #include "Utility/B3DShared.h"
+#include "Utility/B3DUnique.h"
 #include "Utility/B3DEvent.h"
 #include "Utility/B3DPlatformUtility.h"
 #include "Utility/B3DNonCopyable.h"
