@@ -38,7 +38,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		UPtr<IJointImplementation> CreateImplementation() override;
+		TUnique<IJointImplementation> CreateImplementation() override;
 		void CalculateLocalBodyTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
 		FixedJointCreateInformation mInformation;

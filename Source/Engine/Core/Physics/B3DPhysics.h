@@ -101,7 +101,7 @@ namespace b3d
 		virtual TShared<PhysicsMaterial> CreateMaterial(float staticFriction, float dynamicFriction, float restitution) = 0;
 
 		/** Creates a physics mesh implementation. See PhysicsMesh::Create. */
-		virtual UPtr<IPhysicsMeshImplementation> CreateMesh(const TShared<MeshData>& meshData, PhysicsMeshType type) = 0;
+		virtual TUnique<IPhysicsMeshImplementation> CreateMesh(const TShared<MeshData>& meshData, PhysicsMeshType type) = 0;
 
 		/** Creates an object representing the physics scene. Must be manually released via destroyPhysicsScene(). */
 		virtual TShared<PhysicsScene> CreatePhysicsScene() = 0;
@@ -110,10 +110,10 @@ namespace b3d
 		virtual TShared<ColliderShape> CreateColliderShape() = 0;
 
 		/** Creates an object that provides low-level functionality required for a Collider. */
-		virtual UPtr<IColliderImplementation> CreateColliderImplementation() = 0;
+		virtual TUnique<IColliderImplementation> CreateColliderImplementation() = 0;
 
 		/** Creates an object that provides low-level functionality required for a Rigidbody. */
-		virtual UPtr<IRigidbodyImplementation> CreateRigidbodyImplementation(Rigidbody& owner) = 0;
+		virtual TUnique<IRigidbodyImplementation> CreateRigidbodyImplementation(Rigidbody& owner) = 0;
 
 		/**
 		 * Checks does the ray hit the provided collider shape.
@@ -600,25 +600,25 @@ namespace b3d
 		/******************************************************************************************************************/
 
 		/** Creates a new fixed joint. */
-		virtual UPtr<IFixedJointImplementation> CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation) = 0;
+		virtual TUnique<IFixedJointImplementation> CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new distance joint. */
-		virtual UPtr<IDistanceJointImplementation> CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation) = 0;
+		virtual TUnique<IDistanceJointImplementation> CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new hinge joint. */
-		virtual UPtr<IHingeJointImplementation> CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation) = 0;
+		virtual TUnique<IHingeJointImplementation> CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new spherical joint. */
-		virtual UPtr<ISphericalJointImplementation> CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation) = 0;
+		virtual TUnique<ISphericalJointImplementation> CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new spherical joint. */
-		virtual UPtr<ISliderJointImplementation> CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation) = 0;
+		virtual TUnique<ISliderJointImplementation> CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation) = 0;
 
 		/** Creates a new D6 joint. */
-		virtual UPtr<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) = 0;
+		virtual TUnique<ID6JointImplementation> CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation) = 0;
 
 		/** Creates a new character controller. */
-		virtual UPtr<ICharacterControllerImplementation> CreateCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation) = 0;
+		virtual TUnique<ICharacterControllerImplementation> CreateCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation) = 0;
 
 		/** @copydoc PhysicsScene::BoxOverlap() */
 		virtual Vector<ColliderShape*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;

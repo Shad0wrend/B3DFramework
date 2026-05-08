@@ -137,7 +137,7 @@ void D6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
 		GetImplementation().SetDriveVelocity(linear, angular);
 }
 
-UPtr<IJointImplementation> D6Joint::CreateImplementation()
+TUnique<IJointImplementation> D6Joint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateD6Joint(*this, mInformation);

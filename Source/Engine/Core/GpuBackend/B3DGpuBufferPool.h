@@ -156,7 +156,7 @@ namespace b3d::render
 	 *   pool.Release(allocation);
 	 *
 	 * Usage - Tracked (automatic release on destruction):
-	 *   UPtr<TrackedGpuBufferSuballocation> allocation = pool.AllocateTracked();
+	 *   TUnique<TrackedGpuBufferSuballocation> allocation = pool.AllocateTracked();
 	 *   // ... use allocation ...
 	 *   // Automatically released when allocation goes out of scope
 	 */
@@ -194,7 +194,7 @@ namespace b3d::render
 		 *
 		 * @return	Tracked suballocation handle (always valid)
 		 */
-		UPtr<TrackedGpuBufferSuballocation> AllocateTracked();
+		TUnique<TrackedGpuBufferSuballocation> AllocateTracked();
 
 		/**
 		 * Manually releases a suballocation.

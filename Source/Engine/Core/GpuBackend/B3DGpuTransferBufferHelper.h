@@ -32,7 +32,7 @@ namespace b3d
 		/** Per-thread data containing transfer buffer state. */
 		struct ThreadData
 		{
-			UPtr<render::GpuCommandBufferPoolRing> PoolRing; /**< Ring buffer of pools for allocating transfer command buffers. */
+			TUnique<render::GpuCommandBufferPoolRing> PoolRing; /**< Ring buffer of pools for allocating transfer command buffers. */
 			TShared<render::GpuCommandBuffer> CurrentCommandBuffer; /**< Currently active transfer buffer, if any. */
 			ThreadId OwnerThread; /**< Thread ID that owns this data. */
 		};
@@ -83,7 +83,7 @@ namespace b3d
 		u32 mTargetQueueIndex;
 
 		Mutex mRegistryMutex;
-		Vector<UPtr<ThreadData>> mThreadRegistry;
+		Vector<TUnique<ThreadData>> mThreadRegistry;
 	};
 
 	/** @} */

@@ -25,7 +25,7 @@ TShared<PhysicsMaterial> NullPhysics::CreateMaterial(float staticFriction, float
 	return B3DMakeShared<NullPhysicsMaterial>(staticFriction, dynamicFriction, restitution);
 }
 
-UPtr<IPhysicsMeshImplementation> NullPhysics::CreateMesh(const TShared<MeshData>& meshData, PhysicsMeshType type)
+TUnique<IPhysicsMeshImplementation> NullPhysics::CreateMesh(const TShared<MeshData>& meshData, PhysicsMeshType type)
 {
 	return B3DMakeUnique<NullPhysicsMeshImplementation>(meshData, type);
 }
@@ -43,12 +43,12 @@ TShared<ColliderShape> NullPhysics::CreateColliderShape()
 	return B3DMakeShared<NullPhysicsColliderShape>();
 }
 
-UPtr<IColliderImplementation> NullPhysics::CreateColliderImplementation()
+TUnique<IColliderImplementation> NullPhysics::CreateColliderImplementation()
 {
 	return B3DMakeUnique<NullPhysicsCollider>();
 }
 
-UPtr<IRigidbodyImplementation> NullPhysics::CreateRigidbodyImplementation(Rigidbody& owner)
+TUnique<IRigidbodyImplementation> NullPhysics::CreateRigidbodyImplementation(Rigidbody& owner)
 {
 	return B3DMakeUnique<NullPhysicsRigidbody>(owner);
 }
@@ -69,37 +69,37 @@ NullPhysicsScene::~NullPhysicsScene()
 	GetNullPhysics().NotifySceneDestroyedInternal(this);
 }
 
-UPtr<IFixedJointImplementation> NullPhysicsScene::CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation)
+TUnique<IFixedJointImplementation> NullPhysicsScene::CreateFixedJoint(Joint& owner, const FixedJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsFixedJoint>();
 }
 
-UPtr<IDistanceJointImplementation> NullPhysicsScene::CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation)
+TUnique<IDistanceJointImplementation> NullPhysicsScene::CreateDistanceJoint(Joint& owner, const DistanceJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsDistanceJoint>();
 }
 
-UPtr<IHingeJointImplementation> NullPhysicsScene::CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation)
+TUnique<IHingeJointImplementation> NullPhysicsScene::CreateHingeJoint(Joint& owner, const HingeJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsHingeJoint>();
 }
 
-UPtr<ISphericalJointImplementation> NullPhysicsScene::CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation)
+TUnique<ISphericalJointImplementation> NullPhysicsScene::CreateSphericalJoint(Joint& owner, const SphericalJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsSphericalJoint>();
 }
 
-UPtr<ISliderJointImplementation> NullPhysicsScene::CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation)
+TUnique<ISliderJointImplementation> NullPhysicsScene::CreateSliderJoint(Joint& owner, const SliderJointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsSliderJoint>();
 }
 
-UPtr<ID6JointImplementation> NullPhysicsScene::CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation)
+TUnique<ID6JointImplementation> NullPhysicsScene::CreateD6Joint(Joint& owner, const D6JointCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsD6Joint>();
 }
 
-UPtr<ICharacterControllerImplementation> NullPhysicsScene::CreateCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation)
+TUnique<ICharacterControllerImplementation> NullPhysicsScene::CreateCharacterController(CharacterController& owner, const CharacterControllerCreateInformation& createInformation)
 {
 	return B3DMakeUnique<NullPhysicsCharacterController>(owner, createInformation);
 }

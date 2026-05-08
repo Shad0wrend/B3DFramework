@@ -61,7 +61,7 @@ void SliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-UPtr<IJointImplementation> SliderJoint::CreateImplementation()
+TUnique<IJointImplementation> SliderJoint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateSliderJoint(*this, mInformation);

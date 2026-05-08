@@ -368,7 +368,7 @@ void Package::AddResource(const Path& path, const TShared<Resource>& resource)
 		metaData->Flags.Set(PackageResourceFlag::Folder);
 	}
 
-	UPtr<ResourceInformation> resourceInformation = B3DMakeUnique<ResourceInformation>();
+	TUnique<ResourceInformation> resourceInformation = B3DMakeUnique<ResourceInformation>();
 	resourceInformation->LoadedResource = resource;
 	resourceInformation->MetaData = metaData;
 	resourceInformation->LoadState = PackageResourceLoadState::Loaded;
@@ -1170,7 +1170,7 @@ TShared<Package> Package::Clone() const
 
 		B3D_ASSERT(entry.second->LoadState != PackageResourceLoadState::InProgress);
 
-		UPtr<ResourceInformation> resourceInformationClone = B3DMakeUnique<ResourceInformation>();
+		TUnique<ResourceInformation> resourceInformationClone = B3DMakeUnique<ResourceInformation>();
 		resourceInformationClone->MetaData = B3DRTTIClone(resourceInformation->MetaData);
 		resourceInformationClone->LoadState = resourceInformation->LoadState;
 		resourceInformationClone->LoadProgress.store(resourceInformation->LoadProgress.load());
@@ -1196,11 +1196,11 @@ void Package::CopyResourceLoadStatesFromClone(const Package& otherPackage)
 		if (found == mResourceInformationByUUID.end())
 			continue;
 
-		const UPtr<ResourceInformation>& otherResourceInfo = entry.second;
+		const TUnique<ResourceInformation>& otherResourceInfo = entry.second;
 		B3D_ASSERT(otherResourceInfo != nullptr);
 		B3D_ASSERT(otherResourceInfo->LoadState != PackageResourceLoadState::InProgress);
 
-		const UPtr<ResourceInformation>& resourceInformation= found->second;
+		const TUnique<ResourceInformation>& resourceInformation= found->second;
 		B3D_ASSERT(resourceInformation!= nullptr);
 
 		if (resourceInformation->LoadState != otherResourceInfo->LoadState)

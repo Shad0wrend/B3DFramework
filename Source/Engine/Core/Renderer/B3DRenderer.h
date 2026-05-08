@@ -306,8 +306,8 @@ namespace b3d
 			void ProcessTask(RendererTask& task, bool forceAll);
 
 			TShared<GpuDevice> mDevice;
-			UPtr<GpuCommandBufferPoolRing> mCommandBufferPoolRing;
-			UPtr<GpuParameterSetPool> mParameterSetPool;
+			TUnique<GpuCommandBufferPoolRing> mCommandBufferPoolRing;
+			TUnique<GpuParameterSetPool> mParameterSetPool;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			bool mRendererExtensionsDirty = true;

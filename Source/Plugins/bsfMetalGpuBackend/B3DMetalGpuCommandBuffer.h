@@ -165,7 +165,7 @@ namespace b3d
 
 			MetalGpuDevice& mGpuDevice;
 			MetalGpuCommandBufferPool& mPool;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			u32 mId;
 
 			// Cached pipeline + input state; applied to the render encoder at bind time.

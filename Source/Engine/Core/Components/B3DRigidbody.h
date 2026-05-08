@@ -349,7 +349,7 @@ namespace b3d
 		void OnEnabled() override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
-		UPtr<IRigidbodyImplementation> mImplementation;
+		TUnique<IRigidbodyImplementation> mImplementation;
 		Vector<HCollider> mChildColliders;
 		HJoint mParentJoint;
 

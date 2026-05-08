@@ -144,7 +144,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			TArray<MetalArgumentBufferBinding> mBindings;
 			u64 mArgumentBufferSize = 0;
 			u32 mArgumentBufferAlignment = 16;

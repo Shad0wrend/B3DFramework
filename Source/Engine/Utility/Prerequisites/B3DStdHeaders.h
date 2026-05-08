@@ -136,7 +136,7 @@ namespace b3d
 	 * The object is destroyed automatically when the pointer to the object is destroyed.
 	 */
 	template <typename T, typename AllocatorTag = DefaultAllocatorTag, typename Delete = Deleter<T, AllocatorTag>>
-	using UPtr = std::unique_ptr<T, Delete>;
+	using TUnique = std::unique_ptr<T, Delete>;
 
 	/** @} */
 
@@ -245,14 +245,14 @@ namespace b3d
 	 * Pointer specific data will be allocated using the provided allocator category.
 	 */
 	template <typename Type, typename AllocatorTag = DefaultAllocatorTag, typename Delete = Deleter<Type, AllocatorTag>>
-	UPtr<Type, AllocatorTag, Delete> B3DMakeUniqueFromExisting(Type* data, Delete del = Delete())
+	TUnique<Type, AllocatorTag, Delete> B3DMakeUniqueFromExisting(Type* data, Delete del = Delete())
 	{
 		return std::unique_ptr<Type, Delete>(data, std::move(del));
 	}
 
 	/** Create a new unique pointer using a custom allocator category. */
 	template <typename Type, typename AllocatorTag = DefaultAllocatorTag, typename Delete = Deleter<Type, AllocatorTag>, typename... Args>
-	UPtr<Type, AllocatorTag, Delete> B3DMakeUnique(Args&&... args)
+	TUnique<Type, AllocatorTag, Delete> B3DMakeUnique(Args&&... args)
 	{
 		Type* rawPtr = B3DNew<Type, AllocatorTag>(std::forward<Args>(args)...);
 

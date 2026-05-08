@@ -258,7 +258,7 @@ void Importer::QueueForImport(SpecificImporter* importer, const Path& inputFileP
 				perImporterQueue = foundQueue->second.get();
 			else
 			{
-				UPtr<SchedulerTicketQueue> newQueue = B3DMakeUnique<SchedulerTicketQueue>(GetApplication().GetTaskScheduler());
+				TUnique<SchedulerTicketQueue> newQueue = B3DMakeUnique<SchedulerTicketQueue>(GetApplication().GetTaskScheduler());
 				perImporterQueue = newQueue.get();
 
 				mPerImporterQueues[importer] = std::move(newQueue);

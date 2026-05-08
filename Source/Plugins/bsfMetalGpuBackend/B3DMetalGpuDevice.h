@@ -174,7 +174,7 @@ namespace b3d
 			TShared<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
 			TShared<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation) override;
 			TShared<GpuPipelineParameterSetLayout> CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription) override;
-			UPtr<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) override;
+			TUnique<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) override;
 			TShared<GpuTimelineFence> CreateTimelineFence() override;
 
 			void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) override;
@@ -219,8 +219,8 @@ namespace b3d
 			// reached during device teardown skip deferred-release queuing and release their backing
 			// Metal handles synchronously. Never cleared.
 			bool mIsShuttingDown = false;
-			UPtr<Impl> mImpl;
-			UPtr<MetalHeapAllocator> mHeapAllocator;
+			TUnique<Impl> mImpl;
+			TUnique<MetalHeapAllocator> mHeapAllocator;
 			QueueInfo mQueueInfos[GQT_COUNT];
 			GpuDeviceCapabilities mCapabilities;
 			TShared<VideoModeInfo> mVideoModeInfo;

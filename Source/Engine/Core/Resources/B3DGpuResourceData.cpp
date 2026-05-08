@@ -45,7 +45,7 @@ u8* GpuResourceData::GetData() const
 	return mData;
 }
 
-void GpuResourceData::SetData(UPtr<u8[]>& data)
+void GpuResourceData::SetData(TUnique<u8[]>& data)
 {
 	VerifyLockAndThread(this);
 

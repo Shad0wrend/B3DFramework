@@ -111,7 +111,7 @@ namespace b3d
 	class B3D_EXPORT Fiber
 	{
 	public:
-		Fiber(UPtr<marl::OSFiber>&& osFiber, u32 id);
+		Fiber(TUnique<marl::OSFiber>&& osFiber, u32 id);
 
 		/** Returns the thread that the fiber is running on. */
 		const SchedulerThread& GetSchedulerThread() const { return *mOwningThread; }
@@ -172,7 +172,7 @@ namespace b3d
 		 * @param	workerFunction	Function to execute when the fiber gets switched to.
 		 * @return					Newly allocated fiber.
 		 */
-		static UPtr<Fiber> Create(u32 id, u64 stackSize, const std::function<void()>& workerFunction);
+		static TUnique<Fiber> Create(u32 id, u64 stackSize, const std::function<void()>& workerFunction);
 
 		/**
 		 * Creates a new fiber using the current thread's context.
@@ -180,7 +180,7 @@ namespace b3d
 		 * @param	id		Unique id of the fiber within the current thread.
 		 * @return			Newly allocated fiber.
 		 */
-		static UPtr<Fiber> CreateFromCurrentThread(u32 id);
+		static TUnique<Fiber> CreateFromCurrentThread(u32 id);
 
 		/** Returns the currently executing fiber, or null if no scheduler is bound to this thread. */
 		static Fiber* Get();
@@ -350,7 +350,7 @@ namespace b3d
 		const Mode mMode;
 		Scheduler* const mOwnerScheduler;
 
-		UPtr<Fiber> mMainFiber;
+		TUnique<Fiber> mMainFiber;
 		Fiber* mCurrentFiber = nullptr;
 
 		Thread mThread;
@@ -368,7 +368,7 @@ namespace b3d
 		Mutex mMutex;
 
 		UnorderedSet<Fiber*> mFreeFibers;
-		TInlineArray<UPtr<Fiber>, 16> mAllFibers;
+		TInlineArray<TUnique<Fiber>, 16> mAllFibers;
 		bool mIsShutdownRequested = false;
 	};
 	

@@ -45,7 +45,7 @@ void SphericalJoint::SetFlag(SphericalJointFlag flag, bool isEnabled)
 		GetImplementation().SetFlag(flag, isEnabled);
 }
 
-UPtr<IJointImplementation> SphericalJoint::CreateImplementation()
+TUnique<IJointImplementation> SphericalJoint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateSphericalJoint(*this, mInformation);

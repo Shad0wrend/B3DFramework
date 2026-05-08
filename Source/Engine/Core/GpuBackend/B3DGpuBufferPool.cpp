@@ -190,7 +190,7 @@ GpuBufferSuballocation GpuBufferPool::Allocate()
 	return Allocate();
 }
 
-b3d::UPtr<TrackedGpuBufferSuballocation> GpuBufferPool::AllocateTracked()
+b3d::TUnique<TrackedGpuBufferSuballocation> GpuBufferPool::AllocateTracked()
 {
 	GpuBufferSuballocation allocation = Allocate();
 	return b3d::B3DMakeUnique<TrackedGpuBufferSuballocation>(this, allocation);

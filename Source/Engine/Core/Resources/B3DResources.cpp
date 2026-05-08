@@ -23,7 +23,7 @@ const ResourceLoadOptions ResourceLoadOptions::kDefault;
  * Attempts to acquire a read lock on the package containing the resource at the provided virtual/physical path. Returns true if the lock
  * was acquired, in which case also outputs the lock and the ID of the locked resource. Also see PackageManager::AcquireReadLock().
  */
-static bool TryAcquirePackageLockForResourceLoad(const Path& resourcePath, const char* lockReason, UPtr<PackageReadLock>& outReadLock, UUID& outResourceId)
+static bool TryAcquirePackageLockForResourceLoad(const Path& resourcePath, const char* lockReason, TUnique<PackageReadLock>& outReadLock, UUID& outResourceId)
 {
 	PackageManager& packageManager = GetPackageManager();
 
@@ -57,7 +57,7 @@ static bool TryAcquirePackageLockForResourceLoad(const Path& resourcePath, const
  * Attempts to acquire a write lock on the package containing the resource with the provided ID. Returns true if the lock was acquired, in which case also
  * outputs the lock and the physical path of the package containing the resource . Also see PackageManager::AcquireWriteLock().
  */
-static bool TryAcquirePackageLockForResourceLoad(const UUID& resourceId, const char* lockReason, UPtr<PackageReadLock>& outReadLock, Path& outPackagePath)
+static bool TryAcquirePackageLockForResourceLoad(const UUID& resourceId, const char* lockReason, TUnique<PackageReadLock>& outReadLock, Path& outPackagePath)
 {
 	PackageManager& packageManager = GetPackageManager();
 
@@ -82,7 +82,7 @@ Resources::~Resources()
 
 HResource Resources::Load(const Path& resourcePath, const ResourceLoadOptions& loadOptions)
 {
-	UPtr<PackageReadLock> packageReadLock;
+	TUnique<PackageReadLock> packageReadLock;
 	UUID resourceId;
 	if(!TryAcquirePackageLockForResourceLoad(resourcePath, "Load resource", packageReadLock, resourceId))
 	{
@@ -126,7 +126,7 @@ HResource Resources::Load(const UUID& resourceId, const ResourceLoadOptions& loa
 			return *result;
 	}
 
-	UPtr<PackageReadLock> packageReadLock;
+	TUnique<PackageReadLock> packageReadLock;
 	Path packagePath;
 	if(!TryAcquirePackageLockForResourceLoad(resourceId, "Load resource", packageReadLock, packagePath))
 	{
@@ -144,7 +144,7 @@ HResource Resources::Load(const UUID& resourceId, const ResourceLoadOptions& loa
 
 bool Resources::Exists(const Path& resourcePath) const
 {
-	UPtr<PackageReadLock> packageReadLock;
+	TUnique<PackageReadLock> packageReadLock;
 	UUID resourceId;
 	return TryAcquirePackageLockForResourceLoad(resourcePath, "Check resource exists", packageReadLock, resourceId);
 }
@@ -159,12 +159,12 @@ bool Resources::Exists(const UUID& resourceId) const
 			return found->second->ResourceHandle.Lock();
 	}
 
-	UPtr<PackageReadLock> packageReadLock;
+	TUnique<PackageReadLock> packageReadLock;
 	Path packagePath;
 	return TryAcquirePackageLockForResourceLoad(resourceId, "Check resource exists", packageReadLock, packagePath);
 }
 
-HResource Resources::LoadFromPackage(UPtr<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions)
+HResource Resources::LoadFromPackage(TUnique<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions)
 {
 	const TShared<Package>& package = packageReadLock->GetPackage();
 	const TShared<const PackageResourceMetaData>& metaData = package->GetResourceMetaData(resourceId);
@@ -338,7 +338,7 @@ void Resources::TryFinalizeLoad(const TShared<InProgressLoadInformation>& inProg
 		}
 		else
 		{
-			UPtr<LoadedResourceInformation> newLoadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
+			TUnique<LoadedResourceInformation> newLoadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
 			newLoadedResourceInformation->ResourceHandle = inProgressLoadInformation->ResourceHandle.GetWeak();
 
 			loadedResourceInformation = newLoadedResourceInformation.get();
@@ -473,7 +473,7 @@ void Resources::Destroy(ResourceHandleData& handleData)
 		Lock lock(mLoadedResourceMutex);
 
 		// TODO - Do I need to wait for in-progress loads to finish above?
-		UPtr<LoadedResourceInformation> loadedResourceInformation;
+		TUnique<LoadedResourceInformation> loadedResourceInformation;
 		if(auto found = mLoadedResourceInformation.find(resourceId); found != mLoadedResourceInformation.end())
 		{
 			loadedResourceInformation = std::move(found->second);
@@ -493,7 +493,7 @@ void Resources::Destroy(ResourceHandleData& handleData)
 		if(const auto& packagePath = packageManager.TryGetPackagePathForResource(resourceId); packagePath.has_value())
 		{
 			AcquirePackageReadLockOptions readLockOptions(false, true, "Destroy resource");
-			UPtr<PackageReadLock> packageReadLock;
+			TUnique<PackageReadLock> packageReadLock;
 			const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(*packagePath, readLockOptions, packageReadLock);
 			if(lockResult != AcquirePackageLockResult::Acquired || packageReadLock == nullptr)
 				return;
@@ -575,7 +575,7 @@ void Resources::DestroyHandleData(ResourceHandleData& handleData)
 		mHandles.erase(found);
 }
 
-void Resources::UpdateResourcesFromPackage(const UPtr<PackageWriteLock>& packageWriteLock)
+void Resources::UpdateResourcesFromPackage(const TUnique<PackageWriteLock>& packageWriteLock)
 {
 	if(!B3D_ENSURE(packageWriteLock != nullptr))
 		return;
@@ -661,7 +661,7 @@ void Resources::GetLoadProgressRecursive(const HResource& resource, UnorderedMap
 		const Path& packagePath = *maybePackagePath;
 
 		AcquirePackageReadLockOptions readLockOptions(false, true, "GetLoadProgress");
-		UPtr<PackageReadLock> packageReadLock;
+		TUnique<PackageReadLock> packageReadLock;
 		const AcquirePackageLockResult lockResult = packageManager.AcquireReadLock(packagePath, readLockOptions, packageReadLock);
 		if(lockResult != AcquirePackageLockResult::Acquired || packageReadLock == nullptr)
 			return LoadProgress();
@@ -738,7 +738,7 @@ HResource Resources::CreateResourceHandle(const TShared<Resource>& resource, con
 
 			resource->SetHandle(newHandle.GetWeak());
 
-			UPtr<LoadedResourceInformation> loadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
+			TUnique<LoadedResourceInformation> loadedResourceInformation = B3DMakeUnique<LoadedResourceInformation>();
 			loadedResourceInformation->ResourceHandle = newHandle.GetWeak();
 
 			mLoadedResourceInformation[resourceId] = std::move(loadedResourceInformation);

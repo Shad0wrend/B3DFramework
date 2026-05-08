@@ -79,7 +79,7 @@ namespace b3d
 		
 	private:
 		u8 mCullingQueryIndex = 0;
-		UPtr<GUIElementQuadTree> mQuadTree;
+		TUnique<GUIElementQuadTree> mQuadTree;
 		UnorderedMap<GUIElement*, GUIElementCullInformation> mNonCulledElements;
 		TInlineArray<GUIElement*, 4> mVisibleElements;
 		float mMaximumQuadTreeSize = 50000.0f;

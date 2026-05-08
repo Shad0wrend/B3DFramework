@@ -197,7 +197,7 @@ namespace b3d
 		void WaitForAsync(SpecificImporter* importer);
 
 		Vector<SpecificImporter*> mAssetImporters;
-		UnorderedMap<SpecificImporter*, UPtr<SchedulerTicketQueue>> mPerImporterQueues; /**< Queues for importers having to run sequential tasks. */
+		UnorderedMap<SpecificImporter*, TUnique<SchedulerTicketQueue>> mPerImporterQueues; /**< Queues for importers having to run sequential tasks. */
 		Mutex mPerImporterQueueMutex;
 	};
 

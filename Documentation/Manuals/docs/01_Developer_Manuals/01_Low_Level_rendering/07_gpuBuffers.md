@@ -200,7 +200,7 @@ render::GpuBufferSuballocation suballocation = uniformPool.Allocate();
 uniformPool.Release(suballocation);
 
 // Or tracked lifetime (auto-releases on destruction)
-UPtr<TrackedGpuBufferSuballocation> tracked = uniformPool.AllocateTracked();
+TUnique<TrackedGpuBufferSuballocation> tracked = uniformPool.AllocateTracked();
 // ... use tracked (it inherits from GpuBufferSuballocation) ...
 // Released automatically when tracked goes out of scope
 ~~~~~~~~~~~~~

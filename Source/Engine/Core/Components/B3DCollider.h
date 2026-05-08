@@ -176,7 +176,7 @@ namespace b3d
 		bool RefreshParentRigidbody();
 
 		TInlineArray<TShared<ColliderShape>, 1> mShapes;
-		UPtr<IColliderImplementation> mImplementation;
+		TUnique<IColliderImplementation> mImplementation;
 
 		u64 mLayer = 1;
 		CollisionReportMode mCollisionReportMode = CollisionReportMode::None;

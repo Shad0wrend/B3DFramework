@@ -5,17 +5,17 @@
 
 namespace b3d
 {
-static bool operator<(const UPtr<DynamicLibrary>& lhs, const String& rhs)
+static bool operator<(const TUnique<DynamicLibrary>& lhs, const String& rhs)
 {
 	return lhs->GetName() < rhs;
 }
 
-static bool operator<(const String& lhs, const UPtr<DynamicLibrary>& rhs)
+static bool operator<(const String& lhs, const TUnique<DynamicLibrary>& rhs)
 {
 	return lhs < rhs->GetName();
 }
 
-static bool operator<(const UPtr<DynamicLibrary>& lhs, const UPtr<DynamicLibrary>& rhs)
+static bool operator<(const TUnique<DynamicLibrary>& lhs, const TUnique<DynamicLibrary>& rhs)
 {
 	return lhs->GetName() < rhs->GetName();
 }

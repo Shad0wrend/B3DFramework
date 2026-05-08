@@ -33,7 +33,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 		};
 
 		/** @} */

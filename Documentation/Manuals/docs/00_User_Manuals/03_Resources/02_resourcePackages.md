@@ -153,7 +153,7 @@ options.LoadIfMissing = true;              // Load package if not loaded
 options.BlockUntilAcquired = true;         // Wait if write lock exists
 options.VirtualPathPrefix = "/Game/";      // Virtual path prefix
 
-UPtr<PackageReadLock> readLock;
+TUnique<PackageReadLock> readLock;
 AcquirePackageLockResult result = GetPackageManager().AcquireReadLock(
 	"D:/MyGame/Assets/Textures.b3d",
 	options,
@@ -175,7 +175,7 @@ AcquirePackageWriteLockOptions options;
 options.AllowCreateNew = false;      // Fail if package doesn't exist
 options.BlockUntilAcquired = true;   // Wait for existing locks
 
-UPtr<PackageWriteLock> writeLock;
+TUnique<PackageWriteLock> writeLock;
 AcquirePackageLockResult result = GetPackageManager().AcquireWriteLock(
 	"D:/MyGame/Assets/Textures.b3d",
 	options,
@@ -196,7 +196,7 @@ Packages can be updated in place without creating a new file:
 If you need to update package metadata (like resource information) without changing the actual resource data, use @b3d::PackageManager::SavePackageMetaData:
 
 ~~~~~~~~~~~~~{.cpp}
-UPtr<PackageWriteLock> writeLock;
+TUnique<PackageWriteLock> writeLock;
 GetPackageManager().AcquireWriteLock("D:/MyGame/Assets/Textures.b3d", options, writeLock);
 
 // Modify package metadata...

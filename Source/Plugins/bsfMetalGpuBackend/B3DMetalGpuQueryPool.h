@@ -64,7 +64,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			u32 mNextQueryId = 0;
 
 			// Tracks every (queue, eventValue) pair this pool was written from that has not yet been

@@ -184,7 +184,7 @@ namespace b3d
 			bool mLastCBSemaphoreUsed = false;
 			u32 mNextSubmitIndex = 1;
 
-			Vector<UPtr<SubmitWorkBuffer>> mSubmitWorkBufferPool;
+			Vector<TUnique<SubmitWorkBuffer>> mSubmitWorkBufferPool;
 			u32 mActiveSubmitWorkBufferCount = 0;
 
 			TInlineArray<VulkanSemaphore*, 8> mWaitSemaphoreBuffer; // Input wrapper for ExecuteSubmitOnSubmitThread; cleared between adjacent submits.

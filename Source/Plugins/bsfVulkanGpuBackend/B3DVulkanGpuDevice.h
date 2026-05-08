@@ -100,7 +100,7 @@ namespace b3d
 			TShared<GpuComputePipelineState> CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
 			TShared<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation) override;
 			TShared<GpuPipelineParameterSetLayout> CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription) override;
-			UPtr<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) override;
+			TUnique<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) override;
 			TShared<GpuTimelineFence> CreateTimelineFence() override;
 
 			void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) override;
@@ -347,10 +347,10 @@ namespace b3d
 			TShared<VideoModeInfo> mVideoModeInfo;
 
 			bool mSupportsTimelineSemaphore = false;
-			UPtr<VulkanHeapBackend> mHeapBackend;
+			TUnique<VulkanHeapBackend> mHeapBackend;
 
 			/** Per-memory-type TLSF allocator pool. Slots are lazily populated on first allocation. */
-			UPtr<TGpuTlsfAllocator<VulkanHeapBackend>> mGpuMemoryAllocators[VK_MAX_MEMORY_TYPES];
+			TUnique<TGpuTlsfAllocator<VulkanHeapBackend>> mGpuMemoryAllocators[VK_MAX_MEMORY_TYPES];
 
 			/** Guards lazy creation of mTlsfAllocators entries. */
 			mutable Mutex mGpuMemoryAllocatorMutex;

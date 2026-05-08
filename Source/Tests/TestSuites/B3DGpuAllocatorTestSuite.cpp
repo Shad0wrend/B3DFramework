@@ -1042,7 +1042,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_DrainsHighestHeap()
 	const u32 kAllocCount = 6;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1100,7 +1100,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_SingleHeapWithinHeapCompaction()
 	const u32 kAllocCount = 16;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1154,7 +1154,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_RespectsBudget()
 	const u32 kAllocCount = 8;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1196,7 +1196,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_OnlySkipsUntrackedSlots()
 	const u32 kAllocCount = 8;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1227,7 +1227,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_OnlySkipsUntrackedSlots()
 	// Only the surviving tracked allocations were eligible for movement. The untracked ones could
 	// not have been touched even if iteration reached them.
 	B3D_TEST_ASSERT(stats.MovesCompleted > 0)
-	for (UPtr<Holder>& holder : holders)
+	for (TUnique<Holder>& holder : holders)
 	{
 		if (!holder->Tracked)
 			B3D_TEST_ASSERT(holder->Resource.MovedCount == 0)
@@ -1251,7 +1251,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MovesInFlightResource()
 	const u32 kAllocCount = 4;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1305,7 +1305,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MoveAllocationReceivesContext()
 	const u32 kAllocCount = 4;
 	const u64 kAllocSize = 16 * 1024;
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
 		auto holder = B3DMakeUnique<Holder>();
@@ -1473,7 +1473,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_LifecycleAllowsSwap()
 		MockLocation ReplacementLocation;
 	};
 
-	Vector<UPtr<Holder>> holders;
+	Vector<TUnique<Holder>> holders;
 	holders.reserve(kAllocCount);
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex++)
 	{
@@ -1633,7 +1633,7 @@ void GpuAllocatorTestSuite::TestTlsf_ConcurrentDefragWithAllocateAndFree()
 	constexpr u32 kIterationsPerWorker = 400;
 	constexpr u32 kWorkerCount = 4;
 
-	Vector<UPtr<Slot>> slots;
+	Vector<TUnique<Slot>> slots;
 	slots.reserve(kSlotCount);
 	for (u32 slotIndex = 0; slotIndex < kSlotCount; slotIndex++)
 	{
@@ -1694,7 +1694,7 @@ void GpuAllocatorTestSuite::TestTlsf_ConcurrentDefragWithAllocateAndFree()
 	// Free every live destination plus every captured defrag source. ResourceLifecycle does not
 	// retire source slots automatically — the consumer (this test) plays the role of the
 	// destructor that would normally call FreeMemory on the old wrapper.
-	for (UPtr<Slot>& slot : slots)
+	for (TUnique<Slot>& slot : slots)
 	{
 		if (slot->InUse.load(std::memory_order_relaxed))
 			allocator.Free(slot->Location);

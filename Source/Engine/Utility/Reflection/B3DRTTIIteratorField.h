@@ -271,7 +271,7 @@ namespace b3d
 		using IteratorType = TRTTIIterator<DataType, IsDataTypeContainer>;
 		using ElementType = typename IteratorType::ElementType;
 
-		typedef UPtr<IteratorType, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsDataTypeContainer>> (ObjectRTTIType::*GetIteratorDelegate)(ObjectType&, FrameAllocator&);
+		typedef TUnique<IteratorType, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsDataTypeContainer>> (ObjectRTTIType::*GetIteratorDelegate)(ObjectType&, FrameAllocator&);
 		typedef const ElementType& (ObjectRTTIType::*GetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&);
 		typedef void (ObjectRTTIType::*SetValueDelegate)(ObjectType&, FrameAllocator&, IteratorType&, const ElementType&);
 

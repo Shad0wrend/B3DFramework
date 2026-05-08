@@ -302,7 +302,7 @@ VulkanGpuDevice::~VulkanGpuDevice()
 	// destructor releases all owned heaps via mHeapBackend, so the heap backend must outlive it.
 	for (u32 typeIndex = 0; typeIndex < VK_MAX_MEMORY_TYPES; typeIndex++)
 	{
-		UPtr<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator = mGpuMemoryAllocators[typeIndex];
+		TUnique<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator = mGpuMemoryAllocators[typeIndex];
 		if (allocator != nullptr)
 		{
 			allocator->Flush(0, true);
@@ -643,7 +643,7 @@ TShared<GpuPipelineParameterSetLayout> VulkanGpuDevice::CreateGpuPipelineParamet
 	return B3DMakeShared<VulkanGpuPipelineParameterSetLayout>(*this, parameterDescription);
 }
 
-UPtr<GpuParameterSetPool> VulkanGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)
+TUnique<GpuParameterSetPool> VulkanGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)
 {
 	return B3DMakeUnique<VulkanGpuParameterSetPool>(*this, createInformation);
 }
@@ -693,7 +693,7 @@ void VulkanGpuDevice::RunDefragPass()
 	info.MaxAllocationsPerCall = mDefragBudgetAllocations;
 
 	Lock lock(mGpuMemoryAllocatorMutex);
-	for (UPtr<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator : mGpuMemoryAllocators)
+	for (TUnique<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator : mGpuMemoryAllocators)
 	{
 		if (allocator != nullptr)
 			allocator->Defrag(*transferCb, info);
@@ -1102,7 +1102,7 @@ TGpuTlsfAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuMemoryAlloc
 
 	{
 		Lock lock(mGpuMemoryAllocatorMutex);
-		UPtr<TGpuTlsfAllocator<VulkanHeapBackend>>& slot = mGpuMemoryAllocators[memoryTypeIndex];
+		TUnique<TGpuTlsfAllocator<VulkanHeapBackend>>& slot = mGpuMemoryAllocators[memoryTypeIndex];
 		if (slot != nullptr)
 			return *slot;
 

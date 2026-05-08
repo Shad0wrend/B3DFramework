@@ -395,7 +395,7 @@ namespace b3d
 		Color mTextSelectionColor{ 0.0f, 114 / 255.0f, 188 / 255.0f };
 
 		Map<TShared<const RenderTexture>, const GUIInteractable*> mInputBridge;
-		UPtr<GUIVectorSpriteAtlas> mVectorSpriteAtlas;
+		TUnique<GUIVectorSpriteAtlas> mVectorSpriteAtlas;
 
 		HEvent mOnPointerMovedConn;
 		HEvent mOnPointerPressedConn;

@@ -31,7 +31,7 @@ namespace b3d
 		void Unload(DynamicLibrary* lib);
 
 	protected:
-		Set<UPtr<DynamicLibrary>, std::less<>> mLoadedLibraries;
+		Set<TUnique<DynamicLibrary>, std::less<>> mLoadedLibraries;
 	};
 
 	/** Easy way of accessing DynLibManager. */

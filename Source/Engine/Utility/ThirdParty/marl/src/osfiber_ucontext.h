@@ -39,12 +39,12 @@ class OSFiber {
 
   // createFiberFromCurrentThread() returns a fiber created from the current
   // thread.
-  static inline b3d::UPtr<OSFiber> createFiberFromCurrentThread();
+  static inline b3d::TUnique<OSFiber> createFiberFromCurrentThread();
 
   // createFiber() returns a new fiber with the given stack size that will
   // call func when switched to. func() must end by switching back to another
   // fiber, and must not return.
-  static inline b3d::UPtr<OSFiber> createFiber(
+  static inline b3d::TUnique<OSFiber> createFiber(
       size_t stackSize,
       const std::function<void()>& func);
 
@@ -66,14 +66,14 @@ OSFiber::~OSFiber() {
   }
 }
 
-b3d::UPtr<OSFiber> OSFiber::createFiberFromCurrentThread() {
+b3d::TUnique<OSFiber> OSFiber::createFiberFromCurrentThread() {
   auto out = b3d::B3DMakeUnique<OSFiber>();
   out->context = {};
   getcontext(&out->context);
   return out;
 }
 
-b3d::UPtr<OSFiber> OSFiber::createFiber(
+b3d::TUnique<OSFiber> OSFiber::createFiber(
     size_t stackSize,
     const std::function<void()>& func) {
   union Args {

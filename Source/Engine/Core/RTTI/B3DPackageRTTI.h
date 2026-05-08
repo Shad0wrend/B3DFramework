@@ -122,7 +122,7 @@ namespace b3d
 			{
 				for (const auto& entry : mResourceMetaData)
 				{
-					UPtr<Package::ResourceInformation> resourceInformation = B3DMakeUnique<Package::ResourceInformation>();
+					TUnique<Package::ResourceInformation> resourceInformation = B3DMakeUnique<Package::ResourceInformation>();
 					resourceInformation->MetaData = entry;
 
 					object.mResourceInformationByPath[entry->Path] = resourceInformation.get();

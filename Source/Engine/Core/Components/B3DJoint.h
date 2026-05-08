@@ -354,7 +354,7 @@ namespace b3d
 		friend class Rigidbody;
 
 		/** Creates the implementation the joint for use by the component. */
-		virtual UPtr<IJointImplementation> CreateImplementation() = 0;
+		virtual TUnique<IJointImplementation> CreateImplementation() = 0;
 
 		/** Destroys the current implementation of the joint, if any. Effectively removing it from the scene. */
 		void DestroyImplementation();
@@ -368,7 +368,7 @@ namespace b3d
 		/** Updates the local transform for the specified body attached to the joint. */
 		void UpdateRelativeBodyTransforms(JointBody body);
 
-		UPtr<IJointImplementation> mImplementation;
+		TUnique<IJointImplementation> mImplementation;
 
 	private:
 		JointCreateInformation& mInformation; // References the information in the derived class

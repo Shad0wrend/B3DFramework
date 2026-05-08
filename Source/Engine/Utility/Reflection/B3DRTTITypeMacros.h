@@ -27,7 +27,7 @@ namespace b3d
 	using __TRTTIIterator##name##Type = TRTTIIterator<std::remove_reference_t<decltype(OwnerType::field)>, container>;                                              \
 	using __TRTTIIteratorDeleter##name##Type = TRTTIIteratorDeleter<std::remove_reference_t<decltype(OwnerType::field)>, container>;                                \
                                                                                                                                                                     \
-	UPtr<__TRTTIIterator##name##Type, DefaultAllocatorTag, __TRTTIIteratorDeleter##name##Type> GetIterator##name(OwnerType& object, FrameAllocator& allocator)      \
+	TUnique<__TRTTIIterator##name##Type, DefaultAllocatorTag, __TRTTIIteratorDeleter##name##Type> GetIterator##name(OwnerType& object, FrameAllocator& allocator)      \
 	{                                                                                                                                                               \
 		return CreateRTTIIterator<std::remove_reference_t<decltype(OwnerType::field)>, container>(allocator, object.field);                                         \
 	}                                                                                                                                                               \
@@ -94,7 +94,7 @@ namespace b3d
 	using __TRTTIIterator##name##Type = TRTTIIterator<std::remove_reference_t<decltype(MyType::field)>, container>;                                                 \
 	using __TRTTIIteratorDeleter##name##Type = TRTTIIteratorDeleter<std::remove_reference_t<decltype(MyType::field)>, container>;                                   \
                                                                                                                                                                     \
-	UPtr<__TRTTIIterator##name##Type, DefaultAllocatorTag, __TRTTIIteratorDeleter##name##Type> GetIterator##name(OwnerType& object, FrameAllocator& allocator)      \
+	TUnique<__TRTTIIterator##name##Type, DefaultAllocatorTag, __TRTTIIteratorDeleter##name##Type> GetIterator##name(OwnerType& object, FrameAllocator& allocator)      \
 	{                                                                                                                                                               \
 		return CreateRTTIIterator<std::remove_reference_t<decltype(field)>, container>(allocator, field);                                                           \
 	}                                                                                                                                                               \

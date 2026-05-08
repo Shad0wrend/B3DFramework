@@ -505,7 +505,7 @@ namespace b3d
 		size_t mMetaDataPaddingByteCount = 0; /**< Extra empty bytes in the file after meta-data. Allows meta-data to grow without having to re-write the whole file. */
 
 		UnorderedMap<Path, ResourceInformation*, PathHashFunction<true>, PathEqualsFunction<true>> mResourceInformationByPath;
-		UnorderedMap<UUID, UPtr<ResourceInformation>> mResourceInformationByUUID;
+		UnorderedMap<UUID, TUnique<ResourceInformation>> mResourceInformationByUUID;
 
 		mutable Mutex mMetaDataMutex;
 		mutable SharedMutex mDataMutex;

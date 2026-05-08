@@ -49,7 +49,7 @@ TShared<Resource> OAImporter::Import(const Path& filePath, TShared<const ImportO
 		String extension = filePath.GetExtension();
 		StringUtility::ToLowerCase(extension);
 
-		UPtr<AudioDecoder> reader;
+		TUnique<AudioDecoder> reader;
 		if(extension == ".wav")
 			reader = B3DMakeUnique<WaveDecoder>();
 		else if(extension == ".flac")

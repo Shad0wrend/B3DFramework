@@ -19,7 +19,7 @@ FixedJoint::FixedJoint()
 	: FixedJoint(nullptr)
 { }
 
-UPtr<IJointImplementation> FixedJoint::CreateImplementation()
+TUnique<IJointImplementation> FixedJoint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateFixedJoint(*this, mInformation);

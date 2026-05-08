@@ -395,7 +395,7 @@ namespace b3d
 		typedef MyRTTIType MyType;
 
 		template<typename DataType, bool IsContainer>
-		using UPtrRTTIIterator = UPtr<TRTTIIterator<DataType, IsContainer>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsContainer>>;
+		using UPtrRTTIIterator = TUnique<TRTTIIterator<DataType, IsContainer>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, IsContainer>>;
 
 		/**
 		 * Registers a field containing a type derived from IReflectable, shared pointer to IReflectable, or a type implementing
@@ -404,7 +404,7 @@ namespace b3d
 		 */
 		template <class InterfaceType, class ObjectType, class DataType>
 		void AddField(const String& name, u32 uniqueId,
-			UPtr<TRTTIIterator<DataType, false>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, false>> (InterfaceType::*getIteratorCallback)(ObjectType&, FrameAllocator&),
+			TUnique<TRTTIIterator<DataType, false>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, false>> (InterfaceType::*getIteratorCallback)(ObjectType&, FrameAllocator&),
 			const DataType& (InterfaceType::*getValueCallback)(ObjectType&, FrameAllocator&, TRTTIIterator<DataType, false>&),
 			void (InterfaceType::*setValueCallback)(ObjectType&, FrameAllocator&, TRTTIIterator<DataType, false>&, const DataType&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
@@ -419,7 +419,7 @@ namespace b3d
 		 */
 		template <class InterfaceType, class ObjectType, class DataType>
 		void AddField(const String& name, u32 uniqueId,
-			UPtr<TRTTIIterator<DataType, true>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, true>> (InterfaceType::*getIteratorCallback)(ObjectType&, FrameAllocator&),
+			TUnique<TRTTIIterator<DataType, true>, DefaultAllocatorTag, TRTTIIteratorDeleter<DataType, true>> (InterfaceType::*getIteratorCallback)(ObjectType&, FrameAllocator&),
 			const typename DataType::value_type& (InterfaceType::*getValueCallback)(ObjectType&, FrameAllocator&, TRTTIIterator<DataType, true>&),
 			void (InterfaceType::*setValueCallback)(ObjectType&, FrameAllocator&, TRTTIIterator<DataType, true>&, const typename DataType::value_type&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)

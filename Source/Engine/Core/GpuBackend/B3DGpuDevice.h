@@ -494,7 +494,7 @@ namespace b3d
 		 * @param	createInformation	Pool configuration including mode and capacity limits.
 		 * @return						Created parameter set pool.
 		 */
-		virtual UPtr<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) = 0;
+		virtual TUnique<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) = 0;
 
 		/** Creates a timeline fence that can be signaled when command buffer execution finishes. */
 		virtual TShared<GpuTimelineFence> CreateTimelineFence() = 0;
@@ -568,7 +568,7 @@ namespace b3d
 			return TShared<Type>(data, fnStandaloneDeleter, StdAlloc<Type, PointerDataAllocatorTag>());
 		}
 
-		UPtr<GpuTransferBufferHelper> mTransferBufferHelper;
+		TUnique<GpuTransferBufferHelper> mTransferBufferHelper;
 
 		mutable UnorderedMap<SamplerStateCreateInformation, TShared<SamplerState>> mCachedSamplerStates;
 		mutable Mutex mSamplerStateMutex;

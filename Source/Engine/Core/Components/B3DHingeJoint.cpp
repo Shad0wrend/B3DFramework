@@ -72,7 +72,7 @@ void HingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-UPtr<IJointImplementation> HingeJoint::CreateImplementation()
+TUnique<IJointImplementation> HingeJoint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateHingeJoint(*this, mInformation);

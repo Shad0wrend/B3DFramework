@@ -240,7 +240,7 @@ namespace b3d
 	protected:
 		friend class SceneObject;
 
-		UPtr<IJointImplementation> CreateImplementation() override;
+		TUnique<IJointImplementation> CreateImplementation() override;
 
 		D6JointCreateInformation mInformation;
 

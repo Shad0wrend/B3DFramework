@@ -58,7 +58,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			// Note: no local @c mName — we inherit @c GpuBuffer::mName and its @c GetName accessor,
 			// delegating the store through @c GpuBuffer::SetName in our override.
 		};

@@ -46,7 +46,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			u32 mWorkgroupSize[3] = { 1, 1, 1 };
 		};
 

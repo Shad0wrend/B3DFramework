@@ -36,7 +36,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			std::atomic<u64> mExpectedValue{ 0 };
 		};
 

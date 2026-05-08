@@ -71,7 +71,7 @@ namespace b3d
 			{ }
 
 			ResourceLoadOptions LoadOptions;
-			UPtr<PackageReadLock> PackageReadLock;
+			TUnique<PackageReadLock> PackageReadLock;
 
 			HResource ResourceHandle;
 			Vector<HResource> DependencyResourceHandles;
@@ -256,7 +256,7 @@ namespace b3d
 		 * resource will be retrieved from the package and handle to the resource updated with the new resource. This may involve loading the resource, if the new package doesn't
 		 * have the resource loaded. If the resource is loaded in the package, but not marked as loaded by the resource system, it will be unloaded from the package.
 		 */
-		void UpdateResourcesFromPackage(const UPtr<PackageWriteLock>& packageWriteLock);
+		void UpdateResourcesFromPackage(const TUnique<PackageWriteLock>& packageWriteLock);
 
 		/** Updates an existing resource handle with a new resource. Caller must ensure that new resource type matches the original resource type. */
 		void UpdateHandle(HResource& handle, const TShared<Resource>& resource);
@@ -293,7 +293,7 @@ namespace b3d
 		 *
 		 * This is an internal method to be shared by public Load() overloads.
 		 */
-		HResource LoadFromPackage(UPtr<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions);
+		HResource LoadFromPackage(TUnique<PackageReadLock> packageReadLock, const UUID& resourceId, const ResourceLoadOptions& loadOptions);
 
 		/**
 		 * Checks if the provided in-progress load has completed any finalizes the operation. Operation is deemed complete once its primary resource and
@@ -311,7 +311,7 @@ namespace b3d
 		Mutex mResourceHandleMutex;
 
 		UnorderedMap<UUID, ResourceHandleData*> mHandles;
-		UnorderedMap<UUID, UPtr<LoadedResourceInformation>> mLoadedResourceInformation;
+		UnorderedMap<UUID, TUnique<LoadedResourceInformation>> mLoadedResourceInformation;
 		UnorderedMap<UUID, TInlineArray<TShared<InProgressLoadInformation>, 1>> mInProgressLoadInformation;
 		UnorderedMap<UUID, TInlineArray<TShared<InProgressLoadInformation>, 4>> mDependantResourceLoads;
 	};

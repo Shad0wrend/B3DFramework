@@ -163,7 +163,7 @@ namespace b3d
 			void BindEncoder() const;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			const MetalGpuPipelineParameterSetLayout* mMetalLayout = nullptr;
 
 			// Optional pool that sub-allocated the argument buffer for this set. Non-owning pointer —

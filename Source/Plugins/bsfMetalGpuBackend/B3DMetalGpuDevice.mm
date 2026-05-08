@@ -241,7 +241,7 @@ namespace b3d
 			// Heap-backed resources hold implicit refs back to their parent heap; dropping the
 			// heaps first while the deferred-release list still has heap-backed textures / buffers
 			// queued would leave those with dangling parent refs when they release later in this
-			// destructor. The explicit drain above guarantees the order. Resetting the UPtr nils
+			// destructor. The explicit drain above guarantees the order. Resetting the TUnique nils
 			// all pooled MTLHeaps; the driver reclaims their storage on the next autorelease drain.
 			mHeapAllocator.reset();
 
@@ -1014,7 +1014,7 @@ namespace b3d
 			return B3DMakeShared<MetalGpuPipelineParameterSetLayout>(*this, parameterDescription);
 		}
 
-		UPtr<GpuParameterSetPool> MetalGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)
+		TUnique<GpuParameterSetPool> MetalGpuDevice::CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation)
 		{
 			return B3DMakeUnique<MetalGpuParameterSetPool>(*this, createInformation);
 		}

@@ -41,7 +41,7 @@ namespace b3d
 
 		private:
 			struct Impl;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 		};
 
 		/** @} */

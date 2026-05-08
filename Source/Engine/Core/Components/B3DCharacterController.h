@@ -278,7 +278,7 @@ namespace b3d
 		/** Triggered when the internal controller hits another controller. */
 		void TriggerOnControllerHit(const ControllerControllerCollision& value);
 
-		UPtr<ICharacterControllerImplementation> mImplementation;
+		TUnique<ICharacterControllerImplementation> mImplementation;
 		CharacterControllerCreateInformation mInformation;
 		u64 mLayer = 1;
 

@@ -106,7 +106,7 @@ namespace b3d
 	protected:
 		Vector<GUIConstrainedSizeRange> mChildConstrainedSizeRanges;
 		GUIConstrainedSizeRange mConstrainedSizeRange;
-		UPtr<GUICulling> mCulling;
+		TUnique<GUICulling> mCulling;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

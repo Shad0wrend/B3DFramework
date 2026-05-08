@@ -75,12 +75,12 @@ const TShared<Package>& PackageWriteLock::GetPackage() const
 	return RuntimePackageInformation != nullptr ? RuntimePackageInformation->LoadedPackage : kNullPackage;
 }
 
-UPtr<PackageReadLock> PackageManager::LoadOrGetPackage(const Path& packagePhysicalPath, const Path& virtualPathPrefix)
+TUnique<PackageReadLock> PackageManager::LoadOrGetPackage(const Path& packagePhysicalPath, const Path& virtualPathPrefix)
 {
 	AcquirePackageReadLockOptions readLockOptions(true, true, "LoadOrGetPackage");
 	readLockOptions.VirtualPathPrefix = virtualPathPrefix;
 
-	UPtr<PackageReadLock> readLock;
+	TUnique<PackageReadLock> readLock;
 	const AcquirePackageLockResult lockResult = AcquireReadLock(packagePhysicalPath, readLockOptions, readLock);
 
 	if(lockResult == AcquirePackageLockResult::Acquired && readLock != nullptr)
@@ -104,7 +104,7 @@ void PackageManager::LoadPackages(const Path& folderPath, bool recursive, const 
 					virtualPath = Path::Combine(virtualPathPrefix, relativePath.GetDirectory());
 			}
 
-			UPtr<PackageReadLock> readLock = LoadOrGetPackage(path, virtualPath);
+			TUnique<PackageReadLock> readLock = LoadOrGetPackage(path, virtualPath);
 			(void)readLock;
 		}
 
@@ -114,7 +114,7 @@ void PackageManager::LoadPackages(const Path& folderPath, bool recursive, const 
 	FileSystem::Iterate(folderPath, fnOnFileFound, nullptr, recursive);
 }
 
-UPtr<PackageWriteLock> PackageManager::SavePackage(const TShared<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options)
+TUnique<PackageWriteLock> PackageManager::SavePackage(const TShared<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options)
 {
 	if(package == nullptr)
 	{
@@ -148,7 +148,7 @@ UPtr<PackageWriteLock> PackageManager::SavePackage(const TShared<Package>& packa
 	AcquirePackageWriteLockOptions writeLockOptions(true);
 	writeLockOptions.VirtualPathPrefix = options.VirtualPathPrefix;
 
-	UPtr<PackageWriteLock> packageWriteLock;
+	TUnique<PackageWriteLock> packageWriteLock;
 	const AcquirePackageLockResult acquireLockResult = AcquireWriteLock(destinationPath, writeLockOptions, packageWriteLock);
 
 	if(!B3D_ENSURE(acquireLockResult == AcquirePackageLockResult::Acquired && packageWriteLock != nullptr))
@@ -197,7 +197,7 @@ void PackageManager::UnloadPackage(const Path& packagePath)
 		return;
 	}
 
-	UPtr<PackageWriteLock> packageWriteLock;
+	TUnique<PackageWriteLock> packageWriteLock;
 	const AcquirePackageLockResult acquireLockResult = AcquireWriteLock(packagePath, AcquirePackageWriteLockOptions(), packageWriteLock);
 
 	if(acquireLockResult != AcquirePackageLockResult::Acquired)
@@ -341,7 +341,7 @@ TShared<const PackageResourceMetaData> PackageManager::GetResourceMetaData(const
 {
 	if(auto packagePath = TryGetPackagePathForResource(resourceId); packagePath.has_value())
 	{
-		UPtr<PackageReadLock> readLock;
+		TUnique<PackageReadLock> readLock;
 		AcquirePackageReadLockOptions readLockOptions(false, true, "Read meta-data");
 		const AcquirePackageLockResult lockResult = AcquireReadLock(*packagePath, readLockOptions, readLock);
 		if(!B3D_ENSURE(lockResult == AcquirePackageLockResult::Acquired && readLock != nullptr))
@@ -357,7 +357,7 @@ TShared<const PackageResourceMetaData> PackageManager::GetResourceMetaData(const
 	return nullptr;
 }
 
-AcquirePackageLockResult PackageManager::AcquireReadLock(const Path& physicalPackagePath, const AcquirePackageReadLockOptions& options, UPtr<PackageReadLock>& outLock)
+AcquirePackageLockResult PackageManager::AcquireReadLock(const Path& physicalPackagePath, const AcquirePackageReadLockOptions& options, TUnique<PackageReadLock>& outLock)
 {
 	if(!physicalPackagePath.IsAbsolute())
 	{
@@ -450,7 +450,7 @@ AcquirePackageLockResult PackageManager::AcquireReadLock(const Path& physicalPac
 	}
 }
 
-AcquirePackageLockResult PackageManager::AcquireWriteLock(const Path& physicalPackagePath, const AcquirePackageWriteLockOptions& options, UPtr<PackageWriteLock>& outLock)
+AcquirePackageLockResult PackageManager::AcquireWriteLock(const Path& physicalPackagePath, const AcquirePackageWriteLockOptions& options, TUnique<PackageWriteLock>& outLock)
 {
 	if(!physicalPackagePath.IsAbsolute())
 	{

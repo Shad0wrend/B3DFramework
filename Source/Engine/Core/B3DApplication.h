@@ -220,7 +220,7 @@ namespace b3d
 		volatile bool mRunMainLoop;
 
 #if B3D_ENABLE_TESTS
-		UPtr<SnapshotTestRunner> mSnapshotTestRunner;
+		TUnique<SnapshotTestRunner> mSnapshotTestRunner;
 #endif
 	};
 

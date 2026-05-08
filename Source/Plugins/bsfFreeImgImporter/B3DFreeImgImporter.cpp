@@ -210,7 +210,7 @@ TShared<Resource> FreeImgImporter::Import(const Path& filePath, TShared<const Im
 
 TShared<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 {
-	UPtr<MemoryDataStream> memStream;
+	TUnique<MemoryDataStream> memStream;
 	FREE_IMAGE_FORMAT imageFormat;
 	{
 		TShared<DataStream> fileData = FileSystem::OpenFile(filePath, true);

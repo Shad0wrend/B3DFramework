@@ -413,7 +413,7 @@ namespace b3d
 		};
 
 		NetworkState mState = NetworkState::Disconnected;
-		UPtr<NetworkPeer> mPeer;
+		TUnique<NetworkPeer> mPeer;
 	};
 
 	/** @} */

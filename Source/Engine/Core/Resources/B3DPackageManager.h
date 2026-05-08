@@ -146,7 +146,7 @@ namespace b3d
 		 * @return							Lock that can be used for accessing the newly or previously loaded package, if successful. Null otherwise. Lock
 		 *									must be kept alive as long as you are accessing the underlying package.
 		 */
-		UPtr<PackageReadLock> LoadOrGetPackage(const Path& packagePhysicalPath, const Path& virtualPathPrefix = Path::kBlank);
+		TUnique<PackageReadLock> LoadOrGetPackage(const Path& packagePhysicalPath, const Path& virtualPathPrefix = Path::kBlank);
 
 		/**
 		 * Loads all packages within the folder. All loaded packages will remain loaded until explicitly unloaded via a call to Unload(). If a package is already
@@ -176,7 +176,7 @@ namespace b3d
 		 *			no other operations are being performed on the package.
 		 *			If a read lock for a package is acquired, the save operation at that same location will result in a deadlock.
 		 */
-		UPtr<PackageWriteLock> SavePackage(const TShared<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options);
+		TUnique<PackageWriteLock> SavePackage(const TShared<Package>& package, const Path& destinationPath, const PackageManagerSavePackageOptions& options);
 
 		/**
 		 * Unloads a package at the specified path.
@@ -220,7 +220,7 @@ namespace b3d
 		 * @param	outLock						Acquired lock, if successful. Package will remain locked until this object goes out of scope.
 		 * @return								Information if the lock was acquired or not.
 		 */
-		AcquirePackageLockResult AcquireReadLock(const Path& physicalPackagePath, const AcquirePackageReadLockOptions& options, UPtr<PackageReadLock>& outLock);
+		AcquirePackageLockResult AcquireReadLock(const Path& physicalPackagePath, const AcquirePackageReadLockOptions& options, TUnique<PackageReadLock>& outLock);
 
 		/**
 		 * Attempts to lock a package for writing. Locking the package before performing write operations ensures that any existing read or write operations
@@ -231,7 +231,7 @@ namespace b3d
 		 * @param	outLock						Acquired lock, if successful. Package will remain locked until this object goes out of scope.
 		 * @return								Information if the lock was acquired or not.
 		 */
-		AcquirePackageLockResult AcquireWriteLock(const Path& physicalPackagePath, const AcquirePackageWriteLockOptions& options, UPtr<PackageWriteLock>& outLock);
+		AcquirePackageLockResult AcquireWriteLock(const Path& physicalPackagePath, const AcquirePackageWriteLockOptions& options, TUnique<PackageWriteLock>& outLock);
 
 		/**
 		 * Resolves a physical path to a resource into a physical path to the package, and a path to the resource within the package.

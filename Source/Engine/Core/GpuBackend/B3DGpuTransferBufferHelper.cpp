@@ -90,7 +90,7 @@ GpuTransferBufferHelper::ThreadData* GpuTransferBufferHelper::RegisterCurrentThr
 	}
 
 	// Create new thread data
-	UPtr<ThreadData> newThreadData = B3DMakeUnique<ThreadData>();
+	TUnique<ThreadData> newThreadData = B3DMakeUnique<ThreadData>();
 	newThreadData->OwnerThread = currentThreadId;
 
 	ThreadData* threadDataPtr = newThreadData.get();

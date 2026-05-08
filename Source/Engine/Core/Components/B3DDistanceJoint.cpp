@@ -86,7 +86,7 @@ void DistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 		GetImplementation().SetFlag(flag, enabled);
 }
 
-UPtr<IJointImplementation> DistanceJoint::CreateImplementation()
+TUnique<IJointImplementation> DistanceJoint::CreateImplementation()
 {
 	const TShared<SceneInstance>& scene = SO()->GetScene();
 	return scene->GetPhysicsScene()->CreateDistanceJoint(*this, mInformation);

@@ -17,7 +17,7 @@ using namespace b3d;
 
 // Implementation based on Marl Scheduler (See ThirdParty/Marl)
 
-Fiber::Fiber(UPtr<marl::OSFiber>&& osFiber, u32 id)
+Fiber::Fiber(TUnique<marl::OSFiber>&& osFiber, u32 id)
 	: Id(id), mOSFiber(std::move(osFiber)), mOwningThread(SchedulerThread::Get().get())
 {
 	B3D_ASSERT(mOwningThread != nullptr && "No Scheduler thread found for fiber.");
@@ -50,12 +50,12 @@ void Fiber::SwitchExecutionTo(Fiber* to)
 		mOSFiber->switchTo(to->mOSFiber.get());
 }
 
-UPtr<Fiber> Fiber::Create(u32 id, size_t stackSize, const std::function<void()>& workerFunction)
+TUnique<Fiber> Fiber::Create(u32 id, size_t stackSize, const std::function<void()>& workerFunction)
 {
 	return B3DMakeUnique<Fiber>(marl::OSFiber::createFiber(stackSize, workerFunction), id);
 }
 
-UPtr<Fiber> Fiber::CreateFromCurrentThread(u32 id)
+TUnique<Fiber> Fiber::CreateFromCurrentThread(u32 id)
 {
 	return b3d::B3DMakeUnique<Fiber>(marl::OSFiber::createFiberFromCurrentThread(), id);
 }

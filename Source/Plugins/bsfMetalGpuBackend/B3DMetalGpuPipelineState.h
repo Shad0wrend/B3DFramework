@@ -159,7 +159,7 @@ namespace b3d
 #endif
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 
 			// Cached rasterizer state applied on the render encoder at bind time.
 			u32 mCullMode = 0;
@@ -208,7 +208,7 @@ namespace b3d
 			struct Impl;
 
 			MetalGpuDevice& mGpuDevice;
-			UPtr<Impl> mImpl;
+			TUnique<Impl> mImpl;
 			u32 mWorkgroupSize[3] = { 1, 1, 1 };
 		};
 
