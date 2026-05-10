@@ -1,4 +1,4 @@
-<p align="center"><img src="https://data.banshee3d.com/web/bsfLogoHeaderLarge.png" /></p>
+![B3D Framework](./Documentation/logo.svg)
 
 B3D Framework is a C++17 library intended as a foundation for high-performance game engines, games and other real-time graphical applications. It targets zero-compromise performance capable of running the largest open-world projects, paired with a clean, intuitive API and a modular internal architecture that's easy to understand, modify and extend.
 
