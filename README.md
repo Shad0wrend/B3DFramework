@@ -15,7 +15,7 @@ The framework is still in active development, but can already serve as a solid f
 * [Roadmap](Documentation/GitHub/roadmap.md) - A list of features to be implemented in both near and far future. 
 
 # Get started
-* [Documentation](https://github.com/GameFoundry/B3DFrameworkDocumentation) - Head over to the "Manuals" section to learn how to use the framework from the ground up. Use the API reference to look up what a particular class/method does.
+* [Documentation](https://docs.banshee3d.io) - Head over to the "Manuals" section to learn how to use the framework from the ground up. Use the API reference to look up what a particular class/method does.
 * [Examples](https://github.com/GameFoundry/B3DFrameworkExamples) - Grab a set of working examples and start tinkering and analyzing them to figure out how things work. They are well documented and can be used for quickly learning the framework.
 * [Building](Documentation/GitHub/compiling.md) - Learn how to build the framework from the source code. 
 

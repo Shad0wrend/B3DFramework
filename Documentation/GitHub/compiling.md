@@ -32,7 +32,7 @@ Use the guide below to get B3D Framework up and running as quickly as possible. 
 	 
 ## Customizing the build
 
-Additional variables allow you to pick between the render API (Vulkan, Null), audio module (FMOD, OpenAudio) among other options. Run *CMake* to see all options. Note that non-default *CMake* options might require additional dependencies to be installed, see [here](#otherDeps).
+Additional variables allow you to pick between the render API (Vulkan, Null), audio module (FMOD, OpenAudio) among other options. Run *CMake* to see all options. Note that non-default *CMake* options might require additional dependencies to be installed, see [here](#other-dependencies).
 
 Modify *CMAKE_INSTALL_PREFIX* to choose where the library gets installed after the *install* target is ran (e.g. `make install`, or running the *INSTALL* target in Visual Studio/XCode).
 
@@ -53,24 +53,18 @@ You can choose to use a different *CMake* generator than those specified above, 
     - Clang 5.0 (or newer) (currently non functional while major refactor is in progress)
 	- Apple LLVM 9.0.0 (XCode 9) (currently non functional while major refactor is in progress)
 	
-### <a name="dependencies"></a>Third party dependencies
+### Third party dependencies
 B3D Framework relies on a variety of third party dependencies. A set of pre-compiled dependencies are provided for every supported platform/compiler and these will be fetched automatically by the build process. If required, the dependencies can also be compiled manually by following [this guide](dependencies.md). This can be required if the pre-compiled dependencies don't work with your platform (e.g. unsupported Linux distro) or if you wish to update to a newer dependency version.
 
 Note that prebuilt dependencies only come as 64-bit, if you wish to build as 32-bit you will need to compile them manually.
 
-## <a name="otherDeps"></a>Other dependencies
+## Other dependencies
 The following dependencies will need to be installed manually. Which ones are required depend on the selected *CMake* options and your usage of B3D Framework (check text of each entry below).
 
 **Windows**
-  - **DirectX SDK** (Required by default on Windows 7 or earlier)
-	- Optional if you have choosen a different GPU backend in *CMake* options
-    - Set up DXSDK_DIR environment variable pointing to the DirectX instalation
-  - **Windows SDK** (Required by default on Windows 8 or later)
-	- Optional if you have choosen a different GPU backend in *CMake* options
-  - **DirectX Debug Layer** (Required by default on Windows 10)
-    - Optional if you have choosen a different GPU backend in *CMake* options
-    - Go to Settings panel (type "Settings" in Start)->System->Apps & features->Manage optional Features->Add a feature->Select "Graphics Tools"
- 
+  - **Windows SDK**
+    - Version 10.0.26100.0, but others may work as well
+
 **Linux**
   - **X11**
     - Debian/Ubuntu: `apt-get install libx11-dev libxcursor-dev libxrandr-dev libxi-dev`
@@ -103,10 +97,10 @@ The following dependencies will need to be installed manually. Which ones are re
 
 **All OS**
   - **Vulkan SDK 1.4.321.1*
-    - Only needed if you selected the Vulkan render API during build configuration
+    - Only needed if you selected the Vulkan render API during build configuration (currently the only option, so you need to do this)
     - https://lunarg.com/vulkan-sdk/
     - Set up `VULKAN_SDK` environment variable pointing to your installation
-    - **Additional setup for MacOS**
+    - **Additional setup for MacOS** (currently not supported, as we're refactoring the macOS backend)
       - Set up the following environment variables:
         - `VULKAN_SDK = $SDK_DIR$/macOS`
         - `VK_LAYER_PATH = $SDK_DIR$/macOS/etc/vulkan/explicit_layer.d`
