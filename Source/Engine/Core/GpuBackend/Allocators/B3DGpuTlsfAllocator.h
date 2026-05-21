@@ -440,6 +440,9 @@ namespace b3d
 			if (mPages == nullptr)
 				return true;
 
+			if (inOutOffset + size > blockEnd)
+				return false;
+
 			const PageCategory category = (PageCategory)kind;
 			u32 startPage = (u32)(inOutOffset >> mPageShift);
 			if (mPages[startPage].LiveCount > 0 && IsConflict(mPages[startPage].Category, category))
