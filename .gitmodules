@@ -4,10 +4,10 @@
 	url = https://github.com/GameFoundry/B3DFrameworkExamples
 [submodule "Tools/BansheeCodeGenerator"]
 	path = Tools/BansheeCodeGenerator
-	url = https://github.com/BearishSun/BansheeCodeGenerator
+	url = https://github.com/GameFoundry/B3DCodeGenerator
 [submodule "Tools/BansheeForge"]
 	path = Tools/BansheeForge
-	url = https://github.com/BearishSun/BansheeForge.git
+	url = https://github.com/GameFoundry/B3DForge.git
 [submodule "Tools/BansheeDocGenerator"]
 	path = Tools/BansheeDocGenerator
-	url = https://github.com/BearishSun/BansheeDocGenerator.git
+	url = https://github.com/GameFoundry/B3DDocGenerator.git
