@@ -90,6 +90,59 @@ function(B3DGlobSourceFiles parentPath path foldersToIgnore outSourceFiles)
 	set(${outSourceFiles} ${sourceFiles} PARENT_SCOPE)
 endfunction()
 
+# Globs source files from the Source/Engine path and the active platform Platform/{Platform}/Source/Engine path.
+#
+# Non-platform file paths are returned relative to Framework/Source/Engine,
+# platform overlay file paths are returned absolute (they live outside that tree).
+#
+# @param	enginePath		Engine sub-folder to collect, e.g. "Core/" or "Utility/".
+# @param	foldersToIgnore	Folders to ignore (applied to both trees).
+# @param	outSourceFiles	Output list of collected source files.
+function(B3DGlobSourceFilesAcrossPlatforms enginePath foldersToIgnore outSourceFiles)
+	set(collected "")
+
+	# 1) Framework engine sources
+	B3DGlobSourceFiles(${B3D_FRAMEWORK_SOURCE_FOLDER}/Engine "${enginePath}" "${foldersToIgnore}" collected)
+
+	# 2) Active platform engine sources
+	string(REGEX REPLACE "/$" "" engineSub "${enginePath}")
+	B3DGetActivePlatformFolders(activePlatforms)
+	foreach(platformName ${activePlatforms})
+		set(platformEngineFolder ${B3D_PLATFORM_${platformName}_SOURCE_FOLDER}/Engine)
+		if(NOT EXISTS ${platformEngineFolder}/${engineSub})
+			continue()
+		endif()
+
+		set(platformFiles "")
+		B3DGlobSourceFiles(${platformEngineFolder} "${enginePath}" "${foldersToIgnore}" platformFiles)
+
+		# Convert to absolute paths (these live outside the Engine tree) and group per platform.
+		foreach(relFile ${platformFiles})
+			set(absFile ${platformEngineFolder}/${relFile})
+			list(APPEND collected ${absFile})
+
+			get_filename_component(relDir ${relFile} DIRECTORY)
+			source_group(${platformName}/${relDir} FILES ${absFile})
+		endforeach()
+	endforeach()
+
+	set(${outSourceFiles} ${collected} PARENT_SCOPE)
+endfunction()
+
+# Returns the list of platform directory names for the current target platform.
+#
+# @param	outFolderNames	Output list of active platform directory names.
+function(B3DGetActivePlatformFolders outFolderNames)
+	set(folders ${B3D_PLATFORM})
+
+	# Unix sources are shared by the Linux and macOS targets.
+	if(APPLE OR LINUX)
+		list(APPEND folders Unix)
+	endif()
+
+	set(${outFolderNames} ${folders} PARENT_SCOPE)
+endfunction()
+
 # Determines library type based on monolithic mode and plugin category, and
 # wires up the plugin's framework dependency.
 # PLUGIN_CATEGORY: ENGINE (goes static in monolithic) or IMPORTER (always shared)
@@ -166,13 +219,7 @@ function(B3DAddRuntimeDependencies target)
 		add_dependencies(${target} bsfPhysX bsfNullPhysics)
 		add_dependencies(${target} bsfRenderBeast bsfNullRenderer)
 	else()
-		if(B3D_GPU_BACKEND MATCHES "Vulkan")
-			add_dependencies(${target} bsfVulkanGpuBackend)
-		elseif(B3D_GPU_BACKEND MATCHES "Metal")
-			add_dependencies(${target} bsfMetalGpuBackend)
-		else()
-			add_dependencies(${target} bsfNullGpuBackend)
-		endif()
+		add_dependencies(${target} ${B3D_GPU_BACKEND_LIB_${B3D_GPU_BACKEND}})
 
 		if(B3D_AUDIO_BACKEND MATCHES "FMOD")
 			add_dependencies(${target} bsfFMOD)

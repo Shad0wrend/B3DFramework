@@ -111,3 +111,58 @@ include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/Utility.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/SourceDependencyUtility.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/DownloadPackageUtility.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/FindPackageUtility.cmake)
+
+#######################################################################################
+######################## Platform discovery ###########################################
+#######################################################################################
+# Platform-specific code lives under Framework/Platform/<X>/, each a self-contained
+# overlay of Framework/Source (see Framework/Platform/README.md). This step discovers
+# the available platforms and reads each platform's metadata (Platform.cmake)
+
+set(B3D_PLATFORM_ROOT ${B3D_FRAMEWORK_ROOT_FOLDER}/Platform)
+set(B3D_BUILTIN_PLATFORMS Win32 MacOS Linux Unix)
+
+# The host is always a valid build target.
+if(WIN32)
+	set(B3D_HOST_PLATFORM Win32)
+elseif(APPLE)
+	set(B3D_HOST_PLATFORM MacOS)
+elseif(LINUX)
+	set(B3D_HOST_PLATFORM Linux)
+endif()
+
+# Discover available platforms
+set(B3D_PLATFORM_CHOICES ${B3D_HOST_PLATFORM})
+
+if(EXISTS ${B3D_PLATFORM_ROOT})
+	file(GLOB B3D_PLATFORM_FOLDERS RELATIVE ${B3D_PLATFORM_ROOT} ${B3D_PLATFORM_ROOT}/*)
+	foreach(platformName ${B3D_PLATFORM_FOLDERS})
+		if(NOT IS_DIRECTORY ${B3D_PLATFORM_ROOT}/${platformName})
+			continue()
+		endif()
+
+		# Per-platform convention paths (always set for present platforms)
+		set(B3D_PLATFORM_${platformName}_SOURCE_FOLDER ${B3D_PLATFORM_ROOT}/${platformName}/Source)
+		if(EXISTS ${B3D_PLATFORM_ROOT}/${platformName}/Dependencies)
+			set(B3D_PLATFORM_${platformName}_DEPENDENCIES_FOLDER ${B3D_PLATFORM_ROOT}/${platformName}/Dependencies)
+		else()
+			set(B3D_PLATFORM_${platformName}_DEPENDENCIES_FOLDER "")
+		endif()
+
+		if(NOT ${platformName} IN_LIST B3D_BUILTIN_PLATFORMS)
+			list(APPEND B3D_PLATFORM_CHOICES ${platformName})
+		endif()
+	endforeach()
+endif()
+
+# The single platform this configuration builds for. Defaults to the host.
+set(B3D_PLATFORM ${B3D_HOST_PLATFORM} CACHE STRING "Target platform to build for.")
+set_property(CACHE B3D_PLATFORM PROPERTY STRINGS ${B3D_PLATFORM_CHOICES})
+
+# Include platform meta-data (Platform.cmake)
+set(B3D_PLATFORM_METADATA ${B3D_PLATFORM_ROOT}/${B3D_PLATFORM}/Platform.cmake)
+if(NOT EXISTS ${B3D_PLATFORM_METADATA})
+	message(FATAL_ERROR "Selected platform '${B3D_PLATFORM}' is not available. ")
+endif()
+
+include(${B3D_PLATFORM_METADATA})

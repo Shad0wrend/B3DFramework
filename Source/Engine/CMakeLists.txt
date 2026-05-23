@@ -7,8 +7,8 @@ if(NOT B3D_BUILD_TESTS)
 	list(APPEND coreSourceFoldersToIgnore "Testing")
 endif()
 
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Utility/" "" B3D_UTILITY_SOURCE_FILES)
-B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "Core/" "${coreSourceFoldersToIgnore}" B3D_CORE_SOURCE_FILES)
+B3DGlobSourceFilesAcrossPlatforms("Utility/" "" B3D_UTILITY_SOURCE_FILES)
+B3DGlobSourceFilesAcrossPlatforms("Core/" "${coreSourceFoldersToIgnore}" B3D_CORE_SOURCE_FILES)
 
 if(MSVC)
 	list(APPEND B3D_CORE_SOURCE_FILES "Core/VSVisualizations.natvis")
@@ -33,25 +33,6 @@ if(B3D_ENABLE_NETWORKING)
 	find_package(GameNetworkingSockets REQUIRED)
 endif()
 
-if(LINUX)
-	find_package(X11 REQUIRED)
-	find_package(LibUUID REQUIRED)
-	find_package(LibICU REQUIRED)
-
-	if(NOT X11_Xcursor_FOUND)
-		message(FATAL_ERROR "Could not find XCursor library.")
-	endif()
-
-	if(NOT X11_Xrandr_FOUND)
-		message(FATAL_ERROR "Could not find XRandR library.")
-	endif()
-
-	if(NOT X11_Xi_FOUND)
-		message(FATAL_ERROR "Could not find Xi (XInput) library.")
-	endif()
-elseif(APPLE)
-	find_package(LibUUID REQUIRED)
-endif()
 
 # Third party (non-package) libraries
 add_library(ThirdParty INTERFACE)
@@ -63,6 +44,8 @@ target_include_directories(ThirdParty INTERFACE
 # separate INTERFACE target so static plugins can inherit them in monolithic
 # builds without creating a link cycle with bsf itself.
 add_library(bsfHeaders INTERFACE)
+
+# Add global framework includes
 target_include_directories(bsfHeaders INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Utility>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Core>
@@ -70,6 +53,21 @@ target_include_directories(bsfHeaders INTERFACE
 	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/Generated/Core>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Utility>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/Core>)
+
+# Add platform-specific includes
+B3DGetActivePlatformFolders(activePlatformFolders)
+
+foreach(platformFolder ${activePlatformFolders})
+	set(platformEngineFolder ${B3D_PLATFORM_${platformFolder}_SOURCE_FOLDER}/Engine)
+
+	if(EXISTS ${platformEngineFolder}/Utility)
+		target_include_directories(bsfHeaders INTERFACE $<BUILD_INTERFACE:${platformEngineFolder}/Utility>)
+	endif()
+
+	if(EXISTS ${platformEngineFolder}/Core)
+		target_include_directories(bsfHeaders INTERFACE $<BUILD_INTERFACE:${platformEngineFolder}/Core>)
+	endif()
+endforeach()
 
 if(MSVC)
 	if(NOT B3D_ENABLE_RTTI)
@@ -132,30 +130,6 @@ endif()
 ## External libs: Header only libraries
 target_link_libraries(bsf PUBLIC ThirdParty)
 
-if(LINUX)
-	## External lib: X11, LibUUID, LibICU
-	target_link_libraries(bsf PUBLIC ${X11_LIBRARIES} ${X11_Xcursor_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB})
-	target_link_libraries(bsf PRIVATE ${LibUUID_LIBRARIES})
-	target_link_libraries(bsf PRIVATE ${LibICU_LIBRARIES})
-endif()
-
-if(APPLE)
-	## External lib: LibUUID
-	target_link_libraries(bsf PRIVATE ${LibUUID_LIBRARIES})
-endif()
-
-## OS libs
-if(WIN32)
-	target_link_libraries(bsf PRIVATE Winmm dinput8 xinput9_1_0 dxguid.lib)
-	target_link_libraries(bsf PRIVATE DbgHelp IPHLPAPI Rpcrt4 User32 Shcore)
-elseif(LINUX)
-	target_link_libraries(bsf PRIVATE dl pthread)
-elseif(APPLE) # MacOS
-	B3DTargetLinkFramework(bsf CoreServices)
-	B3DTargetLinkFramework(bsf IOKit)
-	B3DTargetLinkFramework(bsf AppKit)
-	B3DTargetLinkFramework(bsf Carbon)
-endif()
 
 # IDE specific
 set_property(TARGET bsf PROPERTY FOLDER Engine)

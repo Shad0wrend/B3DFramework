@@ -11,18 +11,18 @@ set_property(CACHE B3D_AUDIO_BACKEND PROPERTY STRINGS OpenAudio FMOD Null)
 set(B3D_PHYSICS_BACKEND "PhysX" CACHE STRING "Physics backend to use.")
 set_property(CACHE B3D_PHYSICS_BACKEND PROPERTY STRINGS "PhysX" "Null")
 
-if(WIN32)
-	set(B3D_GPU_BACKEND "Vulkan" CACHE STRING "GPU backend to use.")
-	set_property(CACHE B3D_GPU_BACKEND PROPERTY STRINGS "Vulkan" "Null")
-elseif(APPLE)
-	# Metal backend exists but is still under development; Vulkan (via MoltenVK) remains the default
-	# on macOS until the Metal backend reaches feature parity.
-	set(B3D_GPU_BACKEND "Vulkan" CACHE STRING "GPU backend to use.")
-	set_property(CACHE B3D_GPU_BACKEND PROPERTY STRINGS "Metal" "Vulkan" "Null")
-else()
-	set(B3D_GPU_BACKEND "Vulkan" CACHE STRING "GPU backend to use.")
-	set_property(CACHE B3D_GPU_BACKEND PROPERTY STRINGS "Vulkan" "Null")
+# GPU backend choices and default are declared per-platform in Framework/Platform/<X>/Platform.cmake
+# and collected during platform discovery (Prerequisites.cmake)
+if(NOT B3D_GPU_BACKEND_CHOICES)
+	message(FATAL_ERROR "No GPU backend was declared for the target platform. Ensure the target platform exists under Framework/Platform/ and its Platform.cmake declares a GPU backend.")
 endif()
+
+if(NOT B3D_GPU_BACKEND_DEFAULT)
+	list(GET B3D_GPU_BACKEND_CHOICES 0 B3D_GPU_BACKEND_DEFAULT)
+endif()
+
+set(B3D_GPU_BACKEND "${B3D_GPU_BACKEND_DEFAULT}" CACHE STRING "GPU backend to use.")
+set_property(CACHE B3D_GPU_BACKEND PROPERTY STRINGS ${B3D_GPU_BACKEND_CHOICES})
 
 set(B3D_RENDERER "RenderBeast" CACHE STRING "Renderer backend to use.")
 set_property(CACHE B3D_RENDERER PROPERTY STRINGS RenderBeast Null)
@@ -56,13 +56,7 @@ B3DCheckAndUpdateAssetPackage(FrameworkDataRaw)
 # Config file
 ## Note: Must happen before script binding generation
 ## Set names of libraries used in the config file
-if(B3D_GPU_BACKEND MATCHES "Vulkan")
-	set(GPU_BACKEND_MODULE_LIB bsfVulkanGpuBackend)
-elseif(B3D_GPU_BACKEND MATCHES "Metal")
-	set(GPU_BACKEND_MODULE_LIB bsfMetalGpuBackend)
-else()
-	set(GPU_BACKEND_MODULE_LIB bsfNullGpuBackend)
-endif()
+set(GPU_BACKEND_MODULE_LIB ${B3D_GPU_BACKEND_LIB_${B3D_GPU_BACKEND}})
 
 if(B3D_AUDIO_BACKEND MATCHES "FMOD")
 	set(AUDIO_MODULE_LIB bsfFMOD)
@@ -111,6 +105,12 @@ configure_file("${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DFrameworkConfig.h.in" "$
 ## Engine
 add_subdirectory(Engine)
 
+## Platform
+set(B3D_PLATFORM_SOURCE_FOLDER ${B3D_PLATFORM_${B3D_PLATFORM}_SOURCE_FOLDER})
+if(EXISTS ${B3D_PLATFORM_SOURCE_FOLDER}/CMakeLists.txt)
+	add_subdirectory(${B3D_PLATFORM_SOURCE_FOLDER} ${PROJECT_BINARY_DIR}/Platform/${B3D_PLATFORM})
+endif()
+
 ## Plugins
 ### If building all plugins, include all in the solution
 if(B3D_BUILD_ALL_PLUGINS)
@@ -131,11 +131,12 @@ if(B3D_BUILD_ALL_PLUGINS)
 	add_subdirectory(Scripting/bsfScript)
 	add_subdirectory(Scripting/bsfSharp)
 else() # Otherwise include only chosen ones
-	if(B3D_GPU_BACKEND MATCHES "Vulkan")
+	# Match global GpuBackend plugins. Platforms can match their own.
+	if(B3D_GPU_BACKEND STREQUAL "Vulkan")
 		add_subdirectory(Plugins/bsfVulkanGpuBackend)
-	elseif(B3D_GPU_BACKEND MATCHES "Metal")
+	elseif(B3D_GPU_BACKEND STREQUAL "Metal")
 		add_subdirectory(Plugins/bsfMetalGpuBackend)
-	else()
+	elseif(B3D_GPU_BACKEND STREQUAL "Null")
 		add_subdirectory(Plugins/bsfNullGpuBackend)
 	endif()
 

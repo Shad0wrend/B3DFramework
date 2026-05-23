@@ -389,7 +389,7 @@ upload_rclone() {
 		case "$PlatformSuffix" in
 			Win32) echo "          winget install Rclone.Rclone" ;;
 			Linux) echo "          sudo -v ; curl https://rclone.org/install.sh | sudo bash" ;;
-			macOS) echo "          brew install rclone" ;;
+			MacOS) echo "          brew install rclone" ;;
 			*)     echo "          See https://rclone.org/downloads/" ;;
 		esac
 		echo "        Or run with --backend ftp."
@@ -548,7 +548,7 @@ fi
 if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
 	PlatformSuffix="Win32"
 elif [[ "$Platform" == "darwin"* ]]; then
-	PlatformSuffix="macOS"
+	PlatformSuffix="MacOS"
 elif [[ "$Platform" == "linux-gnu"* ]]; then
 	PlatformSuffix="Linux"
 else

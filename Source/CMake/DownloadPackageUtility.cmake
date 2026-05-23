@@ -102,19 +102,29 @@ endfunction()
 # Checks if a dependency is out of date and if so, downloads it.
 # Version is read from .reqversion file in the dependency folder.
 #
+# The prebuilt-archive suffix is the active platform (B3D_PLATFORM, e.g. Win32/Linux/MacOS),
+# resolved during platform discovery in Prerequisites.cmake.
+#
 # @param	dependencyName		Name of the dependency (e.g. 'XShaderCompiler', 'Mono', etc.)
+# @param	usePlatformFolder	(optional) If TRUE, the dependency lives in the active platform's Dependencies folder
+#								(Framework/Platform/<B3D_PLATFORM>/Dependencies), if FALSE the dependency lives in
+#								the framework's global Dependencies folder.
 function(B3DCheckAndUpdatePrebuiltDependency dependencyName)
-	set(dependencyFolder ${B3D_FRAMEWORK_ROOT_FOLDER}/Dependencies/${dependencyName})
-
-	if(WIN32)
-		set(platformSuffix Win32)
-	elseif(LINUX)
-		set(platformSuffix Linux)
-	elseif(APPLE)
-		set(platformSuffix macOS)
+	set(usePlatformFolder FALSE)
+	if(${ARGC} GREATER 1 AND ARGV1)
+		set(usePlatformFolder TRUE)
 	endif()
 
-	set(archivePrefix ${dependencyName}_${platformSuffix})
+	if(usePlatformFolder)
+		if(NOT B3D_PLATFORM_${B3D_PLATFORM}_DEPENDENCIES_FOLDER)
+			message(FATAL_ERROR "Platform '${B3D_PLATFORM}' has no Dependencies folder; cannot update '${dependencyName}'.")
+		endif()
+		set(dependencyFolder ${B3D_PLATFORM_${B3D_PLATFORM}_DEPENDENCIES_FOLDER}/${dependencyName})
+	else()
+		set(dependencyFolder ${B3D_FRAMEWORK_ROOT_FOLDER}/Dependencies/${dependencyName})
+	endif()
+
+	set(archivePrefix ${dependencyName}_${B3D_PLATFORM})
 
 	B3DDownloadPackageIfNeeded(${dependencyFolder} ${archivePrefix} ${dependencyName})
 endfunction()
