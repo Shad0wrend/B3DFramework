@@ -3,6 +3,7 @@
 #include "FileSystem/B3DFileSystem.h"
 
 #include "FileSystem/B3DDataStream.h"
+#include "FileSystem/B3DAsyncDataStream.h"
 #include "Debug/B3DDebug.h"
 
 #include <dirent.h>
@@ -143,34 +144,21 @@ bool FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 	return true;
 }
 
-TShared<DataStream> FileSystem::OpenFile(const Path& path, bool readOnly)
+TShared<DataStream> FileSystem::CreateFileStream(const Path& path, u32 accessMode)
 {
-	String pathString = path.ToString();
-
-	DataStream::AccessMode accessMode = DataStream::READ;
-	if(!readOnly)
-		accessMode = (DataStream::AccessMode)((u32)accessMode | (u32)DataStream::WRITE);
-
-	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(path, accessMode);
+	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(path, (DataStream::AccessMode)accessMode);
 	if(!fileDataStream->Open())
 	{
-		B3D_LOG(Warning, LogPlatform, "Failed to open file at path '{0}'. File stream failed to open.", path);
+		B3D_LOG(Warning, LogFileSystem, "Failed to open file at path '{0}'. File stream failed to open.", path);
 		return nullptr;
 	}
 
 	return fileDataStream;
 }
 
-TShared<DataStream> FileSystem::CreateAndOpenFile(const Path& path)
+TShared<IAsyncDataStream> FileSystem::CreateAsyncFileStream(const Path& path)
 {
-	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(path, DataStream::AccessMode::WRITE);
-	if(!fileDataStream->Open())
-	{
-		B3D_LOG(Warning, LogPlatform, "Failed to create file at path '{0}'. File stream failed to open.", path);
-		return nullptr;
-	}
-
-	return fileDataStream;
+	return AsyncFileDataStream::Create(path);
 }
 
 u64 FileSystem::GetFileSize(const Path& path)

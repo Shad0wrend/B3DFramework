@@ -222,6 +222,15 @@ MemoryDataStream::MemoryDataStream(void* memory, size_t size)
 	mEnd = mData + mSize;
 }
 
+MemoryDataStream::MemoryDataStream(void* memory, size_t size, bool takeOwnership)
+	: DataStream(READ | WRITE), mOwnsMemory(takeOwnership)
+{
+	mData = mCursor = static_cast<uint8_t*>(memory);
+	mSize = size;
+	mCapacity = size;
+	mEnd = mData + mSize;
+}
+
 MemoryDataStream::MemoryDataStream(const MemoryDataStream& sourceStream)
 	: DataStream(READ | WRITE)
 {

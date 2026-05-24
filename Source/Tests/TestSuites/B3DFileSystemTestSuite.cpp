@@ -4,6 +4,8 @@
 
 #include "Debug/B3DDebug.h"
 #include "FileSystem/B3DFileSystem.h"
+#include "FileSystem/B3DDataStream.h"
+#include "FileSystem/B3DAsyncDataStream.h"
 
 #include <algorithm>
 #include <fstream>
@@ -82,6 +84,11 @@ FileSystemTestSuite::FileSystemTestSuite()
 	B3D_ADD_TEST(FileSystemTestSuite::TestGetChildren);
 	B3D_ADD_TEST(FileSystemTestSuite::TestGetLastModifiedTime);
 	B3D_ADD_TEST(FileSystemTestSuite::TestGetTempDirectoryPath);
+	B3D_ADD_TEST(FileSystemTestSuite::TestStreamWriteReadRoundtrip);
+	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileMissing);
+	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncRead);
+	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncUserMemory);
+	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncEof);
 }
 
 void FileSystemTestSuite::TestExistsYesFile()
@@ -303,4 +310,151 @@ void FileSystemTestSuite::TestGetTempDirectoryPath()
 	Path path = FileSystem::GetTemporaryFolderPath();
 	/* No judging. */
 	B3D_TEST_ASSERT(!path.ToString().empty());
+}
+
+void FileSystemTestSuite::TestStreamWriteReadRoundtrip()
+{
+	Path path = mTestDirectory + "stream-roundtrip";
+	const String content = "Hello, platform data stream!";
+
+	{
+		TShared<DataStream> out = FileSystem::CreateAndOpenFile(path);
+		B3D_TEST_ASSERT(out != nullptr);
+		const size_t written = out->Write(content.data(), content.size());
+		B3D_TEST_ASSERT(written == content.size());
+		out->Close();
+	}
+
+	{
+		TShared<DataStream> in = FileSystem::OpenFile(path, true);
+		B3D_TEST_ASSERT(in != nullptr);
+		B3D_TEST_ASSERT(in->Size() == content.size());
+
+		String buffer;
+		buffer.resize(content.size());
+		const size_t read = in->Read(&buffer[0], content.size());
+		B3D_TEST_ASSERT(read == content.size());
+		B3D_TEST_ASSERT(buffer == content);
+
+		in->Seek(7);
+		B3D_TEST_ASSERT(in->Tell() == 7);
+
+		const size_t skipped = in->Skip(3);
+		B3D_TEST_ASSERT(skipped == 3);
+		B3D_TEST_ASSERT(in->Tell() == 10);
+
+		String rest;
+		rest.resize(content.size() - 10);
+		in->Read(&rest[0], rest.size());
+		B3D_TEST_ASSERT(rest == content.substr(10));
+
+		in->Seek(content.size());
+		u8 dummy = 0;
+		const size_t readPastEnd = in->Read(&dummy, 1);
+		B3D_TEST_ASSERT(readPastEnd == 0);
+		B3D_TEST_ASSERT(in->Eof());
+
+		in->Close();
+	}
+
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestOpenFileMissing()
+{
+	Path path = mTestDirectory + "this-file-really-does-not-exist";
+
+	LoggingScope logScope(*this);
+	logScope.ExpectWarning("Failed to open file");
+
+	TShared<DataStream> stream = FileSystem::OpenFile(path, true);
+	B3D_TEST_ASSERT(stream == nullptr);
+}
+
+void FileSystemTestSuite::TestOpenFileAsyncRead()
+{
+	Path path = mTestDirectory + "async-read";
+	const String content = "0123456789ABCDEFabcdef";
+	CreateFile(path, content);
+
+	TShared<IAsyncDataStream> stream = FileSystem::OpenFileAsync(path);
+	B3D_TEST_ASSERT(stream != nullptr);
+	B3D_TEST_ASSERT(stream->Size() == content.size());
+
+	TAsyncOp<TShared<MemoryDataStream>> op = stream->ReadAsync(0, content.size());
+	op.BlockUntilComplete();
+
+	TShared<MemoryDataStream> data = op.GetReturnValue();
+	B3D_TEST_ASSERT(data != nullptr);
+	B3D_TEST_ASSERT(data->Size() == content.size());
+	B3D_TEST_ASSERT(String((const char*)data->Data(), data->Size()) == content);
+
+	// Read a slice from a non-zero offset.
+	TAsyncOp<TShared<MemoryDataStream>> sliceOp = stream->ReadAsync(10, 6);
+	sliceOp.BlockUntilComplete();
+
+	TShared<MemoryDataStream> slice = sliceOp.GetReturnValue();
+	B3D_TEST_ASSERT(slice != nullptr);
+	B3D_TEST_ASSERT(slice->Size() == 6);
+	B3D_TEST_ASSERT(String((const char*)slice->Data(), slice->Size()) == content.substr(10, 6));
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestOpenFileAsyncUserMemory()
+{
+	Path path = mTestDirectory + "async-usermem";
+	const String content = "user-supplied-memory-test";
+	CreateFile(path, content);
+
+	TShared<IAsyncDataStream> stream = FileSystem::OpenFileAsync(path);
+	B3D_TEST_ASSERT(stream != nullptr);
+
+	Vector<u8> buffer(content.size(), 0);
+	DataRange range(buffer.data(), buffer.size());
+
+	TAsyncOp<TShared<MemoryDataStream>> op = stream->ReadAsync(0, content.size(), range);
+	op.BlockUntilComplete();
+
+	TShared<MemoryDataStream> data = op.GetReturnValue();
+	B3D_TEST_ASSERT(data != nullptr);
+	B3D_TEST_ASSERT(data->Size() == content.size());
+
+	// The returned stream should wrap the caller-supplied memory, which should now hold the file contents.
+	B3D_TEST_ASSERT(data->Data() == buffer.data());
+	B3D_TEST_ASSERT(String((const char*)buffer.data(), content.size()) == content);
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestOpenFileAsyncEof()
+{
+	Path path = mTestDirectory + "async-eof";
+	const String content = "short";
+	CreateFile(path, content);
+
+	TShared<IAsyncDataStream> stream = FileSystem::OpenFileAsync(path);
+	B3D_TEST_ASSERT(stream != nullptr);
+
+	// Request more bytes than remain past the offset; should return only the available bytes.
+	TAsyncOp<TShared<MemoryDataStream>> partialOp = stream->ReadAsync(3, 100);
+	partialOp.BlockUntilComplete();
+
+	TShared<MemoryDataStream> partial = partialOp.GetReturnValue();
+	B3D_TEST_ASSERT(partial != nullptr);
+	B3D_TEST_ASSERT(partial->Size() == content.size() - 3);
+	B3D_TEST_ASSERT(String((const char*)partial->Data(), partial->Size()) == content.substr(3));
+
+	// Read entirely past the end of file; should return an empty stream.
+	TAsyncOp<TShared<MemoryDataStream>> eofOp = stream->ReadAsync(100, 10);
+	eofOp.BlockUntilComplete();
+
+	TShared<MemoryDataStream> eof = eofOp.GetReturnValue();
+	B3D_TEST_ASSERT(eof != nullptr);
+	B3D_TEST_ASSERT(eof->Size() == 0);
+
+	stream->Close();
+	FileSystem::Remove(path);
 }

@@ -35,6 +35,11 @@ namespace b3d
 		void TestGetChildren();
 		void TestGetLastModifiedTime();
 		void TestGetTempDirectoryPath();
+		void TestStreamWriteReadRoundtrip();
+		void TestOpenFileMissing();
+		void TestOpenFileAsyncRead();
+		void TestOpenFileAsyncUserMemory();
+		void TestOpenFileAsyncEof();
 
 		Path mTestDirectory;
 	};

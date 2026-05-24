@@ -214,6 +214,17 @@ namespace b3d
 		MemoryDataStream(void* memory, size_t size);
 
 		/**
+		 * Wrap an existing memory chunk in a stream, optionally transferring ownership of the memory to the stream.
+		 *
+		 * @param 	memory			Memory to wrap the data stream around. If ownership is taken it must have been
+		 *							allocated using B3DAllocate().
+		 * @param	size			Size of the memory chunk in bytes.
+		 * @param	takeOwnership	If true the stream takes ownership of the memory and frees it (via B3DFree()) when
+		 *							destroyed. If false the caller retains ownership and must ensure it outlives the stream.
+		 */
+		MemoryDataStream(void* memory, size_t size, bool takeOwnership);
+
+		/**
 		 * Create a stream which pre-buffers the contents of another stream. Data from the other buffer will be entirely
 		 * read and stored in an internal buffer.
 		 */

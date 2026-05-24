@@ -1,9 +1,42 @@
 //************************************* B3D Framework - Copyright 2026 Marko Pintera *************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "FileSystem/B3DFileSystem.h"
+#include "FileSystem/B3DDataStream.h"
+#include "FileSystem/B3DAsyncDataStream.h"
 #include "Debug/B3DDebug.h"
 
 using namespace b3d;
+
+TShared<DataStream> FileSystem::OpenFile(const Path& fullPath, bool readOnly)
+{
+	if(!Exists(fullPath) || !IsFile(fullPath))
+	{
+		B3D_LOG(Warning, LogFileSystem, "Failed to open file at path '{0}'. File doesn't exist.", fullPath);
+		return nullptr;
+	}
+
+	u32 accessMode = DataStream::READ;
+	if(!readOnly)
+		accessMode |= DataStream::WRITE;
+
+	return CreateFileStream(fullPath, accessMode);
+}
+
+TShared<DataStream> FileSystem::CreateAndOpenFile(const Path& fullPath)
+{
+	return CreateFileStream(fullPath, DataStream::WRITE);
+}
+
+TShared<IAsyncDataStream> FileSystem::OpenFileAsync(const Path& fullPath)
+{
+	if(!Exists(fullPath) || !IsFile(fullPath))
+	{
+		B3D_LOG(Warning, LogFileSystem, "Failed to open file at path '{0}'. File doesn't exist.", fullPath);
+		return nullptr;
+	}
+
+	return CreateAsyncFileStream(fullPath);
+}
 
 bool FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)
 {

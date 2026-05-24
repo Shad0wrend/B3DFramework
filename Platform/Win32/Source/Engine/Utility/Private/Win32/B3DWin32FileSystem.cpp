@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "FileSystem/B3DFileSystem.h"
 #include "FileSystem/B3DDataStream.h"
+#include "Private/Win32/B3DWin32FileDataStream.h"
 #include "Debug/B3DDebug.h"
 #include "String/B3DUnicode.h"
 #include <windows.h>
@@ -296,41 +297,21 @@ bool FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 	return true;
 }
 
-TShared<DataStream> FileSystem::OpenFile(const Path& fullPath, bool readOnly)
+TShared<DataStream> FileSystem::CreateFileStream(const Path& fullPath, u32 accessMode)
 {
-	WString pathWString = UTF8::ToWide(fullPath.ToString());
-	const wchar_t* pathString = pathWString.c_str();
-
-	if(!Win32PathExists(pathString) || !Win32IsFile(pathString))
-	{
-		B3D_LOG(Warning, LogPlatform, "Failed to open file at path '{0}'. File doesn't exist.", fullPath);
-		return nullptr;
-	}
-
-	DataStream::AccessMode accessMode = DataStream::READ;
-	if(!readOnly)
-		accessMode = (DataStream::AccessMode)(accessMode | (u32)DataStream::WRITE);
-
-	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(fullPath, accessMode);
+	TShared<Win32FileDataStream> fileDataStream = B3DMakeShared<Win32FileDataStream>(fullPath, (DataStream::AccessMode)accessMode);
 	if(!fileDataStream->Open())
 	{
-		B3D_LOG(Warning, LogPlatform, "Failed to open file at path '{0}'. File stream failed to open.", fullPath);
+		B3D_LOG(Warning, LogFileSystem, "Failed to open file at path '{0}'. File stream failed to open.", fullPath);
 		return nullptr;
 	}
 
 	return fileDataStream;
 }
 
-TShared<DataStream> FileSystem::CreateAndOpenFile(const Path& fullPath)
+TShared<IAsyncDataStream> FileSystem::CreateAsyncFileStream(const Path& fullPath)
 {
-	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(fullPath, DataStream::AccessMode::WRITE);
-	if(!fileDataStream->Open())
-	{
-		B3D_LOG(Warning, LogPlatform, "Failed to create file at path '{0}'. File stream failed to open.", fullPath);
-		return nullptr;
-	}
-
-	return fileDataStream;
+	return Win32AsyncFileDataStream::Create(fullPath);
 }
 
 u64 FileSystem::GetFileSize(const Path& fullPath)
