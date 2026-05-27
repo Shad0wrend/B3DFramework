@@ -309,6 +309,16 @@ TShared<DataStream> FileSystem::CreateFileStream(const Path& fullPath, FileAcces
 	return fileDataStream;
 }
 
+void FileSystem::StartUp()
+{
+	// Do nothing
+}
+
+void FileSystem::ShutDown()
+{
+	// Do nothing
+}
+
 u64 FileSystem::GetFileSize(const Path& fullPath)
 {
 	return Win32GetFileSize(UTF8::ToWide(fullPath.ToString()));

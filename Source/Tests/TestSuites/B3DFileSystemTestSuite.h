@@ -40,6 +40,11 @@ namespace b3d
 		void TestOpenFileAsyncRead();
 		void TestOpenFileAsyncUserMemory();
 		void TestOpenFileAsyncEof();
+		void TestAsyncConcurrentReads();
+		void TestAsyncCloseWhileInFlight();
+		void TestAsyncLargeFileChunkChaining();
+		void TestAsyncFallbackWhenNotAsyncOpened();
+		void TestAsyncEmptyFile();
 
 		Path mTestDirectory;
 	};

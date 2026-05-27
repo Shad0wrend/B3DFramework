@@ -143,17 +143,6 @@ bool FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 	return true;
 }
 
-TShared<DataStream> FileSystem::CreateFileStream(const Path& path, FileAccessFlags access)
-{
-	TShared<FileDataStream> fileDataStream = B3DMakeShared<FileDataStream>(path, access);
-	if(!fileDataStream->Open())
-	{
-		B3D_LOG(Warning, LogFileSystem, "Failed to open file at path '{0}'. File stream failed to open.", path);
-		return nullptr;
-	}
-
-	return fileDataStream;
-}
 
 u64 FileSystem::GetFileSize(const Path& path)
 {

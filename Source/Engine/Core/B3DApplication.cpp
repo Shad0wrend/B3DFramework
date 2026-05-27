@@ -199,16 +199,19 @@ Application::~Application()
 	mTaskScheduler = nullptr;
 	Scheduler::UnbindFromCurrentThread();
 
+	ConfigVariableManager::ShutDown();
+
 	ThreadPool::ShutDown();
 	MemStack::EndThread();
 	Platform::ShutDown();
+	FileSystem::ShutDown();
 
-	ConfigVariableManager::ShutDown();
 	CrashHandler::ShutDown();
 }
 
 void Application::OnStartUp()
 {
+	FileSystem::StartUp();
 	Platform::StartUp();
 	MemStack::BeginThread();
 	ThreadPool::StartUp<TThreadPool<ThreadDefaultPolicy>>((Thread::GetLogicalCoreCount()));
@@ -220,6 +223,9 @@ void Application::OnStartUp()
 	schedulerCreateInformation.AffinityPolicy = B3DMakeShared<AnyOfThreadAffinityPolicy>(ThreadCoreMask::CreateAnyThreadMask()); // TODO - Mask out main + render threads
 
 	mTaskScheduler = B3DMakeShared<Scheduler>(schedulerCreateInformation);
+
+	// Initialize configuration variable system
+	ConfigVariableManager::StartUp();
 
 	mApplicationCache = PersistentCache::Create();
 	mApplicationCache->Initialize(FileSystem::GetApplicationDataFolder());
@@ -234,9 +240,6 @@ void Application::OnStartUp()
 	StringTableManager::StartUp();
 	DeferredCallManager::StartUp();
 	Time::StartUp();
-
-	// Initialize configuration variable system
-	ConfigVariableManager::StartUp();
 
 	// Handle --help-config
 	if (CommandLine::HasParameter("list-config-variables"))

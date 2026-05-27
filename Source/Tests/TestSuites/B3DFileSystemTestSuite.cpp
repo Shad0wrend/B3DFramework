@@ -26,6 +26,17 @@ void CreateEmptyFile(Path path)
 	CreateFile(path, "");
 }
 
+// Binary-safe variant of CreateFile that doesn't normalise newlines, used by tests that need exact byte-pattern
+// reproducibility (e.g. the async-read tests that verify each byte after a read-back).
+void CreateBinaryFile(Path path, const u8* data, size_t size)
+{
+	std::ofstream fs;
+	fs.open(path.ToPlatformString().c_str(), std::ios::binary | std::ios::trunc);
+	if(size > 0)
+		fs.write(reinterpret_cast<const char*>(data), (std::streamsize)size);
+	fs.close();
+}
+
 String ReadFile(Path path)
 {
 	String content;
@@ -78,6 +89,7 @@ FileSystemTestSuite::FileSystemTestSuite()
 	B3D_ADD_TEST(FileSystemTestSuite::TestMoveOverwriteExisting);
 	B3D_ADD_TEST(FileSystemTestSuite::TestMoveNoOverwriteExisting);
 	B3D_ADD_TEST(FileSystemTestSuite::TestCopy);
+	B3D_ADD_TEST(FileSystemTestSuite::TestCopyRecursive);
 	B3D_ADD_TEST(FileSystemTestSuite::TestCopyOverwriteExisting);
 	B3D_ADD_TEST(FileSystemTestSuite::TestCopyNoOverwriteExisting);
 	B3D_ADD_TEST(FileSystemTestSuite::TestGetChildren);
@@ -88,6 +100,11 @@ FileSystemTestSuite::FileSystemTestSuite()
 	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncRead);
 	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncUserMemory);
 	B3D_ADD_TEST(FileSystemTestSuite::TestOpenFileAsyncEof);
+	B3D_ADD_TEST(FileSystemTestSuite::TestAsyncConcurrentReads);
+	B3D_ADD_TEST(FileSystemTestSuite::TestAsyncCloseWhileInFlight);
+	B3D_ADD_TEST(FileSystemTestSuite::TestAsyncLargeFileChunkChaining);
+	B3D_ADD_TEST(FileSystemTestSuite::TestAsyncFallbackWhenNotAsyncOpened);
+	B3D_ADD_TEST(FileSystemTestSuite::TestAsyncEmptyFile);
 }
 
 void FileSystemTestSuite::TestExistsYesFile()
@@ -230,6 +247,39 @@ void FileSystemTestSuite::TestCopy()
 	B3D_TEST_ASSERT(FileSystem::Exists(destination));
 	B3D_TEST_ASSERT(ReadFile(source) == "copy-data-source-1");
 	B3D_TEST_ASSERT(ReadFile(destination) == "copy-data-source-1");
+}
+
+void FileSystemTestSuite::TestCopyRecursive()
+{
+	// Build a small nested tree under the test directory, copy the whole thing, and verify every file landed at the
+	// expected destination path with the expected contents. Exercises FileSystem::Copy's directory-recursion path.
+	Path source = mTestDirectory + "copy-recursive-source/";
+	Path destination = mTestDirectory + "copy-recursive-destination/";
+
+	FileSystem::CreateFolder(source);
+	FileSystem::CreateFolder(source + "sub/");
+	FileSystem::CreateFolder(source + "sub/deeper/");
+	CreateFile(source + "a.txt", "alpha");
+	CreateFile(source + "b.txt", "bravo");
+	CreateFile(source + "sub/c.txt", "charlie");
+	CreateFile(source + "sub/deeper/d.txt", "delta");
+
+	B3D_TEST_ASSERT(FileSystem::Exists(source));
+	B3D_TEST_ASSERT(!FileSystem::Exists(destination));
+
+	const bool ok = FileSystem::Copy(source, destination);
+	B3D_TEST_ASSERT(ok);
+
+	// Source must still be present (Copy, not Move) and every child file must exist at the mirrored destination path
+	// with the correct content.
+	B3D_TEST_ASSERT(FileSystem::Exists(source));
+	B3D_TEST_ASSERT(FileSystem::IsFolder(destination));
+	B3D_TEST_ASSERT(FileSystem::IsFolder(destination + "sub/"));
+	B3D_TEST_ASSERT(FileSystem::IsFolder(destination + "sub/deeper/"));
+	B3D_TEST_ASSERT(ReadFile(destination + "a.txt") == "alpha");
+	B3D_TEST_ASSERT(ReadFile(destination + "b.txt") == "bravo");
+	B3D_TEST_ASSERT(ReadFile(destination + "sub/c.txt") == "charlie");
+	B3D_TEST_ASSERT(ReadFile(destination + "sub/deeper/d.txt") == "delta");
 }
 
 void FileSystemTestSuite::TestCopyOverwriteExisting()
@@ -453,6 +503,173 @@ void FileSystemTestSuite::TestOpenFileAsyncEof()
 	TShared<MemoryDataStream> eof = eofOp.GetReturnValue();
 	B3D_TEST_ASSERT(eof != nullptr);
 	B3D_TEST_ASSERT(eof->Size() == 0);
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestAsyncConcurrentReads()
+{
+	// Issue many ReadAsync calls back-to-back without blocking between them, then collect each result and verify the
+	// slice content. On Linux this stresses the shared LinuxFileIOManager's MPSC submit path; on Win32 and macOS it
+	// exercises the per-stream outstanding-read counter and concurrent completion-callback bookkeeping.
+	Path path = mTestDirectory + "async-concurrent";
+
+	constexpr size_t fileSize = 256 * 1024;
+	Vector<u8> fileBytes(fileSize);
+	for(size_t i = 0; i < fileSize; i++)
+		fileBytes[i] = (u8)((i * 31u + 7u) & 0xff); // Cheap deterministic pattern.
+	CreateBinaryFile(path, fileBytes.data(), fileBytes.size());
+
+	TShared<DataStream> stream = FileSystem::OpenFile(path, FileAccessFlag::Read | FileAccessFlag::Async);
+	B3D_TEST_ASSERT(stream != nullptr);
+
+	constexpr int numReads = 16;
+	constexpr size_t sliceSize = fileSize / numReads;
+
+	Vector<TAsyncOp<TShared<MemoryDataStream>>> ops;
+	ops.reserve(numReads);
+	for(int i = 0; i < numReads; i++)
+		ops.push_back(stream->ReadAsync(i * sliceSize, sliceSize));
+
+	for(int i = 0; i < numReads; i++)
+	{
+		ops[i].BlockUntilComplete();
+		TShared<MemoryDataStream> data = ops[i].GetReturnValue();
+		B3D_TEST_ASSERT(data != nullptr);
+		B3D_TEST_ASSERT(data->Size() == sliceSize);
+
+		const u8* bytes = (const u8*)data->Data();
+		for(size_t j = 0; j < sliceSize; j++)
+			B3D_TEST_ASSERT(bytes[j] == fileBytes[i * sliceSize + j]);
+	}
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestAsyncCloseWhileInFlight()
+{
+	// Issue a handful of reads then immediately call Close() *before* blocking on any of them. Each op must finalize
+	// (either with correct data or null if cancelled); the test fails only if Close hangs, an op never completes, or
+	// completed data is corrupt. The reads are sized to give the kernel a fair chance of having work outstanding at
+	// the moment Close runs, but the test stays meaningful even when every read happens to complete first.
+	Path path = mTestDirectory + "async-close-in-flight";
+
+	constexpr size_t fileSize = 1 * 1024 * 1024;
+	Vector<u8> fileBytes(fileSize);
+	for(size_t i = 0; i < fileSize; i++)
+		fileBytes[i] = (u8)(i & 0xff);
+	CreateBinaryFile(path, fileBytes.data(), fileBytes.size());
+
+	TShared<DataStream> stream = FileSystem::OpenFile(path, FileAccessFlag::Read | FileAccessFlag::Async);
+	B3D_TEST_ASSERT(stream != nullptr);
+
+	constexpr int numReads = 8;
+	constexpr size_t readSize = fileSize / numReads;
+
+	Vector<TAsyncOp<TShared<MemoryDataStream>>> ops;
+	ops.reserve(numReads);
+	for(int i = 0; i < numReads; i++)
+		ops.push_back(stream->ReadAsync(i * readSize, readSize));
+
+	// Close immediately, without blocking on any op. The contract is that Close drains every in-flight read; after
+	// it returns, each op must have either finalized with correct data or finalized with a null result (cancelled).
+	stream->Close();
+
+	for(int i = 0; i < numReads; i++)
+	{
+		ops[i].BlockUntilComplete();
+		TShared<MemoryDataStream> data = ops[i].GetReturnValue();
+		if(data != nullptr)
+		{
+			B3D_TEST_ASSERT(data->Size() == readSize);
+			const u8* bytes = (const u8*)data->Data();
+			for(size_t j = 0; j < readSize; j++)
+				B3D_TEST_ASSERT(bytes[j] == fileBytes[i * readSize + j]);
+		}
+		// Otherwise the read was cancelled by Close - also acceptable.
+	}
+
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestAsyncLargeFileChunkChaining()
+{
+	// Read a file larger than the Linux backend's 16 MiB per-chunk cap in a single ReadAsync call. The manager has to
+	// chain at least two chunks for the request to complete. On Win32 and macOS the read is a single transfer (Win32
+	// caps at 4 GiB, macOS GCD splits opaquely) but the test still validates that large reads return the right bytes.
+	Path path = mTestDirectory + "async-large-chunk-chain";
+
+	constexpr size_t fileSize = 24 * 1024 * 1024; // 24 MiB; exceeds the 16 MiB per-chunk cap on Linux.
+	Vector<u8> fileBytes(fileSize);
+	for(size_t i = 0; i < fileSize; i++)
+		fileBytes[i] = (u8)((i * 131u + 11u) & 0xff);
+	CreateBinaryFile(path, fileBytes.data(), fileBytes.size());
+
+	TShared<DataStream> stream = FileSystem::OpenFile(path, FileAccessFlag::Read | FileAccessFlag::Async);
+	B3D_TEST_ASSERT(stream != nullptr);
+	B3D_TEST_ASSERT(stream->Size() == fileSize);
+
+	TAsyncOp<TShared<MemoryDataStream>> op = stream->ReadAsync(0, fileSize);
+	op.BlockUntilComplete();
+
+	TShared<MemoryDataStream> data = op.GetReturnValue();
+	B3D_TEST_ASSERT(data != nullptr);
+	B3D_TEST_ASSERT(data->Size() == fileSize);
+
+	// Compare a handful of byte windows rather than the whole file to keep the test cheap when it does pass; if the
+	// chain is broken the boundaries are exactly where the failure would show up.
+	const u8* bytes = (const u8*)data->Data();
+	const size_t spotCheckOffsets[] = {0, 1, fileSize / 2 - 1, fileSize / 2, fileSize / 2 + 1, 16 * 1024 * 1024 - 1, 16 * 1024 * 1024, 16 * 1024 * 1024 + 1, fileSize - 2, fileSize - 1};
+	for(size_t off : spotCheckOffsets)
+		B3D_TEST_ASSERT(bytes[off] == fileBytes[off]);
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestAsyncFallbackWhenNotAsyncOpened()
+{
+	// Streams opened *without* FileAccessFlag::Async must still service ReadAsync calls by falling back to the
+	// synchronous default DataStream::ReadAsync. The returned op completes inline with the correct data.
+	Path path = mTestDirectory + "async-fallback";
+	const String content = "fallback-path-via-sync-default";
+	CreateFile(path, content);
+
+	// No Async flag.
+	TShared<DataStream> stream = FileSystem::OpenFile(path, FileAccessFlag::Read);
+	B3D_TEST_ASSERT(stream != nullptr);
+
+	TAsyncOp<TShared<MemoryDataStream>> op = stream->ReadAsync(0, content.size());
+	op.BlockUntilComplete();
+
+	TShared<MemoryDataStream> data = op.GetReturnValue();
+	B3D_TEST_ASSERT(data != nullptr);
+	B3D_TEST_ASSERT(data->Size() == content.size());
+	B3D_TEST_ASSERT(String((const char*)data->Data(), data->Size()) == content);
+
+	stream->Close();
+	FileSystem::Remove(path);
+}
+
+void FileSystemTestSuite::TestAsyncEmptyFile()
+{
+	// ReadAsync on a zero-byte file must finalize cleanly with an empty MemoryDataStream rather than wedging or
+	// allocating the requested-size buffer just to return zero bytes. Validates the at-EOF clamp-before-allocate path.
+	Path path = mTestDirectory + "async-empty";
+	CreateEmptyFile(path);
+
+	TShared<DataStream> stream = FileSystem::OpenFile(path, FileAccessFlag::Read | FileAccessFlag::Async);
+	B3D_TEST_ASSERT(stream != nullptr);
+	B3D_TEST_ASSERT(stream->Size() == 0);
+
+	TAsyncOp<TShared<MemoryDataStream>> op = stream->ReadAsync(0, 100);
+	op.BlockUntilComplete();
+
+	TShared<MemoryDataStream> data = op.GetReturnValue();
+	B3D_TEST_ASSERT(data != nullptr);
+	B3D_TEST_ASSERT(data->Size() == 0);
 
 	stream->Close();
 	FileSystem::Remove(path);

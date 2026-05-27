@@ -193,6 +193,15 @@ TAsyncOp<TShared<MemoryDataStream>> Win32FileDataStream::ReadAsync(u64 offset, s
 		return op;
 	}
 
+	const u64 available = offset < mSize ? (mSize - offset) : 0;
+	const u64 totalByteCount = byteCount > available ? available : byteCount;
+
+	if(totalByteCount == 0)
+	{
+		op.CompleteOperation(B3DMakeShared<MemoryDataStream>());
+		return op;
+	}
+
 	{
 		Lock lock(mMutex);
 		if(mClosed || mHandle == nullptr)
@@ -207,6 +216,7 @@ TAsyncOp<TShared<MemoryDataStream>> Win32FileDataStream::ReadAsync(u64 offset, s
 	AsyncChunkReadRequest* request = B3DNew<AsyncChunkReadRequest>();
 	request->Stream = this;
 	request->BaseOffset = offset;
+	request->TotalByteCount = totalByteCount;
 	request->Op = op;
 	request->Event = CreateEventW(nullptr, TRUE, FALSE, nullptr); // Manual-reset, initially nonsignaled.
 
@@ -224,26 +234,15 @@ TAsyncOp<TShared<MemoryDataStream>> Win32FileDataStream::ReadAsync(u64 offset, s
 	}
 	else
 	{
-		request->Buffer = B3DAllocate(byteCount);
+		request->Buffer = B3DAllocate((size_t)totalByteCount);
 		request->OwnsBuffer = true;
 
 		if(request->Buffer == nullptr)
 		{
-			B3D_LOG(Error, LogFileSystem, "Failed to allocate {0} bytes for an asynchronous read.", (u64)byteCount);
+			B3D_LOG(Error, LogFileSystem, "Failed to allocate {0} bytes for an asynchronous read.", totalByteCount);
 			FinalizeAsyncRead(request, 0, false);
 			return op;
 		}
-	}
-
-	// Clamp the read to the bytes actually available so ReadFile never crosses the end of file. This keeps the
-	// completion behaviour unambiguous and matches the synchronous default. Reads entirely at/after EOF complete inline.
-	const u64 available = offset < mSize ? (mSize - offset) : 0;
-	request->TotalByteCount = byteCount > available ? available : byteCount;
-
-	if(request->TotalByteCount == 0)
-	{
-		FinalizeAsyncRead(request, 0, true);
-		return op;
 	}
 
 	IssueAsyncChunkRead(request);
@@ -578,6 +577,10 @@ bool Win32FileDataStream::Close()
 		CloseHandle((HANDLE)mSyncEvent);
 		mSyncEvent = nullptr;
 	}
+
+	// Reset cursor/EOF state so a subsequent Open() on the same stream object doesn't start in EOF from the previous lifetime.
+	mCursor = 0;
+	mEof = false;
 
 	return flushResult;
 }

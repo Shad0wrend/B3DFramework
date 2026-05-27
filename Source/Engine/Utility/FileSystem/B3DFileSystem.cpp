@@ -77,7 +77,7 @@ bool FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteEx
 
 			Vector<Path> files;
 			Vector<Path> directories;
-			GetChildren(destinationPath, files, directories);
+			GetChildren(sourcePath, files, directories);
 
 			for(auto& file : files)
 			{

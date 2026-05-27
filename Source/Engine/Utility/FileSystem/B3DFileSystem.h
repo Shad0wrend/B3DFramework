@@ -16,6 +16,19 @@ namespace b3d
 	{
 	public:
 		/**
+		 * One-time process-level initialization for the file system. Brings up any platform-specific async I/O machinery
+		 * (e.g. the shared io_uring instance on Linux). Must be called once from Application startup before any thread
+		 * issues an asynchronous file read. No-op on platforms that need no per-process setup.
+		 */
+		static void StartUp();
+
+		/**
+		 * Tears down any platform-specific async I/O machinery brought up by StartUp(). Must be called once from
+		 * Application shutdown, paired with StartUp().
+		 */
+		static void ShutDown();
+
+		/**
 		 * Opens a file and returns a data stream capable of reading and/or writing to that file.
 		 *
 		 * @param	fullPath	Full path to a file.
