@@ -17,9 +17,9 @@ TShared<DataStream> FileSystem::OpenFile(const Path& fullPath, FileAccessFlags a
 	return CreateFileStream(fullPath, access);
 }
 
-TShared<DataStream> FileSystem::CreateAndOpenFile(const Path& fullPath)
+TShared<DataStream> FileSystem::CreateAndOpenFile(const Path& fullPath, FileAccessFlags access)
 {
-	return CreateFileStream(fullPath, FileAccessFlag::Write);
+	return CreateFileStream(fullPath, access);
 }
 
 bool FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)

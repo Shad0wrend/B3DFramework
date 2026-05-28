@@ -65,11 +65,12 @@ bool Win32FileDataStream::Open()
 		flags |= FILE_FLAG_OVERLAPPED;
 
 	// Strict sharing: read-only handles permit other readers (FILE_SHARE_READ); any write-capable handle is exclusive
-	// (dwShareMode = 0). The kernel surfaces accidental concurrent open-for-write on the same path as
-	// ERROR_SHARING_VIOLATION at open time, instead of letting it turn into silent data corruption. Callers that
-	// legitimately need to coordinate concurrent access on the same path do so through higher-level locks (e.g.
-	// PackageWriteLock, PersistentCache per-entry write operations) and serialize their opens accordingly.
-	const DWORD shareMode = wantWrite ? 0 : FILE_SHARE_READ;
+	// (dwShareMode = 0). Shared permits sharing.
+	DWORD shareMode;
+	if(mAccess.IsSet(FileAccessFlag::Shared))
+		shareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;
+	else
+		shareMode = wantWrite ? 0 : FILE_SHARE_READ;
 	const WString widePath = UTF8::ToWide(mPath.ToString());
 	HANDLE handle = CreateFileW(widePath.c_str(), access, shareMode, nullptr, disposition, flags, nullptr);
 	if(handle == INVALID_HANDLE_VALUE)

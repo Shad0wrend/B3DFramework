@@ -367,8 +367,11 @@ table td
 
 	stream << htmlFooter;
 
-	TShared<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
-	fileStream->WriteString(stream.str());
+	// Shared: a log file is a diagnostic output an external process may legitimately tail or tee while we write it, so
+	// it opts out of the strict exclusive-write sharing the file streams otherwise enforce.
+	TShared<DataStream> fileStream = FileSystem::CreateAndOpenFile(path, FileAccessFlag::Write | FileAccessFlag::Shared);
+	if(fileStream)
+		fileStream->WriteString(stream.str());
 }
 
 /* Internal function to get the given number of spaces, so that the log looks properly indented */
@@ -476,8 +479,11 @@ void Debug::SaveTextLog(const Path& path) const
 		stream << builtMsg << "\n";
 	}
 
-	TShared<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
-	fileStream->WriteString(stream.str());
+	// Shared: a log file is a diagnostic output an external process may legitimately tail or tee while we write it, so
+	// it opts out of the strict exclusive-write sharing the file streams otherwise enforce.
+	TShared<DataStream> fileStream = FileSystem::CreateAndOpenFile(path, FileAccessFlag::Write | FileAccessFlag::Shared);
+	if(fileStream)
+		fileStream->WriteString(stream.str());
 }
 
 namespace b3d

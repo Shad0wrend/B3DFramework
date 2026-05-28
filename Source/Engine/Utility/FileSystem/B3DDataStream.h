@@ -314,7 +314,17 @@ namespace b3d
 		 * overlapped IO on Windows) on platforms that support it. On other platforms ReadAsync() falls back to a
 		 * synchronous implementation regardless. Intended to be combined with Read.
 		 */
-		Async = 1 << 2
+		Async = 1 << 2,
+
+		/**
+		 * Relaxes the kernel-enforced exclusive sharing that a write-capable open normally takes. By default a write
+		 * open is exclusive (no other handle to the same path is permitted) and a read-only open admits only other
+		 * readers; this is what makes accidental concurrent access to the same file surface as a hard open error
+		 * instead of silent corruption. Set this flag only for files that are *deliberately* shared with cooperating
+		 * external processes - e.g. a log file that a CI harness tails at the same time the engine writes it.
+		 * With this flag set other readers and writers may hold the same path open concurrently.
+		 */
+		Shared = 1 << 3
 	};
 
 	using FileAccessFlags = Flags<FileAccessFlag>;

@@ -38,12 +38,14 @@ namespace b3d
 		static TShared<DataStream> OpenFile(const Path& fullPath, FileAccessFlags access = FileAccessFlag::Read);
 
 		/**
-		 * Opens a file and returns a data stream capable of reading and writing to that file. If file doesn't exist new
-		 * one will be created.
+		 * Opens a file and returns a data stream capable of writing to that file. If file doesn't exist a new one will
+		 * be created (and an existing one truncated).
 		 *
 		 * @param	fullPath	Full path to a file.
+		 * @param	access		(optional) Combination of FileAccessFlag values controlling how the file is accessed.
+		 *						Defaults to write-only with strict exclusive sharing.
 		 */
-		static TShared<DataStream> CreateAndOpenFile(const Path& fullPath);
+		static TShared<DataStream> CreateAndOpenFile(const Path& fullPath, FileAccessFlags access = FileAccessFlag::Write);
 
 		/**
 		 * Returns the size of a file in bytes.
