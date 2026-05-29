@@ -39,6 +39,10 @@ UnixFileDataStream::~UnixFileDataStream()
 
 bool UnixFileDataStream::Open()
 {
+	// Open() must be called on a stream that isn't already open; re-opening would overwrite (and leak) the live descriptor.
+	if(!B3D_ENSURE(mFd < 0))
+		return false;
+
 	const bool wantRead = mAccess.IsSet(FileAccessFlag::Read);
 	const bool wantWrite = mAccess.IsSet(FileAccessFlag::Write);
 

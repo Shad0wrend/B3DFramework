@@ -527,6 +527,11 @@ FileDataStream::~FileDataStream()
 
 bool FileDataStream::Open()
 {
+	// Open() must be called on a stream that isn't already open; std::fstream::open() would otherwise fail and leave the
+	// already-open stream in an error state.
+	if(!B3D_ENSURE(!mFileStream.is_open()))
+		return false;
+
 	// Always open in binary mode
 	std::ios::openmode mode = std::ios::binary;
 

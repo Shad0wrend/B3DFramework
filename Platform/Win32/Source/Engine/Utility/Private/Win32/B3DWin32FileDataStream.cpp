@@ -44,6 +44,10 @@ Win32FileDataStream::~Win32FileDataStream()
 
 bool Win32FileDataStream::Open()
 {
+	// Open() must be called on a stream that isn't already open; re-opening would overwrite (and leak) the live handle.
+	if(!B3D_ENSURE(mHandle == nullptr))
+		return false;
+
 	const bool wantRead = mAccess.IsSet(FileAccessFlag::Read);
 	const bool wantWrite = mAccess.IsSet(FileAccessFlag::Write);
 	mIsOverlapped = mAccess.IsSet(FileAccessFlag::Async);
