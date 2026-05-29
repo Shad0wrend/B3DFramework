@@ -13,6 +13,7 @@
 #include "Threading/B3DSignal.h"
 #include "Threading/B3DThreadPool.h"
 #include "Utility/B3DMinHeap.h"
+#include "Utility/B3DPool.h"
 #include "Utility/B3DSpatialTree.h"
 #include "Utility/B3DBitstream.h"
 #include "Utility/B3DQueue.h"
@@ -92,6 +93,35 @@ struct DebugQuadtreeOptions
 
 typedef TQuadTree<u32, DebugQuadtreeOptions> DebugQuadtree;
 
+// Tracks construction/destruction so TestPool can verify lifetimes. Sized to at least a pointer so it satisfies TPool's
+// minimum element size requirement.
+struct PoolLifetimeProbe
+{
+	PoolLifetimeProbe(i32 value)
+		: Value(value)
+	{
+		++sLiveCount;
+		++sConstructCount;
+	}
+
+	~PoolLifetimeProbe()
+	{
+		--sLiveCount;
+		++sDestructCount;
+	}
+
+	i32 Value;
+	i32 Padding = 0;
+
+	static i32 sLiveCount;
+	static i32 sConstructCount;
+	static i32 sDestructCount;
+};
+
+i32 PoolLifetimeProbe::sLiveCount = 0;
+i32 PoolLifetimeProbe::sConstructCount = 0;
+i32 PoolLifetimeProbe::sDestructCount = 0;
+
 UtilityTestSuite::UtilityTestSuite()
 	: TestSuite("UtilityTestSuite")
 {
@@ -109,6 +139,7 @@ UtilityTestSuite::UtilityTestSuite()
 	B3D_ADD_TEST(UtilityTestSuite::TestSPSCQueue)
 	B3D_ADD_TEST(UtilityTestSuite::TestHashedString)
 	B3D_ADD_TEST(UtilityTestSuite::TestUnique)
+	B3D_ADD_TEST(UtilityTestSuite::TestPool)
 }
 
 void UtilityTestSuite::TestBitfield()
@@ -1296,4 +1327,106 @@ void UtilityTestSuite::TestUnique()
 		B3D_TEST_ASSERT(shared->Value == 17)
 	}
 	B3D_TEST_ASSERT(UniqueLifetimeProbe::sLiveCount == 0)
+}
+
+void UtilityTestSuite::TestPool()
+{
+	PoolLifetimeProbe::sLiveCount = 0;
+	PoolLifetimeProbe::sConstructCount = 0;
+	PoolLifetimeProbe::sDestructCount = 0;
+
+	// Small page size so allocating past it forces multiple pages
+	static constexpr u32 kCount = 10;
+	TPool<PoolLifetimeProbe, 4> pool;
+
+	B3D_TEST_ASSERT(pool.GetAllocatedCount() == 0)
+
+	// Allocate across multiple pages; each element is constructed and gets a unique address
+	Vector<PoolLifetimeProbe*> elements;
+	for(u32 i = 0; i < kCount; ++i)
+		elements.push_back(pool.Allocate((i32)i));
+
+	B3D_TEST_ASSERT(pool.GetAllocatedCount() == kCount)
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sLiveCount == (i32)kCount)
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sConstructCount == (i32)kCount)
+
+	for(u32 i = 0; i < kCount; ++i)
+	{
+		B3D_TEST_ASSERT(elements[i]->Value == (i32)i)
+
+		for(u32 j = i + 1; j < kCount; ++j)
+			B3D_TEST_ASSERT(elements[i] != elements[j])
+	}
+
+	// Release everything; all elements are destructed
+	for(u32 i = 0; i < kCount; ++i)
+		pool.Release(elements[i]);
+
+	B3D_TEST_ASSERT(pool.GetAllocatedCount() == 0)
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sLiveCount == 0)
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sDestructCount == (i32)kCount)
+
+	// Re-allocating the same count reuses freed slots rather than growing storage
+	const i32 constructsBeforeReuse = PoolLifetimeProbe::sConstructCount;
+	Vector<PoolLifetimeProbe*> reused;
+	for(u32 i = 0; i < kCount; ++i)
+	{
+		PoolLifetimeProbe* element = pool.Allocate((i32)(100 + i));
+
+		bool fromOriginalSlots = false;
+		for(u32 j = 0; j < kCount; ++j)
+			fromOriginalSlots = fromOriginalSlots || (element == elements[j]);
+
+		B3D_TEST_ASSERT(fromOriginalSlots)
+		reused.push_back(element);
+	}
+
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sConstructCount == constructsBeforeReuse + (i32)kCount)
+	B3D_TEST_ASSERT(pool.GetAllocatedCount() == kCount)
+
+	for(u32 i = 0; i < kCount; ++i)
+		pool.Release(reused[i]);
+
+	B3D_TEST_ASSERT(pool.GetAllocatedCount() == 0)
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sLiveCount == 0)
+
+	// Non-LIFO release order still recycles correctly through the intrusive linked list
+	{
+		TPool<PoolLifetimeProbe, 4> relinkPool;
+
+		PoolLifetimeProbe* a = relinkPool.Allocate(0);
+		PoolLifetimeProbe* b = relinkPool.Allocate(1);
+		PoolLifetimeProbe* c = relinkPool.Allocate(2);
+		PoolLifetimeProbe* d = relinkPool.Allocate(3);
+		PoolLifetimeProbe* e = relinkPool.Allocate(4);
+		B3D_TEST_ASSERT(relinkPool.GetAllocatedCount() == 5)
+
+		// Release out of order
+		relinkPool.Release(b);
+		relinkPool.Release(d);
+		relinkPool.Release(a);
+		B3D_TEST_ASSERT(relinkPool.GetAllocatedCount() == 2)
+
+		// The three freed slots must all come back out of the free list before any new page is used
+		Vector<PoolLifetimeProbe*> recycled;
+		for(u32 i = 0; i < 3; ++i)
+		{
+			PoolLifetimeProbe* element = relinkPool.Allocate((i32)i);
+			const bool fromFreeList = element == a || element == b || element == d;
+			B3D_TEST_ASSERT(fromFreeList)
+			recycled.push_back(element);
+		}
+
+		B3D_TEST_ASSERT(relinkPool.GetAllocatedCount() == 5)
+
+		// Release all outstanding elements so the pool can be destroyed cleanly
+		relinkPool.Release(c);
+		relinkPool.Release(e);
+		for(u32 i = 0; i < (u32)recycled.size(); ++i)
+			relinkPool.Release(recycled[i]);
+
+		B3D_TEST_ASSERT(relinkPool.GetAllocatedCount() == 0)
+	}
+
+	B3D_TEST_ASSERT(PoolLifetimeProbe::sLiveCount == 0)
 }

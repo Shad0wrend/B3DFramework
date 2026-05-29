@@ -53,7 +53,7 @@ void LinuxFileIOManager::OnStartUp()
 		return;
 	}
 
-	// Arm the eventfd poll before spawning the reaper so the very first SubmitRead() can wake it. The sentinel
+	// Arm the eventfd poll before spawning the reaper so the very first RequestRead() can wake it. The sentinel
 	// user_data lets the reaper distinguish wake-ups from chunk completions; the reaper re-arms the poll after each
 	// wake.
 	struct io_uring_sqe* sqe = ::io_uring_get_sqe(&mRing);
@@ -91,7 +91,7 @@ void LinuxFileIOManager::OnShutDown()
 
 	// Stop accepting new submissions and wake the reaper. The reaper drains any pending queue (failing each request),
 	// waits for in-flight CQEs to come back from the kernel, then exits its loop. mRunning flips to false here so any
-	// late SubmitRead() callers fail their op inline rather than wedging on the joined reaper thread.
+	// late RequestRead() callers fail their op inline rather than wedging on the joined reaper thread.
 	mStopping.store(true, std::memory_order_release);
 	mRunning.store(false, std::memory_order_release);
 
@@ -109,20 +109,23 @@ void LinuxFileIOManager::OnShutDown()
 	mEventFd = -1;
 }
 
-void LinuxFileIOManager::SubmitRead(AsyncReadRequest* request)
+void LinuxFileIOManager::RequestRead(const AsyncReadRequest& request)
 {
+	AsyncReadOperation* operation = AllocateOperation();
+	operation->Request = request;
+
 	// Defensive: the stream is supposed to check IsRunning() before calling, but a race between that check and here can
-	// land us with mStopping flipped under us. Fail the request inline so the stream's outstanding-read counter still
-	// rebalances and Close() can make progress.
+	// land us with mStopping flipped under us. Finalize the operation inline so the stream's outstanding-read counter
+	// still rebalances and Close() can make progress.
 	if(mStopping.load(std::memory_order_acquire))
 	{
-		FinalizeRequest(request, 0, false);
+		FinalizeOperation(operation, 0, false);
 		return;
 	}
 
 	{
 		Lock lock(mSubmitMutex);
-		mPending.push_back(request);
+		mPending.push_back(operation);
 	}
 
 	const uint64_t one = 1;
@@ -198,29 +201,29 @@ void LinuxFileIOManager::ReaperThreadMain()
 			// and io_uring_submit can be slow and there's no reason to hold the caller-facing mutex while they run.
 			// Both vectors retain capacity across wakes, so after the first growth this swap+drain pair allocates
 			// nothing.
-			B3D_ASSERT(mReadyBuf.empty()); // Previous iteration ended with clear(); must be empty before swap.
+			B3D_ASSERT(mReadyOperations.empty()); // Previous iteration ended with clear(); must be empty before swap.
 			{
 				Lock lock(mSubmitMutex);
-				mReadyBuf.swap(mPending);
+				mReadyOperations.swap(mPending);
 			}
 
 			const bool stopping = mStopping.load(std::memory_order_acquire);
-			for(AsyncReadRequest* request : mReadyBuf)
+			for(AsyncReadOperation* operation : mReadyOperations)
 			{
 				if(stopping)
 				{
-					// Manager going away: fail the request inline so the stream's outstanding counter rebalances.
-					FinalizeRequest(request, 0, false);
+					// Manager going away: fail the operation inline so the stream's outstanding counter rebalances.
+					FinalizeOperation(operation, 0, false);
 				}
-				else if(SubmitChunk(request))
+				else if(SubmitChunk(operation))
 				{
 					inFlightCount++;
 				}
 				// SubmitChunk already finalized on failure; nothing more to do.
 			}
-			mReadyBuf.clear(); // Preserves capacity for the next wake.
+			mReadyOperations.clear(); // Preserves capacity for the next wake.
 
-			// Re-arm the eventfd poll so subsequent SubmitRead() calls can wake us. Even during shutdown we re-arm:
+			// Re-arm the eventfd poll so subsequent RequestRead() calls can wake us. Even during shutdown we re-arm:
 			// the exit condition handles termination cleanly once everything drains, and the SQE is freed by
 			// io_uring_queue_exit() in OnShutDown().
 			struct io_uring_sqe* pollSqe = ::io_uring_get_sqe(&mRing);
@@ -236,46 +239,46 @@ void LinuxFileIOManager::ReaperThreadMain()
 				::io_uring_sqe_set_data(pollSqe, (void*)kEventFdSentinel);
 				const int rearmRet = ::io_uring_submit(&mRing);
 				if(rearmRet < 0)
-					B3D_LOG(Error, LogFileSystem, "Failed to submit eventfd poll re-arm on the shared ring (error {0}). Subsequent SubmitRead() wake-ups may be delayed until an in-flight read completes.", String(strerror(-rearmRet)));
+					B3D_LOG(Error, LogFileSystem, "Failed to submit eventfd poll re-arm on the shared ring (error {0}). Subsequent RequestRead() wake-ups may be delayed until an in-flight read completes.", String(strerror(-rearmRet)));
 			}
 			else
 			{
-				B3D_LOG(Error, LogFileSystem, "Failed to obtain SQE for eventfd poll re-arm on the shared ring. Subsequent SubmitRead() wake-ups may be delayed until an in-flight read completes.");
+				B3D_LOG(Error, LogFileSystem, "Failed to obtain SQE for eventfd poll re-arm on the shared ring. Subsequent RequestRead() wake-ups may be delayed until an in-flight read completes.");
 			}
 		}
 		else
 		{
-			AsyncReadRequest* request = static_cast<AsyncReadRequest*>(userData);
+			AsyncReadOperation* operation = static_cast<AsyncReadOperation*>(userData);
 
 			if(res < 0)
 			{
 				// Negative result is a kernel error. The bytes already accumulated from prior chunks are discarded
 				// to match the Win32 behaviour where any in-flight failure aborts the whole operation.
 				B3D_LOG(Warning, LogFileSystem, "Asynchronous read failed (error {0}).", String(strerror(-res)));
-				FinalizeRequest(request, (size_t)request->BytesRead, false);
+				FinalizeOperation(operation, (size_t)operation->BytesRead, false);
 				inFlightCount--;
 			}
 			else if(res == 0)
 			{
 				// EOF before the clamped total was reached - finish with whatever we have. Reads are clamped to file
 				// size at issue time so this is rare in practice (only happens if the file was truncated under us).
-				FinalizeRequest(request, (size_t)request->BytesRead, true);
+				FinalizeOperation(operation, (size_t)operation->BytesRead, true);
 				inFlightCount--;
 			}
 			else
 			{
-				request->BytesRead += (u64)res;
+				operation->BytesRead += (u64)res;
 
-				if(request->BytesRead < request->TotalByteCount)
+				if(operation->BytesRead < operation->Request.TotalByteCount)
 				{
 					// Chain the next chunk. SubmitChunk reuses the same in-flight slot (the SQE we just had a CQE
-					// for is being replaced); on submit failure it finalizes the request and we drop the slot.
-					if(!SubmitChunk(request))
+					// for is being replaced); on submit failure it finalizes the operation and we drop the slot.
+					if(!SubmitChunk(operation))
 						inFlightCount--;
 				}
 				else
 				{
-					FinalizeRequest(request, (size_t)request->BytesRead, true);
+					FinalizeOperation(operation, (size_t)operation->BytesRead, true);
 					inFlightCount--;
 				}
 			}
@@ -285,10 +288,11 @@ void LinuxFileIOManager::ReaperThreadMain()
 	}
 }
 
-bool LinuxFileIOManager::SubmitChunk(AsyncReadRequest* request)
+bool LinuxFileIOManager::SubmitChunk(AsyncReadOperation* operation)
 {
-	const u64 fileOffset = request->BaseOffset + request->BytesRead;
-	const u64 remaining = request->TotalByteCount - request->BytesRead;
+	const AsyncReadRequest& request = operation->Request;
+	const u64 fileOffset = request.BaseOffset + operation->BytesRead;
+	const u64 remaining = request.TotalByteCount - operation->BytesRead;
 	const u32 chunkLen = remaining > kAsyncChunkBytes ? (u32)kAsyncChunkBytes : (u32)remaining;
 
 	// Only the reaper touches the SQ, so a null SQE here means the queue genuinely filled up. Flush what we have and
@@ -300,7 +304,7 @@ bool LinuxFileIOManager::SubmitChunk(AsyncReadRequest* request)
 		if(flushRet < 0)
 		{
 			B3D_LOG(Warning, LogFileSystem, "io_uring_submit failed while flushing for the shared ring (error {0}).", String(strerror(-flushRet)));
-			FinalizeRequest(request, (size_t)request->BytesRead, false);
+			FinalizeOperation(operation, (size_t)operation->BytesRead, false);
 			return false;
 		}
 
@@ -308,49 +312,65 @@ bool LinuxFileIOManager::SubmitChunk(AsyncReadRequest* request)
 		if(sqe == nullptr)
 		{
 			B3D_LOG(Warning, LogFileSystem, "io_uring submission queue exhausted on the shared ring.");
-			FinalizeRequest(request, (size_t)request->BytesRead, false);
+			FinalizeOperation(operation, (size_t)operation->BytesRead, false);
 			return false;
 		}
 	}
 
-	::io_uring_prep_read(sqe, request->Fd, static_cast<u8*>(request->Buffer) + request->BytesRead, chunkLen, fileOffset);
-	::io_uring_sqe_set_data(sqe, request);
+	::io_uring_prep_read(sqe, request.FileDescriptor, static_cast<u8*>(request.Buffer) + operation->BytesRead, chunkLen, fileOffset);
+	::io_uring_sqe_set_data(sqe, operation);
 
 	// liburing returns negative errno directly on failure - don't consult the global errno.
 	const int submitRet = ::io_uring_submit(&mRing);
 	if(submitRet < 0)
 	{
 		B3D_LOG(Warning, LogFileSystem, "io_uring_submit failed on the shared ring (error {0}).", String(strerror(-submitRet)));
-		FinalizeRequest(request, (size_t)request->BytesRead, false);
+		FinalizeOperation(operation, (size_t)operation->BytesRead, false);
 		return false;
 	}
 
 	return true;
 }
 
-void LinuxFileIOManager::FinalizeRequest(AsyncReadRequest* request, size_t bytesRead, bool succeeded)
+void LinuxFileIOManager::FinalizeOperation(AsyncReadOperation* operation, size_t bytesRead, bool succeeded)
 {
+	AsyncReadRequest& request = operation->Request;
+
 	TShared<MemoryDataStream> result;
 	if(succeeded)
 	{
-		if(request->OwnsBuffer)
-			result = B3DMakeShared<MemoryDataStream>(request->Buffer, bytesRead, true);
+		if(request.OwnsBuffer)
+			result = B3DMakeShared<MemoryDataStream>(request.Buffer, bytesRead, true);
 		else
-			result = B3DMakeShared<MemoryDataStream>(request->Buffer, bytesRead);
+			result = B3DMakeShared<MemoryDataStream>(request.Buffer, bytesRead);
 	}
-	else if(request->OwnsBuffer && request->Buffer != nullptr)
+	else if(request.OwnsBuffer && request.Buffer != nullptr)
 	{
-		B3DFree(request->Buffer);
+		B3DFree(request.Buffer);
 	}
 
-	request->Op.CompleteOperation(result);
+	request.Op.CompleteOperation(result);
 
-	// Tell the owning stream the read finalized before the request memory is reclaimed - the stream uses this signal
-	// to decrement its per-stream outstanding count and wake any Close()-side drain.
-	if(request->Stream != nullptr)
-		request->Stream->OnAsyncReadComplete();
+	// Tell the owning stream the read finalized before the operation is recycled - the stream uses this signal to
+	// decrement its per-stream outstanding count and wake any Close()-side drain.
+	if(request.Stream != nullptr)
+		request.Stream->OnAsyncReadComplete();
 
-	B3DDelete(request);
+	ReleaseOperation(operation);
+}
+
+LinuxFileIOManager::AsyncReadOperation* LinuxFileIOManager::AllocateOperation()
+{
+	Lock lock(mOperationMutex);
+	return mOperationPool.Allocate();
+}
+
+void LinuxFileIOManager::ReleaseOperation(AsyncReadOperation* operation)
+{
+	// Releasing destructs the operation, dropping its AsyncOp/stream references (and stale chunk progress); the next
+	// Allocate() default-constructs a clean slot. The caller no longer touches the operation, so this is safe.
+	Lock lock(mOperationMutex);
+	mOperationPool.Release(operation);
 }
 
 // ************************************************************************************************************************
@@ -416,36 +436,36 @@ TAsyncOp<TShared<MemoryDataStream>> LinuxFileDataStream::ReadAsync(u64 offset, s
 		mOutstandingReads++;
 	}
 
-	LinuxFileIOManager::AsyncReadRequest* request = B3DNew<LinuxFileIOManager::AsyncReadRequest>();
-	request->Stream = this;
-	request->Fd = mFd;
-	request->BaseOffset = offset;
-	request->TotalByteCount = totalByteCount;
-	request->Op = op;
+	// The manager copies this into a pooled operation, so a stack-local request is fine.
+	LinuxFileIOManager::AsyncReadRequest request;
+	request.Stream = this;
+	request.FileDescriptor = mFd;
+	request.BaseOffset = offset;
+	request.TotalByteCount = totalByteCount;
+	request.Op = op;
 
 	if(userSuppliedMemory.has_value())
 	{
-		request->Buffer = userSuppliedMemory->Data;
-		request->OwnsBuffer = false;
+		request.Buffer = userSuppliedMemory->Data;
+		request.OwnsBuffer = false;
 	}
 	else
 	{
-		request->Buffer = B3DAllocate(totalByteCount);
-		request->OwnsBuffer = true;
+		request.Buffer = B3DAllocate(totalByteCount);
+		request.OwnsBuffer = true;
 
-		if(request->Buffer == nullptr)
+		if(request.Buffer == nullptr)
 		{
 			B3D_LOG(Error, LogFileSystem, "Failed to allocate {0} bytes for an asynchronous read.", (u64)totalByteCount);
-			// Bypass the manager: with no buffer there is nothing to submit. Complete the op with null, release the
-			// request, and rebalance the outstanding counter we bumped above so Close() can make progress.
-			B3DDelete(request);
+			// Bypass the manager: with no buffer there is nothing to submit. Complete the op with null and rebalance the
+			// outstanding counter we bumped above so Close() can make progress.
 			op.CompleteOperation(nullptr);
 			OnAsyncReadComplete();
 			return op;
 		}
 	}
 
-	LinuxFileIOManager::Instance().SubmitRead(request);
+	LinuxFileIOManager::Instance().RequestRead(request);
 	return op;
 }
 

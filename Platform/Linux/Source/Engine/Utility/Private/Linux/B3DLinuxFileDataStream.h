@@ -6,6 +6,7 @@
 #include "Private/Unix/B3DUnixFileDataStream.h"
 #include "Threading/B3DThreading.h"
 #include "Utility/B3DModule.h"
+#include "Utility/B3DPool.h"
 
 #include <atomic>
 #include <liburing.h>
@@ -23,38 +24,37 @@ namespace b3d
 	 *
 	 * Threading contract:
 	 *   - The reaper thread is the single owner of the ring. Only the reaper touches the submission & completion queues (SQE/CQE).
-	 *   - SubmitRead() is safe from any thread: it pushes the request onto an MPSC queue under mSubmitMutex and signals
-	 *     the eventfd, then returns. The reaper drains the queue on its next wake and issues the SQEs itself.
+	 *   - RequestRead() is safe from any thread. The reaper drains the queue on its next wake and issues the SQEs itself.
 	 *   - The reaper signals completion by calling LinuxFileDataStream::OnAsyncReadComplete() on the owning stream,
 	 *     which the stream uses to release its outstanding-read count and wake any Close()-side drain.
 	 */
 	class LinuxFileIOManager final : public Module<LinuxFileIOManager>
 	{
 	public:
-		/** State for a single in-flight async read. Manager-owned; lifetime: SubmitRead() through FinalizeRequest(). */
+		/** Describes a single async read. The owning stream fills it in and passes it to RequestRead(). */
 		struct AsyncReadRequest
 		{
 			LinuxFileDataStream* Stream = nullptr; /**< Owning stream; receives OnAsyncReadComplete() after finalize. */
-			int Fd = -1;
-			void* Buffer = nullptr;
-			bool OwnsBuffer = false;
-			u64 BaseOffset = 0; /**< File offset where the read began. */
+			int FileDescriptor = -1; /**< Descriptor to read from; the stream keeps it alive for the operation's lifetime. */
+			void* Buffer = nullptr; /**< Destination the read writes into. */
+			bool OwnsBuffer = false; /**< True if the manager should free Buffer (via B3DFree) when the read fails. */
+			u64 BaseOffset = 0; /**< File offset where the read begins. */
 			u64 TotalByteCount = 0; /**< Total bytes to read (already clamped to EOF by the caller). */
-			u64 BytesRead = 0; /**< Bytes accumulated so far across all chunks. */
-			TAsyncOp<TShared<MemoryDataStream>> Op;
+			TAsyncOp<TShared<MemoryDataStream>> Op; /**< Completed with the read result, or a null stream on failure. */
 		};
 
 		/** True iff OnStartUp() successfully brought the ring online and the reaper is reaping. */
 		bool IsRunning() const { return mRunning.load(std::memory_order_acquire); }
 
 		/**
-		 * Submits an async read request to the shared ring. Takes ownership of @p request; the manager finalizes,
-		 * completes the AsyncOp, and B3DDeletes the request when the read finishes (or fails). Safe from any thread.
+		 * Queues an async read with the shared ring. The manager issues the read (chunked across CQEs as needed),
+		 * finalizes it, completes the AsyncOp, and notifies the owning stream when it finishes (or fails).
+		 * Safe from any thread.
 		 *
-		 * If the manager is not running (e.g. shutting down), the request is finalized inline as a failure - the
-		 * stream's OnAsyncReadComplete() still runs so the outstanding-read counter is consistent.
+		 * If the manager is not running (e.g. shutting down), the read is finalized inline as a failure - the stream's
+		 * OnAsyncReadComplete() still runs so the outstanding-read counter is consistent.
 		 */
-		void SubmitRead(AsyncReadRequest* request);
+		void RequestRead(const AsyncReadRequest& request);
 
 	protected:
 		/** Brings up the ring + eventfd + reaper thread. Logs Warning and leaves IsRunning() == false on any failure. */
@@ -64,26 +64,48 @@ namespace b3d
 		void OnShutDown() override;
 
 	private:
+		/**
+		 * One in-flight async read: the caller's request plus the reaper-internal chunk accumulator. Pooled in
+		 * mOperationPool, so its address (used as the SQE user_data) stays stable for the operation's whole lifetime.
+		 */
+		struct AsyncReadOperation
+		{
+			AsyncReadRequest Request;
+			u64 BytesRead = 0; /**< Bytes accumulated so far across all chunks. */
+		};
+
 		/** Reaper thread entry point: waits on the ring, reaps CQEs, drains the pending queue, chains chunks. */
 		void ReaperThreadMain();
 
-		/** Submits one chunk for an in-flight request. Returns true on successful submit. */
-		bool SubmitChunk(AsyncReadRequest* request);
+		/** Submits one chunk for an in-flight operation. Returns true on successful submit. */
+		bool SubmitChunk(AsyncReadOperation* operation);
 
-		/** Builds the result, completes the AsyncOp, notifies the owning stream, deletes the request. */
-		void FinalizeRequest(AsyncReadRequest* request, size_t bytesRead, bool succeeded);
+		/** Builds the result, completes the AsyncOp, notifies the owning stream, then returns the operation to the pool. */
+		void FinalizeOperation(AsyncReadOperation* operation, size_t bytesRead, bool succeeded);
+
+		/** Returns a freshly-constructed pooled operation slot, recycling a free one if available or growing the pool. Safe from any thread. */
+		AsyncReadOperation* AllocateOperation();
+
+		/** Destructs @p operation and returns its slot to the pool for reuse. Safe from any thread. */
+		void ReleaseOperation(AsyncReadOperation* operation);
 
 		struct io_uring mRing;
 		int mEventFd = -1;
 		Thread mReaper;
 		Mutex mSubmitMutex; /**< Guards mPending only; not held across ring ops. */
 		// Double-buffered MPSC drain: submitters push_back to mPending under mSubmitMutex; on each wake the reaper
-		// O(1) swaps the two vectors, drains mReadyBuf unlocked, then clear()s it (preserving capacity). Both
+		// O(1) swaps the two vectors, drains mReadyOperations unlocked, then clear()s it (preserving capacity). Both
 		// vectors reach steady-state capacity after the first level-load burst and never reallocate afterwards.
 		// FIFO ordering is preserved because submitters push_back in arrival order and the reaper iterates
 		// front-to-back.
-		Vector<AsyncReadRequest*> mPending;
-		Vector<AsyncReadRequest*> mReadyBuf; /**< Reaper-only after the swap. */
+		Vector<AsyncReadOperation*> mPending;
+		Vector<AsyncReadOperation*> mReadyOperations; /**< Reaper-only after the swap. */
+
+		// Operation pool. Operations are pointer-stable (the pool never moves elements) and accessed from both submitter
+		// threads (allocate) and the reaper (release), so a mutex guards it (TPool is not thread-safe on its own).
+		Mutex mOperationMutex;
+		TPool<AsyncReadOperation, 64> mOperationPool;
+
 		std::atomic<bool> mRunning{false};
 		std::atomic<bool> mStopping{false};
 		u32 mWaitFailureCount = 0; /**< Reaper-local; log-throttle counter for io_uring_wait_cqe failures. */
