@@ -108,6 +108,9 @@ endif()
 
 # Common includes
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/Utility.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/Globbing.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/PostBuild.cmake)
+include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/CompileFlags.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/SourceDependencyUtility.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/DownloadPackageUtility.cmake)
 include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/FindPackageUtility.cmake)

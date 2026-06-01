@@ -48,6 +48,8 @@ set(B3D_USE_BUNDLED_LIBRARIES ON CACHE BOOL "Use and install bundled libraries")
 
 set(B3D_MONOLITHIC_BUILD OFF CACHE BOOL "Link non-importer plugins statically into a single bsf library.")
 
+set(B3D_BUILD_IMPORTERS ON CACHE BOOL "Build asset importer plugins and the import tooling. These are cook-time only, and are not supported on consoles.")
+
 # Ensure dependencies are up to date
 ## Check data dependencies
 B3DCheckAndUpdateAssetPackage(FrameworkData)
@@ -174,10 +176,12 @@ else() # Otherwise include only chosen ones
 	endif()
 endif()
 
-add_subdirectory(Plugins/bsfFBXImporter)
-add_subdirectory(Plugins/bsfFontImporter)
-add_subdirectory(Plugins/bsfFreeImgImporter)
-add_subdirectory(Plugins/bsfSL)
+if(B3D_BUILD_IMPORTERS)
+	add_subdirectory(Plugins/bsfFBXImporter)
+	add_subdirectory(Plugins/bsfFontImporter)
+	add_subdirectory(Plugins/bsfFreeImgImporter)
+	add_subdirectory(Plugins/bsfSL)
+endif()
 
 ## Generate static plugin registry for monolithic builds
 if(B3D_MONOLITHIC_BUILD)
@@ -227,23 +231,25 @@ if(B3D_BUILD_TESTS)
 endif()
 
 ## Builtin resource preprocessing
-add_executable(BansheeImportTool
-	Engine/Core/Resources/B3DBuiltinResourcesImporter.cpp)
-B3DSetDefaultLinkAndCompileFlags(BansheeImportTool)
+if(B3D_BUILD_IMPORTERS)
+	add_executable(BansheeImportTool
+		Engine/Core/Resources/B3DBuiltinResourcesImporter.cpp)
+	B3DSetDefaultLinkAndCompileFlags(BansheeImportTool)
 
-target_link_libraries(BansheeImportTool bsf)
+	target_link_libraries(BansheeImportTool bsf)
 
-B3DAddRuntimeDependencies(BansheeImportTool)
-add_dependencies(BansheeImportTool bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
+	B3DAddRuntimeDependencies(BansheeImportTool)
+	add_dependencies(BansheeImportTool bsfFBXImporter bsfFontImporter bsfFreeImgImporter bsfSL)
 
-set_property(TARGET BansheeImportTool PROPERTY FOLDER Tools)
+	set_property(TARGET BansheeImportTool PROPERTY FOLDER Tools)
 
-if(NOT B3D_IS_ENGINE)
-	install(TARGETS BansheeImportTool RUNTIME DESTINATION bin)
+	if(NOT B3D_IS_ENGINE)
+		install(TARGETS BansheeImportTool RUNTIME DESTINATION bin)
+	endif()
+
+	include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BuiltinAssetUtility.cmake)
+	B3DAddRunAssetImportTarget(FrameworkBuiltinAssets ${B3D_FRAMEWORK_ROOT_FOLDER}/Data/Raw ${B3D_FRAMEWORK_ROOT_FOLDER}/Data "")
 endif()
-
-include(${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/BuiltinAssetUtility.cmake)
-B3DAddRunAssetImportTarget(FrameworkBuiltinAssets ${B3D_FRAMEWORK_ROOT_FOLDER}/Data/Raw ${B3D_FRAMEWORK_ROOT_FOLDER}/Data "")
 
 if(NOT B3D_IS_ENGINE)
 	set(B3D_ASSETS_INSTALL_FOLDER bin)

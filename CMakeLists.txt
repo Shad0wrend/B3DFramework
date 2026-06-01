@@ -1,5 +1,12 @@
 cmake_minimum_required (VERSION 3.31.0)
-project (bsf LANGUAGES C CXX CSharp)
+
+# CSharp is only supported by the Visual Studio generators.
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+	set(B3D_PROJECT_LANGUAGES C CXX CSharp)
+else()
+	set(B3D_PROJECT_LANGUAGES C CXX)
+endif()
+project (bsf LANGUAGES ${B3D_PROJECT_LANGUAGES})
 
 set (B3D_FRAMEWORK_ROOT_FOLDER ${PROJECT_SOURCE_DIR})
 set (B3D_FRAMEWORK_SOURCE_FOLDER ${B3D_FRAMEWORK_ROOT_FOLDER}/Source)
