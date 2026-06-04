@@ -144,7 +144,6 @@ mixin TextureCompressBC6Common
 				QuantizeBC6Pair(e0, e1, wBits, tBits, transformed, cA, cBs, cBa);
 
 				int palR[16], palG[16], palB[16];
-				[unroll]
 				for (uint k = 0; k < 16; ++k)
 				{
 					palR[k] = BC6PaletteValue(cA.x, cBa.x, wBits, k, 4u);
@@ -154,12 +153,10 @@ mixin TextureCompressBC6Common
 
 				float wgt[16];
 				total = 0;
-				[unroll]
 				for (uint t = 0; t < 16; ++t)
 				{
 					int bestK = 0;
 					int bestD = 0x7fffffff;
-					[unroll]
 					for (uint k = 0; k < 16; ++k)
 					{
 						int dr = h[t].x - palR[k];
@@ -260,10 +257,8 @@ mixin TextureCompressBC6Common
 
 					// Palette per subset, packed into [16] as index s*8 + k (subset s, ramp position k).
 					int palR[16], palG[16], palB[16];
-					[unroll]
 					for (uint s = 0; s < 2; ++s)
 					{
-						[unroll]
 						for (uint k = 0; k < 8; ++k)
 						{
 							palR[s * 8 + k] = BC6PaletteValue(absC[2 * s].x, absC[2 * s + 1].x, wBits, k, 3u);
@@ -274,13 +269,11 @@ mixin TextureCompressBC6Common
 
 					float wgt[16];
 					err = 0;
-					[unroll]
 					for (uint t = 0; t < 16; ++t)
 					{
 						uint b = ((pmask >> t) & 1u) * 8u;
 						int bestK = 0;
 						int bestD = 0x7fffffff;
-						[unroll]
 						for (uint k = 0; k < 8; ++k)
 						{
 							int dr = h[t].x - palR[b + k];
@@ -360,10 +353,8 @@ mixin TextureCompressBC6Common
 
 			// Re-measure error from the truly-decoded palette (delta clamping above may shift the actual codes).
 			int palR2[16], palG2[16], palB2[16];
-			[unroll]
 			for (uint s = 0; s < 2; ++s)
 			{
-				[unroll]
 				for (uint k = 0; k < 8; ++k)
 				{
 					palR2[s * 8 + k] = BC6PaletteValue(act[2 * s].x, act[2 * s + 1].x, wBits, k, 3u);
@@ -372,7 +363,6 @@ mixin TextureCompressBC6Common
 				}
 			}
 			float finalErr = 0;
-			[unroll]
 			for (uint t = 0; t < 16; ++t)
 			{
 				uint b = ((fpmask >> t) & 1u) * 8u + bestIdx[t];

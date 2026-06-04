@@ -364,9 +364,11 @@ mixin TextureCompressBC7Common
 						}
 					}
 
+					// Rolled loops (not [unroll]): inlined many times per BC7 kernel (mode 0/2 search 64 three-subset
+					// partitions, FORMAT 4 inlines five modes) and unrolling the 16x16 search overruns amdvlk/LLPC's
+					// cold-compile budget (hangs in vkCreateComputePipelines).
 					float wgt[16];
 					err = 0;
-					[unroll]
 					for (int t = 0; t < 16; ++t)
 					{
 						uint s = subsetOf[t];
@@ -374,7 +376,6 @@ mixin TextureCompressBC7Common
 						int4 pr1 = r1[s];
 						int bestK = 0;
 						int bestD = 0x7fffffff;
-						[unroll]
 						for (int k = 0; k < 16; ++k)
 						{
 							if (k >= idxCount) continue;
@@ -424,43 +425,45 @@ mixin TextureCompressBC7Common
 			// by -1/0/+1 and keep the lowest squared-error pair (separable per channel), then re-assign indices. Recovers
 			// error the continuous least-squares fit loses to integer rounding. Only the chosen partition is polished.
 			int maxCode = (1 << bits) - 1;
-			[unroll]
 			for (int polishIter = 0; polishIter < BCN_POLISH_ITERS; ++polishIter)
 			{
-				[unroll]
 				for (int ps = 0; ps < 3; ++ps)
 				{
 					if (ps >= numSubsets) continue;
 					int pp0 = (pbMode == 0) ? -1 : (int)bP0[ps];
 					int pp1 = (pbMode == 0) ? -1 : (int)bP1[ps];
-					[unroll]
 					for (int pc = 0; pc < 4; ++pc)
 					{
 						if (pc >= numCh) continue;
 						int cur0 = bC0[ps][pc];
 						int cur1 = bC1[ps][pc];
-						int polBest = 0x7fffffff;
+						// Precompute the squared-error quadratic-form partial sums over this subset's texels ONCE, so each
+						// of the nine (-1/0/+1)^2 endpoint-code candidates is evaluated in O(1) instead of re-scanning all
+						// 16 texels per candidate. Re-scanning inside the d0/d1 search was ~80% of this kernel's compile
+						// time on amdvlk/LLPC (deeply nested runtime loops). 
+						float Spp = 0, SpA = 0, SpB = 0, SAA = 0, SAB = 0, SBB = 0;
+						for (int t = 0; t < 16; ++t)
+						{
+							if (subF[t] != (uint)ps) continue;
+							float A = (float)(64 - BC7IdxWeight(ib, bIdx[t])) * (1.0f / 64.0f);
+							float B = 1.0f - A;
+							float p = (float)px[t][pc];
+							Spp += p * p; SpA += p * A; SpB += p * B;
+							SAA += A * A; SAB += A * B; SBB += B * B;
+						}
+
+						float polBest = 3.4e38f;
 						int sel0 = cur0, sel1 = cur1;
-						[unroll]
 						for (int d0 = -1; d0 <= 1; ++d0)
 						{
 							int nc0 = clamp(cur0 + d0, 0, maxCode);
-							int rr0 = ReconChannelBC7(nc0, pp0, bits);
-							[unroll]
+							float rr0 = (float)ReconChannelBC7(nc0, pp0, bits);
 							for (int d1 = -1; d1 <= 1; ++d1)
 							{
 								int nc1 = clamp(cur1 + d1, 0, maxCode);
-								int rr1 = ReconChannelBC7(nc1, pp1, bits);
-								int se = 0;
-								[unroll]
-								for (int t = 0; t < 16; ++t)
-								{
-									if (subF[t] != (uint)ps) continue;
-									int w = BC7IdxWeight(ib, bIdx[t]);
-									int pal = ((64 - w) * rr0 + w * rr1 + 32) >> 6;
-									int diff = px[t][pc] - pal;
-									se += diff * diff;
-								}
+								float rr1 = (float)ReconChannelBC7(nc1, pp1, bits);
+								float se = Spp - 2.0f * rr0 * SpA - 2.0f * rr1 * SpB
+									+ rr0 * rr0 * SAA + 2.0f * rr0 * rr1 * SAB + rr1 * rr1 * SBB;
 								if (se < polBest) { polBest = se; sel0 = nc0; sel1 = nc1; }
 							}
 						}
@@ -471,14 +474,12 @@ mixin TextureCompressBC7Common
 
 				// Re-assign indices against the polished endpoints and recompute the total error.
 				int4 pr0[3], pr1[3];
-				[unroll]
 				for (int rs = 0; rs < 3; ++rs)
 				{
 					pr0[rs] = int4(0, 0, 0, 0); pr1[rs] = int4(0, 0, 0, 0);
 					if (rs >= numSubsets) continue;
 					int rp0 = (pbMode == 0) ? -1 : (int)bP0[rs];
 					int rp1 = (pbMode == 0) ? -1 : (int)bP1[rs];
-					[unroll]
 					for (int rc = 0; rc < 4; ++rc)
 					{
 						if (rc >= numCh) continue;
@@ -487,7 +488,6 @@ mixin TextureCompressBC7Common
 					}
 				}
 				float polErr = 0;
-				[unroll]
 				for (int t = 0; t < 16; ++t)
 				{
 					uint es = subF[t];
@@ -495,7 +495,6 @@ mixin TextureCompressBC7Common
 					int4 e1r = pr1[es];
 					int bestK = 0;
 					int bestD = 0x7fffffff;
-					[unroll]
 					for (int k = 0; k < 16; ++k)
 					{
 						if (k >= idxCount) continue;

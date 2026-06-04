@@ -15,6 +15,8 @@
 #include "B3DApplication.h"
 
 #include <cstring>
+#include <cstdio>
+#include <cfloat>
 
 using namespace b3d;
 
@@ -36,26 +38,26 @@ namespace b3d
 				variation = 0;
 				bufferFormat = BF_32X2U; // 64-bit block
 				return true;
-			case PF_BC4:
-				variation = 1;
-				bufferFormat = BF_32X2U; // 64-bit block
-				return true;
 			case PF_BC3:
-				variation = 2;
+				variation = 1;
 				bufferFormat = BF_32X4U; // 128-bit block
+				return true;
+			case PF_BC4:
+				variation = 2;
+				bufferFormat = BF_32X2U; // 64-bit block
 				return true;
 			case PF_BC5:
 				variation = 3;
 				bufferFormat = BF_32X4U; // 128-bit block
 				return true;
-			case PF_BC7:
-				variation = 4;
-				bufferFormat = BF_32X4U; // 128-bit block
-				return true;
 			case PF_BC6H:
-				variation = 5;
+				variation = 4;           // base of the BC6H mode range (variations 4..17, encoder modes 1..14)
 				bufferFormat = BF_32X4U; // 128-bit block
 				isHdr = true;            // HDR source: fed as RGBA32F, not normalized RGBA8
+				return true;
+			case PF_BC7:
+				variation = 18;          // base of the BC7 mode range (variations 18..25, encoder modes 0..7)
+				bufferFormat = BF_32X4U; // 128-bit block
 				return true;
 			default:
 				return false;
@@ -72,7 +74,7 @@ namespace b3d
 
 			/**
 			 * Records the dispatch that compresses @p input into @p output. Must run on the render thread. @p bestErr is the
-			 * per-block running-best-error buffer shared by the BC7 mode-group dispatches; pass null for single-dispatch
+			 * per-block running-best-error buffer shared by the BC7 / BC6H per-mode dispatches; pass null for single-dispatch
 			 * formats (the variation's shader will not declare gBestErr in that case).
 			 */
 			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const TShared<render::GpuBuffer>& meta, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount)
@@ -95,7 +97,7 @@ namespace b3d
 				return variation;
 			}
 
-			/** Returns the material for a single FORMAT variation value (including the extra BC7 mode-group values 6 and 7). */
+			/** Returns the material for a single FORMAT variation value (0..25; see TextureCompress.bsl FORMAT note). */
 			static TextureCompressMaterial* GetVariation(i32 variation)
 			{
 				switch(variation)
@@ -104,6 +106,7 @@ namespace b3d
 				case 1: return Get(GetVariationParams<1>());
 				case 2: return Get(GetVariationParams<2>());
 				case 3: return Get(GetVariationParams<3>());
+				case 4: return Get(GetVariationParams<4>());
 				case 5: return Get(GetVariationParams<5>());
 				case 6: return Get(GetVariationParams<6>());
 				case 7: return Get(GetVariationParams<7>());
@@ -113,34 +116,41 @@ namespace b3d
 				case 11: return Get(GetVariationParams<11>());
 				case 12: return Get(GetVariationParams<12>());
 				case 13: return Get(GetVariationParams<13>());
-				default: return Get(GetVariationParams<4>());
+				case 14: return Get(GetVariationParams<14>());
+				case 15: return Get(GetVariationParams<15>());
+				case 16: return Get(GetVariationParams<16>());
+				case 17: return Get(GetVariationParams<17>());
+				case 18: return Get(GetVariationParams<18>());
+				case 19: return Get(GetVariationParams<19>());
+				case 20: return Get(GetVariationParams<20>());
+				case 21: return Get(GetVariationParams<21>());
+				case 22: return Get(GetVariationParams<22>());
+				case 23: return Get(GetVariationParams<23>());
+				case 24: return Get(GetVariationParams<24>());
+				case 25: return Get(GetVariationParams<25>());
+				default: return Get(GetVariationParams<0>());
 				}
 			}
 
 			/**
 			 * Fills @p outVariations with the sequence of FORMAT variation values that must be dispatched, in order, to fully
-			 * compress the given base format. BC7 (base variation 4) splits into four mode groups (4 -> 6 -> 7 -> 8) and
-			 * BC6H (base variation 5) into six (5 -> 9 -> 10 -> 11 -> 12 -> 13), each run over a shared running-best buffer;
-			 * every other format is a single dispatch.
+			 * compress the given base format. BC6H (base variation 4) expands to its 14 single-mode kernels (variations
+			 * 4..17, encoder modes 1..14) and BC7 (base variation 18) to its 8 single-mode kernels (variations 18..25,
+			 * encoder modes 0..7), each run over a shared running-best buffer; every other format is a single dispatch.
+			 * Dispatch order is irrelevant because the host seeds gBestErr to +inf (no special "seed" pass).
 			 */
-			static void GetDispatchVariations(i32 baseVariation, TInlineArray<i32, 8>& outVariations)
+			static void GetDispatchVariations(i32 baseVariation, TInlineArray<i32, 32>& outVariations)
 			{
 				outVariations.Clear();
-				if(baseVariation == 4) // BC7: four mode-group dispatches (see TextureCompress.bsl FORMAT note).
+				if(baseVariation == 4) // BC6H: 14 single-mode kernels.
 				{
-					outVariations.Add(4);
-					outVariations.Add(6);
-					outVariations.Add(7);
-					outVariations.Add(8);
+					for(i32 v = 4; v <= 17; ++v)
+						outVariations.Add(v);
 				}
-				else if(baseVariation == 5) // BC6H: six mode-group dispatches.
+				else if(baseVariation == 18) // BC7: 8 single-mode kernels.
 				{
-					outVariations.Add(5);
-					outVariations.Add(9);
-					outVariations.Add(10);
-					outVariations.Add(11);
-					outVariations.Add(12);
-					outVariations.Add(13);
+					for(i32 v = 18; v <= 25; ++v)
+						outVariations.Add(v);
 				}
 				else
 					outVariations.Add(baseVariation);
@@ -151,7 +161,7 @@ namespace b3d
 		 * Performs the actual GPU compression. Must be called on the render thread: it creates GPU resources, dispatches the
 		 * compute kernel and reads the packed blocks back to the CPU. Returns true on success.
 		 */
-		bool CompressOnRenderThread(const TInlineArray<TextureCompressMaterial*, 8>& materials, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, PixelData& destination)
+		bool CompressOnRenderThread(const TInlineArray<TextureCompressMaterial*, 32>& materials, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, PixelData& destination)
 		{
 			AssertIfNotRenderThread();
 
@@ -189,16 +199,21 @@ namespace b3d
 			if(output == nullptr)
 				return false;
 
-			// BC7 splits its modes across several dispatches (see TextureCompress.bsl). They share a per-block running-best
-			// error buffer so each group can continue the minimum started by the previous one. Single-dispatch formats skip it.
+			// BC7 / BC6H evaluate each mode in its own dispatch (see TextureCompress.bsl). They share a per-block running-best
+			// error buffer so each mode kernel can keep its block when it beats the modes dispatched before it. The buffer is
+			// seeded to +inf so the first dispatched mode always wins (there is no special "seed" kernel that writes
+			// unconditionally), which is why it must be host-writable. Single-dispatch formats skip it.
 			TShared<render::GpuBuffer> bestErr;
 			if(materials.Size() > 1)
 			{
 				bestErr = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X1F, blockCount,
-					GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
+					GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
 
 				if(bestErr == nullptr)
 					return false;
+
+				const TArray<float> initErr((u64)blockCount, FLT_MAX);
+				render::GpuBufferUtility::Write(bestErr, 0, blockCount * (u32)sizeof(float), initErr.Data());
 			}
 
 			const TShared<render::GpuCommandBufferPool> pool = gpuDevice->CreateGpuCommandBufferPool(render::GpuCommandBufferPoolCreateInformation::CreateForThisThread());
@@ -329,13 +344,13 @@ namespace b3d
 
 		// Compile/fetch the shader variation(s) for this format. BC7 needs several mode-group variations dispatched in
 		// sequence; everything else is a single variation. Each Get() blocks until that variation is compiled.
-		TInlineArray<i32, 8> dispatchVariations;
+		TInlineArray<i32, 32> dispatchVariations;
 		TextureCompressMaterial::GetDispatchVariations(variation, dispatchVariations);
 
-		TInlineArray<TextureCompressMaterial*, 8> materials;
+		TInlineArray<TextureCompressMaterial*, 32> materials;
 		for(const i32 dispatchVariation : dispatchVariations)
 		{
-			TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation);
+			fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr); TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation); fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
 			if(material == nullptr || material->GetComputePipeline() == nullptr)
 				return false;
 

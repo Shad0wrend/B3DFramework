@@ -26,7 +26,6 @@ mixin TextureCompressBC7Mode4
 			int bA0 = 0, bA1 = 0;                          // 6-bit alpha endpoint codes
 			uint bCIdx[16], bAIdx[16];                     // colour/alpha logical indices (bit width per idxMode)
 
-			[unroll]
 			for (uint rot = 0; rot < 4; ++rot)
 			{
 				int3 cmn = int3(255, 255, 255), cmx = int3(0, 0, 0);
@@ -48,7 +47,6 @@ mixin TextureCompressBC7Mode4
 				FitLineRGB(col, 0xFFFFu, fec0, fec1);
 				float fea0 = (float)amx, fea1 = (float)amn;
 
-				[unroll]
 				for (uint idxMode = 0; idxMode < 2; ++idxMode)
 				{
 					uint colorBits = (idxMode == 0u) ? 2u : 3u;
@@ -83,12 +81,10 @@ mixin TextureCompressBC7Mode4
 
 						float cwgt[16], awgt[16];
 						err = 0;
-						[unroll]
 						for (uint t = 0; t < 16; ++t)
 						{
 							int bestKc = 0, bestDc = 0x7fffffff;
 							int bestKa = 0, bestDa = 0x7fffffff;
-							[unroll]
 							for (uint k = 0; k < 8; ++k)
 							{
 								if (k < (1u << colorBits))

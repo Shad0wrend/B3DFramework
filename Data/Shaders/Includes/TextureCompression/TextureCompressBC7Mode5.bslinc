@@ -27,7 +27,6 @@ mixin TextureCompressBC7Mode5
 			int bA0 = 0, bA1 = 0;                          // 8-bit alpha endpoint codes
 			uint bCIdx[16], bAIdx[16];
 
-			[unroll]
 			for (uint rot = 0; rot < 4; ++rot)
 			{
 				int3 cmn = int3(255, 255, 255), cmx = int3(0, 0, 0);
@@ -74,12 +73,10 @@ mixin TextureCompressBC7Mode5
 
 					float cwgt[16], awgt[16];
 					err = 0;
-					[unroll]
 					for (uint t = 0; t < 16; ++t)
 					{
 						int bestKc = 0; int bestDc = 0x7fffffff;
 						int bestKa = 0; int bestDa = 0x7fffffff;
-						[unroll]
 						for (uint k = 0; k < 4; ++k)
 						{
 							int w = (int)kBC7Weight2[k];

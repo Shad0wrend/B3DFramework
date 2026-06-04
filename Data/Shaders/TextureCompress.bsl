@@ -52,49 +52,30 @@ shader TextureCompress
 
 	variations
 	{
-		// Target block-compressed format.
-		// 0  - BC1 (RGB, 64-bit block)
-		// 1  - BC4 (single red channel, 64-bit block)
-		// 2  - BC3 (RGBA: BC4 alpha block + BC1 color block, 128-bit)
-		// 3  - BC5 (RG: two BC4 blocks, 128-bit)
-		// 4  - BC7  (RGBA, 128-bit)        mode group A: modes 6/5/4/7/1 - seeds the running best
-		// 5  - BC6H (RGB HDR / UF16, 128-bit) mode group A: one-region modes 11/12/13/14 - seeds the running best
-		// 6  - BC7  mode group B: mode 3      - continues the running best
-		// 7  - BC7  mode group C: mode 2      - continues the running best
-		// 8  - BC7  mode group D: mode 0      - continues the running best (final BC7 group)
-		// 9  - BC6H mode group B: modes 1/2   - continues the running best
-		// 10 - BC6H mode group C: modes 3/4   - continues the running best
-		// 11 - BC6H mode group D: modes 5/6   - continues the running best
-		// 12 - BC6H mode group E: modes 7/8   - continues the running best
-		// 13 - BC6H mode group F: modes 9/10  - continues the running best (final BC6H group)
+		// Target block-compressed format. Numbered sequentially by format, then by encoder mode within a format:
 		//
-		// Both BC7 and BC6H split their modes across several dispatches because inlining every mode into one compute
-		// kernel produces SPIR-V large enough to hang AMD's Vulkan driver (amdvlk / LLPC) inside vkCreateComputePipelines.
-		// The per-kernel budget is small, so the heaviest modes are isolated into their own (or a small) group:
-		//   - BC7  (FORMAT 4 -> 6 -> 7 -> 8): ~two two-subset modes plus the single-subset modes compile together, but a
-		//     three-subset mode (0 or 2) must sit alone - even pairing it with one other multi-subset mode overruns.
-		//   - BC6H (FORMAT 5 -> 9 -> 10 -> 11 -> 12 -> 13): the one-region modes (11-14, no partition search) are light and
-		//     all fit in the seed group, while each two-region mode (1-10) runs a 32-partition search and is heavy, so they
-		//     are paired two-per-group.
-		// Within each format the dispatches share the gOutput block buffer and a gBestErr buffer that carries the per-block
-		// best error from one group to the next; the C++ orchestration (B3DTextureCompressor.cpp) runs the groups in
-		// sequence over the same buffers.
-		FORMAT = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+		//   0       - BC1  (RGB, 64-bit block)
+		//   1       - BC3  (RGBA: BC4 alpha block + BC1 color block, 128-bit)
+		//   2       - BC4  (single red channel, 64-bit block)
+		//   3       - BC5  (RG: two BC4 blocks, 128-bit)
+		//   4 .. 17 - BC6H (RGB HDR / UF16, 128-bit), one encoder mode per variation: 4 = mode 1 ... 17 = mode 14
+		//  18 .. 25 - BC7  (RGBA, 128-bit),           one encoder mode per variation: 18 = mode 0 ... 25 = mode 7
+		FORMAT = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
 	};
 
 	code
 	{
-		// 64-bit formats output a uint2 per block, 128-bit formats output a uint4.
-		#if FORMAT == 0 || FORMAT == 1
+		// 64-bit formats output a uint2 per block, 128-bit formats output a uint4. BC1 (0) and BC4 (2) are 64-bit.
+		#if FORMAT == 0 || FORMAT == 2
 			#define BLOCK_TYPE uint2
 		#else
 			#define BLOCK_TYPE uint4
 		#endif
 
-		// BC7 is split across four dispatches (FORMAT 4/6/7/8); they share input/output layout and a running-best buffer.
-		#define IS_BC7 (FORMAT == 4 || FORMAT == 6 || FORMAT == 7 || FORMAT == 8)
-		// BC6H is split across six dispatches (FORMAT 5/9/10/11/12/13), same running-best scheme as BC7.
-		#define IS_BC6H (FORMAT == 5 || FORMAT == 9 || FORMAT == 10 || FORMAT == 11 || FORMAT == 12 || FORMAT == 13)
+		// BC6H is dispatched as 14 single-mode kernels (FORMAT 4..17, encoder modes 1..14).
+		#define IS_BC6H (FORMAT >= 4 && FORMAT <= 17)
+		// BC7 is dispatched as 8 single-mode kernels (FORMAT 18..25, encoder modes 0..7). Both share a running-best buffer.
+		#define IS_BC7 (FORMAT >= 18 && FORMAT <= 25)
 
 		// Source pixels as RGBA8 (read as normalized float4), laid out row-major: index = y * width + x.
 		Buffer<float4> gInput;
@@ -606,153 +587,95 @@ shader TextureCompress
 
 			#if FORMAT == 0 // BC1
 				gOutput[blockIndex] = CompressBC1(rgb);
-			#elif FORMAT == 1 // BC4
-				gOutput[blockIndex] = CompressBC4(red);
-			#elif FORMAT == 2 // BC3 = BC4(alpha) + BC1(color)
+			#elif FORMAT == 1 // BC3 = BC4(alpha) + BC1(color)
 				uint2 alphaBlock = CompressBC4(alpha);
 				uint2 colorBlock = CompressBC1(rgb);
 				gOutput[blockIndex] = uint4(alphaBlock, colorBlock);
+			#elif FORMAT == 2 // BC4
+				gOutput[blockIndex] = CompressBC4(red);
 			#elif FORMAT == 3 // BC5 = BC4(red) + BC4(green)
 				uint2 redBlock = CompressBC4(red);
 				uint2 greenBlock = CompressBC4(green);
 				gOutput[blockIndex] = uint4(redBlock, greenBlock);
-			#elif IS_BC6H // BC6H (UF16, HDR): split into mode groups; results accumulate via gBestErr (see FORMAT note).
-				float bestErr6;
-				uint4 bestBlock6;
-				#if FORMAT == 5
-					// Seed group: one-region modes 11-14. They have no partition search, so all four fit in one kernel.
-					bestBlock6 = CompressBC6Mode11(hbits, bestErr6);
-
-					float err12;
-					uint4 block12 = CompressBC6Mode12(hbits, err12);
-					if (err12 < bestErr6) { bestErr6 = err12; bestBlock6 = block12; }
-
-					float err13;
-					uint4 block13 = CompressBC6Mode13(hbits, err13);
-					if (err13 < bestErr6) { bestErr6 = err13; bestBlock6 = block13; }
-
-					float err14;
-					uint4 block14 = CompressBC6Mode14(hbits, err14);
-					if (err14 < bestErr6) { bestErr6 = err14; bestBlock6 = block14; }
-				#else
-					// Two-region groups: continue from the running best. Each two-region mode does a 32-partition search and
-					// is "heavy", so they are paired two-per-group to stay within the amdvlk compile budget.
-					bestErr6 = gBestErr[blockIndex];
-					bestBlock6 = gOutput[blockIndex];
-
-					#if FORMAT == 9
-						float err1;
-						uint4 block1 = CompressBC6Mode1(hbits, err1);
-						if (err1 < bestErr6) { bestErr6 = err1; bestBlock6 = block1; }
-
-						float err2;
-						uint4 block2 = CompressBC6Mode2(hbits, err2);
-						if (err2 < bestErr6) { bestErr6 = err2; bestBlock6 = block2; }
-					#elif FORMAT == 10
-						float err3;
-						uint4 block3 = CompressBC6Mode3(hbits, err3);
-						if (err3 < bestErr6) { bestErr6 = err3; bestBlock6 = block3; }
-
-						float err4;
-						uint4 block4 = CompressBC6Mode4(hbits, err4);
-						if (err4 < bestErr6) { bestErr6 = err4; bestBlock6 = block4; }
-					#elif FORMAT == 11
-						float err5;
-						uint4 block5 = CompressBC6Mode5(hbits, err5);
-						if (err5 < bestErr6) { bestErr6 = err5; bestBlock6 = block5; }
-
-						float err6;
-						uint4 block6 = CompressBC6Mode6(hbits, err6);
-						if (err6 < bestErr6) { bestErr6 = err6; bestBlock6 = block6; }
-					#elif FORMAT == 12
-						float err7;
-						uint4 block7 = CompressBC6Mode7(hbits, err7);
-						if (err7 < bestErr6) { bestErr6 = err7; bestBlock6 = block7; }
-
-						float err8;
-						uint4 block8 = CompressBC6Mode8(hbits, err8);
-						if (err8 < bestErr6) { bestErr6 = err8; bestBlock6 = block8; }
-					#else // FORMAT == 13
-						float err9;
-						uint4 block9 = CompressBC6Mode9(hbits, err9);
-						if (err9 < bestErr6) { bestErr6 = err9; bestBlock6 = block9; }
-
-						float err10;
-						uint4 block10 = CompressBC6Mode10(hbits, err10);
-						if (err10 < bestErr6) { bestErr6 = err10; bestBlock6 = block10; }
-					#endif
-				#endif
-
-				gOutput[blockIndex] = bestBlock6;
-				#if FORMAT != 13
-					// Publish the running best for the next group's dispatch (the final group, FORMAT 13, skips this).
-					gBestErr[blockIndex] = bestErr6;
-				#endif
-			#else // BC7 (FORMAT 4/6/7): each FORMAT value evaluates one mode group; results accumulate via gBestErr.
-				// RGB-only modes (0, 1, 2, 3) cannot represent alpha (the decoder forces A=255), so charge them the alpha
-				// they drop before comparing against alpha-capable modes (4/5/6/7).
-				float alphaPenalty = 0;
-				[unroll]
-				for (uint i = 0; i < 16; ++i)
-				{
-					float da = saturate(rgba[i].a) * 255.0f - 255.0f;
-					alphaPenalty += da * da;
-				}
-
-				float bestErr;
-				uint4 bestBlock;
+			#elif IS_BC6H // BC6H (UF16, HDR): one encoder mode per kernel (FORMAT 4..17 -> modes 1..14); accumulate via gBestErr.
+				float modeErr;
+				uint4 modeBlock;
 				#if FORMAT == 4
-					// Group A (first dispatch): single-subset modes 6/5/4 plus two-subset modes 7/1. Seeds the running best.
-					bestBlock = CompressBC7Mode6(rgba, bestErr);
-
-					// Modes 5 and 4 encode full RGBA, so they compete without the alpha penalty.
-					float err5;
-					uint4 block5 = CompressBC7Mode5(rgba, err5);
-					if (err5 < bestErr) { bestErr = err5; bestBlock = block5; }
-
-					float err4;
-					uint4 block4 = CompressBC7Mode4(rgba, err4);
-					if (err4 < bestErr) { bestErr = err4; bestBlock = block4; }
-
-					float err7;
-					uint4 block7 = CompressBC7Mode7(rgba, err7);
-					if (err7 < bestErr) { bestErr = err7; bestBlock = block7; }
-
-					float err1;
-					uint4 block1 = CompressBC7Mode1(rgbF, err1);
-					err1 += alphaPenalty;
-					if (err1 < bestErr) { bestErr = err1; bestBlock = block1; }
-				#else
-					// Groups B/C/D: continue from the previous group's per-block running best.
-					bestErr = gBestErr[blockIndex];
-					bestBlock = gOutput[blockIndex];
-
-					#if FORMAT == 6
-						// Group B: two-subset mode 3 (RGB-only).
-						float err3;
-						uint4 block3 = CompressBC7Mode3(rgbF, err3);
-						err3 += alphaPenalty;
-						if (err3 < bestErr) { bestErr = err3; bestBlock = block3; }
-					#elif FORMAT == 7
-						// Group C: three-subset mode 2 (RGB-only). Three-subset modes sit alone (see FORMAT note).
-						float err2;
-						uint4 block2 = CompressBC7Mode2(rgbF, err2);
-						err2 += alphaPenalty;
-						if (err2 < bestErr) { bestErr = err2; bestBlock = block2; }
-					#else // FORMAT == 8
-						// Group D: three-subset mode 0 (RGB-only). Final group.
-						float err0;
-						uint4 block0 = CompressBC7Mode0(rgbF, err0);
-						err0 += alphaPenalty;
-						if (err0 < bestErr) { bestErr = err0; bestBlock = block0; }
-					#endif
+					modeBlock = CompressBC6Mode1(hbits, modeErr);
+				#elif FORMAT == 5
+					modeBlock = CompressBC6Mode2(hbits, modeErr);
+				#elif FORMAT == 6
+					modeBlock = CompressBC6Mode3(hbits, modeErr);
+				#elif FORMAT == 7
+					modeBlock = CompressBC6Mode4(hbits, modeErr);
+				#elif FORMAT == 8
+					modeBlock = CompressBC6Mode5(hbits, modeErr);
+				#elif FORMAT == 9
+					modeBlock = CompressBC6Mode6(hbits, modeErr);
+				#elif FORMAT == 10
+					modeBlock = CompressBC6Mode7(hbits, modeErr);
+				#elif FORMAT == 11
+					modeBlock = CompressBC6Mode8(hbits, modeErr);
+				#elif FORMAT == 12
+					modeBlock = CompressBC6Mode9(hbits, modeErr);
+				#elif FORMAT == 13
+					modeBlock = CompressBC6Mode10(hbits, modeErr);
+				#elif FORMAT == 14
+					modeBlock = CompressBC6Mode11(hbits, modeErr);
+				#elif FORMAT == 15
+					modeBlock = CompressBC6Mode12(hbits, modeErr);
+				#elif FORMAT == 16
+					modeBlock = CompressBC6Mode13(hbits, modeErr);
+				#else // FORMAT == 17
+					modeBlock = CompressBC6Mode14(hbits, modeErr);
 				#endif
 
-				gOutput[blockIndex] = bestBlock;
-				#if FORMAT != 8
-					// Publish the running best for the next group's dispatch (the final group, FORMAT 8, skips this).
-					gBestErr[blockIndex] = bestErr;
+				// Keep this mode's block if it beats the running best. gBestErr is seeded to +inf by the host, so the first
+				// dispatched mode always wins; no special seed pass is needed and dispatch order is irrelevant.
+				float prevErr6 = gBestErr[blockIndex];
+				uint4 prevBlock6 = gOutput[blockIndex];
+				if (modeErr < prevErr6) { prevErr6 = modeErr; prevBlock6 = modeBlock; }
+				gOutput[blockIndex] = prevBlock6;
+				gBestErr[blockIndex] = prevErr6;
+			#else // BC7 (FORMAT 18..25 -> encoder modes 0..7): one mode per kernel; accumulate via gBestErr.
+				float modeErr;
+				uint4 modeBlock;
+				#if FORMAT >= 18 && FORMAT <= 21
+					// RGB-only modes (0, 1, 2, 3) cannot represent alpha (the decoder forces A=255), so charge them the
+					// alpha they drop before comparing against the alpha-capable modes (4/5/6/7).
+					float alphaPenalty = 0;
+					[unroll]
+					for (uint i = 0; i < 16; ++i)
+					{
+						float da = saturate(rgba[i].a) * 255.0f - 255.0f;
+						alphaPenalty += da * da;
+					}
 				#endif
+
+				#if FORMAT == 18
+					modeBlock = CompressBC7Mode0(rgbF, modeErr); modeErr += alphaPenalty; // 3-subset RGB
+				#elif FORMAT == 19
+					modeBlock = CompressBC7Mode1(rgbF, modeErr); modeErr += alphaPenalty; // 2-subset RGB
+				#elif FORMAT == 20
+					modeBlock = CompressBC7Mode2(rgbF, modeErr); modeErr += alphaPenalty; // 3-subset RGB
+				#elif FORMAT == 21
+					modeBlock = CompressBC7Mode3(rgbF, modeErr); modeErr += alphaPenalty; // 2-subset RGB
+				#elif FORMAT == 22
+					modeBlock = CompressBC7Mode4(rgba, modeErr); // RGBA single-subset, rotation + dual index
+				#elif FORMAT == 23
+					modeBlock = CompressBC7Mode5(rgba, modeErr); // RGBA single-subset, rotation + dual index
+				#elif FORMAT == 24
+					modeBlock = CompressBC7Mode6(rgba, modeErr); // RGBA single-subset
+				#else // FORMAT == 25
+					modeBlock = CompressBC7Mode7(rgba, modeErr); // RGBA two-subset
+				#endif
+
+				// Keep this mode's block if it beats the running best (gBestErr seeded to +inf by the host; see BC6H note).
+				float prevErr = gBestErr[blockIndex];
+				uint4 prevBlock = gOutput[blockIndex];
+				if (modeErr < prevErr) { prevErr = modeErr; prevBlock = modeBlock; }
+				gOutput[blockIndex] = prevBlock;
+				gBestErr[blockIndex] = prevErr;
 			#endif
 		}
 	};
