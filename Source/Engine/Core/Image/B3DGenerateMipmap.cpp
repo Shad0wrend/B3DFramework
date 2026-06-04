@@ -12,9 +12,12 @@
 #include "GpuBackend/B3DGpuParameterSet.h"
 #include "GpuBackend/B3DGpuPipelineState.h"
 #include "CoreObject/B3DRenderThread.h"
+#include "Threading/B3DAsyncOp.h"
+#include "FileSystem/B3DDataStream.h"
 #include "B3DApplication.h"
 
 #include <algorithm>
+#include <cstring>
 
 using namespace b3d;
 
@@ -69,17 +72,34 @@ namespace b3d
 		};
 
 		/**
-		 * Generates the full mip chain on the GPU. Must run on the render thread: each level is produced by a compute
-		 * dispatch that downsamples the previous level, with the result read back to a CPU RGBA32F surface. The
-		 * source level (mip 0) is the unfiltered @p interim. Returns false on failure.
+		 * Records the full mip chain on the GPU and sets up an asynchronous read-back. Must run on the render thread.
+		 *
+		 * Every level is produced by a compute dispatch that downsamples the previous level. The levels are chained
+		 * entirely on the GPU - level N's output buffer is bound as level N+1's input (with a barrier between), so there is
+		 * no CPU round-trip between dispatches. All dispatches run on a single command buffer; after submission each
+		 * generated level is read back via GpuBufferUtility::ReadAsync, and a completion callback assembles the chain (each
+		 * level converted to @p sourceFormat, with @p mip0 prepended) and completes @p op. On failure @p op is completed
+		 * with an empty vector. The render thread is never blocked on the GPU.
 		 */
-		bool GenerateMipmapsOnRenderThread(GenerateMipmapMaterial* material, const TShared<PixelData>& source, const MipMapGenOptions& options, u32 mipCount, Vector<TShared<PixelData>>& outMipLevels)
+		void GenerateMipmapsOnRenderThread(const TShared<PixelData>& convertedSource, const TShared<PixelData>& mip0, PixelFormat sourceFormat, const MipMapGenOptions& options, u32 mipCount, TAsyncOp<Vector<TShared<PixelData>>> op)
 		{
 			AssertIfNotRenderThread();
 
 			const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 			if(gpuDevice == nullptr)
-				return false;
+			{
+				op.CompleteOperation(Vector<TShared<PixelData>>());
+				return;
+			}
+
+			// Compile/fetch the compute shader - render-thread only (RendererMaterial access is not thread-safe). Blocks
+			// until the shader is compiled.
+			GenerateMipmapMaterial* const material = GenerateMipmapMaterial::Get();
+			if(material == nullptr || material->GetComputePipeline() == nullptr)
+			{
+				op.CompleteOperation(Vector<TShared<PixelData>>());
+				return;
+			}
 
 			i32 filter = 0; // Box
 			if(options.Filter == MipMapFilter::Triangle || options.Filter == MipMapFilter::Kaiser)
@@ -96,26 +116,45 @@ namespace b3d
 
 			const TShared<render::GpuCommandBufferPool> commandBufferPool = gpuDevice->CreateGpuCommandBufferPool(render::GpuCommandBufferPoolCreateInformation::CreateForThisThread());
 
-			// Mip 0 is the source surface, unfiltered. GetMipmapCount returns the number of mips below the base, so the full chain has mipCount + 1 surfaces.
-			outMipLevels.push_back(source);
+			render::GpuCommandBufferCreateInformation commandBufferInfo;
+			commandBufferInfo.Name = "GenerateMipmap";
 
-			TShared<PixelData> previous = source;
+			const TShared<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(commandBufferInfo);
+
+			// Upload mip 0 (the RGBA32F-converted source) as the first input buffer; read as float4 in the shader.
+			const u32 baseWidth = convertedSource->GetWidth();
+			const u32 baseHeight = convertedSource->GetHeight();
+			const TShared<render::GpuBuffer> inputBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, baseWidth * baseHeight));
+			if(inputBuffer == nullptr)
+			{
+				op.CompleteOperation(Vector<TShared<PixelData>>());
+				return;
+			}
+
+			render::GpuBufferUtility::Write(inputBuffer, 0, baseWidth * baseHeight * sizeof(float) * 4, convertedSource->GetData());
+
+			// Generate levels 1..mipCount, each downsampled from the previous level's GPU buffer (no CPU round-trip).
+			TInlineArray<TShared<render::GpuBuffer>, 16> levelBuffers; // Generated level outputs, in order
+			TInlineArray<Size2UI, 16> levelDimensions; // (width, height) of each generated level
+
+			TShared<render::GpuBuffer> previous = inputBuffer;
+			u32 sourceWidth = baseWidth;
+			u32 sourceHeight = baseHeight;
 			for(u32 mipLevel = 0; mipLevel < mipCount; ++mipLevel)
 			{
-				const u32 sourceWidth = previous->GetWidth();
-				const u32 sourceHeight = previous->GetHeight();
 				const u32 destinationWidth = std::max(1u, sourceWidth / 2);
 				const u32 destinationHeight = std::max(1u, sourceHeight / 2);
 
-				// Upload the previous level as a GPU-resident input buffer (read as float4 in the shader).
-				const TShared<render::GpuBuffer> gpuInput = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, sourceWidth * sourceHeight));
-				if(gpuInput == nullptr)
-					return false;
+				// Output for this level: written as a compute UAV, read back by the CPU, and bound as the next level's input (read as a storage buffer).
+				const TShared<render::GpuBuffer> output = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, destinationWidth * destinationHeight, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
+				if(output == nullptr)
+				{
+					op.CompleteOperation(Vector<TShared<PixelData>>());
+					return;
+				}
 
-				render::GpuBufferUtility::Write(gpuInput, 0, sourceWidth * sourceHeight * sizeof(float) * 4, previous->GetData());
-
-				// Per-dispatch constants for this level, populated into a transient uniform buffer. The mapped scope must
-				// outlive the dispatch below (it unmaps on destruction).
+				// Per-dispatch constants for this level, in a transient uniform buffer (frame-lifetime, GPU-safe). The
+				// mapped scope must outlive the dispatch; it is unmapped (flushed) just before submission below.
 				render::GpuBufferMappedScope parameters = render::gMipmapParameterDefinition.AllocateTransient().Map();
 				render::gMipmapParameterDefinition.gSourceSize.Set(parameters, Vector2I((i32)sourceWidth, (i32)sourceHeight));
 				render::gMipmapParameterDefinition.gDestSize.Set(parameters, Vector2I((i32)destinationWidth, (i32)destinationHeight));
@@ -124,76 +163,104 @@ namespace b3d
 				render::gMipmapParameterDefinition.gNormalize.Set(parameters, normalize);
 				render::gMipmapParameterDefinition.gWrapMode.Set(parameters, wrapMode);
 
-				// Output buffer receives the downsampled level; readable by the CPU and writable as a compute UAV.
-				const TShared<render::GpuBuffer> gpuOutput = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, destinationWidth * destinationHeight, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
-				if(gpuOutput == nullptr)
-					return false;
-
-				render::GpuCommandBufferCreateInformation commandBufferInfo;
-				commandBufferInfo.Name = "GenerateMipmap";
-				const TShared<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(commandBufferInfo);
-
-				material->Execute(*commandBuffer, gpuInput, gpuOutput, parameters, Vector2I((i32)destinationWidth, (i32)destinationHeight));
-
-				// Flush the uniform writes to the GPU before the dispatch executes (unmap flushes a render-proxy mapping).
 				parameters.Unmap();
 
-				gpuDevice->SubmitCommandBuffer(commandBuffer);
+				material->Execute(*commandBuffer, previous, output, parameters, Vector2I((i32)destinationWidth, (i32)destinationHeight));
 
-				// Blocking read-back of the downsampled level (waits on the compute write).
-				TShared<PixelData> generatedMipLevel = PixelData::Create(destinationWidth, destinationHeight, 1, PF_RGBA32F);
-				render::GpuBufferUtility::Read(gpuOutput, 0, destinationWidth * destinationHeight * sizeof(float) * 4, generatedMipLevel->GetData());
+				levelBuffers.Add(output);
+				levelDimensions.Add(Size2UI(destinationWidth, destinationHeight));
 
-				outMipLevels.push_back(generatedMipLevel);
-				previous = generatedMipLevel;
+				previous = output;
+				sourceWidth = destinationWidth;
+				sourceHeight = destinationHeight;
 			}
 
-			return true;
+			// Queue a non-blocking read-back of every generated level on the same command buffer. Each ReadAsync connects a
+			// completion callback that fills a MemoryDataStream; the finalize callback below is connected last, so by the
+			// time it runs (events fire in registration order) every read-back has completed.
+			TInlineArray<TAsyncOp<TShared<MemoryDataStream>>, 16> readOps;
+			readOps.reserve(mipCount);
+			for(u32 mipLevel = 0; mipLevel < mipCount; ++mipLevel)
+			{
+				const u32 byteCount = levelDimensions[mipLevel].Width * levelDimensions[mipLevel].Height * (u32)sizeof(float) * 4u;
+				readOps.Add(render::GpuBufferUtility::ReadAsync(levelBuffers[mipLevel], 0, byteCount, *commandBuffer));
+			}
+
+			// Assemble the chain once the GPU finishes. Captures keep the level buffers (read-back sources) and read ops
+			// alive until completion. Runs on the render thread (the command buffer's owner thread).
+			commandBuffer->OnDidComplete.Connect(
+				[op, readOps, levelBuffers, inputBuffer, levelDimensions, sourceFormat, mip0]() mutable
+				{
+					Vector<TShared<PixelData>> outMipLevels;
+					outMipLevels.reserve(levelDimensions.size() + 1);
+					outMipLevels.push_back(mip0);
+
+					for(u32 mipLevel = 0; mipLevel < (u32)levelDimensions.size(); ++mipLevel)
+					{
+						const TShared<MemoryDataStream> data = readOps[mipLevel].GetReturnValue();
+						if(data == nullptr)
+						{
+							op.CompleteOperation(Vector<TShared<PixelData>>());
+							return;
+						}
+
+						const u32 width = levelDimensions[mipLevel].Width;
+						const u32 height = levelDimensions[mipLevel].Height;
+
+						const TShared<PixelData> rgbaLevel = PixelData::Create(width, height, 1, PF_RGBA32F);
+						memcpy(rgbaLevel->GetData(), data->Data(), (size_t)width * height * sizeof(float) * 4);
+
+						const TShared<PixelData> convertedLevel = PixelData::Create(width, height, 1, sourceFormat);
+						PixelUtility::BulkPixelConversion(*rgbaLevel, *convertedLevel);
+						outMipLevels.push_back(convertedLevel);
+					}
+
+					op.CompleteOperation(std::move(outMipLevels));
+				});
+
+			gpuDevice->SubmitCommandBuffer(commandBuffer);
 		}
 	} // anonymous namespace
 
-	bool GpuGenerateMipmap::Generate(const TShared<PixelData>& source, const MipMapGenOptions& options, Vector<TShared<PixelData>>& output)
+	TAsyncOp<Vector<TShared<PixelData>>> GpuGenerateMipmap::Generate(const TShared<PixelData>& source, const MipMapGenOptions& options)
 	{
+		// On failure we still return a *completed* op (with an empty chain) so a caller blocking on it never hangs.
+		auto fnFailed = []()
+		{
+			TAsyncOp<Vector<TShared<PixelData>>> op;
+			op.CompleteOperation(Vector<TShared<PixelData>>());
+			return op;
+		};
+
 		if(GetApplication().GetPrimaryGpuDevice() == nullptr)
-			return false;
+			return fnFailed();
 
 		const u32 mipCount = PixelUtility::GetMipmapCount(source->GetWidth(), source->GetHeight(), 1, source->GetFormat());
 
-		// Compile/fetch the compute shader (blocks until ready).
-		GenerateMipmapMaterial* const material = GenerateMipmapMaterial::Get();
-		if(material == nullptr || material->GetComputePipeline() == nullptr)
-			return false;
-
-		// Convert the source to RGBA32F so downsampling and gamma run at full precision. CPU work, any thread.
+		// CPU work, any thread: convert the source to RGBA32F so downsampling and gamma run at full precision, and make a
+		// distinct mip-0 surface in the source format (the chain's first level is the unfiltered source).
+		const PixelFormat sourceFormat = source->GetFormat();
 		const TShared<PixelData> convertedSource = PixelData::Create(source->GetWidth(), source->GetHeight(), 1, PF_RGBA32F);
 		PixelUtility::BulkPixelConversion(*source, *convertedSource);
 
-		// GPU resource creation and dispatch must run on the render thread. Run inline if we're already there,
-		// otherwise marshal the work across and block until it finishes.
-		Vector<TShared<PixelData>> mips;
-		bool success = false;
-		auto fnGpuWork = [&]() { success = GenerateMipmapsOnRenderThread(material, convertedSource, options, mipCount, mips); };
+		const TShared<PixelData> mip0 = PixelData::Create(source->GetWidth(), source->GetHeight(), 1, sourceFormat);
+		PixelUtility::BulkPixelConversion(*source, *mip0);
+
+		// GPU resource creation and dispatch must run on the render thread. The work is non-blocking: it fetches the
+		// material, records the dispatches, queues the read-backs and returns immediately; the op completes from a
+		// command-buffer completion callback once the GPU finishes. Run inline if we are already on the render thread,
+		// otherwise marshal it across.
+		TAsyncOp<Vector<TShared<PixelData>>> op;
+		auto fnGpuWork = [convertedSource, mip0, sourceFormat, options, mipCount, op]() mutable
+		{
+			GenerateMipmapsOnRenderThread(convertedSource, mip0, sourceFormat, options, mipCount, op);
+		};
 
 		if(B3D_CURRENT_THREAD_ID == GetRenderThread().GetThreadId())
 			fnGpuWork();
 		else
-			GetRenderThread().PostCommand(fnGpuWork, "GPU mipmap generation", true);
+			GetRenderThread().PostCommand(std::move(fnGpuWork), "GPU mipmap generation");
 
-		if(!success)
-		{
-			B3D_LOG(Warning, LogPixelUtility, "GPU mipmap generation failed. Falling back.");
-			return false;
-		}
-
-		// Convert each RGBA32F level back to the source format.
-		output.reserve(mips.size());
-		for(const TShared<PixelData>& mip : mips)
-		{
-			TShared<PixelData> convertedMip = PixelData::Create(mip->GetWidth(), mip->GetHeight(), 1, source->GetFormat());
-			PixelUtility::BulkPixelConversion(*mip, *convertedMip);
-			output.push_back(convertedMip);
-		}
-
-		return true;
+		return op;
 	}
 } // namespace b3d

@@ -4,6 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Image/B3DPixelData.h"
+#include "Threading/B3DAsyncOp.h"
 
 namespace b3d
 {
@@ -20,11 +21,16 @@ namespace b3d
 		static bool IsFormatSupported(PixelFormat format);
 
 		/**
-		 * Encodes @p source (uncompressed) into @p destination (block-compressed) on the GPU. Blocks until the GPU has
-		 * finished and the result has been read back to CPU memory. Returns false if compression could not be performed
-		 * (e.g. unsupported format or no active GPU device).
+		 * Encodes @p source (uncompressed) into @p destination (block-compressed) on the GPU. The returned operation
+		 * completes with @p destination (now holding the packed blocks) once the GPU has finished and the result has been
+		 * read back, or with null if compression could not be performed (e.g. unsupported format or no active GPU device).
+		 * Both surfaces are held by shared pointer for the duration of the operation, so the caller need not keep them alive
+		 * itself. The render thread is never blocked on the GPU - the read-back happens in a command-buffer completion
+		 * callback.
+		 *
+		 * Do not block on the returned operation from the render thread, since that thread owns (and drives) the callback.
 		 */
-		static bool Compress(const PixelData& source, PixelData& destination, const CompressionOptions& options);
+		static TAsyncOp<TShared<PixelData>> Compress(const TShared<PixelData>& source, const TShared<PixelData>& destination, const CompressionOptions& options);
 	};
 
 	/**

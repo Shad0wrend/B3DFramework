@@ -3169,7 +3169,13 @@ void PixelUtility::Compress(const PixelData& source, PixelData& destination, con
 	// GPU compression where the target format is supported (BC1/BC3/BC4/BC5/BC6H/BC7)
 	if(GpuTextureCompressor::IsFormatSupported(options.Format))
 	{
-		if(GpuTextureCompressor::Compress(source, destination, options))
+		const TShared<PixelData> sourcePtr(TShared<PixelData>(), const_cast<PixelData*>(&source));
+		const TShared<PixelData> destinationPtr(TShared<PixelData>(), &destination);
+
+		TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(sourcePtr, destinationPtr, options);
+		compressOp.BlockUntilComplete();
+
+		if(compressOp.GetReturnValue() != nullptr)
 			return;
 
 		B3D_LOG(Warning, LogPixelUtility, "GPU texture compression failed for format \"{0}\". Falling back.", GetFormatName(options.Format));
@@ -3269,9 +3275,17 @@ Vector<TShared<PixelData>> PixelUtility::GenerateMipmaps(const TShared<PixelData
 	}
 
 #if !B3D_USE_NVTT
-	// GPU mip-map generation
-	if(GpuGenerateMipmap::Generate(source, options, output))
+	// GPU mip-map generation is asynchronous (the read-back happens off the render thread); block this worker thread until
+	// it finishes. Must not run on the render thread, which drives the completion callback.
+	TAsyncOp<Vector<TShared<PixelData>>> mipmapOp = GpuGenerateMipmap::Generate(source, options);
+	mipmapOp.BlockUntilComplete();
+
+	Vector<TShared<PixelData>> generatedMips = mipmapOp.GetReturnValue();
+	if(!generatedMips.empty())
+	{
+		output = std::move(generatedMips);
 		return output;
+	}
 
 	B3D_LOG(Error, LogPixelUtility, "Mipmap generation failed. Runtime mipmap generation is not available on this platform.");
 	return output;

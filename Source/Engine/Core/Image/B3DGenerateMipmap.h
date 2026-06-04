@@ -4,6 +4,7 @@
 
 #include "B3DPrerequisites.h"
 #include "Image/B3DPixelData.h"
+#include "Threading/B3DAsyncOp.h"
 
 namespace b3d
 {
@@ -17,11 +18,13 @@ namespace b3d
 	{
 	public:
 		/**
-		 * Generates the full mip chain for @p source (including mip 0) on the GPU, appending each level - in @p source's
-		 * pixel format - to @p output. Blocks until the GPU has finished and every level has been read back to CPU memory.
-		 * Returns false if generation could not be performed (e.g. no active GPU device or the shader is unavailable), in
-		 * which case @p output is left untouched and the caller may fall back to a CPU path.
+		 * Generates the full mip chain for @p source (including mip 0) on the GPU. The returned operation completes with the
+		 * chain - mip 0 first, each level in @p source's pixel format - once the GPU has finished and every level has been
+		 * read back to CPU memory. On failure (no active GPU device or the shader is unavailable) it completes with an empty
+		 * vector.
+		 *
+		 * Do not block on the returned operation from the render thread, since that thread owns (and drives) the callback.
 		 */
-		static bool Generate(const TShared<PixelData>& source, const MipMapGenOptions& options, Vector<TShared<PixelData>>& output);
+		static TAsyncOp<Vector<TShared<PixelData>>> Generate(const TShared<PixelData>& source, const MipMapGenOptions& options);
 	};
 } // namespace b3d

@@ -13,6 +13,8 @@
 #include "GpuBackend/B3DGpuParameterSet.h"
 #include "GpuBackend/B3DGpuPipelineState.h"
 #include "CoreObject/B3DRenderThread.h"
+#include "Threading/B3DAsyncOp.h"
+#include "FileSystem/B3DDataStream.h"
 #include "B3DApplication.h"
 
 #include <cstring>
@@ -190,16 +192,38 @@ namespace b3d
 		};
 
 		/**
-		 * Performs the actual GPU compression. Must be called on the render thread: it creates GPU resources, dispatches the
-		 * compute kernel and reads the packed blocks back to the CPU. Returns true on success.
+		 * Records the GPU compression on the render thread and sets up an asynchronous read-back. Must be called on the
+		 * render thread: it creates GPU resources, dispatches the compute kernel(s), then queues a non-blocking read-back of
+		 * the packed blocks into @p destination. Completes @p op with @p destination once the GPU finishes and the blocks
+		 * have been copied back, or with null on failure. The render thread is never blocked on the GPU.
 		 */
-		bool CompressOnRenderThread(const TInlineArray<TextureCompressMaterial*, 32>& materials, const TInlineArray<i32, 32>& variations, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, PixelData& destination)
+		void CompressOnRenderThread(const TInlineArray<i32, 32>& variations, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, const TShared<PixelData>& destination, TAsyncOp<TShared<PixelData>> op)
 		{
 			AssertIfNotRenderThread();
 
 			const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 			if(gpuDevice == nullptr)
-				return false;
+			{
+				op.CompleteOperation(nullptr);
+				return;
+			}
+
+			// Compile/fetch the shader variation(s)
+			TInlineArray<TextureCompressMaterial*, 32> materials;
+			for(const i32 dispatchVariation : variations)
+			{
+				// TODO - Debug only, remove this later
+				fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr);
+				TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation);
+				fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
+				if(material == nullptr || material->GetComputePipeline() == nullptr)
+				{
+					op.CompleteOperation(nullptr);
+					return;
+				}
+
+				materials.Add(material);
+			}
 
 			const u32 width = source->GetWidth();
 			const u32 height = source->GetHeight();
@@ -212,7 +236,10 @@ namespace b3d
 			// avoids the image-layout transitions a freshly-uploaded sampled texture would need in a standalone dispatch.
 			const TShared<render::GpuBuffer> input = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(inputBufferFormat, width * height));
 			if(input == nullptr)
-				return false;
+			{
+				op.CompleteOperation(nullptr);
+				return;
+			}
 
 			render::GpuBufferUtility::Write(input, 0, source->GetConsecutiveSize(), source->GetData());
 
@@ -227,7 +254,10 @@ namespace b3d
 				GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
 
 			if(output == nullptr)
-				return false;
+			{
+				op.CompleteOperation(nullptr);
+				return;
+			}
 
 			// BC7 / BC6H evaluate each mode in its own dispatch (see TextureCompress.bsl). They share a per-block running-best
 			// error buffer so each mode kernel can keep its block when it beats the modes dispatched before it. The buffer is
@@ -240,7 +270,10 @@ namespace b3d
 					GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
 
 				if(bestErr == nullptr)
-					return false;
+				{
+					op.CompleteOperation(nullptr);
+					return;
+				}
 
 				const TArray<float> initErr((u64)blockCount, FLT_MAX);
 				render::GpuBufferUtility::Write(bestErr, 0, blockCount * (u32)sizeof(float), initErr.Data());
@@ -262,12 +295,30 @@ namespace b3d
 			// Flush the uniform writes to the GPU before the dispatches execute (unmap flushes a render-proxy mapping).
 			params.Unmap();
 
+			// Non-blocking read-back of the packed blocks. ReadAsync queues a copy to a staging buffer on the same command
+			// buffer and connects a completion callback; the finalize callback below is connected last, so by the time it
+			// runs (events fire in registration order) the staging read-back has completed.
+			const u32 readSize = destination->GetConsecutiveSize();
+			TAsyncOp<TShared<MemoryDataStream>> readOp = render::GpuBufferUtility::ReadAsync(output, 0, readSize, *commandBuffer);
+
+			// Copy the packed blocks into the destination surface and complete the op with it once the GPU finishes. The
+			// captures keep the destination surface and the GPU buffers (read-back source + dispatch inputs) alive until
+			// completion; runs on the render thread.
+			commandBuffer->OnDidComplete.Connect(
+				[op, readOp, output, input, bestErr, destination, readSize]() mutable
+				{
+					const TShared<MemoryDataStream> data = readOp.GetReturnValue();
+					if(data == nullptr)
+					{
+						op.CompleteOperation(nullptr);
+						return;
+					}
+
+					memcpy(destination->GetData(), data->Data(), readSize);
+					op.CompleteOperation(destination);
+				});
+
 			gpuDevice->SubmitCommandBuffer(commandBuffer);
-
-			// Blocking read-back of the packed blocks into the destination surface (waits on the compute write).
-			render::GpuBufferUtility::Read(output, 0, destination.GetConsecutiveSize(), destination.GetData());
-
-			return true;
 		}
 
 		// ---- CPU reference decoders (used by TextureCompressionUtility) ----
@@ -358,52 +409,56 @@ namespace b3d
 		return GetFormatInfo(format, variation, bufferFormat, isHdr);
 	}
 
-	bool GpuTextureCompressor::Compress(const PixelData& source, PixelData& destination, const CompressionOptions& options)
+	TAsyncOp<TShared<PixelData>> GpuTextureCompressor::Compress(const TShared<PixelData>& source, const TShared<PixelData>& destination, const CompressionOptions& options)
 	{
+		// On failure we still return a *completed* op (with null) so a caller blocking on it never hangs.
+		auto fnFailed = []()
+		{
+			TAsyncOp<TShared<PixelData>> op;
+			op.CompleteOperation(nullptr);
+			return op;
+		};
+
+		if(source == nullptr || destination == nullptr)
+			return fnFailed();
+
 		i32 variation;
 		GpuBufferFormat bufferFormat;
 		bool isHdr;
 		if(!GetFormatInfo(options.Format, variation, bufferFormat, isHdr))
-			return false;
+			return fnFailed();
 
 		if(GetApplication().GetPrimaryGpuDevice() == nullptr)
-			return false;
+			return fnFailed();
 
 		// Convert the source to a surface the compute shader can sample: RGBA8 for LDR formats, RGBA32F for HDR (BC6H).
 		// CPU work, safe on any thread.
 		const PixelFormat interimFormat = isHdr ? PF_RGBA32F : PF_RGBA8;
 		const GpuBufferFormat inputBufferFormat = isHdr ? BF_32X4F : BF_8X4;
-		const TShared<PixelData> convertedSource = PixelData::Create(source.GetWidth(), source.GetHeight(), 1, interimFormat);
-		PixelUtility::BulkPixelConversion(source, *convertedSource);
+		const TShared<PixelData> convertedSource = PixelData::Create(source->GetWidth(), source->GetHeight(), 1, interimFormat);
+		PixelUtility::BulkPixelConversion(*source, *convertedSource);
 
-		// Compile/fetch the shader variation(s) for this format. BC7 needs several mode-group variations dispatched in
-		// sequence; everything else is a single variation. Each Get() blocks until that variation is compiled.
+		// Determine the dispatch variation sequence for this format (pure CPU; no material instances). BC7/BC6H expand to
+		// several mode-group variations dispatched in sequence; everything else is a single variation.
 		TInlineArray<i32, 32> dispatchVariations;
 		TextureCompressMaterial::GetDispatchVariations(variation, dispatchVariations);
 
-		TInlineArray<TextureCompressMaterial*, 32> materials;
-		for(const i32 dispatchVariation : dispatchVariations)
+		// GPU resource creation and dispatch must run on the render thread. The work is non-blocking: it fetches the
+		// materials, records the dispatches, queues the read-back and returns immediately; the op completes (with the
+		// destination surface) from a command-buffer completion callback once the GPU finishes. Run inline if we are 
+		// already on the render thread, otherwise marshal it across.
+		TAsyncOp<TShared<PixelData>> op;
+		auto fnGpuWork = [dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination, op]() mutable
 		{
-			fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr);
-			TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation);
-			fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
-			if(material == nullptr || material->GetComputePipeline() == nullptr)
-				return false;
-
-			materials.Add(material);
-		}
-
-		// GPU resource creation and dispatch must run on the render thread. Run inline if we're already there,
-		// otherwise marshal the work across and block until it finishes.
-		bool success = false;
-		auto fnGpuWork = [&]() { success = CompressOnRenderThread(materials, dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination); };
+			CompressOnRenderThread(dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination, op);
+		};
 
 		if(B3D_CURRENT_THREAD_ID == GetRenderThread().GetThreadId())
 			fnGpuWork();
 		else
-			GetRenderThread().PostCommand(fnGpuWork, "GPU texture compression", true);
+			GetRenderThread().PostCommand(std::move(fnGpuWork), "GPU texture compression");
 
-		return success;
+		return op;
 	}
 
 	void TextureCompressionUtility::DecodeBC1(const u8* block, bool fourColorOnly, u8 outRGBA[64])

@@ -376,7 +376,9 @@ void ImporterTestSuite::TestGpuCompress_Psnr()
 		co.Format = test.Format;
 		// Call the GPU compressor directly: PixelUtility::Compress routes through nvtt while B3D_USE_NVTT is on (the
 		// default), so the test must target the GPU path explicitly to keep exercising it until the switch is complete.
-		const bool compressOk = GpuTextureCompressor::Compress(*source, *compressed, co);
+		TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(source, compressed, co);
+		compressOp.BlockUntilComplete();
+		const bool compressOk = compressOp.GetReturnValue() != nullptr;
 		B3D_TEST_ASSERT(compressOk)
 
 		const u8* blocks = compressed->GetData();
@@ -495,7 +497,9 @@ void ImporterTestSuite::TestGpuCompress_BC6H_Psnr()
 	CompressionOptions co;
 	co.Format = PF_BC6H;
 	// Call the GPU compressor directly (see note in TestGpuCompress_Psnr): PixelUtility::Compress uses nvtt by default.
-	const bool compressOk = GpuTextureCompressor::Compress(*source, *compressed, co);
+	TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(source, compressed, co);
+	compressOp.BlockUntilComplete();
+	const bool compressOk = compressOp.GetReturnValue() != nullptr;
 	B3D_TEST_ASSERT(compressOk)
 
 	const u32 blocksX = size / 4, blocksY = size / 4;
@@ -597,7 +601,9 @@ void ImporterTestSuite::TestGpuCompress_Perf()
 		co.Format = test.Format;
 
 		// Warm-up: the first call pays the one-time pipeline compile per FORMAT variation; excluded from timing.
-		const bool warmOk = GpuTextureCompressor::Compress(*source, *compressed, co);
+		TAsyncOp<TShared<PixelData>> warmOp = GpuTextureCompressor::Compress(source, compressed, co);
+		warmOp.BlockUntilComplete();
+		const bool warmOk = warmOp.GetReturnValue() != nullptr;
 		B3D_TEST_ASSERT(warmOk)
 
 		double bestMs = 1.0e30;
@@ -605,7 +611,9 @@ void ImporterTestSuite::TestGpuCompress_Perf()
 		for(u32 it = 0; it < kIters; ++it)
 		{
 			const Clock::time_point t0 = Clock::now();
-			const bool ok = GpuTextureCompressor::Compress(*source, *compressed, co);
+			TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(source, compressed, co);
+			compressOp.BlockUntilComplete(); // measure the full round-trip (dispatch + async read-back)
+			const bool ok = compressOp.GetReturnValue() != nullptr;
 			const double ms = std::chrono::duration<double, std::milli>(Clock::now() - t0).count();
 			B3D_TEST_ASSERT(ok)
 			if(ms < bestMs) bestMs = ms;
@@ -658,8 +666,10 @@ void ImporterTestSuite::TestGpuMipmaps_BoxFilter()
 	MipMapGenOptions options; // Box filter, linear (no sRGB), no normalization.
 	// Call the GPU generator directly: PixelUtility::GenerateMipmaps routes through nvtt while B3D_USE_NVTT is on (the
 	// default), so the test must target the GPU path explicitly to keep exercising it until the switch is complete.
-	Vector<TShared<PixelData>> mips;
-	const bool mipsOk = GpuGenerateMipmap::Generate(source, options, mips);
+	TAsyncOp<Vector<TShared<PixelData>>> mipmapOp = GpuGenerateMipmap::Generate(source, options);
+	mipmapOp.BlockUntilComplete();
+	Vector<TShared<PixelData>> mips = mipmapOp.GetReturnValue();
+	const bool mipsOk = !mips.empty();
 	B3D_TEST_ASSERT(mipsOk)
 
 	// 4x4 produces a full chain: 4x4, 2x2, 1x1.
