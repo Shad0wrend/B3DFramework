@@ -77,7 +77,7 @@ namespace b3d
 			 * per-block running-best-error buffer shared by the BC7 / BC6H per-mode dispatches; pass null for single-dispatch
 			 * formats (the variation's shader will not declare gBestErr in that case).
 			 */
-			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const TShared<render::GpuBuffer>& meta, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount)
+			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const TShared<render::GpuBuffer>& meta, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount, i32 variation)
 			{
 				mGpuParameterSet->SetStorageBuffer("gInput", input);
 				mGpuParameterSet->SetStorageBuffer("gOutput", output);
@@ -86,7 +86,14 @@ namespace b3d
 					mGpuParameterSet->SetStorageBuffer("gBestErr", bestErr);
 
 				Bind(commandBuffer);
-				commandBuffer.DispatchCompute((u32)Math::DivideAndRoundUp(blockCount.X, 8), (u32)Math::DivideAndRoundUp(blockCount.Y, 8));
+				// BC6H two-region modes (variations 4..13) dispatch one thread-group per 4x4 block, with 32 threads (one per
+				// partition) cooperating via groupshared (kernel uses [numthreads(32, 1, 1)]). Every other variation runs one
+				// thread per block ([numthreads(8, 8, 1)], 8x8 groups). (BC7 cooperative-LDS was tried and reverted: it
+				// regressed compile time because BC7's cost is the per-partition body + polish, not the partition loop.)
+				if(variation >= 4 && variation <= 13)
+					commandBuffer.DispatchCompute((u32)blockCount.X, (u32)blockCount.Y);
+				else
+					commandBuffer.DispatchCompute((u32)Math::DivideAndRoundUp(blockCount.X, 8), (u32)Math::DivideAndRoundUp(blockCount.Y, 8));
 			}
 
 			template <int FORMAT>
@@ -161,7 +168,7 @@ namespace b3d
 		 * Performs the actual GPU compression. Must be called on the render thread: it creates GPU resources, dispatches the
 		 * compute kernel and reads the packed blocks back to the CPU. Returns true on success.
 		 */
-		bool CompressOnRenderThread(const TInlineArray<TextureCompressMaterial*, 32>& materials, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, PixelData& destination)
+		bool CompressOnRenderThread(const TInlineArray<TextureCompressMaterial*, 32>& materials, const TInlineArray<i32, 32>& variations, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, PixelData& destination)
 		{
 			AssertIfNotRenderThread();
 
@@ -222,11 +229,12 @@ namespace b3d
 			commandBufferInfo.Name = "TextureCompress";
 			const TShared<render::GpuCommandBuffer> commandBuffer = pool->Create(commandBufferInfo);
 
-			// One thread per 4x4 block; the kernel uses [numthreads(8, 8, 1)]. The mode groups run in sequence on one command
-			// buffer and must see each other's writes to the shared gOutput / gBestErr running-best buffers.
+			// Each mode runs as its own dispatch (BC6H two-region uses 32-thread cooperative groups, everything else one
+			// thread per block; see Execute). The mode groups run in sequence on one command buffer and must see each
+			// other's writes to the shared gOutput / gBestErr running-best buffers.
 			const Vector2I blockDims((i32)blockCountX, (i32)blockCountY);
 			for(u32 i = 0; i < materials.Size(); ++i)
-				materials[i]->Execute(*commandBuffer, input, output, metaBuffer, bestErr, blockDims);
+				materials[i]->Execute(*commandBuffer, input, output, metaBuffer, bestErr, blockDims, variations[i]);
 
 			gpuDevice->SubmitCommandBuffer(commandBuffer);
 
@@ -360,7 +368,7 @@ namespace b3d
 		// GPU resource creation and dispatch must run on the render thread. Run inline if we're already there,
 		// otherwise marshal the work across and block until it finishes.
 		bool success = false;
-		auto fnGpuWork = [&]() { success = CompressOnRenderThread(materials, convertedSource, inputBufferFormat, bufferFormat, destination); };
+		auto fnGpuWork = [&]() { success = CompressOnRenderThread(materials, dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination); };
 
 		if(B3D_CURRENT_THREAD_ID == GetRenderThread().GetThreadId())
 			fnGpuWork();

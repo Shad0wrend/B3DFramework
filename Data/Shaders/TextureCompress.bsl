@@ -74,6 +74,8 @@ shader TextureCompress
 
 		// BC6H is dispatched as 14 single-mode kernels (FORMAT 4..17, encoder modes 1..14).
 		#define IS_BC6H (FORMAT >= 4 && FORMAT <= 17)
+		// BC6H two-region modes (1..10) run cooperatively: 32 threads/block, one per partition (FORMAT 4..13).
+		#define IS_BC6H_TWOREGION (FORMAT >= 4 && FORMAT <= 13)
 		// BC7 is dispatched as 8 single-mode kernels (FORMAT 18..25, encoder modes 0..7). Both share a running-best buffer.
 		#define IS_BC7 (FORMAT >= 18 && FORMAT <= 25)
 
@@ -528,13 +530,22 @@ shader TextureCompress
 			return uint2(lo, hi);
 		}
 
+		#if IS_BC6H_TWOREGION
+		[numthreads(32, 1, 1)] // 32 threads = the 32 BC6H two-region partitions; one thread-group per 4x4 block
+		#else
 		[numthreads(8, 8, 1)]
-		void csmain(uint3 dispatchId : SV_DispatchThreadID)
+		#endif
+		void csmain(uint3 dispatchId : SV_DispatchThreadID, uint3 groupId : SV_GroupID, uint3 groupThreadId : SV_GroupThreadID)
 		{
 			int2 texSize = gMeta[0];
 			uint2 numBlocks = (uint2)gMeta[1];
 
+			#if IS_BC6H_TWOREGION
+			uint2 blockId = groupId.xy;    // one thread-group per 4x4 block
+			uint partId = groupThreadId.x; // 0..31: this thread's partition
+			#else
 			uint2 blockId = dispatchId.xy;
+			#endif
 			if (blockId.x >= numBlocks.x || blockId.y >= numBlocks.y)
 				return;
 
@@ -601,25 +612,25 @@ shader TextureCompress
 				float modeErr;
 				uint4 modeBlock;
 				#if FORMAT == 4
-					modeBlock = CompressBC6Mode1(hbits, modeErr);
+					modeBlock = CompressBC6Mode1(hbits, partId, modeErr);
 				#elif FORMAT == 5
-					modeBlock = CompressBC6Mode2(hbits, modeErr);
+					modeBlock = CompressBC6Mode2(hbits, partId, modeErr);
 				#elif FORMAT == 6
-					modeBlock = CompressBC6Mode3(hbits, modeErr);
+					modeBlock = CompressBC6Mode3(hbits, partId, modeErr);
 				#elif FORMAT == 7
-					modeBlock = CompressBC6Mode4(hbits, modeErr);
+					modeBlock = CompressBC6Mode4(hbits, partId, modeErr);
 				#elif FORMAT == 8
-					modeBlock = CompressBC6Mode5(hbits, modeErr);
+					modeBlock = CompressBC6Mode5(hbits, partId, modeErr);
 				#elif FORMAT == 9
-					modeBlock = CompressBC6Mode6(hbits, modeErr);
+					modeBlock = CompressBC6Mode6(hbits, partId, modeErr);
 				#elif FORMAT == 10
-					modeBlock = CompressBC6Mode7(hbits, modeErr);
+					modeBlock = CompressBC6Mode7(hbits, partId, modeErr);
 				#elif FORMAT == 11
-					modeBlock = CompressBC6Mode8(hbits, modeErr);
+					modeBlock = CompressBC6Mode8(hbits, partId, modeErr);
 				#elif FORMAT == 12
-					modeBlock = CompressBC6Mode9(hbits, modeErr);
+					modeBlock = CompressBC6Mode9(hbits, partId, modeErr);
 				#elif FORMAT == 13
-					modeBlock = CompressBC6Mode10(hbits, modeErr);
+					modeBlock = CompressBC6Mode10(hbits, partId, modeErr);
 				#elif FORMAT == 14
 					modeBlock = CompressBC6Mode11(hbits, modeErr);
 				#elif FORMAT == 15
@@ -632,11 +643,16 @@ shader TextureCompress
 
 				// Keep this mode's block if it beats the running best. gBestErr is seeded to +inf by the host, so the first
 				// dispatched mode always wins; no special seed pass is needed and dispatch order is irrelevant.
-				float prevErr6 = gBestErr[blockIndex];
-				uint4 prevBlock6 = gOutput[blockIndex];
-				if (modeErr < prevErr6) { prevErr6 = modeErr; prevBlock6 = modeBlock; }
-				gOutput[blockIndex] = prevBlock6;
-				gBestErr[blockIndex] = prevErr6;
+				#if IS_BC6H_TWOREGION
+				if (partId == 0) // group leader commits the running-best; all 32 threads computed the same block
+				#endif
+				{
+					float prevErr6 = gBestErr[blockIndex];
+					uint4 prevBlock6 = gOutput[blockIndex];
+					if (modeErr < prevErr6) { prevErr6 = modeErr; prevBlock6 = modeBlock; }
+					gOutput[blockIndex] = prevBlock6;
+					gBestErr[blockIndex] = prevErr6;
+				}
 			#else // BC7 (FORMAT 18..25 -> encoder modes 0..7): one mode per kernel; accumulate via gBestErr.
 				float modeErr;
 				uint4 modeBlock;

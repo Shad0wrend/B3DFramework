@@ -220,7 +220,13 @@ mixin TextureCompressBC6Common
 		// mode's stored layout (@p codeStore: base for subset-0 A, then base+delta for the other three when @p
 		// transformed) and the error is re-measured from the truly-decoded palette so the dispatcher accounts for any
 		// delta clamping. @p codeStore order: [0]=subset0 A (base), [1]=subset0 B, [2]=subset1 A, [3]=subset1 B.
-		void EncodeBC6TwoRegion(int3 h[16], int wBits, int3 tBits, bool transformed,
+		// Groupshared scratch for the cooperative two-region search: each of the 32 threads in a block-group encodes
+		// one partition and publishes {error, absolute codes, indices}; one pass then reduces to the best partition.
+		groupshared float gBC6PartErr[32];
+		groupshared int gBC6PartAbsC[32][12]; // 4 endpoints x 3 channels, flattened
+		groupshared uint gBC6PartIdx[32][16];
+		
+		void EncodeBC6TwoRegion(int3 h[16], int wBits, int3 tBits, bool transformed, uint partId,
 			out uint outPart, out int3 codeStore[4], out uint idxOut[16], out float errOut)
 		{
 			float3 pts[16];
@@ -233,7 +239,7 @@ mixin TextureCompressBC6Common
 			int3 bestAbs[4];
 			uint bestIdx[16];
 
-			for (uint part = 0; part < 32; ++part)
+			uint part = partId; // cooperative: this thread owns one partition
 			{
 				uint pmask = kBC6Part2[part];
 				uint mask0 = (~pmask) & 0xFFFFu;
@@ -294,17 +300,36 @@ mixin TextureCompressBC6Common
 					}
 				}
 
-				if (err < bestErr)
+				// Publish this partition's result to groupshared for the cooperative reduction.
+				gBC6PartErr[partId] = err;
+				[unroll]
+				for (uint pk = 0; pk < 4; ++pk)
 				{
-					bestErr = err;
-					bestPart = part;
-					bestAbs[0] = absC[0]; bestAbs[1] = absC[1]; bestAbs[2] = absC[2]; bestAbs[3] = absC[3];
-					[unroll]
-					for (uint t = 0; t < 16; ++t)
-						bestIdx[t] = idx[t];
+					gBC6PartAbsC[partId][pk * 3 + 0] = absC[pk].x;
+					gBC6PartAbsC[partId][pk * 3 + 1] = absC[pk].y;
+					gBC6PartAbsC[partId][pk * 3 + 2] = absC[pk].z;
 				}
+				[unroll]
+				for (uint pt = 0; pt < 16; ++pt)
+					gBC6PartIdx[partId][pt] = idx[pt];
 			}
 
+			// Cooperative reduction: all threads agree on the lowest-error partition, then reconstruct its data.
+			GroupMemoryBarrierWithGroupSync();
+			bestErr = gBC6PartErr[0];
+			bestPart = 0;
+			for (uint pp = 1; pp < 32; ++pp)
+			{
+				float pe = gBC6PartErr[pp];
+				if (pe < bestErr) { bestErr = pe; bestPart = pp; }
+			}
+			[unroll]
+			for (uint rk = 0; rk < 4; ++rk)
+				bestAbs[rk] = int3(gBC6PartAbsC[bestPart][rk * 3 + 0], gBC6PartAbsC[bestPart][rk * 3 + 1], gBC6PartAbsC[bestPart][rk * 3 + 2]);
+			[unroll]
+			for (uint rt = 0; rt < 16; ++rt)
+				bestIdx[rt] = gBC6PartIdx[bestPart][rt];
+			
 			// Anchor fixups: each anchor index slot stores one fewer bit, so its high bit must be 0. Swap that subset's
 			// endpoints and invert (7 - idx) every index in that subset; the 3-bit ramp is symmetric so this is lossless.
 			uint anchor1 = kBC6Anchor2[bestPart];

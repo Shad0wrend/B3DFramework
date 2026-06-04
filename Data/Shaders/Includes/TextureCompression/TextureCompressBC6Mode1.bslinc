@@ -13,12 +13,12 @@ mixin TextureCompressBC6Mode1
 
 	code
 	{
-		uint4 CompressBC6Mode1(int3 h[16], out float outErr)
+		uint4 CompressBC6Mode1(int3 h[16], uint partId, out float outErr)
 		{
 			uint part;
 			int3 c[4]; // [0]=subset0 A (base), [1]=subset0 B, [2]=subset1 A, [3]=subset1 B (deltas)
 			uint idx[16];
-			EncodeBC6TwoRegion(h, 10, int3(5, 5, 5), true, part, c, idx, outErr);
+			EncodeBC6TwoRegion(h, 10, int3(5, 5, 5), true, partId, part, c, idx, outErr);
 
 			// Field names follow the spec: w/x = subset0 A/B, y/z = subset1 A/B; .x/.y/.z = R/G/B.
 			uint rw = (uint)c[0].x, gw = (uint)c[0].y, bw = (uint)c[0].z;

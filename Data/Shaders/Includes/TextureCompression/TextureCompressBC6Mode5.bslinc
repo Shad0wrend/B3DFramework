@@ -12,12 +12,12 @@ mixin TextureCompressBC6Mode5
 
 	code
 	{
-		uint4 CompressBC6Mode5(int3 h[16], out float outErr)
+		uint4 CompressBC6Mode5(int3 h[16], uint partId, out float outErr)
 		{
 			uint part;
 			int3 c[4];
 			uint idx[16];
-			EncodeBC6TwoRegion(h, 11, int3(4, 4, 5), true, part, c, idx, outErr);
+			EncodeBC6TwoRegion(h, 11, int3(4, 4, 5), true, partId, part, c, idx, outErr);
 
 			uint rw = (uint)c[0].x, gw = (uint)c[0].y, bw = (uint)c[0].z;
 			uint rx = (uint)c[1].x, gx = (uint)c[1].y, bx = (uint)c[1].z;
