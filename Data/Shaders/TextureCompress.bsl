@@ -171,101 +171,121 @@ shader TextureCompress
 			}
 			float3 bestE0 = saturate(mean + axis * maxProj);
 			float3 bestE1 = saturate(mean + axis * minProj);
-
-			// Sort the texels by their projection onto the axis (ascending). Insertion sort over a runtime loop keeps
-			// the IR small (no unrolled 16-wide sorting network); the inner shift is a runtime loop for the same reason.
-			float3 sortedPts[16];
-			float sortKey[16];
-			[unroll]
-			for (uint i = 0; i < 16; ++i)
-			{
-				sortedPts[i] = texels[i];
-				sortKey[i] = dot(texels[i] - mean, axis);
-			}
-			for (uint a = 1; a < 16; ++a)
-			{
-				float keyP = sortKey[a];
-				float3 keyV = sortedPts[a];
-				uint b = a;
-				[loop]
-				while (b > 0 && sortKey[b - 1] > keyP)
-				{
-					sortKey[b] = sortKey[b - 1];
-					sortedPts[b] = sortedPts[b - 1];
-					--b;
-				}
-				sortKey[b] = keyP;
-				sortedPts[b] = keyV;
-			}
-
-			// Totals over all texels (constant across partitions): sum of points and sum of |point|^2.
-			float3 sumAll = float3(0, 0, 0);
-			float pSq = 0.0f;
-			[unroll]
-			for (uint i = 0; i < 16; ++i)
-			{
-				sumAll += sortedPts[i];
-				pSq += dot(sortedPts[i], sortedPts[i]);
-			}
-
-			// Enumerate ordered partitions (n0,n1,n2,n3) of the 16 sorted points across the four palette levels.
-			// acc0/acc1/acc2 carry the running point sums of groups 0/1/2 as the split points sweep; group 3 is the
-			// remainder. Each (n0,n1,n2) is one closed-form least-squares endpoint solve plus an error evaluation. The
-			// loops are runtime (not [unroll]) so the ~969-iteration search stays a small loop body on the AMD compiler.
 			float bestSSE = 1e30f;
-			float3 acc0 = float3(0, 0, 0);
-			for (uint n0 = 0; n0 <= 16; ++n0)
+
+			// Iterated cluster fit with axis re-estimation (matches squish / Compressonator). A single cluster fit is
+			// optimal only for the axis it was given; the initial PCA axis is biased by the point spread and by 5:6:5
+			// quantization, so after each fit we re-derive the axis from the winning endpoint pair (the colour change
+			// per index step, = e0-e1) and refit along it. Re-using one loop body means the compiled IR stays the same
+			// size as a single fit - only runtime grows - which keeps the AMD/LLPC compile time bounded.
+			[loop]
+			for (uint fitIter = 0; fitIter < 4u; ++fitIter)
 			{
-				float3 acc1 = float3(0, 0, 0);
-				for (uint n1 = 0; n0 + n1 <= 16; ++n1)
+				float prevBest = bestSSE;
+
+				// Sort the texels by their projection onto the current axis (ascending). Insertion sort over a runtime
+				// loop keeps the IR small (no unrolled 16-wide network); the inner shift is a runtime loop for the same reason.
+				float3 sortedPts[16];
+				float sortKey[16];
+				[unroll]
+				for (uint i = 0; i < 16; ++i)
 				{
-					float3 acc2 = float3(0, 0, 0);
-					for (uint n2 = 0; n0 + n1 + n2 <= 16; ++n2)
-					{
-						uint n3 = 16u - n0 - n1 - n2;
-						float3 s0 = acc0;
-						float3 s1 = acc1;
-						float3 s2 = acc2;
-						float3 s3 = sumAll - acc0 - acc1 - acc2;
-						float fn0 = (float)n0, fn1 = (float)n1, fn2 = (float)n2, fn3 = (float)n3;
-
-						// Normal-equation coefficients for the blend factors (1-w) = {1, 2/3, 1/3, 0} per level.
-						float A = fn0 + fn1 * (4.0f / 9.0f) + fn2 * (1.0f / 9.0f);
-						float Cc = fn1 * (1.0f / 9.0f) + fn2 * (4.0f / 9.0f) + fn3;
-						float Bb = (fn1 + fn2) * (2.0f / 9.0f);
-						float det = A * Cc - Bb * Bb;
-						if (det > 1e-9f)
-						{
-							float3 rhsA = s0 + s1 * (2.0f / 3.0f) + s2 * (1.0f / 3.0f);
-							float3 rhsB = s1 * (1.0f / 3.0f) + s2 * (2.0f / 3.0f) + s3;
-							float inv = 1.0f / det;
-							float3 e0 = (Cc * rhsA - Bb * rhsB) * inv;
-							float3 e1 = (A * rhsB - Bb * rhsA) * inv;
-
-							// Reconstructed palette value per group, and the resulting total squared error.
-							float3 r0 = e0;
-							float3 r1 = (2.0f / 3.0f) * e0 + (1.0f / 3.0f) * e1;
-							float3 r2 = (1.0f / 3.0f) * e0 + (2.0f / 3.0f) * e1;
-							float3 r3 = e1;
-							float sse = pSq
-								- 2.0f * (dot(r0, s0) + dot(r1, s1) + dot(r2, s2) + dot(r3, s3))
-								+ fn0 * dot(r0, r0) + fn1 * dot(r1, r1) + fn2 * dot(r2, r2) + fn3 * dot(r3, r3);
-							if (sse < bestSSE)
-							{
-								bestSSE = sse;
-								bestE0 = saturate(e0);
-								bestE1 = saturate(e1);
-							}
-						}
-
-						if (n0 + n1 + n2 < 16u)
-							acc2 += sortedPts[n0 + n1 + n2];
-					}
-					if (n0 + n1 < 16u)
-						acc1 += sortedPts[n0 + n1];
+					sortedPts[i] = texels[i];
+					sortKey[i] = dot(texels[i] - mean, axis);
 				}
-				if (n0 < 16u)
-					acc0 += sortedPts[n0];
+				for (uint a = 1; a < 16; ++a)
+				{
+					float keyP = sortKey[a];
+					float3 keyV = sortedPts[a];
+					uint b = a;
+					[loop]
+					while (b > 0 && sortKey[b - 1] > keyP)
+					{
+						sortKey[b] = sortKey[b - 1];
+						sortedPts[b] = sortedPts[b - 1];
+						--b;
+					}
+					sortKey[b] = keyP;
+					sortedPts[b] = keyV;
+				}
+
+				// Totals over all texels (constant across partitions): sum of points and sum of |point|^2.
+				float3 sumAll = float3(0, 0, 0);
+				float pSq = 0.0f;
+				[unroll]
+				for (uint i = 0; i < 16; ++i)
+				{
+					sumAll += sortedPts[i];
+					pSq += dot(sortedPts[i], sortedPts[i]);
+				}
+
+				// Enumerate ordered partitions (n0,n1,n2,n3) of the 16 sorted points across the four palette levels.
+				// acc0/acc1/acc2 carry the running point sums of groups 0/1/2 as the split points sweep; group 3 is the
+				// remainder. Each (n0,n1,n2) is one closed-form least-squares endpoint solve plus an error evaluation. The
+				// loops are runtime (not [unroll]) so the ~969-iteration search stays a small loop body on the AMD compiler.
+				float3 acc0 = float3(0, 0, 0);
+				for (uint n0 = 0; n0 <= 16; ++n0)
+				{
+					float3 acc1 = float3(0, 0, 0);
+					for (uint n1 = 0; n0 + n1 <= 16; ++n1)
+					{
+						float3 acc2 = float3(0, 0, 0);
+						for (uint n2 = 0; n0 + n1 + n2 <= 16; ++n2)
+						{
+							uint n3 = 16u - n0 - n1 - n2;
+							float3 s0 = acc0;
+							float3 s1 = acc1;
+							float3 s2 = acc2;
+							float3 s3 = sumAll - acc0 - acc1 - acc2;
+							float fn0 = (float)n0, fn1 = (float)n1, fn2 = (float)n2, fn3 = (float)n3;
+
+							// Normal-equation coefficients for the blend factors (1-w) = {1, 2/3, 1/3, 0} per level.
+							float A = fn0 + fn1 * (4.0f / 9.0f) + fn2 * (1.0f / 9.0f);
+							float Cc = fn1 * (1.0f / 9.0f) + fn2 * (4.0f / 9.0f) + fn3;
+							float Bb = (fn1 + fn2) * (2.0f / 9.0f);
+							float det = A * Cc - Bb * Bb;
+							if (det > 1e-9f)
+							{
+								float3 rhsA = s0 + s1 * (2.0f / 3.0f) + s2 * (1.0f / 3.0f);
+								float3 rhsB = s1 * (1.0f / 3.0f) + s2 * (2.0f / 3.0f) + s3;
+								float inv = 1.0f / det;
+								float3 e0 = (Cc * rhsA - Bb * rhsB) * inv;
+								float3 e1 = (A * rhsB - Bb * rhsA) * inv;
+
+								// Reconstructed palette value per group, and the resulting total squared error.
+								float3 r0 = e0;
+								float3 r1 = (2.0f / 3.0f) * e0 + (1.0f / 3.0f) * e1;
+								float3 r2 = (1.0f / 3.0f) * e0 + (2.0f / 3.0f) * e1;
+								float3 r3 = e1;
+								float sse = pSq
+									- 2.0f * (dot(r0, s0) + dot(r1, s1) + dot(r2, s2) + dot(r3, s3))
+									+ fn0 * dot(r0, r0) + fn1 * dot(r1, r1) + fn2 * dot(r2, r2) + fn3 * dot(r3, r3);
+								if (sse < bestSSE)
+								{
+									bestSSE = sse;
+									bestE0 = saturate(e0);
+									bestE1 = saturate(e1);
+								}
+							}
+
+							if (n0 + n1 + n2 < 16u)
+								acc2 += sortedPts[n0 + n1 + n2];
+						}
+						if (n0 + n1 < 16u)
+							acc1 += sortedPts[n0 + n1];
+					}
+					if (n0 < 16u)
+						acc0 += sortedPts[n0];
+				}
+
+				// Re-derive the axis from the winning endpoint pair for the next pass; stop once a pass no longer
+				// improves the (continuous) error - the fit has converged.
+				float3 dir = bestE0 - bestE1;
+				float dlen = length(dir);
+				if (dlen > 1e-6f)
+					axis = dir / dlen;
+				if (!(bestSSE < prevBest - 1e-9f))
+					break;
 			}
 
 			float3 maxColor = bestE0;
