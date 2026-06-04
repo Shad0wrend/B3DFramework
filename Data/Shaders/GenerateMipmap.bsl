@@ -8,11 +8,17 @@ shader GenerateMipmap
 		Buffer<float4> gInput;
 		// Destination mip (one level down). Row-major: index = y * dstWidth + x.
 		RWBuffer<float4> gOutput;
-		// gParams[0] = (srcWidth, srcHeight, dstWidth, dstHeight)
-		// gParams[1] = (filter, isSrgb, normalize, wrapMode)
-		//   filter:   0 = box, 1 = triangle
-		//   wrapMode: 0 = mirror, 1 = repeat, 2 = clamp
-		Buffer<int4> gParams;
+
+		[internal]
+		cbuffer Parameters
+		{
+			int2 gSourceSize; // (srcWidth, srcHeight)
+			int2 gDestSize;   // (dstWidth, dstHeight)
+			int gFilter;      // 0 = box, 1 = triangle
+			int gIsSrgb;      // non-zero: source is sRGB, filter in linear space
+			int gNormalize;   // non-zero: re-normalize the result as a normal vector
+			int gWrapMode;    // 0 = mirror, 1 = repeat, 2 = clamp
+		}
 
 		float3 SrgbToLinear(float3 c)
 		{
@@ -67,15 +73,15 @@ shader GenerateMipmap
 		[numthreads(8, 8, 1)]
 		void csmain(uint3 dispatchId : SV_DispatchThreadID)
 		{
-			int srcW = gParams[0].x;
-			int srcH = gParams[0].y;
-			int dstW = gParams[0].z;
-			int dstH = gParams[0].w;
+			int srcW = gSourceSize.x;
+			int srcH = gSourceSize.y;
+			int dstW = gDestSize.x;
+			int dstH = gDestSize.y;
 
-			int filter = gParams[1].x;
-			bool srgb = gParams[1].y != 0;
-			bool normalizeResult = gParams[1].z != 0;
-			int wrapMode = gParams[1].w;
+			int filter = gFilter;
+			bool srgb = gIsSrgb != 0;
+			bool normalizeResult = gNormalize != 0;
+			int wrapMode = gWrapMode;
 
 			int2 dst = int2(dispatchId.xy);
 			if (dst.x >= dstW || dst.y >= dstH)

@@ -6,6 +6,7 @@
 #include "Image/B3DPixelData.h"
 #include "Image/B3DTexture.h"
 #include "Renderer/B3DRendererMaterial.h"
+#include "Renderer/B3DGpuUniformBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DGpuBuffer.h"
@@ -19,6 +20,20 @@
 #include <cfloat>
 
 using namespace b3d;
+
+namespace b3d::render
+{
+	namespace
+	{
+		/** Per-dispatch constants for the block-compression kernel (maps to the BSL `cbuffer Parameters`). */
+		B3D_UNIFORM_BUFFER_BEGIN(TextureCompressParamsDefinition)
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gTextureSize) // texture size in pixels
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gBlockCount)  // number of 4x4 blocks along each axis
+		B3D_UNIFORM_BUFFER_END
+
+		TextureCompressParamsDefinition gTextureCompressParams;
+	}
+}
 
 namespace b3d
 {
@@ -72,24 +87,28 @@ namespace b3d
 		public:
 			TextureCompressMaterial() = default;
 
+			void Initialize() override
+			{
+				mGpuParameterSet->TryGetUniformBufferParameter("Parameters", mParametersBuffer);
+			}
+
 			/**
 			 * Records the dispatch that compresses @p input into @p output. Must run on the render thread. @p bestErr is the
 			 * per-block running-best-error buffer shared by the BC7 / BC6H per-mode dispatches; pass null for single-dispatch
 			 * formats (the variation's shader will not declare gBestErr in that case).
 			 */
-			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const TShared<render::GpuBuffer>& meta, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount, i32 variation)
+			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const render::GpuBufferMappedScope& parameters, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount, i32 variation)
 			{
 				mGpuParameterSet->SetStorageBuffer("gInput", input);
 				mGpuParameterSet->SetStorageBuffer("gOutput", output);
-				mGpuParameterSet->SetStorageBuffer("gMeta", meta);
+				mParametersBuffer.Set(parameters);
 				if(bestErr != nullptr && mGpuParameterSet->HasStorageBuffer("gBestErr"))
 					mGpuParameterSet->SetStorageBuffer("gBestErr", bestErr);
 
 				Bind(commandBuffer);
 				// BC6H two-region modes (variations 4..13) dispatch one thread-group per 4x4 block, with 32 threads (one per
 				// partition) cooperating via groupshared (kernel uses [numthreads(32, 1, 1)]). Every other variation runs one
-				// thread per block ([numthreads(8, 8, 1)], 8x8 groups). (BC7 cooperative-LDS was tried and reverted: it
-				// regressed compile time because BC7's cost is the per-partition body + polish, not the partition loop.)
+				// thread per block ([numthreads(8, 8, 1)], 8x8 groups).
 				if(variation >= 4 && variation <= 13)
 					commandBuffer.DispatchCompute((u32)blockCount.X, (u32)blockCount.Y);
 				else
@@ -135,7 +154,10 @@ namespace b3d
 				case 23: return Get(GetVariationParams<23>());
 				case 24: return Get(GetVariationParams<24>());
 				case 25: return Get(GetVariationParams<25>());
-				default: return Get(GetVariationParams<0>());
+				// The caller always passes an in-range variation (0..25); this fallback is purely defensive.
+				default:
+					B3D_ASSERT(false);
+					return Get(GetVariationParams<0>());
 				}
 			}
 
@@ -162,6 +184,9 @@ namespace b3d
 				else
 					outVariations.Add(baseVariation);
 			}
+
+		private:
+			render::GpuParameterUniformBuffer mParametersBuffer;
 		};
 
 		/**
@@ -191,13 +216,11 @@ namespace b3d
 
 			render::GpuBufferUtility::Write(input, 0, source->GetConsecutiveSize(), source->GetData());
 
-			// Metadata buffer: [0] = texture size, [1] = number of blocks (two int2 entries).
-			const i32 meta[4] = { (i32)width, (i32)height, (i32)blockCountX, (i32)blockCountY };
-			const TShared<render::GpuBuffer> metaBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X2S, 2));
-			if(metaBuffer == nullptr)
-				return false;
-
-			render::GpuBufferUtility::Write(metaBuffer, 0, sizeof(meta), meta);
+			// Per-dispatch constants (texture size + block count) shared by every mode dispatch, populated once into a
+			// transient uniform buffer. The mapped scope must outlive the dispatch loop below (it unmaps on destruction).
+			render::GpuBufferMappedScope params = render::gTextureCompressParams.AllocateTransient().Map();
+			render::gTextureCompressParams.gTextureSize.Set(params, Vector2I((i32)width, (i32)height));
+			render::gTextureCompressParams.gBlockCount.Set(params, Vector2I((i32)blockCountX, (i32)blockCountY));
 
 			// Output buffer receives the packed blocks; readable by the CPU and writable as a compute UAV.
 			const TShared<render::GpuBuffer> output = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(outputBufferFormat, blockCount,
@@ -233,8 +256,11 @@ namespace b3d
 			// thread per block; see Execute). The mode groups run in sequence on one command buffer and must see each
 			// other's writes to the shared gOutput / gBestErr running-best buffers.
 			const Vector2I blockDims((i32)blockCountX, (i32)blockCountY);
-			for(u32 i = 0; i < materials.Size(); ++i)
-				materials[i]->Execute(*commandBuffer, input, output, metaBuffer, bestErr, blockDims, variations[i]);
+			for(u32 materialIndex = 0; materialIndex < materials.Size(); ++materialIndex)
+				materials[materialIndex]->Execute(*commandBuffer, input, output, params, bestErr, blockDims, variations[materialIndex]);
+
+			// Flush the uniform writes to the GPU before the dispatches execute (unmap flushes a render-proxy mapping).
+			params.Unmap();
 
 			gpuDevice->SubmitCommandBuffer(commandBuffer);
 
@@ -358,7 +384,9 @@ namespace b3d
 		TInlineArray<TextureCompressMaterial*, 32> materials;
 		for(const i32 dispatchVariation : dispatchVariations)
 		{
-			fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr); TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation); fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
+			fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr);
+			TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation);
+			fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
 			if(material == nullptr || material->GetComputePipeline() == nullptr)
 				return false;
 
@@ -390,30 +418,30 @@ namespace b3d
 		bool transparentBlack = false;
 		if(c0 > c1 || fourColorOnly)
 		{
-			for(i32 k = 0; k < 3; ++k)
+			for(i32 channelIndex = 0; channelIndex < 3; ++channelIndex)
 			{
-				pal[2][k] = (2 * pal[0][k] + pal[1][k] + 1) / 3;
-				pal[3][k] = (pal[0][k] + 2 * pal[1][k] + 1) / 3;
+				pal[2][channelIndex] = (2 * pal[0][channelIndex] + pal[1][channelIndex] + 1) / 3;
+				pal[3][channelIndex] = (pal[0][channelIndex] + 2 * pal[1][channelIndex] + 1) / 3;
 			}
 		}
 		else
 		{
-			for(i32 k = 0; k < 3; ++k)
+			for(i32 channelIndex = 0; channelIndex < 3; ++channelIndex)
 			{
-				pal[2][k] = (pal[0][k] + pal[1][k]) / 2;
-				pal[3][k] = 0;
+				pal[2][channelIndex] = (pal[0][channelIndex] + pal[1][channelIndex]) / 2;
+				pal[3][channelIndex] = 0;
 			}
 			transparentBlack = true;
 		}
 
 		const u32 indices = block[4] | (block[5] << 8) | (block[6] << 16) | (block[7] << 24);
-		for(i32 i = 0; i < 16; ++i)
+		for(i32 texelIndex = 0; texelIndex < 16; ++texelIndex)
 		{
-			const u32 idx = (indices >> (i * 2)) & 0x3;
-			outRGBA[i * 4 + 0] = (u8)pal[idx][0];
-			outRGBA[i * 4 + 1] = (u8)pal[idx][1];
-			outRGBA[i * 4 + 2] = (u8)pal[idx][2];
-			outRGBA[i * 4 + 3] = (transparentBlack && idx == 3) ? 0 : 255;
+			const u32 idx = (indices >> (texelIndex * 2)) & 0x3;
+			outRGBA[texelIndex * 4 + 0] = (u8)pal[idx][0];
+			outRGBA[texelIndex * 4 + 1] = (u8)pal[idx][1];
+			outRGBA[texelIndex * 4 + 2] = (u8)pal[idx][2];
+			outRGBA[texelIndex * 4 + 3] = (transparentBlack && idx == 3) ? 0 : 255;
 		}
 	}
 
@@ -442,10 +470,10 @@ namespace b3d
 		for(i32 i = 0; i < 6; ++i)
 			bits |= (u64)block[2 + i] << (i * 8);
 
-		for(i32 i = 0; i < 16; ++i)
+		for(i32 texelIndex = 0; texelIndex < 16; ++texelIndex)
 		{
-			const u32 idx = (u32)((bits >> (i * 3)) & 0x7);
-			out[i] = (u8)pal[idx];
+			const u32 idx = (u32)((bits >> (texelIndex * 3)) & 0x7);
+			out[texelIndex] = (u8)pal[idx];
 		}
 	}
 

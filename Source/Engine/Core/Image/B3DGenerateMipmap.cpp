@@ -5,6 +5,7 @@
 #include "Image/B3DPixelUtility.h"
 #include "Image/B3DPixelData.h"
 #include "Renderer/B3DRendererMaterial.h"
+#include "Renderer/B3DGpuUniformBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DGpuBuffer.h"
@@ -16,6 +17,24 @@
 #include <algorithm>
 
 using namespace b3d;
+
+namespace b3d::render
+{
+	namespace
+	{
+		/** Per-dispatch constants for the mip-map downsample kernel. */
+		B3D_UNIFORM_BUFFER_BEGIN(MipmapParamsDefinition)
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gSourceSize) // (srcWidth, srcHeight)
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gDestSize)   // (dstWidth, dstHeight)
+			B3D_UNIFORM_BUFFER_MEMBER(i32, gFilter)          // 0 = box, 1 = triangle
+			B3D_UNIFORM_BUFFER_MEMBER(i32, gIsSrgb)          // non-zero: source is sRGB
+			B3D_UNIFORM_BUFFER_MEMBER(i32, gNormalize)       // non-zero: re-normalize as a normal vector
+			B3D_UNIFORM_BUFFER_MEMBER(i32, gWrapMode)        // 0 = mirror, 1 = repeat, 2 = clamp
+		B3D_UNIFORM_BUFFER_END
+
+		MipmapParamsDefinition gMipmapParameterDefinition;
+	}
+}
 
 namespace b3d
 {
@@ -29,16 +48,24 @@ namespace b3d
 		public:
 			GenerateMipmapMaterial() = default;
 
+			void Initialize() override
+			{
+				mGpuParameterSet->TryGetUniformBufferParameter("Parameters", mParametersBuffer);
+			}
+
 			/** Records the dispatch that downsamples @p input into @p output. Must run on the render thread. */
-			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const TShared<render::GpuBuffer>& params, const Vector2I& dstSize)
+			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const render::GpuBufferMappedScope& parameters, const Vector2I& dstSize)
 			{
 				mGpuParameterSet->SetStorageBuffer("gInput", input);
 				mGpuParameterSet->SetStorageBuffer("gOutput", output);
-				mGpuParameterSet->SetStorageBuffer("gParams", params);
+				mParametersBuffer.Set(parameters);
 
 				Bind(commandBuffer);
 				commandBuffer.DispatchCompute((u32)Math::DivideAndRoundUp(dstSize.X, 8), (u32)Math::DivideAndRoundUp(dstSize.Y, 8));
 			}
+
+		private:
+			render::GpuParameterUniformBuffer mParametersBuffer;
 		};
 
 		/**
@@ -87,17 +114,15 @@ namespace b3d
 
 				render::GpuBufferUtility::Write(gpuInput, 0, sourceWidth * sourceHeight * sizeof(float) * 4, previous->GetData());
 
-				// Two int4 entries: [0] = (srcW, srcH, dstW, dstH), [1] = (filter, isSrgb, normalize, wrapMode).
-				const i32 params[8] =
-				{
-					(i32)sourceWidth, (i32)sourceHeight, (i32)destinationWidth, (i32)destinationHeight,
-					filter, isSrgb, normalize, wrapMode
-				};
-				const TShared<render::GpuBuffer> paramsBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4S, 2));
-				if(paramsBuffer == nullptr)
-					return false;
-
-				render::GpuBufferUtility::Write(paramsBuffer, 0, sizeof(params), params);
+				// Per-dispatch constants for this level, populated into a transient uniform buffer. The mapped scope must
+				// outlive the dispatch below (it unmaps on destruction).
+				render::GpuBufferMappedScope parameters = render::gMipmapParameterDefinition.AllocateTransient().Map();
+				render::gMipmapParameterDefinition.gSourceSize.Set(parameters, Vector2I((i32)sourceWidth, (i32)sourceHeight));
+				render::gMipmapParameterDefinition.gDestSize.Set(parameters, Vector2I((i32)destinationWidth, (i32)destinationHeight));
+				render::gMipmapParameterDefinition.gFilter.Set(parameters, filter);
+				render::gMipmapParameterDefinition.gIsSrgb.Set(parameters, isSrgb);
+				render::gMipmapParameterDefinition.gNormalize.Set(parameters, normalize);
+				render::gMipmapParameterDefinition.gWrapMode.Set(parameters, wrapMode);
 
 				// Output buffer receives the downsampled level; readable by the CPU and writable as a compute UAV.
 				const TShared<render::GpuBuffer> gpuOutput = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, destinationWidth * destinationHeight, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
@@ -108,7 +133,10 @@ namespace b3d
 				commandBufferInfo.Name = "GenerateMipmap";
 				const TShared<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(commandBufferInfo);
 
-				material->Execute(*commandBuffer, gpuInput, gpuOutput, paramsBuffer, Vector2I((i32)destinationWidth, (i32)destinationHeight));
+				material->Execute(*commandBuffer, gpuInput, gpuOutput, parameters, Vector2I((i32)destinationWidth, (i32)destinationHeight));
+
+				// Flush the uniform writes to the GPU before the dispatch executes (unmap flushes a render-proxy mapping).
+				parameters.Unmap();
 
 				gpuDevice->SubmitCommandBuffer(commandBuffer);
 
