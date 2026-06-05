@@ -29,8 +29,9 @@ namespace b3d::render
 	{
 		/** Per-dispatch constants for the block-compression kernel (maps to the BSL `cbuffer Parameters`). */
 		B3D_UNIFORM_BUFFER_BEGIN(TextureCompressParamsDefinition)
-			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gTextureSize) // texture size in pixels
-			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gBlockCount)  // number of 4x4 blocks along each axis
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gTextureSize)  // Texture size in pixels
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gBlockCount)   // Number of 4x4 blocks along each axis (whole texture)
+			B3D_UNIFORM_BUFFER_MEMBER(Vector2I, gBlockOffset)  // Block-grid offset of the dispatched band (X is always 0)
 		B3D_UNIFORM_BUFFER_END
 
 		TextureCompressParamsDefinition gTextureCompressParams;
@@ -42,10 +43,14 @@ namespace b3d
 	namespace
 	{
 		/**
-		 * Maps a block-compressed pixel format to the TextureCompress.bsl FORMAT variation index, the output buffer format
-		 * (block size), and whether the source must be fed as HDR floating-point (BC6H) rather than normalized RGBA8.
+		 * Maps a block-compressed pixel format to the TextureCompress.bsl FORMAT variation index, the output texture format
+		 * (one packed block per texel: RG32U for 64-bit blocks, RGBA32U for 128-bit), whether the source must be fed as HDR
+		 * floating-point (BC6H) rather than normalized RGBA8, and a per-format band-height multiplier.
+		 *
+		 * @p tileSizeMultiplier scales the caller's maxTileSize band budget by how much GPU work this format does per block,
+		 * so each band's dispatch stays well under the OS GPU watchdog (TDR) regardless of format.
 		 */
-		bool GetFormatInfo(PixelFormat format, i32& variation, GpuBufferFormat& bufferFormat, bool& isHdr)
+		bool GetFormatInfo(PixelFormat format, i32& variation, PixelFormat& outputTexFormat, bool& isHdr, float& tileSizeMultiplier)
 		{
 			isHdr = false;
 			switch(format)
@@ -53,28 +58,34 @@ namespace b3d
 			case PF_BC1:
 			case PF_BC1a:
 				variation = 0;
-				bufferFormat = BF_32X2U; // 64-bit block
+				outputTexFormat = PF_RG32U; // 64-bit block
+				tileSizeMultiplier = 1.0f;
 				return true;
 			case PF_BC3:
 				variation = 1;
-				bufferFormat = BF_32X4U; // 128-bit block
+				outputTexFormat = PF_RGBA32U; // 128-bit block
+				tileSizeMultiplier = 1.0f;
 				return true;
 			case PF_BC4:
 				variation = 2;
-				bufferFormat = BF_32X2U; // 64-bit block
+				outputTexFormat = PF_RG32U; // 64-bit block
+				tileSizeMultiplier = 4.0f; // Trivial min/max encode, allow larger tiles
 				return true;
 			case PF_BC5:
 				variation = 3;
-				bufferFormat = BF_32X4U; // 128-bit block
+				outputTexFormat = PF_RGBA32U; // 128-bit block
+				tileSizeMultiplier = 4.0f; // Trivial min/max encode, allow larger tiles
 				return true;
 			case PF_BC6H:
-				variation = 4;           // base of the BC6H mode range (variations 4..17, encoder modes 1..14)
-				bufferFormat = BF_32X4U; // 128-bit block
-				isHdr = true;            // HDR source: fed as RGBA32F, not normalized RGBA8
+				variation = 4; // base of the BC6H mode range (variations 4..17, encoder modes 1..14)
+				outputTexFormat = PF_RGBA32U; // 128-bit block
+				isHdr = true; // HDR source: fed as RGBA32F, not normalized RGBA8
+				tileSizeMultiplier = 0.25f; // Multiple modes per tile, expensive, use smaller tile
 				return true;
 			case PF_BC7:
-				variation = 18;          // base of the BC7 mode range (variations 18..25, encoder modes 0..7)
-				bufferFormat = BF_32X4U; // 128-bit block
+				variation = 18; // base of the BC7 mode range (variations 18..25, encoder modes 0..7)
+				outputTexFormat = PF_RGBA32U; // 128-bit block
+				tileSizeMultiplier = 0.25f; // Multiple modes per tile, expensive, use smaller tile
 				return true;
 			default:
 				return false;
@@ -99,13 +110,13 @@ namespace b3d
 			 * per-block running-best-error buffer shared by the BC7 / BC6H per-mode dispatches; pass null for single-dispatch
 			 * formats (the variation's shader will not declare gBestErr in that case).
 			 */
-			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::GpuBuffer>& input, const TShared<render::GpuBuffer>& output, const render::GpuBufferMappedScope& parameters, const TShared<render::GpuBuffer>& bestErr, const Vector2I& blockCount, i32 variation)
+			void Execute(render::GpuCommandBuffer& commandBuffer, const TShared<render::Texture>& input, const TShared<render::Texture>& output, const render::GpuBufferMappedScope& parameters, const TShared<render::Texture>& bestErr, const Vector2I& blockCount, i32 variation)
 			{
-				mGpuParameterSet->SetStorageBuffer("gInput", input);
-				mGpuParameterSet->SetStorageBuffer("gOutput", output);
+				mGpuParameterSet->SetSampledTexture("gInput", input);
+				mGpuParameterSet->SetStorageTexture("gOutput", output, TextureSurface::kComplete);
 				mParametersBuffer.Set(parameters);
-				if(bestErr != nullptr && mGpuParameterSet->HasStorageBuffer("gBestErr"))
-					mGpuParameterSet->SetStorageBuffer("gBestErr", bestErr);
+				if(bestErr != nullptr && mGpuParameterSet->HasStorageTexture("gBestErr"))
+					mGpuParameterSet->SetStorageTexture("gBestErr", bestErr, TextureSurface::kComplete);
 
 				Bind(commandBuffer);
 				// BC6H two-region modes (variations 4..13) dispatch one thread-group per 4x4 block, with 32 threads (one per
@@ -193,11 +204,11 @@ namespace b3d
 
 		/**
 		 * Records the GPU compression on the render thread and sets up an asynchronous read-back. Must be called on the
-		 * render thread: it creates GPU resources, dispatches the compute kernel(s), then queues a non-blocking read-back of
-		 * the packed blocks into @p destination. Completes @p op with @p destination once the GPU finishes and the blocks
-		 * have been copied back, or with null on failure. The render thread is never blocked on the GPU.
+		 * render thread: it creates the shared GPU resources, dispatches the compute kernel(s) tile by tile, then queues a
+		 * non-blocking read-back of the packed blocks into @p destination. Completes @p op with @p destination once the GPU
+		 * finishes and the blocks have been copied back, or with null on failure.
 		 */
-		void CompressOnRenderThread(const TInlineArray<i32, 32>& variations, const TShared<PixelData>& source, GpuBufferFormat inputBufferFormat, GpuBufferFormat outputBufferFormat, const TShared<PixelData>& destination, TAsyncOp<TShared<PixelData>> op)
+		void CompressOnRenderThread(const TInlineArray<i32, 32>& variations, const TShared<PixelData>& source, PixelFormat inputTexFormat, PixelFormat outputTexFormat, const TShared<PixelData>& destination, u32 maxTileSize, TAsyncOp<TShared<PixelData>> op)
 		{
 			AssertIfNotRenderThread();
 
@@ -212,10 +223,7 @@ namespace b3d
 			TInlineArray<TextureCompressMaterial*, 32> materials;
 			for(const i32 dispatchVariation : variations)
 			{
-				// TODO - Debug only, remove this later
-				fprintf(stderr, "[COMPRESS] compiling FORMAT variation %d ...\n", dispatchVariation); fflush(stderr);
 				TextureCompressMaterial* const material = TextureCompressMaterial::GetVariation(dispatchVariation);
-				fprintf(stderr, "[COMPRESS] FORMAT variation %d compiled.\n", dispatchVariation); fflush(stderr);
 				if(material == nullptr || material->GetComputePipeline() == nullptr)
 				{
 					op.CompleteOperation(nullptr);
@@ -230,95 +238,176 @@ namespace b3d
 			const u32 blockCountX = Math::DivideAndRoundUp(width, 4u);
 			const u32 blockCountY = Math::DivideAndRoundUp(height, 4u);
 			const u32 blockCount = blockCountX * blockCountY;
+			if(blockCount == 0 || height == 0)
+			{
+				op.CompleteOperation(nullptr);
+				return;
+			}
 
-			// Upload the source pixels into a typed buffer, read as float4 in the shader. LDR formats use a normalized
-			// RGBA8 buffer (BF_8X4); BC6H uses a full-float RGBA32F buffer (BF_32X4F) so HDR values survive. A buffer
-			// avoids the image-layout transitions a freshly-uploaded sampled texture would need in a standalone dispatch.
-			const TShared<render::GpuBuffer> input = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(inputBufferFormat, width * height));
+			// Command buffer pool for the whole operation (uploads, tile dispatches, read-back).
+			const TShared<render::GpuCommandBufferPool> pool = gpuDevice->CreateGpuCommandBufferPool(render::GpuCommandBufferPoolCreateInformation::CreateForThisThread());
+
+			// Upload the whole source once into one sampled input texture, read as float4 in the shader. LDR formats use a
+			// normalized RGBA8 texture; BC6H uses a full-float RGBA32F texture so HDR values survive. A 2D texture (rather
+			// than a flat buffer) lets the texture cache exploit the spatial locality of each 4x4 block's 16 texels. 
+			TextureCreateInformation inputInfo;
+			inputInfo.Type = TEX_TYPE_2D;
+			inputInfo.Format = inputTexFormat;
+			inputInfo.Width = width;
+			inputInfo.Height = height;
+			inputInfo.Usage = TextureUsageFlag::StoreOnGPU; // device-local, sampled-only
+			const TShared<render::Texture> input = gpuDevice->CreateTexture(inputInfo);
 			if(input == nullptr)
 			{
 				op.CompleteOperation(nullptr);
 				return;
 			}
 
-			render::GpuBufferUtility::Write(input, 0, source->GetConsecutiveSize(), source->GetData());
-
-			// Per-dispatch constants (texture size + block count) shared by every mode dispatch, populated once into a
-			// transient uniform buffer. The mapped scope must outlive the dispatch loop below (it unmaps on destruction).
-			render::GpuBufferMappedScope params = render::gTextureCompressParams.AllocateTransient().Map();
-			render::gTextureCompressParams.gTextureSize.Set(params, Vector2I((i32)width, (i32)height));
-			render::gTextureCompressParams.gBlockCount.Set(params, Vector2I((i32)blockCountX, (i32)blockCountY));
-
-			// Output buffer receives the packed blocks; readable by the CPU and writable as a compute UAV.
-			const TShared<render::GpuBuffer> output = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(outputBufferFormat, blockCount,
-				GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
-
+			// Output texture receives all packed blocks, one block per texel (RG32U for 64-bit blocks, RGBA32U for 128-bit),
+			// at the block-grid resolution. Device-local + UAV so the compute kernel can write it; read back to the CPU after.
+			TextureCreateInformation outputInfo;
+			outputInfo.Type = TEX_TYPE_2D;
+			outputInfo.Format = outputTexFormat;
+			outputInfo.Width = blockCountX;
+			outputInfo.Height = blockCountY;
+			outputInfo.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::AllowUnorderedAccessOnTheGPU;
+			const TShared<render::Texture> output = gpuDevice->CreateTexture(outputInfo);
 			if(output == nullptr)
 			{
 				op.CompleteOperation(nullptr);
 				return;
 			}
 
-			// BC7 / BC6H evaluate each mode in its own dispatch (see TextureCompress.bsl). They share a per-block running-best
-			// error buffer so each mode kernel can keep its block when it beats the modes dispatched before it. The buffer is
-			// seeded to +inf so the first dispatched mode always wins (there is no special "seed" kernel that writes
-			// unconditionally), which is why it must be host-writable. Single-dispatch formats skip it.
-			TShared<render::GpuBuffer> bestErr;
-			if(materials.Size() > 1)
-			{
-				bestErr = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X1F, blockCount,
-					GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
+			// Tile extent (a square, in blocks). maxTileSize is in pixels and has already been scaled by the per-format
+			// multiplier (see GetFormatInfo / Compress), so a maxTileSize of 1024 means the texture is processed in
+			// 1024x1024-pixel tiles (256x256 blocks). Aligned up to a multiple of 8 so non-cooperative tiles (8x8 thread groups)
+			// fall on group boundaries and adjacent tiles never share a thread group.
+			const u32 budgetBlocks = (maxTileSize < 4u) ? 1u : (maxTileSize / 4u);
+			const u32 tileBlocks = Math::DivideAndRoundUp(Math::Max(1u, budgetBlocks), 8u) * 8u;
+			const u32 tileCountX = Math::DivideAndRoundUp(blockCountX, tileBlocks);
+			const u32 tileCountY = Math::DivideAndRoundUp(blockCountY, tileBlocks);
 
+			// BC7 / BC6H evaluate each mode in its own dispatch (see TextureCompress.bsl), sharing a per-block running-best
+			// error so each mode keeps its block when it beats the modes dispatched before it.  Single-dispatch formats skip it.
+			const bool multiMode = materials.Size() > 1;
+			const u32 bestErrW = Math::Min(tileBlocks, blockCountX);
+			const u32 bestErrH = Math::Min(tileBlocks, blockCountY);
+			TShared<render::Texture> bestErr;
+			TShared<PixelData> initErr; // tile-sized +inf seed, re-written onto each tile's first command buffer
+			if(multiMode)
+			{
+				TextureCreateInformation bestErrInfo;
+				bestErrInfo.Type = TEX_TYPE_2D;
+				bestErrInfo.Format = PF_R32F;
+				bestErrInfo.Width = bestErrW;
+				bestErrInfo.Height = bestErrH;
+				bestErrInfo.Usage = TextureUsageFlag::StoreOnGPU | TextureUsageFlag::AllowUnorderedAccessOnTheGPU;
+				bestErr = gpuDevice->CreateTexture(bestErrInfo);
 				if(bestErr == nullptr)
 				{
 					op.CompleteOperation(nullptr);
 					return;
 				}
 
-				const TArray<float> initErr((u64)blockCount, FLT_MAX);
-				render::GpuBufferUtility::Write(bestErr, 0, blockCount * (u32)sizeof(float), initErr.Data());
+				// +inf seed (one tile's worth). Fill row by row so any staging row-pitch padding is respected. FLT_MAX is set
+				// explicitly (not via Clear/SetColors, which may clamp) so the first mode of every tile always wins.
+				initErr = PixelData::Create(bestErrW, bestErrH, 1, PF_R32F);
+				for(u32 y = 0; y < bestErrH; ++y)
+				{
+					float* const row = (float*)(initErr->GetData() + (u64)y * initErr->GetRowPitch());
+					for(u32 x = 0; x < bestErrW; ++x)
+						row[x] = FLT_MAX;
+				}
 			}
 
-			const TShared<render::GpuCommandBufferPool> pool = gpuDevice->CreateGpuCommandBufferPool(render::GpuCommandBufferPoolCreateInformation::CreateForThisThread());
+			const Vector2I fullBlockCount((i32)blockCountX, (i32)blockCountY);
+			const Vector2I fullTexSize((i32)width, (i32)height);
 
-			render::GpuCommandBufferCreateInformation commandBufferInfo;
-			commandBufferInfo.Name = "TextureCompress";
-			const TShared<render::GpuCommandBuffer> commandBuffer = pool->Create(commandBufferInfo);
+			// Compress tile by tile, and mode by mode (for multi-mode encoders such as BC6H and BC7). After each tile/mode
+			// we submit the command buffer and drain the GPU via WaitUntilIdle. This stops the OS watchdog (TDR) from triggering
+			// on weaker GPUs due to excessively long tasks.
+			bool inputUploaded = false;
+			for(u32 tileY = 0; tileY < tileCountY; ++tileY)
+			{
+				const u32 tileStartBlockRow = tileY * tileBlocks;
+				const u32 tileBlockRows = Math::Min(tileBlocks, blockCountY - tileStartBlockRow);
 
-			// Each mode runs as its own dispatch (BC6H two-region uses 32-thread cooperative groups, everything else one
-			// thread per block; see Execute). The mode groups run in sequence on one command buffer and must see each
-			// other's writes to the shared gOutput / gBestErr running-best buffers.
-			const Vector2I blockDims((i32)blockCountX, (i32)blockCountY);
-			for(u32 materialIndex = 0; materialIndex < materials.Size(); ++materialIndex)
-				materials[materialIndex]->Execute(*commandBuffer, input, output, params, bestErr, blockDims, variations[materialIndex]);
+				for(u32 tileX = 0; tileX < tileCountX; ++tileX)
+				{
+					const u32 tileStartBlockCol = tileX * tileBlocks;
+					const u32 tileBlockCols = Math::Min(tileBlocks, blockCountX - tileStartBlockCol);
+					const Vector2I tileDispatch((i32)tileBlockCols, (i32)tileBlockRows);
+					const Vector2I tileOffset((i32)tileStartBlockCol, (i32)tileStartBlockRow);
 
-			// Flush the uniform writes to the GPU before the dispatches execute (unmap flushes a render-proxy mapping).
-			params.Unmap();
+					for(u32 materialIndex = 0; materialIndex < materials.Size(); ++materialIndex)
+					{
+						render::GpuBufferMappedScope parameters = render::gTextureCompressParams.AllocateTransient().Map();
+						render::gTextureCompressParams.gTextureSize.Set(parameters, fullTexSize);
+						render::gTextureCompressParams.gBlockCount.Set(parameters, fullBlockCount);
+						render::gTextureCompressParams.gBlockOffset.Set(parameters, tileOffset);
+						parameters.Unmap();
 
-			// Non-blocking read-back of the packed blocks. ReadAsync queues a copy to a staging buffer on the same command
-			// buffer and connects a completion callback; the finalize callback below is connected last, so by the time it
-			// runs (events fire in registration order) the staging read-back has completed.
+						render::GpuCommandBufferCreateInformation commandBufferInfo;
+						commandBufferInfo.Name = "TextureCompress";
+						const TShared<render::GpuCommandBuffer> commandBuffer = pool->Create(commandBufferInfo);
+
+						// Upload the source onto the very first command buffer (the dispatch barriers make it visible to the
+						// first sample); the input texture then persists, sampled by every later tile.
+						if(!inputUploaded)
+						{
+							render::TextureUtility::Write(input, *source, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+							inputUploaded = true;
+						}
+
+						// Re-seed the per-tile running-best to +inf before this tile's first mode. The previous tile's writes are
+						// already drained by the inter-tile WaitUntilIdle, so reusing the scratch is safe; the dispatch barriers
+						// order this copy before the first mode reads it.
+						if(multiMode && materialIndex == 0)
+							render::TextureUtility::Write(bestErr, *initErr, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+
+						// One mode dispatch (BC6H two-region uses 32-thread cooperative groups, everything else one thread per
+						// block; see Execute), covering this tile's block region.
+						materials[materialIndex]->Execute(*commandBuffer, input, output, parameters, bestErr, tileDispatch, variations[materialIndex]);
+
+						gpuDevice->SubmitCommandBuffer(commandBuffer);
+
+						// Drain the GPU before the next mode/tile so it cannot run dispatches back-to-back and trip the watchdog.
+						gpuDevice->WaitUntilIdle();
+					}
+				}
+			}
+
+			// Final command buffer: a single non-blocking read-back of the whole output texture
+			render::GpuCommandBufferCreateInformation readbackInfo;
+			readbackInfo.Name = "TextureCompressReadback";
+			const TShared<render::GpuCommandBuffer> readbackCommandBuffer = pool->Create(readbackInfo);
+
 			const u32 readSize = destination->GetConsecutiveSize();
-			TAsyncOp<TShared<MemoryDataStream>> readOp = render::GpuBufferUtility::ReadAsync(output, 0, readSize, *commandBuffer);
+			TAsyncOp<TShared<PixelData>> readOp = render::TextureUtility::ReadAsync(output, *readbackCommandBuffer);
 
-			// Copy the packed blocks into the destination surface and complete the op with it once the GPU finishes. The
-			// captures keep the destination surface and the GPU buffers (read-back source + dispatch inputs) alive until
-			// completion; runs on the render thread.
-			commandBuffer->OnDidComplete.Connect(
+			// Copy the packed blocks into the destination surface and complete the op once the GPU finishes. 
+			readbackCommandBuffer->OnDidComplete.Connect(
 				[op, readOp, output, input, bestErr, destination, readSize]() mutable
 				{
-					const TShared<MemoryDataStream> data = readOp.GetReturnValue();
+					const TShared<PixelData> data = readOp.GetReturnValue();
 					if(data == nullptr)
 					{
 						op.CompleteOperation(nullptr);
 						return;
 					}
 
-					memcpy(destination->GetData(), data->Data(), readSize);
+					const u32 rows = data->GetHeight();
+					const u32 dstRowBytes = (rows != 0) ? (readSize / rows) : readSize; // tightly-packed block row
+					const u32 srcRowPitch = data->GetRowPitch();
+					const u8* const src = (const u8*)data->GetData();
+					u8* const dst = destination->GetData();
+					for(u32 y = 0; y < rows; ++y)
+						memcpy(dst + (u64)y * dstRowBytes, src + (u64)y * srcRowPitch, dstRowBytes);
+
 					op.CompleteOperation(destination);
 				});
 
-			gpuDevice->SubmitCommandBuffer(commandBuffer);
+			gpuDevice->SubmitCommandBuffer(readbackCommandBuffer);
 		}
 
 		// ---- CPU reference decoders (used by TextureCompressionUtility) ----
@@ -404,9 +493,10 @@ namespace b3d
 	bool GpuTextureCompressor::IsFormatSupported(PixelFormat format)
 	{
 		i32 variation;
-		GpuBufferFormat bufferFormat;
+		PixelFormat outputTexFormat;
 		bool isHdr;
-		return GetFormatInfo(format, variation, bufferFormat, isHdr);
+		float tileSizeMultiplier;
+		return GetFormatInfo(format, variation, outputTexFormat, isHdr, tileSizeMultiplier);
 	}
 
 	TAsyncOp<TShared<PixelData>> GpuTextureCompressor::Compress(const TShared<PixelData>& source, const TShared<PixelData>& destination, const CompressionOptions& options)
@@ -423,34 +513,34 @@ namespace b3d
 			return fnFailed();
 
 		i32 variation;
-		GpuBufferFormat bufferFormat;
+		PixelFormat outputTexFormat;
 		bool isHdr;
-		if(!GetFormatInfo(options.Format, variation, bufferFormat, isHdr))
+		float tileSizeMultiplier;
+		if(!GetFormatInfo(options.Format, variation, outputTexFormat, isHdr, tileSizeMultiplier))
 			return fnFailed();
 
 		if(GetApplication().GetPrimaryGpuDevice() == nullptr)
 			return fnFailed();
 
+		// Scale the caller's tile budget by how heavy this format's per-block GPU work is, so each tile stays under the OS
+		// GPU watchdog regardless of format (BC1/3 allow larger tiles, BC6H/BC7 force smaller ones; see GetFormatInfo()).
+		const u32 effectiveTileSize = Math::Max(4u, (u32)((float)options.MaxTileSize * tileSizeMultiplier));
+
 		// Convert the source to a surface the compute shader can sample: RGBA8 for LDR formats, RGBA32F for HDR (BC6H).
-		// CPU work, safe on any thread.
 		const PixelFormat interimFormat = isHdr ? PF_RGBA32F : PF_RGBA8;
-		const GpuBufferFormat inputBufferFormat = isHdr ? BF_32X4F : BF_8X4;
 		const TShared<PixelData> convertedSource = PixelData::Create(source->GetWidth(), source->GetHeight(), 1, interimFormat);
 		PixelUtility::BulkPixelConversion(*source, *convertedSource);
 
-		// Determine the dispatch variation sequence for this format (pure CPU; no material instances). BC7/BC6H expand to
-		// several mode-group variations dispatched in sequence; everything else is a single variation.
+		// Determine the dispatch variation sequence for this format). BC7/BC6H expand to several mode-group variations dispatched 
+		// in sequence; everything else is a single variation.
 		TInlineArray<i32, 32> dispatchVariations;
 		TextureCompressMaterial::GetDispatchVariations(variation, dispatchVariations);
 
-		// GPU resource creation and dispatch must run on the render thread. The work is non-blocking: it fetches the
-		// materials, records the dispatches, queues the read-back and returns immediately; the op completes (with the
-		// destination surface) from a command-buffer completion callback once the GPU finishes. Run inline if we are 
-		// already on the render thread, otherwise marshal it across.
+		// Run inline if we are already on the render thread, otherwise marshal it across.
 		TAsyncOp<TShared<PixelData>> op;
-		auto fnGpuWork = [dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination, op]() mutable
+		auto fnGpuWork = [dispatchVariations, convertedSource, interimFormat, outputTexFormat, destination, effectiveTileSize, op]() mutable
 		{
-			CompressOnRenderThread(dispatchVariations, convertedSource, inputBufferFormat, bufferFormat, destination, op);
+			CompressOnRenderThread(dispatchVariations, convertedSource, interimFormat, outputTexFormat, destination, effectiveTileSize, op);
 		};
 
 		if(B3D_CURRENT_THREAD_ID == GetRenderThread().GetThreadId())

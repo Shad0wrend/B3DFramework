@@ -19,6 +19,7 @@ namespace b3d
 			value.IsNormalMap = false;
 			value.IsSrgb = false;
 			value.Quality = CompressionQuality.Normal;
+			value.MaxTileSize = 1024;
 
 			return value;
 		}
@@ -28,5 +29,6 @@ namespace b3d
 		public bool IsNormalMap;
 		public bool IsSrgb;
 		public CompressionQuality Quality;
+		public uint MaxTileSize;
 	}
 }

@@ -111,6 +111,7 @@ namespace b3d
 		bool IsNormalMap = false; /*< Determines does the input data represent a normal map. */
 		bool IsSrgb = false; /*< Determines has the input data been gamma corrected. */
 		CompressionQuality Quality = CompressionQuality::Normal; /*< Compressed image quality. Better compression might take longer to execute but will generate better results. */
+		u32 MaxTileSize = 1024; /*< For GPU compression, bounds (in pixels) the width/height of each independently-dispatched tile. Large textures are compressed tile-by-tile so no single GPU dispatch runs long enough to trip the OS GPU watchdog (TDR). The default keeps each dispatch well under the limit even on slow integrated GPUs; smaller values tile more finely. Ignored by CPU compression. */
 	};
 
 	/**	Options used to control texture mip map generation. */

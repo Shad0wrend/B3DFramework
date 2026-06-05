@@ -83,20 +83,25 @@ shader TextureCompress
 		// BC7 is dispatched as 8 single-mode kernels (FORMAT 18..25, encoder modes 0..7). Both share a running-best buffer.
 		#define IS_BC7 (FORMAT >= 18 && FORMAT <= 25)
 
-		// Source pixels as RGBA8 (read as normalized float4), laid out row-major: index = y * width + x.
-		Buffer<float4> gInput;
-		RWBuffer<BLOCK_TYPE> gOutput;
+		// Source pixels as a 2D texture: RGBA8 (read as normalized float4) for LDR, or RGBA32F for HDR (BC6H).
+		Texture2D gInput;
+
+		// One packed block per texel, at the block-grid coordinate: a uint2 (64-bit formats) or uint4 (128-bit).
+		RWTexture2D<BLOCK_TYPE> gOutput;
+
 		#if IS_BC7 || IS_BC6H
-			// Per-block lowest error so far, carried between the BC7/BC6H mode-group dispatches. The seed group (FORMAT 4
-			// for BC7, 5 for BC6H) writes it; later groups read it to continue the running minimum and write it back.
-			RWBuffer<float> gBestErr;
+			// Per-block lowest error so far, carried between the BC7/BC6H mode-group dispatches; addressed by block
+			// coordinate. The host seeds it to +inf so the first dispatched mode always wins; later modes continue the
+			// running minimum and write it back.
+			RWTexture2D<float> gBestErr;
 		#endif
 
 		[internal]
 		cbuffer Parameters
 		{
-			int2 gTextureSize; // texture size in pixels
-			int2 gBlockCount;  // number of 4x4 blocks along each axis
+			int2 gTextureSize; // texture size in pixels (whole texture)
+			int2 gBlockCount;  // number of 4x4 blocks along each axis (whole texture)
+			int2 gBlockOffset; // block-grid offset of the dispatched tile; added to the local block id (both X and Y)
 		}
 
 		#if IS_BC6H_TWOREGION
@@ -115,6 +120,14 @@ shader TextureCompress
 			#else
 			uint2 blockId = dispatchId.xy;
 			#endif
+			#if IS_BC7 || IS_BC6H
+			// The per-tile gBestErr scratch is only one tile in size, so it is indexed by the tile-local block id (the
+			// dispatch grid starts at (0,0)), captured here before the global offset is applied below.
+			uint2 localBlockId = blockId;
+			#endif
+			// Large textures are dispatched in square tiles: each tile's grid starts at (0,0), so shift it to its real
+			// block coordinates. The shared input/output textures are addressed with this global block id.
+			blockId += (uint2)gBlockOffset;
 			if (blockId.x >= numBlocks.x || blockId.y >= numBlocks.y)
 				return;
 
@@ -141,7 +154,7 @@ shader TextureCompress
 				{
 					uint2 coord = min(base + uint2(x, y), maxCoord);
 
-					float4 texel = gInput[coord.y * (uint)texSize.x + coord.x];
+					float4 texel = gInput.Load(int3((int2)coord, 0));
 
 					uint idx = y * 4 + x;
 					#if IS_BC7
@@ -163,20 +176,18 @@ shader TextureCompress
 				}
 			}
 
-			uint blockIndex = blockId.y * numBlocks.x + blockId.x;
-
 			#if FORMAT == 0 // BC1
-				gOutput[blockIndex] = CompressBC1(rgb);
+				gOutput[blockId] = CompressBC1(rgb);
 			#elif FORMAT == 1 // BC3 = BC4(alpha) + BC1(color)
 				uint2 alphaBlock = CompressBC4(alpha);
 				uint2 colorBlock = CompressBC1(rgb);
-				gOutput[blockIndex] = uint4(alphaBlock, colorBlock);
+				gOutput[blockId] = uint4(alphaBlock, colorBlock);
 			#elif FORMAT == 2 // BC4
-				gOutput[blockIndex] = CompressBC4(red);
+				gOutput[blockId] = CompressBC4(red);
 			#elif FORMAT == 3 // BC5 = BC4(red) + BC4(green)
 				uint2 redBlock = CompressBC4(red);
 				uint2 greenBlock = CompressBC4(green);
-				gOutput[blockIndex] = uint4(redBlock, greenBlock);
+				gOutput[blockId] = uint4(redBlock, greenBlock);
 			#elif IS_BC6H // BC6H (UF16, HDR): one encoder mode per kernel (FORMAT 4..17 -> modes 1..14); accumulate via gBestErr.
 				float modeErr;
 				uint4 modeBlock;
@@ -216,11 +227,11 @@ shader TextureCompress
 				if (partId == 0) // group leader commits the running-best; all 32 threads computed the same block
 				#endif
 				{
-					float prevErr6 = gBestErr[blockIndex];
-					uint4 prevBlock6 = gOutput[blockIndex];
+					float prevErr6 = gBestErr[localBlockId];
+					uint4 prevBlock6 = gOutput[blockId];
 					if (modeErr < prevErr6) { prevErr6 = modeErr; prevBlock6 = modeBlock; }
-					gOutput[blockIndex] = prevBlock6;
-					gBestErr[blockIndex] = prevErr6;
+					gOutput[blockId] = prevBlock6;
+					gBestErr[localBlockId] = prevErr6;
 				}
 			#else // BC7 (FORMAT 18..25 -> encoder modes 0..7): one mode per kernel; accumulate via gBestErr.
 				float modeErr;
@@ -256,11 +267,11 @@ shader TextureCompress
 				#endif
 
 				// Keep this mode's block if it beats the running best (gBestErr seeded to +inf by the host; see BC6H note).
-				float prevErr = gBestErr[blockIndex];
-				uint4 prevBlock = gOutput[blockIndex];
+				float prevErr = gBestErr[localBlockId];
+				uint4 prevBlock = gOutput[blockId];
 				if (modeErr < prevErr) { prevErr = modeErr; prevBlock = modeBlock; }
-				gOutput[blockIndex] = prevBlock;
-				gBestErr[blockIndex] = prevErr;
+				gOutput[blockId] = prevBlock;
+				gBestErr[localBlockId] = prevErr;
 			#endif
 		}
 	};
