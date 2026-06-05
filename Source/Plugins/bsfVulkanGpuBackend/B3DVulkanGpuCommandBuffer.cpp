@@ -1564,6 +1564,12 @@ bool VulkanGpuCommandBuffer::UpdateExecutionStatus(bool block)
 	AssertIfNotVulkanSubmitThread();
 
 	VkResult result = vkWaitForFences(GetVulkanGpuDevice().GetLogical(), 1, &mFence, true, block ? 1'000'000'000 : 0);
+
+	// VK_ERROR_DEVICE_LOST here means the GPU faulted/hung (TDR) while this command buffer was executing. The fence
+	// will never signal, so this would otherwise spin (timing out every wait) forever. Treat it as fatal.
+	if(result == VK_ERROR_DEVICE_LOST)
+		B3D_LOG(Fatal, LogRenderBackend, "vkWaitForFences reported VK_ERROR_DEVICE_LOST. The GPU device is in an unrecoverable state; aborting.");
+
 	B3D_ASSERT(result == VK_SUCCESS || result == VK_TIMEOUT);
 
 	return result == VK_SUCCESS;

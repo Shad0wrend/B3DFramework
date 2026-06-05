@@ -293,7 +293,16 @@ void VulkanGpuQueue::ExecuteSubmitOnSubmitThread(const GpuCommandBufferSubmitInf
 	mActiveSubmissions.push_back(QueueSubmissionInformation(mLastSubmittedCommandBuffer, mNextSubmitIndex++, (u32)submitInfos.Size()));
 
 	VkResult result = vkQueueSubmit(mQueue, (u32)submitInfos.Size(), submitInfos.Data(), mLastSubmittedCommandBuffer->GetFence());
-	B3D_ASSERT(result == VK_SUCCESS);
+
+	// A failed queue submit is unrecoverable: the submitted command buffer's fence will never signal, so any wait on
+	// it (and any dependent read-back / frame-completion wait) would deadlock forever. The most common cause is
+	// VK_ERROR_DEVICE_LOST from a GPU hang/TDR or page fault. Fail fast with a fatal error (which brings the
+	// application down) rather than silently hanging.
+	if(result != VK_SUCCESS)
+	{
+		B3D_LOG(Fatal, LogRenderBackend, "vkQueueSubmit failed with VkResult {0}{1}. The GPU device is in an unrecoverable state; aborting.",
+			(i32)result, (result == VK_ERROR_DEVICE_LOST) ? " (VK_ERROR_DEVICE_LOST)" : "");
+	}
 
 	ReleaseAllSubmitWorkBuffers();
 }
