@@ -27,6 +27,13 @@ namespace b3d
 
 		/** If true then on UNIX a signal handler is not automatically registered to call the crash handler */
 		bool DisableCrashSignalHandler = false;
+
+		/**
+		 * If true, the crash handler does not show the modal "fatal error" message box and instead terminates the
+		 * process immediately after writing the log + crash dump. Intended for headless / non-interactive runs (unit
+		 * test runner, CI) where a modal dialog has nobody to dismiss it and would block the process forever.
+		 */
+		bool SuppressErrorPopup = false;
 	};
 
 	/** @addtogroup Internal-Utility

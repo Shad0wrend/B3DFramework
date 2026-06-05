@@ -56,7 +56,12 @@ static TestOutputFormat ParseOutputFormat(const String& formatStr)
 
 int main(int argc, char* argv[])
 {
-	CrashHandler::StartUp();
+	// The unit test runner is non-interactive: a modal "fatal error" message box would block the run forever (e.g. in
+	// CI). Suppress it so a fatal error instead writes the log + crash dump and terminates the process immediately.
+	CrashHandlerSettings crashSettings;
+	crashSettings.SuppressErrorPopup = true;
+
+	CrashHandler::StartUp(crashSettings);
 	CommandLine::Initialize(argc, argv);
 
 	String formatStr = CommandLine::GetParameterValue("test-output-format", "console");

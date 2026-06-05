@@ -478,6 +478,13 @@ void CrashHandler::ReportCrash(const String& type, const String& description, co
 	SaveCrashLog();
 
 	Win32WriteMiniDump(GetCrashFolder() + String(sMiniDumpName), nullptr);
+
+	if(mSettings.SuppressErrorPopup)
+	{
+		TerminateProcess(GetCurrentProcess(), (UINT)-1);
+		return;
+	}
+
 	Win32PopupErrorMessageBox(ToWString(kSFatalErrorMsg), GetCrashFolder());
 
 	DebugBreak();
@@ -512,6 +519,16 @@ int CrashHandler::ReportCrash(void* exceptionDataPtr) const
 	SaveCrashLog();
 
 	Win32WriteMiniDump(GetCrashFolder() + String(sMiniDumpName), exceptionData);
+
+	// See note in the other ReportCrash overload: skip the modal popup and terminate hard when running headless.
+	if(mSettings.SuppressErrorPopup)
+	{
+		fflush(stdout);
+		fflush(stderr);
+		TerminateProcess(GetCurrentProcess(), (UINT)-1);
+		return EXCEPTION_EXECUTE_HANDLER;
+	}
+
 	Win32PopupErrorMessageBox(ToWString(kSFatalErrorMsg), GetCrashFolder());
 
 	DebugBreak();
