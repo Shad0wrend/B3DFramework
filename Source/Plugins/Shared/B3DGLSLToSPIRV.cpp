@@ -976,8 +976,11 @@ TShared<GpuProgramBytecode> GLSLToSPIRV::Convert(const GpuProgramCreateInformati
 	program.mapIO();
 	program.buildReflection();
 
-	// Compile to SPIR-V.
-	GlslangToSpv(*program.getIntermediate(glslType), spirv, &logger);
+	glslang::SpvOptions spvOptions;
+	spvOptions.disableOptimizer = false;
+	spvOptions.optimizeSize = true;
+
+	GlslangToSpv(*program.getIntermediate(glslType), spirv, &logger, &spvOptions);
 
 	spirv_cross::Compiler spirvCompiler(spirv);
 

@@ -25,5 +25,7 @@ B3DFindImportedLibraryWithConfigurationNames(glslang HLSL STATIC HLSL HLSL${glsl
 B3DFindImportedLibraryWithConfigurationNames(glslang OSDependent STATIC OSDependent OSDependent${glslang_DEBUG_SUFFIX})
 B3DFindImportedLibraryWithConfigurationNames(glslang OGLCompiler STATIC OGLCompiler OGLCompiler${glslang_DEBUG_SUFFIX})
 B3DFindImportedLibraryWithConfigurationNames(glslang SPIRV STATIC SPIRV SPIRV${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang SPIRV-Tools-opt STATIC SPIRV-Tools-opt SPIRV-Tools-opt${glslang_DEBUG_SUFFIX})
+B3DFindImportedLibraryWithConfigurationNames(glslang SPIRV-Tools STATIC SPIRV-Tools SPIRV-Tools${glslang_DEBUG_SUFFIX})
 
 B3DEndFindPackage(glslang glslang)

@@ -53,22 +53,22 @@ namespace b3d
 		};
 
 		/** Identifier of the compiler used for compiling Vulkan GPU programs. */
-		static constexpr const char* VULKAN_COMPILER_ID = "Vulkan";
+		static constexpr const char* kVulkanCompilerId = "Vulkan";
 
 		/**
 		 * Version of the compiler used for compiling Vulkan GPU programs. Tick this whenever the compiler updates in order
 		 * to force bytecode to rebuild.
 		 */
-		static constexpr u32 VULKAN_COMPILER_VERSION = 1;
+		static constexpr u32 kVulkanCompilerVersion = 2;
 
 		/** Identifier of the compiler used for compiling MoltenVK GPU programs. */
-		static constexpr const char* MOLTENVK_COMPILER_ID = "MoltenVK";
+		static constexpr const char* kMoltenVkCompilerId = "MoltenVK";
 
 		/**
 		 * Version of the compiler used for compiling MoltenVK GPU programs. Tick this whenever the compiler updates in order
 		 * to force bytecode to rebuild.
 		 */
-		static constexpr u32 MOLTENVK_COMPILER_VERSION = 1;
+		static constexpr u32 kMoltenVkCompilerVersion = 1;
 
 		/** @} */
 	} // namespace render

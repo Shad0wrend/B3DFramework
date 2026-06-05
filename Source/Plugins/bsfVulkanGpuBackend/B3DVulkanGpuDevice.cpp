@@ -321,11 +321,11 @@ TShared<GpuProgramBytecode> VulkanGpuDevice::CompileGpuProgramBytecode(const Gpu
 		return nullptr;
 
 #if B3D_PLATFORM_MACOS
-	TShared<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, MOLTENVK_COMPILER_ID, MOLTENVK_COMPILER_VERSION);
+	TShared<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, kMoltenVkCompilerId, kMoltenVkCompilerVersion);
 	// We'll just re-purpose the existing data structure
 	TShared<GpuProgramBytecode> msl = spirv;
 #else
-	TShared<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, VULKAN_COMPILER_ID, VULKAN_COMPILER_VERSION);
+	TShared<GpuProgramBytecode> spirv = GLSLToSPIRV::Instance().Convert(createInformation, kVulkanCompilerId, kVulkanCompilerVersion);
 #endif
 
 #if B3D_PLATFORM_MACOS

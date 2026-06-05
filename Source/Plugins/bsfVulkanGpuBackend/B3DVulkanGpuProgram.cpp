@@ -68,9 +68,9 @@ void VulkanGpuProgram::Initialize()
 
 	if(!mBytecode ||
 #if B3D_PLATFORM_MACOS
-	   mBytecode->CompilerId != MOLTENVK_COMPILER_ID || mBytecode->CompilerVersion != MOLTENVK_COMPILER_VERSION)
+	   mBytecode->CompilerId != kMoltenVkCompilerId || mBytecode->CompilerVersion != kMoltenVkCompilerVersion)
 #else
-	   mBytecode->CompilerId != VULKAN_COMPILER_ID || mBytecode->CompilerVersion != VULKAN_COMPILER_VERSION)
+	   mBytecode->CompilerId != kVulkanCompilerId || mBytecode->CompilerVersion != kVulkanCompilerVersion)
 #endif
 	{
 		GpuProgramCreateInformation createInformation;
