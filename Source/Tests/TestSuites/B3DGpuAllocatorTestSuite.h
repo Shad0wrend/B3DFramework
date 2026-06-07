@@ -184,5 +184,17 @@ namespace b3d
 
 		/** Per-allocation FreeImmediate is also a no-op: calling it on one Location does not invalidate peer Locations sharing the same page, and the page itself is not recycled. */
 		void TestLinear_FreeImmediateOnSharedPageIsNoop();
+
+		/** Two ThreadUnsafe allocators backed by one shared page pool recycle each other's drained pages instead of creating fresh heaps. */
+		void TestLinear_SharedPoolReusedAcrossAllocators();
+
+		/** A shared pool retains at most MaxRetainedPages warm pages; drained pages beyond the bound are destroyed. */
+		void TestLinear_SharedPoolRespectsBound();
+
+		/** A pooled page returns to the shared pool only once its retire marker completes — and exactly at that marker, not one before. */
+		void TestLinear_SharedPoolDrainsOnlyAfterMarkerComplete();
+
+		/** Force drain (destructor / blocking reclaim) returns a never-completed retired page to the shared pool rather than waiting on a marker that never signals. */
+		void TestLinear_SharedPoolForceDrainReturnsPages();
 	};
 } // namespace b3d

@@ -64,6 +64,10 @@ GpuAllocatorTestSuite::GpuAllocatorTestSuite()
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SparePageCap)
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_FreeIsNoop)
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop)
+	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SharedPoolReusedAcrossAllocators)
+	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SharedPoolRespectsBound)
+	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SharedPoolDrainsOnlyAfterMarkerComplete)
+	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SharedPoolForceDrainReturnsPages)
 }
 
 namespace
@@ -253,11 +257,21 @@ namespace
 	}
 
 	using LinearAllocator = TGpuLinearAllocator<MockHeapBackend>;
+	using LinearPagePool = TGpuLinearPagePool<MockHeapBackend>;
 
 	/** Default linear allocator configuration. Tests that need a different page size or spare cap pass overrides. */
 	LinearAllocator::Configuration MakeDefaultLinearConfig(u64 pageSize = 64 * 1024, u32 maxRetained = 2)
 	{
 		LinearAllocator::Configuration configuration;
+		configuration.PageSize = pageSize;
+		configuration.MaxRetainedPages = maxRetained;
+		return configuration;
+	}
+
+	/** Default shared page-pool configuration. Page size must match the allocators drawing from it. */
+	LinearPagePool::Configuration MakeDefaultPagePoolConfig(u64 pageSize = 4 * 1024, u32 maxRetained = 2)
+	{
+		LinearPagePool::Configuration configuration;
 		configuration.PageSize = pageSize;
 		configuration.MaxRetainedPages = maxRetained;
 		return configuration;
@@ -2080,5 +2094,138 @@ void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 	B3D_TEST_ASSERT(allocator.GetLivePageCount() == livePagesBefore)
 	B3D_TEST_ASSERT(allocator.GetSparePageCount() == 0)
 	B3D_TEST_ASSERT(backend.DestroyCount() == destroyCountBefore)
+}
+
+void GpuAllocatorTestSuite::TestLinear_SharedPoolReusedAcrossAllocators()
+{
+	MockHeapBackend backend;
+	MockGpuCompletionTracker tracker;
+
+	// One device-owned pool shared by two independent ThreadUnsafe allocators (each models a separate
+	// context/operation). The pool page size must match the allocators' page size.
+	LinearPagePool pool(&backend, MakeDefaultPagePoolConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 4));
+
+	// Allocator-local MaxRetainedPages is ignored when a pool is supplied — the pool owns the bound.
+	LinearAllocator a(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 0), &pool);
+	LinearAllocator b(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 0), &pool);
+
+	// Each allocator fills then overflows its first page, retiring one page apiece. Four heaps total
+	// (two retired-pending-drain + two active); nothing has reached the pool yet.
+	MockLocation a0, a1, b0, b1;
+	B3D_TEST_ASSERT(a.TryAllocate(3 * 1024, 16, a0))
+	B3D_TEST_ASSERT(a.TryAllocate(3 * 1024, 16, a1)) // overflow → retire a's first page
+	B3D_TEST_ASSERT(b.TryAllocate(3 * 1024, 16, b0))
+	B3D_TEST_ASSERT(b.TryAllocate(3 * 1024, 16, b1)) // overflow → retire b's first page
+	B3D_TEST_ASSERT(backend.CreateCount() == 4)
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
+
+	// Both retired pages were stamped at marker 0; completing the marker and flushing each allocator
+	// returns those pages to the shared pool (pooled, not destroyed).
+	AdvanceCompleteAndFlush(a, tracker);
+	AdvanceCompleteAndFlush(b, tracker);
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 2)
+	B3D_TEST_ASSERT(pool.GetCommittedBytes() == 2ull * 4 * 1024)
+	B3D_TEST_ASSERT(backend.DestroyCount() == 0)
+
+	// A fresh overflow now draws from the shared pool instead of calling CreateHeap. Both allocators
+	// pull a pooled page — including pages the *other* allocator drained — proving the pool is shared.
+	MockLocation a2, b2;
+	B3D_TEST_ASSERT(a.TryAllocate(3 * 1024, 16, a2)) // overflow → pull from pool
+	B3D_TEST_ASSERT(b.TryAllocate(3 * 1024, 16, b2)) // overflow → pull from pool
+	B3D_TEST_ASSERT(backend.CreateCount() == 4)      // both reused pooled pages, no new heaps
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
+}
+
+void GpuAllocatorTestSuite::TestLinear_SharedPoolRespectsBound()
+{
+	MockHeapBackend backend;
+	MockGpuCompletionTracker tracker;
+
+	// Pool retains at most two warm pages regardless of how many drain into it.
+	LinearPagePool pool(&backend, MakeDefaultPagePoolConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 2));
+	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 0), &pool);
+
+	// Four pages alive within one frame: three overflow-retired + the active fourth.
+	MockLocation a, b, c, d;
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, a))
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, b))
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, c))
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, d))
+	B3D_TEST_ASSERT(backend.CreateCount() == 4)
+
+	// Retire the active page too, so all four are pending drain against the same marker.
+	allocator.Reset();
+
+	// Drain: the pool keeps two warm spares; the remaining two exceed the bound and are destroyed.
+	AdvanceCompleteAndFlush(allocator, tracker);
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 2)
+	B3D_TEST_ASSERT(backend.DestroyCount() == 2)
+	B3D_TEST_ASSERT(allocator.GetLivePageCount() == 0) // every page handed back to the pool or destroyed
+}
+
+void GpuAllocatorTestSuite::TestLinear_SharedPoolDrainsOnlyAfterMarkerComplete()
+{
+	MockHeapBackend backend;
+	MockGpuCompletionTracker tracker;
+	LinearPagePool pool(&backend, MakeDefaultPagePoolConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 4));
+	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 0), &pool);
+
+	// Advance the device marker so the retire below is stamped at a known, non-zero value — the value
+	// the operation's *next* submit would signal, i.e. GetCurrentMarker() at retire time.
+	tracker.AdvanceFrame(); // marker → 1
+	tracker.AdvanceFrame(); // marker → 2
+	const u64 retireMarker = tracker.GetCurrentMarker();
+	B3D_TEST_ASSERT(retireMarker == 2)
+
+	// Allocate then overflow: the rotated-out page is stamped with retireMarker.
+	MockLocation first, second;
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, first))
+	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, second))
+
+	// Completing every marker strictly below the stamp must NOT drain the page (off-by-one guard): the
+	// page is still in flight until its own marker signals.
+	tracker.MarkFrameComplete(retireMarker - 1);
+	allocator.Flush(); // Flush(false)
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
+
+	// Completing exactly the stamped marker drains it to the pool.
+	tracker.MarkFrameComplete(retireMarker);
+	allocator.Flush();
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 1)
+	B3D_TEST_ASSERT(backend.DestroyCount() == 0)
+}
+
+void GpuAllocatorTestSuite::TestLinear_SharedPoolForceDrainReturnsPages()
+{
+	MockHeapBackend backend;
+	MockGpuCompletionTracker tracker;
+	LinearPagePool pool(&backend, MakeDefaultPagePoolConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 4));
+
+	{
+		LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 0), &pool);
+
+		// Retire a page but never complete its marker — models a page whose submit never signals (e.g.
+		// allocate-without-submit, or teardown reached before the fence catches up).
+		MockLocation first, second;
+		B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, first))
+		B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, second))
+
+		// Non-blocking reclaim drains nothing — the marker never completed.
+		allocator.Flush(); // Flush(false)
+		B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
+
+		// Force drain (what a blocking WaitAndReclaim / the destructor performs) reclaims the retired
+		// page regardless of fence and returns it to the shared pool. The guard that used to destroy
+		// force-drained pages was removed — destroying still-in-flight memory is UB either way, and the
+		// blocking-reclaim contract already requires the caller to have waited for in-flight work.
+		allocator.Flush(true);
+		B3D_TEST_ASSERT(pool.GetSparePageCount() == 1) // retired page returned to the pool
+		B3D_TEST_ASSERT(backend.DestroyCount() == 0)
+	}
+
+	// The active page was never retired, so the destructor destroys it directly rather than pooling it;
+	// only the force-drained retired page made it back to the pool.
+	B3D_TEST_ASSERT(pool.GetSparePageCount() == 1)
+	B3D_TEST_ASSERT(backend.DestroyCount() == 1)
 }
 
