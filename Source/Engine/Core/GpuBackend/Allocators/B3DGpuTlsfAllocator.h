@@ -958,7 +958,7 @@ namespace b3d
 			typename HeapBackend::HeapCreateInformation HeapCreateInfo{};
 		};
 
-		TGpuTlsfAllocator(HeapBackend* backend, IGpuFrameTracker* frameTracker, const Configuration& configuration);
+		TGpuTlsfAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration);
 		~TGpuTlsfAllocator();
 
 		// Non-copyable — node pool and heap state are not safe to duplicate.
@@ -1092,8 +1092,8 @@ namespace b3d
 	};
 
 	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	TGpuTlsfAllocator<HeapBackend, ThreadPolicy>::TGpuTlsfAllocator(HeapBackend* backend, IGpuFrameTracker* frameTracker, const Configuration& configuration)
-		: Base(backend, frameTracker), mConfig(configuration), mNextHeapSize(configuration.InitialHeapSize)
+	TGpuTlsfAllocator<HeapBackend, ThreadPolicy>::TGpuTlsfAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration)
+		: Base(backend, completionTracker), mConfig(configuration), mNextHeapSize(configuration.InitialHeapSize)
 	{
 		B3D_ASSERT(mConfig.GrowthFactor >= 1);
 		B3D_ASSERT(mConfig.InitialHeapSize > 0);
@@ -1102,7 +1102,7 @@ namespace b3d
 		B3D_ASSERT(mConfig.BufferImageGranularity == 1 || Bitwise::IsPow2(mConfig.BufferImageGranularity));
 		// Guards the bitmap-width constraint — sizes whose MSB exceeds this cap can't be bucketed.
 		B3D_ASSERT(mConfig.MaxHeapSize < (1ull << (detail::tlsf::Utility::kFirstLevelClassCount + detail::tlsf::Utility::kMemoryClassShift)));
-		B3D_ASSERT((mConfig.DeferralMode != GpuAllocatorFreeDeferralMode::FrameTracker) || frameTracker != nullptr);
+		B3D_ASSERT((mConfig.DeferralMode != GpuAllocatorFreeDeferralMode::FrameTracker) || completionTracker != nullptr);
 	}
 
 	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>

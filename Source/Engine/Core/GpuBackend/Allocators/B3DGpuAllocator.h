@@ -106,8 +106,8 @@ namespace b3d
 		/**
 		 * Default for backends without proper IGpuResource lifecycle wiring, and for the 
 		 * linear / transient allocators. Free queues the allocation against the current frame index; 
-		 * the queue drains when IFrameTracker::IsFrameComplete(frameIndex) is true. Defrag
-		 * retires the source slot the same way. Requires a non-null IGpuFrameTracker.
+		 * the queue drains when IGpuCompletionTracker::IsMarkerComplete(marker) is true. Defrag
+		 * retires the source slot the same way. Requires a non-null IGpuCompletionTracker.
 		 */
 		FrameTracker,
 
@@ -195,10 +195,10 @@ namespace b3d
 		}
 
 		/**
-		 * Releases retired allocations whose recorded frame is no longer in flight on the GPU
-		 * (per IGpuFrameTracker::IsFrameComplete).
+		 * Releases retired allocations whose recorded marker is no longer in flight on the GPU
+		 * (per IGpuCompletionTracker::IsMarkerComplete).
 		 *
-		 * @param forceComplete  When true, frame-completion checks are skipped and every retired entry
+		 * @param forceComplete  When true, completion checks are skipped and every retired entry
 		 *                       is freed unconditionally. Use only at shutdown after ensuring all
 		 *                       GPU work has completed.
 		 */
@@ -225,11 +225,11 @@ namespace b3d
 		const MutexHolder& GetMutex() const { return mMutex; }
 
 		/**
-		 * Constructs the allocator base. @p backend must outlive this object. @p frameTracker may be
+		 * Constructs the allocator base. @p backend must outlive this object. @p completionTracker may be
 		 * null if the allocator is using ResourceLifecycle free deferral mode.
 		 */
-		TGpuAllocator(HeapBackend* backend, IGpuFrameTracker* frameTracker)
-			: mBackend(backend), mFrameTracker(frameTracker)
+		TGpuAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker)
+			: mBackend(backend), mCompletionTracker(completionTracker)
 		{
 			B3D_ASSERT(backend != nullptr);
 		}
@@ -241,17 +241,17 @@ namespace b3d
 		TGpuAllocator& operator=(const TGpuAllocator&) = delete;
 
 		/**
-		 * Schedule deferred-free of @p allocation against the allocator's current frame index.
+		 * Schedule deferred-free of @p allocation against the allocator's current completion marker.
 		 * Caller must hold the allocator mutex when @p ThreadPolicy is ThreadSafe.
 		 */
 		void RetireAllocation(const Location& allocation)
 		{
-			B3D_ASSERT(mFrameTracker != nullptr);
+			B3D_ASSERT(mCompletionTracker != nullptr);
 
 			RetiredEntry entry;
 			entry.AllocatorData0 = allocation.AllocatorData0;
 			entry.AllocatorData1 = allocation.AllocatorData1;
-			entry.FrameIndex = mFrameTracker->GetCurrentFrameIndex();
+			entry.Marker = mCompletionTracker->GetCurrentMarker();
 
 			mRetiredQueue.Add(entry);
 		}
@@ -261,11 +261,11 @@ namespace b3d
 		{
 			u32 AllocatorData0;
 			u32 AllocatorData1;
-			u64 FrameIndex;
+			u64 Marker;
 		};
 
 		HeapBackend* mBackend = nullptr;
-		IGpuFrameTracker* mFrameTracker = nullptr;
+		IGpuCompletionTracker* mCompletionTracker = nullptr;
 		TInlineArray<RetiredEntry, 64> mRetiredQueue;
 
 	private:
@@ -280,7 +280,7 @@ namespace b3d
 			for (u32 entryIndex = 0; entryIndex < size; entryIndex++)
 			{
 				const RetiredEntry& entry = mRetiredQueue[entryIndex];
-				if (!forceComplete && !mFrameTracker->IsFrameComplete(entry.FrameIndex))
+				if (!forceComplete && !mCompletionTracker->IsMarkerComplete(entry.Marker))
 					break;
 
 				static_cast<Derived*>(this)->FreeImmediateImpl(entry.AllocatorData0, entry.AllocatorData1);

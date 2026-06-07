@@ -165,21 +165,21 @@ namespace
 	};
 
 	/**
-	 * Standalone implementation of IGpuFrameTracker for the allocator unit tests. Models the
+	 * Standalone implementation of IGpuCompletionTracker for the allocator unit tests. Models the
 	 * device-wide frame counter as two monotonic 64-bit values — mCurrent (the frame currently being
 	 * recorded) and mCompleted (the highest frame the simulated GPU has fully drained). Lets tests
 	 * exercise the deferred-delete contract end-to-end without a real GpuDevice.
 	 */
-	class MockGpuFrameTracker : public IGpuFrameTracker
+	class MockGpuCompletionTracker : public IGpuCompletionTracker
 	{
 	public:
-		u64 GetCurrentFrameIndex() const override { return mCurrent; }
-		bool IsFrameComplete(u64 index) const override { return mAnyComplete && index <= mCompleted; }
+		u64 GetCurrentMarker() const override { return mCurrent; }
+		bool IsMarkerComplete(u64 marker) const override { return mAnyComplete && marker <= mCompleted; }
 
 		/**
 		 * Simulates the device advancing to the next frame: bumps the current frame counter by one
 		 * and returns the new value. Allocations retired immediately after this call observe the new
-		 * frame index via GetCurrentFrameIndex.
+		 * frame index via GetCurrentMarker.
 		 */
 		u64 AdvanceFrame()
 		{
@@ -218,7 +218,7 @@ namespace
 	 * Helper: advances the frame, frees, marks complete, flushes — drives a single retire entry
 	 * to completion. Only meaningful when the allocator is configured with @c FrameTracker.
 	 */
-	void FreeAndDrain(TlsfAllocator& allocator, MockGpuFrameTracker& tracker, MockLocation& location)
+	void FreeAndDrain(TlsfAllocator& allocator, MockGpuCompletionTracker& tracker, MockLocation& location)
 	{
 		tracker.AdvanceFrame();
 		allocator.Free(location);
@@ -266,7 +266,7 @@ namespace
 
 	/** Helper: advances frame, marks all complete, flushes — drains every retire entry stamped at or before the call. */
 	template <typename Allocator>
-	void AdvanceCompleteAndFlush(Allocator& allocator, MockGpuFrameTracker& tracker)
+	void AdvanceCompleteAndFlush(Allocator& allocator, MockGpuCompletionTracker& tracker)
 	{
 		tracker.AdvanceFrame();
 		tracker.MarkAllFramesComplete();
@@ -294,7 +294,7 @@ namespace
 		// having to round-trip through the public Free path (which auto-resets the location).
 		using Base::RetireAllocation;
 
-		MockAllocator(MockHeapBackend* backend, MockGpuFrameTracker* tracker)
+		MockAllocator(MockHeapBackend* backend, MockGpuCompletionTracker* tracker)
 			: Base(backend, tracker)
 		{}
 
@@ -374,7 +374,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorContract()
 	static_assert(std::is_trivially_copyable<MockLocation>::value, "TGpuResourceLocation must remain trivially copyable.");
 
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	MockAllocator allocator(&backend, &tracker);
 
 	// Exercise the full public surface so the linker resolves every entry point.
@@ -410,7 +410,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 	// Case 1: FIFO drain stops at the first incomplete entry.
 	{
 		MockHeapBackend backend;
-		MockGpuFrameTracker tracker;
+		MockGpuCompletionTracker tracker;
 		MockAllocator allocator(&backend, &tracker);
 
 		// Each location carries a distinct slot identity so the test can match drained entries back to the
@@ -453,7 +453,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 	// Case 3: Flush(forceComplete=true) drains everything regardless of submission state.
 	{
 		MockHeapBackend backend;
-		MockGpuFrameTracker tracker;
+		MockGpuCompletionTracker tracker;
 		MockAllocator allocator(&backend, &tracker);
 
 		MockLocation locationA, locationB, locationC;
@@ -480,7 +480,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 	// completes.
 	{
 		MockHeapBackend backend;
-		MockGpuFrameTracker tracker;
+		MockGpuCompletionTracker tracker;
 		MockAllocator allocator(&backend, &tracker);
 
 		MockLocation location;
@@ -522,11 +522,12 @@ void GpuAllocatorTestSuite::TestFrameTracker_InitialState()
 	// so the value is non-deterministic — what matters is that the predicate is monotone: a frame
 	// reported complete now stays complete, and the current frame is never reported complete (it
 	// is by definition still being recorded).
-	const u64 frame = device->GetCurrentFrameIndex();
-	B3D_TEST_ASSERT(!device->IsFrameComplete(frame))
+	IGpuCompletionTracker& tracker = device->GetFrameCompletionTracker();
+	const u64 frame = tracker.GetCurrentMarker();
+	B3D_TEST_ASSERT(!tracker.IsMarkerComplete(frame))
 
 	if (frame >= RenderThread::kMaximumFramesInFlight)
-		B3D_TEST_ASSERT(device->IsFrameComplete(frame - RenderThread::kMaximumFramesInFlight))
+		B3D_TEST_ASSERT(tracker.IsMarkerComplete(frame - RenderThread::kMaximumFramesInFlight))
 }
 
 void GpuAllocatorTestSuite::TestFrameTracker_AdvancesOnEndFrame()
@@ -555,7 +556,7 @@ void GpuAllocatorTestSuite::TestFrameTracker_AdvancesOnEndFrame()
 		GetRenderThread().PostCommand(fnTickFrame, "TestFrameTracker_AdvancesOnEndFrame::Tick", true);
 
 	device->WaitUntilIdle();
-	B3D_TEST_ASSERT(device->IsFrameComplete(indexBefore))
+	B3D_TEST_ASSERT(device->GetFrameCompletionTracker().IsMarkerComplete(indexBefore))
 }
 
 void GpuAllocatorTestSuite::TestUserCreatedFence_ExplicitSignal()
@@ -603,7 +604,7 @@ void GpuAllocatorTestSuite::TestTlsf_ContractAndInitialState()
 	B3D_STATIC_ASSERT_HEAP_BACKEND_IS_VALID(MockHeapBackend);
 
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	// No heap creation on construction — heaps are created lazily on first allocation.
 	TlsfAllocator allocator(&backend, &tracker, MakeDefaultTlsfConfig());
@@ -629,7 +630,7 @@ void GpuAllocatorTestSuite::TestTlsf_ContractAndInitialState()
 void GpuAllocatorTestSuite::TestTlsf_SingleAllocateFree()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeDefaultTlsfConfig());
 
 	MockLocation location;
@@ -655,7 +656,7 @@ void GpuAllocatorTestSuite::TestTlsf_SingleAllocateFree()
 void GpuAllocatorTestSuite::TestTlsf_NonOverlappingAlignedOffsets()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeDefaultTlsfConfig());
 
 	struct Alloc { MockLocation Location; u64 Begin; u64 End; };
@@ -714,7 +715,7 @@ void GpuAllocatorTestSuite::TestTlsf_CoalesceAllOrders()
 		const u32* freeOrder = patterns[patternIndex];
 
 		MockHeapBackend backend;
-		MockGpuFrameTracker tracker;
+		MockGpuCompletionTracker tracker;
 
 		TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 		configuration.InitialHeapSize = 64 * 1024;
@@ -750,7 +751,7 @@ void GpuAllocatorTestSuite::TestTlsf_CoalesceAllOrders()
 void GpuAllocatorTestSuite::TestTlsf_LargeAlignmentSplitsLeadingPadding()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -787,7 +788,7 @@ void GpuAllocatorTestSuite::TestTlsf_LargeAlignmentSplitsLeadingPadding()
 void GpuAllocatorTestSuite::TestTlsf_HeapGrowthAndEmptyRelease()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 64 * 1024;
@@ -828,7 +829,7 @@ void GpuAllocatorTestSuite::TestTlsf_HeapGrowthAndEmptyRelease()
 void GpuAllocatorTestSuite::TestTlsf_OversizedAllocationGetsDedicatedHeap()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 64 * 1024;
@@ -849,7 +850,7 @@ void GpuAllocatorTestSuite::TestTlsf_OversizedAllocationGetsDedicatedHeap()
 void GpuAllocatorTestSuite::TestTlsf_RandomStressNoLeak()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 4 * 1024 * 1024;
@@ -924,7 +925,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityDisabled()
 	// Default config: BufferImageGranularity = 1 → tracker is fully inert. Linear / NonLinear
 	// allocations should pack contiguously without any BIG-driven padding.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeDefaultTlsfConfig());
 
 	MockLocation linearLocation;
@@ -943,7 +944,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityHomogeneousNoPadding()
 {
 	// All-Linear workload — no conflicting neighbors anywhere, so BIG inflation never fires.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeTlsfConfigWithGranularity(4096));
 
 	MockLocation a, b, c;
@@ -964,7 +965,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityLinearVsNonLinearInflatesPadding
 	// naturally land at offset 1008 but that's still inside page 0 (which now holds Linear),
 	// so BIG inflation must bump it past the granularity boundary to offset 4096.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeTlsfConfigWithGranularity(4096));
 
 	MockLocation linearLocation;
@@ -977,7 +978,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityLinearVsNonLinearInflatesPadding
 
 	// Sanity: a Linear-Linear sequence in the same starting state would *not* be bumped.
 	MockHeapBackend baselineBackend;
-	MockGpuFrameTracker baselineTracker;
+	MockGpuCompletionTracker baselineTracker;
 	TlsfAllocator baselineAllocator(&baselineBackend, &baselineTracker, MakeTlsfConfigWithGranularity(4096));
 
 	MockLocation baselineFirst;
@@ -998,7 +999,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityRejectAndRetryAcrossHeaps()
 	configuration.MaxHeapSize = 8192;
 
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, configuration);
 
 	MockLocation firstLinear;
@@ -1022,7 +1023,7 @@ void GpuAllocatorTestSuite::TestTlsf_GranularityFreeReleasesRegion()
 	// the Linear and confirm a fresh NonLinear can land at offset 0 — the page-table refcount
 	// has dropped to zero so the page reverts to Free and no longer conflicts.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	TlsfAllocator allocator(&backend, &tracker, MakeTlsfConfigWithGranularity(4096));
 
 	MockLocation linearLocation;
@@ -1061,7 +1062,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_DrainsHighestHeap()
 	// migrants. Defrag should drain heap 1 into heap 0 and the empty heap 1 should be released
 	// once the deferred-free queue settles.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 64 * 1024;
@@ -1121,7 +1122,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_SingleHeapWithinHeapCompaction()
 	// the same heap. This proves the NodeFlag::DefragDestination marker mechanism (destination
 	// lands in the heap being walked) and that single-heap setups can defrag at all.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -1175,7 +1176,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_RespectsBudget()
 	// Single-heap setup where multiple compaction moves are possible. Budget = single-allocation
 	// size aborts after the first attempt that would exceed.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -1217,7 +1218,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_OnlySkipsUntrackedSlots()
 	// TryAllocate time) are the only ones Defrag should skip — they have no consumer to relocate
 	// against. Tracked slots in the same workload should still be moved.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -1272,7 +1273,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MovesInFlightResource()
 	// "bound to a recording command buffer". With the relaxed in-flight filter Defrag must move
 	// them anyway; correctness comes from submission ordering, not from skipping the candidates.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -1326,7 +1327,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MoveAllocationReceivesContext()
 	// MoveAllocation time and assigns it onto its externally-held location, mirroring the
 	// production consumer contract (replace location wholesale, no field-by-field patching).
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 1 * 1024 * 1024;
@@ -1395,7 +1396,7 @@ void GpuAllocatorTestSuite::TestTlsf_ResourceLifecyclePolicy_FreesImmediately()
 	// frame-tracker state. The frame tracker is intentionally not advanced or signaled here — if the
 	// implementation took the FrameTracker path, the slot would still be queued.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.DeferralMode = GpuAllocatorFreeDeferralMode::ResourceLifecycle;
@@ -1418,7 +1419,7 @@ void GpuAllocatorTestSuite::TestTlsf_FrameTrackerPolicy_DefersAcrossFrames()
 	// Under FrameTracker, Free queues the slot against the current frame index. The slot is held in
 	// the deferred-free queue until the frame is reported complete by the tracker.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.DeferralMode = GpuAllocatorFreeDeferralMode::FrameTracker;
@@ -1444,7 +1445,7 @@ void GpuAllocatorTestSuite::TestTlsf_FrameTrackerPolicy_DefersAcrossFrames()
 	allocator.Flush(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == usedAfterAlloc)
 
-	// Marking the retire frame complete is what flips IsFrameComplete to true. Flush now drains.
+	// Marking the retire frame complete is what flips IsMarkerComplete to true. Flush now drains.
 	tracker.MarkFrameComplete(retireFrame);
 	allocator.Flush(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
@@ -1458,7 +1459,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_LifecycleAllowsSwap()
 	// destructor" path, modelled here via an explicit FreeImmediate against the source-side
 	// location the original holder still holds.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 64 * 1024;
@@ -1560,7 +1561,7 @@ void GpuAllocatorTestSuite::TestTlsf_ConcurrentAllocateAndFree()
 	// mutex — torn writes to the bucket heads would manifest as either an assertion failure inside
 	// FreeNode (e.g. corrupted physical chain) or a non-zero used-bytes count at teardown.
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	TlsfAllocator::Configuration configuration = MakeDefaultTlsfConfig();
 	configuration.InitialHeapSize = 4 * 1024 * 1024;
@@ -1773,7 +1774,7 @@ void GpuAllocatorTestSuite::TestLinear_ContractAndInitialState()
 	B3D_STATIC_ASSERT_HEAP_BACKEND_IS_VALID(MockHeapBackend);
 
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	// No heap creation on construction — pages are created lazily on first allocation.
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
@@ -1798,7 +1799,7 @@ void GpuAllocatorTestSuite::TestLinear_ContractAndInitialState()
 void GpuAllocatorTestSuite::TestLinear_BumpPointerAlignedOffsets()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
 
 	struct Alloc { MockLocation Location; u64 Begin; u64 End; };
@@ -1836,7 +1837,7 @@ void GpuAllocatorTestSuite::TestLinear_BumpPointerAlignedOffsets()
 void GpuAllocatorTestSuite::TestLinear_OverflowRotatesPage()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	// 8 KB page with no spare retention so the destroy-on-drain path is also exercised.
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 8 * 1024, /*maxRetained*/ 0));
 
@@ -1863,7 +1864,7 @@ void GpuAllocatorTestSuite::TestLinear_OverflowRotatesPage()
 void GpuAllocatorTestSuite::TestLinear_MultiPageWithinFrame()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 4));
 
 	// Force three page rotations (no AdvanceFrame between them) — three retired pages plus one active.
@@ -1892,7 +1893,7 @@ void GpuAllocatorTestSuite::TestLinear_MultiPageWithinFrame()
 void GpuAllocatorTestSuite::TestLinear_PageRecycledOnFenceComplete()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 1));
 
 	MockLocation first;
@@ -1919,7 +1920,7 @@ void GpuAllocatorTestSuite::TestLinear_PageRecycledOnFenceComplete()
 void GpuAllocatorTestSuite::TestLinear_OversizeBypassesPagePool()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 8 * 1024, /*maxRetained*/ 4));
 
 	// First populate the active page with a normal allocation, so we can verify the oversize path
@@ -1955,7 +1956,7 @@ void GpuAllocatorTestSuite::TestLinear_OversizeBypassesPagePool()
 void GpuAllocatorTestSuite::TestLinear_ResetRetiresActivePage()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
 
 	MockLocation first;
@@ -1988,7 +1989,7 @@ void GpuAllocatorTestSuite::TestLinear_ResetRetiresActivePage()
 void GpuAllocatorTestSuite::TestLinear_SparePageCap()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig(/*pageSize*/ 4 * 1024, /*maxRetained*/ 1));
 
 	// Force three pages alive concurrently within one frame: first two retire on overflow, third stays active.
@@ -2009,7 +2010,7 @@ void GpuAllocatorTestSuite::TestLinear_SparePageCap()
 void GpuAllocatorTestSuite::TestLinear_FreeIsNoop()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
 
 	MockLocation first;
@@ -2041,7 +2042,7 @@ void GpuAllocatorTestSuite::TestLinear_FreeIsNoop()
 void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 {
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
 
 	// Three allocations share one active page. With a naive implementation, FreeImmediate(a) would
@@ -2087,7 +2088,7 @@ void GpuAllocatorTestSuite::TestLinear_ThreadUnsafePolicyOptOut()
 	using ThreadUnsafeAllocator = TGpuLinearAllocator<MockHeapBackend, ThreadUnsafe>;
 
 	MockHeapBackend backend;
-	MockGpuFrameTracker tracker;
+	MockGpuCompletionTracker tracker;
 
 	ThreadUnsafeAllocator::Configuration configuration;
 	configuration.PageSize = 8 * 1024;

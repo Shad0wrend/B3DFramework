@@ -285,22 +285,47 @@ namespace b3d
 	};
 
 	/**
-	 * Interface used by GPU allocators (and other deferred-cleanup consumers) to schedule work against
-	 * frame boundaries. Frames are natural cross-queue sync points: at end-of-frame the device blocks
-	 * until the previous frame's resources are safe to reuse, so once a frame is "complete" the GPU is
-	 * guaranteed to have drained every submission tagged with that frame's index regardless of which
-	 * queue it ran on.
+	 * Abstraction over a monotonic GPU-completion marker, used by GPU allocators (and other
+	 * deferred-cleanup consumers) to schedule reclamation against GPU progress. A "marker" is an
+	 * opaque, monotonically increasing value handed out at record/submit time; the GPU is said to
+	 * have "completed" a marker once every submission tagged with a value <= that marker has drained.
 	 */
-	class B3D_EXPORT IGpuFrameTracker
+	class B3D_EXPORT IGpuCompletionTracker
 	{
 	public:
-		virtual ~IGpuFrameTracker() = default;
+		virtual ~IGpuCompletionTracker() = default;
 
+		/** Value the next piece of work recorded/submitted will be tagged with. Monotonic; starts at 0. */
+		virtual u64 GetCurrentMarker() const = 0;
+
+		/** Returns true once the GPU has drained every submission tagged with a value <= @p marker. */
+		virtual bool IsMarkerComplete(u64 marker) const = 0;
+	};
+
+	/**
+	 * Frame-count based completion tracker for the render thread's primary context. The marker is the
+	 * frame index currently being recorded; a marker is "complete" only after the conservative
+	 * RenderThread::kMaximumFramesInFlight lag, since at end-of-frame the device blocks until the
+	 * previous frame's resources are safe to reuse.
+	 */
+	class B3D_EXPORT GpuFrameCompletionTracker : public IGpuCompletionTracker
+	{
+	public:
 		/** Index of the frame currently being recorded. Monotonic; starts at 0. */
-		virtual u64 GetCurrentFrameIndex() const = 0;
+		u64 GetCurrentMarker() const override { return mFrameIndex.load(std::memory_order_acquire); }
 
-		/** Returns true once the GPU has caught up such that frame @p index is no longer in flight on any queue. */
-		virtual bool IsFrameComplete(u64 index) const = 0;
+		/**
+		 * Returns true once the GPU has caught up such that frame @p marker is no longer in flight on
+		 * any queue — i.e. the current frame index has advanced by at least
+		 * RenderThread::kMaximumFramesInFlight beyond it.
+		 */
+		bool IsMarkerComplete(u64 marker) const override;
+
+		/** Advances to the next frame. */
+		void AdvanceFrame() { mFrameIndex.fetch_add(1, std::memory_order_acq_rel); }
+
+	private:
+		std::atomic<u64> mFrameIndex{0};
 	};
 
 	/**
@@ -308,10 +333,10 @@ namespace b3d
 	 *
 	 * @note	Thread safe.
 	 */
-	class B3D_EXPORT GpuDevice : public IGpuFrameTracker
+	class B3D_EXPORT GpuDevice
 	{
 	public:
-		~GpuDevice() override = default;
+		virtual ~GpuDevice() = default;
 
 		/** Initializes the GpuDevice. Should be called after construction but before any other operations. */
 		virtual bool Initialize() = 0;
@@ -377,7 +402,7 @@ namespace b3d
 		/** Notifies the device the rendering for the current frame has ended. See BeginFrame(). */
 		virtual void EndFrame()
 		{
-			mFrameIndex.fetch_add(1, std::memory_order_acq_rel);
+			mPrimaryTracker.AdvanceFrame();
 		}
 
 		/**
@@ -531,20 +556,14 @@ namespace b3d
 		 *  @{
 		 */
 
-		/** Returns this device as the IGpuFrameTracker interface. */
-		IGpuFrameTracker& GetFrameTracker() { return *this; }
+		/** 
+		 * Returns the device's primary completion tracker - to be used on the render thread, controlled via BeginFrame()/EndFrame(). 
+		 * Worker threads should use fence trackers, since concept of a frame is not as clearly defined for workers.
+		 */
+		IGpuCompletionTracker& GetFrameCompletionTracker() { return mPrimaryTracker; }
 
 		/** Index of the frame currently being recorded. Monotonic; starts at 0. Incremented inside EndFrame. */
-		u64 GetCurrentFrameIndex() const override { return mFrameIndex.load(std::memory_order_acquire); }
-
-		/**
-		 * Returns true once the GPU has caught up such that frame @p index is no longer in flight on
-		 * any queue. Implementation: an @p index is complete once the current frame index has advanced
-		 * by at least RenderThread::kMaximumFramesInFlight beyond it — at end-of-frame the device
-		 * blocks until the previous frame's resources are safe to reuse, so once @c kMaximumFramesInFlight
-		 * frame ticks pass, the GPU has drained everything from frame @p index.
-		 */
-		bool IsFrameComplete(u64 index) const override;
+		u64 GetCurrentFrameIndex() const { return mPrimaryTracker.GetCurrentMarker(); }
 
 		/** @} */
 
@@ -574,7 +593,7 @@ namespace b3d
 		mutable Mutex mSamplerStateMutex;
 
 	private:
-		std::atomic<u64> mFrameIndex{0};
+		GpuFrameCompletionTracker mPrimaryTracker;
 	};
 
 	/** @} */

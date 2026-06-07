@@ -42,10 +42,10 @@ void GpuDevice::SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& com
 	SubmitCommandBuffer(information, queueIndex);
 }
 
-bool GpuDevice::IsFrameComplete(u64 index) const
+bool GpuFrameCompletionTracker::IsMarkerComplete(u64 marker) const
 {
 	const u64 currentFrame = mFrameIndex.load(std::memory_order_acquire);
-	return index + RenderThread::kMaximumFramesInFlight <= currentFrame;
+	return marker + RenderThread::kMaximumFramesInFlight <= currentFrame;
 }
 
 TShared<SamplerState> GpuDevice::FindOrCreateSamplerState(const SamplerStateCreateInformation& createInformation)

@@ -1173,7 +1173,7 @@ TGpuTlsfAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuMemoryAlloc
 		configuration.HeapCreateInfo.PropertyFlags = flags;
 		configuration.HeapCreateInfo.MapPersistently = isHostVisible;
 
-		slot = B3DMakeUnique<TGpuTlsfAllocator<VulkanHeapBackend>>(mHeapBackend.get(), this, configuration);
+		slot = B3DMakeUnique<TGpuTlsfAllocator<VulkanHeapBackend>>(mHeapBackend.get(), &GetFrameCompletionTracker(), configuration);
 		return *slot;
 	}
 }
@@ -1197,7 +1197,7 @@ TGpuLinearAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuLinearAll
 	configuration.HeapCreateInfo.PropertyFlags = flags;
 	configuration.HeapCreateInfo.MapPersistently = isHostVisible;
 
-	slot = B3DMakeUnique<TGpuLinearAllocator<VulkanHeapBackend>>(mHeapBackend.get(), this, configuration);
+	slot = B3DMakeUnique<TGpuLinearAllocator<VulkanHeapBackend>>(mHeapBackend.get(), &GetFrameCompletionTracker(), configuration);
 	return *slot;
 }
 

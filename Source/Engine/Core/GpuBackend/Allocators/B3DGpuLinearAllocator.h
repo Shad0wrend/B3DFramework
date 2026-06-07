@@ -77,7 +77,7 @@ namespace b3d
 			typename HeapBackend::HeapCreateInformation HeapCreateInfo{};
 		};
 
-		TGpuLinearAllocator(HeapBackend* backend, IGpuFrameTracker* frameTracker, const Configuration& configuration);
+		TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration);
 		~TGpuLinearAllocator();
 
 		// Non-copyable — page state is not safe to duplicate.
@@ -191,11 +191,11 @@ namespace b3d
 	};
 
 	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	TGpuLinearAllocator<HeapBackend, ThreadPolicy>::TGpuLinearAllocator(HeapBackend* backend, IGpuFrameTracker* frameTracker, const Configuration& configuration)
-		: Base(backend, frameTracker), mConfig(configuration)
+	TGpuLinearAllocator<HeapBackend, ThreadPolicy>::TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration)
+		: Base(backend, completionTracker), mConfig(configuration)
 	{
 		B3D_ASSERT(mConfig.PageSize > 0);
-		B3D_ASSERT(frameTracker != nullptr); // Linear pages always retire against a frame fence.
+		B3D_ASSERT(completionTracker != nullptr); // Linear pages always retire against a completion marker.
 	}
 
 	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>

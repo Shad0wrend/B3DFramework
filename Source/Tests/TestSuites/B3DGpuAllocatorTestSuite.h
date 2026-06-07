@@ -44,7 +44,7 @@ namespace b3d
 
 		/**
 		 * Calling EndFrame advances the device's frame index by one. After kMaximumFramesInFlight
-		 * further ticks the original frame is reported complete by the IGpuFrameTracker interface.
+		 * further ticks the original frame is reported complete by the IGpuCompletionTracker interface.
 		 */
 		void TestFrameTracker_AdvancesOnEndFrame();
 

@@ -160,7 +160,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeHostVisibleBuffer()
 	B3D_TEST_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES)
 
 	auto config = BuildAllocatorConfig(memProps, device->GetDeviceProperties().limits, memoryTypeIndex);
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), device, config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetFrameCompletionTracker(), config);
 
 	TGpuResourceLocation<VulkanHeapBackend> location;
 	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, location);
@@ -215,7 +215,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeDeviceLocalImage()
 	B3D_TEST_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES)
 
 	auto config = BuildAllocatorConfig(memProps, device->GetDeviceProperties().limits, memoryTypeIndex);
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), device, config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetFrameCompletionTracker(), config);
 
 	TGpuResourceLocation<VulkanHeapBackend> location;
 	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::NonLinear, location);
@@ -263,7 +263,7 @@ void VulkanAllocatorTestSuite::TestBufferHeapGrowth()
 	config.InitialHeapSize = 4ull * 1024 * 1024;
 	config.MaxHeapSize = 16ull * 1024 * 1024;
 
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), device, config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetFrameCompletionTracker(), config);
 
 	// Allocate enough 1 MiB chunks to exceed the 4 MiB initial heap and force a second heap.
 	constexpr u32 kAllocCount = 6;
