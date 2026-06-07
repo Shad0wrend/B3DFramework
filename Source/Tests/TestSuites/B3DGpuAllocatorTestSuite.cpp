@@ -64,7 +64,6 @@ GpuAllocatorTestSuite::GpuAllocatorTestSuite()
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_SparePageCap)
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_FreeIsNoop)
 	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop)
-	B3D_ADD_TEST(GpuAllocatorTestSuite::TestLinear_ThreadUnsafePolicyOptOut)
 }
 
 namespace
@@ -2083,26 +2082,3 @@ void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 	B3D_TEST_ASSERT(backend.DestroyCount() == destroyCountBefore)
 }
 
-void GpuAllocatorTestSuite::TestLinear_ThreadUnsafePolicyOptOut()
-{
-	using ThreadUnsafeAllocator = TGpuLinearAllocator<MockHeapBackend, ThreadUnsafe>;
-
-	MockHeapBackend backend;
-	MockGpuCompletionTracker tracker;
-
-	ThreadUnsafeAllocator::Configuration configuration;
-	configuration.PageSize = 8 * 1024;
-	configuration.MaxRetainedPages = 1;
-	ThreadUnsafeAllocator allocator(&backend, &tracker, configuration);
-
-	MockLocation a, b;
-	B3D_TEST_ASSERT(allocator.TryAllocate(2 * 1024, 16, a))
-	B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, b))
-	B3D_TEST_ASSERT(a.Heap.Id == b.Heap.Id)
-
-	allocator.Reset();
-	tracker.AdvanceFrame();
-	tracker.MarkAllFramesComplete();
-	allocator.Flush();
-	B3D_TEST_ASSERT(allocator.GetSparePageCount() == 1)
-}

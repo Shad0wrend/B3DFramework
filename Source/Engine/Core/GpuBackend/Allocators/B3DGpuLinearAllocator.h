@@ -5,6 +5,8 @@
 #include "B3DPrerequisites.h"
 #include "GpuBackend/Allocators/B3DGpuAllocator.h"
 #include "Utility/B3DBitwise.h"
+#include "Utility/B3DPool.h"
+#include "Threading/B3DThreading.h"
 
 namespace b3d
 {
@@ -13,10 +15,142 @@ namespace b3d
 	 */
 
 	/**
+	 * Thread-safe pool of linear-allocator pages, meant to be shared between multiple TGpuLinearAllocators
+	 * (usually each thread has its own linear allocator).
+	 *
+	 * All pooled pages are exactly @ref Configuration::PageSize bytes and share the same
+	 * @ref Configuration::HeapCreateInfo. Oversize allocations never enter the pool —
+	 * they stay allocator-local one-shot heaps.
+	 *
+	 * **GPU-safety.** The pool assumes every released page is GPU-safe and immediately reusable. The
+	 * allocator upholds this: a page reaches @ref ReleasePage only at *drain* time — either a
+	 * fence-verified drain (the retiring context's completion marker has signaled) or a teardown drain,
+	 * where the allocator contract requires the caller to have already waited for in-flight work.
+	 * Pages never submitted to the GPU are trivially safe as well.
+	 *
+	 * **Bound.** At most @ref Configuration::MaxRetainedPages drained pages are retained; further
+	 * releases are destroyed immediately. The bound must be sized for the peak number of concurrent
+	 * contexts or they fall back to fresh CreateHeap calls.
+	 *
+	 * @tparam HeapBackend		Backend trait satisfying the GpuHeapBackend contract.
+	 */
+	template <typename HeapBackend>
+	class TGpuLinearPagePool
+	{
+	public:
+		B3D_STATIC_ASSERT_HEAP_BACKEND_IS_VALID(HeapBackend);
+
+		using HeapHandle = typename HeapBackend::HeapHandle;
+		using HeapCreateInformation = typename HeapBackend::HeapCreateInformation;
+
+		/** Runtime configuration shared by every page the pool hands out. */
+		struct Configuration
+		{
+			/** Size in bytes of every pooled page. */
+			u64 PageSize = 8ull * 1024 * 1024;
+
+			/** Maximum number of drained pages retained as warm spares; further releases are destroyed. */
+			u32 MaxRetainedPages = 8;
+
+			/** Backend create-info forwarded verbatim to HeapBackend::CreateHeap for each page. */
+			HeapCreateInformation HeapCreateInfo{};
+		};
+
+		TGpuLinearPagePool(HeapBackend* backend, const Configuration& configuration)
+			: mBackend(backend), mConfig(configuration)
+		{
+			B3D_ASSERT(backend != nullptr);
+			B3D_ASSERT(mConfig.PageSize > 0);
+		}
+
+		~TGpuLinearPagePool()
+		{
+			for (HeapHandle& handle : mSparePages)
+				mBackend->DestroyHeap(handle);
+
+			mSparePages.clear();
+		}
+
+		// Non-copyable — owns backend heaps.
+		TGpuLinearPagePool(const TGpuLinearPagePool&) = delete;
+		TGpuLinearPagePool& operator=(const TGpuLinearPagePool&) = delete;
+
+		/** Page size every acquired/released page is expected to be. */
+		u64 GetPageSize() const { return mConfig.PageSize; }
+
+		/**
+		 * Returns a warm spare page if one is available, otherwise creates a fresh @ref GetPageSize
+		 * byte heap. The returned heap is owned by the caller until handed back via @ref ReleasePage.
+		 */
+		HeapHandle AcquirePage()
+		{
+			Lock lock(mMutex);
+			if (!mSparePages.empty())
+			{
+				const HeapHandle handle = mSparePages.back();
+				mSparePages.pop_back();
+				return handle;
+			}
+
+			lock.unlock();
+			return mBackend->CreateHeap(mConfig.PageSize, mConfig.HeapCreateInfo);
+		}
+
+		/**
+		 * Returns a drained, GPU-safe page to the pool. Retained as a warm spare while the pool is
+		 * below @ref Configuration::MaxRetainedPages, otherwise destroyed immediately. The caller must
+		 * guarantee the page is no longer in flight (see class docs).
+		 */
+		void ReleasePage(HeapHandle handle)
+		{
+			Lock lock(mMutex);
+			if ((u32)mSparePages.size() < mConfig.MaxRetainedPages)
+			{
+				mSparePages.push_back(handle);
+				return;
+			}
+
+			lock.unlock();
+			mBackend->DestroyHeap(handle);
+		}
+
+		/** @name Diagnostics.
+		 *  @{
+		 */
+
+		/** Number of drained pages currently held warm, ready for immediate reuse. */
+		u32 GetSparePageCount() const
+		{
+			Lock lock(mMutex);
+			return (u32)mSparePages.size();
+		}
+
+		/** Total bytes of backing memory currently held as warm spares. */
+		u64 GetCommittedBytes() const
+		{
+			Lock lock(mMutex);
+			return (u64)mSparePages.size() * mConfig.PageSize;
+		}
+
+		/** @} */
+
+	private:
+		HeapBackend* mBackend = nullptr;
+		Configuration mConfig;
+		Vector<HeapHandle> mSparePages;
+		mutable Mutex mMutex;
+	};
+
+	/**
 	 * Linear (bump) GPU memory allocator for transient allocations such as staging buffers and
 	 * one-off scratch buffers. Allocations are produced by bumping a per-page offset; per-allocation
 	 * Free is a no-op. Whole pages recycle once their retire fence completes — at which point the
-	 * page returns to a spare list (up to Configuration::MaxRetainedPages) or is destroyed.
+	 * page returns to its page source (a shared @ref TGpuLinearPagePool when one is supplied, otherwise
+	 * an internal spare list bounded by Configuration::MaxRetainedPages) or is destroyed.
+	 *
+	 * **Page source.** When constructed with a non-null @c pagePool the allocator draws normal pages from
+	 * (and returns them to) that thread-safe pool, so many single-threaded allocators can recycle a
+	 * shared, bounded set of heaps.
 	 *
 	 * **Page lifecycle.** Three kinds of pages coexist:
 	 *  - Active page (at most one): the page currently being bumped from.
@@ -44,32 +178,38 @@ namespace b3d
 	 * explicitly via @ref Reset, and the actual recycling runs from the deferred-free drain after
 	 * the retired page's fence completes.
 	 *
-	 * **Threading.** When @p ThreadPolicy is ThreadSafe (the default), every public entry point
-	 * acquires the allocator-wide mutex inherited from TGpuAllocator. When @p ThreadPolicy is
-	 * ThreadUnsafe, locking compiles out and the caller is responsible for external synchronization.
+	 * **Threading.** This allocator is always thread-unsafe: it performs no internal locking and the
+	 * caller is responsible for external synchronization. A single allocator is intended to be owned and
+	 * driven by one thread/operation at a time; cross-thread page recycling goes through the thread-safe
+	 * @ref TGpuLinearPagePool, not through a shared allocator.
 	 *
 	 * @tparam HeapBackend		Backend trait satisfying the GpuHeapBackend contract.
-	 * @tparam ThreadPolicy		Compile-time thread-safety policy.
 	 *
 	 * @see TGpuAllocator
 	 */
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy = ThreadSafe>
-	class TGpuLinearAllocator : public TGpuAllocator<TGpuLinearAllocator<HeapBackend, ThreadPolicy>, HeapBackend, ThreadPolicy>
+	template <typename HeapBackend>
+	class TGpuLinearAllocator : public TGpuAllocator<TGpuLinearAllocator<HeapBackend>, HeapBackend, ThreadUnsafe>
 	{
 	public:
-		using Base = TGpuAllocator<TGpuLinearAllocator<HeapBackend, ThreadPolicy>, HeapBackend, ThreadPolicy>;
+		using Base = TGpuAllocator<TGpuLinearAllocator<HeapBackend>, HeapBackend, ThreadUnsafe>;
 		using Location = typename Base::Location;
 		using HeapHandle = typename HeapBackend::HeapHandle;
+		using PagePool = TGpuLinearPagePool<HeapBackend>;
 
 		/** Runtime configuration for the allocator. */
 		struct Configuration
 		{
-			/** Default backing-heap size (one page == one heap). */
+			/**
+			 * Default backing-heap size (one page == one heap). When a shared pool is supplied, the pool's
+			 * page size governs normal pages and this is used only for the oversize threshold; they should
+			 * match.
+			 */
 			u64 PageSize = 4ull * 1024 * 1024;
 
 			/**
 			 * Number of fence-completed normal pages to retain as warm spares before destroying further
-			 * drained pages. Oversize pages never enter the spare list regardless of this setting.
+			 * drained pages. Oversize pages never enter the spare list regardless of this setting. Ignored
+			 * when a shared pool is supplied (the pool owns the retention bound).
 			 */
 			u32 MaxRetainedPages = 2;
 
@@ -77,7 +217,13 @@ namespace b3d
 			typename HeapBackend::HeapCreateInformation HeapCreateInfo{};
 		};
 
-		TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration);
+		/**
+		 * @param backend			Heap backend; must outlive this allocator.
+		 * @param completionTracker	Determines when pages can be safely retired (i.e. GPU is done with them); must be non-null.
+		 * @param configuration		Page size (oversize threshold), oversize heap create-info, internal bound.
+		 * @param pagePool			Optional shared page source for normal pages. When null the allocator keeps its own internal spare list.
+		 */
+		TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration, PagePool* pagePool = nullptr);
 		~TGpuLinearAllocator();
 
 		// Non-copyable — page state is not safe to duplicate.
@@ -153,6 +299,9 @@ namespace b3d
 		static constexpr u32 kReclaimAllocation = 0; /**< Per-allocation reclaim — no-op for linear. */
 		static constexpr u32 kReclaimPage = 1;       /**< Page-retirement drain — recycle the whole page. */
 
+		/** Effective normal-page size: the shared pool's when present, otherwise the configured size. */
+		u64 GetPageSize() const { return mPagePool != nullptr ? mPagePool->GetPageSize() : mConfig.PageSize; }
+
 		/** Round @p value up to the next multiple of @p alignment, which must be a power of two. */
 		static u64 AlignUp(u64 value, u32 alignment)
 		{
@@ -170,10 +319,10 @@ namespace b3d
 		};
 
 		/** Acquires a normal page (from spares if available, otherwise a fresh CreateHeap). */
-		u32 AcquireNormalPage();
+		u32 AcquirePage();
 
 		/** Allocates a fresh dedicated heap of @p size bytes; never enters the spare list. */
-		u32 CreateOversizePage(u64 size);
+		u32 CreateOversizedPage(u64 size);
 
 		/** Stamps @p pageIndex into the base's deferred-free queue against the current frame index. */
 		void RetirePage(u32 pageIndex);
@@ -185,21 +334,23 @@ namespace b3d
 		u32 InsertIntoPageTable(Page* page);
 
 		Configuration mConfig;
+		PagePool* mPagePool = nullptr;    /**< Shared page source; null means use the internal spare list. */
+		TPool<Page> mPageStorage;         /**< Backing store for Page structs; recycles slots so acquire/drain doesn't churn heap allocations. */
 		Vector<Page*> mPages;             /**< Indexed; FreeImmediateImpl uses these indices. nullptr for vacated slots. */
-		Vector<u32> mSparePages;          /**< Drained pages held warm; popped on AcquireNormalPage. */
+		Vector<u32> mSparePages;          /**< Drained pages held warm; popped on AcquireNormalPage. Only relevant when mPagePool is null. */
 		u32 mCurrentPageIndex = kInvalidPageIndex;
 	};
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	TGpuLinearAllocator<HeapBackend, ThreadPolicy>::TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration)
-		: Base(backend, completionTracker), mConfig(configuration)
+	template <typename HeapBackend>
+	TGpuLinearAllocator<HeapBackend>::TGpuLinearAllocator(HeapBackend* backend, IGpuCompletionTracker* completionTracker, const Configuration& configuration, PagePool* pagePool)
+		: Base(backend, completionTracker), mConfig(configuration), mPagePool(pagePool)
 	{
 		B3D_ASSERT(mConfig.PageSize > 0);
 		B3D_ASSERT(completionTracker != nullptr); // Linear pages always retire against a completion marker.
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	TGpuLinearAllocator<HeapBackend, ThreadPolicy>::~TGpuLinearAllocator()
+	template <typename HeapBackend>
+	TGpuLinearAllocator<HeapBackend>::~TGpuLinearAllocator()
 	{
 		// Drain unconditionally — any submissions still in flight at destructor time are the caller's
 		// responsibility to wait for via WaitUntilIdle, matching the convention from TGpuAllocator.
@@ -210,14 +361,14 @@ namespace b3d
 			if (mPages[pageIndex] != nullptr)
 			{
 				Base::mBackend->DestroyHeap(mPages[pageIndex]->Handle);
-				B3DDelete(mPages[pageIndex]);
+				mPageStorage.Release(mPages[pageIndex]);
 				mPages[pageIndex] = nullptr;
 			}
 		}
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	bool TGpuLinearAllocator<HeapBackend, ThreadPolicy>::TryAllocateImpl(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, Location& out)
+	template <typename HeapBackend>
+	bool TGpuLinearAllocator<HeapBackend>::TryAllocateImpl(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, Location& out)
 	{
 		B3D_ASSERT(out.Allocator == nullptr);
 		B3D_ASSERT(alignment > 0);
@@ -229,9 +380,9 @@ namespace b3d
 
 		// Oversize: dedicated one-shot heap, retired immediately. Active page is left untouched so the
 		// next regular request keeps bumping from where it was.
-		if (size > mConfig.PageSize)
+		if (size > GetPageSize())
 		{
-			const u32 oversizeIndex = CreateOversizePage(size);
+			const u32 oversizeIndex = CreateOversizedPage(size);
 			Page* oversize = mPages[oversizeIndex];
 			oversize->BumpOffset = size;
 
@@ -249,7 +400,7 @@ namespace b3d
 
 		// Acquire an active page on first allocate.
 		if (mCurrentPageIndex == kInvalidPageIndex)
-			mCurrentPageIndex = AcquireNormalPage();
+			mCurrentPageIndex = AcquirePage();
 
 		Page* active = mPages[mCurrentPageIndex];
 		u64 alignedOffset = AlignUp(active->BumpOffset, alignment);
@@ -260,7 +411,7 @@ namespace b3d
 		if (alignedOffset + size > active->Size)
 		{
 			RetirePage(mCurrentPageIndex);
-			mCurrentPageIndex = AcquireNormalPage();
+			mCurrentPageIndex = AcquirePage();
 			active = mPages[mCurrentPageIndex];
 			alignedOffset = AlignUp(active->BumpOffset, alignment);
 			B3D_ASSERT(alignedOffset + size <= active->Size);
@@ -278,8 +429,8 @@ namespace b3d
 		return true;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuLinearAllocator<HeapBackend, ThreadPolicy>::FreeImpl(Location& allocation)
+	template <typename HeapBackend>
+	void TGpuLinearAllocator<HeapBackend>::FreeImpl(Location& allocation)
 	{
 		// Per-allocation Free is a no-op for the linear allocator. Pages recycle as a whole when they
 		// fill up or when Reset is called; individual allocations never reclaim space. The base wraps
@@ -287,8 +438,8 @@ namespace b3d
 		(void)allocation;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuLinearAllocator<HeapBackend, ThreadPolicy>::FreeImmediateImpl(u32 pageIndex, u32 reclaimKind)
+	template <typename HeapBackend>
+	void TGpuLinearAllocator<HeapBackend>::FreeImmediateImpl(u32 pageIndex, u32 reclaimKind)
 	{
 		// Per-allocation FreeImmediate is a no-op for the linear allocator: a page is shared by every
 		// allocation that fit into it, so a single Location can't release the page without invalidating
@@ -302,21 +453,36 @@ namespace b3d
 		Page* page = mPages[pageIndex];
 		B3D_ASSERT(page != nullptr);
 
-		if (page->Oversize || mSparePages.size() >= mConfig.MaxRetainedPages)
+		// Oversize pages are dedicated one-shot heaps; they never re-enter any spare list.
+		if (page->Oversize)
 		{
 			DestroyPage(pageIndex);
 			return;
 		}
 
-		// Reset for reuse and park on the spare list.
+		if (mPagePool != nullptr)
+		{
+			// Hand the GPU-safe heap back to the shared pool and vacate our slot
+			mPagePool->ReleasePage(page->Handle);
+			mPages[pageIndex] = nullptr;
+			mPageStorage.Release(page);
+			return;
+		}
+
+		// Internal spare list: park the page for reuse while under the retention bound, else destroy it.
+		if (mSparePages.size() >= mConfig.MaxRetainedPages)
+		{
+			DestroyPage(pageIndex);
+			return;
+		}
+
 		page->BumpOffset = 0;
 		mSparePages.push_back(pageIndex);
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuLinearAllocator<HeapBackend, ThreadPolicy>::Reset()
+	template <typename HeapBackend>
+	void TGpuLinearAllocator<HeapBackend>::Reset()
 	{
-		typename Base::ScopedLock lock(this->GetMutex());
 		if (mCurrentPageIndex == kInvalidPageIndex)
 			return;
 
@@ -324,10 +490,9 @@ namespace b3d
 		mCurrentPageIndex = kInvalidPageIndex;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u64 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::GetCommittedBytes() const
+	template <typename HeapBackend>
+	u64 TGpuLinearAllocator<HeapBackend>::GetCommittedBytes() const
 	{
-		typename Base::ScopedLock lock(this->GetMutex());
 		u64 total = 0;
 		for (Page* page : mPages)
 		{
@@ -338,27 +503,24 @@ namespace b3d
 		return total;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u64 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::GetUsedBytes() const
+	template <typename HeapBackend>
+	u64 TGpuLinearAllocator<HeapBackend>::GetUsedBytes() const
 	{
-		typename Base::ScopedLock lock(this->GetMutex());
 		if (mCurrentPageIndex == kInvalidPageIndex)
 			return 0;
 
 		return mPages[mCurrentPageIndex]->BumpOffset;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u32 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::GetSparePageCount() const
+	template <typename HeapBackend>
+	u32 TGpuLinearAllocator<HeapBackend>::GetSparePageCount() const
 	{
-		typename Base::ScopedLock lock(this->GetMutex());
 		return (u32)mSparePages.size();
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u32 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::GetLivePageCount() const
+	template <typename HeapBackend>
+	u32 TGpuLinearAllocator<HeapBackend>::GetLivePageCount() const
 	{
-		typename Base::ScopedLock lock(this->GetMutex());
 		u32 count = 0;
 		for (Page* page : mPages)
 		{
@@ -369,9 +531,19 @@ namespace b3d
 		return count;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u32 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::AcquireNormalPage()
+	template <typename HeapBackend>
+	u32 TGpuLinearAllocator<HeapBackend>::AcquirePage()
 	{
+		if (mPagePool != nullptr)
+		{
+			// The pool owns the GPU heap; mPageStorage owns the Page struct (recycling its slot).
+			Page* page = mPageStorage.Allocate();
+			page->Handle = mPagePool->AcquirePage();
+			page->Size = mPagePool->GetPageSize();
+
+			return InsertIntoPageTable(page);
+		}
+
 		if (!mSparePages.empty())
 		{
 			const u32 spareIndex = mSparePages.back();
@@ -379,29 +551,26 @@ namespace b3d
 			return spareIndex;
 		}
 
-		const HeapHandle handle = Base::mBackend->CreateHeap(mConfig.PageSize, mConfig.HeapCreateInfo);
-		Page* page = B3DNew<Page>();
-		page->Handle = handle;
+		Page* page = mPageStorage.Allocate();
+		page->Handle = Base::mBackend->CreateHeap(mConfig.PageSize, mConfig.HeapCreateInfo);
 		page->Size = mConfig.PageSize;
-		page->Oversize = false;
 
 		return InsertIntoPageTable(page);
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u32 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::CreateOversizePage(u64 size)
+	template <typename HeapBackend>
+	u32 TGpuLinearAllocator<HeapBackend>::CreateOversizedPage(u64 size)
 	{
-		const HeapHandle handle = Base::mBackend->CreateHeap(size, mConfig.HeapCreateInfo);
-		Page* page = B3DNew<Page>();
-		page->Handle = handle;
+		Page* page = mPageStorage.Allocate();
+		page->Handle = Base::mBackend->CreateHeap(size, mConfig.HeapCreateInfo);
 		page->Size = size;
 		page->Oversize = true;
 
 		return InsertIntoPageTable(page);
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuLinearAllocator<HeapBackend, ThreadPolicy>::RetirePage(u32 pageIndex)
+	template <typename HeapBackend>
+	void TGpuLinearAllocator<HeapBackend>::RetirePage(u32 pageIndex)
 	{
 		B3D_ASSERT(pageIndex < (u32)mPages.size());
 		B3D_ASSERT(mPages[pageIndex] != nullptr);
@@ -414,19 +583,19 @@ namespace b3d
 		Base::RetireAllocation(snapshot);
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuLinearAllocator<HeapBackend, ThreadPolicy>::DestroyPage(u32 pageIndex)
+	template <typename HeapBackend>
+	void TGpuLinearAllocator<HeapBackend>::DestroyPage(u32 pageIndex)
 	{
 		Page* page = mPages[pageIndex];
 		B3D_ASSERT(page != nullptr);
 
 		Base::mBackend->DestroyHeap(page->Handle);
-		B3DDelete(page);
+		mPageStorage.Release(page);
 		mPages[pageIndex] = nullptr;
 	}
 
-	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	u32 TGpuLinearAllocator<HeapBackend, ThreadPolicy>::InsertIntoPageTable(Page* page)
+	template <typename HeapBackend>
+	u32 TGpuLinearAllocator<HeapBackend>::InsertIntoPageTable(Page* page)
 	{
 		// Reuse a vacated slot if one exists; otherwise grow the vector. Slot reuse keeps page indices
 		// from drifting upward forever and matches the pattern used by TGpuTlsfAllocator::CreateNewHeap.

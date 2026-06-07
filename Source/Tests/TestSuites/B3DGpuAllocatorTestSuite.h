@@ -184,8 +184,5 @@ namespace b3d
 
 		/** Per-allocation FreeImmediate is also a no-op: calling it on one Location does not invalidate peer Locations sharing the same page, and the page itself is not recycled. */
 		void TestLinear_FreeImmediateOnSharedPageIsNoop();
-
-		/** Compile-time + runtime smoke test for the ThreadUnsafe policy: instantiating the linear allocator with ThreadSafetyPolicy::ThreadUnsafe compiles and behaves identically. */
-		void TestLinear_ThreadUnsafePolicyOptOut();
 	};
 } // namespace b3d
