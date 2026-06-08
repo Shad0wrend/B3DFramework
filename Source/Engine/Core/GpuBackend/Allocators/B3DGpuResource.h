@@ -8,6 +8,8 @@
 namespace b3d
 {
 	class GpuResourceManager;
+	class IGpuResource;
+	struct GpuResourceLocation;
 	namespace render { class GpuCommandBuffer; }
 
 	/** @addtogroup GpuBackend
@@ -40,6 +42,35 @@ namespace b3d
 	};
 
 	/**
+	 * Backend-agnostic GPU memory allocator interface. The CRTP TGpuAllocator family implements this.
+	 *
+	 * An IGpuAllocator* is a borrowed call handle, never an owning one: allocators are always owned
+	 * and destroyed as their concrete type. The destructor is therefore protected and non-virtual —
+	 * an allocator is never deleted through this interface.
+	 */
+	class IGpuAllocator
+	{
+	public:
+		/**
+		 * Attempts to allocate @p size bytes with @p alignment, tagged with @p kind so the strategy can
+		 * honor buffer-image granularity, and optionally registering @p owner for defragmentation
+		 * callbacks (pass nullptr for an untracked allocation). On success populates @p out — including
+		 * stamping @p out.Allocator with this allocator — and returns true.
+		 */
+		virtual bool TryAllocate(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, GpuResourceLocation& out) = 0;
+
+		/** Retires @p allocation (deferred free per the allocator's policy) and resets it to the empty state. */
+		virtual void Free(GpuResourceLocation& allocation) = 0;
+
+		/** Releases @p allocation immediately, bypassing any deferred-free queue, and resets it to the empty state. */
+		virtual void FreeImmediate(GpuResourceLocation& allocation) = 0;
+
+	protected:
+		IGpuAllocator() = default;
+		~IGpuAllocator() = default;
+	};
+
+	/**
 	 * GPU memory allocation as returned by a GPU memory allocator. Used for freeing the allocation, as well
 	 * as referencing the underlying memory. Each consumer owns their location and is the sole writer; the
 	 * allocator only writes to the consumer's location once during the initial TryAllocate, and then
@@ -54,8 +85,8 @@ namespace b3d
 		u64 Offset = 0;
 		u64 Size = 0;
 
-		/** Type-erased pointer to the allocator strategy that owns this allocation. */
-		void* Allocator = nullptr;
+		/** Allocator that produced this allocation; used to free or relocate it. Stamped at TryAllocate. */
+		IGpuAllocator* Allocator = nullptr;
 
 		// Strategy-private bookkeeping. Interpretation is private to the owning allocator.
 		u32 AllocatorData0 = 0;

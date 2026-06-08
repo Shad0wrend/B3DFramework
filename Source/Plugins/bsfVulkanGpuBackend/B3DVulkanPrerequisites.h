@@ -58,7 +58,6 @@ namespace b3d
 		class VulkanResourceManager;
 		class VulkanBuffer;
 		class VulkanImage;
-		class VulkanDescriptorPool;
 		class VulkanGpuParameterSet;
 		class VulkanEvent;
 		class VulkanVertexInput;

@@ -48,9 +48,8 @@ namespace b3d
 		 */
 		struct VulkanAllocationResult
 		{
-			GpuResourceLocation Location; /**< Allocator slot — heap, offset, size, allocator-private bookkeeping. */
+			GpuResourceLocation Location; /**< Allocator slot — heap, offset, size, owning allocator, allocator-private bookkeeping. */
 			void* MappedMemory = nullptr; /**< Heap.Mapped + Location.Offset for host-visible heaps; null otherwise. */
-			bool IsTransient = false; /**< True if produced by the linear (bump) allocator rather than the TLSF allocator; controls which allocator frees it. */
 
 			/** Returns true once the allocator has populated this result with a live slot. */
 			bool IsValid() const { return Location.IsValid(); }

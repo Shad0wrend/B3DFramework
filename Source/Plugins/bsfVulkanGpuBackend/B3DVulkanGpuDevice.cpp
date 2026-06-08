@@ -1046,7 +1046,6 @@ VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VkMemory
 	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested buffer allocation flags.");
 
 	VulkanAllocationResult output;
-	output.IsTransient = transient;
 
 	if (transient)
 	{
@@ -1075,19 +1074,7 @@ void VulkanGpuDevice::FreeMemory(VulkanAllocationResult& allocation)
 	if (!allocation.IsValid())
 		return;
 
-	const u32 memoryTypeIndex = ToVulkanGpuHeap(allocation.Location.Heap).MemoryTypeIndex;
-
-	if (allocation.IsTransient)
-	{
-		TGpuLinearAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuLinearAllocator(memoryTypeIndex);
-		allocator.FreeImmediate(allocation.Location);
-	}
-	else
-	{
-		TGpuTlsfAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
-		allocator.FreeImmediate(allocation.Location);
-	}
-
+	allocation.Location.Allocator->FreeImmediate(allocation.Location);
 	allocation.MappedMemory = nullptr;
 }
 

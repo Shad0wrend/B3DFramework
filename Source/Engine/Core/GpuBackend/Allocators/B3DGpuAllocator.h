@@ -135,7 +135,7 @@ namespace b3d
 	 * 						RecursiveMutex; ThreadUnsafe compiles out all locking.
 	 */
 	template <typename Derived, typename HeapBackend, ThreadSafetyPolicy ThreadPolicy = ThreadSafe>
-	class TGpuAllocator
+	class TGpuAllocator : public IGpuAllocator
 	{
 	public:
 		B3D_STATIC_ASSERT_HEAP_BACKEND_IS_VALID(HeapBackend);
@@ -160,7 +160,7 @@ namespace b3d
 		 * @p owner as the resource the allocator will call back during defragmentation. Pass
 		 * nullptr if the allocation is untracked (won't participate in defragmentation).
 		 */
-		bool TryAllocate(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, GpuResourceLocation& out)
+		bool TryAllocate(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, GpuResourceLocation& out) override
 		{
 			ScopedLock lock(mMutex);
 			return static_cast<Derived*>(this)->TryAllocateImpl(size, alignment, kind, owner, out);
@@ -170,7 +170,7 @@ namespace b3d
 		 * Retires a previously allocated location and resets it to the empty state. Frees are
 		 * deferred until the associated resource is no longer used on the GPU.
 		 */
-		void Free(GpuResourceLocation& allocation)
+		void Free(GpuResourceLocation& allocation) override
 		{
 			ScopedLock lock(mMutex);
 			static_cast<Derived*>(this)->FreeImpl(allocation);
@@ -185,7 +185,7 @@ namespace b3d
 		 * example, when the caller already gates resource destruction on a separate use-count or
 		 * frame fence. Use Free when no such guarantee exists.
 		 */
-		void FreeImmediate(GpuResourceLocation& allocation)
+		void FreeImmediate(GpuResourceLocation& allocation) override
 		{
 			ScopedLock lock(mMutex);
 			static_cast<Derived*>(this)->FreeImmediateImpl(allocation.AllocatorData0, allocation.AllocatorData1);
