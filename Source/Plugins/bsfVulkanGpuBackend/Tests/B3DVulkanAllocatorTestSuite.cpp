@@ -181,7 +181,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeHostVisibleBuffer()
 
 	vkDestroyBuffer(device->GetLogical(), buffer, nullptr);
 
-	allocator.FreeImmediate(location);
+	allocator.FreeAndReclaim(location);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 
@@ -229,7 +229,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeDeviceLocalImage()
 
 	vkDestroyImage(device->GetLogical(), image, nullptr);
 
-	allocator.FreeImmediate(location);
+	allocator.FreeAndReclaim(location);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 
@@ -279,7 +279,7 @@ void VulkanAllocatorTestSuite::TestBufferHeapGrowth()
 	B3D_TEST_ASSERT(allocator.GetHeapCount() > 1)
 
 	for (u32 entryIndex = 0; entryIndex < kAllocCount; entryIndex++)
-		allocator.FreeImmediate(locations[entryIndex]);
+		allocator.FreeAndReclaim(locations[entryIndex]);
 
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }

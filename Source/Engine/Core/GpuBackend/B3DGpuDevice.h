@@ -8,7 +8,6 @@
 #include "B3DGpuTimelineFence.h"
 #include "B3DPrerequisites.h"
 #include "B3DSamplerState.h"
-#include "B3DGpuTransferBufferHelper.h"
 #include "B3DGpuWorkContext.h"
 
 namespace b3d::render
@@ -23,6 +22,7 @@ namespace b3d
 {
 	class GpuPipelineParameterSetLayout;
 	class GpuFrameCapture;
+	class IGpuAllocator;
 	struct SamplerStateCreateInformation;
 	struct TextureCreateInformation;
 	struct TextureCopyInformation;
@@ -569,6 +569,16 @@ namespace b3d
 		/** Creates a timeline fence that can be signaled when command buffer execution finishes. */
 		virtual TShared<GpuTimelineFence> CreateTimelineFence() = 0;
 
+		/**
+		 * Backend factory for a context-owned transient (linear/bump) allocator. Manufactures an
+		 * allocator for memory type @p memoryType, drawing pages from the device's shared per-type page
+		 * pool and retiring them against @p completionTracker. Ownership transfers to the caller.
+		 *
+		 * The base implementation returns nullptr (context transient allocation unsupported); backends
+		 * that support it override this.
+		 */
+		virtual TUnique<IGpuAllocator> CreateTransientAllocator(u32 memoryType, IGpuCompletionTracker& completionTracker);
+
 		/************************************************************************/
 		/* 								UTILITY METHODS                    		*/
 		/************************************************************************/
@@ -642,17 +652,13 @@ namespace b3d
 			return TShared<Type>(data, fnStandaloneDeleter, StdAlloc<Type, PointerDataAllocatorTag>());
 		}
 
-		TUnique<GpuTransferBufferHelper> mTransferBufferHelper;
-
 		mutable UnorderedMap<SamplerStateCreateInformation, TShared<SamplerState>> mCachedSamplerStates;
 		mutable Mutex mSamplerStateMutex;
 
 	private:
 		GpuFrameCompletionTracker mPrimaryTracker;
 
-		// Declared after mPrimaryTracker so it is constructed last and torn down first; borrows the
-		// tracker above. Render-thread-bound, persistent for the device lifetime.
-		GpuWorkContext mPrimaryContext;
+		TShared<GpuWorkContext> mPrimaryContext; // Built after mPrimaryTracker, which it borrows
 	};
 
 	/** @} */

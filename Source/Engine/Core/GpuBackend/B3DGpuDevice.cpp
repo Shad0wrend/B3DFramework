@@ -2,10 +2,10 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DGpuDevice.h"
 #include "B3DGpuCommandBuffer.h"
-#include "B3DGpuTransferBufferHelper.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "Image/B3DTexture.h"
 #include "GpuBackend/B3DGpuBuffer.h"
+#include "GpuBackend/Allocators/B3DGpuResource.h"
 
 using namespace b3d;
 
@@ -18,7 +18,7 @@ GpuQueue::GpuQueue(GpuDevice& gpuDevice, GpuQueueType type, u32 index)
 }
 
 GpuDevice::GpuDevice()
-	: mPrimaryContext(*this, mPrimaryTracker)
+	: mPrimaryContext(GpuWorkContext::Create(*this, mPrimaryTracker))
 {
 }
 

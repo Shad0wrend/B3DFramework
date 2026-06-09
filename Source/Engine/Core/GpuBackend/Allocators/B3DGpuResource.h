@@ -43,14 +43,12 @@ namespace b3d
 
 	/**
 	 * Backend-agnostic GPU memory allocator interface. The CRTP TGpuAllocator family implements this.
-	 *
-	 * An IGpuAllocator* is a borrowed call handle, never an owning one: allocators are always owned
-	 * and destroyed as their concrete type. The destructor is therefore protected and non-virtual —
-	 * an allocator is never deleted through this interface.
 	 */
 	class IGpuAllocator
 	{
 	public:
+		virtual ~IGpuAllocator() = default;
+
 		/**
 		 * Attempts to allocate @p size bytes with @p alignment, tagged with @p kind so the strategy can
 		 * honor buffer-image granularity, and optionally registering @p owner for defragmentation
@@ -63,11 +61,29 @@ namespace b3d
 		virtual void Free(GpuResourceLocation& allocation) = 0;
 
 		/** Releases @p allocation immediately, bypassing any deferred-free queue, and resets it to the empty state. */
-		virtual void FreeImmediate(GpuResourceLocation& allocation) = 0;
+		virtual void FreeAndReclaim(GpuResourceLocation& allocation) = 0;
+
+		/**
+		 * Releases every retired allocation whose completion marker has signaled (per
+		 * IGpuCompletionTracker::IsMarkerComplete), returning that memory to the allocator's pool.
+		 * @p forceReclaimAll drains unconditionally and must only be used at teardown after the GPU is
+		 * known idle.
+		 */
+		virtual void ReclaimUnused(bool forceReclaimAll = false) = 0;
+
+		/**
+		 * Frees every live allocation in one shot, resetting the allocator to its empty state. Only the
+		 * linear/bump allocator supports this — it recycles memory by the page, so retiring its open
+		 * pages frees everything at once. Every other strategy frees per allocation, so the default
+		 * implementation is an error.
+		 */
+		virtual void FreeAll()
+		{
+			B3D_ENSURE_LOG(false, "FreeAll is only supported by the linear/bump allocator.");
+		}
 
 	protected:
 		IGpuAllocator() = default;
-		~IGpuAllocator() = default;
 	};
 
 	/**

@@ -245,13 +245,13 @@ namespace
 		tracker.AdvanceFrame();
 		allocator.Free(location);
 		tracker.MarkAllFramesComplete();
-		allocator.Flush();
+		allocator.ReclaimUnused();
 	}
 
 	/**
 	 * Default TLSF configuration: 1 MB heaps, capped at 4 MB, no warm-spare retention beyond 1.
 	 * The tests override individual fields as needed. @c DeferralMode defaults to @c FrameTracker so
-	 * existing tests that drive @c Free → @c AdvanceFrame → @c MarkFrameComplete → @c Flush keep
+	 * existing tests that drive @c Free → @c AdvanceFrame → @c MarkFrameComplete → @c ReclaimUnused keep
 	 * exercising the queued path.
 	 */
 	TlsfAllocator::Configuration MakeDefaultTlsfConfig(u64 initial = 1 * 1024 * 1024, u64 maxHeap = 4 * 1024 * 1024)
@@ -302,10 +302,10 @@ namespace
 	{
 		tracker.AdvanceFrame();
 		tracker.MarkAllFramesComplete();
-		allocator.Flush();
+		allocator.ReclaimUnused();
 	}
 
-	/** Identifier the deferred-free queue forwards to a strategy's FreeImmediateImpl. */
+	/** Identifier the deferred-free queue forwards to a strategy's FreeAndReclaimImpl. */
 	struct FreedSlot
 	{
 		u32 AllocatorData0;
@@ -314,7 +314,7 @@ namespace
 
 	/**
 	 * Minimal CRTP-derived allocator used by the contract and deferred-delete tests. Records every
-	 * FreeImmediateImpl call in FreedSlots so tests can assert which retired slots were actually drained.
+	 * FreeAndReclaimImpl call in FreedSlots so tests can assert which retired slots were actually drained.
 	 * TryAllocateImpl / FreeImpl exist only to prove the public surface compiles and links.
 	 */
 	class MockAllocator : public TGpuAllocator<MockAllocator, MockHeapBackend>
@@ -340,7 +340,7 @@ namespace
 			RetireAllocation(allocation);
 		}
 
-		void FreeImmediateImpl(u32 allocatorData0, u32 allocatorData1)
+		void FreeAndReclaimImpl(u32 allocatorData0, u32 allocatorData1)
 		{
 			FreedSlots.push_back({ allocatorData0, allocatorData1 });
 		}
@@ -426,7 +426,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorContract()
 
 	tracker.MarkFrameComplete(submittedIndex);
 
-	allocator.Flush();
+	allocator.ReclaimUnused();
 	B3D_TEST_ASSERT(allocator.FreedSlots.size() == 1)
 	B3D_TEST_ASSERT(allocator.FreedSlots[0].AllocatorData0 == 5)
 	B3D_TEST_ASSERT(allocator.FreedSlots[0].AllocatorData1 == 7)
@@ -465,7 +465,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 
 		// Signal only past the first entry. The drain must release exactly that one and stop.
 		tracker.MarkFrameComplete(indexA);
-		allocator.Flush();
+		allocator.ReclaimUnused();
 
 		B3D_TEST_ASSERT(allocator.FreedSlots.size() == 1)
 		B3D_TEST_ASSERT(allocator.FreedSlots[0].AllocatorData0 == 1)
@@ -473,7 +473,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 
 		// Case 2: Subsequent advance drains the rest in original order.
 		tracker.MarkFrameComplete(indexC);
-		allocator.Flush();
+		allocator.ReclaimUnused();
 
 		B3D_TEST_ASSERT(allocator.FreedSlots.size() == 3)
 		B3D_TEST_ASSERT(allocator.FreedSlots[1].AllocatorData0 == 2)
@@ -482,7 +482,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 		B3D_TEST_ASSERT(allocator.FreedSlots[2].AllocatorData1 == 30)
 	}
 
-	// Case 3: Flush(forceComplete=true) drains everything regardless of submission state.
+	// Case 3: ReclaimUnused(forceReclaimAll=true) drains everything regardless of submission state.
 	{
 		MockHeapBackend backend;
 		MockGpuCompletionTracker tracker;
@@ -498,7 +498,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 		tracker.AdvanceFrame(); allocator.RetireAllocation(locationC);
 
 		// No Signal() call — submissions remain incomplete.
-		allocator.Flush(true);
+		allocator.ReclaimUnused(true);
 
 		B3D_TEST_ASSERT(allocator.FreedSlots.size() == 3)
 		B3D_TEST_ASSERT(allocator.FreedSlots[0].AllocatorData0 == 1)
@@ -535,7 +535,7 @@ void GpuAllocatorTestSuite::TestGpuAllocatorDeferredDelete()
 		location.AllocatorData1 = 8;
 
 		tracker.MarkFrameComplete(retireIndex);
-		allocator.Flush();
+		allocator.ReclaimUnused();
 
 		B3D_TEST_ASSERT(allocator.FreedSlots.size() == 1)
 		B3D_TEST_ASSERT(allocator.FreedSlots[0].AllocatorData0 == 42)
@@ -681,7 +681,7 @@ void GpuAllocatorTestSuite::TestTlsf_SingleAllocateFree()
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == usedAfterAlloc) // Still accounted for — fence pending.
 
 	tracker.MarkFrameComplete(retireSubmission);
-	allocator.Flush();
+	allocator.ReclaimUnused();
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 
@@ -726,7 +726,7 @@ void GpuAllocatorTestSuite::TestTlsf_NonOverlappingAlignedOffsets()
 	for (Alloc& record : allocs)
 		allocator.Free(record.Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush();
+	allocator.ReclaimUnused();
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 
@@ -767,7 +767,7 @@ void GpuAllocatorTestSuite::TestTlsf_CoalesceAllOrders()
 		for (u32 freeIndex = 0; freeIndex < 3; freeIndex++)
 			allocator.Free(locations[freeOrder[freeIndex]]);
 		tracker.MarkAllFramesComplete();
-		allocator.Flush();
+		allocator.ReclaimUnused();
 		B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 
 		// Coalescing proof: a single allocation equal to the entire usable heap must succeed. If any
@@ -806,7 +806,7 @@ void GpuAllocatorTestSuite::TestTlsf_LargeAlignmentSplitsLeadingPadding()
 	allocator.Free(aligned);
 	allocator.Free(pin);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush();
+	allocator.ReclaimUnused();
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 
 	// After draining, the allocator should once again be able to fit a single allocation that
@@ -850,7 +850,7 @@ void GpuAllocatorTestSuite::TestTlsf_HeapGrowthAndEmptyRelease()
 	for (MockLocation& location : allocs)
 		allocator.Free(location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush();
+	allocator.ReclaimUnused();
 
 	// MaxEmptyHeapCount = 1, so all but one heap must be returned to the backend.
 	B3D_TEST_ASSERT(allocator.GetHeapCount() == 1)
@@ -938,7 +938,7 @@ void GpuAllocatorTestSuite::TestTlsf_RandomStressNoLeak()
 		if ((iteration % 32) == 0)
 		{
 			tracker.MarkAllFramesComplete();
-			allocator.Flush();
+			allocator.ReclaimUnused();
 		}
 	}
 
@@ -947,7 +947,7 @@ void GpuAllocatorTestSuite::TestTlsf_RandomStressNoLeak()
 	for (Live& record : live)
 		allocator.Free(record.Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush();
+	allocator.ReclaimUnused();
 
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
@@ -1128,7 +1128,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_DrainsHighestHeap()
 	allocator.Free(holders[0]->Location);
 	allocator.Free(holders[1]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	const TlsfAllocator::DefragmentationStats stats = allocator.Defrag(NullCommandBuffer());
 
@@ -1142,7 +1142,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_DrainsHighestHeap()
 	// the now-empty heap 1 is released back to the backend.
 	tracker.AdvanceFrame();
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	B3D_TEST_ASSERT(allocator.GetHeapCount() == 1)
 }
@@ -1181,7 +1181,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_SingleHeapWithinHeapCompaction()
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex += 2)
 		allocator.Free(holders[holderIndex]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	const TlsfAllocator::DefragmentationStats stats = allocator.Defrag(NullCommandBuffer());
 
@@ -1232,7 +1232,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_RespectsBudget()
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex += 2)
 		allocator.Free(holders[holderIndex]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	TlsfAllocator::DefragmentationInfo info{};
 	info.MaxBytesPerCall = kAllocSize; // One allocation worth.
@@ -1285,7 +1285,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_OnlySkipsUntrackedSlots()
 	allocator.Free(holders[2]->Location);
 	allocator.Free(holders[4]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	const TlsfAllocator::DefragmentationStats stats = allocator.Defrag(NullCommandBuffer());
 
@@ -1331,7 +1331,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MovesInFlightResource()
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex += 2)
 		allocator.Free(holders[holderIndex]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	const TlsfAllocator::DefragmentationStats stats = allocator.Defrag(NullCommandBuffer());
 
@@ -1383,7 +1383,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MoveAllocationReceivesContext()
 	for (u32 holderIndex = 0; holderIndex < kAllocCount; holderIndex += 2)
 		allocator.Free(holders[holderIndex]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	// Capture original offsets for survivors before Defrag rewrites their locations.
 	Vector<u64> originalOffsetForSurvivor;
@@ -1423,7 +1423,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_MoveAllocationReceivesContext()
 
 void GpuAllocatorTestSuite::TestTlsf_ResourceLifecyclePolicy_FreesImmediately()
 {
-	// Under ResourceLifecycle, Free routes straight to FreeImmediate without going through the
+	// Under ResourceLifecycle, Free routes straight to FreeAndReclaim without going through the
 	// deferred-free queue. The expectation: bytes go to zero the moment Free returns, regardless of
 	// frame-tracker state. The frame tracker is intentionally not advanced or signaled here — if the
 	// implementation took the FrameTracker path, the slot would still be queued.
@@ -1466,7 +1466,7 @@ void GpuAllocatorTestSuite::TestTlsf_FrameTrackerPolicy_DefersAcrossFrames()
 	const u64 retireFrame = tracker.CurrentFrameIndex();
 	allocator.Free(location);
 	B3D_TEST_ASSERT(!location.IsValid())
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == usedAfterAlloc)
 
 	// Even after kMaximumFramesInFlight ticks the slot is still held — the mock tracker tracks
@@ -1474,12 +1474,12 @@ void GpuAllocatorTestSuite::TestTlsf_FrameTrackerPolicy_DefersAcrossFrames()
 	// "frame-complete" is a GPU-drained predicate, not a tick predicate.
 	for (u32 tick = 0; tick < RenderThread::kMaximumFramesInFlight; tick++)
 		tracker.AdvanceFrame();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == usedAfterAlloc)
 
 	// Marking the retire frame complete is what flips IsMarkerComplete to true. Flush now drains.
 	tracker.MarkFrameComplete(retireFrame);
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 
@@ -1488,7 +1488,7 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_LifecycleAllowsSwap()
 	// Under ResourceLifecycle, MoveAllocation may return a different IGpuResource (wrapper-swap).
 	// The destination slot is stamped with the returned pointer so subsequent defrag passes see
 	// the destination as tracked-by-the-new-owner. The source slot is released by the "old wrapper
-	// destructor" path, modelled here via an explicit FreeImmediate against the source-side
+	// destructor" path, modelled here via an explicit FreeAndReclaim against the source-side
 	// location the original holder still holds.
 	MockHeapBackend backend;
 	MockGpuCompletionTracker tracker;
@@ -1575,10 +1575,10 @@ void GpuAllocatorTestSuite::TestTlsf_Defrag_LifecycleAllowsSwap()
 		B3D_TEST_ASSERT(holder.ReplacementLocation.Size == kAllocSize)
 
 		// Source slot is committed but untracked under ResourceLifecycle — the allocator did NOT
-		// retire it. Drive the "old wrapper destructor" by calling FreeImmediate against the
+		// retire it. Drive the "old wrapper destructor" by calling FreeAndReclaim against the
 		// still-held source location.
 		B3D_TEST_ASSERT(holders[holderIndex]->Location.AllocatorData0 == heap1Slot)
-		allocator.FreeImmediate(holders[holderIndex]->Location);
+		allocator.FreeAndReclaim(holders[holderIndex]->Location);
 	}
 
 	// Heap 1 was vacated by the immediate-free path; with MaxEmptyHeapCount=0 it gets released.
@@ -1765,7 +1765,7 @@ void GpuAllocatorTestSuite::TestTlsf_ConcurrentDefragWithAllocateAndFree()
 			allocator.Free(slot->Location);
 
 		for (MockLocation& sourceLocation : slot->Resource.SourceLocations)
-			allocator.FreeImmediate(sourceLocation);
+			allocator.FreeAndReclaim(sourceLocation);
 	}
 
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
@@ -1885,7 +1885,7 @@ void GpuAllocatorTestSuite::TestLinear_OverflowRotatesPage()
 	// First allocation's location is still valid — backend heap is alive until fence drains.
 	B3D_TEST_ASSERT(backend.LiveHeapCount() == 2)
 
-	// Drain — first page goes through FreeImmediateImpl. With MaxRetainedPages=0, it destructs.
+	// Drain — first page goes through FreeAndReclaimImpl. With MaxRetainedPages=0, it destructs.
 	AdvanceCompleteAndFlush(allocator, tracker);
 	B3D_TEST_ASSERT(allocator.GetSparePageCount() == 0)
 	B3D_TEST_ASSERT(allocator.GetLivePageCount() == 1) // Only the active second page remains.
@@ -1995,7 +1995,7 @@ void GpuAllocatorTestSuite::TestLinear_ResetRetiresActivePage()
 	B3D_TEST_ASSERT(allocator.TryAllocate(1024, 16, first))
 	const IGpuHeap* activeHeapId = first.Heap;
 
-	allocator.Reset();
+	allocator.FreeAll();
 	B3D_TEST_ASSERT(allocator.GetLivePageCount() == 1)        // Page is retired-pending-drain, not destroyed.
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)            // No active page → bump offset reads as 0.
 	B3D_TEST_ASSERT(allocator.GetSparePageCount() == 0)
@@ -2013,8 +2013,8 @@ void GpuAllocatorTestSuite::TestLinear_ResetRetiresActivePage()
 	B3D_TEST_ASSERT(backend.CreateCount() == 1) // No new heap created.
 
 	// Reset on an empty allocator (no active page) is a no-op.
-	allocator.Reset();
-	allocator.Reset();
+	allocator.FreeAll();
+	allocator.FreeAll();
 	AdvanceCompleteAndFlush(allocator, tracker);
 }
 
@@ -2077,9 +2077,9 @@ void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 	MockGpuCompletionTracker tracker;
 	LinearAllocator allocator(&backend, &tracker, MakeDefaultLinearConfig());
 
-	// Three allocations share one active page. With a naive implementation, FreeImmediate(a) would
+	// Three allocations share one active page. With a naive implementation, FreeAndReclaim(a) would
 	// recycle/destroy the page — invalidating b and c. The linear allocator must treat per-allocation
-	// FreeImmediate as a no-op so peers remain valid.
+	// FreeAndReclaim as a no-op so peers remain valid.
 	MockLocation a, b, c;
 	B3D_TEST_ASSERT(allocator.TryAllocate(1024, 16, a))
 	B3D_TEST_ASSERT(allocator.TryAllocate(1024, 16, b))
@@ -2090,8 +2090,8 @@ void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 	const u32 livePagesBefore = allocator.GetLivePageCount();
 	const u32 destroyCountBefore = backend.DestroyCount();
 
-	// FreeImmediate one of the three. The page must NOT be recycled — peers are still live.
-	allocator.FreeImmediate(a);
+	// FreeAndReclaim one of the three. The page must NOT be recycled — peers are still live.
+	allocator.FreeAndReclaim(a);
 	B3D_TEST_ASSERT(!a.IsValid())
 	B3D_TEST_ASSERT(b.IsValid())
 	B3D_TEST_ASSERT(c.IsValid())
@@ -2106,10 +2106,10 @@ void GpuAllocatorTestSuite::TestLinear_FreeImmediateOnSharedPageIsNoop()
 	B3D_TEST_ASSERT(d.Heap == b.Heap)
 	B3D_TEST_ASSERT(d.Offset >= c.Offset + c.Size)
 
-	// Free the rest with FreeImmediate — still all no-ops; page is reclaimed only via Reset + drain.
-	allocator.FreeImmediate(b);
-	allocator.FreeImmediate(c);
-	allocator.FreeImmediate(d);
+	// Free the rest with FreeAndReclaim — still all no-ops; page is reclaimed only via FreeAll + drain.
+	allocator.FreeAndReclaim(b);
+	allocator.FreeAndReclaim(c);
+	allocator.FreeAndReclaim(d);
 	B3D_TEST_ASSERT(allocator.GetLivePageCount() == livePagesBefore)
 	B3D_TEST_ASSERT(allocator.GetSparePageCount() == 0)
 	B3D_TEST_ASSERT(backend.DestroyCount() == destroyCountBefore)
@@ -2173,7 +2173,7 @@ void GpuAllocatorTestSuite::TestLinear_SharedPoolRespectsBound()
 	B3D_TEST_ASSERT(backend.CreateCount() == 4)
 
 	// Retire the active page too, so all four are pending drain against the same marker.
-	allocator.Reset();
+	allocator.FreeAll();
 
 	// Drain: the pool keeps two warm spares; the remaining two exceed the bound and are destroyed.
 	AdvanceCompleteAndFlush(allocator, tracker);
@@ -2204,12 +2204,12 @@ void GpuAllocatorTestSuite::TestLinear_SharedPoolDrainsOnlyAfterMarkerComplete()
 	// Completing every marker strictly below the stamp must NOT drain the page (off-by-one guard): the
 	// page is still in flight until its own marker signals.
 	tracker.MarkFrameComplete(retireMarker - 1);
-	allocator.Flush(); // Flush(false)
+	allocator.ReclaimUnused(); // drains completed retired entries
 	B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
 
 	// Completing exactly the stamped marker drains it to the pool.
 	tracker.MarkFrameComplete(retireMarker);
-	allocator.Flush();
+	allocator.ReclaimUnused();
 	B3D_TEST_ASSERT(pool.GetSparePageCount() == 1)
 	B3D_TEST_ASSERT(backend.DestroyCount() == 0)
 }
@@ -2230,14 +2230,14 @@ void GpuAllocatorTestSuite::TestLinear_SharedPoolForceDrainReturnsPages()
 		B3D_TEST_ASSERT(allocator.TryAllocate(3 * 1024, 16, second))
 
 		// Non-blocking reclaim drains nothing — the marker never completed.
-		allocator.Flush(); // Flush(false)
+		allocator.ReclaimUnused(); // drains completed retired entries
 		B3D_TEST_ASSERT(pool.GetSparePageCount() == 0)
 
 		// Force drain (what a blocking WaitAndReclaim / the destructor performs) reclaims the retired
 		// page regardless of fence and returns it to the shared pool. The guard that used to destroy
 		// force-drained pages was removed — destroying still-in-flight memory is UB either way, and the
 		// blocking-reclaim contract already requires the caller to have waited for in-flight work.
-		allocator.Flush(true);
+		allocator.ReclaimUnused(true);
 		B3D_TEST_ASSERT(pool.GetSparePageCount() == 1) // retired page returned to the pool
 		B3D_TEST_ASSERT(backend.DestroyCount() == 0)
 	}
@@ -2259,7 +2259,7 @@ void GpuAllocatorTestSuite::TestAllocatorIdentity_FreeRoutesByCarriedAllocator()
 	MockHeapBackend linearBackend;
 	MockGpuCompletionTracker tracker;
 
-	// TLSF in ResourceLifecycle so FreeImmediate reclaims synchronously and used-bytes is observable
+	// TLSF in ResourceLifecycle so FreeAndReclaim reclaims synchronously and used-bytes is observable
 	// without a frame-tracker dance.
 	TlsfAllocator::Configuration tlsfConfig = MakeDefaultTlsfConfig();
 	tlsfConfig.DeferralMode = GpuAllocatorFreeDeferralMode::ResourceLifecycle;
@@ -2289,17 +2289,17 @@ void GpuAllocatorTestSuite::TestAllocatorIdentity_FreeRoutesByCarriedAllocator()
 	// Free the TLSF slot through ONLY the carried base pointer — no static knowledge of the concrete
 	// type at the call site. Dispatch reaches the TLSF strategy and (ResourceLifecycle) reclaims it.
 	IGpuAllocator* tlsfHandle = tlsfLocation.Allocator;
-	tlsfHandle->FreeImmediate(tlsfLocation);
+	tlsfHandle->FreeAndReclaim(tlsfLocation);
 	B3D_TEST_ASSERT(!tlsfLocation.IsValid())
 	B3D_TEST_ASSERT(tlsfAllocator.GetUsedBytes() == 0)
 
 	// Free one linear slot through its carried base pointer. Dispatch reaches the linear strategy,
-	// whose per-allocation FreeImmediate is a no-op: the shared page is not recycled or destroyed and
+	// whose per-allocation FreeAndReclaim is a no-op: the shared page is not recycled or destroyed and
 	// the peer slot stays valid.
 	const u32 linearLivePagesBefore = linearAllocator.GetLivePageCount();
 	const u32 linearDestroyBefore = linearBackend.DestroyCount();
 	IGpuAllocator* linearHandle = linearFirst.Allocator;
-	linearHandle->FreeImmediate(linearFirst);
+	linearHandle->FreeAndReclaim(linearFirst);
 	B3D_TEST_ASSERT(!linearFirst.IsValid())
 	B3D_TEST_ASSERT(linearSecond.IsValid())
 	B3D_TEST_ASSERT(linearAllocator.GetLivePageCount() == linearLivePagesBefore)
@@ -2355,7 +2355,7 @@ void GpuAllocatorTestSuite::TestAllocatorIdentity_DefraggedAllocationFreesThroug
 	allocator.Free(holders[0]->Location);
 	allocator.Free(holders[1]->Location);
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 
 	const TlsfAllocator::DefragmentationStats stats = allocator.Defrag(NullCommandBuffer());
 	B3D_TEST_ASSERT(stats.MovesCompleted == 2)
@@ -2371,7 +2371,7 @@ void GpuAllocatorTestSuite::TestAllocatorIdentity_DefraggedAllocationFreesThroug
 	// Drain the defrag-retired heap-1 source slots; with MaxEmptyHeapCount=0 the emptied heap 1 is released.
 	tracker.AdvanceFrame();
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 	B3D_TEST_ASSERT(allocator.GetHeapCount() == 1)
 
 	// Free every still-live allocation (indices 2..5, including the two relocated by defrag) through ONLY
@@ -2385,7 +2385,7 @@ void GpuAllocatorTestSuite::TestAllocatorIdentity_DefraggedAllocationFreesThroug
 		location.Allocator->Free(location);
 	}
 	tracker.MarkAllFramesComplete();
-	allocator.Flush(false);
+	allocator.ReclaimUnused(false);
 	B3D_TEST_ASSERT(allocator.GetUsedBytes() == 0)
 }
 

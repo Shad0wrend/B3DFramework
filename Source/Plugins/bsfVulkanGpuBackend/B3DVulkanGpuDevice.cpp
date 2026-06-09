@@ -281,7 +281,6 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	static_assert(false, "mVideoModeInfo needs to be created.");
 #endif
 
-	mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this, GpuQueueId(GQT_GRAPHICS, 0));
 }
 
 VulkanGpuDevice::~VulkanGpuDevice()

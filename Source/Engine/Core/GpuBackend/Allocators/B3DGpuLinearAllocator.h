@@ -155,11 +155,11 @@ namespace b3d
 	 * **Page lifecycle.** Three kinds of pages coexist:
 	 *  - Active page (at most one): the page currently being bumped from.
 	 *  - Retired pages: pages rotated out earlier in the frame because they filled up, or because
-	 *    @ref Reset was called. Their existing allocations are still being read by the GPU, so the
+	 *    @ref FreeAll was called. Their existing allocations are still being read by the GPU, so the
 	 *    memory cannot be reused yet — the page sits in the base's deferred-free queue stamped
 	 *    against the frame index that retired it. Slot indices in mPages stay live so the
 	 *    page-index stored in Location::AllocatorData0 keeps resolving.
-	 *  - Spare pages: pages whose retire fence has completed (drained by Flush). Bump offset is
+	 *  - Spare pages: pages whose retire fence has completed (drained by ReclaimUnused). Bump offset is
 	 *    reset to zero, GPU-safe to overwrite, eligible for immediate reuse on the next overflow.
 	 *
 	 * Within a single frame the allocator can grow without bound — every overflow just retires the
@@ -168,14 +168,14 @@ namespace b3d
 	 *
 	 * **Oversize allocations.** A request larger than Configuration::PageSize allocates a
 	 * dedicated one-shot heap sized exactly to the request, emits the location into it, then
-	 * immediately retires that heap. Oversize heaps never re-enter the spare list; @ref FreeImmediateImpl
+	 * immediately retires that heap. Oversize heaps never re-enter the spare list; @ref FreeAndReclaimImpl
 	 * destroys them outright once their fence completes.
 	 *
-	 * **Free model.** Both @ref FreeImpl (deferred Free) and the per-allocation FreeImmediate path
+	 * **Free model.** Both @ref FreeImpl (deferred Free) and the per-allocation FreeAndReclaim path
 	 * are no-ops apart from the base-driven Location::Reset. A page is shared by every allocation
 	 * that fit into it, so a single Location can't reclaim the page without invalidating its peers.
 	 * Reclaim is meaningful at the page level only — pages are retired implicitly on overflow or
-	 * explicitly via @ref Reset, and the actual recycling runs from the deferred-free drain after
+	 * explicitly via @ref FreeAll, and the actual recycling runs from the deferred-free drain after
 	 * the retired page's fence completes.
 	 *
 	 * **Threading.** This allocator is always thread-unsafe: it performs no internal locking and the
@@ -249,23 +249,24 @@ namespace b3d
 
 		/**
 		 * Reached from two different paths, distinguished by @p reclaimKind:
-		 *  - @p kReclaimAllocation (per-allocation FreeImmediate): no-op. A page is shared by every
+		 *  - @p kReclaimAllocation (per-allocation FreeAndReclaim): no-op. A page is shared by every
 		 *    allocation that fit into it, so a single Location can't release the page without
 		 *    invalidating its peers.
 		 *  - @p kReclaimPage (page-retirement drain): returns the page to the spare list when it's a
 		 *    normal page and the spare list isn't full; otherwise destroys it via HeapBackend::DestroyHeap.
 		 *    Oversize pages always destruct.
 		 */
-		void FreeImmediateImpl(u32 pageIndex, u32 reclaimKind);
+		void FreeAndReclaimImpl(u32 pageIndex, u32 reclaimKind);
 
 		/** @} */
 
 		/**
-		 * Retires the active page against the current frame index. The active page becomes invalid;
-		 * the next TryAllocate acquires a fresh one. Use at end-of-frame to bound page lifetime.
-		 * No-op if there is no active page.
+		 * Frees every live allocation by retiring the active page against the current frame index. The
+		 * active page becomes invalid; the next TryAllocate acquires a fresh one. Use at end-of-frame to
+		 * bound page lifetime. No-op if there is no active page. The retired pages only become reusable
+		 * once their fence completes and ReclaimUnused drains them.
 		 */
-		void Reset();
+		void FreeAll() override;
 
 		/** @name Diagnostics.
 		 *  @{
@@ -291,9 +292,9 @@ namespace b3d
 
 		/**
 		 * Discriminator stored in @p Location::AllocatorData1 (and in the matching deferred-free queue
-		 * entry) so @p FreeImmediateImpl can tell whether it was reached via the per-allocation
-		 * @p FreeImmediate / @p Free path or via the page-retirement drain. The two paths want completely
-		 * different behavior — see @p FreeImmediateImpl.
+		 * entry) so @p FreeAndReclaimImpl can tell whether it was reached via the per-allocation
+		 * @p FreeAndReclaim / @p Free path or via the page-retirement drain. The two paths want completely
+		 * different behavior — see @p FreeAndReclaimImpl.
 		 */
 		static constexpr u32 kReclaimAllocation = 0; /**< Per-allocation reclaim — no-op for linear. */
 		static constexpr u32 kReclaimPage = 1;       /**< Page-retirement drain — recycle the whole page. */
@@ -335,7 +336,7 @@ namespace b3d
 		Configuration mConfig;
 		PagePool* mPagePool = nullptr;    /**< Shared page source; null means use the internal spare list. */
 		TPool<Page> mPageStorage;         /**< Backing store for Page structs; recycles slots so acquire/drain doesn't churn heap allocations. */
-		Vector<Page*> mPages;             /**< Indexed; FreeImmediateImpl uses these indices. nullptr for vacated slots. */
+		Vector<Page*> mPages;             /**< Indexed; FreeAndReclaimImpl uses these indices. nullptr for vacated slots. */
 		Vector<u32> mSparePages;          /**< Drained pages held warm; popped on AcquireNormalPage. Only relevant when mPagePool is null. */
 		u32 mCurrentPageIndex = kInvalidPageIndex;
 	};
@@ -353,7 +354,7 @@ namespace b3d
 	{
 		// Drain unconditionally — any submissions still in flight at destructor time are the caller's
 		// responsibility to wait for via WaitUntilIdle, matching the convention from TGpuAllocator.
-		Base::Flush(true);
+		Base::ReclaimUnused(true);
 
 		for (u32 pageIndex = 0; pageIndex < (u32)mPages.size(); pageIndex++)
 		{
@@ -438,9 +439,9 @@ namespace b3d
 	}
 
 	template <typename HeapBackend>
-	void TGpuLinearAllocator<HeapBackend>::FreeImmediateImpl(u32 pageIndex, u32 reclaimKind)
+	void TGpuLinearAllocator<HeapBackend>::FreeAndReclaimImpl(u32 pageIndex, u32 reclaimKind)
 	{
-		// Per-allocation FreeImmediate is a no-op for the linear allocator: a page is shared by every
+		// Per-allocation FreeAndReclaim is a no-op for the linear allocator: a page is shared by every
 		// allocation that fit into it, so a single Location can't release the page without invalidating
 		// its peers. Pages recycle as a whole via the page-retirement drain (kReclaimPage), which is the
 		// only path that should actually return memory.
@@ -480,7 +481,7 @@ namespace b3d
 	}
 
 	template <typename HeapBackend>
-	void TGpuLinearAllocator<HeapBackend>::Reset()
+	void TGpuLinearAllocator<HeapBackend>::FreeAll()
 	{
 		if (mCurrentPageIndex == kInvalidPageIndex)
 			return;

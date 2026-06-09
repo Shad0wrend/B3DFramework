@@ -113,7 +113,7 @@ namespace b3d
 
 		/**
 		 * Used by backends that fully implement IGpuResource::Notify* events. Free routes straight to 
-		 * FreeImmediateImpl - as its assumed the caller will free memory only after the lifecycle
+		 * FreeAndReclaimImpl - as its assumed the caller will free memory only after the lifecycle
 		 * reports the resource is no longer being used on the GPU. Similarly, defragment operation
 		 * will not free memory internally, it relies on the tracking to release the resource from
 		 * the old memory location.
@@ -124,12 +124,12 @@ namespace b3d
 	/**
 	 * CRTP base for GPU allocation strategies. Provides deferred-free and owner-relocation logic.
 	 *
-	 * **Threading.** Public entry points (TryAllocate, Free, FreeImmediate, Flush) acquire an
+	 * **Threading.** Public entry points (TryAllocate, Free, FreeAndReclaim, ReclaimUnused) acquire an
 	 * allocator-wide RecursiveMutex when @p ThreadPolicy is ThreadSafe (the default).
 	 * When @p ThreadPolicy is ThreadUnsafe, locking compiles out entirely and
 	 * the caller is responsible for external synchronization.
 	 *
-	 * @tparam Derived		Allocator strategy implementing TryAllocateImpl, FreeImpl and FreeImmediateImpl.
+	 * @tparam Derived		Allocator strategy implementing TryAllocateImpl, FreeImpl and FreeAndReclaimImpl.
 	 * @tparam HeapBackend	Backend trait satisfying the GpuHeapBackend contract.
 	 * @tparam ThreadPolicy	Compile-time thread-safety policy. ThreadSafe (default) wraps state with a
 	 * 						RecursiveMutex; ThreadUnsafe compiles out all locking.
@@ -185,10 +185,10 @@ namespace b3d
 		 * example, when the caller already gates resource destruction on a separate use-count or
 		 * frame fence. Use Free when no such guarantee exists.
 		 */
-		void FreeImmediate(GpuResourceLocation& allocation) override
+		void FreeAndReclaim(GpuResourceLocation& allocation) override
 		{
 			ScopedLock lock(mMutex);
-			static_cast<Derived*>(this)->FreeImmediateImpl(allocation.AllocatorData0, allocation.AllocatorData1);
+			static_cast<Derived*>(this)->FreeAndReclaimImpl(allocation.AllocatorData0, allocation.AllocatorData1);
 			allocation.Reset();
 		}
 
@@ -196,14 +196,30 @@ namespace b3d
 		 * Releases retired allocations whose recorded marker is no longer in flight on the GPU
 		 * (per IGpuCompletionTracker::IsMarkerComplete).
 		 *
-		 * @param forceComplete  When true, completion checks are skipped and every retired entry
-		 *                       is freed unconditionally. Use only at shutdown after ensuring all
-		 *                       GPU work has completed.
+		 * @param forceReclaimAll  When true, completion checks are skipped and every retired entry
+		 *                         is freed unconditionally. Use only at shutdown after ensuring all
+		 *                         GPU work has completed.
 		 */
-		void Flush(bool forceComplete = false)
+		void ReclaimUnused(bool forceReclaimAll = false) override
 		{
 			ScopedLock lock(mMutex);
-			DrainRetired(forceComplete);
+
+			// Drain completed entries from the front of the FIFO. The queue is ordered by marker, so the
+			// first not-yet-complete entry stops the scan (unless forceReclaimAll bypasses the check).
+			u32 drainCount = 0;
+			const u32 size = (u32)mRetiredQueue.size();
+			for (u32 entryIndex = 0; entryIndex < size; entryIndex++)
+			{
+				const RetiredEntry& entry = mRetiredQueue[entryIndex];
+				if (!forceReclaimAll && !mCompletionTracker->IsMarkerComplete(entry.Marker))
+					break;
+
+				static_cast<Derived*>(this)->FreeAndReclaimImpl(entry.AllocatorData0, entry.AllocatorData1);
+				drainCount++;
+			}
+
+			if (drainCount > 0)
+				mRetiredQueue.Erase(mRetiredQueue.Begin(), mRetiredQueue.Begin() + drainCount);
 		}
 
 	protected:
@@ -267,28 +283,6 @@ namespace b3d
 		TInlineArray<RetiredEntry, 64> mRetiredQueue;
 
 	private:
-		/**
-		 * Drains completed retired entries from the front of the FIFO queue. Caller must hold
-		 * the allocator mutex when @p ThreadPolicy is ThreadSafe.
-		 */
-		void DrainRetired(bool forceComplete)
-		{
-			u32 drainCount = 0;
-			const u32 size = (u32)mRetiredQueue.size();
-			for (u32 entryIndex = 0; entryIndex < size; entryIndex++)
-			{
-				const RetiredEntry& entry = mRetiredQueue[entryIndex];
-				if (!forceComplete && !mCompletionTracker->IsMarkerComplete(entry.Marker))
-					break;
-
-				static_cast<Derived*>(this)->FreeImmediateImpl(entry.AllocatorData0, entry.AllocatorData1);
-				drainCount++;
-			}
-
-			if (drainCount > 0)
-				mRetiredQueue.Erase(mRetiredQueue.Begin(), mRetiredQueue.Begin() + drainCount);
-		}
-
 		mutable MutexHolder mMutex;
 	};
 

@@ -887,7 +887,7 @@ namespace b3d
 	 * the heap index and pool node index stored in the location's two strategy-private slots.
 	 *
 	 * **Threading.** When ThreadPolicy is ThreadSafe (the default), every public entry point — including
-	 * TryAllocate, Free, FreeImmediate, Flush, Defrag, SetAllocationOwner and the diagnostic accessors —
+	 * TryAllocate, Free, FreeAndReclaim, ReclaimUnused, Defrag, SetAllocationOwner and the diagnostic accessors —
 	 * acquires the allocator-wide mutex inherited from TGpuAllocator. When ThreadPolicy is ThreadUnsafe, 
 	 * the locking compiles out and the caller is responsible for external synchronization.
 	 *
@@ -970,7 +970,7 @@ namespace b3d
 
 		bool TryAllocateImpl(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, GpuResourceLocation& out);
 		void FreeImpl(GpuResourceLocation& allocation);
-		void FreeImmediateImpl(u32 heapIndex, u32 nodeIndex);
+		void FreeAndReclaimImpl(u32 heapIndex, u32 nodeIndex);
 
 		/**
 		 * Stamps an IGpuResource owner onto a previously-allocated slot. Used by callers that can't
@@ -1109,7 +1109,7 @@ namespace b3d
 	{
 		// Drain unconditionally — any submissions still in flight at destructor time are the caller's
 		// responsibility to wait for via WaitUntilIdle, matching the convention from TGpuAllocator.
-		Base::Flush(true);
+		Base::ReclaimUnused(true);
 
 		for (u32 heapIndex = 0; heapIndex < (u32)mHeaps.size(); heapIndex++)
 		{
@@ -1194,7 +1194,7 @@ namespace b3d
 		{
 			// Caller has gated GPU completion through IGpuResource::Destroy + Notify* — no need to
 			// queue the slot. Release synchronously so a subsequent allocation can reuse it.
-			FreeImmediateImpl(allocation.AllocatorData0, allocation.AllocatorData1);
+			FreeAndReclaimImpl(allocation.AllocatorData0, allocation.AllocatorData1);
 			return;
 		}
 
@@ -1202,7 +1202,7 @@ namespace b3d
 	}
 
 	template <typename HeapBackend, ThreadSafetyPolicy ThreadPolicy>
-	void TGpuTlsfAllocator<HeapBackend, ThreadPolicy>::FreeImmediateImpl(u32 heapIndex, u32 nodeIndex)
+	void TGpuTlsfAllocator<HeapBackend, ThreadPolicy>::FreeAndReclaimImpl(u32 heapIndex, u32 nodeIndex)
 	{
 		B3D_ASSERT(heapIndex < (u32)mHeaps.size());
 		Heap* heap = mHeaps[heapIndex];
@@ -1374,7 +1374,7 @@ namespace b3d
 		// 2. Ensure destination is at a lower offset than the source
 		if (destination.HeapIndex == sourceHeapIndex && destination.Offset >= sourceOffset)
 		{
-			FreeImmediateImpl(destination.HeapIndex, destination.NodeIndex);
+			FreeAndReclaimImpl(destination.HeapIndex, destination.NodeIndex);
 			return false;
 		}
 

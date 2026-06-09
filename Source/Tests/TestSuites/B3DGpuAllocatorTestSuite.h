@@ -113,7 +113,7 @@ namespace b3d
 		void TestTlsf_Defrag_MoveAllocationReceivesContext();
 
 		/**
-		 * Under FreeDeferralMode::ResourceLifecycle, Free routes straight to FreeImmediate;
+		 * Under FreeDeferralMode::ResourceLifecycle, Free routes straight to FreeAndReclaim;
 		 * the slot is returned to the pool synchronously without going through the deferred-free queue.
 		 */
 		void TestTlsf_ResourceLifecyclePolicy_FreesImmediately();
@@ -129,7 +129,7 @@ namespace b3d
 		 * Under FreeDeferralMode::ResourceLifecycle, MoveAllocation may return a different
 		 * IGpuResource than the one it was called on (wrapper-swap pattern). The destination slot
 		 * is owned by the returned pointer; the source slot is left for the consumer's destructor to
-		 * free via FreeImmediate.
+		 * free via FreeAndReclaim.
 		 */
 		void TestTlsf_Defrag_LifecycleAllowsSwap();
 
@@ -182,7 +182,7 @@ namespace b3d
 		/** Per-allocation Free is a no-op apart from resetting the caller's location — page state is unchanged and no retire entry is queued. */
 		void TestLinear_FreeIsNoop();
 
-		/** Per-allocation FreeImmediate is also a no-op: calling it on one Location does not invalidate peer Locations sharing the same page, and the page itself is not recycled. */
+		/** Per-allocation FreeAndReclaim is also a no-op: calling it on one Location does not invalidate peer Locations sharing the same page, and the page itself is not recycled. */
 		void TestLinear_FreeImmediateOnSharedPageIsNoop();
 
 		/** Two ThreadUnsafe allocators backed by one shared page pool recycle each other's drained pages instead of creating fresh heaps. */
