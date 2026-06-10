@@ -9,14 +9,6 @@
 
 using namespace b3d;
 
-const GpuQueueMask GpuQueueMask::kNone = GpuQueueMask(0);
-const GpuQueueMask GpuQueueMask::kAll = GpuQueueMask(~0u);
-
-GpuQueue::GpuQueue(GpuDevice& gpuDevice, GpuQueueType type, u32 index)
-	:mGpuDevice(gpuDevice), mType(type), mIndex(index)
-{
-}
-
 GpuDevice::GpuDevice()
 	: mPrimaryContext(GpuWorkContext::Create(*this, mPrimaryTracker))
 {
@@ -25,32 +17,24 @@ GpuDevice::GpuDevice()
 GpuWorkContext& GpuDevice::GetPrimaryContext()
 {
 	EnsureRenderThread();
-	return mPrimaryContext;
+	return *mPrimaryContext;
 }
 
-void GpuDevice::SubmitCommandBuffer(const GpuSubmissionInformation& information, u32 queueIndex, bool flushTransferCommandBuffer)
+TUnique<IGpuAllocator> GpuDevice::CreateTransientAllocator(u32 /*memoryType*/, IGpuCompletionTracker& /*completionTracker*/)
 {
-	if (!B3D_ENSURE(information.CommandBuffer))
-		return;
-
-	const u32 queueCount = GetQueueCount(information.CommandBuffer->GetQueueType());
-	if (!B3D_ENSURE(queueIndex < queueCount))
-		return;
-
-	const TShared<GpuQueue>& queue = GetQueue(information.CommandBuffer->GetQueueType(), queueIndex);
-	if (!B3D_ENSURE(queue))
-		return;
-
-	queue->SubmitCommandBuffer(information, flushTransferCommandBuffer);
+	// Default: context-owned transient allocation is unsupported. Backends that support it override this.
+	return nullptr;
 }
 
-void GpuDevice::SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, u32 queueIndex)
+void GpuDevice::ShutdownPrimaryContext()
 {
-	GpuSubmissionInformation information;
-	information.CommandBuffer = commandBuffer;
-	information.SyncMask = syncMask;
-
-	SubmitCommandBuffer(information, queueIndex);
+	// The primary context's transfer pool is created on the render thread, so its destructor must run
+	// there. Device teardown usually runs on the main thread (with the render thread still alive), so
+	// marshal the release (which destroys the context) onto the render thread.
+	if (B3D_CURRENT_THREAD_ID == RenderThread::Instance().GetThreadId())
+		mPrimaryContext.reset();
+	else
+		GetRenderThread().PostCommand([this] { mPrimaryContext.reset(); }, "Shutdown primary GpuWorkContext", true);
 }
 
 bool GpuFrameCompletionTracker::IsMarkerComplete(u64 marker) const
@@ -76,12 +60,3 @@ TShared<SamplerState> GpuDevice::FindOrCreateSamplerState(const SamplerStateCrea
 	return newSamplerState;
 }
 
-const TShared<render::GpuCommandBuffer>& GpuDevice::GetOrCreateTransferCommandBuffer()
-{
-	return mTransferBufferHelper->GetOrCreateTransferCommandBuffer();
-}
-
-void GpuDevice::SubmitTransferCommandBuffers(bool wait)
-{
-	mTransferBufferHelper->SubmitTransferCommandBuffer(wait);
-}

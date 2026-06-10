@@ -297,8 +297,8 @@ void ReflectionProbeUtility::CaptureAndFilter(ecs::Registry& registry, ecs::Enti
 
 			GetGpuProfiler().ResolveProfileWhenReady("RenderAndFilterReflectionProbe", commandBufferProfiler);
 
-			const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-			gpuDevice->SubmitCommandBuffer(commandBuffer);
+			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+			workContext.SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};
@@ -324,8 +324,8 @@ void ReflectionProbeUtility::CaptureAndFilter(ecs::Registry& registry, ecs::Enti
 
 			GetGpuProfiler().ResolveProfileWhenReady("FilterReflectionProbe", commandBufferProfiler);
 
-			const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-			gpuDevice->SubmitCommandBuffer(commandBuffer);
+			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+			workContext.SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};

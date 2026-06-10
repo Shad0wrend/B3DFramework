@@ -945,8 +945,8 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				mappedScope.Unmap();
 
-				GpuDevice& gpuDevice = currentUniformBufferInfo->Buffer->GetDevice();
-				const TShared<render::GpuCommandBuffer>& commandBuffer = gpuDevice.GetOrCreateTransferCommandBuffer();
+				GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+				const TShared<render::GpuCommandBuffer>& commandBuffer = workContext.GetTransferCommandBuffer();
 				commandBuffer->CopyBufferToBuffer(stagingBuffer, currentUniformBufferInfo->Buffer, 0, currentUniformBufferInfo->SuballocationByteOffset, currentUniformBufferInfo->Buffer->GetSuballocationSize());
 				stagingBuffer = nullptr;
 			}

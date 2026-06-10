@@ -71,6 +71,7 @@ namespace b3d
 	extern PFN_vkGetSemaphoreCounterValueKHR vkGetSemaphoreCounterValueKHR;
 	extern PFN_vkWaitSemaphoresKHR vkWaitSemaphoresKHR;
 
+	extern PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR;
 
 	/** @} */
 } // namespace b3d

@@ -13,7 +13,6 @@
 #include "CoreObject/B3DRenderThread.h"
 #include "Managers/B3DVulkanDescriptorManager.h"
 #include "Managers/B3DVulkanQueries.h"
-#include "GpuBackend/B3DGpuTransferBufferHelper.h"
 
 #if B3D_PLATFORM_WIN32
 #	include "Private/Win32/B3DWin32VideoModeInfo.h"
@@ -169,15 +168,15 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	if(transferQueueFamilyIndex != ~0u)
 		fnPopulateQueueInfo(GQT_TRANSFER, transferQueueFamilyIndex);
 
-	// Set up extensions. Slots: swapchain, maintenance1, maintenance2, timeline_semaphore (optional),
-	// plus up to three more discovered below (dedicated_allocation, get_memory_requirements_2,
-	// shader_viewport_index_layer).
+	// Set up extensions. Required: swapchain, maintenance1, maintenance2, maintenance4. Plus optional ones
+	// discovered below (shader_viewport_index_layer, timeline_semaphore).
 	const char* extensions[8];
 	uint32_t extensionCount = 0;
 
 	extensions[extensionCount++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 	extensions[extensionCount++] = VK_KHR_MAINTENANCE1_EXTENSION_NAME;
 	extensions[extensionCount++] = VK_KHR_MAINTENANCE2_EXTENSION_NAME;
+	extensions[extensionCount++] = VK_KHR_MAINTENANCE_4_EXTENSION_NAME;
 
 	// Enumerate supported extensions
 	uint32_t availableExtensionCount = 0;
@@ -219,17 +218,28 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 	}
 #endif
 
+	// Build the enabled-feature pNext chain. Maintenance4 is required and enabled unconditionally; if the
+	// physical device lacks the extension/feature, the vkCreateDevice below fails its assert.
+	void* featureChain = nullptr;
+
 	VkPhysicalDeviceTimelineSemaphoreFeaturesKHR timelineFeatures = {};
 	if(mSupportsTimelineSemaphore)
 	{
 		timelineFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
-		timelineFeatures.pNext = nullptr;
+		timelineFeatures.pNext = featureChain;
 		timelineFeatures.timelineSemaphore = VK_TRUE;
+		featureChain = &timelineFeatures;
 	}
+
+	VkPhysicalDeviceMaintenance4FeaturesKHR maintenance4Features = {};
+	maintenance4Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR;
+	maintenance4Features.pNext = featureChain;
+	maintenance4Features.maintenance4 = VK_TRUE;
+	featureChain = &maintenance4Features;
 
 	VkDeviceCreateInfo deviceInfo;
 	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceInfo.pNext = mSupportsTimelineSemaphore ? &timelineFeatures : nullptr;
+	deviceInfo.pNext = featureChain;
 	deviceInfo.flags = 0;
 	deviceInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
 	deviceInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -247,6 +257,9 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 		GET_DEVICE_PROC_ADDR(mLogicalDevice, GetSemaphoreCounterValueKHR)
 		GET_DEVICE_PROC_ADDR(mLogicalDevice, WaitSemaphoresKHR)
 	}
+
+	GET_DEVICE_PROC_ADDR(mLogicalDevice, GetDeviceBufferMemoryRequirementsKHR)
+	B3D_ASSERT(vkGetDeviceBufferMemoryRequirementsKHR != nullptr && "VK_KHR_maintenance4 is required.");
 
 	// Retrieve queues
 	for(u32 i = 0; i < GQT_COUNT; i++)
@@ -285,8 +298,9 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 
 VulkanGpuDevice::~VulkanGpuDevice()
 {
-	// Destroy transfer buffer helper before other cleanup
-	mTransferBufferHelper.reset();
+	// Tear down the primary context's transfer resources before other cleanup, while the queues / submit
+	// thread it submits to are still alive.
+	ShutdownPrimaryContext();
 
 	mCachedSamplerStates.clear();
 	mBuiltinResources.Cleanup();
@@ -309,21 +323,16 @@ VulkanGpuDevice::~VulkanGpuDevice()
 		TUnique<TGpuTlsfAllocator<VulkanHeapBackend>>& allocator = mGpuMemoryAllocators[typeIndex];
 		if (allocator != nullptr)
 		{
-			allocator->Flush(true);
+			allocator->ReclaimUnused(true);
 			allocator.reset();
 		}
 	}
 
-	// Same for the transient linear allocators — they must release their pages before the heap backend is destroyed.
+	// The transient linear allocators live on the GpuWorkContext, already destroyed above by
+	// ShutdownPrimaryContext(); that returned their drained pages to these shared pools. Destroy the pools
+	// before the heap backend, since each pool releases its retained pages through mHeapBackend.
 	for (u32 typeIndex = 0; typeIndex < VK_MAX_MEMORY_TYPES; typeIndex++)
-	{
-		TUnique<TGpuLinearAllocator<VulkanHeapBackend>>& allocator = mGpuLinearAllocators[typeIndex];
-		if (allocator != nullptr)
-		{
-			allocator->Flush(true);
-			allocator.reset();
-		}
-	}
+		mLinearPagePools[typeIndex].reset();
 
 	mHeapBackend.reset();
 
@@ -683,33 +692,18 @@ void VulkanGpuDevice::EndFrame()
 	ASSERT_IF_NOT_RENDER_THREAD
 
 	RunDefragPass();
-	SubmitTransferCommandBuffers();
+	GetPrimaryContext().SubmitTransferCommandBuffers();
 
 	// Signal end-of-frame to submit thread. This blocks until the previous frame's resources are safe to reuse.
 	GetVulkanSubmitThread().QueueEndFrameAndWaitForPreviousFrame();
 
-	// Advance transfer buffer helper pools to next frame. Important this is done after the wait above.
-	mTransferBufferHelper->EndFrame();
-
-	// Transient reclamation point. Must run before GpuDevice::EndFrame() increments the frame index, so the
-	// retired pages are stamped with the correct frame.
-	ReclaimLinearAllocators();
+	// Advance the primary context to the next frame: recycles its transfer pools and reclaims transient
+	// memory (retire each transient allocator's active page, drain everything whose frame is complete).
+	// Important this is done after the wait above, and before GpuDevice::EndFrame() increments the frame
+	// index so the retired pages are stamped with the correct frame.
+	GetPrimaryContext().AdvanceFrame();
 
 	GpuDevice::EndFrame();
-}
-
-void VulkanGpuDevice::ReclaimLinearAllocators()
-{
-	Lock lock(mGpuLinearAllocatorMutex);
-	for (TUnique<TGpuLinearAllocator<VulkanHeapBackend>>& allocator : mGpuLinearAllocators)
-	{
-		if (allocator == nullptr)
-			continue;
-
-		// Retire the active page (stamped against the current frame), then drain everything whose frame is complete.
-		allocator->Reset();
-		allocator->Flush();
-	}
 }
 
 void VulkanGpuDevice::RunDefragPass()
@@ -717,7 +711,7 @@ void VulkanGpuDevice::RunDefragPass()
 	if (!mDefragEnabled)
 		return;
 
-	const TShared<render::GpuCommandBuffer>& transferCb = mTransferBufferHelper->GetOrCreateTransferCommandBuffer();
+	const TShared<render::GpuCommandBuffer>& transferCb = GetPrimaryContext().GetTransferCommandBuffer();
 	if (transferCb == nullptr)
 		return;
 
@@ -731,14 +725,6 @@ void VulkanGpuDevice::RunDefragPass()
 		if (allocator != nullptr)
 			allocator->Defrag(*transferCb, info);
 	}
-}
-
-void VulkanGpuDevice::SubmitTransferCommandBuffers(bool wait)
-{
-	mTransferBufferHelper->SubmitTransferCommandBuffer();
-
-	if (wait)
-		GetVulkanSubmitThread().WaitUntilIdle();
 }
 
 void VulkanGpuDevice::PresentRenderWindow(const TShared<render::RenderWindow>& renderWindow, GpuQueueMask syncMask)
@@ -1036,6 +1022,36 @@ VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkImage image, VkMemoryPr
 	return output;
 }
 
+u32 VulkanGpuDevice::PickBufferMemoryType(const GpuBufferCreateInformation& createInformation) const
+{
+	const VkBufferUsageFlags usageFlags = VulkanGpuBuffer::GetVkBufferUsageFlags(createInformation);
+	VkMemoryPropertyFlags requiredFlags = 0;
+	VkMemoryPropertyFlags preferredFlags = 0;
+	VulkanGpuBuffer::GetVkMemoryPropertyFlags(createInformation, requiredFlags, preferredFlags);
+
+	// VK_KHR_maintenance4: query the buffer's memory requirements straight from the create-info, with no
+	// VkBuffer object. memoryTypeBits depends only on usage, not size, so the size here is nominal.
+	VkBufferCreateInfo bufferInfo{};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = 1;
+	bufferInfo.usage = usageFlags;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	VkDeviceBufferMemoryRequirementsKHR query{};
+	query.sType = VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR;
+	query.pCreateInfo = &bufferInfo;
+
+	VkMemoryRequirements2 requirements{};
+	requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+
+	vkGetDeviceBufferMemoryRequirementsKHR(mLogicalDevice, &query, &requirements);
+
+	const u32 memoryTypeIndex = PickMemoryTypeIndex(requirements.memoryRequirements.memoryTypeBits, requiredFlags, preferredFlags);
+	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested buffer allocation flags.");
+
+	return memoryTypeIndex;
+}
+
 VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, bool transient)
 {
 	VkMemoryRequirements requirements = {};
@@ -1048,8 +1064,10 @@ VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VkMemory
 
 	if (transient)
 	{
-		TGpuLinearAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuLinearAllocator(memoryTypeIndex);
-		const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, output.Location);
+		// Transient buffers are suballocated from the render-thread primary context's per-type linear
+		// allocator. Off-thread callers get their own worker context (and its own transient allocators).
+		IGpuAllocator& allocator = GetPrimaryContext().GetOrCreateTransientAllocator(memoryTypeIndex);
+		const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, nullptr, output.Location);
 		B3D_ASSERT(ok && "Linear allocator failed to satisfy transient buffer allocation request.");
 		(void)ok;
 	}
@@ -1073,7 +1091,7 @@ void VulkanGpuDevice::FreeMemory(VulkanAllocationResult& allocation)
 	if (!allocation.IsValid())
 		return;
 
-	allocation.Location.Allocator->FreeImmediate(allocation.Location);
+	allocation.Location.Allocator->FreeAndReclaim(allocation.Location);
 	allocation.MappedMemory = nullptr;
 }
 
@@ -1171,27 +1189,45 @@ TGpuTlsfAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuMemoryAlloc
 	}
 }
 
-TGpuLinearAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuLinearAllocator(u32 memoryTypeIndex)
+TGpuLinearPagePool<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateLinearPagePool(u32 memoryTypeIndex)
 {
 	B3D_ASSERT(memoryTypeIndex < mMemoryProperties.memoryTypeCount);
 
-	Lock lock(mGpuLinearAllocatorMutex);
-	TUnique<TGpuLinearAllocator<VulkanHeapBackend>>& slot = mGpuLinearAllocators[memoryTypeIndex];
+	Lock lock(mLinearPagePoolMutex);
+	TUnique<TGpuLinearPagePool<VulkanHeapBackend>>& slot = mLinearPagePools[memoryTypeIndex];
 	if (slot != nullptr)
 		return *slot;
 
 	const VkMemoryPropertyFlags flags = mMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags;
 	const bool isHostVisible = (flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0;
 
-	TGpuLinearAllocator<VulkanHeapBackend>::Configuration configuration;
+	TGpuLinearPagePool<VulkanHeapBackend>::Configuration configuration;
 	configuration.PageSize = 8ull * 1024 * 1024;
-	configuration.MaxRetainedPages = 2;
+	configuration.MaxRetainedPages = 4;
 	configuration.HeapCreateInfo.MemoryTypeBits = (1u << memoryTypeIndex);
 	configuration.HeapCreateInfo.PropertyFlags = flags;
 	configuration.HeapCreateInfo.MapPersistently = isHostVisible;
 
-	slot = B3DMakeUnique<TGpuLinearAllocator<VulkanHeapBackend>>(mHeapBackend.get(), &GetPrimaryCompletionTracker(), configuration);
+	slot = B3DMakeUnique<TGpuLinearPagePool<VulkanHeapBackend>>(mHeapBackend.get(), configuration);
 	return *slot;
+}
+
+TUnique<IGpuAllocator> VulkanGpuDevice::CreateTransientAllocator(u32 memoryType, IGpuCompletionTracker& completionTracker)
+{
+	B3D_ASSERT(memoryType < mMemoryProperties.memoryTypeCount);
+
+	TGpuLinearPagePool<VulkanHeapBackend>& pool = GetOrCreateLinearPagePool(memoryType);
+
+	const VkMemoryPropertyFlags flags = mMemoryProperties.memoryTypes[memoryType].propertyFlags;
+	const bool isHostVisible = (flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0;
+
+	TGpuLinearAllocator<VulkanHeapBackend>::Configuration configuration;
+	configuration.PageSize = pool.GetPageSize(); // Match the pool so normal pages share one size; also the oversize threshold.
+	configuration.HeapCreateInfo.MemoryTypeBits = (1u << memoryType);
+	configuration.HeapCreateInfo.PropertyFlags = flags;
+	configuration.HeapCreateInfo.MapPersistently = isHostVisible;
+
+	return B3DMakeUnique<TGpuLinearAllocator<VulkanHeapBackend>>(mHeapBackend.get(), &completionTracker, configuration, &pool);
 }
 
 void VulkanGpuDevice::InitializeCapabilities()

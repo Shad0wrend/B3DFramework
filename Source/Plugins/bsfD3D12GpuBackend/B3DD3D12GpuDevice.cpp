@@ -100,14 +100,12 @@ D3D12GpuDevice::D3D12GpuDevice(IDXGIAdapter4* adapter)
 #else
 	static_assert(false, "mVideoModeInfo needs to be created.");
 #endif
-
-	mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this, GpuQueueId(GQT_GRAPHICS, 0));
 }
 
 D3D12GpuDevice::~D3D12GpuDevice()
 {
-	// Destroy transfer buffer helper before other cleanup
-	mTransferBufferHelper.reset();
+	// Tear down the primary context's transfer resources before other cleanup, while its queues are alive.
+	ShutdownPrimaryContext();
 
 	// Clear cached sampler states
 	mCachedSamplerStates.clear();
@@ -308,10 +306,10 @@ void D3D12GpuDevice::BeginFrame()
 
 void D3D12GpuDevice::EndFrameImpl()
 {
-	SubmitTransferCommandBuffers();
+	GetPrimaryContext().SubmitTransferCommandBuffers();
 
-	// Advance transfer buffer helper pools to next frame
-	mTransferBufferHelper->EndFrame();
+	// Advance the primary context's transfer pools to next frame
+	GetPrimaryContext().AdvanceFrame();
 
 	// TODO: Implement frame end logic
 }

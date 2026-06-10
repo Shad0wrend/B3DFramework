@@ -8,6 +8,7 @@
 #include "B3DGpuTimelineFence.h"
 #include "B3DPrerequisites.h"
 #include "B3DSamplerState.h"
+#include "B3DGpuQueue.h"
 #include "B3DGpuWorkContext.h"
 
 namespace b3d::render
@@ -56,156 +57,6 @@ namespace b3d
 	typedef Flags<GpuAccessFlag> GpuAccessFlags;
 	B3D_FLAGS_OPERATORS(GpuAccessFlag);
 
-	/** Uniquely represents a GPU queue. */
-	struct GpuQueueId
-	{
-		GpuQueueId(u32 id = 0)
-			: Id(id)
-		{
-			B3D_ASSERT(Id < (B3D_MAX_QUEUES_PER_TYPE * GQT_COUNT));
-		}
-
-		GpuQueueId(GpuQueueType type, u32 index)
-		{
-			switch(type)
-			{
-			case GQT_COMPUTE:
-				Id = B3D_MAX_QUEUES_PER_TYPE + index;
-				break;
-			case GQT_TRANSFER:
-				Id = B3D_MAX_QUEUES_PER_TYPE * 2 + index;
-				break;
-			default:
-				Id = index;
-			}
-
-			B3D_ASSERT(Id < (B3D_MAX_QUEUES_PER_TYPE * GQT_COUNT));
-		}
-
-		GpuQueueType GetType() const
-		{
-			if(Id >= B3D_MAX_QUEUES_PER_TYPE * 2)
-				return GQT_TRANSFER;
-
-			if(Id >= B3D_MAX_QUEUES_PER_TYPE)
-				return GQT_COMPUTE;
-
-			return GQT_GRAPHICS;
-
-		}
-
-		u32 GetIndex() const
-		{
-			if(Id >= B3D_MAX_QUEUES_PER_TYPE * 2)
-				return Id - B3D_MAX_QUEUES_PER_TYPE * 2;
-
-			if(Id >= B3D_MAX_QUEUES_PER_TYPE)
-				return Id - B3D_MAX_QUEUES_PER_TYPE;
-
-			return Id;
-		}
-
-		u32 Id;
-	};
-
-	/** Mask that represents zero or multiple GPU queues. */
-	struct B3D_EXPORT GpuQueueMask
-	{
-		GpuQueueMask(u32 mask = 0)
-			: Mask(mask)
-		{ }
-
-		GpuQueueMask(GpuQueueId id)
-		{
-			u32 bitShift = 0;
-			switch(id.GetType())
-			{
-			case GQT_GRAPHICS:
-				break;
-			case GQT_COMPUTE:
-				bitShift = 8;
-				break;
-			case GQT_TRANSFER:
-				bitShift = 16;
-				break;
-			default:
-				break;
-			}
-
-			Mask = 1 << id.GetIndex() << bitShift;
-		}
-
-		bool operator==(GpuQueueMask rhs) const { return Mask == rhs.Mask; }
-		bool operator!=(GpuQueueMask rhs) const { return Mask != rhs.Mask; }
-
-		GpuQueueMask& operator=(GpuQueueId id)
-		{
-			Mask = GpuQueueMask(id).Mask;
-			return *this;
-		}
-
-		GpuQueueMask& operator|=(GpuQueueMask rhs)
-		{
-			Mask |= rhs.Mask;
-			return *this;
-		}
-
-		GpuQueueMask operator|(GpuQueueMask rhs) const
-		{
-			GpuQueueMask out(*this);
-			out |= rhs;
-
-			return out;
-		}
-
-		GpuQueueMask& operator&=(GpuQueueMask rhs)
-		{
-			Mask &= rhs.Mask;
-			return *this;
-		}
-
-		GpuQueueMask operator&(GpuQueueMask rhs) const
-		{
-			GpuQueueMask out(*this);
-			out &= rhs;
-
-			return out;
-		}
-
-		GpuQueueMask& operator^=(GpuQueueMask rhs)
-		{
-			Mask ^= rhs.Mask;
-			return *this;
-		}
-
-		GpuQueueMask operator^(GpuQueueMask rhs) const
-		{
-			GpuQueueMask out(*this);
-			out ^= rhs;
-
-			return out;
-		}
-
-		GpuQueueMask operator~() const
-		{
-			GpuQueueMask out;
-			out.Mask = ~Mask;
-
-			return out;
-		}
-
-		/** Returns true if no queues are part of the mask. */
-		bool IsEmpty() const { return Mask == 0; }
-
-		/** Returns true if the queue ID is part of the mask. */
-		bool IsSet(GpuQueueId queueId) const { return (Mask & GpuQueueMask(queueId).Mask) != 0; }
-
-		u32 Mask = 0;
-
-		static const GpuQueueMask kNone;
-		static const GpuQueueMask kAll;
-	};
-
 	/** Flags that control creation of GPU objects via GpuDevice factory methods. */
 	enum class GpuObjectCreateFlag
 	{
@@ -216,74 +67,6 @@ namespace b3d
 
 	using GpuObjectCreateFlags = Flags<GpuObjectCreateFlag>;
 	B3D_FLAGS_OPERATORS(GpuObjectCreateFlag)
-
-	/** Command buffer to submit and any timeline fences to signal. */
-	struct GpuSubmissionInformation
-	{
-		/** Command buffer to submit  */
-		TShared<render::GpuCommandBuffer> CommandBuffer;
-		
-		/**
-		 * Optional synchronization mask that determines if the submitted command buffer
-		 * depends on any other command buffers submitted on other queues.
-		 *
-		 * This mask is only relevant if your command buffers are executing on different
-		 * queues, and are dependent. If they are executing on the same queue then they will
-		 * execute sequentially in the order they are submitted. Otherwise, if there is a
-		 * dependency you must make state it explicitly here.
-		 */
-		GpuQueueMask SyncMask = GpuQueueMask::kAll;
-
-		/** Fence(s) to signal when execution completes. */
-		TInlineArray<GpuTimelineFenceAndValue, 2> SignalFences;
-	};
-
-	/**
-	 * Specifies a queue on which command buffers can be submitted on.
-	 *
-	 * @note	Thread safe.
-	 */
-	class B3D_EXPORT GpuQueue
-	{
-	public:
-		virtual ~GpuQueue() = default;
-
-		/** Determines which type of command buffer commands can be used on the command buffers submitted on the queue. */
-		GpuQueueType GetType() const { return mType; }
-
-		/** Returns the unique index of the queue, for its type. */
-		u32 GetIndex() const { return mIndex; }
-
-		/** Returns a unique identifier for this queue. */
-		GpuQueueId GetId() const { return GpuQueueId(mType, mIndex); }
-
-		/**
-		 * Submits a command buffer on this queue. 
-		 *
-		 * @param	information					Command buffer + signal fences to submit.
-		 * @param	flushTransferCommandBuffer	When true, any pending transfer command buffer on the calling thread is submitted first.
-		 */
-		virtual void SubmitCommandBuffer(const GpuSubmissionInformation& information, bool flushTransferCommandBuffer = true) = 0;
-
-		/**
-		 * Presents the back-buffer image from the provided window onto the window, using the appropriate queue that supports present operations.
-		 *
-		 * @param	renderWindow		Window whose back-buffer to present.
-		 * @param	syncMask			Optional synchronization mask that determines if the present operation
-		 *								depends on any command buffers submitted on other queues.
-		 */
-		virtual void PresentRenderWindow(const TShared<render::RenderWindow>& renderWindow, GpuQueueMask syncMask = GpuQueueMask::kAll) = 0;
-
-		/** Blocks the calling thread until all operations on the queue finish executing on the GPU. */
-		virtual void WaitUntilIdle() = 0;
-
-	protected:
-		GpuQueue(GpuDevice& gpuDevice, GpuQueueType type, u32 index);
-
-		GpuDevice& mGpuDevice;
-		GpuQueueType mType;
-		u32 mIndex;
-	};
 
 	/**
 	 * Abstraction over a monotonic GPU-completion marker, used by GPU allocators (and other
@@ -404,32 +187,6 @@ namespace b3d
 		virtual TShared<GpuQueue> GetQueue(GpuQueueType type, u32 index) const = 0;
 
 		/**
-		 * Submits a command buffer on a queue matching its type. 
-		 *
-		 * @param	information					Command buffer + signal fences to submit.
-		 * @param	queueIndex					Index of the queue (within the command buffer's queue type) to submit on.
-		 * @param	flushTransferCommandBuffer	When true, any pending transfer command buffer on the calling thread is submitted first.
-		 */
-		void SubmitCommandBuffer(const GpuSubmissionInformation& information, u32 queueIndex = 0, bool flushTransferCommandBuffer = true);
-
-		/**
-		 * Convenience overload equivalent to building a GpuSubmissionInformation with no extra
-		 * signal fences. 
-		 *
-		 * @param	commandBuffer	Command buffer to submit. Usage of the command buffer determines the queue to execute on.
-		 * @param	syncMask		Optional synchronization mask that determines if the submitted command buffer
-		 *							depends on any other command buffers submitted on other queues.
-		 *
-		 *							This mask is only relevant if your command buffers are executing on different
-		 *							queues, and are dependent. If they are executing on the same queue then they will
-		 *							execute sequentially in the order they are submitted. Otherwise, if there is a
-		 *							dependency you must make state it explicitly here.
-		 * @param	queueIndex		In case there are multiple queues supported with the command buffer's usage,
-		 *							this determines which one to execute on.
-		 */
-		virtual void SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask = GpuQueueMask::kAll, u32 queueIndex = 0);
-
-		/**
 		 * Presents the back-buffer image from the provided window onto the window, using the appropriate queue that supports present operations.
 		 *
 		 * @param	renderWindow		Window whose back-buffer to present.
@@ -449,20 +206,6 @@ namespace b3d
 		{
 			mPrimaryTracker.AdvanceFrame();
 		}
-
-		/**
-		 * Retrieves or creates a transfer command buffer for the current thread.
-		 * The returned command buffer will be automatically submitted during EndFrame() or when
-		 * SubmitTransferCommandBuffer() is called.
-		 */
-		const TShared<render::GpuCommandBuffer>& GetOrCreateTransferCommandBuffer();
-
-		/**
-		 * Submits the transfer command buffer for the current thread. Optionally waits until the GPU is done processing it.
-		 *
-		 * @param	wait	If true, blocks until the GPU has finished executing the transfer command buffer.
-		 */
-		virtual void SubmitTransferCommandBuffers(bool wait = false);
 
 		/************************************************************************/
 		/* 								CREATION METHODS                   		*/
@@ -621,8 +364,9 @@ namespace b3d
 		u64 GetCurrentFrameIndex() const { return mPrimaryTracker.GetCurrentMarker(); }
 
 		/**
-		 * Returns the device's render-thread-bound primary work context. All the device's existing
-		 * transient/transfer behavior forwards to it. Render thread only.
+		 * Returns the device's render-thread-bound primary work context, which owns the render thread's
+		 * transient allocators and transfer command buffers, and through which render-thread command
+		 * buffers are submitted. Render thread only.
 		 *
 		 * TODO: Move the primary work context outside of the GpuDevice and have it be owned by Renderer instead. This also includes the primary completion tracker.
 		 */
@@ -632,6 +376,18 @@ namespace b3d
 
 	protected:
 		GpuDevice();
+
+		/**
+		 * Destroys the primary context (by releasing the device's shared pointer to it). Backends must call
+		 * this at the start of their destructor — before their GPU queues / submit thread are destroyed —
+		 * since the primary context is otherwise released too late, after the backend teardown.
+		 *
+		 * The primary context's transfer command buffers are created on the render thread, but the device
+		 * (and so this call) is typically destroyed on the main thread, while the render thread is still
+		 * alive. So the destruction is marshalled onto the render thread — its owning thread — which is why
+		 * GpuWorkContext's destructor itself needs no cross-thread handling. Idempotent.
+		 */
+		void ShutdownPrimaryContext();
 
 		/**
 		 * Explicit deleter for objects that derive from RenderProxy. By default render proxy objects provide a custom deleter that

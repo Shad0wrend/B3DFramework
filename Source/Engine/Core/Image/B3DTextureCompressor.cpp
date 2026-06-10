@@ -5,6 +5,7 @@
 #include "Image/B3DPixelUtility.h"
 #include "Image/B3DPixelData.h"
 #include "Image/B3DTexture.h"
+#include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
@@ -219,6 +220,8 @@ namespace b3d
 				return;
 			}
 
+			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+
 			// Compile/fetch the shader variation(s)
 			TInlineArray<TextureCompressMaterial*, 32> materials;
 			for(const i32 dispatchVariation : variations)
@@ -362,7 +365,7 @@ namespace b3d
 						// first sample); the input texture then persists, sampled by every later tile.
 						if(!inputUploaded)
 						{
-							render::TextureUtility::Write(input, *source, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+							render::TextureUtility::Write(workContext, input, *source, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
 							inputUploaded = true;
 						}
 
@@ -370,13 +373,13 @@ namespace b3d
 						// already drained by the inter-tile WaitUntilIdle, so reusing the scratch is safe; the dispatch barriers
 						// order this copy before the first mode reads it.
 						if(multiMode && materialIndex == 0)
-							render::TextureUtility::Write(bestErr, *initErr, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+							render::TextureUtility::Write(workContext, bestErr, *initErr, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
 
 						// One mode dispatch (BC6H two-region uses 32-thread cooperative groups, everything else one thread per
 						// block; see Execute), covering this tile's block region.
 						materials[materialIndex]->Execute(*commandBuffer, input, output, parameters, bestErr, tileDispatch, variations[materialIndex]);
 
-						gpuDevice->SubmitCommandBuffer(commandBuffer);
+						workContext.SubmitCommandBuffer(commandBuffer);
 
 						// Drain the GPU before the next mode/tile so it cannot run dispatches back-to-back and trip the watchdog.
 						gpuDevice->WaitUntilIdle();
@@ -414,7 +417,7 @@ namespace b3d
 					op.CompleteOperation(destination);
 				});
 
-			gpuDevice->SubmitCommandBuffer(readbackCommandBuffer);
+			workContext.SubmitCommandBuffer(readbackCommandBuffer);
 		}
 
 		// ---- CPU reference decoders (used by TextureCompressionUtility) ----

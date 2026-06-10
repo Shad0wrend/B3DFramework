@@ -13,6 +13,7 @@
 #include "Threading/B3DAsyncOp.h"
 #include "GpuBackend/B3DVertexDescription.h"
 #include "Resources/B3DResources.h"
+#include "Renderer/B3DRenderer.h"
 
 using namespace b3d;
 
@@ -57,10 +58,8 @@ TAsyncOp<void> Mesh::ReadData(const TShared<MeshData>& data)
 
 	auto fnReadMeshData = [&](const TShared<render::Mesh>& mesh, const TShared<MeshData>& meshData, TAsyncOp<void>& asyncOp)
 	{
-		// TODO - Transfer buffers should be handled by the Renderer
-		const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		if(gpuDevice != nullptr)
-			gpuDevice->SubmitTransferCommandBuffers();
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		workContext.SubmitTransferCommandBuffers();
 
 		mesh->ReadData(*meshData);
 		meshData->UnlockInternal();
@@ -378,7 +377,8 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		B3D_LOG(Error, LogMesh, "Index buffer values are being written out of valid range.");
 	}
 
-	GpuBufferUtility::Write(mIndexBuffer, 0, indicesSize, sourceIndexData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(workContext, mIndexBuffer, 0, indicesSize, sourceIndexData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
 
 	// Vertices
 	for(u32 streamIndex = 0; streamIndex <= mVertexDescription->GetLargestStreamIndex(); streamIndex++)
@@ -412,7 +412,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 			B3D_LOG(Error, LogMesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", streamIndex);
 		}
 
-		GpuBufferUtility::Write(vertexBuffer, 0, bufferSize, sourceVertexBufferData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
+		GpuBufferUtility::Write(workContext, vertexBuffer, 0, bufferSize, sourceVertexBufferData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
 	}
 
 	if(performUpdateBounds)
@@ -422,6 +422,8 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& commandBuffer)
 {
 	ASSERT_IF_NOT_RENDER_THREAD;
+
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 
 	const GpuBufferInformation& indexBufferInformation = mIndexBuffer->GetInformation();
 	B3D_ENSURE(indexBufferInformation.Type == GpuBufferType::Index);
@@ -457,7 +459,7 @@ void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& command
 			return;
 		}
 
-		GpuBufferUtility::Read(mIndexBuffer, 0, indicesSize, indices);
+		GpuBufferUtility::Read(workContext, mIndexBuffer, 0, indicesSize, indices);
 	}
 
 	if(mVertexData)
@@ -497,7 +499,7 @@ void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& command
 			}
 
 			u8* destination = meshData.GetStreamData(streamIndex);
-			GpuBufferUtility::Read(vertexBuffer, 0, bufferSize, destination);
+			GpuBufferUtility::Read(workContext, vertexBuffer, 0, bufferSize, destination);
 
 			streamIndex++;
 		}

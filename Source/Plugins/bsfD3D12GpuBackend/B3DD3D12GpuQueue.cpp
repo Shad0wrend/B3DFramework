@@ -51,11 +51,8 @@ D3D12GpuQueue::~D3D12GpuQueue()
 	B3D_LOG(Info, LogRenderBackend, "Destroyed D3D12 GPU queue");
 }
 
-void D3D12GpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information, bool flushTransferCommandBuffer)
+void D3D12GpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information)
 {
-	if(flushTransferCommandBuffer)
-		mGpuDevice.SubmitTransferCommandBuffers();
-
 	(void)information.SignalFences; // TODO: chain ID3D12CommandQueue::Signal calls for each fence once D3D12GpuTimelineFence lands.
 	const TShared<GpuCommandBuffer>& commandBuffer = information.CommandBuffer;
 	if (!commandBuffer)

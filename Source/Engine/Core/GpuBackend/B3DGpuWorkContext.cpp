@@ -84,31 +84,64 @@ const TShared<render::GpuCommandBuffer>& GpuWorkContext::GetTransferCommandBuffe
 	return mTransferCommandBuffer;
 }
 
+void GpuWorkContext::SubmitCommandBuffer(const GpuSubmissionInformation& information, u32 queueIndex)
+{
+	// NOTE: Transfer and work are submitted to the same queue (graphics 0), so same-queue submission
+	//		 order preserves the transfer-before-work dependency with no explicit semaphore. If the work
+	//		 command buffer ever targets a different queue, the caller must add an explicit sync mask for
+	//		 the transfer queue - same-queue ordering no longer guarantees transfer visibility.
+
+	// Flush this context's pending transfers first (non-blocking) so they are visible to the work below.
+	SubmitTransferCommandBuffers(false);
+
+	if (!B3D_ENSURE(information.CommandBuffer))
+		return;
+
+	const GpuQueueType queueType = information.CommandBuffer->GetQueueType();
+	const u32 queueCount = mDevice.GetQueueCount(queueType);
+	if (!B3D_ENSURE(queueIndex < queueCount))
+		return;
+
+	const TShared<GpuQueue> queue = mDevice.GetQueue(queueType, queueIndex);
+	if (!B3D_ENSURE(queue))
+		return;
+
+	queue->SubmitCommandBuffer(information);
+}
+
+void GpuWorkContext::SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, u32 queueIndex)
+{
+	GpuSubmissionInformation information;
+	information.CommandBuffer = commandBuffer;
+	information.SyncMask = syncMask;
+
+	SubmitCommandBuffer(information, queueIndex);
+}
+
 void GpuWorkContext::SubmitTransferCommandBuffers(bool wait)
 {
 	TShared<render::GpuCommandBuffer> commandBufferToSubmit = mTransferCommandBuffer;
 	mTransferCommandBuffer = nullptr;
 
+	if (commandBufferToSubmit == nullptr && !wait)
+		return;
+
+	TShared<GpuQueue> queue = mDevice.GetQueue(kTransferQueueType, kTransferQueueIndex);
+	if (queue == nullptr)
+		return;
+
 	if (commandBufferToSubmit != nullptr)
 	{
 		commandBufferToSubmit->End();
 
-		TShared<GpuQueue> queue = mDevice.GetQueue(kTransferQueueType, kTransferQueueIndex);
-		if (queue != nullptr)
-		{
-			GpuSubmissionInformation submissionInfo;
-			submissionInfo.CommandBuffer = commandBufferToSubmit;
-			submissionInfo.SyncMask = GpuQueueMask::kAll;
-			queue->SubmitCommandBuffer(submissionInfo, false);
-		}
+		GpuSubmissionInformation submissionInfo;
+		submissionInfo.CommandBuffer = commandBufferToSubmit;
+		submissionInfo.SyncMask = GpuQueueMask::kAll;
+		queue->SubmitCommandBuffer(submissionInfo);
 	}
 
 	if (wait)
-	{
-		TShared<GpuQueue> queue = mDevice.GetQueue(kTransferQueueType, kTransferQueueIndex);
-		if (queue)
-			queue->WaitUntilIdle();
-	}
+		queue->WaitUntilIdle();
 }
 
 void GpuWorkContext::AdvanceFrame()

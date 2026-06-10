@@ -14,6 +14,7 @@
 #include "GpuBackend/B3DGpuBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "Renderer/B3DRendererScene.h"
+#include "Renderer/B3DRenderer.h"
 #include "Scene/B3DSceneInstance.h"
 #include "Scene/B3DSceneManager.h"
 #include "Scene/B3DSceneObjectFragments.h"
@@ -670,6 +671,7 @@ void RenderableProxy::UpdateAnimationBuffers(const EvaluatedAnimationData& animD
 	if(animInfo == nullptr)
 		return;
 
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 	if(mData.AnimType == RenderableAnimType::Skinned || mData.AnimType == RenderableAnimType::SkinnedMorph)
 	{
 		const EvaluatedAnimationData::PoseInfo& poseInfo = animInfo->PoseInfo;
@@ -690,7 +692,7 @@ void RenderableProxy::UpdateAnimationBuffers(const EvaluatedAnimationData& animD
 			currentWriteLocation += 12 * sizeof(float);
 		}
 
-		GpuBufferUtility::Write(mBoneMatrixBuffer, 0, bufferSize, temporaryBuffer, GpuBufferWriteFlag::Discard);
+		GpuBufferUtility::Write(workContext, mBoneMatrixBuffer, 0, bufferSize, temporaryBuffer, GpuBufferWriteFlag::Discard);
 		B3DStackFree(temporaryBuffer);
 	}
 
@@ -703,7 +705,7 @@ void RenderableProxy::UpdateAnimationBuffers(const EvaluatedAnimationData& animD
 			u32 bufferSize = meshData->GetSize();
 			u8* data = meshData->GetData();
 
-			GpuBufferUtility::Write(mMorphShapeBuffer, 0, bufferSize, data, GpuBufferWriteFlag::Discard);
+			GpuBufferUtility::Write(workContext, mMorphShapeBuffer, 0, bufferSize, data, GpuBufferWriteFlag::Discard);
 			mMorphShapeVersion = animInfo->MorphShapeInfo.Version;
 		}
 	}

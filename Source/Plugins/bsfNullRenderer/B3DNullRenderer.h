@@ -49,7 +49,7 @@ namespace b3d
 			NullRenderer() = default;
 
 			const StringID& GetName() const override;
-			void Initialize(const TShared<GpuDevice>& gpuDevice) override;
+			void Activate() override;
 			void Destroy() override;
 			void RenderAll(PerFrameData perFrameData) override;
 			void CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& commandBuffer, const TShared<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override {}

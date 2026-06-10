@@ -266,25 +266,12 @@ void VulkanGpuBuffer::Initialize()
 	RecreateInternalBuffer();
 }
 
-VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable, const VulkanAllocationResult* preAllocatedMemory)
+VkBufferUsageFlags VulkanGpuBuffer::GetVkBufferUsageFlags(const GpuBufferCreateInformation& createInformation)
 {
-	// Not allowed to have size 0 buffer
-	if(size == 0)
-		size = 64;
-
-	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;
-	const GpuBufferFlags newBufferFlags = staging ? (GpuBufferFlags)0 : mInformation.Flags;
-
-	// Transient buffers are allocated from the linear (bump) allocator, which doesn't participate in defragmentation
-	const bool transient = newBufferFlags.IsSet(GpuBufferFlag::Transient);
-
-	// Persistent buffers pass `this` as the proxy parent so defrag can recreate them in place.
-	VulkanGpuBuffer* const proxyParent = (staging || transient) ? nullptr : this;
-
-	const String debugName = staging ? StringUtility::Format("Staging buffer ({0})", mName) : mName;
-
+	// Buffer usage bits from the buffer type. Every type is a transfer destination (buffers are uploaded
+	// to) except StagingWrite, which is a pure copy source.
 	VkBufferUsageFlags usageFlags = 0;
-	switch(mInformation.Type)
+	switch(createInformation.Type)
 	{
 	case GpuBufferType::Vertex:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
@@ -309,13 +296,72 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 		break;
 	}
 
-	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
+	if(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 	{
-		if(mInformation.Type == GpuBufferType::SimpleStorage)
+		if(createInformation.Type == GpuBufferType::SimpleStorage)
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		else
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 	}
+
+	// Persistent (non-staging) buffers are readable by default
+	usageFlags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+	return usageFlags;
+}
+
+void VulkanGpuBuffer::GetVkMemoryPropertyFlags(const GpuBufferCreateInformation& createInformation, VkMemoryPropertyFlags& requiredFlags, VkMemoryPropertyFlags& preferredFlags)
+{
+	// Map the engine's high-level buffer-usage hint to (required, preferred) memory-property flags.
+	if(createInformation.Type == GpuBufferType::StagingRead)
+	{
+		// CPU readback (transfer-dst staging): host-visible + cached for fast CPU reads.
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+	}
+	else if(createInformation.Type == GpuBufferType::StagingWrite)
+	{
+		// CPU upload staging: host-visible + coherent for write-combined upload.
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
+	else if(createInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
+	{
+		// Persistent CPU-write-then-GPU-read buffer (e.g. dynamic uniform buffers). Prefer ReBAR-style
+		// HOST_VISIBLE + DEVICE_LOCAL when available, otherwise plain HOST_VISIBLE.
+		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
+	else
+	{
+		// Pure GPU buffer (vertex / index / structured / uniform with TRANSFER_DST init): DEVICE_LOCAL only.
+		requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		preferredFlags = 0;
+	}
+}
+
+VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable, const VulkanAllocationResult* preAllocatedMemory)
+{
+	// Not allowed to have size 0 buffer
+	if(size == 0)
+		size = 64;
+
+	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;
+	const GpuBufferFlags newBufferFlags = staging ? (GpuBufferFlags)0 : mInformation.Flags;
+
+	// Transient buffers are allocated from the linear (bump) allocator, which doesn't participate in defragmentation
+	const bool transient = newBufferFlags.IsSet(GpuBufferFlag::Transient);
+
+	// Persistent buffers pass `this` as the proxy parent so defrag can recreate them in place.
+	VulkanGpuBuffer* const proxyParent = (staging || transient) ? nullptr : this;
+
+	const String debugName = staging ? StringUtility::Format("Staging buffer ({0})", mName) : mName;
+
+	// Resolve usage + (required, preferred) memory-property flags from the buffer's engine usage hint.
+	VkBufferUsageFlags usageFlags = GetVkBufferUsageFlags(mInformation);
+	VkMemoryPropertyFlags requiredFlags = 0;
+	VkMemoryPropertyFlags preferredFlags = 0;
+	GetVkMemoryPropertyFlags(mInformation, requiredFlags, preferredFlags);
 
 	VulkanBufferCreateInformation info;
 	info.VkCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -329,62 +375,17 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	info.Flags = newBufferFlags;
 	info.DebugName = debugName;
 	info.VkCreateInfo.size = size;
+
 	if(staging)
 	{
+		// Staging sub-buffer override usage as a pure copy source, plus a copy destination when readable.
 		info.VkCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-		// Staging buffers are used as a destination for reads
 		if(readable)
 			info.VkCreateInfo.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	}
-	else if(readable) // Non-staging readable
-		info.VkCreateInfo.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-	// Map the engine's high-level buffer-usage hint to (required, preferred) memory-property flags. The
-	// PickMemoryTypeIndex picker prefers the lowest-index type that has all required bits and the most
-	// matching preferred bits — this mirrors VMA's prior behaviour for these usage classes.
-	VkMemoryPropertyFlags requiredFlags = 0;
-	VkMemoryPropertyFlags preferredFlags = 0;
-	if(staging)
-	{
-		if(readable)
-		{
-			// CPU readback (e.g. transfer-dst staging): host-visible + cached for fast CPU reads.
-			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-			preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-		}
-		else
-		{
-			// CPU upload staging: host-visible + coherent for write-combined upload.
-			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-			preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-		}
-	}
-	else if(mInformation.Type == GpuBufferType::StagingRead)
-	{
-		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-	}
-	else if(mInformation.Type == GpuBufferType::StagingWrite)
-	{
-		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-		preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-	}
-	else if(mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
-	{
-		// Persistent CPU-write-then-GPU-read buffer (e.g. dynamic uniform buffers). Prefer ReBAR-style
-		// HOST_VISIBLE + DEVICE_LOCAL when available, otherwise plain HOST_VISIBLE.
-		requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-		preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-	}
-	else
-	{
-		// Pure GPU buffer (vertex / index / structured / uniform with TRANSFER_DST init): DEVICE_LOCAL only.
-		requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-		preferredFlags = 0;
-	}
-
-	VulkanBuffer* const vulkanBuffer = preAllocatedMemory != nullptr 
+	VulkanBuffer* const vulkanBuffer = preAllocatedMemory != nullptr
 		? device.CreateBuffer(info, *preAllocatedMemory, proxyParent)
 		: device.CreateBuffer(info, requiredFlags, preferredFlags, proxyParent);
 

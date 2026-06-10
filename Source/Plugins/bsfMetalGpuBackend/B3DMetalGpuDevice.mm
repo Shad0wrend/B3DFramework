@@ -22,7 +22,6 @@
 #include "B3DMetalEventQuery.h"
 #include "B3DMetalGpuQueryPool.h"
 #include "GpuBackend/B3DVideoModeInfo.h"
-#include "GpuBackend/B3DGpuTransferBufferHelper.h"
 #include "GpuBackend/B3DGpuTimelineFence.h"
 #include "B3DMetalGpuTimelineFence.h"
 #include "Math/B3DMatrix4.h"
@@ -182,7 +181,7 @@ namespace b3d
 			// heaps those resources are backed by.
 			mIsShuttingDown = true;
 
-			mTransferBufferHelper.reset();
+			ShutdownPrimaryContext();
 
 			// Persist the mutable pipeline binary archive to disk so the next launch can reuse compiled
 			// functions. Only MutableBinaryArchive is serialized — LoadedBinaryArchive is immutable and
@@ -541,8 +540,6 @@ namespace b3d
 			// the destructor after the deferred-release queue has been drained so heap-backed
 			// resources do not outlive their parent heap.
 			mHeapAllocator = B3DMakeUnique<MetalHeapAllocator>(*this);
-
-			mTransferBufferHelper = B3DMakeUnique<GpuTransferBufferHelper>(*this, GpuQueueId(GQT_GRAPHICS, 0));
 
 			mIsInitialized = true;
 			initSucceeded = true;
@@ -1140,20 +1137,10 @@ namespace b3d
 			}
 		}
 
-		void MetalGpuDevice::SubmitTransferCommandBuffers(bool wait)
-		{
-			if (!mTransferBufferHelper)
-				return;
-
-			mTransferBufferHelper->SubmitTransferCommandBuffer(wait);
-		}
-
 		void MetalGpuDevice::EndFrameImpl()
 		{
-			SubmitTransferCommandBuffers();
-
-			if (mTransferBufferHelper)
-				mTransferBufferHelper->EndFrame();
+			GetPrimaryContext().SubmitTransferCommandBuffers();
+			GetPrimaryContext().AdvanceFrame();
 		}
 
 		TShared<SamplerState> MetalGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags)

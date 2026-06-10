@@ -7,6 +7,7 @@
 #include "B3DGpuDeviceCapabilities.h"
 #include "CoreObject/B3DCoreObjectSync.h"
 #include "FileSystem/B3DDataStream.h"
+#include "Renderer/B3DRenderer.h"
 
 using namespace b3d;
 
@@ -337,7 +338,8 @@ namespace b3d::render
 		if(B3D_ENSURE(mTotalSize == syncPacket->BufferSize))
 		{
 			// TODO - This should write to CPU cached buffer directly via map/unmap. But we need a ring buffer to handle usage over multiple frames
-			GpuBufferUtility::Write(std::static_pointer_cast<GpuBuffer>(GetShared()), 0, syncPacket->BufferSize, syncPacket->BufferData);
+			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(workContext, std::static_pointer_cast<GpuBuffer>(GetShared()), 0, syncPacket->BufferSize, syncPacket->BufferData);
 		}
 
 		allocator.Free(syncPacket->BufferData);
@@ -356,7 +358,7 @@ namespace b3d::render
 		return device.CreateGpuBuffer(createInformation);
 	}
 
-	void GpuBufferUtility::Write(const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags flags, TShared<GpuCommandBuffer> commandBuffer)
+	void GpuBufferUtility::Write(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags flags, TShared<GpuCommandBuffer> commandBuffer)
 	{
 		B3D_ASSERT(buffer != nullptr);
 
@@ -449,9 +451,8 @@ namespace b3d::render
 		}
 
 		// Queue copy/update command for the actual write
-		GpuDevice& device = buffer->GetDevice();
 		if(commandBuffer == nullptr)
-			commandBuffer = device.GetOrCreateTransferCommandBuffer();
+			commandBuffer = workContext.GetTransferCommandBuffer();
 
 		commandBuffer->CopyBufferToBuffer(stagingBuffer, buffer, 0, offset, length);
 		commandBuffer->AddQueueSyncMask(syncMask);
@@ -460,7 +461,7 @@ namespace b3d::render
 		// done automatically before next "normal" command buffer submission.
 	}
 
-	void GpuBufferUtility::Read(const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue)
+	void GpuBufferUtility::Read(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue)
 	{
 		B3D_ASSERT(buffer != nullptr);
 
@@ -490,8 +491,7 @@ namespace b3d::render
 			// If used on the GPU, we need to wait until all write operations complete before mapping it
 			if(isUsedOnGPU)
 			{
-				GpuDevice& device = buffer->GetDevice();
-				TShared<GpuCommandBuffer> commandBuffer = device.GetOrCreateTransferCommandBuffer();
+				TShared<GpuCommandBuffer> commandBuffer = workContext.GetTransferCommandBuffer();
 
 				// Make any writes visible before mapping
 				if(supportsGPUWrites)
@@ -502,7 +502,7 @@ namespace b3d::render
 
 				// Submit the command buffer and wait until it finishes
 				commandBuffer->AddQueueSyncMask(writeUseMask);
-				device.SubmitTransferCommandBuffers(true);
+				workContext.SubmitTransferCommandBuffers(true);
 			}
 
 			GpuBufferMappedScope mapping = buffer->Map(offset, length, GpuMapOption::Read);
@@ -522,15 +522,14 @@ namespace b3d::render
 			syncMask = writeUseMask;
 		}
 
-		GpuDevice& device = buffer->GetDevice();
-		TShared<GpuCommandBuffer> commandBuffer = device.GetOrCreateTransferCommandBuffer();
+		TShared<GpuCommandBuffer> commandBuffer = workContext.GetTransferCommandBuffer();
 
 		// Queue copy command
 		commandBuffer->CopyBufferToBuffer(buffer, stagingBuffer, offset, 0, length);
 
 		// Submit the command buffer and wait until it finishes
 		commandBuffer->AddQueueSyncMask(syncMask);
-		device.SubmitTransferCommandBuffers(true);
+		workContext.SubmitTransferCommandBuffers(true);
 
 		{
 			GpuBufferMappedScope mapping = stagingBuffer->Map(0, length, GpuMapOption::Read);

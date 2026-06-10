@@ -56,10 +56,8 @@ const StringID& RenderBeast::GetName() const
 	return name;
 }
 
-void RenderBeast::Initialize(const TShared<GpuDevice>& gpuDevice)
+void RenderBeast::Activate()
 {
-	Renderer::Initialize(gpuDevice);
-
 	LoadedRendererTextures textures;
 	HTexture bokehFlare = GetBuiltinResources().GetTexture(BuiltinTexture::BokehFlare);
 	textures.BokehFlare = B3DGetRenderProxy(bokehFlare);
@@ -411,6 +409,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 
 	scene.ResetRenderableReady();
 
+	GpuWorkContext& gpuContext = GetGpuContext();
 	mDevice->BeginFrame();
 
 	if (mIsFrameCaptureRequested)
@@ -463,7 +462,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 #if B3D_PROFILING_ENABLED
 			commandBuffer->EndProfiling();
 #endif
-			mDevice->SubmitCommandBuffer(commandBuffer);
+			gpuContext.SubmitCommandBuffer(commandBuffer);
 
 			commandBuffer = mCommandBufferPoolRing->GetCurrentPool().Create(GpuCommandBufferCreateInformation::Create("Main"));
 
@@ -481,7 +480,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 #if B3D_PROFILING_ENABLED
 	commandBuffer->EndProfiling();
 #endif
-	mDevice->SubmitCommandBuffer(commandBuffer);
+	gpuContext.SubmitCommandBuffer(commandBuffer);
 
 	return anythingDrawnForScene;
 }

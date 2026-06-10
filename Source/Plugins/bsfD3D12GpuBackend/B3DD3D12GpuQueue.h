@@ -20,7 +20,7 @@ namespace b3d
 			D3D12GpuQueue(D3D12GpuDevice& device, GpuQueueUsage usage, u32 index, ID3D12CommandQueue* d3d12Queue);
 			~D3D12GpuQueue();
 
-			void SubmitCommandBuffer(const GpuSubmissionInformation& information, bool flushTransferCommandBuffer = true) override;
+			void SubmitCommandBuffer(const GpuSubmissionInformation& information) override;
 			void WaitUntilIdle() override;
 			void PresentRenderWindow(const TShared<RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) override;
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "B3DPrerequisites.h"
+#include "B3DGpuQueue.h"
 
 namespace b3d
 {
@@ -28,7 +29,7 @@ namespace b3d
 	 * Provides parameter set and command buffer pools, transfer command buffers, transient memory allocations 
 	 * and a completion tracker. 
 	 * 
-	 * It's expected that the render that will have one of these, and any worker operation will create its own context.
+	 * It's expected that the renderer will have one of these, and any worker operation will create its own context.
 	 *
 	 * @note	Not thread safe. A single thread/fiber must own and drive a given context.
 	 */
@@ -91,16 +92,35 @@ namespace b3d
 		const TShared<render::GpuCommandBuffer>& GetTransferCommandBuffer();
 
 		/**
+		 * Submits a command buffer through this context. Any pending transfer command buffer owned by this
+		 * context is flushed first (non-blocking), so transfers recorded against this context are visible to
+		 * the submitted work, then the command buffer is submitted to the queue resolved from its queue type
+		 * and @p queueIndex.
+		 *
+		 * @param	information	Command buffer + sync mask + signal fences to submit.
+		 * @param	queueIndex	Index of the queue (of the command buffer's type) to submit on.
+		 */
+		void SubmitCommandBuffer(const GpuSubmissionInformation& information, u32 queueIndex = 0);
+
+		/**
+		 * Convenience overload of SubmitCommandBuffer that submits @p commandBuffer with the provided sync
+		 * mask. See SubmitCommandBuffer(const GpuSubmissionInformation&, u32).
+		 */
+		void SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask = GpuQueueMask::kAll, u32 queueIndex = 0);
+
+		/**
 		 * Ends and submits the active transfer command buffer (if any) to the transfer queue. After this a
-		 * fresh buffer is created on the next GetTransferCommandBuffer() call.
+		 * fresh buffer is created on the next GetTransferCommandBuffer() call. SubmitCommandBuffer() flushes
+		 * pending transfers automatically; call this directly when transfers must execute without follow-up
+		 * work (e.g. before reading back a resource the transfers write).
 		 *
 		 * @param	wait	If true, blocks until the transfer queue finishes executing the submitted work.
 		 */
-		void SubmitTransferCommandBuffers(bool wait = false); // TODO - Should be private, to be called by eventual SubmitCommandBuffer method
+		void SubmitTransferCommandBuffers(bool wait = false);
 
 		/**
 		 * Advances to the next frame at the frame boundary: recycles the transfer pool ring (clearing the
-		 * active transfer command buffer) and reclaims transient memory the GPU has finished with — retiring
+		 * active transfer command buffer) and reclaims transient memory the GPU has finished with - retiring
 		 * each transient allocator's open page and draining everything whose completion marker has signaled
 		 * (non-blocking; drains only what is already complete). Call once per frame after the prior frame's
 		 * work is known safe to reuse, and before the frame index advances so retired pages are stamped with

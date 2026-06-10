@@ -4,6 +4,7 @@
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "Renderer/B3DGpuResourcePool.h"
+#include "Renderer/B3DRenderer.h"
 #include "GpuBackend/B3DVertexDescription.h"
 #include "GpuBackend/B3DGpuPipelineParameterLayout.h"
 #include "Particles/B3DVectorField.h"
@@ -204,7 +205,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		tileUVData[i * 4 + 3] = Vector2(0.0f, 1.0f) * tileUVScale;
 	}
 
-	GpuBufferUtility::Write(TileUVs, 0, TileUVs->GetTotalSize(), tileUVData);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(workContext, TileUVs, 0, TileUVs->GetTotalSize(), tileUVData);
 	B3DStackFree(tileUVData);
 
 	// Prepare UV coordinates for rendering particles
@@ -225,7 +227,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		particleUVData[i * 4 + 3] = Vector2(0.0f, 1.0f) * particleUVScale;
 	}
 
-	GpuBufferUtility::Write(ParticleUVs, 0, ParticleUVs->GetTotalSize(), particleUVData);
+	GpuBufferUtility::Write(workContext, ParticleUVs, 0, ParticleUVs->GetTotalSize(), particleUVData);
 	B3DStackFree(particleUVData);
 
 	// Prepare indices for rendering tiles & particles
@@ -263,7 +265,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		}
 	}
 
-	GpuBufferUtility::Write(SpriteIndices, 0, SpriteIndices->GetTotalSize(), indices);
+	GpuBufferUtility::Write(workContext, SpriteIndices, 0, SpriteIndices->GetTotalSize(), indices);
 	B3DStackFree(indices);
 }
 
@@ -544,6 +546,7 @@ TShared<GpuParameterSet> GpuParticleSimulation::PrepareSimulateParameters(const 
 static TShared<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 {
 	const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 
 	const u32 size = gGpuParticleTileVertexUniformDefinition.GetSize();
 	TShared<GpuBuffer> stagingBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateStagingWrite(size));
@@ -566,7 +569,7 @@ static TShared<GpuBuffer> CreateGpuParticleVertexInputBuffer()
 	gGpuParticleTileVertexUniformDefinition.gUVToNDC.Set(stagingMemory, uvToNdc);
 	stagingMemory.Unmap();
 
-	const TShared<GpuCommandBuffer>& commandBuffer = gpuDevice->GetOrCreateTransferCommandBuffer();
+	const TShared<GpuCommandBuffer>& commandBuffer = workContext.GetTransferCommandBuffer();
 	commandBuffer->CopyBufferToBuffer(stagingBuffer, inputBuffer, 0, 0, size);
 
 	return inputBuffer;
@@ -960,7 +963,8 @@ void GpuParticleSimulation::PrepareClearTiles(const Vector<u32>& tiles)
 			tileUVs[tileIndex] = Vector2(2.0f, 2.0f); // Out of bounds
 
 		// Write data to buffer (BEFORE render pass)
-		GpuBufferUtility::Write(parameters.ScratchBuffer, 0, parameters.ScratchBuffer->GetTotalSize(), tileUVs);
+		GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+		GpuBufferUtility::Write(workContext, parameters.ScratchBuffer, 0, parameters.ScratchBuffer->GetTotalSize(), tileUVs);
 
 		// Free temporary array
 		B3DStackFree(tileUVs);
@@ -1002,7 +1006,8 @@ void GpuParticleSimulation::PrepareInjectParticles(const Vector<GpuParticle>& pa
 			particleData[particleIndex - particleStart] = particles[particleIndex].GetVertex();
 
 		// Write data to buffer (BEFORE render pass)
-		GpuBufferUtility::Write(parameters.ScratchBuffer, 0, parameters.ScratchBuffer->GetTotalSize(), particleData, GpuBufferWriteFlag::Discard);
+		GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+		GpuBufferUtility::Write(workContext, parameters.ScratchBuffer, 0, parameters.ScratchBuffer->GetTotalSize(), particleData, GpuBufferWriteFlag::Discard);
 
 		// Free temporary array
 		B3DStackFree(particleData);
@@ -1025,6 +1030,7 @@ struct GpuParticleCurveInject
 
 GpuParticleCurves::GpuParticleCurves()
 {
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 	const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 
 	TextureCreateInformation textureCreateInformation;
@@ -1064,7 +1070,7 @@ GpuParticleCurves::GpuParticleCurves()
 	tileUVData[2] = Vector2(1.0f, 1.0f) * tileUVScale;
 	tileUVData[3] = Vector2(0.0f, 1.0f) * tileUVScale;
 
-	GpuBufferUtility::Write(mInjectUV, 0, mInjectUV->GetTotalSize(), tileUVData);
+	GpuBufferUtility::Write(workContext, mInjectUV, 0, mInjectUV->GetTotalSize(), tileUVData);
 	B3DStackFree(tileUVData);
 
 	// Prepare indices for injecting curves
@@ -1100,7 +1106,7 @@ GpuParticleCurves::GpuParticleCurves()
 		indices[5] = 3;
 	}
 
-	GpuBufferUtility::Write(mInjectIndices, 0, mInjectIndices->GetTotalSize(), indices);
+	GpuBufferUtility::Write(workContext, mInjectIndices, 0, mInjectIndices->GetTotalSize(), indices);
 	B3DStackFree(indices);
 
 	// Prepare a scratch buffer we'll use to inject new curves
@@ -1147,6 +1153,8 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 	if(numCurves == 0)
 		return;
 
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+
 	GpuParticleCurveInjectMaterial* injectMat = GpuParticleCurveInjectMaterial::Get();
 	injectMat->Prepare(CreateGpuParticleVertexInputBuffer());
 	injectMat->Bind(commandBuffer);
@@ -1187,7 +1195,7 @@ void GpuParticleCurves::ApplyChanges(GpuCommandBuffer& commandBuffer)
 			}
 		}
 
-		GpuBufferUtility::Write(mInjectScratch, 0, mInjectScratch->GetTotalSize(), data, GpuBufferWriteFlag::Discard); // TODO - Write using the command buffer below? It wouldn't require discard.
+		GpuBufferUtility::Write(workContext, mInjectScratch, 0, mInjectScratch->GetTotalSize(), data, GpuBufferWriteFlag::Discard); // TODO - Write using the command buffer below? It wouldn't require discard.
 
 		B3DStackFree(data);
 		commandBuffer.DrawIndexed(0, 6, 0, 4, count);

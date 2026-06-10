@@ -27,11 +27,8 @@ VulkanGpuQueue::VulkanGpuQueue(VulkanGpuDevice& device, GpuQueueType type, u32 i
 		mSubmitDstWaitMask[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 }
 
-void VulkanGpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information, bool flushTransferCommandBuffer)
+void VulkanGpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information)
 {
-	if(flushTransferCommandBuffer)
-		mGpuDevice.SubmitTransferCommandBuffers();
-
 	if (!B3D_ENSURE(information.CommandBuffer))
 		return;
 

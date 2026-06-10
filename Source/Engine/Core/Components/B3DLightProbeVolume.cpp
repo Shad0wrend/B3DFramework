@@ -252,8 +252,8 @@ void LightProbeVolume::RunRenderProbeTask()
 		commandBufferProfiler->EndSample(*commandBuffer);
 
 		GetGpuProfiler().ResolveProfileWhenReady("LightProbeRendering", commandBufferProfiler);
-		const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		gpuDevice->SubmitCommandBuffer(commandBuffer);
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		workContext.SubmitCommandBuffer(commandBuffer);
 
 		return isDone;
 	};
@@ -426,7 +426,8 @@ void LightProbeVolume::Initialize()
 		}
 	}
 
-	TextureUtility::Write(mCoefficients, *coeffData, 0, 0, TextureWriteFlag::Discard);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Write(workContext, mCoefficients, *coeffData, 0, 0, TextureWriteFlag::Discard);
 	mInitCoefficients.clear();
 
 	const TShared<RendererScene>& rendererScene = mSceneInstance->GetRendererScene();
@@ -612,7 +613,8 @@ void LightProbeVolume::GetProbeCoefficients(Vector<LightProbeCoefficientInfo>& o
 	LightProbeSHCoefficients* coefficients = B3DStackAllocate<LightProbeSHCoefficients>(activeProbeCount);
 
 	TShared<PixelData> coeffData = mCoefficients->GetProperties().AllocBuffer(0, 0);
-	TextureUtility::Read(mCoefficients, *coeffData);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Read(workContext, mCoefficients, *coeffData);
 
 	u32 probesPerRow = coeffData->GetWidth() / 9;
 	u32 probeIndex = 0;

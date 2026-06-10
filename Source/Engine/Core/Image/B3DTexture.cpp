@@ -12,6 +12,7 @@
 #include "Image/B3DPixelUtility.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
+#include "Renderer/B3DRenderer.h"
 
 using namespace b3d;
 
@@ -143,7 +144,8 @@ TAsyncOp<void> Texture::WriteData(const TShared<PixelData>& data, u32 face, u32 
 		bool _discardEntireBuffer, TAsyncOp<void>& asyncOp)
 	{
 		render::TextureWriteFlags flags = _discardEntireBuffer ? render::TextureWriteFlag::Discard : render::TextureWriteFlag::Normal;
-		render::TextureUtility::Write(texture, *_pixData, _mipLevel, _face, flags);
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		render::TextureUtility::Write(workContext, texture, *_pixData, _mipLevel, _face, flags);
 		_pixData->UnlockInternal();
 		asyncOp.CompleteOperation();
 	};
@@ -160,11 +162,10 @@ TAsyncOp<void> Texture::ReadData(const TShared<PixelData>& data, u32 face, u32 m
 
 	auto fnReadData = [](const TShared<render::Texture>& texture, u32 face, u32 mipLevel, const TShared<PixelData>& pixelData, TAsyncOp<void>& asyncOp)
 	{
-		const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		if(gpuDevice != nullptr)
-			gpuDevice->SubmitTransferCommandBuffers();
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		workContext.SubmitTransferCommandBuffers();
 
-		render::TextureUtility::Read(texture, *pixelData, mipLevel, face);
+		render::TextureUtility::Read(workContext, texture, *pixelData, mipLevel, face);
 		pixelData->UnlockInternal();
 		asyncOp.CompleteOperation();
 	};
@@ -181,12 +182,11 @@ TAsyncOp<TShared<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 
 	auto fnReadDataAsync = [texture = B3DGetRenderProxy(this), face, mipLevel, op]() mutable
 	{
-		const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		if(gpuDevice != nullptr)
-			gpuDevice->SubmitTransferCommandBuffers();
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		workContext.SubmitTransferCommandBuffers();
 
 		TShared<PixelData> output = texture->GetProperties().AllocBuffer(face, mipLevel);
-		render::TextureUtility::Read(texture, *output, mipLevel, face);
+		render::TextureUtility::Read(workContext, texture, *output, mipLevel, face);
 
 		op.CompleteOperation(output);
 	};
@@ -360,7 +360,8 @@ void Texture::Initialize()
 {
 	if(mInitData != nullptr)
 	{
-		TextureUtility::Write(std::static_pointer_cast<Texture>(GetShared()), *mInitData, 0, 0, TextureWriteFlag::Discard);
+		GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+		TextureUtility::Write(workContext, std::static_pointer_cast<Texture>(GetShared()), *mInitData, 0, 0, TextureWriteFlag::Discard);
 		mInitData->UnlockInternal();
 		mInitData = nullptr;
 	}
@@ -423,7 +424,7 @@ TShared<GpuBuffer> TextureUtility::CreateStagingBuffer(const TShared<Texture>& t
 	return texture->GetDevice().CreateGpuBuffer(createInformation);
 }
 
-void TextureUtility::Write(const TShared<Texture>& texture, const PixelData& source, u32 mipLevel, u32 arrayLayer, TextureWriteFlags flags, TShared<GpuCommandBuffer> commandBuffer)
+void TextureUtility::Write(GpuWorkContext& workContext, const TShared<Texture>& texture, const PixelData& source, u32 mipLevel, u32 arrayLayer, TextureWriteFlags flags, TShared<GpuCommandBuffer> commandBuffer)
 {
 	ASSERT_IF_NOT_RENDER_THREAD
 	B3D_ASSERT(texture != nullptr);
@@ -496,7 +497,6 @@ void TextureUtility::Write(const TShared<Texture>& texture, const PixelData& sou
 	}
 
 	// Fall back to staging buffer approach
-	GpuDevice& device = texture->GetDevice();
 
 	// Create staging buffer
 	const u32 mipWidth = Math::Max(1u, textureProperties.Width >> mipLevel);
@@ -537,14 +537,14 @@ void TextureUtility::Write(const TShared<Texture>& texture, const PixelData& sou
 
 	// Get or create command buffer
 	if(commandBuffer == nullptr)
-		commandBuffer = device.GetOrCreateTransferCommandBuffer();
+		commandBuffer = workContext.GetTransferCommandBuffer();
 
 	// Issue copy command
 	commandBuffer->CopyBufferToTexture(stagingBuffer, texture, 0, mipLevel, arrayLayer);
 	commandBuffer->AddQueueSyncMask(syncMask);
 }
 
-void TextureUtility::Read(const TShared<Texture>& texture, PixelData& destination, u32 mipLevel, u32 arrayLayer, const TShared<GpuQueue>& gpuQueue)
+void TextureUtility::Read(GpuWorkContext& workContext, const TShared<Texture>& texture, PixelData& destination, u32 mipLevel, u32 arrayLayer, const TShared<GpuQueue>& gpuQueue)
 {
 	B3D_ASSERT(texture != nullptr);
 
@@ -585,8 +585,7 @@ void TextureUtility::Read(const TShared<Texture>& texture, PixelData& destinatio
 		// If used on the GPU, we need to wait until all write operations complete before mapping it
 		if(isUsedOnGPU)
 		{
-			GpuDevice& device = texture->GetDevice();
-			TShared<GpuCommandBuffer> commandBuffer = device.GetOrCreateTransferCommandBuffer();
+			TShared<GpuCommandBuffer> commandBuffer = workContext.GetTransferCommandBuffer();
 
 			// Make any writes visible before mapping
 			if(supportsGPUWrites)
@@ -597,7 +596,7 @@ void TextureUtility::Read(const TShared<Texture>& texture, PixelData& destinatio
 
 			// Submit the command buffer and wait until it finishes
 			commandBuffer->AddQueueSyncMask(subresourceWriteUseMask);
-			device.SubmitTransferCommandBuffers(true);
+			workContext.SubmitTransferCommandBuffers(true);
 		}
 
 		GpuTextureMappedScope mappedScope = texture->Map(mipLevel, arrayLayer, GpuMapOption::Read);
@@ -621,15 +620,14 @@ void TextureUtility::Read(const TShared<Texture>& texture, PixelData& destinatio
 		syncMask = subresourceWriteUseMask;
 	}
 
-	GpuDevice& device = texture->GetDevice();
-	TShared<GpuCommandBuffer> commandBuffer = device.GetOrCreateTransferCommandBuffer();
+	TShared<GpuCommandBuffer> commandBuffer = workContext.GetTransferCommandBuffer();
 
 	// Queue copy command
 	commandBuffer->CopyTextureToBuffer(texture, stagingBuffer, mipLevel, arrayLayer, 0);
 
 	// Submit the command buffer and wait until it finishes
 	commandBuffer->AddQueueSyncMask(syncMask);
-	device.SubmitTransferCommandBuffers(true);
+	workContext.SubmitTransferCommandBuffers(true);
 
 	{
 		GpuBufferMappedScope mapping = stagingBuffer->Map(GpuMapOption::Read);
@@ -680,7 +678,7 @@ TAsyncOp<TShared<PixelData>> TextureUtility::ReadAsync(const TShared<Texture>& t
 	return op;
 }
 
-void TextureUtility::Clear(const TShared<Texture>& texture, const Color& value, u32 mipLevel, u32 arrayLayer, const TShared<GpuCommandBuffer>& commandBuffer)
+void TextureUtility::Clear(GpuWorkContext& workContext, const TShared<Texture>& texture, const Color& value, u32 mipLevel, u32 arrayLayer, const TShared<GpuCommandBuffer>& commandBuffer)
 {
 	ASSERT_IF_NOT_RENDER_THREAD
 
@@ -700,6 +698,6 @@ void TextureUtility::Clear(const TShared<Texture>& texture, const Color& value, 
 	TShared<PixelData> data = textureProperties.AllocBuffer(arrayLayer, mipLevel);
 	data->SetColors(value);
 
-	Write(texture, *data, mipLevel, arrayLayer, TextureWriteFlag::Discard, commandBuffer);
+	Write(workContext, texture, *data, mipLevel, arrayLayer, TextureWriteFlag::Discard, commandBuffer);
 }
 }}

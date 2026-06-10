@@ -767,6 +767,7 @@ namespace b3d::render
 		 * and then copy the staging buffer into the destination buffer using the provided command buffer. If no command buffer is provided, it will use
 		 * a transfer buffer which will be submitted automatically before the next regular command buffer submission.
 		 *
+		 * @param	workContext		Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
 		 * @param	offset			Offset in bytes into the destination buffer at which to copy the data to.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	source			Source buffer containing the data to write. Data is read from the start of the buffer (@p offset is only applied to the destination).
@@ -775,7 +776,7 @@ namespace b3d::render
 		 *							the operation will be queued on a transfer command buffer that will be submitted just before next regular command
 		 *							buffer submission (or at the latest, at the end of the current frame).
 		 */
-		static void Write(const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags = GpuBufferWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
+		static void Write(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags = GpuBufferWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
 
 		/**
 		 * Reads data from a buffer while accounting for the fact that the buffer might not be directly CPU-readable. Only buffers with
@@ -788,13 +789,14 @@ namespace b3d::render
 		 *
 		 * Note if the buffer is currently used on the GPU, this method will block until the GPU is done executing, stalling the pipeline.
 		 *
+		 * @param	workContext		Context whose transfer command buffer is used to perform and flush the staging copy.
 		 * @param	buffer			Buffer to read from.
 		 * @param	offset			Offset in bytes from which to copy the data.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start of the buffer (@p offset is only applied to the source).
 		 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default transfer queue will be used.
 		 */
-		static void Read(const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue = nullptr);
+		static void Read(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue = nullptr);
 
 		/**
 		 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point

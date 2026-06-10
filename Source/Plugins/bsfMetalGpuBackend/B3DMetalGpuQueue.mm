@@ -144,11 +144,8 @@ namespace b3d
 			}
 		}
 
-		void MetalGpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information, bool flushTransferCommandBuffer)
+		void MetalGpuQueue::SubmitCommandBuffer(const GpuSubmissionInformation& information)
 		{
-			if(flushTransferCommandBuffer)
-				mGpuDevice.SubmitTransferCommandBuffers();
-
 			const TShared<GpuCommandBuffer>& commandBuffer = information.CommandBuffer;
 			if (!commandBuffer)
 				return;

@@ -25,10 +25,8 @@ const StringID& render::NullRenderer::GetName() const
 	return name;
 }
 
-void render::NullRenderer::Initialize(const TShared<GpuDevice>& gpuDevice)
+void render::NullRenderer::Activate()
 {
-	Renderer::Initialize(gpuDevice);
-
 	GetRenderThread().PostCommand([this]() { InitializeOnRenderThread(); }, "NullRenderer::InitializeOnRenderThread");
 }
 

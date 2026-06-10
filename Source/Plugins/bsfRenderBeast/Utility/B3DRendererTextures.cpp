@@ -11,6 +11,7 @@
 #include "Image/B3DPixelData.h"
 #include "Renderer/B3DIBLUtility.h"
 #include "Image/B3DColorGradient.h"
+#include "Renderer/B3DRenderer.h"
 
 namespace b3d {
 namespace render {
@@ -182,7 +183,8 @@ TShared<render::Texture> GeneratePreintegratedEnvBrdf()
 		}
 	}
 
-	TextureUtility::Write(texture, *pixelData);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Write(workContext, texture, *pixelData);
 
 	return texture;
 }
@@ -193,6 +195,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 	if (!gpuDevice)
 		return nullptr;
 
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 	GpuCommandBufferPool& commandBufferPool = GetRenderBeast()->GetCurrentCommandBufferPool();
 	TShared<GpuCommandBuffer> commandBuffer = commandBufferPool.Create(GpuCommandBufferCreateInformation::Create("GenerateDefaultIndirect"));
 
@@ -218,7 +221,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(Color::kBlack, 0, 1);
 		data->SetColorAt(Color::kBlack, 1, 1);
 
-		TextureUtility::Write(skyTexture, *data, 0, sides[i]);
+		TextureUtility::Write(workContext, skyTexture, *data, 0, sides[i]);
 	}
 
 	{
@@ -229,7 +232,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(skyColor, 0, 1);
 		data->SetColorAt(skyColor, 1, 1);
 
-		TextureUtility::Write(skyTexture, *data, 0, CF_PositiveY);
+		TextureUtility::Write(workContext, skyTexture, *data, 0, CF_PositiveY);
 	}
 
 	{
@@ -240,7 +243,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(Color::kBlack, 0, 1);
 		data->SetColorAt(Color::kBlack, 1, 1);
 
-		TextureUtility::Write(skyTexture, *data, 0, CF_NegativeY);
+		TextureUtility::Write(workContext, skyTexture, *data, 0, CF_NegativeY);
 	}
 
 	TextureCreateInformation irradianceCubemapDesc;
@@ -255,7 +258,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 	TShared<render::Texture> irradiance = gpuDevice->CreateTexture(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);
 
-	gpuDevice->SubmitCommandBuffer(commandBuffer);
+	workContext.SubmitCommandBuffer(commandBuffer);
 
 	return irradiance;
 }

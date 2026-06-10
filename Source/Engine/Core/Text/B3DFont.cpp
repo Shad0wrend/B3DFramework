@@ -725,11 +725,8 @@ void FontAtlasRenderer::BlitGlyphs(Vector<GlyphBitmap> glyphBitmaps)
 			commandBuffer->BlitTexture(entry.GlyphTexture, entry.AtlasTexture, blitInformation);
 		}
 
-		const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		if(!B3D_ENSURE(gpuDevice))
-			return;
-
-		gpuDevice->SubmitCommandBuffer(commandBuffer);
+		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+		workContext.SubmitCommandBuffer(commandBuffer);
 	};
 
 	GetRenderThread().PostCommand(fnBlitToAtlas, "FontAtlasRenderer::BlitGlyphs");

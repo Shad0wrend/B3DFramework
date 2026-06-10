@@ -26,6 +26,12 @@ void Renderer::Initialize(const TShared<GpuDevice>& gpuDevice)
 	mDevice = gpuDevice;
 }
 
+GpuWorkContext& Renderer::GetGpuContext()
+{
+	B3D_ASSERT(mDevice != nullptr && "Renderer has no GPU device bound. The renderer must be made active before its work context is used.");
+	return mDevice->GetPrimaryContext();
+}
+
 void Renderer::InitializeOnRenderThread()
 {
 	GpuCommandBufferPoolCreateInformation createInformation = GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS);

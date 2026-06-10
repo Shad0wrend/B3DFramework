@@ -10,6 +10,7 @@
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DRenderTexture.h"
 #include "Renderer/B3DRendererUtility.h"
+#include "Renderer/B3DRenderer.h"
 #include "COmponents/B3DSkybox.h"
 #include "Utility/B3DRendererTextures.h"
 
@@ -709,7 +710,8 @@ void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 		dst++;
 	}
 
-	GpuBufferUtility::Write(mTetrahedronInfosGPU, 0, mTetrahedronInfosGPU->GetTotalSize(), dst, GpuBufferWriteFlag::Discard);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(workContext, mTetrahedronInfosGPU, 0, mTetrahedronInfosGPU->GetTotalSize(), dst, GpuBufferWriteFlag::Discard);
 	B3DStackFree(dst);
 
 	// Write data specific to faces
@@ -738,7 +740,7 @@ void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 		faceDst++;
 	}
 
-	GpuBufferUtility::Write(mTetrahedronFaceInfosGPU, 0, mTetrahedronFaceInfosGPU->GetTotalSize(), faceDst, GpuBufferWriteFlag::Discard);
+	GpuBufferUtility::Write(workContext, mTetrahedronFaceInfosGPU, 0, mTetrahedronFaceInfosGPU->GetTotalSize(), faceDst, GpuBufferWriteFlag::Discard);
 	B3DStackFree(faceDst);
 
 	B3DStackFree(validTets);

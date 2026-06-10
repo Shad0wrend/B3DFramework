@@ -3,6 +3,7 @@
 #include "Utility/B3DGpuSort.h"
 #include "Math/B3DRandom.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
+#include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererUtility.h"
 
 namespace b3d {
@@ -308,6 +309,7 @@ void RunSortTest()
 	if (!gpuDevice)
 		return;
 
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
 	const TShared<GpuCommandBufferPool> commandBufferPool = gpuDevice->CreateGpuCommandBufferPool(GpuCommandBufferPoolCreateInformation::CreateForThisThread());
 
 	GpuCommandBufferCreateInformation commandBufferCreateInformation;
@@ -332,7 +334,7 @@ void RunSortTest()
 	GpuBufferSuballocation uniformBuffer = CreateGpuSortUniformBuffer(gpuSortProps, bitOffset);
 
 	GpuSortBuffers sortBuffers = GpuSort::CreateSortBuffers(count);
-	GpuBufferUtility::Write(sortBuffers.Keys[0], 0, sortBuffers.Keys[0]->GetTotalSize(), inputKeys.data(), GpuBufferWriteFlag::Discard);
+	GpuBufferUtility::Write(workContext, sortBuffers.Keys[0], 0, sortBuffers.Keys[0]->GetTotalSize(), inputKeys.data(), GpuBufferWriteFlag::Discard);
 
 	TShared<GpuBuffer> helperBuffers[2];
 	helperBuffers[0] = CreateHelperBuffer();
@@ -462,14 +464,14 @@ void RunSortTest()
 	// PARALLEL:
 	RadixSortClearMaterial::Get()->Execute(*commandBuffer, helperBuffers[0]);
 	RadixSortCountMaterial::Get()->Execute(*commandBuffer, gpuSortProps.NumGroups, uniformBuffer, sortBuffers.Keys[0], helperBuffers[0]);
-	gpuDevice->SubmitCommandBuffer(commandBuffer);
+	workContext.SubmitCommandBuffer(commandBuffer);
 
 	commandBuffer = commandBufferPool->Create(commandBufferCreateInformation);
 
 	// Compare with GPU count
 	const u32 helperBufferLength = helperBuffers[0]->GetInformation().SimpleStorage.Count;
 	Vector<u32> bufferCounts(helperBufferLength);
-	GpuBufferUtility::Read(helperBuffers[0], 0, helperBufferLength * sizeof(u32), bufferCounts.data());
+	GpuBufferUtility::Read(workContext, helperBuffers[0], 0, helperBufferLength * sizeof(u32), bufferCounts.data());
 
 	for(u32 i = 0; i < (u32)counts.size(); i++)
 		B3D_ASSERT(bufferCounts[i] == counts[i]);
@@ -561,13 +563,13 @@ void RunSortTest()
 
 	// PARALLEL:
 	RadixSortPrefixScanMaterial::Get()->Execute(*commandBuffer, uniformBuffer, helperBuffers[0], helperBuffers[1]);
-	gpuDevice->SubmitCommandBuffer(commandBuffer);
+	workContext.SubmitCommandBuffer(commandBuffer);
 	
 	commandBuffer = commandBufferPool->Create(commandBufferCreateInformation);
 
 	// Compare with GPU offsets
 	Vector<u32> bufferOffsets(helperBufferLength);
-	GpuBufferUtility::Read(helperBuffers[1], 0, helperBufferLength * sizeof(u32), bufferOffsets.data());
+	GpuBufferUtility::Read(workContext, helperBuffers[1], 0, helperBufferLength * sizeof(u32), bufferOffsets.data());
 
 	for(u32 i = 0; i < (u32)offsets.size(); i++)
 		B3D_ASSERT(bufferOffsets[i] == offsets[i]);
@@ -794,11 +796,11 @@ void RunSortTest()
 
 	// PARALLEL:
 	RadixSortReorderMaterial::Get()->Execute(*commandBuffer, gpuSortProps.NumGroups, uniformBuffer, helperBuffers[1], sortBuffers, 0);
-	gpuDevice->SubmitCommandBuffer(commandBuffer);
+	workContext.SubmitCommandBuffer(commandBuffer);
 
 	// Compare with GPU keys
 	Vector<u32> bufferSortedKeys(count);
-	GpuBufferUtility::Read(sortBuffers.Keys[1], 0, count * sizeof(u32), bufferSortedKeys.data());
+	GpuBufferUtility::Read(workContext, sortBuffers.Keys[1], 0, count * sizeof(u32), bufferSortedKeys.data());
 
 	for(u32 i = 0; i < count; i++)
 		B3D_ASSERT(bufferSortedKeys[i] == sortedKeys[i]);

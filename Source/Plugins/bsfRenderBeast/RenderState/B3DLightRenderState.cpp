@@ -5,6 +5,7 @@
 #include "Material/B3DMaterialParameterAdapter.h"
 #include "GpuBackend/B3DGpuParameterSet.h"
 #include "Components/B3DLight.h"
+#include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "B3DRenderBeast.h"
 #include "B3DRenderBeastScene.h"
@@ -287,7 +288,10 @@ void VisibleLightData::Update(const RenderBeastScene& scene, const RendererViewG
 		}
 
 		if(size > 0)
-			GpuBufferUtility::Write(mLightBuffer, 0, size, mVisibleLightData.data(), GpuBufferWriteFlag::Discard);
+		{
+			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(workContext, mLightBuffer, 0, size, mVisibleLightData.data(), GpuBufferWriteFlag::Discard);
+		}
 	}
 }
 

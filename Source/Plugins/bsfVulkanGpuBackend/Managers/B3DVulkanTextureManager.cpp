@@ -75,7 +75,7 @@ void VulkanTextureManager::OnStartUp()
 
 		createInformation.Name = "VulkanDummyRead";
 		mDummyReadTextures[idx] = std::static_pointer_cast<VulkanTexture>(mGpuDevice.CreateTexture(createInformation));
-		TextureUtility::Write(mDummyReadTextures[idx], *pixelData);
+		TextureUtility::Write(mGpuDevice.GetPrimaryContext(), mDummyReadTextures[idx], *pixelData);
 
 		createInformation.Name = "VulkanDummyStorage";
 		createInformation.Usage = TextureUsageFlag::AllowUnorderedAccessOnTheGPU | TextureUsageFlag::MutableFormat;

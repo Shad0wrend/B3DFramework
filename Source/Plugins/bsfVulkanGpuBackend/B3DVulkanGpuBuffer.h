@@ -196,6 +196,15 @@ namespace b3d
 			/** Returns a view of the buffer object using the provided format. Only relevant for simple storage buffers. If Unknown format is provided, returns the default view. If the view was previously created, returns the existing buffer view. */
 			VkBufferView GetOrCreateView(GpuBufferFormat format) const;
 
+			/** Maps a buffer's engine usage (@p createInformation Type + Flags) to its Vulkan buffer usage bits. */
+			static VkBufferUsageFlags GetVkBufferUsageFlags(const GpuBufferCreateInformation& createInformation);
+
+			/**
+			 * Maps a buffer's engine usage (@p createInformation Type + Flags) to the (required, preferred)
+			 * memory-property flags that drive memory-type selection.
+			 */
+			static void GetVkMemoryPropertyFlags(const GpuBufferCreateInformation& createInformation, VkMemoryPropertyFlags& requiredFlags, VkMemoryPropertyFlags& preferredFlags);
+
 		protected:
 			friend class VulanGpuDevice;
 			friend class VulkanBuffer;

@@ -4,6 +4,7 @@
 
 #include "Image/B3DPixelUtility.h"
 #include "Image/B3DPixelData.h"
+#include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererMaterial.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
 #include "GpuBackend/B3DGpuDevice.h"
@@ -131,7 +132,8 @@ namespace b3d
 				return;
 			}
 
-			render::GpuBufferUtility::Write(inputBuffer, 0, baseWidth * baseHeight * sizeof(float) * 4, convertedSource->GetData());
+			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+			render::GpuBufferUtility::Write(workContext, inputBuffer, 0, baseWidth * baseHeight * sizeof(float) * 4, convertedSource->GetData());
 
 			// Generate levels 1..mipCount, each downsampled from the previous level's GPU buffer (no CPU round-trip).
 			TInlineArray<TShared<render::GpuBuffer>, 16> levelBuffers; // Generated level outputs, in order
@@ -228,7 +230,7 @@ namespace b3d
 					op.CompleteOperation(std::move(outMipLevels));
 				});
 
-			gpuDevice->SubmitCommandBuffer(commandBuffer);
+			workContext.SubmitCommandBuffer(commandBuffer);
 		}
 	} // anonymous namespace
 

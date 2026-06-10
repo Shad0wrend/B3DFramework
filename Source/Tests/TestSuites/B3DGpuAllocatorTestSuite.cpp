@@ -610,9 +610,8 @@ void GpuAllocatorTestSuite::TestUserCreatedFence_ExplicitSignal()
 	B3D_TEST_ASSERT(fence->GetCompletedValue() == 0)
 	B3D_TEST_ASSERT(!fence->IsSignaled(7))
 
-	// Allocate a fresh command buffer outside the transfer-helper's machinery so that resubmitting
-	// it during a later EndFrame doesn't break — the helper's thread-data slot would otherwise
-	// retain a pointer to the CB after this test submits it.
+	// Allocate a fresh command buffer outside the transfer machinery so that resubmitting it during a
+	// later EndFrame doesn't break.
 	GpuCommandBufferPoolCreateInformation poolCreateInfo = GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS);
 	TShared<GpuCommandBufferPool> pool = device->CreateGpuCommandBufferPool(poolCreateInfo);
 	TShared<GpuCommandBuffer> commandBuffer = pool->Create(GpuCommandBufferCreateInformation::Create("UserFenceTestCB"));
@@ -622,7 +621,9 @@ void GpuAllocatorTestSuite::TestUserCreatedFence_ExplicitSignal()
 	info.CommandBuffer = commandBuffer;
 	info.SignalFences.Add(GpuTimelineFenceAndValue{ fence, 7 });
 
-	device->SubmitCommandBuffer(info);
+	// Submit through a worker context owned by this thread; the render-thread primary context stays untouched.
+	TShared<GpuWorkContext> workContext = GpuWorkContext::Create(*device);
+	workContext->SubmitCommandBuffer(info);
 
 	// Drain pending GPU work. After WaitUntilIdle the GPU has retired the (effectively empty)
 	// submit, so the explicit value-7 signal must be observable via IsSignaled.

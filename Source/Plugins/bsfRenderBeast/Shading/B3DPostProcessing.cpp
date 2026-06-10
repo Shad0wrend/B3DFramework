@@ -3,6 +3,7 @@
 #include "B3DPostProcessing.h"
 #include "GpuBackend/B3DRenderTexture.h"
 #include "Renderer/B3DRendererUtility.h"
+#include "Renderer/B3DRenderer.h"
 #include "Components/B3DCamera.h"
 #include "Material/B3DMaterialParameterAdapter.h"
 #include "Image/B3DPixelUtility.h"
@@ -1341,7 +1342,8 @@ void BokehDOFMaterial::Initialize()
 		vertexData[i * 4 + 3] = Vector2(1.0f, 1.0f);
 	}
 
-	GpuBufferUtility::Write(mTileVertexBuffer, 0, mTileVertexBuffer->GetTotalSize(), vertexData);
+	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(workContext, mTileVertexBuffer, 0, mTileVertexBuffer->GetTotalSize(), vertexData);
 	B3DStackFree(vertexData);
 
 	// Prepare indices for rendering tiles
@@ -1379,7 +1381,7 @@ void BokehDOFMaterial::Initialize()
 		}
 	}
 
-	GpuBufferUtility::Write(mTileIndexBuffer, 0, mTileIndexBuffer->GetTotalSize(), indices);
+	GpuBufferUtility::Write(workContext, mTileIndexBuffer, 0, mTileIndexBuffer->GetTotalSize(), indices);
 	B3DStackFree(indices);
 }
 

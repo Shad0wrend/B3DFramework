@@ -153,8 +153,7 @@ void SnapshotTestRunner::RequestScreenCapture()
 		TAsyncOp<TShared<PixelData>> readOp = windowProxy->ReadAsync(*commandBuffer);
 
 		// Submit the command buffer
-		const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-		gpuDevice->SubmitCommandBuffer(commandBuffer);
+		renderer->GetGpuContext().SubmitCommandBuffer(commandBuffer);
 
 		// Chain completion - when the read completes, complete our async op
 		readOp.DoWhenComplete([asyncOp, readOp]() mutable {

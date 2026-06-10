@@ -16,6 +16,7 @@ namespace b3d
 	class RendererExtension;
 	class LightProbeVolume;
 	class PixelData;
+	class GpuWorkContext;
 	struct RenderSettings;
 	struct EvaluatedAnimationData;
 	struct EvaluatedParticleData;
@@ -175,8 +176,26 @@ namespace b3d
 			 */
 			GpuParameterSetPool& GetParameterSetPool() { return *mParameterSetPool; }
 
-			/** Initializes the renderer with the provided GPU device. Must be called before using the renderer. */
+			/**
+			 * Returns the GPU work context for GPU work performed on the render thread (e.g. submitting
+			 * command buffers).
+			 *
+			 * @note	Render thread only. Do not use from the main thread.
+			 */
+			GpuWorkContext& GetGpuContext();
+
+			/**
+			 * Binds the GPU device the renderer performs its work against. Called when the renderer becomes the
+			 * active renderer, before any GPU resources are created, so the renderer's work context becomes
+			 * reachable via GetGpuContext() from that point on.
+			 */
 			virtual void Initialize(const TShared<GpuDevice>& gpuDevice);
+
+			/**
+			 * Completes renderer initialization, making it ready to render. Must be called after Initialize() and
+			 * after the built-in resources have been loaded, as the renderer may depend on them.
+			 */
+			virtual void Activate() {}
 
 			/** Called every frame. Triggers render task callbacks. */
 			void Update();

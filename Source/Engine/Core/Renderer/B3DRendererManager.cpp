@@ -32,7 +32,7 @@ RendererManager::~RendererManager()
 	mFactory = nullptr;
 }
 
-void RendererManager::SetActive(const String& pluginName)
+void RendererManager::SetActive(const String& pluginName, const TShared<GpuDevice>& gpuDevice)
 {
 	mPlugin = PluginLoader::Load(pluginName);
 	mFactory = static_cast<RendererFactory*>(mPlugin.ReturnValue);
@@ -45,6 +45,7 @@ void RendererManager::SetActive(const String& pluginName)
 			if(mActiveRenderer != nullptr)
 				mActiveRenderer->Destroy();
 
+			newRenderer->Initialize(gpuDevice);
 			mActiveRenderer = newRenderer;
 		}
 	}
@@ -52,10 +53,10 @@ void RendererManager::SetActive(const String& pluginName)
 	B3D_ENSURE_LOG(mActiveRenderer != nullptr, "Cannot initialize renderer. Renderer plugin '{0}' cannot be found.", pluginName);
 }
 
-void RendererManager::Initialize(const TShared<GpuDevice>& gpuDevice)
+void RendererManager::Initialize()
 {
 	if(mActiveRenderer != nullptr)
-		mActiveRenderer->Initialize(gpuDevice);
+		mActiveRenderer->Activate();
 }
 
 void RendererManager::RequestFrameCapture()

@@ -284,7 +284,7 @@ void Application::OnStartUp()
 	// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
 	PhysicsManager::StartUp(mInformation.Physics, mInformation.PhysicsCooking);
 	PrefabManager::StartUp();
-	RendererManager::Instance().SetActive(mInformation.Renderer);
+	RendererManager::Instance().SetActive(mInformation.Renderer, GetPrimaryGpuDevice());
 	StartUpRenderer();
 
 	GpuProfiler::StartUp();
@@ -307,7 +307,7 @@ void Application::OnStartUp()
 	StockIcons::StartUp();
 	BuiltinResources::StartUp();
 	RendererMaterialManager::StartUp();
-	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
+	RendererManager::Instance().Initialize();
 	SceneManager::StartUp(); // Must be initialized after the renderer
 	SpriteManager::StartUp();
 	GUIManager::StartUp();

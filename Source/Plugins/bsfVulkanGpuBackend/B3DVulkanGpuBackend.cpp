@@ -62,6 +62,8 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkGetSemaphoreCounterValueKHR vkGetSemaphoreCounterValueKHR = nullptr;
 PFN_vkWaitSemaphoresKHR vkWaitSemaphoresKHR = nullptr;
 
+PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR = nullptr;
+
 /** Enables Vulkan validation layers. Ignored if the backend or platform does not support them. */
 static const bool kEnableVulkanValidationLayers = B3D_DEBUG;
 
@@ -215,14 +217,7 @@ void VulkanGpuBackend::OnStartUp()
 	appInfo.applicationVersion = 1;
 	appInfo.pEngineName = "B3D Framework";
 	appInfo.engineVersion = (B3D_FRAMEWORK_VERSION_MAJOR << 24) | (B3D_FRAMEWORK_VERSION_MINOR << 16) | B3D_FRAMEWORK_VERSION_PATCH;
-
-	// MoltenVK doesn't support 1.1, but we don't need it since the only feature we use from it right now is SPIR-V 1.3,
-	// and that's not relevant for MoltenVK as SPIR-V gets translated to MSL anyway.
-#if B3D_PLATFORM_MACOS
-	appInfo.apiVersion = VK_API_VERSION_1_0;
-#else
 	appInfo.apiVersion = VK_API_VERSION_1_1;
-#endif
 
 	// Check supported extensions
 	bool isDebugUtilsExtensionSupported = false;

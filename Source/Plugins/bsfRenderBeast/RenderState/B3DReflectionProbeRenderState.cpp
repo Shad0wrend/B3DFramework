@@ -5,6 +5,7 @@
 #include "Material/B3DMaterial.h"
 #include "Components/B3DReflectionProbe.h"
 #include "B3DRenderBeast.h"
+#include "Renderer/B3DRenderer.h"
 #include "Renderer/B3DRendererUtility.h"
 #include "Components/B3DSkybox.h"
 
@@ -70,7 +71,10 @@ void VisibleReflectionProbeData::Update(const RenderBeastScene& scene, const Ren
 		}
 
 		if(size > 0)
-			GpuBufferUtility::Write(mProbeBuffer, 0, size, mReflProbeData.data(), GpuBufferWriteFlag::Discard);
+		{
+			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(workContext, mProbeBuffer, 0, size, mReflProbeData.data(), GpuBufferWriteFlag::Discard);
+		}
 	}
 }
 

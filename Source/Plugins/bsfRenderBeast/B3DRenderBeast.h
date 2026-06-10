@@ -94,7 +94,7 @@ namespace b3d
 			/** Returns the type configurations for the renderable uniform buffer manager. */
 			const TInlineArray<UniformBufferPools::PoolConfiguration, 4>& GetPerObjectUniformTypeConfigurations() const { return mTypeConfigurations; }
 
-			void Initialize(const TShared<GpuDevice>& gpuDevice) override;
+			void Activate() override;
 			void Destroy() override;
 			void CaptureSceneCubeMap(RendererScene& scene, GpuCommandBuffer& commandBuffer, const TShared<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override;
 			void RequestDebugFrameCapture() override { mIsFrameCaptureRequested = true; }

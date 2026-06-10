@@ -85,7 +85,6 @@ namespace b3d
 
 			u32 GetQueueCount(GpuQueueType type) const override { return (u32)mQueueInfos[(u32)type].Queues.size(); }
 			TShared<GpuQueue> GetQueue(GpuQueueType type, u32 index) const override;
-			void SubmitTransferCommandBuffers(bool wait = false) override;
 			void PresentRenderWindow(const TShared<RenderWindow>& renderWindow, GpuQueueMask syncMask = GpuQueueMask::kAll) override;
 			void WaitUntilIdle() override;
 			void BeginFrame() override;
@@ -103,6 +102,7 @@ namespace b3d
 			TShared<GpuPipelineParameterSetLayout> CreateGpuPipelineParameterSetLayout(const GpuProgramParameterDescription& parameterDescription) override;
 			TUnique<GpuParameterSetPool> CreateParameterSetPool(const GpuParameterSetPoolCreateInformation& createInformation) override;
 			TShared<GpuTimelineFence> CreateTimelineFence() override;
+			TUnique<IGpuAllocator> CreateTransientAllocator(u32 memoryType, IGpuCompletionTracker& completionTracker) override;
 
 			void ConvertProjectionMatrix(const Matrix4& input, Matrix4& output) override;
 			GpuUniformBufferInformation GenerateUniformBufferInformation(const String& name, TArray<GpuUniformBufferMemberInformation>& inOutUniforms) override;
@@ -185,7 +185,14 @@ namespace b3d
 			VulkanBuffer* CreateBuffer(const VulkanBufferCreateInformation& createInformation, const VulkanAllocationResult& allocation, VulkanGpuBuffer* parent);
 
 			/**
-			 * Creates a VkImage described by @p info, suballocates compatible memory and binds the 
+			 * Determines the best the memory-type for a buffer described by @p createInformation.
+			 *
+			 * Thread safe.
+			 */
+			u32 PickBufferMemoryType(const GpuBufferCreateInformation& createInformation) const;
+
+			/**
+			 * Creates a VkImage described by @p info, suballocates compatible memory and binds the
 			 * two together, and wraps the result in a VulkanImage. @p kind controls buffer-image 
 			 * granularity placement (Non-linear for optimally-tiled images, Linear for linearly-tiled).
 			 *
@@ -278,8 +285,8 @@ namespace b3d
 			 * (where possible) the @p preferredFlags hint, then suballocates from the per-memory-type allocator.
 			 * The caller is responsible for binding via vkBindBufferMemory; this method does not bind.
 			 *
-			 * When @p transient is true the slot is taken from the per-memory-type linear (bump) allocator instead of the
-			 * general-purpose TLSF allocator.
+			 * When @p transient is true the slot is taken from the render-thread primary context's transient
+			 * (linear/bump) allocator for the memory type, instead of the device's general-purpose TLSF allocator.
 			 *
 			 * Internal — invoked only by CreateBuffer.
 			 */
@@ -317,11 +324,12 @@ namespace b3d
 			TGpuTlsfAllocator<VulkanHeapBackend>& GetOrCreateGpuMemoryAllocator(u32 memoryTypeIndex);
 
 			/**
-			 * Returns the linear (bump) allocator backing memory type @p memoryTypeIndex, lazily creating it on first use.
-			 * Used for transient buffer allocations (GpuBufferFlag::Transient). Pages retire against the device frame fence
-			 * and are reclaimed in bulk via EndFrame/WaitUntilIdle rather than per-allocation.
+			 * Returns the shared linear page pool backing memory type @p memoryTypeIndex, lazily creating it on
+			 * first use. Every GpuWorkContext's transient (linear) allocator for this memory type draws pages
+			 * from (and returns drained pages to) this device-owned, thread-safe pool, bounding the number of
+			 * VkDeviceMemory heaps under bursty transient allocation. See CreateTransientAllocator.
 			 */
-			TGpuLinearAllocator<VulkanHeapBackend>& GetOrCreateGpuLinearAllocator(u32 memoryTypeIndex);
+			TGpuLinearPagePool<VulkanHeapBackend>& GetOrCreateLinearPagePool(u32 memoryTypeIndex);
 
 			/**
 			 * Runs an opportunistic defragmentation pass across every GPU allocators that support it.
@@ -330,14 +338,6 @@ namespace b3d
 			 * so a single frame can't stall on copying many GBs of memory.
 			 */
 			void RunDefragPass();
-
-			/**
-			 * Reclaims memory held by the per-memory-type linear (transient) allocators. Retires each allocator's
-			 * active page against the current frame index, then drains every page whose frame is no longer in flight
-			 * on the GPU. Called once per frame from EndFrame (on the render thread); because the linear allocators
-			 * are shared and thread-safe this reclaims transient buffers allocated by any thread during the frame.
-			 */
-			void ReclaimLinearAllocators();
 
 			/** Marks the device as a primary device. */
 			void SetIsPrimary() { mIsPrimary = true; }
@@ -374,11 +374,11 @@ namespace b3d
 			/** Guards lazy creation of mTlsfAllocators entries. */
 			mutable Mutex mGpuMemoryAllocatorMutex;
 
-			/** Per-memory-type linear (bump) allocator pool for transient buffers. Slots are lazily populated on first transient allocation. */
-			TUnique<TGpuLinearAllocator<VulkanHeapBackend>> mGpuLinearAllocators[VK_MAX_MEMORY_TYPES];
+			/** Per-memory-type shared page pool feeding every context's transient linear allocators for that type. Lazily populated. */
+			TUnique<TGpuLinearPagePool<VulkanHeapBackend>> mLinearPagePools[VK_MAX_MEMORY_TYPES];
 
-			/** Guards lazy creation of mGpuLinearAllocators entries. */
-			mutable Mutex mGpuLinearAllocatorMutex;
+			/** Guards lazy creation of mLinearPagePools entries. */
+			mutable Mutex mLinearPagePoolMutex;
 
 			u64 mDefragBudgetBytes = 8ull * 1024 * 1024;
 			u32 mDefragBudgetAllocations = 8;

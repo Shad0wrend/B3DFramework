@@ -24,13 +24,17 @@ namespace b3d
 		~RendererManager();
 
 		/**
-		 * Loads the renderer plugin with the provided name and makes it the active renderer. You must call Initialize()
-		 * after setting the active renderer to properly activate it.
+		 * Loads the renderer plugin with the provided name, makes it the active renderer, and binds it to the
+		 * provided GPU device. Call Initialize() afterwards, once built-in resources are available, to make the
+		 * renderer ready to render.
+		 *
+		 * @param	pluginName	Name of the renderer plugin to load.
+		 * @param	gpuDevice	Device the renderer will perform its work against.
 		 */
-		void SetActive(const String& pluginName);
+		void SetActive(const String& pluginName, const TShared<GpuDevice>& gpuDevice);
 
-		/** Initializes the currently active renderer on the provided GPU device, making it ready to render. */
-		void Initialize(const TShared<GpuDevice>& gpuDevice);
+		/** Completes initialization of the currently active renderer, making it ready to render. See SetActive(). */
+		void Initialize();
 
 		/** Queues GPU command capture of the next frame, if a frame capture is set up. */
 		B3D_SCRIPT_EXPORT()

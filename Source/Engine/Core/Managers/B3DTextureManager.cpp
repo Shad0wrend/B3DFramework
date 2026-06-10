@@ -71,7 +71,7 @@ void TextureManager::OnStartUp()
 	whitePixelData->SetColorAt(Color::kWhite, 1, 0);
 	whitePixelData->SetColorAt(Color::kWhite, 1, 1);
 
-	TextureUtility::Write(whiteTexture, *whitePixelData);
+	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), whiteTexture, *whitePixelData);
 	Texture::kWhite = whiteTexture;
 
 	// Black built-in texture
@@ -84,7 +84,7 @@ void TextureManager::OnStartUp()
 	blackPixelData->SetColorAt(Color::kZero, 1, 0);
 	blackPixelData->SetColorAt(Color::kZero, 1, 1);
 
-	TextureUtility::Write(blackTexture, *blackPixelData);
+	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), blackTexture, *blackPixelData);
 	Texture::kBlack = blackTexture;
 
 
@@ -98,7 +98,7 @@ void TextureManager::OnStartUp()
 	pinkPixelData->SetColorAt(Color::kPink, 1, 0);
 	pinkPixelData->SetColorAt(Color::kPink, 1, 1);
 
-	TextureUtility::Write(pinkTexture, *pinkPixelData);
+	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), pinkTexture, *pinkPixelData);
 	Texture::kPink = pinkTexture;
 
 	// Normal (Y = Up) built-in texture
@@ -112,7 +112,7 @@ void TextureManager::OnStartUp()
 	normalPixelData->SetColorAt(encodedNormal, 1, 0);
 	normalPixelData->SetColorAt(encodedNormal, 1, 1);
 
-	TextureUtility::Write(normalTexture, *normalPixelData);
+	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), normalTexture, *normalPixelData);
 	Texture::kNormal = normalTexture;
 }
 
