@@ -11,9 +11,11 @@ namespace b3d
 	class IGpuAllocator;
 	class IGpuCompletionTracker;
 	class GpuFenceCompletionTracker;
+	struct GpuBufferCreateInformation;
 
 	namespace render
 	{
+		class GpuBuffer;
 		class GpuCommandBuffer;
 		class GpuCommandBufferPoolRing;
 	}
@@ -85,6 +87,19 @@ namespace b3d
 		IGpuAllocator& GetOrCreateTransientAllocator(u32 memoryType);
 
 		/**
+		 * Creates a buffer whose backing memory comes from this context's transient (linear/bump) allocator
+		 * for the buffer's memory type. Allocation and free are extremely cheap — memory is not freed
+		 * per-buffer but reclaimed in bulk by AdvanceFrame() once the GPU work that used it completes — so
+		 * the buffer must only be used for short-lived, single-use work (compute scratch, staging) bounded
+		 * by the frame/operation that created it, and must not be retained past that point.
+		 *
+		 * On backends without context transient allocation this falls back to a regular persistent buffer.
+		 *
+		 * @param	createInformation	Object describing the buffer to create.
+		 */
+		TShared<render::GpuBuffer> CreateTransientGpuBuffer(const GpuBufferCreateInformation& createInformation);
+
+		/**
 		 * Returns a command buffer for transfer (copy/upload) operations, lazily creating the context's
 		 * transfer pool ring and the active command buffer if needed. The returned buffer is submitted by
 		 * SubmitTransferCommandBuffers(), or recycled at the next AdvanceFrame().
@@ -139,6 +154,12 @@ namespace b3d
 		 * @param	tracker	Externally-owned tracker the context borrows (not owned). Must outlive the returned context.
 		 */
 		static TShared<GpuWorkContext> Create(GpuDevice& device, IGpuCompletionTracker& tracker);
+
+		/**
+		 * Same as GetOrCreateTransientAllocator, but returns null when the backend does not support
+		 * context transient allocation, instead of asserting.
+		 */
+		IGpuAllocator* TryGetOrCreateTransientAllocator(u32 memoryType);
 
 		GpuDevice& mDevice; /**< Non-owning back-ref to the device. */
 		IGpuCompletionTracker* mTracker; /**< Owned or borrowed. */

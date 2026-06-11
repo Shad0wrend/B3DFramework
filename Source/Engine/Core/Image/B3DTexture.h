@@ -636,24 +636,28 @@ namespace b3d
 		struct B3D_EXPORT TextureUtility
 		{
 			/**
-			 * Creates a staging buffer sized appropriately for texture data transfer.
+			 * Creates a staging buffer sized appropriately for texture data transfer. Staging buffers are single-use, so
+			 * they are allocated from the performing context's transient allocator — the memory is reclaimed in bulk once
+			 * the GPU work that used it completes, and must not be retained past that point.
 			 *
+			 * @param gpuContext	Context whose transient allocator backs the staging buffer.
 			 * @param texture		Texture for which to create the staging buffer.
 			 * @param mipLevel		Mip level of the texture subresource.
 			 * @param readable		True if the buffer needs to be CPU-readable (for readback), false if CPU-writeable (for upload).
 			 * @return				Newly created staging buffer sized for the specified texture subresource.
 			 */
-			static TShared<GpuBuffer> CreateStagingBuffer(const TShared<Texture>& texture, u32 mipLevel, bool readable);
+			static TShared<GpuBuffer> CreateStagingBuffer(GpuWorkContext& gpuContext, const TShared<Texture>& texture, u32 mipLevel, bool readable);
 
 			/**
-			 * Creates a staging buffer with the specified size.
+			 * Creates a staging buffer with the specified size. See the other overload regarding staging buffer lifetime.
 			 *
+			 * @param gpuContext	Context whose transient allocator backs the staging buffer.
 			 * @param texture		Texture for which to create the staging buffer.
 			 * @param pixelData		Pixel data structure with initialized row/depth pitch, used to determine buffer size.
 			 * @param readable		True if the buffer needs to be CPU-readable (for readback), false if CPU-writeable (for upload).
 			 * @return				Newly created staging buffer.
 			 */
-			static TShared<GpuBuffer> CreateStagingBuffer(const TShared<Texture>& texture, const PixelData& pixelData, bool readable);
+			static TShared<GpuBuffer> CreateStagingBuffer(GpuWorkContext& gpuContext, const TShared<Texture>& texture, const PixelData& pixelData, bool readable);
 
 			/**
 			 * Writes pixel data to a texture subresource.
@@ -662,7 +666,7 @@ namespace b3d
 			 * - For directly mappable textures: Uses Map() + BulkPixelConversion
 			 * - For non-mappable textures: Uses staging buffer + CopyBufferToTexture
 			 *
-			 * @param workContext	Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
+			 * @param gpuContext	Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
 			 * @param texture		Texture to write data to.
 			 * @param source		Pixel data to write. Must be compatible with texture format and dimensions.
 			 * @param mipLevel		Destination mipmap level.
@@ -672,7 +676,7 @@ namespace b3d
 			 *
 			 * @note Render thread only.
 			 */
-			static void Write(GpuWorkContext& workContext, const TShared<Texture>& texture, const PixelData& source, u32 mipLevel = 0, u32 arrayLayer = 0, TextureWriteFlags flags = TextureWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
+			static void Write(GpuWorkContext& gpuContext, const TShared<Texture>& texture, const PixelData& source, u32 mipLevel = 0, u32 arrayLayer = 0, TextureWriteFlags flags = TextureWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
 
 			/**
 			 * Reads data from the texture subresource into the provided buffer.
@@ -682,30 +686,32 @@ namespace b3d
 			 *  - For non-mappable textures: Uses staging buffer + CopyTextureToBuffer
 			 *  - If the texture is currently being used by the GPU, this method will block until the GPU is done executing.
 			 *
-			 * @param	workContext		Context whose transfer command buffer is used to perform and flush the staging copy.
+			 * @param	gpuContext		Context whose transfer command buffer is used to perform and flush the staging copy.
 			 * @param	texture			Texture to read the data from.
 			 * @param	destination		Previously allocated buffer to read data into.
 			 * @param	mipLevel		Mipmap level to read from.
 			 * @param	arrayLayer		Array layer (or cubemap face or depth slice) to read from.
 			 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default transfer queue will be used.
 			 */
-			static void Read(GpuWorkContext& workContext, const TShared<Texture>& texture, PixelData& destination, u32 mipLevel = 0, u32 arrayLayer = 0, const TShared<GpuQueue>& gpuQueue = nullptr);
+			static void Read(GpuWorkContext& gpuContext, const TShared<Texture>& texture, PixelData& destination, u32 mipLevel = 0, u32 arrayLayer = 0, const TShared<GpuQueue>& gpuQueue = nullptr);
 
 			/**
 			 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
 			 * and the asynchronous operation will be signaled with the return value.
 			 *
+			 * @param	gpuContext		Context whose transient allocator backs the internal staging buffer.
+			 * @param	texture			Texture to read the data from.
 			 * @param	commandBuffer	Command buffer to queue the operation on.
 			 * @param	mipLevel		Mipmap level to read from.
 			 * @param	arrayLayer		Texture array layer (or cubemap face or depth slice) to read from.
 			 * @return					Operation that will be signaled when the data is ready to be read.
 			 */
-			static TAsyncOp<TShared<PixelData>> ReadAsync(const TShared<Texture>& texture, GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 arrayLayer = 0);
+			static TAsyncOp<TShared<PixelData>> ReadAsync(GpuWorkContext& gpuContext, const TShared<Texture>& texture, GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 arrayLayer = 0);
 
 			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
 			 *
-			 * @param	workContext		Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
+			 * @param	gpuContext		Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
 			 * @param	texture			Texture to write data to.
 			 * @param	value			Color to clear the pixels to.
 			 * @param	mipLevel		Mip level to clear.
@@ -714,7 +720,7 @@ namespace b3d
 			 *							If not provided the operation will be queued on an internal command buffer that will be submitted before
 			 *							any regular command buffer submission.
 			 */
-			static void Clear(GpuWorkContext& workContext, const TShared<Texture>& texture, const Color& value, u32 mipLevel = 0, u32 arrayLayer = 0, const TShared<GpuCommandBuffer>& commandBuffer = nullptr);
+			static void Clear(GpuWorkContext& gpuContext, const TShared<Texture>& texture, const Color& value, u32 mipLevel = 0, u32 arrayLayer = 0, const TShared<GpuCommandBuffer>& commandBuffer = nullptr);
 		};
 
 		/** @} */

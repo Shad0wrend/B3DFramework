@@ -82,6 +82,14 @@ namespace b3d
 			B3D_ENSURE_LOG(false, "FreeAll is only supported by the linear/bump allocator.");
 		}
 
+		/**
+		 * True when the allocator tracks per-allocation owners and can relocate its allocations during
+		 * defragmentation. Consumers should only register an allocation owner (for defragmentation
+		 * callbacks) with allocators that return true. Default is false; strategies that support
+		 * defragmentation override this.
+		 */
+		virtual bool SupportsDefragmentation() const { return false; }
+
 	protected:
 		IGpuAllocator() = default;
 	};

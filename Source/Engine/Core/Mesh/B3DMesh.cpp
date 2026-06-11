@@ -58,8 +58,8 @@ TAsyncOp<void> Mesh::ReadData(const TShared<MeshData>& data)
 
 	auto fnReadMeshData = [&](const TShared<render::Mesh>& mesh, const TShared<MeshData>& meshData, TAsyncOp<void>& asyncOp)
 	{
-		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
-		workContext.SubmitTransferCommandBuffers();
+		GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+		gpuContext.SubmitTransferCommandBuffers();
 
 		mesh->ReadData(*meshData);
 		meshData->UnlockInternal();
@@ -377,8 +377,8 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		B3D_LOG(Error, LogMesh, "Index buffer values are being written out of valid range.");
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Write(workContext, mIndexBuffer, 0, indicesSize, sourceIndexData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(gpuContext, mIndexBuffer, 0, indicesSize, sourceIndexData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
 
 	// Vertices
 	for(u32 streamIndex = 0; streamIndex <= mVertexDescription->GetLargestStreamIndex(); streamIndex++)
@@ -412,7 +412,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 			B3D_LOG(Error, LogMesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", streamIndex);
 		}
 
-		GpuBufferUtility::Write(workContext, vertexBuffer, 0, bufferSize, sourceVertexBufferData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
+		GpuBufferUtility::Write(gpuContext, vertexBuffer, 0, bufferSize, sourceVertexBufferData, discardEntireBuffer ? GpuBufferWriteFlag::Discard : GpuBufferWriteFlag::Normal, commandBuffer);
 	}
 
 	if(performUpdateBounds)
@@ -423,7 +423,7 @@ void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& command
 {
 	ASSERT_IF_NOT_RENDER_THREAD;
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
 
 	const GpuBufferInformation& indexBufferInformation = mIndexBuffer->GetInformation();
 	B3D_ENSURE(indexBufferInformation.Type == GpuBufferType::Index);
@@ -459,7 +459,7 @@ void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& command
 			return;
 		}
 
-		GpuBufferUtility::Read(workContext, mIndexBuffer, 0, indicesSize, indices);
+		GpuBufferUtility::Read(gpuContext, mIndexBuffer, 0, indicesSize, indices);
 	}
 
 	if(mVertexData)
@@ -499,7 +499,7 @@ void Mesh::ReadData(MeshData& meshData, const TShared<GpuCommandBuffer>& command
 			}
 
 			u8* destination = meshData.GetStreamData(streamIndex);
-			GpuBufferUtility::Read(workContext, vertexBuffer, 0, bufferSize, destination);
+			GpuBufferUtility::Read(gpuContext, vertexBuffer, 0, bufferSize, destination);
 
 			streamIndex++;
 		}

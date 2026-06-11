@@ -157,8 +157,8 @@ void Skybox::FilterTexture()
 		commandBufferProfiler->EndSample(*commandBuffer);
 		GetGpuProfiler().ResolveProfileWhenReady("FilterSkybox", commandBufferProfiler);
 
-		GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
-		workContext.SubmitCommandBuffer(commandBuffer);
+		GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+		gpuContext.SubmitCommandBuffer(commandBuffer);
 
 		return true;
 	};

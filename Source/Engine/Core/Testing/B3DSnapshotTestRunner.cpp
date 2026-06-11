@@ -150,7 +150,7 @@ void SnapshotTestRunner::RequestScreenCapture()
 			render::GpuCommandBufferCreateInformation::Create("SnapshotCapture"));
 
 		// Request async read from the window
-		TAsyncOp<TShared<PixelData>> readOp = windowProxy->ReadAsync(*commandBuffer);
+		TAsyncOp<TShared<PixelData>> readOp = windowProxy->ReadAsync(renderer->GetGpuContext(), *commandBuffer);
 
 		// Submit the command buffer
 		renderer->GetGpuContext().SubmitCommandBuffer(commandBuffer);

@@ -93,6 +93,7 @@ namespace b3d
 			TShared<GpuCommandBufferPool> CreateGpuCommandBufferPool(const GpuCommandBufferPoolCreateInformation& createInformation) override;
 			TShared<Texture> CreateTexture(const TextureCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
 			TShared<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
+			TShared<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, IGpuAllocator& allocator, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
 			TShared<GpuQueryPool> CreateQueryPool(const GpuQueryPoolCreateInformation& createInformation) override;
 			TShared<EventQuery> CreateEventQuery() override;
 			TShared<GpuProgram> CreateGpuProgram(const GpuProgramCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
@@ -158,7 +159,7 @@ namespace b3d
 			 *
 			 * @note	Submit thread only.
 			 */
-			void GetSyncSemaphores(GpuQueueMask syncMask, TInlineArray<VulkanSemaphore*, 8> outSemaphores) const;
+			void GetSyncSemaphores(GpuQueueMask syncMask, TInlineArray<VulkanSemaphore*, 8>& outSemaphores) const;
 
 			/**
 			 * @name Resource Creation
@@ -166,16 +167,17 @@ namespace b3d
 			 */
 
 			/**
-			 * Creates a VkBuffer described by @p info, suballocates compatible memory and binds the two 
-			 * together, and wraps the result in a VulkanBuffer. Memory-type selection picks the best match 
-			 * satisfying @p requiredFlags with a preference scoring against @p preferredFlags. 
+			 * Creates a VkBuffer described by @p info, suballocates compatible memory for it from
+			 * @p allocator and binds the two together, and wraps the result in a VulkanBuffer. The
+			 * allocator must be resolved for the buffer's memory type (see PickBufferMemoryType).
 
 			 * Provide @p parent so the buffer can participate in defragmentation - the parent will be notified
-			 * when it needs to re-allocate the buffer in the new destination.
+			 * when it needs to re-allocate the buffer in the new destination. Only valid for allocators that
+			 * support defragmentation.
 			 *
-			 * Thread safe.
+			 * Thread safe if @p allocator is.
 			 */
-			VulkanBuffer* CreateBuffer(const VulkanBufferCreateInformation& createInformation, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, VulkanGpuBuffer* parent);
+			VulkanBuffer* CreateBuffer(const VulkanBufferCreateInformation& createInformation, IGpuAllocator& allocator, VulkanGpuBuffer* parent);
 
 			/**
 			 * Same as the other overload, but binds the VkBuffer to externally allocated @p allocation slot instead of allocating new memory.
@@ -189,7 +191,7 @@ namespace b3d
 			 *
 			 * Thread safe.
 			 */
-			u32 PickBufferMemoryType(const GpuBufferCreateInformation& createInformation) const;
+			u32 PickBufferMemoryType(const GpuBufferCreateInformation& createInformation) const override;
 
 			/**
 			 * Creates a VkImage described by @p info, suballocates compatible memory and binds the
@@ -279,18 +281,6 @@ namespace b3d
 			 * registration with the allocator (owner stamping for defragmentation) cannot be skipped.
 			 */
 			VulkanAllocationResult AllocateMemory(VkImage image, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, GpuResourceKind kind);
-
-			/**
-			 * Allocates a memory slot for @p buffer. Picks the best memory type satisfying @p requiredFlags and
-			 * (where possible) the @p preferredFlags hint, then suballocates from the per-memory-type allocator.
-			 * The caller is responsible for binding via vkBindBufferMemory; this method does not bind.
-			 *
-			 * When @p transient is true the slot is taken from the render-thread primary context's transient
-			 * (linear/bump) allocator for the memory type, instead of the device's general-purpose TLSF allocator.
-			 *
-			 * Internal — invoked only by CreateBuffer.
-			 */
-			VulkanAllocationResult AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, bool transient);
 
 			/**
 			 * Common bind-and-wrap helper for buffers. Binds @p buffer to @p allocation, constructs the

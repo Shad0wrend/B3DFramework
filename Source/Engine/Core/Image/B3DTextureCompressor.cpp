@@ -220,7 +220,7 @@ namespace b3d
 				return;
 			}
 
-			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+			GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
 
 			// Compile/fetch the shader variation(s)
 			TInlineArray<TextureCompressMaterial*, 32> materials;
@@ -344,7 +344,7 @@ namespace b3d
 
 					for(u32 materialIndex = 0; materialIndex < materials.Size(); ++materialIndex)
 					{
-						const TShared<render::GpuBuffer> parameterBuffer = render::gTextureCompressParams.CreateTransientBuffer();
+						const TShared<render::GpuBuffer> parameterBuffer = render::gTextureCompressParams.CreateTransientBuffer(gpuContext);
 						if(parameterBuffer == nullptr)
 						{
 							op.CompleteOperation(nullptr);
@@ -365,7 +365,7 @@ namespace b3d
 						// first sample); the input texture then persists, sampled by every later tile.
 						if(!inputUploaded)
 						{
-							render::TextureUtility::Write(workContext, input, *source, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+							render::TextureUtility::Write(gpuContext, input, *source, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
 							inputUploaded = true;
 						}
 
@@ -373,13 +373,13 @@ namespace b3d
 						// already drained by the inter-tile WaitUntilIdle, so reusing the scratch is safe; the dispatch barriers
 						// order this copy before the first mode reads it.
 						if(multiMode && materialIndex == 0)
-							render::TextureUtility::Write(workContext, bestErr, *initErr, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
+							render::TextureUtility::Write(gpuContext, bestErr, *initErr, 0, 0, render::TextureWriteFlag::Normal, commandBuffer);
 
 						// One mode dispatch (BC6H two-region uses 32-thread cooperative groups, everything else one thread per
 						// block; see Execute), covering this tile's block region.
 						materials[materialIndex]->Execute(*commandBuffer, input, output, parameters, bestErr, tileDispatch, variations[materialIndex]);
 
-						workContext.SubmitCommandBuffer(commandBuffer);
+						gpuContext.SubmitCommandBuffer(commandBuffer);
 
 						// Drain the GPU before the next mode/tile so it cannot run dispatches back-to-back and trip the watchdog.
 						gpuDevice->WaitUntilIdle();
@@ -393,7 +393,7 @@ namespace b3d
 			const TShared<render::GpuCommandBuffer> readbackCommandBuffer = pool->Create(readbackInfo);
 
 			const u32 readSize = destination->GetConsecutiveSize();
-			TAsyncOp<TShared<PixelData>> readOp = render::TextureUtility::ReadAsync(output, *readbackCommandBuffer);
+			TAsyncOp<TShared<PixelData>> readOp = render::TextureUtility::ReadAsync(gpuContext, output, *readbackCommandBuffer);
 
 			// Copy the packed blocks into the destination surface and complete the op once the GPU finishes. 
 			readbackCommandBuffer->OnDidComplete.Connect(
@@ -417,7 +417,7 @@ namespace b3d
 					op.CompleteOperation(destination);
 				});
 
-			workContext.SubmitCommandBuffer(readbackCommandBuffer);
+			gpuContext.SubmitCommandBuffer(readbackCommandBuffer);
 		}
 
 		// ---- CPU reference decoders (used by TextureCompressionUtility) ----

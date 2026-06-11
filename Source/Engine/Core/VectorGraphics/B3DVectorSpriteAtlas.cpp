@@ -220,7 +220,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 	if(dirtySprites.empty())
 		return;
 
-	GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
+	GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
 	const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 
 	// Create a command buffer
@@ -289,7 +289,7 @@ void GUIVectorSpriteAtlas::RenderDirtySprites(u32 bufferIndex)
 		render::GetRendererUtility().Blit(*commandBuffer, blitInformation);
 	}
 
-	workContext.SubmitCommandBuffer(commandBuffer);
+	gpuContext.SubmitCommandBuffer(commandBuffer);
 	dirtySprites.clear();
 }
 

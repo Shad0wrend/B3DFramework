@@ -51,18 +51,7 @@ namespace b3d
 		 * Ensures that the GPU can perform write operations in the buffer. Generally this is used for buffers used in compute operations. StoreOnGPU memory
 		 * flag must be used.
 		 */
-		AllowUnorderedAccessOnTheGPU = 1 << 2,
-
-		/**
-		 * Allocates the buffer's backing memory from the device's linear (bump) allocator instead of the general-purpose allocator. Memory is not freed
-		 * per-allocation; instead the whole page is reclaimed in bulk when the allocator is flushed and the frame it was allocated in is no longer
-		 * in flight on the GPU. This makes allocation/free extremely cheap, but the buffer's lifetime must be bounded by the frame that created it.
-		 *
-		 * Only use this for short-lived, single-use buffers (e.g. compute scratch input/output) whose GPU work completes within the frame that allocated
-		 * them. Such a buffer must NOT be retained past the end of that frame. Note on worker threads what constitutes a 'frame' is user determined via
-		 * fences.
-		 */
-		Transient = 1 << 3
+		AllowUnorderedAccessOnTheGPU = 1 << 2
 	};
 
 	using GpuBufferFlags = Flags<GpuBufferFlag>;
@@ -750,13 +739,16 @@ namespace b3d::render
 	struct B3D_EXPORT GpuBufferUtility
 	{
 		/**
-		 * Creates a staging buffer that can be used for as copy source or destination for the provided buffer.
+		 * Creates a staging buffer that can be used for as copy source or destination for the provided buffer. Staging
+		 * buffers are single-use, so they are allocated from the performing context's transient allocator — the memory
+		 * is reclaimed in bulk once the GPU work that used it completes, and must not be retained past that point.
 		 *
+		 * @param	gpuContext	Context whose transient allocator backs the staging buffer.
 		 * @param	buffer		Buffer to create the the staging buffer for. The staging buffer will have enough size to fit the contents of this buffer.
 		 * @param	readable	True if the buffer needs to be CPU-readable, false if the buffer needs to be CPU-writeable.
 		 * @return				Newly created buffer.
 		 */
-		static TShared<GpuBuffer> CreateStaging(const TShared<GpuBuffer>& buffer, bool readable);
+		static TShared<GpuBuffer> CreateStaging(GpuWorkContext& gpuContext, const TShared<GpuBuffer>& buffer, bool readable);
 
 		/**
 		 * Writes data into a buffer while accounting for the fact that the buffer might not be directly CPU-writable. Only buffers with
@@ -767,7 +759,7 @@ namespace b3d::render
 		 * and then copy the staging buffer into the destination buffer using the provided command buffer. If no command buffer is provided, it will use
 		 * a transfer buffer which will be submitted automatically before the next regular command buffer submission.
 		 *
-		 * @param	workContext		Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
+		 * @param	gpuContext		Context whose transfer command buffer the staging copy is queued on, when no explicit command buffer is provided.
 		 * @param	offset			Offset in bytes into the destination buffer at which to copy the data to.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	source			Source buffer containing the data to write. Data is read from the start of the buffer (@p offset is only applied to the destination).
@@ -776,7 +768,7 @@ namespace b3d::render
 		 *							the operation will be queued on a transfer command buffer that will be submitted just before next regular command
 		 *							buffer submission (or at the latest, at the end of the current frame).
 		 */
-		static void Write(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags = GpuBufferWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
+		static void Write(GpuWorkContext& gpuContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, const void* source, GpuBufferWriteFlags writeFlags = GpuBufferWriteFlag::Normal, TShared<GpuCommandBuffer> commandBuffer = nullptr);
 
 		/**
 		 * Reads data from a buffer while accounting for the fact that the buffer might not be directly CPU-readable. Only buffers with
@@ -789,25 +781,27 @@ namespace b3d::render
 		 *
 		 * Note if the buffer is currently used on the GPU, this method will block until the GPU is done executing, stalling the pipeline.
 		 *
-		 * @param	workContext		Context whose transfer command buffer is used to perform and flush the staging copy.
+		 * @param	gpuContext		Context whose transfer command buffer is used to perform and flush the staging copy.
 		 * @param	buffer			Buffer to read from.
 		 * @param	offset			Offset in bytes from which to copy the data.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start of the buffer (@p offset is only applied to the source).
 		 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default transfer queue will be used.
 		 */
-		static void Read(GpuWorkContext& workContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue = nullptr);
+		static void Read(GpuWorkContext& gpuContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, void* destination, const TShared<GpuQueue>& gpuQueue = nullptr);
 
 		/**
 		 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
 		 * and the asynchronous operation will be signaled with the return value.
 		 *
-		 * @param	commandBuffer	Command buffer to queue the operation on.
+		 * @param	gpuContext		Context whose transient allocator backs the internal staging buffer.
+		 * @param	buffer			Buffer to read from.
 		 * @param	offset			Offset in bytes from which to read the data.
 		 * @param	length			Length of the area you want to read, in bytes.
+		 * @param	commandBuffer	Command buffer to queue the operation on.
 		 * @return					Operation that will be signaled when the data is ready to be read.
 		 */
-		static TAsyncOp<TShared<MemoryDataStream>> ReadAsync(const TShared<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer);
+		static TAsyncOp<TShared<MemoryDataStream>> ReadAsync(GpuWorkContext& gpuContext, const TShared<GpuBuffer>& buffer, u32 offset, u32 length, GpuCommandBuffer& commandBuffer);
 	};
 
 } // namespace b3d::render

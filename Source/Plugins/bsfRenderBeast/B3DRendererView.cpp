@@ -393,7 +393,7 @@ void RendererView::NotifyLuminanceUpdated(u64 frameIdx, TShared<GpuCommandBuffer
 		return;
 	}
 
-	TAsyncOp<TShared<PixelData>> readbackAsyncOp = TextureUtility::ReadAsync(texture->Texture, *cb);
+	TAsyncOp<TShared<PixelData>> readbackAsyncOp = TextureUtility::ReadAsync(GetRenderer()->GetGpuContext(), texture->Texture, *cb);
 	mLuminanceUpdates.emplace_back(frameIdx, std::move(readbackAsyncOp), std::move(texture));
 }
 
@@ -1051,7 +1051,7 @@ void RendererView::ResolveSceneCaptures(GpuCommandBuffer& commandBuffer, const T
 	Vector<TAsyncOp<TShared<PixelData>>> captureOps = std::move(mRequestedScreenCaptures);
 	mRequestedScreenCaptures.clear();
 
-	TAsyncOp<TShared<PixelData>> readOp = target->ReadAsync(commandBuffer);
+	TAsyncOp<TShared<PixelData>> readOp = target->ReadAsync(GetRenderer()->GetGpuContext(), commandBuffer);
 
 	auto fnOnReadOpCompleted = [captureOps = std::move(captureOps), readOp]() mutable
 	{

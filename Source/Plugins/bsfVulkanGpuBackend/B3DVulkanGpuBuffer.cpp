@@ -251,8 +251,8 @@ bool VulkanBuffer::IsRangeInUse(u32 offset, u32 size) const
 }
 #endif // B3D_BUILD_TYPE_DEVELOPMENT
 
-VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
+VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation, IGpuAllocator& allocator)
+	: GpuBuffer(device, createInformation, b3d::GpuBuffer::CalculateSuballocatedBufferSize(createInformation, device)), mAllocator(allocator), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowUnorderedAccessOnTheGPU))
 	{ }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -349,19 +349,16 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;
 	const GpuBufferFlags newBufferFlags = staging ? (GpuBufferFlags)0 : mInformation.Flags;
 
-	// Transient buffers are allocated from the linear (bump) allocator, which doesn't participate in defragmentation
-	const bool transient = newBufferFlags.IsSet(GpuBufferFlag::Transient);
-
-	// Persistent buffers pass `this` as the proxy parent so defrag can recreate them in place.
-	VulkanGpuBuffer* const proxyParent = (staging || transient) ? nullptr : this;
+	// Buffers participate in defragmentation only when their allocator supports it (transient/linear
+	// allocations don't); such buffers pass `this` as the proxy parent so defrag can notify the buffer when
+	// it needs to reallocate.
+	VulkanGpuBuffer* const proxyParent = (staging || !mAllocator.SupportsDefragmentation()) ? nullptr : this;
 
 	const String debugName = staging ? StringUtility::Format("Staging buffer ({0})", mName) : mName;
 
-	// Resolve usage + (required, preferred) memory-property flags from the buffer's engine usage hint.
+	// Resolve usage flags from the buffer's engine usage hint. The memory type (and so the memory-property
+	// flags) was already resolved when mAllocator was picked at proxy creation.
 	VkBufferUsageFlags usageFlags = GetVkBufferUsageFlags(mInformation);
-	VkMemoryPropertyFlags requiredFlags = 0;
-	VkMemoryPropertyFlags preferredFlags = 0;
-	GetVkMemoryPropertyFlags(mInformation, requiredFlags, preferredFlags);
 
 	VulkanBufferCreateInformation info;
 	info.VkCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -387,7 +384,7 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 
 	VulkanBuffer* const vulkanBuffer = preAllocatedMemory != nullptr
 		? device.CreateBuffer(info, *preAllocatedMemory, proxyParent)
-		: device.CreateBuffer(info, requiredFlags, preferredFlags, proxyParent);
+		: device.CreateBuffer(info, mAllocator, proxyParent);
 
 	if(vulkanBuffer != nullptr)
 		vulkanBuffer->SetName(debugName);

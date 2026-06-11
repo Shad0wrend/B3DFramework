@@ -122,18 +122,19 @@ namespace b3d
 
 			const TShared<render::GpuCommandBuffer> commandBuffer = commandBufferPool->Create(commandBufferInfo);
 
+			GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+
 			// Upload mip 0 (the RGBA32F-converted source) as the first input buffer; read as float4 in the shader.
 			const u32 baseWidth = convertedSource->GetWidth();
 			const u32 baseHeight = convertedSource->GetHeight();
-			const TShared<render::GpuBuffer> inputBuffer = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, baseWidth * baseHeight, GpuBufferFlag::StoreOnGPU | GpuBufferFlag::Transient));
+			const TShared<render::GpuBuffer> inputBuffer = gpuContext.CreateTransientGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, baseWidth * baseHeight, GpuBufferFlag::StoreOnGPU));
 			if(inputBuffer == nullptr)
 			{
 				op.CompleteOperation(Vector<TShared<PixelData>>());
 				return;
 			}
 
-			GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
-			render::GpuBufferUtility::Write(workContext, inputBuffer, 0, baseWidth * baseHeight * sizeof(float) * 4, convertedSource->GetData());
+			render::GpuBufferUtility::Write(gpuContext, inputBuffer, 0, baseWidth * baseHeight * sizeof(float) * 4, convertedSource->GetData());
 
 			// Generate levels 1..mipCount, each downsampled from the previous level's GPU buffer (no CPU round-trip).
 			TInlineArray<TShared<render::GpuBuffer>, 16> levelBuffers; // Generated level outputs, in order
@@ -149,7 +150,7 @@ namespace b3d
 				const u32 destinationHeight = std::max(1u, sourceHeight / 2);
 
 				// Output for this level: written as a compute UAV, read back by the CPU, and bound as the next level's input (read as a storage buffer).
-				const TShared<render::GpuBuffer> output = gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, destinationWidth * destinationHeight, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU | GpuBufferFlag::Transient));
+				const TShared<render::GpuBuffer> output = gpuContext.CreateTransientGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, destinationWidth * destinationHeight, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowUnorderedAccessOnTheGPU));
 				if(output == nullptr)
 				{
 					op.CompleteOperation(Vector<TShared<PixelData>>());
@@ -159,7 +160,7 @@ namespace b3d
 				// Per-dispatch constants for this level, in a transient uniform buffer (linear-allocator backed, thread-safe,
 				// frame-lifetime). The buffer must be kept alive until the GPU completes, so it is stored in parameterBuffers
 				// and captured by the completion callback. The mapped scope is unmapped (flushed) just before the dispatch.
-				const TShared<render::GpuBuffer> parameterBuffer = render::gMipmapParameterDefinition.CreateTransientBuffer();
+				const TShared<render::GpuBuffer> parameterBuffer = render::gMipmapParameterDefinition.CreateTransientBuffer(gpuContext);
 				if(parameterBuffer == nullptr)
 				{
 					op.CompleteOperation(Vector<TShared<PixelData>>());
@@ -195,7 +196,7 @@ namespace b3d
 			for(u32 mipLevel = 0; mipLevel < mipCount; ++mipLevel)
 			{
 				const u32 byteCount = levelDimensions[mipLevel].Width * levelDimensions[mipLevel].Height * (u32)sizeof(float) * 4u;
-				readOps.Add(render::GpuBufferUtility::ReadAsync(levelBuffers[mipLevel], 0, byteCount, *commandBuffer));
+				readOps.Add(render::GpuBufferUtility::ReadAsync(gpuContext, levelBuffers[mipLevel], 0, byteCount, *commandBuffer));
 			}
 
 			// Assemble the chain once the GPU finishes. Captures keep the level buffers (read-back sources) and read ops
@@ -230,7 +231,7 @@ namespace b3d
 					op.CompleteOperation(std::move(outMipLevels));
 				});
 
-			workContext.SubmitCommandBuffer(commandBuffer);
+			gpuContext.SubmitCommandBuffer(commandBuffer);
 		}
 	} // anonymous namespace
 

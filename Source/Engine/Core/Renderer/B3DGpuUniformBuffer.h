@@ -193,7 +193,7 @@ namespace b3d
 			 * Note that transient buffer allocations might be larger than size returned by GetSize(), due to alignment requirements.
 			 *
 			 * @note NOT thread safe. The backing TransientGpuBufferPool may only be used from the render thread. Off-render-thread
-			 *       callers must use CreateTransientBuffer() instead, which is backed by the device's thread-safe linear allocator.
+			 *       callers must allocate from their own worker GpuWorkContext instead (GpuWorkContext::CreateTransientGpuBuffer).
 			 */
 			GpuBufferSuballocation AllocateTransient()
 			{
@@ -201,21 +201,17 @@ namespace b3d
 			}
 
 			/**
-			 * Allocates a one-shot uniform buffer backed by the GPU device's linear (transient) allocator.
-			 * This is thread safe and may be called from any thread.
+			 * Allocates a one-shot uniform buffer backed by the given work context's transient (linear) allocator.
 			 *
-			 * The returned buffer's memory is reclaimed in bulk at end-of-frame (once the frame is no longer in flight on the GPU),
-			 * so it must only be used for the single operation that created it.
+			 * The returned buffer's memory is reclaimed in bulk once the GPU work that used it completes, so it must
+			 * only be used for the single operation that created it.
 			 *
-			 * @return	The transient buffer, or nullptr if there is no primary GPU device.
+			 * @param	gpuContext	Work context whose transient allocator backs the buffer.
+			 * @return				The transient buffer.
 			 */
-			TShared<GpuBuffer> CreateTransientBuffer() const
+			TShared<GpuBuffer> CreateTransientBuffer(GpuWorkContext& gpuContext) const
 			{
-				const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
-				if(gpuDevice)
-					return gpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::Transient, 1), GpuObjectCreateFlag::RenderThreadDestroy);
-
-				return nullptr;
+				return gpuContext.CreateTransientGpuBuffer(GpuBufferCreateInformation::CreateUniform(mBufferSize, GpuBufferFlag::StoreOnCPUWithGPUAccess, 1));
 			}
 
 		protected:

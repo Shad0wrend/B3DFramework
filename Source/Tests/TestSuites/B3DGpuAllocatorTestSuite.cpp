@@ -622,8 +622,8 @@ void GpuAllocatorTestSuite::TestUserCreatedFence_ExplicitSignal()
 	info.SignalFences.Add(GpuTimelineFenceAndValue{ fence, 7 });
 
 	// Submit through a worker context owned by this thread; the render-thread primary context stays untouched.
-	TShared<GpuWorkContext> workContext = GpuWorkContext::Create(*device);
-	workContext->SubmitCommandBuffer(info);
+	TShared<GpuWorkContext> gpuContext = GpuWorkContext::Create(*device);
+	gpuContext->SubmitCommandBuffer(info);
 
 	// Drain pending GPU work. After WaitUntilIdle the GPU has retired the (effectively empty)
 	// submit, so the explicit value-7 signal must be observable via IsSignaled.

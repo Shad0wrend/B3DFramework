@@ -317,12 +317,13 @@ void RenderTexture::ReportIfBuffersDontMatch() const
 	}
 }
 
-TAsyncOp<TShared<PixelData>> RenderTexture::ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
+TAsyncOp<TShared<PixelData>> RenderTexture::ReadAsync(GpuWorkContext& gpuContext, GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
 {
 	TShared<Texture> colorTexture = GetColorTexture(colorSurfaceIndex);
 	if(colorTexture == nullptr)
-		return RenderTarget::ReadAsync(commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
+		return RenderTarget::ReadAsync(gpuContext, commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
 
-	return TextureUtility::ReadAsync(colorTexture, commandBuffer, mipLevel, arrayLayer);
+	// The readback staging buffer comes from the caller-supplied work context.
+	return TextureUtility::ReadAsync(gpuContext, colorTexture, commandBuffer, mipLevel, arrayLayer);
 }
 }}

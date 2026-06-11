@@ -980,6 +980,9 @@ namespace b3d
 		 */
 		void SetAllocationOwner(const GpuResourceLocation& allocation, IGpuResource* owner);
 
+		/** TLSF tracks per-allocation owners and relocates allocations during Defrag. */
+		bool SupportsDefragmentation() const override { return true; }
+
 		/** @} */
 
 		/** @name Diagnostics.

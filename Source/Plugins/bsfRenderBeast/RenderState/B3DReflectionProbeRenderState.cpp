@@ -72,8 +72,8 @@ void VisibleReflectionProbeData::Update(const RenderBeastScene& scene, const Ren
 
 		if(size > 0)
 		{
-			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-			GpuBufferUtility::Write(workContext, mProbeBuffer, 0, size, mReflProbeData.data(), GpuBufferWriteFlag::Discard);
+			GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(gpuContext, mProbeBuffer, 0, size, mReflProbeData.data(), GpuBufferWriteFlag::Discard);
 		}
 	}
 }

@@ -35,14 +35,35 @@ TShared<GpuWorkContext> GpuWorkContext::Create(GpuDevice& device, IGpuCompletion
 	return B3DMakeShared<GpuWorkContext>(PrivatelyConstruct(), device, tracker);
 }
 
-IGpuAllocator& GpuWorkContext::GetOrCreateTransientAllocator(u32 memoryType)
+IGpuAllocator* GpuWorkContext::TryGetOrCreateTransientAllocator(u32 memoryType)
 {
 	TUnique<IGpuAllocator>& slot = mTransientAllocators[memoryType];
 	if (slot == nullptr)
 		slot = mDevice.CreateTransientAllocator(memoryType, *mTracker);
 
-	B3D_ASSERT(slot != nullptr && "Backend does not support context transient allocation.");
-	return *slot;
+	return slot.get();
+}
+
+IGpuAllocator& GpuWorkContext::GetOrCreateTransientAllocator(u32 memoryType)
+{
+	IGpuAllocator* allocator = TryGetOrCreateTransientAllocator(memoryType);
+
+	B3D_ASSERT(allocator != nullptr && "Backend does not support context transient allocation.");
+	return *allocator;
+}
+
+TShared<render::GpuBuffer> GpuWorkContext::CreateTransientGpuBuffer(const GpuBufferCreateInformation& createInformation)
+{
+	// A buffer's memory type is a pure function of its create information, so its transient allocator
+	// can be resolved once, up front, and carried by the buffer for life.
+	const u32 memoryType = mDevice.PickBufferMemoryType(createInformation);
+	IGpuAllocator* allocator = TryGetOrCreateTransientAllocator(memoryType);
+
+	// Backends without context transient allocation fall back to a persistent allocation.
+	if (allocator == nullptr)
+		return mDevice.CreateGpuBuffer(createInformation, GpuObjectCreateFlag::None);
+
+	return mDevice.CreateGpuBuffer(createInformation, *allocator, GpuObjectCreateFlag::None);
 }
 
 

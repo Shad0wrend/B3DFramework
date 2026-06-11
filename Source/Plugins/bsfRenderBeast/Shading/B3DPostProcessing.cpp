@@ -1342,8 +1342,8 @@ void BokehDOFMaterial::Initialize()
 		vertexData[i * 4 + 3] = Vector2(1.0f, 1.0f);
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Write(workContext, mTileVertexBuffer, 0, mTileVertexBuffer->GetTotalSize(), vertexData);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(gpuContext, mTileVertexBuffer, 0, mTileVertexBuffer->GetTotalSize(), vertexData);
 	B3DStackFree(vertexData);
 
 	// Prepare indices for rendering tiles
@@ -1381,7 +1381,7 @@ void BokehDOFMaterial::Initialize()
 		}
 	}
 
-	GpuBufferUtility::Write(workContext, mTileIndexBuffer, 0, mTileIndexBuffer->GetTotalSize(), indices);
+	GpuBufferUtility::Write(gpuContext, mTileIndexBuffer, 0, mTileIndexBuffer->GetTotalSize(), indices);
 	B3DStackFree(indices);
 }
 

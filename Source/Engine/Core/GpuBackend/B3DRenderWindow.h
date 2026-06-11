@@ -332,7 +332,7 @@ namespace b3d
 
 			void Initialize() override;
 			void Destroy() override;
-			TAsyncOp<TShared<PixelData>> ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex = 0, u32 mipLevel = 0, u32 arrayLayer = 0) override;
+			TAsyncOp<TShared<PixelData>> ReadAsync(GpuWorkContext& gpuContext, GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex = 0, u32 mipLevel = 0, u32 arrayLayer = 0) override;
 
 			/** Called by the GPU backend after it requests swap chain back buffer to be presented. */
 			virtual void NotifySwapBuffersRequested();

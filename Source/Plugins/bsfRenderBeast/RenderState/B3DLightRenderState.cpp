@@ -289,8 +289,8 @@ void VisibleLightData::Update(const RenderBeastScene& scene, const RendererViewG
 
 		if(size > 0)
 		{
-			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-			GpuBufferUtility::Write(workContext, mLightBuffer, 0, size, mVisibleLightData.data(), GpuBufferWriteFlag::Discard);
+			GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(gpuContext, mLightBuffer, 0, size, mVisibleLightData.data(), GpuBufferWriteFlag::Discard);
 		}
 	}
 }

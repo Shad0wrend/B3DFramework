@@ -282,10 +282,10 @@ void RenderWindow::SyncFromCoreObject(const CoreSyncData& data, FrameAllocator& 
 	Super::SyncFromCoreObject(data, allocator);
 }
 
-TAsyncOp<TShared<PixelData>> RenderWindow::ReadAsync(GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
+TAsyncOp<TShared<PixelData>> RenderWindow::ReadAsync(GpuWorkContext& gpuContext, GpuCommandBuffer& commandBuffer, u32 colorSurfaceIndex, u32 mipLevel, u32 arrayLayer)
 {
 	if(!B3D_ENSURE(colorSurfaceIndex == 0 && mipLevel == 0 && arrayLayer == 0) || mRenderWindowSurface == nullptr)
-		return RenderTarget::ReadAsync(commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
+		return RenderTarget::ReadAsync(gpuContext, commandBuffer, colorSurfaceIndex, mipLevel, arrayLayer);
 
 	return mRenderWindowSurface->ReadAsync(commandBuffer);
 }

@@ -777,7 +777,7 @@ namespace b3d
 		ShadowRendering::ShadowRendering(u32 shadowMapSize)
 			: mShadowMapSize(shadowMapSize)
 		{
-			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+			GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
 			const TShared<GpuDevice>& gpuDevice = GetApplication().GetPrimaryGpuDevice();
 
 			TInlineArray<VertexElement, 8> vertexElements;
@@ -812,7 +812,7 @@ namespace b3d
 					0, 2, 3
 				};
 
-				GpuBufferUtility::Write(workContext, mPlaneIB, 0, sizeof(indices), indices);
+				GpuBufferUtility::Write(gpuContext, mPlaneIB, 0, sizeof(indices), indices);
 			}
 
 			// Create frustum index and vertex buffers
@@ -831,7 +831,7 @@ namespace b3d
 				indexBufferCreateInformation.Index.Count = 36;
 
 				mFrustumIB = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
-				GpuBufferUtility::Write(workContext, mFrustumIB, 0, sizeof(AABox::kCubeIndices), AABox::kCubeIndices);
+				GpuBufferUtility::Write(gpuContext, mFrustumIB, 0, sizeof(AABox::kCubeIndices), AABox::kCubeIndices);
 			}
 
 			// Create shadow per-object layout with vertex+geometry stage (for point light cubemap shadows)
@@ -1975,8 +1975,8 @@ namespace b3d
 				{ -1.0f, 1.0f * flipY, far },
 			};
 
-			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-			GpuBufferUtility::Write(workContext, mPlaneVB, 0, sizeof(vertices), vertices, GpuBufferWriteFlag::Discard);
+			GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(gpuContext, mPlaneVB, 0, sizeof(vertices), vertices, GpuBufferWriteFlag::Discard);
 
 			// Draw the mesh
 			commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);
@@ -1990,8 +1990,8 @@ namespace b3d
 		void ShadowRendering::DrawFrustum(GpuCommandBuffer& commandBuffer, const std::array<Vector3, 8>& corners) const
 		{
 			// Update VB with new vertices
-			GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-			GpuBufferUtility::Write(workContext, mFrustumVB, 0, sizeof(Vector3) * 8, corners.data(), GpuBufferWriteFlag::Discard);
+			GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+			GpuBufferUtility::Write(gpuContext, mFrustumVB, 0, sizeof(Vector3) * 8, corners.data(), GpuBufferWriteFlag::Discard);
 
 			// Draw the mesh
 			commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);

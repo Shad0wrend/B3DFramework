@@ -26,6 +26,12 @@ TUnique<IGpuAllocator> GpuDevice::CreateTransientAllocator(u32 /*memoryType*/, I
 	return nullptr;
 }
 
+TShared<render::GpuBuffer> GpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& /*createInformation*/, IGpuAllocator& /*allocator*/, GpuObjectCreateFlags /*flags*/)
+{
+	B3D_ENSURE_LOG(false, "This backend does not support allocator-driven buffer creation.");
+	return nullptr;
+}
+
 void GpuDevice::ShutdownPrimaryContext()
 {
 	// The primary context's transfer pool is created on the render thread, so its destructor must run

@@ -710,8 +710,8 @@ void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 		dst++;
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Write(workContext, mTetrahedronInfosGPU, 0, mTetrahedronInfosGPU->GetTotalSize(), dst, GpuBufferWriteFlag::Discard);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(gpuContext, mTetrahedronInfosGPU, 0, mTetrahedronInfosGPU->GetTotalSize(), dst, GpuBufferWriteFlag::Discard);
 	B3DStackFree(dst);
 
 	// Write data specific to faces
@@ -740,7 +740,7 @@ void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 		faceDst++;
 	}
 
-	GpuBufferUtility::Write(workContext, mTetrahedronFaceInfosGPU, 0, mTetrahedronFaceInfosGPU->GetTotalSize(), faceDst, GpuBufferWriteFlag::Discard);
+	GpuBufferUtility::Write(gpuContext, mTetrahedronFaceInfosGPU, 0, mTetrahedronFaceInfosGPU->GetTotalSize(), faceDst, GpuBufferWriteFlag::Discard);
 	B3DStackFree(faceDst);
 
 	B3DStackFree(validTets);

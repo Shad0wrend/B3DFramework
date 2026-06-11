@@ -136,8 +136,8 @@ AABox GpuParticleBoundsMaterial::Execute(GpuCommandBuffer& commandBuffer, const 
 	Vector3 max = -Vector3::kInfinite;
 
 	Vector3* data = (Vector3*)B3DStackAllocate(output->GetTotalSize());
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Read(workContext, output, 0, output->GetTotalSize(), data);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Read(gpuContext, output, 0, output->GetTotalSize(), data);
 
 	for(u32 i = 0; i < numGroups; i++)
 	{

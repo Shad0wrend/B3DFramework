@@ -229,12 +229,25 @@ namespace b3d
 		virtual TShared<render::Texture> CreateTexture(const TextureCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
 
 		/**
-		 * Creates a new GPU buffer.
+		 * Creates a new GPU buffer. The buffer's backing memory comes from the device's persistent
+		 * per-memory-type allocator; use GpuWorkContext::CreateTransientGpuBuffer for short-lived buffers
+		 * backed by a context's transient allocator.
 		 *
 		 * @param	createInformation	Object describing the buffer to create.
 		 * @param	flags				Creation flags. @see GpuObjectCreateFlag
 		 */
 		virtual TShared<render::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) = 0;
+
+		/**
+		 * Determines the backend memory type a buffer described by @p createInformation allocates from.
+		 * A buffer's memory type is a pure function of its create information, fixed for its lifetime, so
+		 * the per-type allocator backing the buffer can be resolved once, up front. The base
+		 * implementation returns 0 (no meaningful memory types); backends with per-type allocators
+		 * override this.
+		 *
+		 * Thread safe.
+		 */
+		virtual u32 PickBufferMemoryType(const GpuBufferCreateInformation& /*createInformation*/) const { return 0; }
 
 		/**
 		 * Creates a new sampler state, or returns an existing one if one with the same create information was already created.
@@ -375,6 +388,8 @@ namespace b3d
 		/** @} */
 
 	protected:
+		friend class GpuWorkContext;
+
 		GpuDevice();
 
 		/**
@@ -388,6 +403,19 @@ namespace b3d
 		 * GpuWorkContext's destructor itself needs no cross-thread handling. Idempotent.
 		 */
 		void ShutdownPrimaryContext();
+
+		/**
+		 * Creates a new GPU buffer whose backing memory is suballocated from an explicitly provided
+		 * @p allocator instead of the device's persistent allocator. The allocator must be compatible
+		 * with the buffer's memory type, i.e. resolved for the type returned by PickBufferMemoryType()
+		 * (GpuWorkContext::CreateTransientGpuBuffer is the canonical caller). @p allocator must outlive the
+		 * returned buffer.
+		 *
+		 * @param	createInformation	Object describing the buffer to create.
+		 * @param	allocator			Allocator the buffer's backing memory is suballocated from.
+		 * @param	flags				Creation flags. @see GpuObjectCreateFlag
+		 */
+		virtual TShared<render::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, IGpuAllocator& allocator, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None);
 
 		/**
 		 * Explicit deleter for objects that derive from RenderProxy. By default render proxy objects provide a custom deleter that

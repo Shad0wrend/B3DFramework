@@ -593,7 +593,15 @@ TShared<render::Texture> VulkanGpuDevice::CreateTexture(const TextureCreateInfor
 
 TShared<render::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, GpuObjectCreateFlags flags)
 {
-	VulkanGpuBuffer* rawBuffer = new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation);
+	const u32 memoryTypeIndex = PickBufferMemoryType(createInformation);
+	IGpuAllocator& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
+
+	return CreateGpuBuffer(createInformation, allocator, flags);
+}
+
+TShared<render::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, IGpuAllocator& allocator, GpuObjectCreateFlags flags)
+{
+	VulkanGpuBuffer* rawBuffer = new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation, allocator);
 
 	TShared<GpuBuffer> output = flags.IsSet(GpuObjectCreateFlag::RenderThreadDestroy)
 		? B3DMakeSharedFromExisting(rawBuffer)
@@ -908,15 +916,29 @@ SurfaceFormat VulkanGpuDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, boo
 	return output;
 }
 
-VulkanBuffer* VulkanGpuDevice::CreateBuffer(const VulkanBufferCreateInformation& createInformation, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, VulkanGpuBuffer* parent)
+VulkanBuffer* VulkanGpuDevice::CreateBuffer(const VulkanBufferCreateInformation& createInformation, IGpuAllocator& allocator, VulkanGpuBuffer* parent)
 {
+	B3D_ASSERT(parent == nullptr || allocator.SupportsDefragmentation());
+
 	VkBuffer buffer;
 	const VkResult createResult = vkCreateBuffer(mLogicalDevice, &createInformation.VkCreateInfo, gVulkanAllocator, &buffer);
 	B3D_ASSERT(createResult == VK_SUCCESS);
 	(void)createResult;
 
-	const bool transient = createInformation.Flags.IsSet(GpuBufferFlag::Transient);
-	const VulkanAllocationResult allocation = AllocateMemory(buffer, requiredFlags, preferredFlags, transient);
+	// The memory type was already picked when @p allocator was resolved (PickBufferMemoryType uses the
+	// same usage flags, so requirements.memoryTypeBits is guaranteed to include it); only size and
+	// alignment are needed here.
+	VkMemoryRequirements requirements = {};
+	vkGetBufferMemoryRequirements(mLogicalDevice, buffer, &requirements);
+
+	VulkanAllocationResult allocation;
+	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, nullptr, allocation.Location);
+	B3D_ASSERT(ok && "Allocator failed to satisfy buffer allocation request.");
+	(void)ok;
+
+	const VulkanGpuHeap& heap = ToVulkanGpuHeap(allocation.Location.Heap);
+	if (heap.Mapped != nullptr)
+		allocation.MappedMemory = static_cast<u8*>(heap.Mapped) + allocation.Location.Offset;
 
 	return BindBufferToAllocation(createInformation, buffer, allocation, parent);
 }
@@ -1050,40 +1072,6 @@ u32 VulkanGpuDevice::PickBufferMemoryType(const GpuBufferCreateInformation& crea
 	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested buffer allocation flags.");
 
 	return memoryTypeIndex;
-}
-
-VulkanAllocationResult VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags, bool transient)
-{
-	VkMemoryRequirements requirements = {};
-	vkGetBufferMemoryRequirements(mLogicalDevice, buffer, &requirements);
-
-	const u32 memoryTypeIndex = PickMemoryTypeIndex(requirements.memoryTypeBits, requiredFlags, preferredFlags);
-	B3D_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES && "No Vulkan memory type satisfies the requested buffer allocation flags.");
-
-	VulkanAllocationResult output;
-
-	if (transient)
-	{
-		// Transient buffers are suballocated from the render-thread primary context's per-type linear
-		// allocator. Off-thread callers get their own worker context (and its own transient allocators).
-		IGpuAllocator& allocator = GetPrimaryContext().GetOrCreateTransientAllocator(memoryTypeIndex);
-		const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, nullptr, output.Location);
-		B3D_ASSERT(ok && "Linear allocator failed to satisfy transient buffer allocation request.");
-		(void)ok;
-	}
-	else
-	{
-		TGpuTlsfAllocator<VulkanHeapBackend>& allocator = GetOrCreateGpuMemoryAllocator(memoryTypeIndex);
-		const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, output.Location);
-		B3D_ASSERT(ok && "TLSF allocator failed to satisfy buffer allocation request.");
-		(void)ok;
-	}
-
-	const VulkanGpuHeap& heap = ToVulkanGpuHeap(output.Location.Heap);
-	if (heap.Mapped != nullptr)
-		output.MappedMemory = static_cast<u8*>(heap.Mapped) + output.Location.Offset;
-
-	return output;
 }
 
 void VulkanGpuDevice::FreeMemory(VulkanAllocationResult& allocation)
@@ -1334,7 +1322,7 @@ void VulkanGpuDevice::InitializeCapabilities()
 	mCapabilities.AddShaderProfile("glsl");
 }
 
-void VulkanGpuDevice::GetSyncSemaphores(GpuQueueMask syncMask, TInlineArray<VulkanSemaphore*, 8> outSemaphores) const
+void VulkanGpuDevice::GetSyncSemaphores(GpuQueueMask syncMask, TInlineArray<VulkanSemaphore*, 8>& outSemaphores) const
 {
 	AssertIfNotVulkanSubmitThread();
 

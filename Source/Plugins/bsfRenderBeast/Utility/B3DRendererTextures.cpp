@@ -183,8 +183,8 @@ TShared<render::Texture> GeneratePreintegratedEnvBrdf()
 		}
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	TextureUtility::Write(workContext, texture, *pixelData);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Write(gpuContext, texture, *pixelData);
 
 	return texture;
 }
@@ -195,7 +195,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 	if (!gpuDevice)
 		return nullptr;
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
 	GpuCommandBufferPool& commandBufferPool = GetRenderBeast()->GetCurrentCommandBufferPool();
 	TShared<GpuCommandBuffer> commandBuffer = commandBufferPool.Create(GpuCommandBufferCreateInformation::Create("GenerateDefaultIndirect"));
 
@@ -221,7 +221,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(Color::kBlack, 0, 1);
 		data->SetColorAt(Color::kBlack, 1, 1);
 
-		TextureUtility::Write(workContext, skyTexture, *data, 0, sides[i]);
+		TextureUtility::Write(gpuContext, skyTexture, *data, 0, sides[i]);
 	}
 
 	{
@@ -232,7 +232,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(skyColor, 0, 1);
 		data->SetColorAt(skyColor, 1, 1);
 
-		TextureUtility::Write(workContext, skyTexture, *data, 0, CF_PositiveY);
+		TextureUtility::Write(gpuContext, skyTexture, *data, 0, CF_PositiveY);
 	}
 
 	{
@@ -243,7 +243,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 		data->SetColorAt(Color::kBlack, 0, 1);
 		data->SetColorAt(Color::kBlack, 1, 1);
 
-		TextureUtility::Write(workContext, skyTexture, *data, 0, CF_NegativeY);
+		TextureUtility::Write(gpuContext, skyTexture, *data, 0, CF_NegativeY);
 	}
 
 	TextureCreateInformation irradianceCubemapDesc;
@@ -258,7 +258,7 @@ TShared<render::Texture> GenerateDefaultIndirect()
 	TShared<render::Texture> irradiance = gpuDevice->CreateTexture(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);
 
-	workContext.SubmitCommandBuffer(commandBuffer);
+	gpuContext.SubmitCommandBuffer(commandBuffer);
 
 	return irradiance;
 }

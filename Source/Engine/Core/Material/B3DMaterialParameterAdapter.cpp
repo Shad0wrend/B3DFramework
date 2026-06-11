@@ -945,8 +945,8 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 			{
 				mappedScope.Unmap();
 
-				GpuWorkContext& workContext = render::GetRenderer()->GetGpuContext();
-				const TShared<render::GpuCommandBuffer>& commandBuffer = workContext.GetTransferCommandBuffer();
+				GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+				const TShared<render::GpuCommandBuffer>& commandBuffer = gpuContext.GetTransferCommandBuffer();
 				commandBuffer->CopyBufferToBuffer(stagingBuffer, currentUniformBufferInfo->Buffer, 0, currentUniformBufferInfo->SuballocationByteOffset, currentUniformBufferInfo->Buffer->GetSuballocationSize());
 				stagingBuffer = nullptr;
 			}
@@ -1028,7 +1028,8 @@ void TMaterialParameterAdapter<IsRenderProxy>::Update(const MaterialType& materi
 
 				if(useStaging)
 				{
-					stagingBuffer = render::GpuBufferUtility::CreateStaging(uniformBufferInfo.Buffer, false);
+					GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+					stagingBuffer = render::GpuBufferUtility::CreateStaging(gpuContext, uniformBufferInfo.Buffer, false);
 					mappedScope = stagingBuffer->Map(GpuMapOption::Write);
 				}
 				else

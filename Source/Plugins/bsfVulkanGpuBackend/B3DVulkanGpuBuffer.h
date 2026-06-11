@@ -174,7 +174,15 @@ namespace b3d
 		class VulkanGpuBuffer : public GpuBuffer
 		{
 		public:
-			VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation);
+			/**
+			 * @param	device				Device the buffer is created on.
+			 * @param	createInformation	Describes the buffer to create.
+			 * @param	allocator			Allocator backing the buffer's memory, resolved up front for the buffer's
+			 *								memory type (see VulkanGpuDevice::PickBufferMemoryType). The buffer
+			 *								allocates through it for its whole lifetime, including internal recreation.
+			 *								Must outlive the buffer.
+			 */
+			VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation, IGpuAllocator& allocator);
 			~VulkanGpuBuffer();
 
 			void SetName(const StringView& name) override;
@@ -236,6 +244,9 @@ namespace b3d
 			VulkanGpuDevice& GetVulkanDevice() const { return static_cast<VulkanGpuDevice&>(mDevice); }
 
 			VulkanBuffer* mBuffer = nullptr;
+
+			/** Allocator the buffer's memory is suballocated from. Resolved once at creation, for the buffer's memory type. */
+			IGpuAllocator& mAllocator;
 
 			bool mDirectlyMappable : 1;
 			bool mSupportsGPUWrites : 1;

@@ -96,8 +96,8 @@ void WriteIndices(const TShared<GpuBuffer>& buffer, const Vector<u32>& input, u3
 		indices[idx++] = (x & 0xFFFF) | (y << 16);
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Write(workContext, buffer, 0, buffer->GetTotalSize(), indices, GpuBufferWriteFlag::Discard);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(gpuContext, buffer, 0, buffer->GetTotalSize(), indices, GpuBufferWriteFlag::Discard);
 	B3DStackFree(indices);
 }
 
@@ -274,10 +274,10 @@ const ParticleBillboardTextures* ParticleTexturePool::Alloc(const ParticleBillbo
 	// Populate texture contents
 	// Note: Perhaps instead of using write-discard here, we should track which frame has finished rendering and then
 	// just use no-overwrite? write-discard will very likely allocate memory under the hood.
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	TextureUtility::Write(workContext, output->PositionAndRotation, simulationData.PositionAndRotation, 0, 0, TextureWriteFlag::Discard);
-	TextureUtility::Write(workContext, output->Color, simulationData.Color, 0, 0, TextureWriteFlag::Discard);
-	TextureUtility::Write(workContext, output->SizeAndFrameIdx, simulationData.SizeAndFrameIdx, 0, 0, TextureWriteFlag::Discard);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Write(gpuContext, output->PositionAndRotation, simulationData.PositionAndRotation, 0, 0, TextureWriteFlag::Discard);
+	TextureUtility::Write(gpuContext, output->Color, simulationData.Color, 0, 0, TextureWriteFlag::Discard);
+	TextureUtility::Write(gpuContext, output->SizeAndFrameIdx, simulationData.SizeAndFrameIdx, 0, 0, TextureWriteFlag::Discard);
 
 	WriteIndices(output->Indices, simulationData.Indices, size);
 	return output;
@@ -304,11 +304,11 @@ const ParticleMeshTextures* ParticleTexturePool::Alloc(const ParticleMeshRenderD
 	// Populate texture contents
 	// Note: Perhaps instead of using write-discard here, we should track which frame has finished rendering and then
 	// just use no-overwrite? write-discard will very likely allocate memory under the hood.
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	TextureUtility::Write(workContext, output->Position, simulationData.Position, 0, 0, TextureWriteFlag::Discard);
-	TextureUtility::Write(workContext, output->Color, simulationData.Color, 0, 0, TextureWriteFlag::Discard);
-	TextureUtility::Write(workContext, output->Size, simulationData.Size, 0, 0, TextureWriteFlag::Discard);
-	TextureUtility::Write(workContext, output->Rotation, simulationData.Rotation, 0, 0, TextureWriteFlag::Discard);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	TextureUtility::Write(gpuContext, output->Position, simulationData.Position, 0, 0, TextureWriteFlag::Discard);
+	TextureUtility::Write(gpuContext, output->Color, simulationData.Color, 0, 0, TextureWriteFlag::Discard);
+	TextureUtility::Write(gpuContext, output->Size, simulationData.Size, 0, 0, TextureWriteFlag::Discard);
+	TextureUtility::Write(gpuContext, output->Rotation, simulationData.Rotation, 0, 0, TextureWriteFlag::Discard);
 
 	WriteIndices(output->Indices, simulationData.Indices, size);
 	return output;
@@ -452,8 +452,8 @@ ParticleRenderer::ParticleRenderer()
 		tangentDst += stride;
 	}
 
-	GpuWorkContext& workContext = GetRenderer()->GetGpuContext();
-	GpuBufferUtility::Write(workContext, m->BillboardVb, 0, meshData.GetStreamSize(0), meshData.GetStreamData(0), GpuBufferWriteFlag::Discard);
+	GpuWorkContext& gpuContext = GetRenderer()->GetGpuContext();
+	GpuBufferUtility::Write(gpuContext, m->BillboardVb, 0, meshData.GetStreamSize(0), meshData.GetStreamData(0), GpuBufferWriteFlag::Discard);
 }
 
 ParticleRenderer::~ParticleRenderer()

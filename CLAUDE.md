@@ -98,6 +98,7 @@ Framework/
 - When writing new implementation comments do not narrate the rationale for an edit or reference what used to be there - that belongs in the commit message, not the source. 
 - Keep existing implementation comments. If copying or refactoring code, keep the comment if still relevant. This also applies to TODO comments.
 - Write Doxygen API documentation on classes/methods/fields. Write smart and concise documentation that does not include implementation details, and also doesn't repeat what is obvious from method/class name or signature, but instead tells you how to use the API.
+- Do not mention the caller/user of a method/class when writing documentation. Each method/class should be treated as a black box that may be potentially used for other purpose than the originally intended one.
 - Keep implementation comments to a minimum:
   - You can split up larger code blocks into meaningful sections using an implementation comment
   - You can comment on non-obvious constraints, workarounds for bugs or other things that might be missed without the comment
