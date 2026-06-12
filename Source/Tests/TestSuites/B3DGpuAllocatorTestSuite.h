@@ -36,14 +36,14 @@ namespace b3d
 		void TestGpuAllocatorDeferredDelete();
 
 		/**
-		 * Newly-observed device reports a stable current frame index. The current frame is never
-		 * marked complete (it is by definition still being recorded), and any frame at least
-		 * kMaximumFramesInFlight ticks behind the current one is reported complete.
+		 * The renderer's frame completion tracker reports a stable current frame index. The current
+		 * frame is never marked complete (it is by definition still being recorded), and any frame at
+		 * least kMaximumFramesInFlight ticks behind the current one is reported complete.
 		 */
 		void TestFrameTracker_InitialState();
 
 		/**
-		 * Calling EndFrame advances the device's frame index by one. After kMaximumFramesInFlight
+		 * Calling Renderer::EndGpuFrame advances the frame index by one. After kMaximumFramesInFlight
 		 * further ticks the original frame is reported complete by the IGpuCompletionTracker interface.
 		 */
 		void TestFrameTracker_AdvancesOnEndFrame();

@@ -104,8 +104,8 @@ D3D12GpuDevice::D3D12GpuDevice(IDXGIAdapter4* adapter)
 
 D3D12GpuDevice::~D3D12GpuDevice()
 {
-	// Tear down the primary context's transfer resources before other cleanup, while its queues are alive.
-	ShutdownPrimaryContext();
+	// Tear down the internal work context's transfer resources before other cleanup, while its queues are alive.
+	mInternalWorkContext = nullptr;
 
 	// Clear cached sampler states
 	mCachedSamplerStates.clear();
@@ -304,14 +304,19 @@ void D3D12GpuDevice::BeginFrame()
 	// TODO: Implement frame begin logic (descriptor heap management, etc.)
 }
 
-void D3D12GpuDevice::EndFrameImpl()
+void D3D12GpuDevice::EndFrame()
 {
-	GetPrimaryContext().SubmitTransferCommandBuffers();
+	// TODO: Implement frame end logic (signal frame boundary to submission machinery)
+}
 
-	// Advance the primary context's transfer pools to next frame
-	GetPrimaryContext().AdvanceFrame();
+GpuWorkContext& D3D12GpuDevice::GetInternalWorkContext()
+{
+	// The context owns its own fence completion tracker - the frame tracker is renderer-owned and a
+	// backend cannot reach the renderer (layering).
+	if (mInternalWorkContext == nullptr)
+		mInternalWorkContext = GpuWorkContext::Create(*this);
 
-	// TODO: Implement frame end logic
+	return *mInternalWorkContext;
 }
 
 void D3D12GpuDevice::PresentRenderWindow(const TShared<render::RenderWindow>& renderWindow, u32 syncMask)

@@ -50,6 +50,7 @@ namespace b3d
 			void PresentRenderWindow(const TShared<RenderWindow>& renderWindow, u32 syncMask = 0xFFFFFFFF) override;
 			void WaitUntilIdle() override;
 			void BeginFrame() override;
+			void EndFrame() override;
 
 			TShared<GpuCommandBufferPool> CreateGpuCommandBufferPool(const GpuCommandBufferPoolCreateInformation& createInformation) override;
 			TShared<Texture> CreateTexture(const TextureCreateInformation& createInformation, GpuObjectCreateFlags flags) override;
@@ -87,6 +88,15 @@ namespace b3d
 			/** Returns the memory allocator for creating GPU resources. */
 			D3D12MA::Allocator* GetAllocator() const { return mAllocator; }
 
+			/**
+			 * Render-thread work context used internally by this backend's texture/buffer read/write
+			 * paths, created lazily on first use. Borrows the device's frame completion tracker.
+			 *
+			 * TODO: Remove once the engine upload/readback surface threads a caller-provided
+			 *		 GpuWorkContext through these paths (this backend is currently non-functional).
+			 */
+			GpuWorkContext& GetInternalWorkContext();
+
 			/** Returns the GPU timestamp frequency for this device. */
 			u64 GetTimestampFrequency() const { return mTimestampFrequency; }
 
@@ -108,6 +118,7 @@ namespace b3d
 			D3D12DescriptorManager* mDescriptorManager = nullptr;
 			D3D12MA::Allocator* mAllocator = nullptr;
 			u64 mTimestampFrequency = 0;
+			TShared<GpuWorkContext> mInternalWorkContext; /**< See GetInternalWorkContext(). */
 
 			/** Contains data about a set of queues of a specific type. */
 			struct QueueInfo

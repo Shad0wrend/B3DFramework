@@ -27,7 +27,6 @@ namespace b3d
 			static constexpr const char* kGpuProgramLanguageName = "nullsl";
 
 			NullGpuDevice();
-			~NullGpuDevice();
 
 			/**
 			 * @name GpuDevice Interface

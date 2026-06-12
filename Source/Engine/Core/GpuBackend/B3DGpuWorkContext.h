@@ -8,6 +8,7 @@
 namespace b3d
 {
 	class GpuDevice;
+	class GpuParameterSetPool;
 	class IGpuAllocator;
 	class IGpuCompletionTracker;
 	class GpuFenceCompletionTracker;
@@ -57,6 +58,11 @@ namespace b3d
 		 */
 		GpuWorkContext(PrivatelyConstruct, GpuDevice& device, IGpuCompletionTracker& tracker);
 
+		/**
+		 * For contexts owning their own fence tracker this settles all outstanding GPU work first, via
+		 * WaitAndReclaim(). Contexts borrowing an external tracker must only be destroyed once their GPU
+		 * work is known complete (e.g. after a device idle at shutdown). Must run on the owning thread.
+		 */
 		~GpuWorkContext();
 
 		GpuWorkContext(const GpuWorkContext&) = delete;
@@ -71,6 +77,17 @@ namespace b3d
 		 * @param	device	Device the context performs work against. Must outlive the returned context.
 		 */
 		static TShared<GpuWorkContext> Create(GpuDevice& device);
+
+		/**
+		 * Creates a context that borrows an externally-owned completion tracker instead of owning a
+		 * fence. For long-lived, frame-driven contexts whose GPU progress is tracked externally - i.e.
+		 * the renderer's render-thread context borrowing the device's frame completion tracker. One-off
+		 * worker operations should use Create(GpuDevice&) instead.
+		 *
+		 * @param	device	Device the context performs work against. Must outlive the returned context.
+		 * @param	tracker	Externally-owned tracker the context borrows (not owned). Must outlive the returned context.
+		 */
+		static TShared<GpuWorkContext> Create(GpuDevice& device, IGpuCompletionTracker& tracker);
 
 		/** Device this context performs its GPU work against. */
 		GpuDevice& GetDevice() const { return mDevice; }
@@ -98,6 +115,12 @@ namespace b3d
 		 * @param	createInformation	Object describing the buffer to create.
 		 */
 		TShared<render::GpuBuffer> CreateTransientGpuBuffer(const GpuBufferCreateInformation& createInformation);
+
+		/**
+		 * Returns this context's pool for allocating GPU parameter sets. Parameter sets allocated from it must not
+		 * outlive the context.
+		 */
+		GpuParameterSetPool& GetParameterSetPool() { return *mParameterSetPool; }
 
 		/**
 		 * Returns a command buffer for transfer (copy/upload) operations, lazily creating the context's
@@ -143,23 +166,32 @@ namespace b3d
 		 */
 		void AdvanceFrame();
 
-	private:
-		friend class GpuDevice;
-
 		/**
-		 * Creates a context that borrows an externally-owned completion tracker (e.g. the device's primary
-		 * frame tracker). Only GpuDevice calls this, to construct its render-thread-bound primary context.
-		 *
-		 * @param	device	Device the context performs work against. Must outlive the returned context.
-		 * @param	tracker	Externally-owned tracker the context borrows (not owned). Must outlive the returned context.
+		 * Blocking teardown of all outstanding GPU work owned by this context: flushes any pending
+		 * transfer command buffer, blocks (yieldably) until the GPU drains this context's last
+		 * submission, ensures the completion callbacks of the finished work have run (releasing any
+		 * transient buffers they hold), then retires and force-drains all transient memory back to the
+		 * device's shared page pool. Called automatically by the destructor for contexts that own their
+		 * fence tracker. Must run on the owning thread.
 		 */
-		static TShared<GpuWorkContext> Create(GpuDevice& device, IGpuCompletionTracker& tracker);
+		void WaitAndReclaim();
 
+	private:
 		/**
 		 * Same as GetOrCreateTransientAllocator, but returns null when the backend does not support
 		 * context transient allocation, instead of asserting.
 		 */
 		IGpuAllocator* TryGetOrCreateTransientAllocator(u32 memoryType);
+
+#if B3D_DEBUG
+		/**
+		 * Asserts no transient allocation produced by this context is still alive — catching transient
+		 * buffers that outlived their context. Only meaningful once the completion callbacks of the
+		 * context's finished GPU work have run (they hold the last references to transient buffers), so
+		 * call after the WaitAndReclaim() wait, or at destruction.
+		 */
+		void AssertNoOutstandingTransientAllocations() const;
+#endif
 
 		GpuDevice& mDevice; /**< Non-owning back-ref to the device. */
 		IGpuCompletionTracker* mTracker; /**< Owned or borrowed. */
@@ -171,6 +203,9 @@ namespace b3d
 		 * through IGpuAllocator (whose destructor is virtual), and destroyed with the context.
 		 */
 		Map<u32, TUnique<IGpuAllocator>> mTransientAllocators;
+
+		/** Pool for GPU parameter sets allocated through this context. */
+		TUnique<GpuParameterSetPool> mParameterSetPool;
 
 		// Transfer command-buffers
 		TUnique<render::GpuCommandBufferPoolRing> mTransferPoolRing;

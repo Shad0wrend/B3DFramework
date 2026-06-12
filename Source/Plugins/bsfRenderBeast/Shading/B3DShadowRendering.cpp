@@ -870,7 +870,7 @@ namespace b3d
 			if(iter != mCubemapShadowParameterSets.end())
 				return iter->second.ParameterSet;
 
-			GpuParameterSetPool& pool = GetRenderer()->GetParameterSetPool();
+			GpuParameterSetPool& pool = GetRenderer()->GetGpuContext().GetParameterSetPool();
 			TShared<GpuParameterSet> parameterSet = pool.Create(mCubemapShadowPerObjectLayout, GpuPipelineSet::kPerObject);
 			parameterSet->SetUniformBuffer("PerObject", perObjectBuffer, 0);
 

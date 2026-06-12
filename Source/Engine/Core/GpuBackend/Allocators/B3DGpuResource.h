@@ -90,6 +90,15 @@ namespace b3d
 		 */
 		virtual bool SupportsDefragmentation() const { return false; }
 
+#if B3D_DEBUG
+		/**
+		 * Number of live allocations produced by this allocator that have not yet been freed. Debug-only
+		 * diagnostic, used to catch allocations that outlive their allocator (e.g. a transient buffer
+		 * outliving its GpuWorkContext).
+		 */
+		virtual u64 GetOutstandingAllocationCount() const { return 0; }
+#endif
+
 	protected:
 		IGpuAllocator() = default;
 	};

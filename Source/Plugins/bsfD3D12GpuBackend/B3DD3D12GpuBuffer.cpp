@@ -302,7 +302,7 @@ void D3D12GpuBuffer::WriteData(u32 offset, u32 length, const void* source, GpuBu
 		uploadBuffer->Unmap(0, &writtenRange);
 
 		// Get or create transfer command buffer for the current thread
-		TShared<render::GpuCommandBuffer> transferCommandBuffer = device.GetPrimaryContext().GetTransferCommandBuffer();
+		TShared<render::GpuCommandBuffer> transferCommandBuffer = device.GetInternalWorkContext().GetTransferCommandBuffer();
 		D3D12GpuCommandBuffer* d3d12CommandBuffer = static_cast<D3D12GpuCommandBuffer*>(transferCommandBuffer.get());
 
 		// Record copy commands on the transfer command buffer
@@ -390,7 +390,7 @@ void D3D12GpuBuffer::ReadData(u32 offset, u32 length, void* dest)
 		}
 
 		// Get or create transfer command buffer for the current thread
-		TShared<render::GpuCommandBuffer> transferCommandBuffer = device.GetPrimaryContext().GetTransferCommandBuffer();
+		TShared<render::GpuCommandBuffer> transferCommandBuffer = device.GetInternalWorkContext().GetTransferCommandBuffer();
 		D3D12GpuCommandBuffer* d3d12CommandBuffer = static_cast<D3D12GpuCommandBuffer*>(transferCommandBuffer.get());
 
 		// Record copy commands on the transfer command buffer
@@ -399,7 +399,7 @@ void D3D12GpuBuffer::ReadData(u32 offset, u32 length, void* dest)
 		d3d12CommandBuffer->TransitionResource(mBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COMMON);
 
 		// For ReadData, we must wait for completion since the caller needs the data
-		device.GetPrimaryContext().SubmitTransferCommandBuffers(true);
+		device.GetInternalWorkContext().SubmitTransferCommandBuffers(true);
 
 		// Map readback buffer and copy to destination
 		void* mappedData = nullptr;

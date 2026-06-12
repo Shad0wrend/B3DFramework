@@ -417,16 +417,18 @@ void VulkanGpuBackend::OnStartUp()
 
 	GLSLToSPIRV::StartUp();
 
-	// Create the texture manager for use by others
-	TextureManager::StartUp<VulkanTextureManager>();
-	render::TextureManager::StartUp<render::VulkanTextureManager>(*mDevices[0]);
-
 	// Create the render pass manager
 	VulkanRenderPassCache::StartUp();
 	VulkanFramebufferCache::StartUp();
 
 	// Start the submit thread
 	VulkanSubmitThread::StartUp(*mDevices[0]);
+
+	// Create the texture manager for use by others. Must come after the submit thread: its startup
+	// uploads the built-in/dummy textures through a worker GpuWorkContext, whose teardown submits the
+	// recorded transfers and waits for them on the GPU queue.
+	TextureManager::StartUp<VulkanTextureManager>();
+	render::TextureManager::StartUp<render::VulkanTextureManager>(*mDevices[0]);
 
 	// Create render window manager
 	RenderWindowManager::StartUp<VulkanRenderWindowManager>();

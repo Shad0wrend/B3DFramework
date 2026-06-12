@@ -43,7 +43,7 @@ void GpuCommandBufferPoolRing::AdvanceFrame()
 
 	// Ensure the messages sent by the submit thread have been processed by this point. We need this to happen as we're hardcoding
 	// our pool count to kPoolCount, so the last pool must be fully processed before we reuse it again. This needs to happen after
-	// GpuDevice::EndFrame(), otherwise we have no guarantee that the submit thread has finished processing command buffers submitted for this frame.
+	// waiting on a GPU fence that guarantees pool at mCurrentPoolIndex has been reset (usually done by render::Renderer::EndFrame).
 	commandBufferPool->GetMessageQueue().PostCommand([]{ }, "Process messages", true);
 
 	// Reset the pool we're about to use (it was last used kPoolCount frames ago)

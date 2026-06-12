@@ -4,6 +4,7 @@
 #include "B3DGpuDevice.h"
 #include "B3DGpuCommandBuffer.h"
 #include "B3DGpuCommandBufferPoolRing.h"
+#include "B3DGpuParameterSetPool.h"
 #include "GpuBackend/Allocators/B3DGpuResource.h"
 
 using namespace b3d;
@@ -12,16 +13,25 @@ namespace
 {
 	constexpr GpuQueueType kTransferQueueType = GQT_GRAPHICS;
 	constexpr u32 kTransferQueueIndex = 0;
+
+	TUnique<GpuParameterSetPool> CreateParameterSetPool(GpuDevice& device)
+	{
+		GpuParameterSetPoolCreateInformation createInformation;
+		createInformation.Mode = GpuParameterSetPoolMode::Persistent;
+
+		return device.CreateParameterSetPool(createInformation);
+	}
 }
 
 GpuWorkContext::GpuWorkContext(PrivatelyConstruct, GpuDevice& device)
 	: mDevice(device), mTracker(nullptr), mOwnedTracker(B3DMakeUnique<GpuFenceCompletionTracker>(device.CreateTimelineFence()))
+	, mParameterSetPool(CreateParameterSetPool(device))
 {
 	mTracker = mOwnedTracker.get();
 }
 
 GpuWorkContext::GpuWorkContext(PrivatelyConstruct, GpuDevice& device, IGpuCompletionTracker& tracker)
-	: mDevice(device), mTracker(&tracker)
+	: mDevice(device), mTracker(&tracker), mParameterSetPool(CreateParameterSetPool(device))
 {
 }
 
@@ -69,6 +79,15 @@ TShared<render::GpuBuffer> GpuWorkContext::CreateTransientGpuBuffer(const GpuBuf
 
 GpuWorkContext::~GpuWorkContext()
 {
+	// Contexts owning a fence tracker (workers) settle their own GPU work: wait for it and reclaim the
+	// transient memory before tearing down. Contexts borrowing an external tracker are frame-driven;
+	// their owner destroys them only once their GPU work is known complete (e.g. after a device idle at
+	// shutdown), so no wait is performed (or possible) here.
+	if (mOwnedTracker != nullptr)
+		WaitAndReclaim();
+
+	B3D_DEBUG_ONLY(AssertNoOutstandingTransientAllocations());
+
 	if (!mTransferPoolRing)
 		return;
 
@@ -127,7 +146,18 @@ void GpuWorkContext::SubmitCommandBuffer(const GpuSubmissionInformation& informa
 	if (!B3D_ENSURE(queue))
 		return;
 
-	queue->SubmitCommandBuffer(information);
+	if (mOwnedTracker == nullptr)
+	{
+		queue->SubmitCommandBuffer(information);
+		return;
+	}
+
+	// Contexts owning a fence tracker tag every submission with their fence, so the tracker observes GPU
+	// progress: transient pages retire against these markers and WaitAndReclaim() blocks on the last one.
+	GpuSubmissionInformation taggedInformation = information;
+	taggedInformation.SignalFences.Add(mOwnedTracker->NotifyWillSubmit());
+
+	queue->SubmitCommandBuffer(taggedInformation);
 }
 
 void GpuWorkContext::SubmitCommandBuffer(const TShared<render::GpuCommandBuffer>& commandBuffer, GpuQueueMask syncMask, u32 queueIndex)
@@ -158,6 +188,11 @@ void GpuWorkContext::SubmitTransferCommandBuffers(bool wait)
 		GpuSubmissionInformation submissionInfo;
 		submissionInfo.CommandBuffer = commandBufferToSubmit;
 		submissionInfo.SyncMask = GpuQueueMask::kAll;
+
+		// See SubmitCommandBuffer() - fence-tracked contexts tag every submission with their fence.
+		if (mOwnedTracker != nullptr)
+			submissionInfo.SignalFences.Add(mOwnedTracker->NotifyWillSubmit());
+
 		queue->SubmitCommandBuffer(submissionInfo);
 	}
 
@@ -184,3 +219,57 @@ void GpuWorkContext::AdvanceFrame()
 		entry.second->ReclaimUnused(false);
 	}
 }
+
+void GpuWorkContext::WaitAndReclaim()
+{
+	// Flush pending transfers so everything this context recorded is actually submitted (and, for
+	// fence-tracked contexts, tagged with the fence value waited on below).
+	SubmitTransferCommandBuffers(false);
+
+	// A context that never submitted work and never allocated transient memory has nothing to settle.
+	const bool hasSubmittedWork = mOwnedTracker != nullptr && mOwnedTracker->GetLastSubmittedMarker() != 0;
+	if (!hasSubmittedWork && mTransientAllocators.empty())
+		return;
+
+	// Block (yieldably) until the GPU drains this context's last submission.
+	if (mOwnedTracker != nullptr)
+		mOwnedTracker->WaitUntilComplete();
+
+	// A signaled fence does not mean the work's completion callbacks have run - those are delivered
+	// through the command pools' message queues once the submit thread processes the finished
+	// submissions. The queue-level wait forces that processing and blocks until every completion
+	// callback has been consumed on its pool's owning thread, so callbacks holding transient buffers
+	// have released them by the time the pages are drained below.
+	// TODO: This waits on the whole queue, serializing concurrent contexts at teardown. Replace it with
+	//		 a targeted completion-refresh + pump of this context's pools once contexts run concurrently.
+	const TShared<GpuQueue> queue = mDevice.GetQueue(kTransferQueueType, kTransferQueueIndex);
+	if (queue != nullptr)
+		queue->WaitUntilIdle();
+
+	B3D_DEBUG_ONLY(AssertNoOutstandingTransientAllocations());
+
+	// Retire the open pages and force-drain everything. Safe because the GPU work consuming the pages
+	// finished above; the drained pages return to the device's shared page pool for reuse.
+	for (auto& entry : mTransientAllocators)
+	{
+		if (entry.second == nullptr)
+			continue;
+
+		entry.second->FreeAll();
+		entry.second->ReclaimUnused(true);
+	}
+}
+
+#if B3D_DEBUG
+void GpuWorkContext::AssertNoOutstandingTransientAllocations() const
+{
+	for (const auto& entry : mTransientAllocators)
+	{
+		if (entry.second == nullptr)
+			continue;
+
+		B3D_ASSERT(entry.second->GetOutstandingAllocationCount() == 0 &&
+			"A transient allocation outlived its work context. Release all transient buffers before the context is reclaimed or destroyed.");
+	}
+}
+#endif

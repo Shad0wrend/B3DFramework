@@ -9,6 +9,7 @@
 #include "Material/B3DShaderVariation.h"
 #include "GpuBackend/B3DGpuCommandBuffer.h"
 #include "GpuBackend/B3DGpuCommandBufferPoolRing.h"
+#include "GpuBackend/B3DGpuCompletionTracker.h"
 #include "GpuBackend/B3DGpuParameterSetPool.h"
 
 namespace b3d
@@ -170,24 +171,39 @@ namespace b3d
 			GpuCommandBufferPool& GetCurrentCommandBufferPool() { return mCommandBufferPoolRing->GetCurrentPool(); }
 
 			/**
-			 * Returns the parameter set pool used for allocating GPU parameter sets.
+			 * Returns the GPU work context intended for use explicitly on the render thread, for primary
+			 * rendering and various helper work. Worker threads must create their own GpuWorkContext.
 			 *
-			 * @note	Render thread only. Do not use from the main thread.
-			 */
-			GpuParameterSetPool& GetParameterSetPool() { return *mParameterSetPool; }
-
-			/**
-			 * Returns the GPU work context for GPU work performed on the render thread (e.g. submitting
-			 * command buffers).
-			 *
-			 * @note	Render thread only. Do not use from the main thread.
+			 * @note	Render thread only.
 			 */
 			GpuWorkContext& GetGpuContext();
 
 			/**
-			 * Binds the GPU device the renderer performs its work against. Called when the renderer becomes the
-			 * active renderer, before any GPU resources are created, so the renderer's work context becomes
-			 * reachable via GetGpuContext() from that point on.
+			 * Returns completion tracker that lets us know when a GPU has finished executing a frame.
+			 * Used by the primary GPU work context. Advanced via BeginFrame/EndFrame methods.
+			 */
+			GpuFrameCompletionTracker& GetFrameCompletionTracker() { return mFrameCompletionTracker; }
+
+			/**
+			 * Call once per frame before recording regular frame rendering commands onto the 
+			 * renderer's GPU context. Pair with EndFrame(). Render thread only.
+			 */
+			void BeginFrame();
+
+			/**
+			 * Ends the current frame: runs the incremental defragmentation pass on GPU memory, flushes
+			 * the work context's pending transfers, blocks until previous frame is done (if needed)
+			 * advances the GPU context across the frame boundary (recycling transfer pools and reclaiming 
+			 * transient memory) and finally advances the frame completion tracker. Call once per frame after the
+			 * frame's GPU work is recorded, paired with BeginFrame(). Render thread only.
+			 */
+			void EndFrame();
+
+			/**
+			 * Binds the GPU device the renderer performs its work against and creates the renderer's GPU
+			 * work context. Called on the main thread when the renderer becomes the active renderer, before
+			 * any GPU resources are created, so the work context is reachable via GetGpuContext() from that
+			 * point on.
 			 */
 			virtual void Initialize(const TShared<GpuDevice>& gpuDevice);
 
@@ -297,8 +313,18 @@ namespace b3d
 				u64 FrameIdx;
 			};
 
-			/** Performs the initialization on the render thread. */
+			/**
+			 * Creates the renderer's GPU work context on the render thread. Queued from Initialize()
+			 * Distinct from ActivateOnRenderThread(), which runs later.
+			 */
 			virtual void InitializeOnRenderThread();
+
+			/**
+			 * Performs per-renderer render-thread activation - command buffer pool ring, uniform buffer
+			 * manager, and any derived-renderer render-thread setup. Queued from the Activate(). Runs after
+			 * InitializeOnRenderThread().
+			 */
+			virtual void ActivateOnRenderThread();
 
 			/** Performs tear-down on the render thread. */
 			virtual void DestroyOnRenderThread();
@@ -325,8 +351,21 @@ namespace b3d
 			void ProcessTask(RendererTask& task, bool forceAll);
 
 			TShared<GpuDevice> mDevice;
+
+			/**
+			 * Frame-count completion tracker for render-thread GPU work, advanced once per frame by
+			 * EndFrame(). Declared before mGpuContext, which borrows it and must not outlive it.
+			 */
+			GpuFrameCompletionTracker mFrameCompletionTracker;
+
+			/**
+			 * Render-thread work context this renderer owns: transient allocators, transfer command
+			 * buffers, parameter set pool and command buffer submission for render-thread work. 
+			 * Borrows the renderer's frame completion tracker.
+			 */
+			TShared<GpuWorkContext> mGpuContext;
+
 			TUnique<GpuCommandBufferPoolRing> mCommandBufferPoolRing;
-			TUnique<GpuParameterSetPool> mParameterSetPool;
 
 			Set<RendererExtension*, RendererExtension::SortFunction> mRendererExtensions;
 			bool mRendererExtensionsDirty = true;

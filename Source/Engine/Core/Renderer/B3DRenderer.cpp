@@ -24,25 +24,60 @@ namespace b3d { namespace render
 void Renderer::Initialize(const TShared<GpuDevice>& gpuDevice)
 {
 	mDevice = gpuDevice;
+
+	GetRenderThread().PostCommand([this]() { InitializeOnRenderThread(); }, "Renderer::InitializeOnRenderThread");
 }
 
 GpuWorkContext& Renderer::GetGpuContext()
 {
-	B3D_ASSERT(mDevice != nullptr && "Renderer has no GPU device bound. The renderer must be made active before its work context is used.");
-	return mDevice->GetPrimaryContext();
+	B3D_ASSERT(mGpuContext != nullptr && "Renderer has no work context. The renderer must be made active before its work context is used.");
+	EnsureRenderThread();
+
+	return *mGpuContext;
+}
+
+void Renderer::BeginFrame()
+{
+	EnsureRenderThread();
+
+	mDevice->BeginFrame();
+}
+
+void Renderer::EndFrame()
+{
+	GpuWorkContext& gpuContext = GetGpuContext(); // Also ensures we are on the render thread.
+
+	// Record this frame's incremental defragmentation copies into the context's transfer command
+	// buffer, then flush all pending transfers so they execute within the frame being ended.
+	mDevice->RunDefragPass(gpuContext);
+	gpuContext.SubmitTransferCommandBuffers();
+
+	// Backend frame-boundary work - e.g. Vulkan signals end-of-frame to its submission thread and
+	// blocks until the previous frame's resources are safe to reuse.
+	mDevice->EndFrame();
+
+	// Advance the context across the frame boundary: recycles its transfer pools and reclaims
+	// transient memory (retire each transient allocator's active page, drain everything whose frame
+	// is complete). Important this is done after the backend wait above, and before the frame tracker
+	// increments so the retired pages are stamped with the frame that used them.
+	gpuContext.AdvanceFrame();
+
+	mFrameCompletionTracker.AdvanceFrame();
 }
 
 void Renderer::InitializeOnRenderThread()
+{
+	// Borrows the renderer's frame completion tracker; all thread-affine state (transfer pools, transient
+	// allocators, parameter set pool) binds lazily on first use, here on the render thread.
+	mGpuContext = GpuWorkContext::Create(*mDevice, mFrameCompletionTracker);
+}
+
+void Renderer::ActivateOnRenderThread()
 {
 	GpuCommandBufferPoolCreateInformation createInformation = GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS);
 	createInformation.UsePoolReset = true;
 
 	mCommandBufferPoolRing = B3DMakeUnique<GpuCommandBufferPoolRing>(*mDevice, createInformation);
-
-	// Create parameter set pool for render thread allocations
-	GpuParameterSetPoolCreateInformation parameterSetPoolCreateInformation;
-	parameterSetPoolCreateInformation.Mode = GpuParameterSetPoolMode::Persistent;
-	mParameterSetPool = mDevice->CreateParameterSetPool(parameterSetPoolCreateInformation);
 
 	GpuUniformBufferManager::StartUp();
 }
@@ -52,7 +87,15 @@ void Renderer::DestroyOnRenderThread()
 	GpuUniformBufferManager::ShutDown();
 	GpuProfiler::Instance().Clear();
 
-	mParameterSetPool = nullptr;
+	// All GPU work this context drove must have drained before the context (and the transient memory
+	// and parameter sets it owns) is torn down. WaitAndReclaim also ensures the completion callbacks of
+	// finished command buffers have run, releasing any transient buffers they hold.
+	if (mGpuContext != nullptr)
+	{
+		mGpuContext->WaitAndReclaim();
+		mGpuContext = nullptr;
+	}
+
 	mCommandBufferPoolRing->Destroy();
 	mCommandBufferPoolRing = nullptr;
 }

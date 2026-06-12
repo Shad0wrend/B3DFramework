@@ -54,6 +54,12 @@ namespace b3d { namespace render
 {
 void TextureManager::OnStartUp()
 {
+	// The renderer (and the render-thread work context it owns) does not exist yet during GPU backend
+	// startup, so the built-in texture uploads run through a short-lived worker context. Its destructor
+	// submits the recorded uploads, waits for them and reclaims the staging memory - a one-time
+	// startup-scoped wait on a handful of tiny textures.
+	TShared<GpuWorkContext> gpuContext = GpuWorkContext::Create(mGpuDevice);
+
 	TextureCreateInformation createInformation;
 	createInformation.Type = TEX_TYPE_2D;
 	createInformation.Width = 2;
@@ -71,7 +77,7 @@ void TextureManager::OnStartUp()
 	whitePixelData->SetColorAt(Color::kWhite, 1, 0);
 	whitePixelData->SetColorAt(Color::kWhite, 1, 1);
 
-	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), whiteTexture, *whitePixelData);
+	TextureUtility::Write(*gpuContext, whiteTexture, *whitePixelData);
 	Texture::kWhite = whiteTexture;
 
 	// Black built-in texture
@@ -84,7 +90,7 @@ void TextureManager::OnStartUp()
 	blackPixelData->SetColorAt(Color::kZero, 1, 0);
 	blackPixelData->SetColorAt(Color::kZero, 1, 1);
 
-	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), blackTexture, *blackPixelData);
+	TextureUtility::Write(*gpuContext, blackTexture, *blackPixelData);
 	Texture::kBlack = blackTexture;
 
 
@@ -98,7 +104,7 @@ void TextureManager::OnStartUp()
 	pinkPixelData->SetColorAt(Color::kPink, 1, 0);
 	pinkPixelData->SetColorAt(Color::kPink, 1, 1);
 
-	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), pinkTexture, *pinkPixelData);
+	TextureUtility::Write(*gpuContext, pinkTexture, *pinkPixelData);
 	Texture::kPink = pinkTexture;
 
 	// Normal (Y = Up) built-in texture
@@ -112,7 +118,7 @@ void TextureManager::OnStartUp()
 	normalPixelData->SetColorAt(encodedNormal, 1, 0);
 	normalPixelData->SetColorAt(encodedNormal, 1, 1);
 
-	TextureUtility::Write(mGpuDevice.GetPrimaryContext(), normalTexture, *normalPixelData);
+	TextureUtility::Write(*gpuContext, normalTexture, *normalPixelData);
 	Texture::kNormal = normalTexture;
 }
 

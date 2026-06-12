@@ -12,6 +12,7 @@
 #include "GpuBackend/Allocators/B3DGpuLinearAllocator.h"
 #include "GpuBackend/Allocators/B3DGpuTlsfAllocator.h"
 #include "GpuBackend/Allocators/B3DGpuResource.h"
+#include "Renderer/B3DRenderer.h"
 
 #include <atomic>
 #include <chrono>
@@ -549,12 +550,12 @@ void GpuAllocatorTestSuite::TestFrameTracker_InitialState()
 	if (device == nullptr)
 		return;
 
-	// The current frame index is "whatever has been advanced so far on this device". Other engine
-	// subsystems (renderer warm-up, asset import bring-up) may have ticked it before this test runs,
+	// The current frame index is "whatever has been advanced so far". Other engine subsystems
+	// (renderer warm-up, asset import bring-up) may have ticked it before this test runs,
 	// so the value is non-deterministic — what matters is that the predicate is monotone: a frame
 	// reported complete now stays complete, and the current frame is never reported complete (it
 	// is by definition still being recorded).
-	IGpuCompletionTracker& tracker = device->GetPrimaryCompletionTracker();
+	IGpuCompletionTracker& tracker = render::GetRenderer()->GetFrameCompletionTracker();
 	const u64 frame = tracker.GetCurrentMarker();
 	B3D_TEST_ASSERT(!tracker.IsMarkerComplete(frame))
 
@@ -568,27 +569,30 @@ void GpuAllocatorTestSuite::TestFrameTracker_AdvancesOnEndFrame()
 	if (device == nullptr || !IsRealBackend(*device))
 		return;
 
-	const u64 indexBefore = device->GetCurrentFrameIndex();
+	GpuFrameCompletionTracker& tracker = render::GetRenderer()->GetFrameCompletionTracker();
+	const u64 indexBefore = tracker.GetCurrentMarker();
 
-	// BeginFrame / EndFrame have a render-thread-only contract — backends advance render-thread-owned
-	// command-buffer pool rings without internal synchronization. Drive them from the render thread.
-	const auto fnTickFrame = [device = device.get()]()
+	// BeginGpuFrame / EndGpuFrame have a render-thread-only contract — they advance render-thread-owned
+	// work-context and command-buffer pool state without internal synchronization. Drive them from the
+	// render thread.
+	const auto fnTickFrame = []()
 	{
-		device->BeginFrame();
-		device->EndFrame();
+		const TShared<render::Renderer> renderer = render::GetRenderer();
+		renderer->BeginFrame();
+		renderer->EndFrame();
 	};
 
 	GetRenderThread().PostCommand(fnTickFrame, "TestFrameTracker_AdvancesOnEndFrame::Tick", true);
 
-	const u64 indexAfter = device->GetCurrentFrameIndex();
+	const u64 indexAfter = tracker.GetCurrentMarker();
 	B3D_TEST_ASSERT(indexAfter == indexBefore + 1)
 
-	// After kMaximumFramesInFlight further EndFrame ticks, the original frame must be reported complete.
+	// After kMaximumFramesInFlight further frame ticks, the original frame must be reported complete.
 	for (u32 i = 0; i < RenderThread::kMaximumFramesInFlight; i++)
 		GetRenderThread().PostCommand(fnTickFrame, "TestFrameTracker_AdvancesOnEndFrame::Tick", true);
 
 	device->WaitUntilIdle();
-	B3D_TEST_ASSERT(device->GetPrimaryCompletionTracker().IsMarkerComplete(indexBefore))
+	B3D_TEST_ASSERT(tracker.IsMarkerComplete(indexBefore))
 }
 
 void GpuAllocatorTestSuite::TestUserCreatedFence_ExplicitSignal()

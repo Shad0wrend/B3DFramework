@@ -168,8 +168,8 @@ namespace b3d
 			 */
 			bool RenderOverlay(GpuCommandBuffer& commandBuffer, RenderBeastScene& scene, RendererView& view, const FrameInfo& frameInfo, bool forceRender);
 
-			/**	Creates data used by the renderer on the render thread. */
-			void InitializeOnRenderThread(const LoadedRendererTextures& rendererTextures);
+			/**	Creates data used by the renderer on the render thread, when the renderer is activated. */
+			void ActivateOnRenderThread(const LoadedRendererTextures& rendererTextures);
 
 			/**	Destroys data used by the renderer on the render thread. */
 			void DestroyOnRenderThread() override;

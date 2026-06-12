@@ -182,9 +182,6 @@ namespace b3d
 
 			/** @} */
 
-		protected:
-			void EndFrameImpl() override;
-
 		private:
 			/** Contains data about a set of queues of a specific type. */
 			struct QueueInfo

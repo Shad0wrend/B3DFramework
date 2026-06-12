@@ -43,11 +43,6 @@ namespace b3d
 			mVideoModeInfo = B3DMakeShared<VideoModeInfo>();
 		}
 
-		NullGpuDevice::~NullGpuDevice()
-		{
-			ShutdownPrimaryContext();
-		}
-
 		bool NullGpuDevice::Initialize()
 		{
 			if (mIsInitialized)

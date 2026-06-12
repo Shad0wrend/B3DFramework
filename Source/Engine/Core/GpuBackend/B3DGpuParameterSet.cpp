@@ -9,7 +9,6 @@
 #include "GpuBackend/B3DGpuPipelineParameterLayout.h"
 #include "GpuBackend/B3DGpuPipelineState.h"
 #include "GpuBackend/B3DGpuParameterSetPool.h"
-#include "Renderer/B3DRenderer.h"
 #include "Math/B3DVector2.h"
 #include "Image/B3DTexture.h"
 #include "GpuBackend/B3DSamplerState.h"
@@ -554,8 +553,10 @@ TShared<GpuParameterSet> GpuParameterSet::GetSelf() const
 
 TShared<render::RenderProxy> GpuParameterSet::CreateRenderProxy() const
 {
-	GpuParameterSetPool& pool = render::GetRenderer()->GetParameterSetPool();
-	return pool.Create(mParameterSetLayout, mSet, true);
+	// Unused: no core (main-thread) GpuParameterSet is ever created. All GPU parameter sets are built render-side
+
+	B3D_ENSURE_LOG(false, "GpuParameterSet does not support core-side render proxy creation; parameter sets are created render-side via the material parameter adapter.");
+	return nullptr;
 }
 
 void GpuParameterSet::MarkRenderProxyDataDirtyInternal()

@@ -62,7 +62,7 @@ void RenderBeast::Activate()
 	HTexture bokehFlare = GetBuiltinResources().GetTexture(BuiltinTexture::BokehFlare);
 	textures.BokehFlare = B3DGetRenderProxy(bokehFlare);
 
-	GetRenderThread().PostCommand([this, textures]() { InitializeOnRenderThread(textures); }, "RenderBeast::InitializeOnRenderThread");
+	GetRenderThread().PostCommand([this, textures]() { ActivateOnRenderThread(textures); }, "RenderBeast::ActivateOnRenderThread");
 }
 
 void RenderBeast::Destroy()
@@ -72,9 +72,9 @@ void RenderBeast::Destroy()
 	GetRenderThread().PostCommand([this]() { DestroyOnRenderThread(); }, "RenderBeast::DestroyOnRenderThread", true);
 }
 
-void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendererTextures)
+void RenderBeast::ActivateOnRenderThread(const LoadedRendererTextures& rendererTextures)
 {
-	Renderer::InitializeOnRenderThread();
+	Renderer::ActivateOnRenderThread();
 
 	const GpuDeviceCapabilities& caps = mDevice->GetCapabilities();
 
@@ -366,7 +366,7 @@ void RenderBeast::RenderAllOnRenderThread(FrameTimings timings, PerFrameData per
 		entry->GetUniformBufferPools().AdvanceFrame();
 	}
 
-	mDevice->EndFrame();
+	EndFrame();
 
 	// Tick pool frame
 	GpuResourcePool::Instance().Update();
@@ -410,7 +410,7 @@ bool RenderBeast::RenderScene(RenderBeastScene& scene, const FrameInfo& frameInf
 	scene.ResetRenderableReady();
 
 	GpuWorkContext& gpuContext = GetGpuContext();
-	mDevice->BeginFrame();
+	BeginFrame();
 
 	if (mIsFrameCaptureRequested)
 		GpuBackend::Instance().StartCapture();

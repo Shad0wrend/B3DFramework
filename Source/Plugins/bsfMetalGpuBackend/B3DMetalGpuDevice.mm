@@ -181,8 +181,6 @@ namespace b3d
 			// heaps those resources are backed by.
 			mIsShuttingDown = true;
 
-			ShutdownPrimaryContext();
-
 			// Persist the mutable pipeline binary archive to disk so the next launch can reuse compiled
 			// functions. Only MutableBinaryArchive is serialized — LoadedBinaryArchive is immutable and
 			// the file it came from already exists on disk. This means the persisted cache reflects only
@@ -1135,12 +1133,6 @@ namespace b3d
 						queue->WaitUntilIdle();
 				}
 			}
-		}
-
-		void MetalGpuDevice::EndFrameImpl()
-		{
-			GetPrimaryContext().SubmitTransferCommandBuffers();
-			GetPrimaryContext().AdvanceFrame();
 		}
 
 		TShared<SamplerState> MetalGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, GpuObjectCreateFlags flags)

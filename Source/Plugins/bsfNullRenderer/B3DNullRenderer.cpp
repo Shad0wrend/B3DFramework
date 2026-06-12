@@ -27,7 +27,7 @@ const StringID& render::NullRenderer::GetName() const
 
 void render::NullRenderer::Activate()
 {
-	GetRenderThread().PostCommand([this]() { InitializeOnRenderThread(); }, "NullRenderer::InitializeOnRenderThread");
+	GetRenderThread().PostCommand([this]() { ActivateOnRenderThread(); }, "NullRenderer::ActivateOnRenderThread");
 }
 
 void render::NullRenderer::Destroy()

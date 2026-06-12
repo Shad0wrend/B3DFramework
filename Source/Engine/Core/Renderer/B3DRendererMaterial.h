@@ -12,6 +12,7 @@
 #include "Material/B3DPass.h"
 #include "Material/B3DShaderCompiler.h"
 #include "GpuBackend/B3DGpuPipelineState.h"
+#include "GpuBackend/B3DGpuWorkContext.h"
 #include "Resources/B3DBuiltinResources.h"
 
 #if B3D_PROFILING_ENABLED
@@ -555,7 +556,7 @@ namespace b3d
 		template <class T>
 		TShared<GpuParameterSet> RendererMaterial<T>::CreateGpuParameterSet(u32 set) const
 		{
-			GpuParameterSetPool& pool = GetRenderer()->GetParameterSetPool();
+			GpuParameterSetPool& pool = GetRenderer()->GetGpuContext().GetParameterSetPool();
 
 			if(mGraphicsPipeline != nullptr)
 				return pool.Create(mGraphicsPipeline->GetParameterLayout()->GetSet(set), set);

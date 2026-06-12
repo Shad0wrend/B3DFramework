@@ -476,7 +476,7 @@ TShared<GpuParameterSet> CreateGpuParameterSet<false>(const TShared<GpuPipelineP
 template <>
 TShared<render::GpuParameterSet> CreateGpuParameterSet<true>(const TShared<GpuPipelineParameterSetLayout>& parameterSetLayout, u32 setIndex)
 {
-	GpuParameterSetPool& pool = render::GetRenderer()->GetParameterSetPool();
+	GpuParameterSetPool& pool = render::GetRenderer()->GetGpuContext().GetParameterSetPool();
 	return pool.Create(parameterSetLayout, setIndex);
 }
 

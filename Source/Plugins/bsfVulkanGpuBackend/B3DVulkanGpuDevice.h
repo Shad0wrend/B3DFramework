@@ -89,6 +89,7 @@ namespace b3d
 			void WaitUntilIdle() override;
 			void BeginFrame() override;
 			void EndFrame() override;
+			void RunDefragPass(GpuWorkContext& gpuContext) override;
 
 			TShared<GpuCommandBufferPool> CreateGpuCommandBufferPool(const GpuCommandBufferPoolCreateInformation& createInformation) override;
 			TShared<Texture> CreateTexture(const TextureCreateInformation& createInformation, GpuObjectCreateFlags flags = GpuObjectCreateFlag::None) override;
@@ -320,14 +321,6 @@ namespace b3d
 			 * VkDeviceMemory heaps under bursty transient allocation. See CreateTransientAllocator.
 			 */
 			TGpuLinearPagePool<VulkanHeapBackend>& GetOrCreateLinearPagePool(u32 memoryTypeIndex);
-
-			/**
-			 * Runs an opportunistic defragmentation pass across every GPU allocators that support it.
-			 *
-			 * No-op when mDefragEnabled is false. Bounded by mDefragBudgetBytes / mDefragBudgetAllocations
-			 * so a single frame can't stall on copying many GBs of memory.
-			 */
-			void RunDefragPass();
 
 			/** Marks the device as a primary device. */
 			void SetIsPrimary() { mIsPrimary = true; }

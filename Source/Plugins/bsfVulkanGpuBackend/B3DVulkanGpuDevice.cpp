@@ -298,10 +298,6 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 
 VulkanGpuDevice::~VulkanGpuDevice()
 {
-	// Tear down the primary context's transfer resources before other cleanup, while the queues / submit
-	// thread it submits to are still alive.
-	ShutdownPrimaryContext();
-
 	mCachedSamplerStates.clear();
 	mBuiltinResources.Cleanup();
 
@@ -328,9 +324,10 @@ VulkanGpuDevice::~VulkanGpuDevice()
 		}
 	}
 
-	// The transient linear allocators live on the GpuWorkContext, already destroyed above by
-	// ShutdownPrimaryContext(); that returned their drained pages to these shared pools. Destroy the pools
-	// before the heap backend, since each pool releases its retained pages through mHeapBackend.
+	// The transient linear allocators live on GpuWorkContexts (the renderer's render-thread context and
+	// per-operation worker contexts), all destroyed before the device; their drained pages returned to
+	// these shared pools. Destroy the pools before the heap backend, since each pool releases its
+	// retained pages through mHeapBackend.
 	for (u32 typeIndex = 0; typeIndex < VK_MAX_MEMORY_TYPES; typeIndex++)
 		mLinearPagePools[typeIndex].reset();
 
@@ -699,27 +696,16 @@ void VulkanGpuDevice::EndFrame()
 {
 	ASSERT_IF_NOT_RENDER_THREAD
 
-	RunDefragPass();
-	GetPrimaryContext().SubmitTransferCommandBuffers();
-
 	// Signal end-of-frame to submit thread. This blocks until the previous frame's resources are safe to reuse.
 	GetVulkanSubmitThread().QueueEndFrameAndWaitForPreviousFrame();
-
-	// Advance the primary context to the next frame: recycles its transfer pools and reclaims transient
-	// memory (retire each transient allocator's active page, drain everything whose frame is complete).
-	// Important this is done after the wait above, and before GpuDevice::EndFrame() increments the frame
-	// index so the retired pages are stamped with the correct frame.
-	GetPrimaryContext().AdvanceFrame();
-
-	GpuDevice::EndFrame();
 }
 
-void VulkanGpuDevice::RunDefragPass()
+void VulkanGpuDevice::RunDefragPass(GpuWorkContext& gpuContext)
 {
 	if (!mDefragEnabled)
 		return;
 
-	const TShared<render::GpuCommandBuffer>& transferCb = GetPrimaryContext().GetTransferCommandBuffer();
+	const TShared<render::GpuCommandBuffer>& transferCb = gpuContext.GetTransferCommandBuffer();
 	if (transferCb == nullptr)
 		return;
 
@@ -1172,7 +1158,7 @@ TGpuTlsfAllocator<VulkanHeapBackend>& VulkanGpuDevice::GetOrCreateGpuMemoryAlloc
 		configuration.HeapCreateInfo.PropertyFlags = flags;
 		configuration.HeapCreateInfo.MapPersistently = isHostVisible;
 
-		slot = B3DMakeUnique<TGpuTlsfAllocator<VulkanHeapBackend>>(mHeapBackend.get(), &GetPrimaryCompletionTracker(), configuration);
+		slot = B3DMakeUnique<TGpuTlsfAllocator<VulkanHeapBackend>>(mHeapBackend.get(), nullptr, configuration);
 		return *slot;
 	}
 }

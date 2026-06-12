@@ -5,6 +5,7 @@
 #include "B3DVulkanGpuDevice.h"
 #include "B3DVulkanHeapBackend.h"
 #include "GpuBackend/Allocators/B3DGpuTlsfAllocator.h"
+#include "Renderer/B3DRenderer.h"
 
 using namespace b3d;
 using namespace b3d::render;
@@ -162,7 +163,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeHostVisibleBuffer()
 	B3D_TEST_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES)
 
 	auto config = BuildAllocatorConfig(memProps, device->GetDeviceProperties().limits, memoryTypeIndex);
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetPrimaryCompletionTracker(), config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &render::GetRenderer()->GetFrameCompletionTracker(), config);
 
 	GpuResourceLocation location;
 	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::Linear, location);
@@ -217,7 +218,7 @@ void VulkanAllocatorTestSuite::TestAllocateAndFreeDeviceLocalImage()
 	B3D_TEST_ASSERT(memoryTypeIndex != VK_MAX_MEMORY_TYPES)
 
 	auto config = BuildAllocatorConfig(memProps, device->GetDeviceProperties().limits, memoryTypeIndex);
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetPrimaryCompletionTracker(), config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &render::GetRenderer()->GetFrameCompletionTracker(), config);
 
 	GpuResourceLocation location;
 	const bool ok = allocator.TryAllocate(requirements.size, (u32)requirements.alignment, GpuResourceKind::NonLinear, location);
@@ -265,7 +266,7 @@ void VulkanAllocatorTestSuite::TestBufferHeapGrowth()
 	config.InitialHeapSize = 4ull * 1024 * 1024;
 	config.MaxHeapSize = 16ull * 1024 * 1024;
 
-	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &device->GetPrimaryCompletionTracker(), config);
+	TGpuTlsfAllocator<VulkanHeapBackend> allocator(&device->GetHeapBackend(), &render::GetRenderer()->GetFrameCompletionTracker(), config);
 
 	// Allocate enough 1 MiB chunks to exceed the 4 MiB initial heap and force a second heap.
 	constexpr u32 kAllocCount = 6;

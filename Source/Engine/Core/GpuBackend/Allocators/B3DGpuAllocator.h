@@ -163,7 +163,16 @@ namespace b3d
 		bool TryAllocate(u64 size, u32 alignment, GpuResourceKind kind, IGpuResource* owner, GpuResourceLocation& out) override
 		{
 			ScopedLock lock(mMutex);
-			return static_cast<Derived*>(this)->TryAllocateImpl(size, alignment, kind, owner, out);
+			DebugCheckThreadConfinement();
+
+			const bool success = static_cast<Derived*>(this)->TryAllocateImpl(size, alignment, kind, owner, out);
+
+#if B3D_DEBUG
+			if (success)
+				mDebugOutstandingAllocations++;
+#endif
+
+			return success;
 		}
 
 		/**
@@ -173,6 +182,13 @@ namespace b3d
 		void Free(GpuResourceLocation& allocation) override
 		{
 			ScopedLock lock(mMutex);
+			DebugCheckThreadConfinement();
+
+#if B3D_DEBUG
+			if (mDebugOutstandingAllocations > 0)
+				mDebugOutstandingAllocations--;
+#endif
+
 			static_cast<Derived*>(this)->FreeImpl(allocation);
 			allocation.Reset();
 		}
@@ -188,6 +204,13 @@ namespace b3d
 		void FreeAndReclaim(GpuResourceLocation& allocation) override
 		{
 			ScopedLock lock(mMutex);
+			DebugCheckThreadConfinement();
+
+#if B3D_DEBUG
+			if (mDebugOutstandingAllocations > 0)
+				mDebugOutstandingAllocations--;
+#endif
+
 			static_cast<Derived*>(this)->FreeAndReclaimImpl(allocation.AllocatorData0, allocation.AllocatorData1);
 			allocation.Reset();
 		}
@@ -203,6 +226,7 @@ namespace b3d
 		void ReclaimUnused(bool forceReclaimAll = false) override
 		{
 			ScopedLock lock(mMutex);
+			DebugCheckThreadConfinement();
 
 			// Drain completed entries from the front of the FIFO. The queue is ordered by marker, so the
 			// first not-yet-complete entry stops the scan (unless forceReclaimAll bypasses the check).
@@ -221,6 +245,15 @@ namespace b3d
 			if (drainCount > 0)
 				mRetiredQueue.Erase(mRetiredQueue.Begin(), mRetiredQueue.Begin() + drainCount);
 		}
+
+#if B3D_DEBUG
+		/** @copydoc IGpuAllocator::GetOutstandingAllocationCount */
+		u64 GetOutstandingAllocationCount() const override
+		{
+			ScopedLock lock(mMutex);
+			return mDebugOutstandingAllocations;
+		}
+#endif
 
 	protected:
 		/** True when the allocator was instantiated with the thread-safe policy. */
@@ -255,6 +288,46 @@ namespace b3d
 		TGpuAllocator& operator=(const TGpuAllocator&) = delete;
 
 		/**
+		 * Debug guard: thread-unsafe allocators are owned and driven by a single thread. Records the
+		 * owning thread on first use and asserts every subsequent use stays on it. Compiles out in
+		 * non-debug builds and for thread-safe allocators.
+		 *
+		 * @note	OS-thread granularity — fibers time-slicing one OS thread share an id — so this is a
+		 *			backstop for cross-OS-thread misuse, not a proof of single-owner use (fiber isolation
+		 *			is structural: each operation owns its own allocator through its GpuWorkContext).
+		 */
+		void DebugCheckThreadConfinement()
+		{
+#if B3D_DEBUG
+			if constexpr (!kThreadSafe)
+			{
+				if (mDebugOwningThread == ThreadId())
+					mDebugOwningThread = B3D_CURRENT_THREAD_ID;
+				else
+					B3D_ASSERT(mDebugOwningThread == B3D_CURRENT_THREAD_ID && "Thread-unsafe allocator accessed from a thread other than its owning thread.");
+			}
+#endif
+		}
+
+		/**
+		 * Debug guard: balances the outstanding-allocation count TryAllocate maintains, on the free paths.
+		 * The count exists to catch an allocation that outlived its owning context (asserted == 0 at
+		 * GpuWorkContext teardown), not to detect double-frees — the authoritative guard for those is the
+		 * GpuResourceLocation::IsValid() early-out at the resource-free entry point, which makes a second
+		 * free a no-op before it ever reaches the allocator. The decrement is therefore clamped at zero
+		 * rather than asserting a prior allocation: white-box allocator tests legitimately fabricate
+		 * locations and drive Free/FreeAndReclaim directly (without a counted TryAllocate) to exercise the
+		 * deferred-free queue in isolation, and must not trip on the instrumentation.
+		 */
+		void DebugCountFreedAllocation()
+		{
+#if B3D_DEBUG
+			if (mDebugOutstandingAllocations > 0)
+				mDebugOutstandingAllocations--;
+#endif
+		}
+
+		/**
 		 * Schedule deferred-free of @p allocation against the allocator's current completion marker.
 		 * Caller must hold the allocator mutex when @p ThreadPolicy is ThreadSafe.
 		 */
@@ -281,6 +354,11 @@ namespace b3d
 		HeapBackend* mBackend = nullptr;
 		IGpuCompletionTracker* mCompletionTracker = nullptr;
 		TInlineArray<RetiredEntry, 64> mRetiredQueue;
+
+#if B3D_DEBUG
+		ThreadId mDebugOwningThread{}; /**< Thread that owns this allocator when thread-unsafe; recorded on first use. */
+		u64 mDebugOutstandingAllocations = 0; /**< Live (not yet freed) allocations produced by this allocator. */
+#endif
 
 	private:
 		mutable MutexHolder mMutex;

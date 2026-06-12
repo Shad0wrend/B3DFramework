@@ -8,6 +8,7 @@
 #include "B3DGpuTimelineFence.h"
 #include "B3DPrerequisites.h"
 #include "B3DSamplerState.h"
+#include "B3DGpuCompletionTracker.h"
 #include "B3DGpuQueue.h"
 #include "B3DGpuWorkContext.h"
 
@@ -69,94 +70,6 @@ namespace b3d
 	B3D_FLAGS_OPERATORS(GpuObjectCreateFlag)
 
 	/**
-	 * Abstraction over a monotonic GPU-completion marker, used by GPU allocators (and other
-	 * deferred-cleanup consumers) to schedule reclamation against GPU progress. A "marker" is an
-	 * opaque, monotonically increasing value handed out at record/submit time; the GPU is said to
-	 * have "completed" a marker once every submission tagged with a value <= that marker has drained.
-	 */
-	class B3D_EXPORT IGpuCompletionTracker
-	{
-	public:
-		virtual ~IGpuCompletionTracker() = default;
-
-		/** Value the next piece of work recorded/submitted will be tagged with. Monotonic; starts at 0. */
-		virtual u64 GetCurrentMarker() const = 0;
-
-		/** Returns true once the GPU has drained every submission tagged with a value <= @p marker. */
-		virtual bool IsMarkerComplete(u64 marker) const = 0;
-	};
-
-	/**
-	 * Frame-count based completion tracker for the render thread's primary context. The marker is the
-	 * frame index currently being recorded; a marker is "complete" only after the conservative
-	 * RenderThread::kMaximumFramesInFlight lag, since at end-of-frame the device blocks until the
-	 * previous frame's resources are safe to reuse.
-	 */
-	class B3D_EXPORT GpuFrameCompletionTracker : public IGpuCompletionTracker
-	{
-	public:
-		/** Index of the frame currently being recorded. Monotonic; starts at 0. */
-		u64 GetCurrentMarker() const override { return mFrameIndex.load(std::memory_order_acquire); }
-
-		/**
-		 * Returns true once the GPU has caught up such that frame @p marker is no longer in flight on
-		 * any queue — i.e. the current frame index has advanced by at least
-		 * RenderThread::kMaximumFramesInFlight beyond it.
-		 */
-		bool IsMarkerComplete(u64 marker) const override;
-
-		/** Advances to the next frame. */
-		void AdvanceFrame() { mFrameIndex.fetch_add(1, std::memory_order_acq_rel); }
-
-	private:
-		std::atomic<u64> mFrameIndex{0};
-	};
-
-	/**
-	 * Timeline-fence based completion tracker. Composes a single GpuTimelineFence; the marker is the 
-	 * exact fence value the GPU signals (no conservative lag like GpuFrameCompletionTracker).
-	 *
-	 * Marker contract: GetCurrentMarker() returns the value the NEXT submit will signal. Submission
-	 * records NotifyWillSubmit() (which yields that value and advances the marker), so a page retired
-	 * right before the submit is stamped with exactly the value its submit signals.
-	 */
-	class B3D_EXPORT GpuFenceCompletionTracker : public IGpuCompletionTracker
-	{
-	public:
-		explicit GpuFenceCompletionTracker(TShared<GpuTimelineFence> fence)
-			: mFence(std::move(fence))
-		{ }
-
-		/** Value the next submit will signal. Monotonic; starts at 1 (0 is the timeline's unsignaled state). */
-		u64 GetCurrentMarker() const override { return mNextValue; }
-
-		/** Exact: true once the GPU has signaled @p marker on the fence. */
-		bool IsMarkerComplete(u64 marker) const override { return mFence->IsSignaled(marker); }
-
-		/** Records an impending submission: returns the fence + value to signal, and advances the marker. */
-		GpuTimelineFenceAndValue NotifyWillSubmit()
-		{
-			const u64 value = mNextValue++;
-			mLastSignaled = value;
-			return { mFence, value };
-		}
-
-		/** Blocks until the last submitted marker completes. No-op if nothing was submitted. */
-		void WaitUntilComplete()
-		{
-			if (mLastSignaled > 0)
-				mFence->Wait(mLastSignaled);
-		}
-
-		const TShared<GpuTimelineFence>& GetFence() const { return mFence; }
-
-	private:
-		TShared<GpuTimelineFence> mFence;
-		u64 mNextValue = 1;
-		u64 mLastSignaled = 0;
-	};
-
-	/**
 	 * Provides access to a particular GPU device.
 	 *
 	 * @note	Thread safe.
@@ -198,14 +111,20 @@ namespace b3d
 		/** Blocks the calling thread until all operations on the device finish. */
 		virtual void WaitUntilIdle() = 0;
 
-		/** Notifies the device the rendering for the current frame will start. See EndFrame(). */
+		/** Notifies the device the rendering for the current frame will start. See EndFrame(). Render thread only. */
 		virtual void BeginFrame() = 0;
 
-		/** Notifies the device the rendering for the current frame has ended. See BeginFrame(). */
-		virtual void EndFrame()
-		{
-			mPrimaryTracker.AdvanceFrame();
-		}
+		/** Notifies the device the rendering for the current frame has ended, see BeginFrame(). Render thread only. */
+		virtual void EndFrame() {}
+
+		/**
+		 * Runs an incremental defragmentation pass over the device's persistent GPU memory allocators,
+		 * recording the relocation copies into @p gpuContext's transfer command buffer. 
+		 * No-op on backends without defragmentation support. Render thread only.
+		 *
+		 * @param	gpuContext	Work context whose transfer command buffer receives the relocation copies.
+		 */
+		virtual void RunDefragPass(GpuWorkContext& gpuContext) {}
 
 		/************************************************************************/
 		/* 								CREATION METHODS                   		*/
@@ -363,46 +282,10 @@ namespace b3d
 		 */
 		virtual float ConvertTimestampToMilliseconds(u64 timestamp) = 0;
 
-		/** @name Frame tracking
-		 *  @{
-		 */
-
-		/** 
-		 * Returns the device's primary completion tracker - to be used on the render thread, controlled via BeginFrame()/EndFrame(). 
-		 * Worker threads should use fence trackers, since concept of a frame is not as clearly defined for workers.
-		 */
-		IGpuCompletionTracker& GetPrimaryCompletionTracker() { return mPrimaryTracker; }
-
-		/** Index of the frame currently being recorded. Monotonic; starts at 0. Incremented inside EndFrame. */
-		u64 GetCurrentFrameIndex() const { return mPrimaryTracker.GetCurrentMarker(); }
-
-		/**
-		 * Returns the device's render-thread-bound primary work context, which owns the render thread's
-		 * transient allocators and transfer command buffers, and through which render-thread command
-		 * buffers are submitted. Render thread only.
-		 *
-		 * TODO: Move the primary work context outside of the GpuDevice and have it be owned by Renderer instead. This also includes the primary completion tracker.
-		 */
-		GpuWorkContext& GetPrimaryContext();
-
-		/** @} */
-
 	protected:
 		friend class GpuWorkContext;
 
-		GpuDevice();
-
-		/**
-		 * Destroys the primary context (by releasing the device's shared pointer to it). Backends must call
-		 * this at the start of their destructor — before their GPU queues / submit thread are destroyed —
-		 * since the primary context is otherwise released too late, after the backend teardown.
-		 *
-		 * The primary context's transfer command buffers are created on the render thread, but the device
-		 * (and so this call) is typically destroyed on the main thread, while the render thread is still
-		 * alive. So the destruction is marshalled onto the render thread — its owning thread — which is why
-		 * GpuWorkContext's destructor itself needs no cross-thread handling. Idempotent.
-		 */
-		void ShutdownPrimaryContext();
+		GpuDevice() = default;
 
 		/**
 		 * Creates a new GPU buffer whose backing memory is suballocated from an explicitly provided
@@ -438,11 +321,6 @@ namespace b3d
 
 		mutable UnorderedMap<SamplerStateCreateInformation, TShared<SamplerState>> mCachedSamplerStates;
 		mutable Mutex mSamplerStateMutex;
-
-	private:
-		GpuFrameCompletionTracker mPrimaryTracker;
-
-		TShared<GpuWorkContext> mPrimaryContext; // Built after mPrimaryTracker, which it borrows
 	};
 
 	/** @} */
