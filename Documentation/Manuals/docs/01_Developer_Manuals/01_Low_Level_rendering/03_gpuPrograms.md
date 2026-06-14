@@ -114,10 +114,9 @@ This separation allows for efficient parameter binding - you can update only the
 **GpuParameterSet** is a container for parameters within a single descriptor set of a GPU pipeline. Each **GpuParameterSet** represents one descriptor set (e.g., set 0, set 1, etc.), allowing for efficient updates when only some parameters change between draw calls. It allows you to set textures, samplers, buffers, and primitive values used by GPU programs. Parameter values are stored on the CPU side and are only submitted to the GPU when the parameters are bound to the command buffer during rendering.
 
 ### Creating GpuParameterSet
-To create a **GpuParameterSet** object, use the GPU device's @b3d::GpuDevice::CreateGpuParameterSet method with the set layout (obtained from the pipeline's parameter layout) and the set index as parameters.
+To create a **GpuParameterSet** object, allocate one from a [GPU work context](../Low_Level_rendering/gpuWorkContext)'s parameter set pool, retrieved with @b3d::GpuWorkContext::GetParameterSetPool, passing the set layout (obtained from the pipeline's parameter layout) and the set index. On the render thread obtain the context from @b3d::render::Renderer::GetGpuContext.
 
 ~~~~~~~~~~~~~{.cpp}
-TShared<GpuDevice> device = ...;
 TShared<GpuGraphicsPipelineState> graphicsPipeline = ...;
 
 // Get the parameter layout for the pipeline
@@ -126,8 +125,9 @@ TShared<GpuPipelineParameterLayout> pipelineLayout = graphicsPipeline->GetParame
 // Get the set layout for descriptor set 0
 TShared<GpuPipelineParameterSetLayout> setLayout = pipelineLayout->GetSet(0);
 
-// Create a parameter set for descriptor set 0
-TShared<GpuParameterSet> parameterSet = device->CreateGpuParameterSet(setLayout, 0);
+// Allocate a parameter set for descriptor set 0 from the render thread's work context
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+TShared<GpuParameterSet> parameterSet = gpuContext.GetParameterSetPool().Create(setLayout, 0);
 ~~~~~~~~~~~~~
 
 The created **GpuParameterSet** object will be initialized with parameter layout information for the specified descriptor set, allowing the system to validate parameter assignments and manage internal storage.
@@ -415,8 +415,8 @@ pipelineInfo.FragmentProgram = fragmentProgram;
 
 TShared<GpuGraphicsPipelineState> pipeline = gpuDevice.CreateGpuGraphicsPipelineState(pipelineInfo);
 
-// 3. Create GpuParameterSet for the pipeline (set 0)
-TShared<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipeline->GetParameterLayout()->GetSet(0), 0);
+// 3. Allocate a GpuParameterSet for the pipeline (set 0) from the render thread's work context
+TShared<GpuParameterSet> parameterSet = render::GetRenderer()->GetGpuContext().GetParameterSetPool().Create(pipeline->GetParameterLayout()->GetSet(0), 0);
 
 // 4. Set up uniform buffer using uniform buffer definition
 B3D_UNIFORM_BUFFER_BEGIN(PerObjectParamDef)

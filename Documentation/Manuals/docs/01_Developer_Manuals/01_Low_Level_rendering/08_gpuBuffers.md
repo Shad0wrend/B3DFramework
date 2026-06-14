@@ -51,6 +51,14 @@ The @b3d::GpuBufferFlag flags control where the buffer memory is stored:
  - @b3d::GpuBufferFlag::StoreOnGPU - Buffer is placed in device memory. Fast GPU access, but CPU reads/writes require staging buffers. This is the default for most buffer types.
  - @b3d::GpuBufferFlag::StoreOnCPUWithGPUAccess - Buffer is placed in CPU-visible memory accessible to the GPU. Faster CPU updates (no staging needed), but slower GPU access through the PCI Express bus. This is the default for uniform and staging buffers.
 
+## Transient buffers
+Short-lived, single-use buffers (compute scratch, staging) can instead be created through @b3d::GpuWorkContext::CreateTransientGpuBuffer. Such buffers are backed by the work context's transient (linear) allocator: allocation and free are extremely cheap, but the memory is reclaimed in bulk once the GPU work that used it completes, so the buffer must not be retained past the frame/operation that created it. See the [GPU work context](../Low_Level_rendering/gpuWorkContext) manual for what a work context is and how to obtain one.
+
+~~~~~~~~~~~~~{.cpp}
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+TShared<render::GpuBuffer> scratchBuffer = gpuContext.CreateTransientGpuBuffer(GpuBufferCreateInformation::CreateSimpleStorage(BF_32X4F, 32));
+~~~~~~~~~~~~~
+
 ## Suballocations
 Buffers can contain multiple suballocations — logically separate regions within one physical buffer. This is more efficient than creating a separate **GpuBuffer** for each entry, because suballocated buffers can be bound using dynamic offsets on the command buffer. To create a buffer with suballocations, pass a `suballocationCount` when creating a uniform buffer:
 
@@ -118,24 +126,27 @@ render::GpuBufferSuballocation suballocation = ...;
 ~~~~~~~~~~~~~
 
 # GpuBufferUtility
-@b3d::render::GpuBufferUtility provides high-level render-thread operations that handle staging buffers internally. This is the preferred way to write to GPU-only buffers from the render thread, as it transparently creates staging buffers and copy commands when needed:
- - @b3d::render::GpuBufferUtility::Write - Writes data into a buffer. If the buffer is not CPU-writable or is currently used by the GPU, it internally creates a staging buffer and issues a copy command via the provided command buffer (or an internal transfer buffer if none is provided).
- - @b3d::render::GpuBufferUtility::Read - Reads data from a buffer, staging if needed. Blocks if the buffer is in GPU use.
+@b3d::render::GpuBufferUtility provides high-level render-thread operations that handle staging buffers internally. This is the preferred way to write to GPU-only buffers from the render thread, as it transparently creates staging buffers and copy commands when needed. The first argument is the @b3d::GpuWorkContext the operation runs against; on the render thread obtain it from @b3d::render::Renderer::GetGpuContext.
+ - @b3d::render::GpuBufferUtility::Write - Writes data into a buffer. If the buffer is not CPU-writable or is currently used by the GPU, it internally creates a staging buffer and issues a copy command via the provided command buffer (or the work context's transfer buffer if none is provided).
+ - @b3d::render::GpuBufferUtility::Read - Reads data from a buffer, staging through the work context if needed. Blocks if the buffer is in GPU use.
  - @b3d::render::GpuBufferUtility::ReadAsync - Non-blocking read via a command buffer. Returns a @b3d::TAsyncOp that is signaled when the data is ready.
- - @b3d::render::GpuBufferUtility::CreateStaging - Creates a staging buffer matching the size of a given buffer.
+ - @b3d::render::GpuBufferUtility::CreateStaging - Creates a staging buffer matching the size of a given buffer. The staging buffer is allocated from the work context's transient allocator, so it is single-use and must not be retained once the GPU work that used it completes.
 
 ~~~~~~~~~~~~~{.cpp}
 TShared<render::GpuBuffer> gpuOnlyBuffer = ...; // Created with StoreOnGPU
 
+// Operations run against the render thread's work context, obtained from the renderer
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+
 // GpuBufferUtility handles staging internally
-GpuBufferUtility::Write(gpuOnlyBuffer, 0, dataSize, sourceData);
+GpuBufferUtility::Write(gpuContext, gpuOnlyBuffer, 0, dataSize, sourceData);
 
 // Read with blocking
 Vector<u8> readBack(dataSize);
-GpuBufferUtility::Read(gpuOnlyBuffer, 0, dataSize, readBack.data());
+GpuBufferUtility::Read(gpuContext, gpuOnlyBuffer, 0, dataSize, readBack.data());
 
 // Non-blocking read via command buffer
-TAsyncOp<TShared<MemoryDataStream>> asyncRead = GpuBufferUtility::ReadAsync(gpuOnlyBuffer, 0, dataSize, commandBuffer);
+TAsyncOp<TShared<MemoryDataStream>> asyncRead = GpuBufferUtility::ReadAsync(gpuContext, gpuOnlyBuffer, 0, dataSize, commandBuffer);
 // ... later, when the command buffer completes, the async op is signaled
 ~~~~~~~~~~~~~
 
@@ -219,19 +230,19 @@ The Vulkan plugin owns one @b3d::TGpuTlsfAllocator per Vulkan memory-type index.
  - GPU→CPU readback (staging-read): `requiredFlags = HOST_VISIBLE`, `preferredFlags = HOST_COHERENT | HOST_CACHED`.
  - Linearly-tiled images: `requiredFlags = HOST_VISIBLE`, `preferredFlags = HOST_COHERENT`.
 
-The Vulkan plugin runs defragmentation per frame inside @b3d::render::VulkanGpuDevice::EndFrame, immediately before the per-thread transfer command buffers are submitted. Soft budgets cap the work — defaults are 8 MB / 8 allocations per pass — and the integration is gated by an internal @c mDefragEnabled toggle (currently default-off until the descriptor-set / framebuffer invalidation paths land). The lifetime base @b3d::IGpuResource is in place — both @b3d::render::VulkanBuffer and @b3d::render::VulkanImage inherit it through @b3d::render::VulkanResource — and the recreate-and-swap pattern in @b3d::render::VulkanBuffer::MoveAllocation / @b3d::render::VulkanImage::MoveAllocation handles the GPU copy and old-handle deferred-destroy.
+Defragmentation runs once per frame from @b3d::render::Renderer::EndGpuFrame, which calls @b3d::render::GpuDevice::RunDefragPass immediately before the renderer's pending transfer command buffers are submitted. Soft budgets cap the work — defaults are 8 MB / 8 allocations per pass — and the integration is gated by an internal @c mDefragEnabled toggle (currently default-off until the descriptor-set / framebuffer invalidation paths land). The lifetime base @b3d::IGpuResource is in place — both @b3d::render::VulkanBuffer and @b3d::render::VulkanImage inherit it through @b3d::render::VulkanResource — and the recreate-and-swap pattern in @b3d::render::VulkanBuffer::MoveAllocation / @b3d::render::VulkanImage::MoveAllocation handles the GPU copy and old-handle deferred-destroy.
 
 ## Deferral modes
 Each @b3d::TGpuTlsfAllocator instance is configured with one of two deferral modes that govern how @b3d::TGpuTlsfAllocator::Free releases the slot and how @b3d::TGpuTlsfAllocator::Defrag retires source slots after a move.
 
-@b3d::FreeDeferralMode::FrameTracker (default, used by backends without per-resource use-count tracking — Metal, D3D12, Null today, plus the future linear / transient allocator). @b3d::TGpuTlsfAllocator::Free queues the allocation in a FIFO retire queue keyed on the current frame index, and @b3d::TGpuTlsfAllocator::Flush drains entries whose frame is no longer in flight (i.e. the current frame index has advanced by @c kMaximumFramesInFlight beyond the retired entry's frame). Defragmentation retires the source slot the same way. Backends configured for @b3d::FreeDeferralMode::FrameTracker are expected to call @b3d::TGpuTlsfAllocator::Flush once per frame after @b3d::render::GpuDevice::EndFrame to drain entries whose retire frame is no longer in flight.
+@b3d::FreeDeferralMode::FrameTracker (default, used by backends without per-resource use-count tracking — Metal, D3D12, Null today, plus the future linear / transient allocator). @b3d::TGpuTlsfAllocator::Free queues the allocation in a FIFO retire queue keyed on the current frame index, and @b3d::TGpuTlsfAllocator::ReclaimUnused drains entries whose frame is no longer in flight (i.e. the current frame index has advanced by @c kMaximumFramesInFlight beyond the retired entry's frame). Defragmentation retires the source slot the same way. Backends configured for @b3d::FreeDeferralMode::FrameTracker are expected to call @b3d::TGpuTlsfAllocator::ReclaimUnused once per frame after @b3d::render::Renderer::EndGpuFrame to drain entries whose retire frame is no longer in flight.
 
 @b3d::FreeDeferralMode::ResourceLifecycle (used by the Vulkan plugin, where @b3d::IGpuResource::Notify* events are fully wired). @b3d::TGpuTlsfAllocator::Free routes straight to @b3d::TGpuTlsfAllocator::FreeImmediate — the caller has already gated GPU completion through the resource's bound-count gate (the wrapper's destructor only fires once @c mUsedCount reaches zero, by which point every CB referencing it has retired). Defragmentation does not retire the source slot; the consumer's @b3d::IGpuResource::Destroy lifecycle frees it via @b3d::TGpuTlsfAllocator::FreeImmediate when the wrapper's use-count proves GPU completion. Strictly tighter than frame-based deferral — waits for the specific CBs that touched the resource, not "every CB outstanding at retire-time".
 
 The two modes also constrain what @b3d::IGpuResource::MoveAllocation may return, see Defragmentation below.
 
 ## Frame tracking
-Allocators key their deferred-free queue on a device-wide frame index exposed through the @b3d::IGpuFrameTracker interface implemented by @b3d::render::GpuDevice. @b3d::IGpuFrameTracker::GetCurrentFrameIndex reports the frame currently being recorded; @b3d::IGpuFrameTracker::IsFrameComplete reports whether a given frame is no longer in flight on any queue. The frame index ticks once per @b3d::render::GpuDevice::EndFrame after the per-backend "previous frame complete" wait returns, so observers see the new value only after the GPU has caught up. Frames are natural cross-queue sync points — once @c kMaximumFramesInFlight ticks pass since a frame, the GPU has drained every submission tagged with that frame's index regardless of which queue it ran on.
+Allocators key their deferred-free queue on a monotonic completion marker exposed through the @b3d::IGpuCompletionTracker interface. Render-thread work uses the renderer-owned @b3d::GpuFrameCompletionTracker (see @b3d::render::Renderer::GetFrameCompletionTracker), whose marker is the frame index currently being recorded; @b3d::IGpuCompletionTracker::IsMarkerComplete reports whether a given frame is no longer in flight on any queue. The frame index ticks once per @b3d::render::Renderer::EndGpuFrame after the per-backend "previous frame complete" wait returns, so observers see the new value only after the GPU has caught up. Frames are natural cross-queue sync points — once @c kMaximumFramesInFlight ticks pass since a frame, the GPU has drained every submission tagged with that frame's index regardless of which queue it ran on.
 
 ## Defragmentation
 @b3d::TGpuTlsfAllocator::Defrag compacts live allocations to free up empty heaps and reduce fragmentation. The pass walks heaps high-index → low-index and within each heap walks the per-heap physical chain offset-high → offset-low. Eligible allocations are moved into either a lower-offset slot in the same heap (within-heap compaction) or a slot in a lower-index heap (multi-heap drain). Source-slot release follows the configured @b3d::FreeDeferralMode (see above): under @b3d::FreeDeferralMode::FrameTracker the allocator retires the source against the current frame index and drains it from the deferred-free queue once the frame is complete; under @b3d::FreeDeferralMode::ResourceLifecycle the allocator does not track the source — the consumer's destructor frees it via @b3d::TGpuTlsfAllocator::FreeImmediate.

@@ -71,10 +71,11 @@ TShared<GpuGraphicsPipelineState> pipelineState = gpuDevice->CreateGpuGraphicsPi
 
 ## Creating GPU parameter sets
 
-GPU parameter sets are created from the pipeline state's parameter set layout (obtained via `GetParameterLayout()->GetSet()`) and will hold uniform buffers, textures, and samplers for a specific descriptor set:
+GPU parameter sets are allocated from the render thread's work context, using its parameter set pool. The pipeline state's parameter set layout (obtained via `GetParameterLayout()->GetSet()`) selects which descriptor set the parameter set holds uniform buffers, textures, and samplers for:
 
 ~~~~~~~~~~~~~{.cpp}
-TShared<GpuParameterSet> parameterSet = gpuDevice->CreateGpuParameterSet(pipelineState->GetParameterLayout()->GetSet(0), 0);
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+TShared<GpuParameterSet> parameterSet = gpuContext.GetParameterSetPool().Create(pipelineState->GetParameterLayout()->GetSet(0), 0);
 ~~~~~~~~~~~~~
 
 ## Creating vertex description
@@ -104,8 +105,8 @@ vertexBufferCreateInformation.Vertex.ElementSize = vertexStride;
 
 TShared<GpuBuffer> vertexBuffer = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
-// Write vertex data
-GpuBufferUtility::Write(vertexBuffer, 0, vertexStride * numVertices, vertexData, GpuBufferWriteFlag::Discard);
+// Write vertex data (the renderer's work context drives the render-thread upload)
+GpuBufferUtility::Write(render::GetRenderer()->GetGpuContext(), vertexBuffer, 0, vertexStride * numVertices, vertexData, GpuBufferWriteFlag::Discard);
 
 // Create index buffer
 u32 numIndices = 36;
@@ -118,7 +119,7 @@ indexBufferCreateInformation.Index.Type = IT_32BIT;
 TShared<GpuBuffer> indexBuffer = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 
 // Write index data
-GpuBufferUtility::Write(indexBuffer, 0, numIndices * sizeof(u32), indexData, GpuBufferWriteFlag::Discard);
+GpuBufferUtility::Write(render::GetRenderer()->GetGpuContext(), indexBuffer, 0, numIndices * sizeof(u32), indexData, GpuBufferWriteFlag::Discard);
 ~~~~~~~~~~~~~
 
 ## Creating textures and samplers
@@ -283,8 +284,8 @@ GetRendererUtility().Blit(*commandBuffer, BlitInformation::BlitColor(colorTextur
 Finally, the command buffer is submitted for GPU execution and the render window is presented:
 
 ~~~~~~~~~~~~~{.cpp}
-// Submit the command buffer for GPU execution
-gpuDevice->SubmitCommandBuffer(commandBuffer);
+// Submit the command buffer for GPU execution through the render thread's GPU work context
+render::GetRenderer()->GetGpuContext().SubmitCommandBuffer(commandBuffer);
 
 // Present the rendered result to the window
 gpuDevice->PresentRenderWindow(renderWindow);

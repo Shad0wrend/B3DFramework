@@ -50,7 +50,7 @@ Load-store textures can also be bound as normal textures, for read-only operatio
 
 # Reading and writing texture data
 
-For reading and writing texture data on the render thread, use the @b3d::render::TextureUtility class which provides static helper methods.
+For reading and writing texture data on the render thread, use the @b3d::render::TextureUtility class which provides static helper methods. The blocking **Write**, **Read** and **Clear** helpers take a @b3d::GpuWorkContext as their first argument, which they use for any internal staging copy; on the render thread obtain it from @b3d::render::Renderer::GetGpuContext (see the [GPU work context](../Low_Level_rendering/gpuWorkContext) manual).
 
 ## Writing data
 
@@ -60,15 +60,18 @@ To write pixel data to a texture subresource:
 TShared<render::Texture> texture = ...;
 PixelData pixelData = ...;
 
+// Operations run against the render thread's work context, obtained from the renderer
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+
 // Write data to mip level 0, array layer 0
-render::TextureUtility::Write(texture, pixelData);
+render::TextureUtility::Write(gpuContext, texture, pixelData);
 
 // Write to specific mip level and array layer
-render::TextureUtility::Write(texture, pixelData, 2, 0); // mip 2, layer 0
+render::TextureUtility::Write(gpuContext, texture, pixelData, 2, 0); // mip 2, layer 0
 
 // Use staging buffer via a command buffer for non-mappable textures
 TShared<GpuCommandBuffer> commandBuffer = ...;
-render::TextureUtility::Write(texture, pixelData, 0, 0, TextureWriteFlag::Normal, commandBuffer);
+render::TextureUtility::Write(gpuContext, texture, pixelData, 0, 0, TextureWriteFlag::Normal, commandBuffer);
 ~~~~~~~~~~~~~
 
 **TextureUtility::Write()** automatically chooses the optimal path:
@@ -88,11 +91,13 @@ To read pixel data from a texture subresource:
 TShared<render::Texture> texture = ...;
 PixelData destination = texture->GetProperties().AllocBuffer(0, 0);
 
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+
 // Blocking read - waits for GPU to finish if texture is in use
-render::TextureUtility::Read(texture, destination);
+render::TextureUtility::Read(gpuContext, texture, destination);
 
 // Read from specific mip level and array layer
-render::TextureUtility::Read(texture, destination, 2, 0); // mip 2, layer 0
+render::TextureUtility::Read(gpuContext, texture, destination, 2, 0); // mip 2, layer 0
 ~~~~~~~~~~~~~
 
 For non-blocking reads that integrate with your rendering pipeline:
@@ -102,7 +107,7 @@ TShared<render::Texture> texture = ...;
 TShared<GpuCommandBuffer> commandBuffer = ...;
 
 // Queue async read operation
-TAsyncOp<TShared<PixelData>> asyncOp = render::TextureUtility::ReadAsync(texture, *commandBuffer, 0, 0);
+TAsyncOp<TShared<PixelData>> asyncOp = render::TextureUtility::ReadAsync(gpuContext, texture, *commandBuffer, 0, 0);
 
 // ... submit command buffer and continue other work ...
 
@@ -145,13 +150,14 @@ These are called automatically when using **GpuTextureMappedScope** — Flush on
 
 ## Staging buffers
 
-@b3d::render::TextureUtility::CreateStagingBuffer creates a @b3d::render::GpuBuffer (not a staging texture) sized to hold the pixel data for a given mip level. This is used internally by **TextureUtility::Write** and **TextureUtility::Read**, but can also be used directly for explicit buffer-to-texture or texture-to-buffer copies:
+@b3d::render::TextureUtility::CreateStagingBuffer creates a @b3d::render::GpuBuffer (not a staging texture) sized to hold the pixel data for a given mip level. The staging buffer is allocated from the work context's transient allocator, so it is single-use and must not be retained once the GPU work that used it completes. This is used internally by **TextureUtility::Write** and **TextureUtility::Read**, but can also be used directly for explicit buffer-to-texture or texture-to-buffer copies:
 
 ~~~~~~~~~~~~~{.cpp}
 TShared<render::Texture> texture = ...;
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
 
 // Create a CPU-writable staging buffer for mip level 0
-TShared<render::GpuBuffer> stagingBuffer = render::TextureUtility::CreateStagingBuffer(texture, 0, false);
+TShared<render::GpuBuffer> stagingBuffer = render::TextureUtility::CreateStagingBuffer(gpuContext, texture, 0, false);
 
 // Write data into the staging buffer, then copy to texture
 render::GpuBufferMappedScope scope = stagingBuffer->Map(GpuMapOption::Write);
@@ -182,10 +188,11 @@ To clear all pixels of a texture subresource to a specific color:
 
 ~~~~~~~~~~~~~{.cpp}
 TShared<render::Texture> texture = ...;
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
 
 // Clear to black
-render::TextureUtility::Clear(texture, Color::kBlack);
+render::TextureUtility::Clear(gpuContext, texture, Color::kBlack);
 
 // Clear specific mip level and array layer
-render::TextureUtility::Clear(texture, Color::kBlue, 2, 0);
+render::TextureUtility::Clear(gpuContext, texture, Color::kBlue, 2, 0);
 ~~~~~~~~~~~~~

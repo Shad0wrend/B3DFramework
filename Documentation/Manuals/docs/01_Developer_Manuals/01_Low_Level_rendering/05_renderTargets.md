@@ -102,9 +102,10 @@ commandBuffer->EndRenderPass();
 commandBuffer->End();
 
 // Submit the command buffer to the GPU
-GpuDevice& gpuDevice = commandBuffer->GetGpuDevice();
-gpuDevice.SubmitCommandBuffer(commandBuffer);
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+gpuContext.SubmitCommandBuffer(commandBuffer);
 
 // Present the window's back buffer
+GpuDevice& gpuDevice = commandBuffer->GetGpuDevice();
 gpuDevice.PresentRenderWindow(window);
 ~~~~~~~~~~~~~

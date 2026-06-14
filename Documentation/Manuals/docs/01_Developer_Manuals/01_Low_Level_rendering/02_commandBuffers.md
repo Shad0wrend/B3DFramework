@@ -82,11 +82,11 @@ commandBuffer->End();
 ~~~~~~~~~~~~~
 
 # Submitting
-Commands queued on a command buffer will only get executed after the command buffer is submitted. Submission is done by calling @b3d::GpuDevice::SubmitCommandBuffer.
+Commands queued on a command buffer will only get executed after the command buffer is submitted. Submission is done by calling @b3d::GpuWorkContext::SubmitCommandBuffer on the @b3d::GpuWorkContext owned by the submitting thread (see the [GPU work context](../Low_Level_rendering/gpuWorkContext) manual). On the render thread that is the renderer's context, retrieved through @b3d::render::Renderer::GetGpuContext.
 
 ~~~~~~~~~~~~~{.cpp}
-GpuDevice& gpuDevice = GetApplication().GetPrimaryGpuDevice();
-gpuDevice.SubmitCommandBuffer(commandBuffer);
+GpuWorkContext& gpuContext = render::GetRenderer()->GetGpuContext();
+gpuContext.SubmitCommandBuffer(commandBuffer);
 ~~~~~~~~~~~~~
 
 You must externally synchronize access to **GpuCommandBuffer** when passing it between threads, as it is not thread safe.
