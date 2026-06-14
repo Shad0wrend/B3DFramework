@@ -619,6 +619,13 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 	return true;
 }
 
+// TODO - B3DShaderCompiler is not thread safe, so we must limit only one call at a time.
+static Mutex& GetXscCompileMutex()
+{
+	static Mutex mutex;
+	return mutex;
+}
+
 template<bool IsRenderProxy>
 static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, ShaderCompilerResult& outCompileResult, CoreVariantType<ShaderCreateInformation, IsRenderProxy>* outShaderCreateInformation = nullptr, TInlineArray<GpuProgramType, 2>* detectedTypes = nullptr)
 {
@@ -716,7 +723,16 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 
 	XscLog log;
 	Xsc::Reflection::ReflectionData reflectionData;
-	bool compileSuccess = Xsc::CompileShader(inputDesc, outputDesc, &log, &reflectionData);
+
+	// Serialize the actual Xsc invocation against all other compiles in the process - see GetXscCompileMutex() above
+	// for why this is required (Xsc is not thread safe). Only the CompileShader() call touches Xsc's shared global
+	// state; the surrounding input/output/reflection handling operates on locals, so the lock scope stays narrow.
+	bool compileSuccess;
+	{
+		Lock lock(GetXscCompileMutex());
+		compileSuccess = Xsc::CompileShader(inputDesc, outputDesc, &log, &reflectionData);
+	}
+
 	if(!compileSuccess)
 	{
 		// If enabled, don't fail if entry point isn't found
