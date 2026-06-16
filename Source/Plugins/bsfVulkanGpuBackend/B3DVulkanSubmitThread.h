@@ -22,8 +22,12 @@ namespace b3d::render
 		/** Groups per-frame completion tracking data together. */
 		struct FrameCompletionMarker
 		{
-			/** Last command buffer submitted for this frame. */
-			TShared<VulkanGpuCommandBuffer> LastCommandBuffer;
+			/**
+			 * Submit index of the last submission on each queue (indexed by GpuQueueId) as of this frame's boundary. Waiting on
+			 * every queue up to its captured index guarantees all of the frame's GPU work has completed, not just its last
+			 * command buffer.
+			 */
+			Array<u32, B3D_MAX_UNIQUE_QUEUES> LastSubmitIndices = {};
 
 			/** Event signalled when this frame has been completely processed by the submit thread. */
 			SignalEvent CompletionEvent;
@@ -97,11 +101,8 @@ namespace b3d::render
 		/** Current frame index (0 to kFrameCount-1), tracked internally by submit thread. */
 		u32 mCurrentFrameIndex = 0;
 
-		/** Per-frame completion tracking (last command buffer and completion event). */
+		/** Per-frame completion tracking (per-queue submit-index snapshot and completion event). */
 		Array<FrameCompletionMarker, kFrameCount> mFrameMarkers;
-
-		/** Tracks the command buffer being built up as "last" during the current frame. */
-		TShared<VulkanGpuCommandBuffer> mCurrentFrameLastCommandBuffer;
 	};
 
 	/** Retrieves an instance of VulkanSubmitThread. */

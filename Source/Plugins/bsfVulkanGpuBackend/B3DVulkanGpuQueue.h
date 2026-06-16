@@ -83,6 +83,15 @@ namespace b3d
 			 */
 			TShared<VulkanGpuCommandBuffer> GetLastCommandBuffer() const { return mLastSubmittedCommandBuffer; }
 
+			/**
+			 * Returns the submit index of the most recently submitted work (command buffer or present) on this queue, or 0 if
+			 * nothing has been submitted yet. Capture this at a frame boundary and pass it to RefreshCompletionStateOnSubmitThread()
+			 * to wait for all of that frame's work to complete.
+			 *
+			 * @note	Submit thread only.
+			 */
+			u32 GetLastSubmitIndex() const { return mNextSubmitIndex - 1; }
+
 		protected:
 			/**
 			 * Prepares a list of semaphores that can be provided to submit or present calls.

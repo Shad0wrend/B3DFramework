@@ -74,9 +74,6 @@ void VulkanSubmitThread::QueueSubmit(const TShared<VulkanGpuCommandBuffer>& comm
 
 		syncMask |= commandBuffer->GetQueueSyncMask();
 		queue.ExecuteSubmitOnSubmitThread(submitInformation, syncMask, signalFences);
-
-		// Track this as the last submitted command buffer for the current frame
-		mCurrentFrameLastCommandBuffer = commandBuffer;
 	};
 
 	commandBuffer->NotifyWillQueueForSubmit();
@@ -132,25 +129,29 @@ void VulkanSubmitThread::QueueEndFrameAndWaitForPreviousFrame()
 
 	auto fnCommand = [this, frameIndex, nextFrameIndex]
 	{
-		mFrameMarkers[frameIndex].LastCommandBuffer = mCurrentFrameLastCommandBuffer;
-		mCurrentFrameLastCommandBuffer = nullptr;
-
-		// Wait for that frame's last command buffer to complete
-		const TShared<VulkanGpuCommandBuffer>& commandBufferToWaitFor = mFrameMarkers[nextFrameIndex].LastCommandBuffer;
-		if (commandBufferToWaitFor != nullptr)
+		// Snapshot the last submit index on every queue, marking the boundary of all work issued during this frame. By the
+		// time this runs all of the frame's submissions have already executed (the command queue is processed in order), so
+		// each queue's most recent submit index covers the whole frame.
+		FrameCompletionMarker& currentMarker = mFrameMarkers[frameIndex];
+		mGpuDevice.DoForEachQueue([&currentMarker](VulkanGpuQueue& queue)
 		{
-			const bool completed = commandBufferToWaitFor->UpdateExecutionStatus(true);
-			B3D_ASSERT(completed && "Frame completion wait timed out!");
-		}
-
-		// Refresh completion states for finished command buffers
-		mGpuDevice.DoForEachQueue([](VulkanGpuQueue& queue)
-		{
-			queue.RefreshCompletionStateOnSubmitThread(false, false);
+			currentMarker.LastSubmitIndices[queue.GetId().Id] = queue.GetLastSubmitIndex();
 		});
 
-		// TODO: This could be signalled earlier. In case the command buffer finishes earlier the submit thread could set the signal
-		// before this point. This would avoid the render thread blocking if the command buffer is already finished.
+		// Wait for all of the previous frame's work to finish on every queue, up to the submit index captured at that frame's
+		// boundary. We must wait on the whole frame rather than just its last command buffer: the intra-queue semaphore chain
+		// is intentionally broken across present, so a trailing post-present command buffer can complete while earlier (heavier)
+		// command buffers from the same frame are still executing. Reusing their command buffer pools or resources before they
+		// finish would lead to GPU faults and device loss.
+		const FrameCompletionMarker& previousMarker = mFrameMarkers[nextFrameIndex];
+		mGpuDevice.DoForEachQueue([&previousMarker](VulkanGpuQueue& queue)
+		{
+			const u32 lastSubmitIndex = previousMarker.LastSubmitIndices[queue.GetId().Id];
+			queue.RefreshCompletionStateOnSubmitThread(true, false, lastSubmitIndex);
+		});
+
+		// TODO: This could be signalled earlier. In case the frame's work finishes earlier the submit thread could set the signal
+		// before this point. This would avoid the render thread blocking if the work is already finished.
 		mFrameMarkers[nextFrameIndex].CompletionEvent.Signal();
 	};
 
