@@ -213,11 +213,11 @@ VkFormat VulkanUtility::GetPixelFormat(PixelFormat format, bool sRGB)
 
 		return VK_FORMAT_BC3_UNORM_BLOCK;
 	case PF_BC4:
-		return VK_FORMAT_BC4_SNORM_BLOCK;
+		return VK_FORMAT_BC4_UNORM_BLOCK;
 	case PF_BC5:
 		return VK_FORMAT_BC5_UNORM_BLOCK;
 	case PF_BC6H:
-		return VK_FORMAT_BC6H_SFLOAT_BLOCK;
+		return VK_FORMAT_BC6H_UFLOAT_BLOCK;
 	case PF_BC7:
 		if(sRGB)
 			return VK_FORMAT_BC7_SRGB_BLOCK;

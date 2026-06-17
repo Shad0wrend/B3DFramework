@@ -3169,10 +3169,10 @@ void PixelUtility::Compress(const PixelData& source, PixelData& destination, con
 	// GPU compression where the target format is supported (BC1/BC3/BC4/BC5/BC6H/BC7)
 	if(GpuTextureCompressor::IsFormatSupported(options.Format))
 	{
-		const TShared<PixelData> sourcePtr(TShared<PixelData>(), const_cast<PixelData*>(&source));
-		const TShared<PixelData> destinationPtr(TShared<PixelData>(), &destination);
+		const TShared<PixelData> sourceShared(TShared<PixelData>(), const_cast<PixelData*>(&source));
+		const TShared<PixelData> destinationShared(TShared<PixelData>(), &destination);
 
-		TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(sourcePtr, destinationPtr, options);
+		TAsyncOp<TShared<PixelData>> compressOp = GpuTextureCompressor::Compress(sourceShared, destinationShared, options);
 		compressOp.BlockUntilComplete();
 
 		if(compressOp.GetReturnValue() != nullptr)
