@@ -536,7 +536,7 @@ void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const 
 		TextureCreateInformation cubemapDesc;
 		cubemapDesc.Name = "Scale Cubemap Scratch";
 		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
-		cubemapDesc.Format = srcProps.Format;
+		cubemapDesc.Format = PF_RGBA16F;
 		cubemapDesc.Width = mipSize;
 		cubemapDesc.Height = mipSize;
 		cubemapDesc.MipMapCount = numDownsamples - 1;
@@ -551,9 +551,11 @@ void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const 
 		srcMip = cubemapDesc.MipMapCount;
 	}
 
-	// Same size so just copy
+	// Same size and format -> just copy
 	if(sizeSrcLog2 == sizeDstLog2)
 	{
+		if(srcProps.Format == dstProps.Format)
+		{
 		for(u32 face = 0; face < 6; face++)
 		{
 			TextureCopyInformation copyDesc;
@@ -564,6 +566,9 @@ void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const 
 
 			commandBuffer.CopyTexture(src, dst, copyDesc);
 		}
+	}
+	else
+			DownsampleCubemap(commandBuffer, src, srcMip, dst, dstMip);
 	}
 	else
 		DownsampleCubemap(commandBuffer, scratchTex, srcMip, dst, dstMip);
