@@ -8,9 +8,6 @@
 #include "Math/B3DMath.h"
 #include "Image/B3DTexture.h"
 #include "FileSystem/B3DPath.h"
-#if B3D_USE_NVTT
-#include <nvtt.h>
-#endif
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "ThirdParty/stb_image_write.h"
@@ -1779,147 +1776,6 @@ static inline const PixelFormatDescription& GetDescriptionFor(const PixelFormat 
 	return _pixelFormats[ord];
 }
 
-#if B3D_USE_NVTT
-/**	Handles compression output from NVTT library for a single image. */
-struct NVTTCompressOutputHandler : public nvtt::OutputHandler
-{
-	NVTTCompressOutputHandler(u8* buffer, u32 sizeBytes)
-		: Buffer(buffer), BufferWritePos(buffer), BufferEnd(buffer + sizeBytes)
-	{}
-
-	void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
-	{}
-
-	bool writeData(const void* data, int size) override
-	{
-		B3D_ASSERT((BufferWritePos + size) <= BufferEnd);
-		memcpy(BufferWritePos, data, size);
-		BufferWritePos += size;
-
-		return true;
-	}
-
-	void endImage() override
-	{}
-
-	u8* Buffer;
-	u8* BufferWritePos;
-	u8* BufferEnd;
-};
-
-/**	Handles output from NVTT library for a mip-map chain. */
-struct NVTTMipmapOutputHandler : public nvtt::OutputHandler
-{
-	NVTTMipmapOutputHandler(const Vector<TShared<PixelData>>& buffers)
-		: Buffers(buffers), BufferWritePos(nullptr), BufferEnd(nullptr)
-	{}
-
-	void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
-	{
-		B3D_ASSERT(miplevel >= 0 && miplevel < (int)Buffers.size());
-		B3D_ASSERT((u32)size == Buffers[miplevel]->GetConsecutiveSize());
-
-		ActiveBuffer = Buffers[miplevel];
-
-		BufferWritePos = ActiveBuffer->GetData();
-		BufferEnd = BufferWritePos + ActiveBuffer->GetConsecutiveSize();
-	}
-
-	bool writeData(const void* data, int size) override
-	{
-		B3D_ASSERT((BufferWritePos + size) <= BufferEnd);
-		memcpy(BufferWritePos, data, size);
-		BufferWritePos += size;
-
-		return true;
-	}
-
-	void endImage() override
-	{}
-
-	Vector<TShared<PixelData>> Buffers;
-	TShared<PixelData> ActiveBuffer;
-
-	u8* BufferWritePos;
-	u8* BufferEnd;
-};
-
-nvtt::Format ToNvttFormat(PixelFormat format)
-{
-	switch(format)
-	{
-	case PF_BC1:
-		return nvtt::Format_BC1;
-	case PF_BC1a:
-		return nvtt::Format_BC1a;
-	case PF_BC2:
-		return nvtt::Format_BC2;
-	case PF_BC3:
-		return nvtt::Format_BC3;
-	case PF_BC4:
-		return nvtt::Format_BC4;
-	case PF_BC5:
-		return nvtt::Format_BC5;
-	case PF_BC6H:
-		return nvtt::Format_BC6;
-	case PF_BC7:
-		return nvtt::Format_BC7;
-	default: // Unsupported format
-		return nvtt::Format_BC3;
-	}
-}
-
-nvtt::Quality ToNvttQuality(CompressionQuality quality)
-{
-	switch(quality)
-	{
-	case CompressionQuality::Fastest:
-		return nvtt::Quality_Fastest;
-	case CompressionQuality::Highest:
-		return nvtt::Quality_Highest;
-	case CompressionQuality::Normal:
-		return nvtt::Quality_Normal;
-	case CompressionQuality::Production:
-		return nvtt::Quality_Normal;
-	}
-
-	// Unknown quality level
-	return nvtt::Quality_Normal;
-}
-
-nvtt::AlphaMode ToNvttAlphaMode(AlphaMode alphaMode)
-{
-	switch(alphaMode)
-	{
-	case AlphaMode::None:
-		return nvtt::AlphaMode_None;
-	case AlphaMode::Premultiplied:
-		return nvtt::AlphaMode_Premultiplied;
-	case AlphaMode::Transparency:
-		return nvtt::AlphaMode_Transparency;
-	}
-
-	// Unknown alpha mode
-	return nvtt::AlphaMode_None;
-}
-
-nvtt::WrapMode ToNvttWrapMode(MipMapWrapMode wrapMode)
-{
-	switch(wrapMode)
-	{
-	case MipMapWrapMode::Clamp:
-		return nvtt::WrapMode_Clamp;
-	case MipMapWrapMode::Mirror:
-		return nvtt::WrapMode_Mirror;
-	case MipMapWrapMode::Repeat:
-		return nvtt::WrapMode_Repeat;
-	}
-
-	// Unknown alpha mode
-	return nvtt::WrapMode_Mirror;
-}
-#endif // B3D_USE_NVTT
-
 namespace
 {
 	// Saves floating-point pixel data as an OpenEXR (.exr) HDR image via TinyEXR. Supports 1/3/4-channel float and
@@ -3165,7 +3021,6 @@ void PixelUtility::Compress(const PixelData& source, PixelData& destination, con
 		return;
 	}
 
-#if !B3D_USE_NVTT
 	// GPU compression where the target format is supported (BC1/BC3/BC4/BC5/BC6H/BC7)
 	if(GpuTextureCompressor::IsFormatSupported(options.Format))
 	{
@@ -3182,49 +3037,6 @@ void PixelUtility::Compress(const PixelData& source, PixelData& destination, con
 	}
 
 	B3D_LOG(Error, LogPixelUtility, "Compression failed. Runtime texture compression is not available on this platform.");
-	return;
-#else
-	PixelFormat interimFormat = options.Format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
-
-	PixelData interimData(source.GetWidth(), source.GetHeight(), 1, interimFormat);
-	interimData.AllocateInternalBuffer();
-	BulkPixelConversion(source, interimData);
-
-	nvtt::InputOptions io;
-	io.setTextureLayout(nvtt::TextureType_2D, source.GetWidth(), source.GetHeight());
-	io.setMipmapGeneration(false);
-	io.setAlphaMode(ToNvttAlphaMode(options.AlphaMode));
-	io.setNormalMap(options.IsNormalMap);
-
-	if(interimFormat == PF_RGBA32F)
-		io.setFormat(nvtt::InputFormat_RGBA_32F);
-	else
-		io.setFormat(nvtt::InputFormat_BGRA_8UB);
-
-	if(options.IsSrgb)
-		io.setGamma(2.2f, 2.2f);
-	else
-		io.setGamma(1.0f, 1.0f);
-
-	io.setMipmapData(interimData.GetData(), source.GetWidth(), source.GetHeight());
-
-	nvtt::CompressionOptions co;
-	co.setFormat(ToNvttFormat(options.Format));
-	co.setQuality(ToNvttQuality(options.Quality));
-
-	NVTTCompressOutputHandler outputHandler(destination.GetData(), destination.GetConsecutiveSize());
-
-	nvtt::OutputOptions oo;
-	oo.setOutputHeader(false);
-	oo.setOutputHandler(&outputHandler);
-
-	nvtt::Compressor compressor;
-	if(!compressor.process(io, co, oo))
-	{
-		B3D_LOG(Error, LogPixelUtility, "Compression failed. Internal error.");
-		return;
-	}
-#endif // B3D_USE_NVTT
 }
 
 TShared<PixelData> PixelUtility::Compress(const TShared<PixelData>& source, const CompressionOptions& options)
@@ -3274,7 +3086,6 @@ Vector<TShared<PixelData>> PixelUtility::GenerateMipmaps(const TShared<PixelData
 		return output;
 	}
 
-#if !B3D_USE_NVTT
 	// GPU mip-map generation is asynchronous (the read-back happens off the render thread); block this worker thread until
 	// it finishes. Must not run on the render thread, which drives the completion callback.
 	TAsyncOp<Vector<TShared<PixelData>>> mipmapOp = GpuGenerateMipmap::Generate(source, options);
@@ -3289,102 +3100,6 @@ Vector<TShared<PixelData>> PixelUtility::GenerateMipmaps(const TShared<PixelData
 
 	B3D_LOG(Error, LogPixelUtility, "Mipmap generation failed. Runtime mipmap generation is not available on this platform.");
 	return output;
-#else
-	PixelFormat interimFormat = IsFloatingPoint(source->GetFormat()) ? PF_RGBA32F : PF_BGRA8;
-
-	PixelData interimData(source->GetWidth(), source->GetHeight(), 1, interimFormat);
-	interimData.AllocateInternalBuffer();
-	BulkPixelConversion(*source, interimData);
-
-	if(interimFormat != PF_RGBA32F)
-		FlipComponentOrder(interimData);
-
-	nvtt::InputOptions io;
-	io.setTextureLayout(nvtt::TextureType_2D, source->GetWidth(), source->GetHeight());
-	io.setMipmapGeneration(true);
-	io.setNormalMap(options.IsNormalMap);
-	io.setNormalizeMipmaps(options.NormalizeMipmaps);
-	io.setWrapMode(ToNvttWrapMode(options.WrapMode));
-
-	if(interimFormat == PF_RGBA32F)
-		io.setFormat(nvtt::InputFormat_RGBA_32F);
-	else
-		io.setFormat(nvtt::InputFormat_BGRA_8UB);
-
-	if(options.IsSrgb)
-		io.setGamma(2.2f, 2.2f);
-	else
-		io.setGamma(1.0f, 1.0f);
-
-	io.setMipmapData(interimData.GetData(), source->GetWidth(), source->GetHeight());
-
-	nvtt::CompressionOptions co;
-	co.setFormat(nvtt::Format_RGBA);
-
-	if(interimFormat == PF_RGBA32F)
-	{
-		co.setPixelType(nvtt::PixelType_Float);
-		co.setPixelFormat(32, 32, 32, 32);
-	}
-	else
-	{
-		co.setPixelType(nvtt::PixelType_UnsignedNorm);
-		co.setPixelFormat(32, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF);
-	}
-
-	u32 numMips = GetMipmapCount(source->GetWidth(), source->GetHeight(), 1, source->GetFormat());
-
-	Vector<TShared<PixelData>> rgbaMipBuffers;
-
-	// Note: This can be done more effectively without creating so many temp buffers
-	// and working with the original formats directly, but it would complicate the code
-	// too much at the moment.
-	u32 curWidth = source->GetWidth();
-	u32 curHeight = source->GetHeight();
-	for(u32 i = 0; i < numMips; i++)
-	{
-		rgbaMipBuffers.push_back(B3DMakeShared<PixelData>(curWidth, curHeight, 1, interimFormat));
-		rgbaMipBuffers.back()->AllocateInternalBuffer();
-
-		if(curWidth > 1)
-			curWidth = curWidth / 2;
-
-		if(curHeight > 1)
-			curHeight = curHeight / 2;
-	}
-
-	rgbaMipBuffers.push_back(B3DMakeShared<PixelData>(curWidth, curHeight, 1, interimFormat));
-	rgbaMipBuffers.back()->AllocateInternalBuffer();
-
-	NVTTMipmapOutputHandler outputHandler(rgbaMipBuffers);
-
-	nvtt::OutputOptions oo;
-	oo.setOutputHeader(false);
-	oo.setOutputHandler(&outputHandler);
-
-	nvtt::Compressor compressor;
-	if(!compressor.process(io, co, oo))
-	{
-		B3D_LOG(Error, LogPixelUtility, "Mipmap generation failed. Internal error.");
-		return output;
-	}
-
-	interimData.FreeInternalBuffer();
-
-	for(u32 i = 0; i < (u32)rgbaMipBuffers.size(); i++)
-	{
-		TShared<PixelData> argbBuffer = rgbaMipBuffers[i];
-		TShared<PixelData> outputBuffer = B3DMakeShared<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, source->GetFormat());
-		outputBuffer->AllocateInternalBuffer();
-
-		BulkPixelConversion(*argbBuffer, *outputBuffer);
-		argbBuffer->FreeInternalBuffer();
-
-		output.push_back(outputBuffer);
-	}
-
-	return output;
-#endif // B3D_USE_NVTT
 }
 
 bool PixelUtility::SaveImage(const TShared<PixelData>& pixelData, const Path& outputPath, ImageFormat format, bool ignoreAlpha)

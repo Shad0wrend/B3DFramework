@@ -17,16 +17,10 @@ endif()
 # Packages
 if(B3D_USE_BUNDLED_LIBRARIES)
 	B3DCheckAndUpdatePrebuiltDependency(snappy)
-	if(B3D_USE_NVTT)
-		B3DCheckAndUpdatePrebuiltDependency(nvtt)
-	endif()
 	B3DCheckAndUpdatePrebuiltDependency(freetype)
 endif()
 
 find_package(snappy REQUIRED)
-if(B3D_USE_NVTT)
-	find_package(nvtt REQUIRED)
-endif()
 find_package(freetype REQUIRED)
 
 if(B3D_ENABLE_NETWORKING)
@@ -119,11 +113,6 @@ target_compile_definitions(bsf PRIVATE
 	$<$<CONFIG:Release>:B3D_CONFIG=B3D_CONFIG_ID_RELEASE>)
 
 # Libraries
-## External lib: NVTT
-if(B3D_USE_NVTT)
-	target_link_libraries(bsf PRIVATE ${nvtt_LIBRARIES})
-endif()
-
 ## External lib: Snappy
 target_link_libraries(bsf PRIVATE ${snappy_LIBRARIES})
 

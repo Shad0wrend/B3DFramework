@@ -22,7 +22,7 @@ shader GenerateMipmap
 
 		float3 SrgbToLinear(float3 c)
 		{
-			// Matches the simple gamma 2.2 curve nvtt used (setGamma(2.2, 2.2)).
+			// Simple gamma 2.2 approximation of the sRGB transfer curve.
 			return pow(max(c, 0.0f), 2.2f);
 		}
 

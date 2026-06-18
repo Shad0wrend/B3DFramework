@@ -63,13 +63,6 @@ B3D_CMAKE_GENERATOR="Ninja" ./B3DBuildSnappy.sh
 - Compile as a static library
 - Build script: `B3DBuildSnappy.sh`
 
-**nvtt**
-- NVIDIA Texture Tools 2.1.2
-- https://github.com/castano/nvidia-texture-tools
-- Required by bsfCore
-- Compile as a static library
-- Build script: `B3DBuildNvtt.sh`
-
 **LibICU**
 - http://site.icu-project.org/
 - Only required for Linux builds
