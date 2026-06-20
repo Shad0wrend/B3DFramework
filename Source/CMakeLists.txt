@@ -47,7 +47,7 @@ set(B3D_BUILD_BSL_PARSER OFF CACHE BOOL "If true, build lexer & parser for BSL. 
 set(B3D_BUILD_TYPE "Development" CACHE STRING "Determines the purpose of the build. 'Development' contains features to make debugging easier, but has overhead compared to other types - this should be your build type in most cases. 'Shipping' strips all development features.")
 set_property(CACHE B3D_BUILD_TYPE PROPERTY STRINGS Development Shipping)
 
-set(B3D_USE_DOTNETCORE ON CACHE BOOL "If enabled, uses new .NET Core 9.0 with support for C# 12. Otherwise uses .NET Framework 4.5 with support for C# 5.")
+set(B3D_MONO_AOT OFF CACHE BOOL "If enabled, runs the Mono runtime in AOT+interpreter mode (MONO_AOT_MODE_INTERP, no JIT) and AOT-compiles managed assemblies at build time.")
 
 set(B3D_ENABLE_NETWORKING OFF CACHE BOOL "If true, enable networking support.")
 

@@ -3,19 +3,11 @@ B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_MONO_SRC)
 
 # Ensure pre-built binary dependencies are up to date
 if(B3D_USE_BUNDLED_LIBRARIES)
-	if(B3D_USE_DOTNETCORE)
-		B3DCheckAndUpdatePrebuiltDependency(DotNETCoreMono)
-	else()
-		B3DCheckAndUpdatePrebuiltDependency(Mono)
-	endif()
+	B3DCheckAndUpdatePrebuiltDependency(DotNETCoreMono)
 endif()
 
 # Find packages
-if(B3D_USE_DOTNETCORE)
-	find_package(DotNETCoreMono)
-else()
-	find_package(mono)
-endif()
+find_package(DotNETCoreMono)
 
 # Target
 add_library(bsfMono STATIC ${BS_MONO_SRC})
@@ -29,13 +21,12 @@ target_include_directories(bsfMono PUBLIC "./")
 # Defines
 target_compile_definitions(bsfMono PUBLIC -DBS_MONO_STATIC_LIB)
 
+# We use Debug coreclr in Debug configuration only
+target_compile_definitions(bsfMono PRIVATE $<$<CONFIG:Debug>:B3D_MONO_CHECKED_RUNTIME=1>)
+
 # Libraries
 ## External lib: Mono
-if(B3D_USE_DOTNETCORE)
-	target_link_libraries(bsfMono PRIVATE ${DotNETCoreMono_LIBRARIES})
-else()
-	target_link_libraries(bsfMono PRIVATE ${mono_LIBRARIES})
-endif()
+target_link_libraries(bsfMono PRIVATE ${DotNETCoreMono_LIBRARIES})
 
 ## Local libs
 target_link_libraries(bsfMono PUBLIC bsf)
@@ -47,12 +38,7 @@ if(B3D_IS_ENGINE)
 	add_executable(MonoExec B3DMonoExec.cpp)
 	target_link_libraries(MonoExec PRIVATE bsfMono)
 
-	if(B3D_USE_DOTNETCORE)
-		target_link_libraries(MonoExec PRIVATE ${DotNETCoreMono_LIBRARIES})
-		target_compile_definitions(MonoExec PRIVATE -DB3D_USE_DOTNETCORE=1)
-	else()
-		target_link_libraries(MonoExec PRIVATE ${mono_LIBRARIES})
-	endif()
+	target_link_libraries(MonoExec PRIVATE ${DotNETCoreMono_LIBRARIES})
 
 	B3DSetUpPostBuildAndInstallSteps(MonoExec)
 endif()

@@ -46,3 +46,7 @@
 // Dynamic library naming
 #define B3D_DYNLIB_EXTENSION "so"
 #define B3D_DYNLIB_PREFIX "lib"
+
+// Sets the environment variable @p name to @p value for the current process, overwriting any existing value.
+#include <stdlib.h>
+#define B3D_SETENV(name, value) setenv(name, value, 1)

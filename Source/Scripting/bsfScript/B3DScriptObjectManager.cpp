@@ -62,10 +62,6 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	for(auto it = mScriptObjectWrappers.begin(); it != mScriptObjectWrappers.end();)
 	{
 		ScriptObjectWrapper* const scriptObjectWrapper = *it;
-#if !B3D_USE_DOTNETCORE
-		B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload());
-		++it;
-#else
 		if(!B3D_ENSURE(scriptObjectWrapper->ShouldPersistScriptReload()))
 		{
 			it = mScriptObjectWrappers.erase(it);
@@ -73,18 +69,13 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 		}
 		else
 			++it;
-#endif
 	}
 
-#if B3D_USE_DOTNETCORE
 	MonoManager::Instance().UnloadMonoLibrary();
-#endif
 
 	ScriptAssemblyManager::Instance().ClearAssemblyInfo();
 
-#if B3D_USE_DOTNETCORE
 	MonoManager::Instance().LoadMonoLibrary();
-#endif
 
 	for(auto& entry : assemblies)
 	{

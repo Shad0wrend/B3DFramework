@@ -17,3 +17,10 @@
 #include <mono/metadata/details/class-functions.h>
 #include <mono/metadata/details/debug-helpers-functions.h>
 #include <mono/metadata/details/reflection-functions.h>
+
+// The cooperative-GC thread-state transition API (mono/utils/mono-threads-api.h) is exported by coreclr.dll but its
+// declaration header isn't shipped with the dependency, so declare the entry points we need here.
+MONO_API_FUNCTION(void*, mono_threads_enter_gc_unsafe_region, (void** stackData))
+MONO_API_FUNCTION(void, mono_threads_exit_gc_unsafe_region, (void* cookie, void** stackData))
+MONO_API_FUNCTION(void*, mono_threads_enter_gc_safe_region, (void** stackData))
+MONO_API_FUNCTION(void, mono_threads_exit_gc_safe_region, (void* cookie, void** stackData))

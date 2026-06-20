@@ -23,3 +23,20 @@ index 718db5eeea6..4f5705f03b1 100644
  MONO_API_FUNCTION(MonoAssembly*, mono_reflection_assembly_get_assembly, (MonoReflectionAssembly *refassembly))
 +
 +MONO_API_FUNCTION(MonoClass*, mono_class_bind_generic_parameters, (MonoClass *klass, int type_argc, MonoType **types, mono_bool is_dynamic))
+diff --git a/src/mono/mono.proj b/src/mono/mono.proj
+index 480f9e15048..32477d41285 100644
+--- a/src/mono/mono.proj
++++ b/src/mono/mono.proj
+@@ -894,7 +894,11 @@ JS_ENGINES = [NODE_JS]
+       <_MonoAOTCPPFLAGS Include="-DFD_SETSIZE=1024" />
+       <_MonoAOTCPPFLAGS Include="-DNVALGRIND" />
+ 
+-      <MonoAOTCMakeArgs Include="-DDISABLE_INTERPRETER=1" />
++      <!-- B3D: interpreter intentionally left ENABLED in the Windows-host cross
++           compiler so it can emit interpreter AOT images for the runtime's
++           AOT+interp mode. Upstream disables it (a 2021 Android/Browser bring-up
++           expedient, not a real limitation; the interp runtime ships on Windows). -->
++      <MonoAOTCMakeArgs Condition="'$(TargetArchitecture)' == 'wasm'" Include="-DDISABLE_INTERPRETER=1" />
+       <MonoAOTCMakeArgs Condition="'$(TargetArchitecture)' == 'wasm'" Include="-DCLR_CMAKE_HOST_ARCH=$(BuildArchitecture)" />
+       <MonoAOTCMakeArgs Condition="'$(TargetArchitecture)' != 'wasm'" Include="-DCLR_CMAKE_HOST_ARCH=$(TargetArchitecture)" />
+ 

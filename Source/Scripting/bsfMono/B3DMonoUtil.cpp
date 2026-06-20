@@ -6,17 +6,7 @@
 #include "B3DMonoAssembly.h"
 #include "B3DMonoClass.h"
 #include "B3DMonoProperty.h"
-
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/appdomain.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/reflection.h>
-#include <mono/metadata/mono-debug.h>
-#endif
 
 using namespace b3d;
 static bool sGenericHelpersInitialized = false;

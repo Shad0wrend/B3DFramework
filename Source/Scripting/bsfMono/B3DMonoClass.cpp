@@ -7,16 +7,7 @@
 #include "B3DMonoAssembly.h"
 #include "B3DMonoManager.h"
 #include "B3DMonoUtil.h"
-
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/reflection.h>
-#endif
 
 namespace b3d {
 size_t MonoClass::MethodId::Hash::operator()(const MonoClass::MethodId& v) const

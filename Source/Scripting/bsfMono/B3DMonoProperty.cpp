@@ -4,15 +4,7 @@
 #include "B3DMonoMethod.h"
 #include "B3DMonoManager.h"
 #include "B3DMonoClass.h"
-
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/reflection.h>
-#endif
 
 namespace b3d {
 MonoProperty::MonoProperty(::MonoProperty* monoProp)

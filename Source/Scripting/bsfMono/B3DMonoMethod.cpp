@@ -5,15 +5,7 @@
 #include "B3DMonoUtil.h"
 #include "B3DMonoClass.h"
 
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/attrdefs.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/reflection.h>
-#endif
 
 namespace b3d {
 MonoMethod::MonoMethod(::MonoMethod* method)

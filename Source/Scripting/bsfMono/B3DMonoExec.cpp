@@ -8,14 +8,7 @@
 #	include <unistd.h>
 #endif
 
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/assembly.h>
-#include <mono/metadata/mono-config.h>
-#include <mono/metadata/appdomain.h>
-#endif
 
 #include <cstring>
 
@@ -45,10 +38,8 @@ int main(int argc, char* argv[])
 	strcpy(assembliesDir, monoDir);
 	strcat(assembliesDir, ASSEMBLIES_DIR);
 
-#if B3D_USE_DOTNETCORE
 	b3d::MonoLoader::StartUp();
 	b3d::MonoLoader::Instance().Load();
-#endif
 
 	mono_set_dirs(libDir, etcDir);
 	mono_set_assemblies_path(assembliesDir);
@@ -71,10 +62,8 @@ int main(int argc, char* argv[])
 
 	mono_jit_cleanup(domain);
 
-#if B3D_USE_DOTNETCORE
 	b3d::MonoLoader::Instance().Unload();
 	b3d::MonoLoader::ShutDown();
-#endif
 
 	return returnVal;
 }

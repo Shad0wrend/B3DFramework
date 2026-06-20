@@ -5,13 +5,7 @@
 #include "B3DMonoClass.h"
 #include "B3DMonoUtil.h"
 
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include <mono/jit/jit.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/class.h>
-#endif
 
 namespace b3d { namespace Detail {
 template <>

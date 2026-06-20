@@ -7,39 +7,20 @@
 #include "B3DMonoUtil.h"
 #include "FileSystem/B3DFileSystem.h"
 
-#if B3D_USE_DOTNETCORE
 #include "B3DMonoLoader.h"
-#else
-#include "mono/jit/jit.h"
-#include <mono/metadata/assembly.h>
-#include <mono/metadata/mono-config.h>
-#include <mono/metadata/mono-gc.h>
-#include <mono/metadata/mono-debug.h>
-#include <mono/utils/mono-logger.h>
-#include <mono/metadata/threads.h>
-#include <mono/metadata/appdomain.h>
-#endif
+#include "B3DMonoGCRegion.h"
 
 using namespace b3d;
 
+#ifndef B3D_MONO_CHECKED_RUNTIME
+#define B3D_MONO_CHECKED_RUNTIME 0
+#endif
+
 const String kMonoCompilerDir = "bin/Mono/compiler/";
 
-#if B3D_USE_DOTNETCORE
+#if !B3D_MONO_AOT
+// Flat (config-independent) assemblies folder used in JIT mode. Under B3D_MONO_AOT the assemblies are in different folders depending on the config.
 static const char* kMonoAssembliesFolder = "bin/Assemblies/";
-#else
-const String kMonoLibDir = "bin/Mono/lib/";
-const String kMonoEtcDir = "bin/Mono/etc/";
-const MonoVersion kMonoVersion = MonoVersion::v4_5;
-
-struct MonoVersionData
-{
-	String Path;
-	String Version;
-};
-
-static const MonoVersionData kMonoVersionData[1] = {
-	{ kMonoLibDir + "mono/4.5", "v4.0.30319" }
-};
 #endif
 
 namespace b3d
@@ -101,9 +82,7 @@ namespace b3d
 MonoManager::MonoManager()
 	: mScriptDomain(nullptr), mRootDomain(nullptr), mCorlibAssembly(nullptr)
 {
-#if B3D_USE_DOTNETCORE
 	MonoLoader::StartUp();
-#endif
 
 	LoadMonoLibrary();
 }
@@ -116,47 +95,45 @@ MonoManager::~MonoManager()
 	// which will likely get unloaded right after shutdown
 	GetScriptWrapperTypeInformation().clear();
 
-#if B3D_USE_DOTNETCORE
 	MonoLoader::ShutDown();
-#endif
 }
 
 void MonoManager::LoadMonoLibrary()
 {
-#if !B3D_USE_DOTNETCORE
-	Path libDir = Paths::FindPath(kMonoLibDir);
-	Path etcDir = GetMonoEtcFolder();
-	Path assembliesDir = GetFrameworkAssembliesFolder();
+	// We don't include 'System.Globalization.Native' library by default. This prevents runtime trying to load it.
+	B3D_SETENV("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1");
 
-	mono_set_dirs(libDir.ToString().c_str(), etcDir.ToString().c_str());
-	mono_set_assemblies_path(assembliesDir.ToString().c_str());
-#else
+	// Disable the .NET diagnostics server as it produces warning when performing hot-reload.
+	B3D_SETENV("DOTNET_EnableDiagnostics", "0");
+
 	MonoLoader::Instance().Load();
 
 	const Path assembliesFolder = GetFrameworkAssembliesFolder();
 	mono_set_assemblies_path(assembliesFolder.ToString().c_str());
-#endif
 
+#if B3D_BUILD_TYPE_DEVELOPMENT
 #if B3D_DEBUG
 	// Note: For proper debugging experience make sure to open a console window to display stdout and stderr, as Mono
 	// uses them for much of its logging.
 	mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+#endif
 
-	const char* options[] = {
+	// The managed soft-debugger. 
+	Vector<const char*> options = {
 		"--soft-breakpoints",
 		"--debugger-agent=transport=dt_socket,address=127.0.0.1:17615,embedding=1,server=y,suspend=n",
-		"--debug-domain-unload",
-
-		// GC options:
-		// check-remset-consistency: Makes sure that write barriers are properly issued in native code, and therefore
-		//    all old->new generation references are properly present in the remset. This is easy to mess up in native
-		//    code by performing a simple memory copy without a barrier, so it's important to keep the option on.
-		// verify-before-collections: Unusure what exactly it does, but it sounds like it could help track down
-		//    things like accessing released/moved objects, or attempting to release handles for an unloaded domain.
-		// xdomain-checks: Makes sure that no references are left when a domain is unloaded.
-		"--gc-debug=check-remset-consistency,verify-before-collections,xdomain-checks"
 	};
-	mono_jit_parse_options(4, (char**)options);
+
+#if B3D_MONO_CHECKED_RUNTIME && B3D_DEBUG
+	// check-remset-consistency: Makes sure that write barriers are properly issued in native code, and therefore
+	//    all old->new generation references are properly present in the remset. This is easy to mess up in native
+	//    code by performing a simple memory copy without a barrier, so it's important to keep the option on.
+	// verify-before-collections: Unusure what exactly it does, but it sounds like it could help track down
+	//    things like accessing released/moved objects, or attempting to release handles for an unloaded domain.
+	options.push_back("--gc-debug=check-remset-consistency,verify-before-collections");
+#endif
+
+	mono_jit_parse_options((int)options.size(), const_cast<char**>(options.data()));
 	mono_trace_set_level_string("warning"); // Note: Switch to "debug" for detailed output, disabled for now due to spam
 #else
 	mono_trace_set_level_string("warning");
@@ -168,11 +145,11 @@ void MonoManager::LoadMonoLibrary()
 
 	mono_config_parse(nullptr);
 
-#if B3D_USE_DOTNETCORE
-	mScriptDomain = mRootDomain = mono_jit_init("bsfMono");
-#else
-	mRootDomain = mono_jit_init_version("bsfMono", kMonoVersionData[(int)kMonoVersion].Version.c_str());
+#if B3D_MONO_AOT
+	mono_jit_set_aot_mode(MONO_AOT_MODE_INTERP);
 #endif
+
+	mScriptDomain = mRootDomain = mono_jit_init("bsfMono");
 
 	if(mRootDomain == nullptr)
 		B3D_LOG(Fatal, LogGeneric, "Cannot initialize Mono runtime.");
@@ -190,29 +167,12 @@ void MonoManager::UnloadMonoLibrary()
 {
 	UnloadAll();
 
-#if B3D_USE_DOTNETCORE
 	MonoLoader::Instance().Unload();
-#endif
 }
 
 b3d::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name)
 {
 	MonoAssembly* assembly = nullptr;
-
-#if !B3D_USE_DOTNETCORE
-	// Application domains not present with .NET Core
-	if(mScriptDomain == nullptr)
-	{
-		String appDomainName = "ScriptDomain";
-
-		mScriptDomain = mono_domain_create_appdomain(const_cast<char*>(appDomainName.c_str()), nullptr);
-		if(mScriptDomain == nullptr)
-			B3D_LOG(Fatal, LogGeneric, "Cannot create script app domain.");
-
-		if(!mono_domain_set(mScriptDomain, true))
-			B3D_LOG(Fatal, LogGeneric, "Cannot set script app domain.");
-	}
-#endif
 
 	auto iterFind = mAssemblies.find(name);
 	if(iterFind != mAssemblies.end())
@@ -383,26 +343,15 @@ b3d::MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
 
 void MonoManager::UnloadScriptDomain()
 {
-#if B3D_USE_DOTNETCORE
 	if(mScriptDomain != nullptr)
 	{
+		// mono_domain_finalize does a cooperative blocking wait on the finalizer thread, which requires the calling
+		// thread to be in GC-Unsafe (managed-running) state, otherwise Release coreclr errors.
+		ScopedGCUnsafeRegion gcUnsafe;
 		mono_domain_finalize(mScriptDomain, ~0u);
-		mScriptDomain = nullptr;
-	}
-#else
-	if(mScriptDomain != nullptr)
-	{
-		mono_domain_set(mono_get_root_domain(), true);
-
-		MonoObject* exception = nullptr;
-		mono_domain_try_unload(mScriptDomain, &exception);
-
-		if(exception != nullptr)
-			MonoUtil::ThrowIfException(exception);
 
 		mScriptDomain = nullptr;
 	}
-#endif
 
 	for(auto& assemblyEntry : mAssemblies)
 	{
@@ -430,20 +379,30 @@ void MonoManager::UnloadScriptDomain()
 
 Path MonoManager::GetFrameworkAssembliesFolder() const
 {
-#if B3D_USE_DOTNETCORE
-	return Paths::FindPath(kMonoAssembliesFolder);
+#if B3D_MONO_AOT
+	// AOT libraries in are in bin/Assemblies/<Config>/ folder
+	const Path releaseFolder = Paths::FindPath(Paths::kReleaseAssemblyPath);
+	const Path debugFolder = Paths::FindPath(Paths::kDebugAssemblyPath);
+
+#if B3D_DEBUG
+	if(FileSystem::Exists(debugFolder))
+		return debugFolder;
+
+	return releaseFolder;
 #else
-	return Paths::FindPath(kMonoVersionData[(int)kMonoVersion].Path);
+	if(FileSystem::Exists(releaseFolder))
+		return releaseFolder;
+
+	return debugFolder;
+#endif
+#else
+	return Paths::FindPath(kMonoAssembliesFolder);
 #endif
 }
 
 Path MonoManager::GetMonoEtcFolder() const
 {
-#if B3D_USE_DOTNETCORE
 	return Path::kBlank;
-#else
-	return Paths::FindPath(kMonoEtcDir);
-#endif
 }
 
 Path MonoManager::GetCompilerPath() const

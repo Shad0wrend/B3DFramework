@@ -62,26 +62,15 @@ if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
     mkdir -p "$MonoOutputFolder/bin/Debug/"
 fi
 
-# Essential assemblies for basic C# scripting (minimal set)
-# Includes core runtime, facades, and commonly used system libraries
-ESSENTIAL_ASSEMBLIES=(
-    # Core runtime
-    "System.Private.CoreLib"
-    "mscorlib"                # Legacy facade that forwards to System.Private.CoreLib
-    "netstandard"
-    # Basic system libraries
-    "System.Runtime"
-    "System.Runtime.InteropServices"
-    "System.Runtime.CompilerServices.Unsafe"
-    "System.Reflection"
-    "System.Collections"
-    "System.Threading"
-    "System.Threading.Tasks"
-    "System.Memory"
-    "System.IO"
-    "System.Text.Encoding"
-    "System.Diagnostics.Debug"
-)
+# Essential assemblies for basic C# scripting (minimal set).
+RequiredAssembliesFile="$CurrentDirectory/../Source/CMake/RequiredNETAssemblies.txt"
+ESSENTIAL_ASSEMBLIES=()
+while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%%#*}"                              # strip trailing comment
+    line="$(printf '%s' "$line" | tr -d '[:space:]')" # trim whitespace (names have none)
+    [ -z "$line" ] && continue
+    ESSENTIAL_ASSEMBLIES+=("$line")
+done < "$RequiredAssembliesFile"
 
 # Helper to copy only essential assemblies from a directory (dll, pdb, and xml)
 copy_essential_assemblies()
@@ -118,6 +107,17 @@ copy_libraries()
     # Copy native runtime library
     cp -p -- "artifacts/bin/mono/$1.$2.$3/coreclr$SharedLibraryExtension" "$MonoOutputFolder/bin/$4"
 
+    # Copy the AOT cross compiler (built via /p:BuildMonoAOTCrossCompiler=true).
+    # It lives under cross/<rid>/ where rid maps windows->win-<arch>, else <os>-<arch>.
+    local ridOs="$1"
+    if [[ "$1" == "windows" ]]; then ridOs="win"; fi
+    local crossExe="artifacts/bin/mono/$1.$2.$3/cross/$ridOs-$2/mono-aot-cross$ExecutableExtension"
+    if [ -f "$crossExe" ]; then
+        cp -p -- "$crossExe" "$MonoOutputFolder/bin/$4"
+    else
+        echo "[Warning] AOT cross compiler not found at $crossExe"
+    fi
+
     if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
         cp -p -- "artifacts/obj/mono/$1.$2.$3/out/lib/coreclr.import.lib" "$MonoOutputFolder/lib/$4"
 
@@ -130,25 +130,25 @@ copy_libraries()
 
 if [[ "$Platform" == "win32" || "$Platform" == "msys" ]]; then
     # Build & copy debug
-    ./build.cmd mono+libs -configuration Debug
-    copy_libraries windows x64 Debug Debug/ 
+    ./build.cmd mono+libs -configuration Debug /p:BuildMonoAOTCrossCompiler=true
+    copy_libraries windows x64 Debug Debug/
 
     # Build & copy release
-    ./build.cmd mono+libs -configuration Release
-    copy_libraries windows x64 Release Release/ 
+    ./build.cmd mono+libs -configuration Release /p:BuildMonoAOTCrossCompiler=true
+    copy_libraries windows x64 Release Release/
 
     # Copy includes
     cp -a -r -- "artifacts/bin/mono/windows.x64.Debug/include/mono-2.0/." "$MonoOutputFolder/include/"
 elif [[ "$Platform" == "darwin"* ]]; then
     # Build & copy release
-    ./build.sh mono+libs -configuration Release
+    ./build.sh mono+libs -configuration Release /p:BuildMonoAOTCrossCompiler=true
     copy_libraries osx arm64 Release ""
 
     # Copy includes
     cp -a -r -- "artifacts/bin/mono/osx.arm64.Release/include/mono-2.0/." "$MonoOutputFolder/include/"
 else
     # Build & copy release
-    ./build.sh mono+libs -configuration Release
+    ./build.sh mono+libs -configuration Release /p:BuildMonoAOTCrossCompiler=true
     copy_libraries linux x64 Release ""
 
     # Copy includes

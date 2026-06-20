@@ -20,7 +20,7 @@
 
 #define B3D_IS_ENGINE @B3D_IS_ENGINE@
 #define B3D_WITH_EDITOR @B3D_IS_ENGINE@ // For now always enable this, but later set up a non-editor build for standalone game
-#cmakedefine01 B3D_USE_DOTNETCORE
+#cmakedefine01 B3D_MONO_AOT
 
 #define B3D_PLATFORM_NAME @B3D_PLATFORM@
 #define B3D_PLATFORM B3D_PLATFORM_ID_@B3D_PLATFORM_UPPER@

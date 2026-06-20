@@ -68,3 +68,7 @@
 // Dynamic library naming
 #define B3D_DYNLIB_EXTENSION "dll"
 #define B3D_DYNLIB_PREFIX nullptr
+
+// Sets the environment variable @p name to @p value for the current process, overwriting any existing value.
+#include <stdlib.h>
+#define B3D_SETENV(name, value) _putenv_s(name, value)

@@ -19,12 +19,6 @@ namespace b3d
 		ScriptTypeMetaData LocalMetaData; /**< Local copy of the meta-data that will be used to initialize @p MetaData. */
 	};
 
-	/**	Available Mono versions. */
-	enum class MonoVersion
-	{
-		v4_5
-	};
-
 	/**	Loads Mono script assemblies and manages script objects. */
 	class B3D_MONO_EXPORT MonoManager : public Module<MonoManager>
 	{
@@ -32,13 +26,11 @@ namespace b3d
 		MonoManager();
 		~MonoManager();
 
-#if B3D_USE_DOTNETCORE
 		/** Loads the Mono library and sets up the relevant function pointers, if not loaded already. Must be called before performing any other actions in this class. */
 		void LoadMonoLibrary();
 
 		/** Unloads the Mono library if loaded. Caller must make sure to release all Mono objects before calling this method. */
 		void UnloadMonoLibrary();
-#endif
 
 		/**
 		 * Loads a new assembly from the provided path.

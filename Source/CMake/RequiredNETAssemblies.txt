@@ -1,0 +1,22 @@
+# List of .NET BCL assemblies deployed with the application
+#
+# One assembly base name per line (no .dll). Blank lines and '#' comments are ignored.
+# System.Private.CoreLib (corlib) is mandatory
+
+# Core runtime
+System.Private.CoreLib
+mscorlib                              # legacy facade forwarding to System.Private.CoreLib
+netstandard
+
+# Basic system libraries
+System.Runtime
+System.Runtime.InteropServices
+System.Runtime.CompilerServices.Unsafe
+System.Reflection
+System.Collections
+System.Threading
+System.Threading.Tasks
+System.Memory
+System.IO
+System.Text.Encoding
+System.Diagnostics.Debug

@@ -19,20 +19,10 @@ endif()
 B3DGlobSourceFilesWithExplicitPattern(${CMAKE_CURRENT_SOURCE_DIR} "cs" "" "" csFiles)
 add_library(${assemblyName} SHARED ${csFiles})
 
-if(B3D_USE_DOTNETCORE)
-	set(defines "${defines}B3D_USE_DOTNETCORE;")
-
-	set_target_properties(${assemblyName} PROPERTIES
-			DOTNET_SDK "Microsoft.NET.Sdk"
-			DOTNET_TARGET_FRAMEWORK "net9.0"
-			VS_GLOBAL_ROOTnamespace b3d)
-else()
-	set_target_properties(${assemblyName} PROPERTIES
-			DOTNET_TARGET_FRAMEWORK_VERSION "v4.5"
-			VS_GLOBAL_ROOTnamespace b3d
-			VS_DOTNET_REFERENCES "System;System.Core")
-endif()
-
+set_target_properties(${assemblyName} PROPERTIES
+		DOTNET_SDK "Microsoft.NET.Sdk"
+		DOTNET_TARGET_FRAMEWORK "net9.0"
+		VS_GLOBAL_ROOTnamespace b3d)
 
 target_compile_definitions(${assemblyName} PRIVATE ${defines})
 set_property(TARGET ${assemblyName} PROPERTY FOLDER Script)
@@ -47,26 +37,8 @@ add_custom_command(
 		COMMAND_EXPAND_LISTS
 )
 
-if(NOT B3D_USE_DOTNETCORE)
-	add_custom_command(
-			TARGET ${assemblyName} POST_BUILD
-			COMMAND ${CMAKE_COMMAND}
-			ARGS    -E copy_if_different "$<TARGET_PDB_FILE:${assemblyName}>" $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>
-			COMMENT "Copying $<TARGET_FILE:${assemblyName}> to $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>\n"
-			COMMAND_EXPAND_LISTS
-	)
-endif()
-
-# Convert PDB to MDB
-if(WIN32 AND NOT B3D_USE_DOTNETCORE)
-	add_custom_command(
-			TARGET ${assemblyName} POST_BUILD
-			COMMAND cmd /c $ENV{MONO_INSTALL_DIR}/bin/pdb2mdb.bat
-			ARGS    $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>$<TARGET_FILE_NAME:${assemblyName}>
-			COMMENT "Converting $<$<CONFIG:Debug>:${assemblyOutputFolder}/Debug/>$<$<NOT:$<CONFIG:Debug>>:${assemblyOutputFolder}/Release/>$<TARGET_FILE_NAME:${assemblyName}>\n"
-			COMMAND_EXPAND_LISTS
-	)
-endif()
+# If AOT mode is enabled, compiles this assembly and all BCL assemblies using the AOT compiler. The assemblies must already be present in the Assemblies folder.
+B3DAddPostBuildAOTCompileIfNeeded(${assemblyName} "$<TARGET_FILE_NAME:${assemblyName}>")
 
 set(csProjectName "${assemblyName}.csproj")
 
