@@ -5,6 +5,7 @@
 #include "B3DPrerequisites.h"
 #include "Material/B3DShader.h"
 #include "GpuBackend/B3DGpuProgram.h"
+#include "GpuBackend/B3DGpuBackend.h"
 
 namespace b3d
 {
@@ -14,28 +15,6 @@ namespace b3d
 	/** @addtogroup Material-Internal
 	 *  @{
 	 */
-
-	/** Supported types of low-level shading languages. */
-	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportName(ShadingLanguageFlags), API(Framework), API(Editor)) ShadingLanguageFlag
-	{
-		Unknown = 0,
-		/** High level shading language used by DirectX backend. */
-		HLSL = 1 << 0,
-		/** OpenGL shading language. */
-		GLSL = 1 << 1,
-		/** Variant of GLSL used for Vulkan. */
-		VKSL = 1 << 2,
-		/** Metal shading language. */
-		MSL = 1 << 3,
-		/** Null shading language for the null render backend. Produces no actual shader code. */
-		NullSL = 1 << 4,
-		Count = 5,
-		/** Helper entry that includes all languages. */
-		All = HLSL | GLSL | VKSL | MSL
-	};
-
-	using ShadingLanguageFlags = Flags<ShadingLanguageFlag>;
-	B3D_FLAGS_OPERATORS(ShadingLanguageFlag)
 
 	/**	Contains the results of shader parsing or compilation. */
 	struct ShaderCompilerResult
@@ -81,35 +60,37 @@ namespace b3d
 		 * @param		name				Name used to identify the shader.
 		 * @param		source				BSL source to compile.
 		 * @param		defines				An optional set of defines to set during compilation.
-		 * @param		languages			Low-level languages to compile individual variations for. Each language will result in another set of variations.
+		 * @param		languages			Low-level shading language identifiers (for example "hlsl", "vksl") to compile individual variations for. Each language will result in another set of variations.
 		 * @param		compileVariations	If true all shader variations will be compiled. If false, you must compile the variations on demand before use.
 		 * @param		outShader			Shader if the compilation is successful, null otherwise.
 		 * @return							A result object containing an error message if not successful.
 		 */
-		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<Shader>& outShader) = 0;
+		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<Shader>& outShader) = 0;
 
-		/** @copydoc Compile(const String&, const String&, const UnorderedMap<String, String>&, ShadingLanguageFlags, bool, TShared<Shader>&) */
-		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<render::Shader>& outShader) = 0;
+		/** @copydoc Compile(const String&, const String&, const UnorderedMap<String, String>&, const Vector<String>&, bool, TShared<Shader>&) */
+		virtual ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<render::Shader>& outShader) = 0;
 
 		/**
 		 * Compiles a particular shader variation.
 		 *
 		 * @param		shader					Shader for which to compile the variation.
 		 * @param		variationParameters		Specific variation to compile.
-		 * @param		language				Language to compile the variation for. Must be a single language, rather than a mask of multiple languages.
+		 * @param		language				Identifier of the single language to compile the variation for (for example "hlsl", "vksl").
 		 * @param		inOutVariation			Variation on which to set the compiled data if successful.
 		 * @return								A result object containing an error message if not successful.
 		 */
-		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Variation& inOutVariation) = 0;
+		virtual ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, const String& language, Variation& inOutVariation) = 0;
 
-		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, ShadingLanguageFlag, ShaderCompilerMetaData, Variation&) */
-		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Variation& inOutVariation) = 0;
+		/** @copydoc CompileVariation(const Shader&, const ShaderVariationParameters&, const String&, Variation&) */
+		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, const String& language, render::Variation& inOutVariation) = 0;
 	};
 
 	/** Keeps track of all available shader compilers. */
 	class B3D_EXPORT ShaderCompilers : public Module<ShaderCompilers>
 	{
 	public:
+		ShaderCompilers();
+
 		/** Registers a new shader compiler for the provided language. */
 		void RegisterCompiler(const String& language, const TShared<IShaderCompiler>& compiler) { mCompilers[language] = compiler; }
 
@@ -118,6 +99,9 @@ namespace b3d
 
 		/** Registers a path that will be used for looking for shader files. Thread safe. */
 		void RegisterSearchPath(const Path& folder);
+
+		/** Registers a low-level shading language that we can cross-compile to (for example "vksl"). Thread safe. */
+		void RegisterShadingLanguage(const String& language);
 
 		/** Returns the compiler for the specified language. */
 		TShared<IShaderCompiler> GetCompiler(const String& language);
@@ -134,19 +118,19 @@ namespace b3d
 		template <bool IsRenderProxy>
 		TShared<CoreVariantType<Shader, IsRenderProxy>> GetOrCompileShader(const Path& shaderPath, const String& cachePrefix, const ShaderDefines& defines);
 
-		/** Detects shading language supported by the current render backend. */
-		static ShadingLanguageFlag DetectActiveShadingLanguage();
-
-		/** Converts a shading language name to a corresponding enum entry. */
-		static ShadingLanguageFlag ParseShadingLanguage(const String& name);
-
-		/** Returns the name of the provided shading language. */
-		static const char* GetShadingLanguageName(ShadingLanguageFlag language);
+		/**
+		 * Detects the shading language identifier supported by the current render backend. Returns an empty string
+		 * if no registered language is supported (or no device is available). Thread safe.
+		 */
+		String DetectActiveShadingLanguage() const;
 
 	private:
 		UnorderedMap<String, TShared<IShaderCompiler>> mCompilers;
 		Vector<Path> mSearchPaths;
 		Mutex mSearchPathMutex;
+
+		Vector<String> mShadingLanguages;
+		mutable Mutex mShadingLanguageMutex;
 	};
 
 

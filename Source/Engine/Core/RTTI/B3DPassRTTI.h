@@ -20,17 +20,17 @@ namespace b3d
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(BlendStateInformation, mData.BlendStateDesc, 0)
-			B3D_RTTI_MEMBER_NAMED(RasterizerStateInformation, mData.RasterizerStateDesc, 1)
-			B3D_RTTI_MEMBER_NAMED(DepthStencilStateInformation, mData.DepthStencilStateDesc, 2)
+			B3D_RTTI_MEMBER_NAMED(BlendStateInformation, mData.BlendStateInformation, 0)
+			B3D_RTTI_MEMBER_NAMED(RasterizerStateInformation, mData.RasterizerStateInformation, 1)
+			B3D_RTTI_MEMBER_NAMED(DepthStencilStateInformation, mData.DepthStencilStateInformation, 2)
 
 			B3D_RTTI_MEMBER_NAMED(StencilReferenceValue, mData.StencilRefValue, 3)
-			B3D_RTTI_MEMBER_NAMED(VertexProgramInformation, mData.VertexProgramDesc, 4)
-			B3D_RTTI_MEMBER_NAMED(FragmentProgramInformation, mData.FragmentProgramDesc, 5)
-			B3D_RTTI_MEMBER_NAMED(GeometryProgramInformation, mData.GeometryProgramDesc, 6)
-			B3D_RTTI_MEMBER_NAMED(HullProgramInformation, mData.HullProgramDesc, 7)
-			B3D_RTTI_MEMBER_NAMED(DomainProgramInformation, mData.DomainProgramDesc, 8)
-			B3D_RTTI_MEMBER_NAMED(ComputeProgramInformation, mData.ComputeProgramDesc, 9)
+			B3D_RTTI_MEMBER_NAMED(VertexProgramInformation, mData.VertexProgramCreateInformation, 4)
+			B3D_RTTI_MEMBER_NAMED(FragmentProgramInformation, mData.FragmentProgramCreateInformation, 5)
+			B3D_RTTI_MEMBER_NAMED(GeometryProgramInformation, mData.GeometryProgramCreateInformation, 6)
+			B3D_RTTI_MEMBER_NAMED(HullProgramInformation, mData.HullProgramCreateInformation, 7)
+			B3D_RTTI_MEMBER_NAMED(DomainProgramInformation, mData.DomainProgramCreateInformation, 8)
+			B3D_RTTI_MEMBER_NAMED(ComputeProgramInformation, mData.ComputeProgramCreateInformation, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
@@ -61,17 +61,17 @@ namespace b3d
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_NAMED(BlendStateInformation, mData.BlendStateDesc, 0)
-			B3D_RTTI_MEMBER_NAMED(RasterizerStateInformation, mData.RasterizerStateDesc, 1)
-			B3D_RTTI_MEMBER_NAMED(DepthStencilStateInformation, mData.DepthStencilStateDesc, 2)
+			B3D_RTTI_MEMBER_NAMED(BlendStateInformation, mData.BlendStateInformation, 0)
+			B3D_RTTI_MEMBER_NAMED(RasterizerStateInformation, mData.RasterizerStateInformation, 1)
+			B3D_RTTI_MEMBER_NAMED(DepthStencilStateInformation, mData.DepthStencilStateInformation, 2)
 
 			B3D_RTTI_MEMBER_NAMED(StencilReferenceValue, mData.StencilRefValue, 3)
-			B3D_RTTI_MEMBER_NAMED(VertexProgramInformation, mData.VertexProgramDesc, 4)
-			B3D_RTTI_MEMBER_NAMED(FragmentProgramInformation, mData.FragmentProgramDesc, 5)
-			B3D_RTTI_MEMBER_NAMED(GeometryProgramInformation, mData.GeometryProgramDesc, 6)
-			B3D_RTTI_MEMBER_NAMED(HullProgramInformation, mData.HullProgramDesc, 7)
-			B3D_RTTI_MEMBER_NAMED(DomainProgramInformation, mData.DomainProgramDesc, 8)
-			B3D_RTTI_MEMBER_NAMED(ComputeProgramInformation, mData.ComputeProgramDesc, 9)
+			B3D_RTTI_MEMBER_NAMED(VertexProgramInformation, mData.VertexProgramCreateInformation, 4)
+			B3D_RTTI_MEMBER_NAMED(FragmentProgramInformation, mData.FragmentProgramCreateInformation, 5)
+			B3D_RTTI_MEMBER_NAMED(GeometryProgramInformation, mData.GeometryProgramCreateInformation, 6)
+			B3D_RTTI_MEMBER_NAMED(HullProgramInformation, mData.HullProgramCreateInformation, 7)
+			B3D_RTTI_MEMBER_NAMED(DomainProgramInformation, mData.DomainProgramCreateInformation, 8)
+			B3D_RTTI_MEMBER_NAMED(ComputeProgramInformation, mData.ComputeProgramCreateInformation, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:

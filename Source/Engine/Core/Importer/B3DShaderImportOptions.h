@@ -23,7 +23,6 @@ namespace b3d
 		 * @param	value		Value to assign to the define.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void SetDefine(const String& define, const String& value)
 		{
 			mDefines[define] = value;
@@ -37,7 +36,6 @@ namespace b3d
 		 * @return				True if the define was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		bool GetDefine(const String& define, String& outValue) const
 		{
 			auto found = mDefines.find(define);
@@ -57,7 +55,6 @@ namespace b3d
 		 * @return				True if the define was found, false otherwise.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		bool HasDefine(const String& define) const
 		{
 			auto found = mDefines.find(define);
@@ -70,7 +67,6 @@ namespace b3d
 		 * @param	define		Name of the define to unregister.
 		 */
 		B3D_SCRIPT_EXPORT()
-
 		void RemoveDefine(const String& define)
 		{
 			mDefines.erase(define);
@@ -80,11 +76,11 @@ namespace b3d
 		const UnorderedMap<String, String>& GetDefines() const { return mDefines; }
 
 		/**
-		 * Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on
-		 * which render backends it will be able to run on.
+		 * Low-level shading language identifiers (for example "hlsl", "vksl") the BSL shader should be converted into.
+		 * This ultimately controls on which render backends it will be able to run on.
 		 */
 		B3D_SCRIPT_EXPORT()
-		ShadingLanguageFlags Languages = ShadingLanguageFlag::All;
+		Vector<String> Languages = { kGpuProgramLanguageHlsl, kGpuProgramLanguageVksl, kGpuProgramLanguageMvksl };
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))

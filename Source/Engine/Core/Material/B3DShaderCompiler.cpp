@@ -29,10 +29,27 @@ TShared<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 	return nullptr;
 }
 
+ShaderCompilers::ShaderCompilers()
+	: mShadingLanguages{ kGpuProgramLanguageHlsl, kGpuProgramLanguageVksl, kGpuProgramLanguageMvksl, kGpuProgramLanguageNullsl }
+{
+}
+
 void ShaderCompilers::RegisterSearchPath(const Path& folder)
 {
 	Lock lock(mSearchPathMutex);
 	mSearchPaths.push_back(folder);
+}
+
+void ShaderCompilers::RegisterShadingLanguage(const String& language)
+{
+	Lock lock(mShadingLanguageMutex);
+	for(const auto& existing : mShadingLanguages)
+	{
+		if(existing == language)
+			return;
+	}
+
+	mShadingLanguages.push_back(language);
 }
 
 template <bool IsRenderProxy>
@@ -67,13 +84,12 @@ TShared<CoreVariantType<Shader, IsRenderProxy>> ShaderCompilers::GetOrCompileSha
 	}
 
 	const String& shaderSource = shaderFileStream->GetAsString();
-	const ShadingLanguageFlag activeShadingLanguage = DetectActiveShadingLanguage();
-	const String shadingLanguageName = String(GetShadingLanguageName(activeShadingLanguage)) + "/";
+	const String shadingLanguageName = DetectActiveShadingLanguage();
 	const String& shaderName = shaderPath.GetFilename(false);
 	const Array<u64, 2> shaderHash = Shader::ComputeHash(shaderSource);
 	const String shaderNameInCache = cachePrefix + shaderName + "/";
 
-	const Path shaderPathInCache = Path(shaderNameInCache) + shadingLanguageName + "MetaData";
+	const Path shaderPathInCache = Path(shaderNameInCache) + shadingLanguageName + "/MetaData";
 	PersistentCache& cache = GetApplication().GetApplicationCache();
 
 	TShared<ShaderType> shader = cache.TryGetEntry<ShaderType>(shaderPathInCache);
@@ -110,7 +126,11 @@ TShared<CoreVariantType<Shader, IsRenderProxy>> ShaderCompilers::GetOrCompileSha
 			return nullptr;
 		}
 
-		ShaderCompilerResult compileResult = bslCompiler->Compile(shaderName, shaderSource, defines.GetAll(), activeShadingLanguage, false, shader);
+		Vector<String> activeLanguages;
+		if(!shadingLanguageName.empty())
+			activeLanguages.push_back(shadingLanguageName);
+
+		ShaderCompilerResult compileResult = bslCompiler->Compile(shaderName, shaderSource, defines.GetAll(), activeLanguages, false, shader);
 		if(!compileResult.ErrorMessage.empty())
 		{
 			B3D_LOG(Error, LogResources, "Shader compilation failed for shader \"{0}\". Compilation error:\n{1}. Location: {2} ({3})", shaderPath, compileResult.ErrorMessage, compileResult.ErrorLine, compileResult.ErrorColumn);
@@ -136,55 +156,20 @@ TShared<CoreVariantType<Shader, IsRenderProxy>> ShaderCompilers::GetOrCompileSha
 	return shader;
 }
 
-ShadingLanguageFlag ShaderCompilers::DetectActiveShadingLanguage()
+String ShaderCompilers::DetectActiveShadingLanguage() const
 {
 	const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
 	if(gpuDevice == nullptr)
-		return ShadingLanguageFlag::Unknown;
+		return StringUtility::kBlank;
 
-	for(u32 shadingLanguageIndex = 0; shadingLanguageIndex < (u32)ShadingLanguageFlag::Count; shadingLanguageIndex++)
+	Lock lock(mShadingLanguageMutex);
+	for(const auto& language : mShadingLanguages)
 	{
-		const ShadingLanguageFlag shadingLanguageFlag = (ShadingLanguageFlag)(1 << shadingLanguageIndex);
-		const String shadingLanguageName = GetShadingLanguageName(shadingLanguageFlag);
-
-		if(gpuDevice->IsGpuProgramLanguageSupported(shadingLanguageName))
-			return shadingLanguageFlag;
+		if(gpuDevice->IsGpuProgramLanguageSupported(language))
+			return language;
 	}
 
-	return ShadingLanguageFlag::Unknown;
-}
-
-ShadingLanguageFlag ShaderCompilers::ParseShadingLanguage(const String& name)
-{
-	if(name == "hlsl")
-		return ShadingLanguageFlag::HLSL;
-
-	if(name == "glsl")
-		return ShadingLanguageFlag::GLSL;
-
-	if(name == "vksl")
-		return ShadingLanguageFlag::VKSL;
-
-	if(name == "mvksl")
-		return ShadingLanguageFlag::MSL;
-
-	if(name == "nullsl")
-		return ShadingLanguageFlag::NullSL;
-
-	return ShadingLanguageFlag::Unknown;
-}
-
-const char* ShaderCompilers::GetShadingLanguageName(ShadingLanguageFlag language)
-{
-	switch(language)
-	{
-	case ShadingLanguageFlag::HLSL: return "hlsl";
-	case ShadingLanguageFlag::GLSL: return "glsl";
-	case ShadingLanguageFlag::VKSL: return "vksl";
-	case ShadingLanguageFlag::MSL: return "mvksl";
-	case ShadingLanguageFlag::NullSL: return "nullsl";
-	default: return "";
-	}
+	return StringUtility::kBlank;
 }
 
 template B3D_EXPORT TShared<CoreVariantType<Shader, false>> ShaderCompilers::GetOrCompileShader<false>(const Path& shaderPath, const String& cachePrefix, const ShaderDefines& defines);

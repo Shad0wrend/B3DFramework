@@ -15,6 +15,12 @@ namespace b3d
 	 */
 
 	/**
+	 * Identifier for the HLSL source authored by BSL and consumed directly by the DirectX backends. Also the
+	 * common source form that BSL passes are cleaned up into before being cross compiled to the other dialects.
+	 */
+	inline constexpr const char* kGpuProgramLanguageHlsl = "hlsl";
+
+	/**
 	 * Canonical identifier for the Vulkan-flavored GLSL dialect authored by BSL. Vulkan's native
 	 * language identifier - the backend consumes these through its own glslang pipeline to emit
 	 * SPIR-V.
@@ -27,6 +33,12 @@ namespace b3d
 	 * define, so you can further customize for Metal specific code.
 	 */
 	inline constexpr const char* kGpuProgramLanguageMvksl = "mvksl";
+
+	/**
+	 * Identifier for the null shading language consumed by the null backend. Produces no actual shader code; used
+	 * for headless or testing devices.
+	 */
+	inline constexpr const char* kGpuProgramLanguageNullsl = "nullsl";
 
 	/**
 	 * Provides access to all available GPU devices.

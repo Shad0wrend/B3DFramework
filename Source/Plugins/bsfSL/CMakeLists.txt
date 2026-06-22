@@ -24,6 +24,48 @@ endif()
 # Source files and their filters
 B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_SL_SRC)
 
+# Built-in cross-compile targets. Each entry is "<language>|<targetLanguage>|<define>" (the trailing "|<define>" is
+# optional): the engine shading-language id, the B3DShaderCompiler output target id, and an optional preprocessor
+# define emitted into the HLSL input. 
+set(B3D_SHADER_CROSS_COMPILE_TARGETS
+	"vksl|VKSL450|VULKAN"
+	"mvksl|VKSL450|METAL"
+)
+
+# Add optional cross compile targets from platform overlays
+foreach(platformName ${B3D_PLATFORM_CHOICES})
+	set(platformTargetsFile ${B3D_PLATFORM_${platformName}_SOURCE_FOLDER}/CMake/ShaderCrossCompileTargets.cmake)
+	if(EXISTS ${platformTargetsFile})
+		include(${platformTargetsFile})
+	endif()
+endforeach()
+
+# Generate .cpp for cross compile target registration
+set(B3D_SHADER_CROSS_COMPILE_TARGET_REGISTRATIONS "")
+foreach(targetEntry ${B3D_SHADER_CROSS_COMPILE_TARGETS})
+	string(REPLACE "|" ";" targetFields ${targetEntry})
+	list(GET targetFields 0 targetLanguageId)
+	list(GET targetFields 1 targetOutputLanguage)
+	list(LENGTH targetFields targetFieldCount)
+	if(targetFieldCount GREATER 2)
+		list(GET targetFields 2 targetDefine)
+		string(APPEND B3D_SHADER_CROSS_COMPILE_TARGET_REGISTRATIONS
+			"\t\tRegisterTarget(\"${targetLanguageId}\", { \"${targetOutputLanguage}\", \"${targetDefine}\" });\n")
+	else()
+		string(APPEND B3D_SHADER_CROSS_COMPILE_TARGET_REGISTRATIONS
+			"\t\tRegisterTarget(\"${targetLanguageId}\", { \"${targetOutputLanguage}\", nullptr });\n")
+	endif()
+endforeach()
+
+set(BS_SL_CROSSCOMPILE_TARGETS_GENERATED ${PROJECT_BINARY_DIR}/Generated/Plugins/bsfSL/B3DHLSLCrossCompileTargets.cpp)
+configure_file(
+	${B3D_FRAMEWORK_SOURCE_FOLDER}/CMake/B3DHLSLCrossCompileTargets.cpp.in
+	${BS_SL_CROSSCOMPILE_TARGETS_GENERATED}
+	@ONLY
+)
+list(APPEND BS_SL_SRC ${BS_SL_CROSSCOMPILE_TARGETS_GENERATED})
+source_group("Generated" FILES ${BS_SL_CROSSCOMPILE_TARGETS_GENERATED})
+
 # Ensure pre-built binary dependencies are up to date
 if(B3D_USE_BUNDLED_LIBRARIES)
 	B3DCheckAndUpdatePrebuiltDependency(XShaderCompiler)

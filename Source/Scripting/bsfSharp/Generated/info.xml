@@ -6518,8 +6518,8 @@ Default value is 0.5. Should be in rough range [-1, 1].</doc>
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are meshes imported.</doc>
 		</ctor>
-		<property name="Languages" type="ShadingLanguageFlags" getter="GetLanguages" setter="SetLanguages" static="false">
-			<doc>Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on which render backends it will be able to run on.</doc>
+		<property name="Languages" type="string" getter="GetLanguages" setter="SetLanguages" static="false">
+			<doc>Low-level shading language identifiers (for example "hlsl", "vksl") the BSL shader should be converted into. This ultimately controls on which render backends it will be able to run on.</doc>
 		</property>
 	</class>
 	<class native="ColorGradingSettings" script="ColorGradingSettings">
@@ -7862,32 +7862,6 @@ Optionally if the parameter is an array you may provide an array index you which
 			<doc>A list of potential values this parameter can take on.</doc>
 		</field>
 	</struct>
-	<enum native="ShadingLanguageFlag" script="ShadingLanguageFlags">
-		<doc>Supported types of low-level shading languages.</doc>
-		<enumentry native="VKSL" script="VKSL">
-			<doc>Variant of GLSL used for Vulkan.</doc>
-		</enumentry>
-		<enumentry native="GLSL" script="GLSL">
-			<doc>OpenGL shading language.</doc>
-		</enumentry>
-		<enumentry native="Unknown" script="Unknown">
-		</enumentry>
-		<enumentry native="HLSL" script="HLSL">
-			<doc>High level shading language used by DirectX backend.</doc>
-		</enumentry>
-		<enumentry native="MSL" script="MSL">
-			<doc>Metal shading language.</doc>
-		</enumentry>
-		<enumentry native="NullSL" script="NullSL">
-			<doc>Null shading language for the null render backend. Produces no actual shader code.</doc>
-		</enumentry>
-		<enumentry native="All" script="All">
-			<doc>Helper entry that includes all languages.</doc>
-		</enumentry>
-		<enumentry native="Count" script="Count">
-			<doc>Null shading language for the null render backend. Produces no actual shader code.</doc>
-		</enumentry>
-	</enum>
 	<class native="RendererManager" script="RendererManager">
 		<doc>Allows you to change and retrieve the active renderer. Active renderer will be used for rendering all objects in the following frame.</doc>
 		<method native="RequestFrameCapture" script="RequestFrameCapture" static="false">

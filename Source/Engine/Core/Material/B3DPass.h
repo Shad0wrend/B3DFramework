@@ -18,17 +18,17 @@ namespace b3d
 	/** Descriptor structure used for initializing a shader pass. */
 	struct PassCreateInformation
 	{
-		BlendStateInformation BlendStateDesc;
-		RasterizerStateInformation RasterizerStateDesc;
-		DepthStencilStateInformation DepthStencilStateDesc;
+		BlendStateInformation BlendStateInformation;
+		RasterizerStateInformation RasterizerStateInformation;
+		DepthStencilStateInformation DepthStencilStateInformation;
 		u32 StencilRefValue = 0;
 
-		GpuProgramCreateInformation VertexProgramDesc;
-		GpuProgramCreateInformation FragmentProgramDesc;
-		GpuProgramCreateInformation GeometryProgramDesc;
-		GpuProgramCreateInformation HullProgramDesc;
-		GpuProgramCreateInformation DomainProgramDesc;
-		GpuProgramCreateInformation ComputeProgramDesc;
+		GpuProgramCreateInformation VertexProgramCreateInformation;
+		GpuProgramCreateInformation FragmentProgramCreateInformation;
+		GpuProgramCreateInformation GeometryProgramCreateInformation;
+		GpuProgramCreateInformation HullProgramCreateInformation;
+		GpuProgramCreateInformation DomainProgramCreateInformation;
+		GpuProgramCreateInformation ComputeProgramCreateInformation;
 	};
 
 	/** @} */
@@ -48,7 +48,7 @@ namespace b3d
 		bool HasBlending() const;
 
 		/** Returns true if the pass executes a compute program. */
-		bool IsCompute() const { return !mData.ComputeProgramDesc.Source.empty(); }
+		bool IsCompute() const { return !mData.ComputeProgramCreateInformation.Source.empty(); }
 
 		/** Gets the stencil reference value that is used when performing operations using the stencil buffer. */
 		u32 GetStencilRefValue() const { return mData.StencilRefValue; }

@@ -17,6 +17,11 @@
 using namespace std;
 using namespace b3d;
 
+BSLCompiler::BSLCompiler()
+{
+	HLSLCrossCompiler::RegisterSupportedTargets();
+}
+
 static TShared<Shader> CreateShader(const String& name, const ShaderCreateInformation& shaderCreateInformation, const Vector<String>& includes)
 {
 	TShared<Shader> shader = Shader::CreateShared(name, shaderCreateInformation);
@@ -47,7 +52,7 @@ static TShared<render::Shader> CreateShader(const String& name, const render::Sh
 }
 
 template<bool IsRenderProxy>
-ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<CoreVariantType<Shader, IsRenderProxy>>& outShader)
+ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<CoreVariantType<Shader, IsRenderProxy>>& outShader)
 {
 	CoreVariantType<ShaderCreateInformation, IsRenderProxy> shaderCreateInformation;
 	Vector<String> shaderIncludes;
@@ -63,19 +68,12 @@ ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& sou
 	compilerMetaData->Variations = CreateShaderVariations(parsedShaderMetaData);
 	compilerMetaData->Defines = defines;
 
-	TInlineArray<ShadingLanguageFlag, (u32)ShadingLanguageFlag::Count> requiredLanguageSet;
-	for(u32 shadingLanguageIndex = 0; shadingLanguageIndex < (u32)ShadingLanguageFlag::Count; shadingLanguageIndex++)
-	{
-		if(languages.IsSet((ShadingLanguageFlag)(1 << shadingLanguageIndex)))
-			requiredLanguageSet.Add((ShadingLanguageFlag)(1 << shadingLanguageIndex));
-	}
-
 	TShared<CoreVariantType<Shader, IsRenderProxy>> shader;
 	for(auto& variationParameters : compilerMetaData->Variations)
 	{
-		for(u32 languageIndex = 0; languageIndex < requiredLanguageSet.size(); ++languageIndex)
+		for(u32 languageIndex = 0; languageIndex < languages.size(); ++languageIndex)
 		{
-			const String languageName = ShaderCompilers::GetShadingLanguageName(requiredLanguageSet[languageIndex]);
+			const String& languageName = languages[languageIndex];
 			TShared<CoreVariantType<Variation, IsRenderProxy>> variation = CoreVariantType<Variation, IsRenderProxy>::Create(shader, languageName, variationParameters);
 
 			shaderCreateInformation.Variations.push_back(std::move(variation));
@@ -102,7 +100,7 @@ ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& sou
 				return compileResult;
 		}
 
-		for(u32 languageIndex = 0; languageIndex < requiredLanguageSet.size(); ++languageIndex)
+		for(u32 languageIndex = 0; languageIndex < languages.size(); ++languageIndex)
 		{
 			if(!wasShaderCreationAttempted)
 			{
@@ -122,12 +120,11 @@ ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& sou
 				wasShaderCreationAttempted = true;
 			}
 
-			const String languageName = ShaderCompilers::GetShadingLanguageName(requiredLanguageSet[languageIndex]);
 			const TShared<CoreVariantType<Variation, IsRenderProxy>>& variation = shaderCreateInformation.Variations[variationIndex];
 
 			if(compileVariations)
 			{
-				compileResult = TCompileVariation<IsRenderProxy>(parsedShaderMetaData.Name, parsedNode, *compilerMetaData, requiredLanguageSet[languageIndex], *variation);
+				compileResult = TCompileVariation<IsRenderProxy>(parsedShaderMetaData.Name, parsedNode, *compilerMetaData, languages[languageIndex], *variation);
 
 				if(!compileResult.ErrorMessage.empty())
 					return compileResult;
@@ -146,11 +143,11 @@ ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& sou
 	return compileResult;
 }
 
-template ShaderCompilerResult BSLCompiler::TCompile<false>(const String&, const String&, const UnorderedMap<String, String>&, ShadingLanguageFlags, bool, TShared<CoreVariantType<Shader, false>>&);
-template ShaderCompilerResult BSLCompiler::TCompile<true>(const String&, const String&, const UnorderedMap<String, String>&, ShadingLanguageFlags, bool, TShared<CoreVariantType<Shader, true>>&);
+template ShaderCompilerResult BSLCompiler::TCompile<false>(const String&, const String&, const UnorderedMap<String, String>&, const Vector<String>&, bool, TShared<CoreVariantType<Shader, false>>&);
+template ShaderCompilerResult BSLCompiler::TCompile<true>(const String&, const String&, const UnorderedMap<String, String>&, const Vector<String>&, bool, TShared<CoreVariantType<Shader, true>>&);
 
 template<bool IsRenderProxy>
-ShaderCompilerResult BSLCompiler::TCompileVariation(const CoreVariantType<Shader, IsRenderProxy>& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, CoreVariantType<Variation, IsRenderProxy>& outVariation)
+ShaderCompilerResult BSLCompiler::TCompileVariation(const CoreVariantType<Shader, IsRenderProxy>& shader, const ShaderVariationParameters& variationParameters, const String& language, CoreVariantType<Variation, IsRenderProxy>& outVariation)
 {
 	TShared<ShaderCompilerMetaData> compilerMetaData = shader.GetCompilerMetaData();
 	if(compilerMetaData == nullptr)
@@ -170,31 +167,19 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const CoreVariantType<Shader
 	return TCompileVariation<IsRenderProxy>(shader.GetShaderName(), parsedNode, *compilerMetaData, language, outVariation);
 }
 
-template ShaderCompilerResult BSLCompiler::TCompileVariation<false>(const CoreVariantType<Shader, false>&, const ShaderVariationParameters&, ShadingLanguageFlag, CoreVariantType<Variation, false>& outVariation);
-template ShaderCompilerResult BSLCompiler::TCompileVariation<true>(const CoreVariantType<Shader, true>&, const ShaderVariationParameters&, ShadingLanguageFlag, CoreVariantType<Variation, true>& outVariation);
+template ShaderCompilerResult BSLCompiler::TCompileVariation<false>(const CoreVariantType<Shader, false>&, const ShaderVariationParameters&, const String&, CoreVariantType<Variation, false>& outVariation);
+template ShaderCompilerResult BSLCompiler::TCompileVariation<true>(const CoreVariantType<Shader, true>&, const ShaderVariationParameters&, const String&, CoreVariantType<Variation, true>& outVariation);
 
 template<bool IsRenderProxy>
-ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BSLParsedShaderData& parsedShader, const ShaderCompilerMetaData& shaderMetaData, ShadingLanguageFlag language, CoreVariantType<Variation, IsRenderProxy>& outVariation)
+ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BSLParsedShaderData& parsedShader, const ShaderCompilerMetaData& shaderMetaData, const String& language, CoreVariantType<Variation, IsRenderProxy>& outVariation)
 {
 	B3D_ASSERT(!parsedShader.MetaData.IsMixin);
 	B3D_ASSERT(shaderMetaData.GPUProgramTypes.size() > 0);
 
 	ShaderCompilerResult compileResult;
 
-	HLSLCrossCompileOutput crossCompileOutputLanguage = HLSLCrossCompileOutput::VKSL45;
-	const String crossCompileOutputLanguageName = ShaderCompilers::GetShadingLanguageName(language);
-	if(language == ShadingLanguageFlag::GLSL)
-	{
-		crossCompileOutputLanguage = HLSLCrossCompileOutput::GLSL45;
-	}
-	else if(language == ShadingLanguageFlag::VKSL)
-	{
-		crossCompileOutputLanguage = HLSLCrossCompileOutput::VKSL45;
-	}
-	else if(language == ShadingLanguageFlag::MSL)
-	{
-		crossCompileOutputLanguage = HLSLCrossCompileOutput::MVKSL;
-	}
+	const HLSLCrossCompileTarget* crossCompileTarget = HLSLCrossCompiler::GetTarget(language);
+	const String& crossCompileOutputLanguageName = language;
 
 	struct CrossCompilePassOutput
 	{
@@ -209,13 +194,13 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 	{
 		const BSLParsedShaderPassData& parsedShaderPass = parsedShader.Passes[passIndex];
 
-		auto fnCrossCompilePass = [&shaderMetaData, &compileResult](const BSLParsedShaderPassData& parsedShaderPass, HLSLCrossCompileOutput language, CrossCompilePassOutput& crossCompiledOutput)
+		auto fnCrossCompilePass = [&shaderMetaData, &compileResult](const BSLParsedShaderPassData& parsedShaderPass, const HLSLCrossCompileTarget& target, CrossCompilePassOutput& crossCompiledOutput)
 		{
 			for(auto& type : shaderMetaData.GPUProgramTypes)
 			{
 				B3D_ASSERT((i32)type < GPT_COUNT);
 				u32 binding = 0;
-				compileResult = HLSLCrossCompiler::CrossCompile(parsedShaderPass.Code, type, language, binding, crossCompiledOutput.ProgramCodePerType[(i32)type]);
+				compileResult = HLSLCrossCompiler::CrossCompile(parsedShaderPass.Code, type, target, binding, crossCompiledOutput.ProgramCodePerType[(i32)type]);
 
 				if(!compileResult.ErrorMessage.empty())
 					return;
@@ -223,12 +208,12 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 		};
 
 		CrossCompilePassOutput crossCompilePassOutput;
-		if(language == ShadingLanguageFlag::NullSL)
+		if(language == kGpuProgramLanguageNullsl)
 		{
 			// Null backend: no compilation needed, leave all ProgramCodePerType entries as empty strings.
 			// The null GPU device accepts empty source and produces empty bytecode.
 		}
-		else if(language == ShadingLanguageFlag::HLSL)
+		else if(language == kGpuProgramLanguageHlsl)
 		{
 			// Clean non-standard HLSL
 			// Note: Ideally we add a full HLSL output module to XShaderCompiler, instead of using simple regex. This
@@ -265,16 +250,22 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 		}
 		else // Need to cross compile to correct low-level language
 		{
-			fnCrossCompilePass(parsedShaderPass, crossCompileOutputLanguage, crossCompilePassOutput);
+			if(crossCompileTarget == nullptr)
+			{
+				compileResult.ErrorMessage = StringUtility::Format("Unsupported shading language \"{0}\".", language);
+				return compileResult;
+			}
+
+			fnCrossCompilePass(parsedShaderPass, *crossCompileTarget, crossCompilePassOutput);
 
 			if(!compileResult.ErrorMessage.empty())
 				return compileResult;
 		}
 
 		PassCreateInformation shaderPassInformation;
-		shaderPassInformation.BlendStateDesc = parsedShaderPass.BlendStateInformation;
-		shaderPassInformation.RasterizerStateDesc = parsedShaderPass.RasterizerStateInformation;
-		shaderPassInformation.DepthStencilStateDesc = parsedShaderPass.DepthStencilStateInformation;
+		shaderPassInformation.BlendStateInformation = parsedShaderPass.BlendStateInformation;
+		shaderPassInformation.RasterizerStateInformation = parsedShaderPass.RasterizerStateInformation;
+		shaderPassInformation.DepthStencilStateInformation = parsedShaderPass.DepthStencilStateInformation;
 
 		auto fnBuildGpuProgramCreateInformation = [&name](const String& language, const String& entry, const String& code, GpuProgramType type) -> GpuProgramCreateInformation
 		{
@@ -319,38 +310,38 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			return gpuProgramCreateInformation;
 		};
 
-		const bool isHLSL = language == ShadingLanguageFlag::HLSL;
-		shaderPassInformation.VertexProgramDesc = fnBuildGpuProgramCreateInformation(
+		const bool isHLSL = language == kGpuProgramLanguageHlsl;
+		shaderPassInformation.VertexProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "vsmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_VERTEX_PROGRAM],
 			GPT_VERTEX_PROGRAM);
 
-		shaderPassInformation.FragmentProgramDesc = fnBuildGpuProgramCreateInformation(
+		shaderPassInformation.FragmentProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "fsmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_FRAGMENT_PROGRAM],
 			GPT_FRAGMENT_PROGRAM);
 
-		shaderPassInformation.GeometryProgramDesc = fnBuildGpuProgramCreateInformation(
+		shaderPassInformation.GeometryProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "gsmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_GEOMETRY_PROGRAM],
 			GPT_GEOMETRY_PROGRAM);
 
-		shaderPassInformation.HullProgramDesc = fnBuildGpuProgramCreateInformation(
+		shaderPassInformation.HullProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "hsmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_HULL_PROGRAM],
 			GPT_HULL_PROGRAM);
 
-		shaderPassInformation.DomainProgramDesc = fnBuildGpuProgramCreateInformation(
+		shaderPassInformation.DomainProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "dsmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_DOMAIN_PROGRAM],
 			GPT_DOMAIN_PROGRAM);
 
-		shaderPassInformation.ComputeProgramDesc = fnBuildGpuProgramCreateInformation(
+		shaderPassInformation.ComputeProgramCreateInformation = fnBuildGpuProgramCreateInformation(
 			crossCompileOutputLanguageName,
 			isHLSL ? "csmain" : "main",
 			crossCompilePassOutput.ProgramCodePerType[GPT_COMPUTE_PROGRAM],

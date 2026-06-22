@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "B3DBSLParser.h"
 #include "Material/B3DShader.h"
+#include "GpuBackend/B3DGpuBackend.h"
 #include "Material/B3DPass.h"
 #include "Debug/B3DDebug.h"
 #include "Math/B3DMatrix4.h"
@@ -125,7 +126,7 @@ BSLParsedShaderMetaData BSLParser::ParseShaderMetaData(ASTFXNode* shader)
 {
 	BSLParsedShaderMetaData metaData;
 
-	metaData.Language = "hlsl";
+	metaData.Language = kGpuProgramLanguageHlsl;
 	metaData.IsMixin = shader->Type == NT_Mixin;
 
 	for(int i = 0; i < shader->Options->Count; i++)

@@ -143,8 +143,7 @@ TAsyncOp<bool> TVariation<IsRenderProxy>::Compile()
 				return operation;
 			}
 
-			const ShadingLanguageFlag language = ShaderCompilers::ParseShadingLanguage(mLanguage);
-			const ShaderCompilerResult compileResult = shaderCompiler->CompileVariation(*owner, mVariationParameters, language, *GetSelf());
+			const ShaderCompilerResult compileResult = shaderCompiler->CompileVariation(*owner, mVariationParameters, mLanguage, *GetSelf());
 
 			if(!compileResult.ErrorMessage.empty())
 			{

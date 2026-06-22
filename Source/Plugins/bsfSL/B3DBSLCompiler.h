@@ -19,33 +19,35 @@ namespace b3d
 	class BSLCompiler : public IShaderCompiler
 	{
 	public:
-		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<Shader>& outShader) override
+		BSLCompiler();
+
+		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<Shader>& outShader) override
 		{
 			return TCompile<false>(name, source, defines, languages, compileVariations, outShader);
 		}
 
-		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<render::Shader>& outShader) override
+		ShaderCompilerResult Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<render::Shader>& outShader) override
 		{
 			return TCompile<true>(name, source, defines, languages, compileVariations, outShader);
 		}
 
-		ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, Variation& inOutVariation) override
+		ShaderCompilerResult CompileVariation(const Shader& shader, const ShaderVariationParameters& variationParameters, const String& language, Variation& inOutVariation) override
 		{
 			return TCompileVariation<false>(shader, variationParameters, language, inOutVariation);
 		}
 
-		ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, render::Variation& inOutVariation) override
+		ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, const String& language, render::Variation& inOutVariation) override
 		{
 			return TCompileVariation<true>(shader, variationParameters, language, inOutVariation);
 		}
 	private:
 		/** Templated version of Compile() for both main and render thread. */
 		template <bool IsRenderProxy>
-		ShaderCompilerResult TCompile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, TShared<CoreVariantType<Shader, IsRenderProxy>>& outShader);
+		ShaderCompilerResult TCompile(const String& name, const String& source, const UnorderedMap<String, String>& defines, const Vector<String>& languages, bool compileVariations, TShared<CoreVariantType<Shader, IsRenderProxy>>& outShader);
 
 		/** Templated version of CompileVariation() for both main and render thread. */
 		template <bool IsRenderProxy>
-		ShaderCompilerResult TCompileVariation(const CoreVariantType<Shader, IsRenderProxy>& shader, const ShaderVariationParameters& variationParameters, ShadingLanguageFlag language, CoreVariantType<Variation, IsRenderProxy>& inOutVariation);
+		ShaderCompilerResult TCompileVariation(const CoreVariantType<Shader, IsRenderProxy>& shader, const ShaderVariationParameters& variationParameters, const String& language, CoreVariantType<Variation, IsRenderProxy>& inOutVariation);
 
 		/**
 		 * Compiles a particular shader variation into the low level shader source from the parsed shader data.
@@ -58,7 +60,7 @@ namespace b3d
 		 * @return					A result object containing an error message if not successful.
 		 */
 		template<bool IsRenderProxy>
-		static ShaderCompilerResult TCompileVariation(const String& name, const BSLParsedShaderData& parsedShader, const ShaderCompilerMetaData& shaderMetaData, ShadingLanguageFlag language, CoreVariantType<Variation, IsRenderProxy>& inOutVariation);
+		static ShaderCompilerResult TCompileVariation(const String& name, const BSLParsedShaderData& parsedShader, const ShaderCompilerMetaData& shaderMetaData, const String& language, CoreVariantType<Variation, IsRenderProxy>& inOutVariation);
 
 		/** Converts internal variation representations in the shader meta-data into a set of ShaderVariation objects. */
 		static Vector<ShaderVariationParameters> CreateShaderVariations(const BSLParsedShaderMetaData& shaderMetaData);

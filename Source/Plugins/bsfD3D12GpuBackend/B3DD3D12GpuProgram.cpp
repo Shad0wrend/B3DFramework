@@ -51,7 +51,7 @@ void D3D12GpuProgram::Initialize()
 		createInformation.Name = mName;
 		createInformation.Type = mType;
 		createInformation.EntryPoint = mEntryPoint;
-		createInformation.Language = "hlsl";
+		createInformation.Language = kGpuProgramLanguageHlsl;
 		createInformation.Source = mSource;
 
 		// Compile using utility class

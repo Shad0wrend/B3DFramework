@@ -5,6 +5,7 @@
 #include "B3DNullPrerequisites.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "GpuBackend/B3DGpuDeviceCapabilities.h"
+#include "GpuBackend/B3DGpuBackend.h"
 
 namespace b3d
 {
@@ -24,7 +25,7 @@ namespace b3d
 		class NullGpuDevice : public GpuDevice
 		{
 		public:
-			static constexpr const char* kGpuProgramLanguageName = "nullsl";
+			static constexpr const char* kGpuProgramLanguageName = kGpuProgramLanguageNullsl;
 
 			NullGpuDevice();
 

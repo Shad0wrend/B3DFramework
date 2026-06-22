@@ -117,7 +117,7 @@ namespace b3d
 			mCapabilities.MinimumUniformBufferOffsetAlignment = 16;
 
 			// Add shader profile
-			mCapabilities.AddShaderProfile("nullsl");
+			mCapabilities.AddShaderProfile(kGpuProgramLanguageNullsl);
 		}
 
 		TShared<GpuProgramBytecode> NullGpuDevice::CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const

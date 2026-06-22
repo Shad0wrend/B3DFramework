@@ -33,11 +33,11 @@ bool TPass<IsRenderProxy>::HasBlending() const
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
 		// Transparent if destination color is taken into account
-		if(mData.BlendStateDesc.RenderTargets[i].ColorDestinationFactor != BF_ZERO ||
-		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_DEST_COLOR ||
-		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_COLOR ||
-		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_DEST_ALPHA ||
-		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_ALPHA)
+		if(mData.BlendStateInformation.RenderTargets[i].ColorDestinationFactor != BF_ZERO ||
+		   mData.BlendStateInformation.RenderTargets[i].ColorSourceFactor == BF_DEST_COLOR ||
+		   mData.BlendStateInformation.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_COLOR ||
+		   mData.BlendStateInformation.RenderTargets[i].ColorSourceFactor == BF_DEST_ALPHA ||
+		   mData.BlendStateInformation.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_ALPHA)
 		{
 			transparent = true;
 		}
@@ -53,17 +53,17 @@ const GpuProgramCreateInformation& TPass<IsRenderProxy>::GetGpuProgramCreateInfo
 	{
 	default:
 	case GPT_VERTEX_PROGRAM:
-		return mData.VertexProgramDesc;
+		return mData.VertexProgramCreateInformation;
 	case GPT_FRAGMENT_PROGRAM:
-		return mData.FragmentProgramDesc;
+		return mData.FragmentProgramCreateInformation;
 	case GPT_GEOMETRY_PROGRAM:
-		return mData.GeometryProgramDesc;
+		return mData.GeometryProgramCreateInformation;
 	case GPT_HULL_PROGRAM:
-		return mData.HullProgramDesc;
+		return mData.HullProgramCreateInformation;
 	case GPT_DOMAIN_PROGRAM:
-		return mData.DomainProgramDesc;
+		return mData.DomainProgramCreateInformation;
 	case GPT_COMPUTE_PROGRAM:
-		return mData.ComputeProgramDesc;
+		return mData.ComputeProgramCreateInformation;
 	}
 }
 
@@ -75,7 +75,7 @@ void TPass<IsRenderProxy>::CreatePipelineState()
 	if(IsCompute())
 	{
 		GpuComputePipelineStateCreateInformation createInformation;
-		createInformation.Program = device->CreateGpuProgram(mData.ComputeProgramDesc);
+		createInformation.Program = device->CreateGpuProgram(mData.ComputeProgramCreateInformation);
 
 		mComputePipelineState = device->CreateGpuComputePipelineState(createInformation);
 	}
@@ -83,24 +83,24 @@ void TPass<IsRenderProxy>::CreatePipelineState()
 	{
 		GpuGraphicsPipelineStateCreateInformation createInformation;
 
-		if(!mData.VertexProgramDesc.Source.empty())
-			createInformation.VertexProgram = device->CreateGpuProgram(mData.VertexProgramDesc);
+		if(!mData.VertexProgramCreateInformation.Source.empty())
+			createInformation.VertexProgram = device->CreateGpuProgram(mData.VertexProgramCreateInformation);
 
-		if(!mData.FragmentProgramDesc.Source.empty())
-			createInformation.FragmentProgram = device->CreateGpuProgram(mData.FragmentProgramDesc);
+		if(!mData.FragmentProgramCreateInformation.Source.empty())
+			createInformation.FragmentProgram = device->CreateGpuProgram(mData.FragmentProgramCreateInformation);
 
-		if(!mData.GeometryProgramDesc.Source.empty())
-			createInformation.GeometryProgram = device->CreateGpuProgram(mData.GeometryProgramDesc);
+		if(!mData.GeometryProgramCreateInformation.Source.empty())
+			createInformation.GeometryProgram = device->CreateGpuProgram(mData.GeometryProgramCreateInformation);
 
-		if(!mData.HullProgramDesc.Source.empty())
-			createInformation.HullProgram = device->CreateGpuProgram(mData.HullProgramDesc);
+		if(!mData.HullProgramCreateInformation.Source.empty())
+			createInformation.HullProgram = device->CreateGpuProgram(mData.HullProgramCreateInformation);
 
-		if(!mData.DomainProgramDesc.Source.empty())
-			createInformation.DomainProgram = device->CreateGpuProgram(mData.DomainProgramDesc);
+		if(!mData.DomainProgramCreateInformation.Source.empty())
+			createInformation.DomainProgram = device->CreateGpuProgram(mData.DomainProgramCreateInformation);
 
-		createInformation.BlendState = mData.BlendStateDesc;
-		createInformation.RasterizerState = mData.RasterizerStateDesc;
-		createInformation.DepthStencilState = mData.DepthStencilStateDesc;
+		createInformation.BlendState = mData.BlendStateInformation;
+		createInformation.RasterizerState = mData.RasterizerStateInformation;
+		createInformation.DepthStencilState = mData.DepthStencilStateInformation;
 
 		mGraphicsPipelineState = device->CreateGpuGraphicsPipelineState(createInformation);
 	}

@@ -5,6 +5,7 @@
 #include "B3DD3D12Prerequisites.h"
 #include "GpuBackend/B3DGpuDevice.h"
 #include "GpuBackend/B3DGpuDeviceCapabilities.h"
+#include "GpuBackend/B3DGpuBackend.h"
 
 namespace D3D12MA
 {
@@ -26,7 +27,7 @@ namespace b3d
 		class D3D12GpuDevice : public GpuDevice
 		{
 		public:
-			static constexpr const char* kGpuProgramLanguageName = "hlsl";
+			static constexpr const char* kGpuProgramLanguageName = kGpuProgramLanguageHlsl;
 
 			D3D12GpuDevice(IDXGIAdapter4* adapter);
 			~D3D12GpuDevice();

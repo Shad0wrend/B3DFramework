@@ -24,12 +24,12 @@ namespace b3d
 		}
 
 		/// <summary>
-		/// Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on which 
-		/// render backends it will be able to run on.
+		/// Low-level shading language identifiers (for example "hlsl", "vksl") the BSL shader should be converted into.
+		/// This ultimately controls on which render backends it will be able to run on.
 		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
-		public ShadingLanguageFlags Languages
+		public string[] Languages
 		{
 			get { return Internal_GetLanguages(mCachedPtr); }
 			set { Internal_SetLanguages(mCachedPtr, value); }
@@ -78,9 +78,9 @@ namespace b3d
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_RemoveDefine(IntPtr thisPtr, string define);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShadingLanguageFlags Internal_GetLanguages(IntPtr thisPtr);
+		private static extern string[] Internal_GetLanguages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetLanguages(IntPtr thisPtr, ShadingLanguageFlags value);
+		private static extern void Internal_SetLanguages(IntPtr thisPtr, string[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(ShaderImportOptions managedInstance);
 	}

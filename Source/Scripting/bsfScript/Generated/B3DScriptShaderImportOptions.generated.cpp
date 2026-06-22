@@ -103,26 +103,43 @@ namespace b3d
 		TShared<ShaderImportOptions> nativeObject = ShaderImportOptions::Create();
 		ScriptObjectWrapper::Create<ScriptShaderImportOptions>(nativeObject, scriptObject);
 	}
-	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetLanguages(ScriptShaderImportOptions* self)
+	MonoArray* ScriptShaderImportOptions::InternalGetLanguages(ScriptShaderImportOptions* self)
 	{
-		Flags<ShadingLanguageFlag> tmp__output;
+		Vector<String> nativeArray__output;
 		if(!self->IsNativeObjectValid())
 			return {};
 
-		tmp__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages;
+		nativeArray__output = static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages;
 
-		ShadingLanguageFlag __output;
-		__output = (ShadingLanguageFlag)(uint32_t)tmp__output;
+		MonoArray* __output;
+		int elementCount__output = (int)nativeArray__output.size();
+		ScriptArray scriptArray__output = ScriptArray::Create<String>(elementCount__output);
+		for(int elementIndex = 0; elementIndex < elementCount__output; elementIndex++)
+		{
+			scriptArray__output.Set(elementIndex, nativeArray__output[elementIndex]);
+		}
+		__output = scriptArray__output.GetInternal();
 
 		return __output;
 	}
 
-	void ScriptShaderImportOptions::InternalSetLanguages(ScriptShaderImportOptions* self, ShadingLanguageFlag value)
+	void ScriptShaderImportOptions::InternalSetLanguages(ScriptShaderImportOptions* self, MonoArray* value)
 	{
 		if(!self->IsNativeObjectValid())
 			return;
 
-		static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages = value;
+		Vector<String> nativeArrayvalue;
+		if(value != nullptr)
+		{
+			ScriptArray scriptArrayvalue(value);
+			nativeArrayvalue.resize(scriptArrayvalue.Size());
+			for(int elementIndex = 0; elementIndex < (int)scriptArrayvalue.Size(); elementIndex++)
+			{
+				nativeArrayvalue[elementIndex] = scriptArrayvalue.Get<String>(elementIndex);
+			}
+
+		}
+		static_cast<ShaderImportOptions*>(self->GetNativeObject())->Languages = nativeArrayvalue;
 	}
 #endif
 }

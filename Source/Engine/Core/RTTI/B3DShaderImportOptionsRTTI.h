@@ -6,7 +6,6 @@
 #include "Reflection/B3DRTTIType.h"
 #include "RTTI/B3DStdRTTI.h"
 #include "RTTI/B3DStringRTTI.h"
-#include "RTTI/B3DFlagsRTTI.h"
 #include "Importer/B3DShaderImportOptions.h"
 
 namespace b3d
@@ -20,7 +19,8 @@ namespace b3d
 	{
 		B3D_RTTI_BEGIN_MEMBERS
 			B3D_RTTI_MEMBER_CONTAINER(mDefines, 0)
-			B3D_RTTI_MEMBER(Languages, 1)
+			//B3D_RTTI_MEMBER(Languages, 1) // No longer used
+			B3D_RTTI_MEMBER_CONTAINER(Languages, 2)
 		B3D_RTTI_END_MEMBERS
 
 	public:

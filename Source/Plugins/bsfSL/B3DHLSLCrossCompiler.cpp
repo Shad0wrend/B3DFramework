@@ -627,24 +627,12 @@ static Mutex& GetXscCompileMutex()
 }
 
 template<bool IsRenderProxy>
-static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, ShaderCompilerResult& outCompileResult, CoreVariantType<ShaderCreateInformation, IsRenderProxy>* outShaderCreateInformation = nullptr, TInlineArray<GpuProgramType, 2>* detectedTypes = nullptr)
+static String CrossCompile(const String& hlsl, GpuProgramType type, const HLSLCrossCompileTarget& target, bool optionalEntry, u32& startBindingSlot, ShaderCompilerResult& outCompileResult, CoreVariantType<ShaderCreateInformation, IsRenderProxy>* outShaderCreateInformation = nullptr, TInlineArray<GpuProgramType, 2>* detectedTypes = nullptr)
 {
 	TShared<StringStream> input = B3DMakeShared<StringStream>();
 
-	bool isVKSL = outputType == HLSLCrossCompileOutput::VKSL45 || outputType == HLSLCrossCompileOutput::MVKSL;
-	switch(outputType)
-	{
-	case HLSLCrossCompileOutput::GLSL41:
-	case HLSLCrossCompileOutput::GLSL45:
-		*input << "#define OPENGL 1" << std::endl;
-		break;
-	case HLSLCrossCompileOutput::VKSL45:
-		*input << "#define VULKAN 1" << std::endl;
-		break;
-	case HLSLCrossCompileOutput::MVKSL:
-		*input << "#define METAL 1" << std::endl;
-		break;
-	}
+	if(target.PreprocessorDefine != nullptr)
+		*input << "#define " << target.PreprocessorDefine << " 1" << std::endl;
 
 	// Clear '\r' as it's breaking XShaderCompiler when used in mutiline preprocessor statements
 	for (const char& currentCharacter : hlsl)
@@ -658,7 +646,7 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 	Xsc::ShaderInput inputDesc;
 	inputDesc.shaderVersion = Xsc::InputShaderVersion::HLSL5;
 	inputDesc.sourceCode = input;
-	inputDesc.extensions = Xsc::Extensions::LayoutAttribute;
+	inputDesc.extensions = Xsc::Extensions::LayoutAttribute | Xsc::Extensions::SrtSignature;
 
 	switch(type)
 	{
@@ -694,32 +682,17 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 
 	Xsc::ShaderOutput outputDesc;
 	outputDesc.sourceCode = &output;
-	outputDesc.options.autoBinding = isVKSL;
+	outputDesc.options.autoBinding = true;
 	outputDesc.options.autoBindingStartSlot = startBindingSlot;
 	outputDesc.options.fragmentLocations = true;
 	outputDesc.options.separateShaders = true;
-	outputDesc.options.separateSamplers = isVKSL;
+	outputDesc.options.separateSamplers = true;
 	outputDesc.options.allowExtensions = true;
 	outputDesc.nameMangling.inputPrefix = "bs_";
 	outputDesc.nameMangling.outputPrefix = "bs_";
 	outputDesc.nameMangling.useAlwaysSemantics = true;
 	outputDesc.nameMangling.renameBufferFields = true;
-
-	switch(outputType)
-	{
-	case HLSLCrossCompileOutput::GLSL45:
-		outputDesc.shaderVersion = Xsc::OutputShaderVersion::GLSL450;
-		break;
-	case HLSLCrossCompileOutput::GLSL41:
-		outputDesc.shaderVersion = Xsc::OutputShaderVersion::GLSL410;
-		break;
-	case HLSLCrossCompileOutput::VKSL45:
-		outputDesc.shaderVersion = Xsc::OutputShaderVersion::VKSL450;
-		break;
-	case HLSLCrossCompileOutput::MVKSL:
-		outputDesc.shaderVersion = Xsc::OutputShaderVersion::VKSL450;
-		break;
-	}
+	outputDesc.targetLanguage = target.TargetLanguage;
 
 	XscLog log;
 	Xsc::Reflection::ReflectionData reflectionData;
@@ -810,10 +783,29 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 	return output.str();
 }
 
-ShaderCompilerResult HLSLCrossCompiler::CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCompileOutput outputType, u32& startBindingSlot, String& outSource)
+static UnorderedMap<String, HLSLCrossCompileTarget>& GetCrossCompileTargetRegistry()
+{
+	static UnorderedMap<String, HLSLCrossCompileTarget> registry;
+	return registry;
+}
+
+void HLSLCrossCompiler::RegisterTarget(const String& language, const HLSLCrossCompileTarget& target)
+{
+	GetCrossCompileTargetRegistry()[language] = target;
+}
+
+const HLSLCrossCompileTarget* HLSLCrossCompiler::GetTarget(const String& language)
+{
+	const UnorderedMap<String, HLSLCrossCompileTarget>& registry = GetCrossCompileTargetRegistry();
+	const auto found = registry.find(language);
+
+	return found != registry.end() ? &found->second : nullptr;
+}
+
+ShaderCompilerResult HLSLCrossCompiler::CrossCompile(const String& hlsl, GpuProgramType type, const HLSLCrossCompileTarget& target, u32& startBindingSlot, String& outSource)
 {
 	ShaderCompilerResult compileResult;
-	outSource = ::CrossCompile<false>(hlsl, type, outputType, false, startBindingSlot, compileResult);
+	outSource = ::CrossCompile<false>(hlsl, type, target, false, startBindingSlot, compileResult);
 
 	return compileResult;
 }
@@ -823,7 +815,10 @@ ShaderCompilerResult HLSLCrossCompiler::TReflect(const String& hlsl, CoreVariant
 {
 	ShaderCompilerResult compileResult;
 	u32 dummy = 0;
-	::CrossCompile<IsRenderProxy>(hlsl, GPT_VERTEX_PROGRAM, HLSLCrossCompileOutput::GLSL45, true, dummy, compileResult, &outShaderCreateInformation, &outEntryPoints);
+
+	// Reflection only needs valid HLSL parsing; the concrete output target is irrelevant, so any built-in target works. 
+	const HLSLCrossCompileTarget reflectionTarget{ Xsc::TargetLanguage::GLSL450, "OPENGL" };
+	::CrossCompile<IsRenderProxy>(hlsl, GPT_VERTEX_PROGRAM, reflectionTarget, true, dummy, compileResult, &outShaderCreateInformation, &outEntryPoints);
 
 	return compileResult;
 }
