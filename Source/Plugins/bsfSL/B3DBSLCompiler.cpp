@@ -13,12 +13,20 @@
 #include "B3DBSLParser.h"
 #include "B3DHLSLCrossCompiler.h"
 #include "GpuBackend/B3DGpuDevice.h"
+#include "Xsc/Backend.h"
 
 using namespace std;
 using namespace b3d;
 
 BSLCompiler::BSLCompiler()
 {
+	// Load any optional output backends
+	const String binariesPath = Paths::GetBinariesPath().ToString();
+	std::string backendLoadError;
+	Xsc::LoadBackendsInDirectory(std::string(binariesPath.c_str()), &backendLoadError);
+	if(!backendLoadError.empty())
+		B3D_LOG(Warning, LogBSLCompiler, "XShaderCompiler backend load reported: {0}", String(backendLoadError.c_str()));
+
 	HLSLCrossCompiler::RegisterSupportedTargets();
 }
 

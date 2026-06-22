@@ -14,6 +14,10 @@ endif()
 B3DPopulateDefaultPackageSearchPaths(XShaderCompiler)
 
 B3DFindImportedIncludes(XShaderCompiler Xsc/Xsc.h)
-B3DFindImportedLibrary(XShaderCompiler xsc_core STATIC)
+B3DFindImportedLibrary(XShaderCompiler xsc_core SHARED)
 
 B3DEndFindPackage(XShaderCompiler xsc_core)
+
+if(TARGET XShaderCompiler::xsc_core)
+	set_property(TARGET XShaderCompiler::xsc_core APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS XSC_SHARED_LIB)
+endif()

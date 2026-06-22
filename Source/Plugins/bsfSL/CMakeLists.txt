@@ -32,11 +32,16 @@ set(B3D_SHADER_CROSS_COMPILE_TARGETS
 	"mvksl|VKSL450|METAL"
 )
 
-# Add optional cross compile targets from platform overlays
+# Add optional per-platform shader support from platform overlays. Each present overlay may contribute
+# cross-compile targets (appended to B3D_SHADER_CROSS_COMPILE_TARGETS above) and/or a runtime-loaded
+# backend DLL (accumulated into B3D_SHADER_BACKEND_LIBRARIES, linked into bsfSL further below so it gets
+# deployed next to the engine). Included here -- before the registration .cpp is generated and the target
+# is created -- so the target contributions are complete in time.
+set(B3D_SHADER_BACKEND_LIBRARIES "")
 foreach(platformName ${B3D_PLATFORM_CHOICES})
-	set(platformTargetsFile ${B3D_PLATFORM_${platformName}_SOURCE_FOLDER}/CMake/ShaderCrossCompileTargets.cmake)
-	if(EXISTS ${platformTargetsFile})
-		include(${platformTargetsFile})
+	set(platformShaderFile ${B3D_PLATFORM_${platformName}_SOURCE_FOLDER}/CMake/ShaderBackend.cmake)
+	if(EXISTS ${platformShaderFile})
+		include(${platformShaderFile})
 	endif()
 endforeach()
 
@@ -97,8 +102,8 @@ if(B3D_BUILD_BSL_PARSER AND WIN32)
 endif()
 
 # Libraries
-## External lib: XShaderCompiler
-target_link_libraries(bsfSL PRIVATE ${XShaderCompiler_LIBRARIES})
+## External lib: XShaderCompiler, plus any optional per-platform shader backends found above.
+target_link_libraries(bsfSL PRIVATE ${XShaderCompiler_LIBRARIES} ${B3D_SHADER_BACKEND_LIBRARIES})
 
 # IDE specific
 set_property(TARGET bsfSL PROPERTY FOLDER Plugins)
