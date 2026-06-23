@@ -10,7 +10,7 @@
 #include "Material/B3DShaderVariation.h"
 #include "Material/B3DShader.h"
 #include "Material/B3DPass.h"
-#include "Material/B3DShaderCompiler.h"
+#include "Material/B3DShaderRegistry.h"
 #include "GpuBackend/B3DGpuPipelineState.h"
 #include "GpuBackend/B3DGpuWorkContext.h"
 #include "Resources/B3DBuiltinResources.h"
@@ -673,7 +673,7 @@ namespace b3d
 					static const String kRendererMaterialShaderCachePrefix = "RendererMaterialShaders/";
 
 					RendererMaterialMetaData& metaData = GetMetaData();
-					TShared<Shader> compiledShader = ShaderCompilers::Instance().GetOrCompileShader<true>(
+					TShared<Shader> compiledShader = ShaderRegistry::Instance().GetOrCompileShader<true>(
 						metaData.ShaderPath, kRendererMaterialShaderCachePrefix, metaData.Defines);
 
 					GetRenderThread().PostTask(SchedulerTask([compiledShader]() mutable

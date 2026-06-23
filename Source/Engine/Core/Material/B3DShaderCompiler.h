@@ -97,9 +97,6 @@ namespace b3d
 		/** Unregisters a shader compiler. */
 		void UnregisterCompiler(const String& language) { mCompilers.erase(language); }
 
-		/** Registers a path that will be used for looking for shader files. Thread safe. */
-		void RegisterSearchPath(const Path& folder);
-
 		/** Registers a low-level shading language that we can cross-compile to (for example "vksl"). Thread safe. */
 		void RegisterShadingLanguage(const String& language);
 
@@ -107,16 +104,17 @@ namespace b3d
 		TShared<IShaderCompiler> GetCompiler(const String& language);
 
 		/**
-		 * Attempts to retrieve a Shader object from cache or builds the Shader and adds it to the cache.
+		 * Compiles a Shader object from high-level (BSL) source. Note this only compiles the shader meta-data, you must
+		 * also call CompileVariation to compile the actual source code for a shader variation.
 		 *
-		 * @param	shaderPath		Relative or absolute path to the shader source file. If relative, search paths provided through
-		 *							RegisterSearchPath() will be searched for the file.
-		 * @param	cachePrefix		Folder within the cache to perform the lookup in.
-		 * @param	defines			Optional set of defines to use when compiling the shader.
-		 * @return					Shader object on success, or null on failure.
+		 * @param	name		Name used to identify the shader.
+		 * @param	source		High-level (BSL) source to compile.
+		 * @param	defines		Optional set of defines to use when compiling the shader.
+		 * @param	languages	Low-level shading language identifiers (for example "vksl") to compile variations for.
+		 * @return				Shader object on success, or null on failure (an error is logged in that case).
 		 */
 		template <bool IsRenderProxy>
-		TShared<CoreVariantType<Shader, IsRenderProxy>> GetOrCompileShader(const Path& shaderPath, const String& cachePrefix, const ShaderDefines& defines);
+		TShared<CoreVariantType<Shader, IsRenderProxy>> CompileShader(const String& name, const String& source, const ShaderDefines& defines, const Vector<String>& languages);
 
 		/**
 		 * Detects the shading language identifier supported by the current render backend. Returns an empty string
@@ -126,8 +124,6 @@ namespace b3d
 
 	private:
 		UnorderedMap<String, TShared<IShaderCompiler>> mCompilers;
-		Vector<Path> mSearchPaths;
-		Mutex mSearchPathMutex;
 
 		Vector<String> mShadingLanguages;
 		mutable Mutex mShadingLanguageMutex;

@@ -49,6 +49,7 @@
 #include "Managers/B3DGpuBackendManager.h"
 #include "Managers/B3DRenderWindowManager.h"
 #include "Material/B3DShaderCompiler.h"
+#include "Material/B3DShaderRegistry.h"
 #include "Particles/B3DParticleScene.h"
 #include "Particles/B3DVectorField.h"
 #include "Renderer/B3DGpuUniformBuffer.h"
@@ -194,6 +195,7 @@ Application::~Application()
 	ProfilerCPU::ShutDown();
 	MessageHandler::ShutDown();
 	ShaderManager::ShutDown();
+	ShaderRegistry::ShutDown();
 	ShaderCompilers::ShutDown();
 
 	mTaskScheduler = nullptr;
@@ -231,6 +233,7 @@ void Application::OnStartUp()
 	mApplicationCache->Initialize(FileSystem::GetApplicationDataFolder());
 
 	ShaderCompilers::StartUp();
+	ShaderRegistry::StartUp();
 	ShaderManager::StartUp(GetShaderIncludeHandler());
 	MessageHandler::StartUp();
 	ProfilerCPU::StartUp();

@@ -14,7 +14,7 @@
 #include "FileSystem/B3DFileSystem.h"
 #include "CoreObject/B3DRenderThread.h"
 #include "GUI/StyleSheet/B3DGUIStyleSheet.h"
-#include "Material/B3DShaderCompiler.h"
+#include "Material/B3DShaderRegistry.h"
 #include "Utility/B3DShapeMeshes3D.h"
 #include "Mesh/B3DMesh.h"
 
@@ -96,7 +96,7 @@ void BuiltinResources::OnStartUp()
 	mBuiltinDataFolder = Paths::GetDataPath();
 
 	GetPackageManager().LoadPackages(mBuiltinDataFolder, true, kVirtualPathPrefix);
-	ShaderCompilers::Instance().RegisterSearchPath(GetShaderFolder());
+	ShaderRegistry::Instance().RegisterSearchPath(GetShaderFolder());
 
 	// Load basic resources
 	mShaderSpriteText = GetShader(kShaderSpriteTextFile);
@@ -263,7 +263,7 @@ HShader BuiltinResources::GetOrCompileShader(const Path& path) const
 	if(shader == nullptr)
 	{
 		static const String kBuiltinShaderCachePrefix = "BuiltinShaders/";
-		const TShared<Shader> shaderShared = ShaderCompilers::Instance().GetOrCompileShader<false>(path, kBuiltinShaderCachePrefix, {});
+		const TShared<Shader> shaderShared = ShaderRegistry::Instance().GetOrCompileShader<false>(path, kBuiltinShaderCachePrefix, {});
 
 		if(shaderShared != nullptr)
 		{
