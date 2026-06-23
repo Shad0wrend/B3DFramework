@@ -87,8 +87,8 @@ void VulkanGpuProgram::Initialize()
 		mBytecode = mGpuDevice.CompileGpuProgramBytecode(createInformation);
 	}
 
-	mCompileMessages = mBytecode->Messages;
-	mIsCompiled = mBytecode->Instructions.Data != nullptr;
+	mCompileMessages = mBytecode ? mBytecode->Messages : String();
+	mIsCompiled = mBytecode && mBytecode->Instructions.Data != nullptr;
 
 	if(mIsCompiled)
 	{

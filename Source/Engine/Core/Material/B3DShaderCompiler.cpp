@@ -20,6 +20,7 @@ RTTIType* ShaderCompilerMetaData::GetRtti() const
 
 TShared<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 {
+	Lock lock(mCompilerMutex);
 	auto found = mCompilers.find(language);
 	if(found != mCompilers.end())
 		return found->second;
@@ -29,6 +30,7 @@ TShared<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 
 TShared<IGpuBytecodeCompiler> ShaderCompilers::GetBytecodeCompiler(const String& language)
 {
+	Lock lock(mCompilerMutex);
 	auto found = mBytecodeCompilers.find(language);
 	if(found != mBytecodeCompilers.end())
 		return found->second;

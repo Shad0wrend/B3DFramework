@@ -69,10 +69,9 @@ TShared<GpuProgramBytecode> VulkanMSLCompiler::CompileBytecode(const GpuProgramC
 
 		auto count = msl->ParameterDescription->UniformBuffers.size() + msl->ParameterDescription->SampledTextures.size() + msl->ParameterDescription->Samplers.size() + msl->ParameterDescription->StorageTextures.size() + msl->ParameterDescription->Buffers.size();
 
-		// NOTE: The original device-method version called a non-existent B3DManagedStackAllocate; the real API is
-		// B3DStackAllocate (returns a raw T*, matching the pointer arithmetic below). The macOS Vulkan path is not
-		// built on the current host, so the stale symbol had gone unnoticed.
-		auto sortedEntries = B3DStackAllocate<spirv_cross::MSLResourceBinding>((u32)count);
+		// Collected resource bindings, sorted by (set, slot) below before flat MSL indices are assigned.
+		TInlineArray<spirv_cross::MSLResourceBinding, 32> sortedEntries;
+		sortedEntries.resize(count);
 		size_t i = 0;
 
 		for(auto& entry : msl->ParameterDescription->UniformBuffers)
@@ -125,7 +124,7 @@ TShared<GpuProgramBytecode> VulkanMSLCompiler::CompileBytecode(const GpuProgramC
 				binding.msl_buffer = 2;
 		}
 
-		std::sort(sortedEntries + 0, sortedEntries + count, [](const spirv_cross::MSLResourceBinding& a, const spirv_cross::MSLResourceBinding& b)
+		std::sort(sortedEntries.begin(), sortedEntries.end(), [](const spirv_cross::MSLResourceBinding& a, const spirv_cross::MSLResourceBinding& b)
 				  {
 					if(a.desc_set == b.desc_set)
 						return a.binding < b.binding;

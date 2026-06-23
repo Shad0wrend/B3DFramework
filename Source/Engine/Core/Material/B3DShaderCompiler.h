@@ -109,28 +109,44 @@ namespace b3d
 	public:
 		ShaderCompilers();
 
-		/** Registers a new shader compiler for the provided language. */
-		void RegisterCompiler(const String& language, const TShared<IShaderCompiler>& compiler) { mCompilers[language] = compiler; }
+		/** Registers a new shader compiler for the provided language. Thread safe. */
+		void RegisterCompiler(const String& language, const TShared<IShaderCompiler>& compiler)
+		{
+			Lock lock(mCompilerMutex);
+			mCompilers[language] = compiler;
+		}
 
-		/** Unregisters a shader compiler. */
-		void UnregisterCompiler(const String& language) { mCompilers.erase(language); }
+		/** Unregisters a shader compiler. Thread safe. */
+		void UnregisterCompiler(const String& language)
+		{
+			Lock lock(mCompilerMutex);
+			mCompilers.erase(language);
+		}
 
 		/**
 		 * Registers a GPU bytecode compiler for the provided shading language (for example "vksl").
-		 * Replaces any compiler previously registered for the same language.
+		 * Replaces any compiler previously registered for the same language. Thread safe.
 		 */
-		void RegisterBytecodeCompiler(const String& language, const TShared<IGpuBytecodeCompiler>& compiler) { mBytecodeCompilers[language] = compiler; }
+		void RegisterBytecodeCompiler(const String& language, const TShared<IGpuBytecodeCompiler>& compiler)
+		{
+			Lock lock(mCompilerMutex);
+			mBytecodeCompilers[language] = compiler;
+		}
 
-		/** Unregisters a GPU bytecode compiler. */
-		void UnregisterBytecodeCompiler(const String& language) { mBytecodeCompilers.erase(language); }
+		/** Unregisters a GPU bytecode compiler. Thread safe. */
+		void UnregisterBytecodeCompiler(const String& language)
+		{
+			Lock lock(mCompilerMutex);
+			mBytecodeCompilers.erase(language);
+		}
 
 		/** Registers a low-level shading language that we can cross-compile to (for example "vksl"). Thread safe. */
 		void RegisterShadingLanguage(const String& language);
 
-		/** Returns the compiler for the specified language. */
+		/** Returns the compiler for the specified language. Thread safe. */
 		TShared<IShaderCompiler> GetCompiler(const String& language);
 
-		/** Returns the GPU bytecode compiler for the specified low-level target shading language, or null if none is registered. */
+		/** Returns the GPU bytecode compiler for the specified low-level target shading language, or null if none is registered. Thread safe. */
 		TShared<IGpuBytecodeCompiler> GetBytecodeCompiler(const String& language);
 
 		/**
@@ -155,6 +171,7 @@ namespace b3d
 	private:
 		UnorderedMap<String, TShared<IShaderCompiler>> mCompilers;
 		UnorderedMap<String, TShared<IGpuBytecodeCompiler>> mBytecodeCompilers;
+		mutable Mutex mCompilerMutex;
 
 		Vector<String> mShadingLanguages;
 		mutable Mutex mShadingLanguageMutex;
