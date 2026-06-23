@@ -2,35 +2,40 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "B3DPrerequisites.h"
+#include "B3DVulkanPrerequisites.h"
+
+#if B3D_PLATFORM_MACOS
+
 #include "Material/B3DShaderCompiler.h"
 
 namespace b3d
 {
 	namespace render
 	{
-		/** @addtogroup GpuBackend-Internal
+		/** @addtogroup Vulkan
 		 *  @{
 		 */
 
+		class GLSLToSPIRV;
+
 		/**
-		 * Compiles engine VKSL / GLSL source code into SPIR-V using glslang. Also performs SPIRV-Cross
-		 * reflection on the produced module to populate parameter- and vertex-input descriptions.
+		 * Compiles engine MVKSL source into MoltenVK MSL bytecode: GLSL / VKSL -> SPIR-V via GLSLToSPIRV, then
+		 * SPIR-V -> MSL via SPIRV-Cross.
 		 */
-		class GLSLToSPIRV final : public IGpuBytecodeCompiler
+		class VulkanMSLCompiler final : public IGpuBytecodeCompiler
 		{
 		public:
-			GLSLToSPIRV(const char* compilerId, u32 compilerVersion);
-			~GLSLToSPIRV();
+			VulkanMSLCompiler(const char* compilerId, u32 compilerVersion);
+			~VulkanMSLCompiler();
 
-			/** Performs the GLSL / VKSL -> SPIR-V conversion and populates reflection info on the result. */
 			TShared<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& createInformation) override;
 
 		private:
-			const char* mCompilerId;
-			u32 mCompilerVersion;
+			TUnique<GLSLToSPIRV> mConverter;
 		};
 
 		/** @} */
 	} // namespace render
 } // namespace b3d
+
+#endif // B3D_PLATFORM_MACOS

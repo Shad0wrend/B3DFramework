@@ -310,10 +310,9 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			gpuProgramCreateInformation.Source = code;
 			gpuProgramCreateInformation.Type = type;
 
-			const TShared<GpuDevice> gpuDevice = GetApplication().GetPrimaryGpuDevice();
-
-			if(gpuDevice != nullptr)
-				gpuProgramCreateInformation.Bytecode = gpuDevice->CompileGpuProgramBytecode(gpuProgramCreateInformation);
+			// Bake bytecode for the target language if a compiler is registered for it.
+			if(const TShared<IGpuBytecodeCompiler> bytecodeCompiler = ShaderCompilers::Instance().GetBytecodeCompiler(gpuProgramCreateInformation.Language))
+				gpuProgramCreateInformation.Bytecode = bytecodeCompiler->CompileBytecode(gpuProgramCreateInformation);
 
 			return gpuProgramCreateInformation;
 		};

@@ -132,9 +132,9 @@ namespace b3d
 
 		/**
 		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
-		 * quicker compilation/creation of GPU programs.
+		 * quicker compilation/creation of GPU programs. 
 		 */
-		virtual TShared<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const = 0;
+		virtual TShared<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const;
 
 		/** Creates a command buffer pool that may be used for allocating command buffers. */
 		virtual TShared<render::GpuCommandBufferPool> CreateGpuCommandBufferPool(const render::GpuCommandBufferPoolCreateInformation& createInformation) = 0;

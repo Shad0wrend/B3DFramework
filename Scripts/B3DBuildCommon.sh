@@ -59,8 +59,8 @@ else
 		echo "[Error] Unknown platform '$Platform'. Built-in values: win32, darwin, linux-gnu."
 		echo "        For other targets, provide a build fragment at:"
 		echo "        $PlatformBuildFragment"
-	exit 1
-fi
+		exit 1
+	fi
 	. "$PlatformBuildFragment"
 fi
 

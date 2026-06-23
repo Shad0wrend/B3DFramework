@@ -27,6 +27,15 @@ TShared<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 	return nullptr;
 }
 
+TShared<IGpuBytecodeCompiler> ShaderCompilers::GetBytecodeCompiler(const String& language)
+{
+	auto found = mBytecodeCompilers.find(language);
+	if(found != mBytecodeCompilers.end())
+		return found->second;
+
+	return nullptr;
+}
+
 ShaderCompilers::ShaderCompilers()
 	: mShadingLanguages{ kGpuProgramLanguageHlsl, kGpuProgramLanguageVksl, kGpuProgramLanguageMvksl, kGpuProgramLanguageNullsl }
 {

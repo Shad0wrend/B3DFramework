@@ -797,7 +797,8 @@ namespace
 	}
 } // namespace
 
-GLSLToSPIRV::GLSLToSPIRV()
+GLSLToSPIRV::GLSLToSPIRV(const char* compilerId, u32 compilerVersion)
+	: mCompilerId(compilerId), mCompilerVersion(compilerVersion)
 {
 	glslang::InitializeProcess();
 }
@@ -807,7 +808,7 @@ GLSLToSPIRV::~GLSLToSPIRV()
 	glslang::FinalizeProcess();
 }
 
-TShared<GpuProgramBytecode> GLSLToSPIRV::Convert(const GpuProgramCreateInformation& desc, const char* compilerId, u32 compilerVersion)
+TShared<GpuProgramBytecode> GLSLToSPIRV::CompileBytecode(const GpuProgramCreateInformation& desc)
 {
 	const TBuiltInResource& resources = *GetDefaultResources();
 	glslang::TProgram program;
@@ -838,8 +839,8 @@ TShared<GpuProgramBytecode> GLSLToSPIRV::Convert(const GpuProgramCreateInformati
 	shader.setEntryPoint("main");
 
 	TShared<GpuProgramBytecode> bytecode = B3DMakeShared<GpuProgramBytecode>();
-	bytecode->CompilerId = compilerId;
-	bytecode->CompilerVersion = compilerVersion;
+	bytecode->CompilerId = mCompilerId;
+	bytecode->CompilerVersion = mCompilerVersion;
 
 	EShMessages messages = (EShMessages)((int)EShMsgSpvRules | (int)EShMsgVulkanRules);
 	if (!shader.parse(&resources, 450, false, messages))

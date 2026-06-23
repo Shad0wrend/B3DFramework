@@ -81,7 +81,6 @@ namespace b3d
 			const VideoModeInfo& GetVideoModeInfo() const override { return *mVideoModeInfo; }
 
 			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
-			TShared<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
 
 			u32 GetQueueCount(GpuQueueType type) const override { return (u32)mQueueInfos[(u32)type].Queues.size(); }
 			TShared<GpuQueue> GetQueue(GpuQueueType type, u32 index) const override;

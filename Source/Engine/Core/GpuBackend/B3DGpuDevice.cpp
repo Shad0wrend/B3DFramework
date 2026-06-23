@@ -4,9 +4,23 @@
 #include "B3DGpuCommandBuffer.h"
 #include "Image/B3DTexture.h"
 #include "GpuBackend/B3DGpuBuffer.h"
+#include "GpuBackend/B3DGpuProgram.h"
 #include "GpuBackend/Allocators/B3DGpuResource.h"
+#include "Material/B3DShaderCompiler.h"
 
 using namespace b3d;
+
+TShared<GpuProgramBytecode> GpuDevice::CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const
+{
+	if(!IsGpuProgramLanguageSupported(createInformation.Language))
+		return nullptr;
+
+	const TShared<IGpuBytecodeCompiler> bytecodeCompiler = ShaderCompilers::Instance().GetBytecodeCompiler(createInformation.Language);
+	if(bytecodeCompiler == nullptr)
+		return nullptr;
+
+	return bytecodeCompiler->CompileBytecode(createInformation);
+}
 
 TUnique<IGpuAllocator> GpuDevice::CreateTransientAllocator(u32 /*memoryType*/, IGpuCompletionTracker& /*completionTracker*/)
 {

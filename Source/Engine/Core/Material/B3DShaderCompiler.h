@@ -85,6 +85,24 @@ namespace b3d
 		virtual ShaderCompilerResult CompileVariation(const render::Shader& shader, const ShaderVariationParameters& variationParameters, const String& language, render::Variation& inOutVariation) = 0;
 	};
 
+	/**
+	 * Interface used for compilers that turn a GPU program written in a backend-native high-level shading language (for example "vksl")
+	 * into the intermediate bytecode consumed by the GPU driver (for example SPIR-V).
+	 */
+	class B3D_EXPORT IGpuBytecodeCompiler
+	{
+	public:
+		virtual ~IGpuBytecodeCompiler() = default;
+
+		/**
+		 * Compiles a single GPU program described by @p createInformation into an intermediate bytecode format.
+		 *
+		 * @param	createInformation	GPU program source and metadata to compile.
+		 * @return						Compiled bytecode, or null on failure.
+		 */
+		virtual TShared<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& createInformation) = 0;
+	};
+
 	/** Keeps track of all available shader compilers. */
 	class B3D_EXPORT ShaderCompilers : public Module<ShaderCompilers>
 	{
@@ -97,11 +115,23 @@ namespace b3d
 		/** Unregisters a shader compiler. */
 		void UnregisterCompiler(const String& language) { mCompilers.erase(language); }
 
+		/**
+		 * Registers a GPU bytecode compiler for the provided shading language (for example "vksl").
+		 * Replaces any compiler previously registered for the same language.
+		 */
+		void RegisterBytecodeCompiler(const String& language, const TShared<IGpuBytecodeCompiler>& compiler) { mBytecodeCompilers[language] = compiler; }
+
+		/** Unregisters a GPU bytecode compiler. */
+		void UnregisterBytecodeCompiler(const String& language) { mBytecodeCompilers.erase(language); }
+
 		/** Registers a low-level shading language that we can cross-compile to (for example "vksl"). Thread safe. */
 		void RegisterShadingLanguage(const String& language);
 
 		/** Returns the compiler for the specified language. */
 		TShared<IShaderCompiler> GetCompiler(const String& language);
+
+		/** Returns the GPU bytecode compiler for the specified low-level target shading language, or null if none is registered. */
+		TShared<IGpuBytecodeCompiler> GetBytecodeCompiler(const String& language);
 
 		/**
 		 * Compiles a Shader object from high-level (BSL) source. Note this only compiles the shader meta-data, you must
@@ -124,6 +154,7 @@ namespace b3d
 
 	private:
 		UnorderedMap<String, TShared<IShaderCompiler>> mCompilers;
+		UnorderedMap<String, TShared<IGpuBytecodeCompiler>> mBytecodeCompilers;
 
 		Vector<String> mShadingLanguages;
 		mutable Mutex mShadingLanguageMutex;

@@ -155,7 +155,6 @@ namespace b3d
 			const VideoModeInfo& GetVideoModeInfo() const override { return *mVideoModeInfo; }
 
 			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
-			TShared<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
 
 			u32 GetQueueCount(GpuQueueType type) const override;
 			TShared<GpuQueue> GetQueue(GpuQueueType type, u32 index) const override;
@@ -217,6 +216,7 @@ namespace b3d
 			bool mIsShuttingDown = false;
 			TUnique<Impl> mImpl;
 			TUnique<MetalHeapAllocator> mHeapAllocator;
+
 			QueueInfo mQueueInfos[GQT_COUNT];
 			GpuDeviceCapabilities mCapabilities;
 			TShared<VideoModeInfo> mVideoModeInfo;

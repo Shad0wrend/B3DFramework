@@ -4,20 +4,23 @@
 #include "B3DMetalGpuDevice.h"
 #include "B3DMetalTextureManager.h"
 #include "B3DMetalRenderWindowManager.h"
-#include "B3DGLSLToSPIRV.h"
+#include "B3DMetalMSLCompiler.h"
+#include "B3DMetalBytecodeLayout.h"
+#include "Material/B3DShaderCompiler.h"
 
 namespace b3d
 {
 	void MetalGpuBackend::OnStartUp()
 	{
-		// Start the shared VKSL/GLSL -> SPIR-V compiler module before any shader compile request hits
-		// the device. Mirrors VulkanGpuBackend::OnStartUp.
-		render::GLSLToSPIRV::StartUp();
-
-		// Create and initialize a single Metal device
 		auto device = B3DMakeShared<render::MetalGpuDevice>();
 		device->Initialize();
 		mDevices.Add(device);
+
+		// Register the device-independent mvksl bytecode compiler (VKSL/MVKSL -> SPIR-V -> argument-buffer MSL).
+		// The compiler owns its own glslang/SPIRV-Cross converter, so this construct-and-register is all the
+		// start-up it needs - no module to start. Mirrors VulkanGpuBackend::OnStartUp.
+		ShaderCompilers::Instance().RegisterBytecodeCompiler(render::MetalGpuDevice::kGpuProgramLanguageName,
+			B3DMakeShared<render::MetalMSLCompiler>(render::kMetalCompilerId, render::kMetalCompilerVersion));
 
 		// Create the texture managers
 		TextureManager::StartUp<MetalTextureManager>();
@@ -49,9 +52,10 @@ namespace b3d
 		render::TextureManager::ShutDown();
 		TextureManager::ShutDown();
 
-		mDevices.clear();
+		// Drops the last reference to the bytecode-compiler adapter, which destroys its glslang/SPIRV-Cross converter.
+		ShaderCompilers::Instance().UnregisterBytecodeCompiler(render::MetalGpuDevice::kGpuProgramLanguageName);
 
-		render::GLSLToSPIRV::ShutDown();
+		mDevices.clear();
 
 		Super::OnShutDown();
 	}
